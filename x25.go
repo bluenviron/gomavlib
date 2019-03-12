@@ -1,0 +1,50 @@
+package gomavlib
+
+import (
+	"hash"
+)
+
+type Hash16 interface {
+	hash.Hash
+	Sum16() uint16
+}
+
+type X25 struct {
+	crc uint16
+}
+
+func NewX25() Hash16 {
+	x := &X25{}
+	x.Reset()
+	return x
+}
+
+func (x *X25) Reset() {
+	x.crc = 0xFFFF
+}
+
+func (x *X25) Size() int {
+	return 2
+}
+
+func (x *X25) BlockSize() int {
+	return 1
+}
+
+func (x *X25) Write(p []byte) (int, error) {
+	for _, b := range p {
+		tmp := uint16(b) ^ (x.crc & 0xFF)
+		tmp ^= (tmp << 4)
+		tmp &= 0xFF
+		x.crc = (x.crc >> 8) ^ (tmp << 8) ^ (tmp << 3) ^ (tmp >> 4)
+	}
+	return len(p), nil
+}
+
+func (x *X25) Sum16() uint16 {
+	return x.crc
+}
+
+func (x *X25) Sum(b []byte) []byte {
+	return append(b, byte(x.crc), byte(x.crc>>8))
+}

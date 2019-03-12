@@ -2086,7 +2086,7 @@ type MessagePlayTune struct {
 	TargetSystem    uint8
 	TargetComponent uint8
 	Tune            string `mavlen:"30"`
-	Tune2           string `mavlen:"200",mavext:"true"`
+	Tune2           string `mavext:"true",mavlen:"200"`
 }
 
 func (*MessagePlayTune) GetId() uint32 {

@@ -151,7 +151,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 
 	// init frame parser
 	FrameParser, err := NewFrameParser(FrameParserConf{
-		dialect: conf.Dialect,
+		Dialect: conf.Dialect,
 	})
 	if err != nil {
 		return nil, err

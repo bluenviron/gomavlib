@@ -97,7 +97,7 @@ func TestFrameParserV1RawEnc(t *testing.T) {
 }
 
 func TestFrameParserV1DialectDec(t *testing.T) {
-	parser, _ := NewFrameParser(FrameParserConf{dialect: testDialect})
+	parser, _ := NewFrameParser(FrameParserConf{Dialect: testDialect})
 	for i, byt := range testFpV1Bytes {
 		frame, err := parser.Decode(byt, true, nil)
 		if err != nil {
@@ -110,7 +110,7 @@ func TestFrameParserV1DialectDec(t *testing.T) {
 }
 
 func TestFrameParserV1DialectEnc(t *testing.T) {
-	parser, _ := NewFrameParser(FrameParserConf{dialect: testDialect})
+	parser, _ := NewFrameParser(FrameParserConf{Dialect: testDialect})
 	for i, frame := range testFpV1FramesDialect {
 		byt, err := parser.Encode(frame, true, nil)
 		if err != nil {
@@ -183,7 +183,7 @@ func TestFrameParserV2RawEnc(t *testing.T) {
 }
 
 func TestFrameParserV2DialectDec(t *testing.T) {
-	parser, _ := NewFrameParser(FrameParserConf{dialect: testDialect})
+	parser, _ := NewFrameParser(FrameParserConf{Dialect: testDialect})
 	for i, byt := range testFpV2Bytes {
 		frame, err := parser.Decode(byt, true, nil)
 		if err != nil {
@@ -196,7 +196,7 @@ func TestFrameParserV2DialectDec(t *testing.T) {
 }
 
 func TestFrameParserV2DialectEnc(t *testing.T) {
-	parser, _ := NewFrameParser(FrameParserConf{dialect: testDialect})
+	parser, _ := NewFrameParser(FrameParserConf{Dialect: testDialect})
 	for i, frame := range testFpV2FramesDialect {
 		byt, err := parser.Encode(frame, true, nil)
 		if err != nil {
@@ -268,7 +268,7 @@ func TestFrameParserV2SignatureDec(t *testing.T) {
 	copy(key[:], bytes.Repeat([]byte("\x4F"), 32))
 
 	parser, _ := NewFrameParser(FrameParserConf{
-		dialect: []Message{&MessageHeartbeat{}},
+		Dialect: []Message{&MessageHeartbeat{}},
 	})
 
 	for i, byt := range testFpV2SigBytes {
@@ -287,7 +287,7 @@ func TestFrameParserV2SignatureEnc(t *testing.T) {
 	copy(key[:], bytes.Repeat([]byte("\x4F"), 32))
 
 	parser, _ := NewFrameParser(FrameParserConf{
-		dialect: []Message{&MessageHeartbeat{}},
+		Dialect: []Message{&MessageHeartbeat{}},
 	})
 
 	for i, frame := range testFpV2SigFrames {

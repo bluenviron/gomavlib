@@ -8,7 +8,9 @@ import (
 
 // FrameParserConf configures a FrameParser.
 type FrameParserConf struct {
-	dialect []Message
+	// Dialect contains the messages which will be automatically decoded and
+	// encoded. If not provided, messages are decoded in the MessageRaw struct.
+	Dialect []Message
 }
 
 // FrameParser is a low level frame encoder and decoder.
@@ -26,7 +28,7 @@ func NewFrameParser(conf FrameParserConf) (*FrameParser, error) {
 	}
 
 	// generate message parsers
-	for _, msg := range conf.dialect {
+	for _, msg := range conf.Dialect {
 		mp, err := newMessageParser(msg)
 		if err != nil {
 			return nil, err

@@ -41,7 +41,7 @@ https://godoc.org/github.com/gswly/gomavlib
 
 ## Testing
 
-Unit tests can be run through:
+If you want to edit the library and test the results, unit tests can be run through:
 ```
 make test
 ```

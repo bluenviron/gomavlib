@@ -3,7 +3,7 @@
 package ardupilotmega
 
 import (
-	"github.com/gswly/mavlib"
+	"github.com/gswly/gomavlib"
 )
 
 // common.xml
@@ -3427,7 +3427,7 @@ func (*MessageEscTelemetry_9To_12) GetId() uint32 {
 	return 11032
 }
 
-var Dialect = []mavlib.Message{
+var Dialect = []gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},
 	&MessageSysStatus{},

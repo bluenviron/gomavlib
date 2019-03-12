@@ -3,7 +3,7 @@
 package paparazzi
 
 import (
-	"github.com/gswly/mavlib"
+	"github.com/gswly/gomavlib"
 )
 
 // common.xml
@@ -2602,7 +2602,7 @@ func (*MessageScriptCurrent) GetId() uint32 {
 	return 184
 }
 
-var Dialect = []mavlib.Message{
+var Dialect = []gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},
 	&MessageSysStatus{},

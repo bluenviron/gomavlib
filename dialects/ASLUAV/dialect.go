@@ -3,7 +3,7 @@
 package ASLUAV
 
 import (
-	"github.com/gswly/mavlib"
+	"github.com/gswly/gomavlib"
 )
 
 // common.xml
@@ -2829,7 +2829,7 @@ func (*MessageGsmLinkStatus) GetId() uint32 {
 	return 213
 }
 
-var Dialect = []mavlib.Message{
+var Dialect = []gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},
 	&MessageSysStatus{},

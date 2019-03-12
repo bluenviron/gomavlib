@@ -3,7 +3,7 @@
 package test
 
 import (
-	"github.com/gswly/mavlib"
+	"github.com/gswly/gomavlib"
 )
 
 // test.xml
@@ -37,7 +37,7 @@ func (*MessageTestTypes) GetId() uint32 {
 	return 0
 }
 
-var Dialect = []mavlib.Message{
+var Dialect = []gomavlib.Message{
 	// test.xml
 	&MessageTestTypes{},
 }

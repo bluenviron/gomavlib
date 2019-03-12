@@ -3,7 +3,7 @@
 package icarous
 
 import (
-	"github.com/gswly/mavlib"
+	"github.com/gswly/gomavlib"
 )
 
 // icarous.xml
@@ -39,7 +39,7 @@ func (*MessageIcarousKinematicBands) GetId() uint32 {
 	return 42001
 }
 
-var Dialect = []mavlib.Message{
+var Dialect = []gomavlib.Message{
 	// icarous.xml
 	&MessageIcarousHeartbeat{},
 	&MessageIcarousKinematicBands{},

@@ -3,7 +3,7 @@
 package minimal
 
 import (
-	"github.com/gswly/mavlib"
+	"github.com/gswly/gomavlib"
 )
 
 // minimal.xml
@@ -21,7 +21,7 @@ func (*MessageHeartbeat) GetId() uint32 {
 	return 0
 }
 
-var Dialect = []mavlib.Message{
+var Dialect = []gomavlib.Message{
 	// minimal.xml
 	&MessageHeartbeat{},
 }

@@ -3,7 +3,7 @@
 package ualberta
 
 import (
-	"github.com/gswly/mavlib"
+	"github.com/gswly/gomavlib"
 )
 
 // common.xml
@@ -2591,7 +2591,7 @@ func (*MessageUalbertaSysStatus) GetId() uint32 {
 	return 222
 }
 
-var Dialect = []mavlib.Message{
+var Dialect = []gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},
 	&MessageSysStatus{},

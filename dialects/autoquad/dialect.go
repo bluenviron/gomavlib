@@ -3,7 +3,7 @@
 package autoquad
 
 import (
-	"github.com/gswly/mavlib"
+	"github.com/gswly/gomavlib"
 )
 
 // common.xml
@@ -2598,7 +2598,7 @@ func (*MessageAqEscTelemetry) GetId() uint32 {
 	return 152
 }
 
-var Dialect = []mavlib.Message{
+var Dialect = []gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},
 	&MessageSysStatus{},

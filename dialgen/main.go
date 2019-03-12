@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"text/template"
@@ -171,6 +172,7 @@ func fieldTypeToGo(f *MavlinkField) string {
 		for k, v := range tags {
 			tmp = append(tmp, fmt.Sprintf("%s:\"%s\"", k, v))
 		}
+		sort.Strings(tmp)
 		out += " `" + strings.Join(tmp, ",") + "`"
 	}
 	return out

@@ -3,7 +3,7 @@
 package standard
 
 import (
-	"github.com/gswly/mavlib"
+	"github.com/gswly/gomavlib"
 )
 
 // common.xml
@@ -2086,7 +2086,7 @@ type MessagePlayTune struct {
 	TargetSystem    uint8
 	TargetComponent uint8
 	Tune            string `mavlen:"30"`
-	Tune2           string `mavext:"true",mavlen:"200"`
+	Tune2           string `mavlen:"200",mavext:"true"`
 }
 
 func (*MessagePlayTune) GetId() uint32 {
@@ -2554,7 +2554,7 @@ func (*MessageWheelDistance) GetId() uint32 {
 
 // standard.xml
 
-var Dialect = []mavlib.Message{
+var Dialect = []gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},
 	&MessageSysStatus{},

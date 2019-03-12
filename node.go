@@ -81,7 +81,7 @@ func (h *heartbeatTicker) do() {
 	}
 }
 
-type FrameTransportChannelPair struct {
+type frameTransportChannelPair struct {
 	Frame
 	*TransportChannel
 }
@@ -130,7 +130,7 @@ type Node struct {
 	transports      []transport
 	channels        map[*TransportChannel]struct{}
 	FrameParser     *FrameParser
-	frameQueue      chan FrameTransportChannelPair
+	frameQueue      chan frameTransportChannelPair
 	writeDone       chan struct{}
 	heartbeatTicker *heartbeatTicker
 }
@@ -171,7 +171,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 		transports:  make([]transport, len(conf.Transports)),
 		channels:    make(map[*TransportChannel]struct{}),
 		FrameParser: FrameParser,
-		frameQueue:  make(chan FrameTransportChannelPair),
+		frameQueue:  make(chan frameTransportChannelPair),
 		writeDone:   make(chan struct{}),
 	}
 
@@ -377,5 +377,5 @@ func (n *Node) processBuffer(conn *TransportChannel, buf []byte) {
 		fmt.Printf("SKIPPED DUE TO ERR: %v\n", err)
 		return
 	}
-	n.frameQueue <- FrameTransportChannelPair{frame, conn}
+	n.frameQueue <- frameTransportChannelPair{frame, conn}
 }

@@ -1,6 +1,11 @@
 
 # gomavlib
 
+[![GoDoc](https://godoc.org/github.com/gswly/gomavlib?status.svg)](https://godoc.org/github.com/gswly/gomavlib)
+[![Go Report Card](https://goreportcard.com/badge/github.com/gswly/gomavlib)](https://goreportcard.com/report/github.com/gswly/gomavlib)
+
+
+
 ## Features
 
 * Decode and encode Mavlink v2.0 and v1.0. Supports checksums, empty-byte truncation (v2.0), signing (v2.0), message extensions (v2.0).
@@ -17,7 +22,7 @@ Go &ge; 1.11 is required. If modules are enabled (i.e. there's a go.mod file in 
 ```go
 import (
     ...
-    dctk "github.com/gswly/gomavlib"
+    "github.com/gswly/gomavlib"
 )
 ```
 
@@ -33,6 +38,13 @@ TODO
 ## Documentation
 
 https://godoc.org/github.com/gswly/gomavlib
+
+## Testing
+
+Unit tests can be run through:
+```
+make test
+```
 
 ## Links
 

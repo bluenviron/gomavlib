@@ -10,7 +10,11 @@
 
 * Decode and encode Mavlink v2.0 and v1.0. Supports checksums, empty-byte truncation (v2.0), signing (v2.0), message extensions (v2.0).
 * Dialect is optional, the library can work with no dialects, with a user-defined dialect or with a standard dialect. Standard dialects are provided in directory `dialect/`, with no need for generation. A Dialect generator is provided anyway.
-* Ready-to-use Mavlink node with heartbeat emission and ability to communicate through multiple transports in parallel: serial, UDP (server, client or broadcast mode), TCP (server or client mode), or a custom interface.
+* Ready-to-use Mavlink node with heartbeat emission and ability to communicate through multiple transports in parallel:
+  * serial
+  * UDP (server, client or broadcast mode)
+  * TCP (server or client mode)
+  * custom reader/writer
 * UDP connections are tracked and removed when inactive.
 * Support both domain names and IPs.
 * Examples provided for every feature.

@@ -82,11 +82,6 @@ func (h *heartbeatTicker) do() {
 	}
 }
 
-type frameChannelPair struct {
-	Frame
-	*TransportChannel
-}
-
 // NodeConf allows to configure a Node.
 type NodeConf struct {
 	// Version is the Mavlink version used to encode frames. See Version
@@ -130,7 +125,7 @@ type Node struct {
 	chanAccepters   map[transportChannelAccepter]struct{}
 	channels        map[*TransportChannel]struct{}
 	frameParser     *FrameParser
-	frameQueue      chan frameChannelPair
+	frameQueue      chan *ReadResult
 	writeDone       chan struct{}
 	heartbeatTicker *heartbeatTicker
 }
@@ -170,7 +165,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 		chanAccepters: make(map[transportChannelAccepter]struct{}),
 		channels:      make(map[*TransportChannel]struct{}),
 		frameParser:   frameParser,
-		frameQueue:    make(chan frameChannelPair),
+		frameQueue:    make(chan *ReadResult),
 		writeDone:     make(chan struct{}),
 	}
 
@@ -283,7 +278,7 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 				continue
 			}
 
-			n.frameQueue <- frameChannelPair{frame, conn}
+			n.frameQueue <- &ReadResult{frame, conn}
 		}
 	}()
 
@@ -373,16 +368,8 @@ func (res *ReadResult) Channel() *TransportChannel {
 // ReadResult contains all the properties of the received message (see ReadResult for details).
 // bool is true whenever the node is still open.
 func (n *Node) Read() (*ReadResult, bool) {
-	pair, ok := <-n.frameQueue
-	if ok == false {
-		return nil, false
-	}
-
-	res := &ReadResult{
-		frame:            pair.Frame,
-		transportChannel: pair.TransportChannel,
-	}
-	return res, true
+	res, ok := <-n.frameQueue
+	return res, ok
 }
 
 // WriteMessage write a message to a given channel.

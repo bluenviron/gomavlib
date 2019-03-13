@@ -10,7 +10,7 @@ type transportServerConf interface {
 	GetAddress() string
 }
 
-// TransportTcpServer sends and reads frames through a TCP server.
+// TransportTcpServer reads and writes frames through a TCP server.
 // TCP can be good for routing frames through the internet, but it is not the most
 // appropriate way for transfering frames from a UAV to a GCS, since it does
 // not allow frame losses.
@@ -23,7 +23,7 @@ func (c TransportTcpServer) GetAddress() string {
 	return c.Address
 }
 
-// TransportUdpServer sends and reads frames through an UDP server.
+// TransportUdpServer reads and writes frames through an UDP server.
 // This is the most appropriate way for transfering frames from a UAV to a GPS
 // if they are connected to the same network.
 type TransportUdpServer struct {

@@ -4,7 +4,7 @@ import (
 	"io"
 )
 
-// TransportCustom sends and reads frames through a custom interface
+// TransportCustom reads and writes frames through a custom interface
 // that provides the Read(), Write() and Close() functions.
 type TransportCustom struct {
 	// the struct or interface implementing Read(), Write() and Close()

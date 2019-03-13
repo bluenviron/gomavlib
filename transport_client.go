@@ -7,46 +7,53 @@ import (
 )
 
 type transportClientConf interface {
-	GetAddress() string
+	getAddress() string
 }
 
-// TransportTcpClient sends and reads frames through a TCP client.
+// TransportTcpClient reads and writes frames through a TCP client.
 type TransportTcpClient struct {
 	// domain name or IP of the server to connect to, example: 1.2.3.4:5600
 	Address string
 }
 
-func (conf TransportTcpClient) GetAddress() string {
+func (TransportTcpClient) isUdp() bool {
+	return false
+}
+
+func (conf TransportTcpClient) getAddress() string {
 	return conf.Address
 }
 
-// TransportUdpClient sends and reads frames through a UDP client.
+func (conf TransportTcpClient) init(n *Node) (transport, error) {
+	return initTransportClient(n, conf)
+}
+
+// TransportUdpClient reads and writes frames through a UDP client.
 type TransportUdpClient struct {
 	// domain name or IP of the server to connect to, example: 1.2.3.4:5600
 	Address string
 }
 
-func (conf TransportUdpClient) GetAddress() string {
+func (TransportUdpClient) isUdp() bool {
+	return true
+}
+
+func (conf TransportUdpClient) getAddress() string {
 	return conf.Address
+}
+
+func (conf TransportUdpClient) init(n *Node) (transport, error) {
+	return initTransportClient(n, conf)
 }
 
 type transportClient struct {
 	conf      transportClientConf
 	node      *Node
-	isUdp     bool
 	terminate chan struct{}
 }
 
-func (conf TransportTcpClient) init(n *Node) (transport, error) {
-	return initTransportClient(n, false, conf)
-}
-
-func (conf TransportUdpClient) init(n *Node) (transport, error) {
-	return initTransportClient(n, true, conf)
-}
-
-func initTransportClient(node *Node, isUdp bool, conf transportClientConf) (transport, error) {
-	_, _, err := net.SplitHostPort(conf.GetAddress())
+func initTransportClient(node *Node, conf transportClientConf) (transport, error) {
+	_, _, err := net.SplitHostPort(conf.getAddress())
 	if err != nil {
 		return nil, fmt.Errorf("invalid address")
 	}
@@ -54,7 +61,6 @@ func initTransportClient(node *Node, isUdp bool, conf transportClientConf) (tran
 	t := &transportClient{
 		conf:  conf,
 		node:  node,
-		isUdp: isUdp,
 	}
 	return t, nil
 }
@@ -77,13 +83,13 @@ func (t *transportClient) do() {
 		dialDone := make(chan struct{}, 1)
 		go func() {
 			var network string
-			if t.isUdp == true {
+			if t.conf.isUdp() == true {
 				network = "udp4"
 			} else {
 				network = "tcp4"
 			}
 			var err error
-			rawConn, err = net.DialTimeout(network, t.conf.GetAddress(), netConnectTimeout)
+			rawConn, err = net.DialTimeout(network, t.conf.getAddress(), netConnectTimeout)
 			if err != nil {
 				rawConn = nil // ensure rawConn is nil in case of error
 			}

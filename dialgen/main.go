@@ -173,7 +173,7 @@ func fieldTypeToGo(f *MavlinkField) string {
 			tmp = append(tmp, fmt.Sprintf("%s:\"%s\"", k, v))
 		}
 		sort.Strings(tmp)
-		out += " `" + strings.Join(tmp, ",") + "`"
+		out += " `" + strings.Join(tmp, " ") + "`"
 	}
 	return out
 }

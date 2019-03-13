@@ -3,6 +3,7 @@
 
 [![GoDoc](https://godoc.org/github.com/gswly/gomavlib?status.svg)](https://godoc.org/github.com/gswly/gomavlib)
 [![Go Report Card](https://goreportcard.com/badge/github.com/gswly/gomavlib)](https://goreportcard.com/report/github.com/gswly/gomavlib)
+[![Build Status](https://travis-ci.org/gswly/gomavlib.svg?branch=master)](https://travis-ci.org/gswly/gomavlib)
 
 gomavlib is a library that implements Mavlink 2.0 and 1.0 in the Go programming language. It can power UGVs, UAVs, ground stations, monitoring systems or routers acting in a Mavlink network.
 

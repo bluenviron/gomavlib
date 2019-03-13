@@ -411,6 +411,9 @@ func TestNodeRouting(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	// wait client connection
+	time.Sleep(500 * time.Millisecond)
+
 	node1.WriteMessageAll(testMsg)
 
 	success := false

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net"
 	"reflect"
-	"time"
 )
 
 // ipByBroadcastIp returns the ip of an interface associated with given broadcast ip
@@ -31,45 +30,6 @@ func ipByBroadcastIp(target net.IP) net.IP {
 	return nil
 }
 
-type transportUdpBroadcastChannel struct {
-	net.PacketConn
-	broadcastAddr net.Addr
-}
-
-func (t *transportUdpBroadcastChannel) Write(buf []byte) (int, error) {
-	return t.WriteTo(buf, t.broadcastAddr)
-}
-
-func (t *transportUdpBroadcastChannel) SetWriteDeadline(ti time.Time) error {
-	// causes a stack overflow, disabled
-	return nil
-}
-
-func (*transportUdpBroadcastChannel) LocalAddr() net.Addr {
-	// provided for netTimedConn, not used
-	return nil
-}
-
-func (*transportUdpBroadcastChannel) RemoteAddr() net.Addr {
-	// provided for netTimedConn, not used
-	return nil
-}
-
-func (*transportUdpBroadcastChannel) Read(buf []byte) (int, error) {
-	// provided for netTimedConn, not used
-	return 0, nil
-}
-
-func (*transportUdpBroadcastChannel) SetDeadline(time.Time) error {
-	// provided for netTimedConn, not used
-	return nil
-}
-
-func (*transportUdpBroadcastChannel) SetReadDeadline(t time.Time) error {
-	// provided for netTimedConn, not used
-	return nil
-}
-
 // TransportUdpBroadcast sends and reads frames through UDP broadcast packets.
 type TransportUdpBroadcast struct {
 	// the broadcast address to which sending outgoing frames, example: 192.168.5.255:5600
@@ -79,13 +39,10 @@ type TransportUdpBroadcast struct {
 	LocalAddr string
 }
 
-type transportUdpBroadcast struct {
+type transportUdpBroadcastRWC struct {
 	conf          TransportUdpBroadcast
-	node          *Node
-	terminate     chan struct{}
-	broadcastAddr net.Addr
 	packetConn    net.PacketConn
-	tconn         *TransportChannel
+	broadcastAddr net.Addr
 }
 
 func (conf TransportUdpBroadcast) init(node *Node) (transport, error) {
@@ -117,55 +74,27 @@ func (conf TransportUdpBroadcast) init(node *Node) (transport, error) {
 		return nil, err
 	}
 
-	t := &transportUdpBroadcast{
+	br := &transportUdpBroadcastRWC{
 		conf:          conf,
-		node:          node,
-		terminate:     make(chan struct{}),
-		broadcastAddr: broadcastAddr,
 		packetConn:    packetConn,
+		broadcastAddr: broadcastAddr,
 	}
 
-	t.tconn = &TransportChannel{
-		transport: t,
-		writer: &netTimedConn{&transportUdpBroadcastChannel{
-			t.packetConn,
-			t.broadcastAddr,
-		}},
+	tc := TransportCustom{
+		ReadWriteCloser: br,
 	}
-	t.node.addTransportChannel(t.tconn)
-
-	return t, nil
+	return tc.init(node)
 }
 
-func (t *transportUdpBroadcast) closePrematurely() {
-	t.packetConn.Close()
+func (t *transportUdpBroadcastRWC) Close() error {
+	return t.packetConn.Close()
 }
 
-func (t *transportUdpBroadcast) do() {
-	listenDone := make(chan struct{})
-	go func() {
-		defer func() { listenDone <- struct{}{} }()
-		defer t.node.removeTransportChannel(t.tconn)
+func (t *transportUdpBroadcastRWC) Read(buf []byte) (int, error) {
+	n, _, err := t.packetConn.ReadFrom(buf)
+	return n, err
+}
 
-		var buf [netBufferSize]byte
-		for {
-			n, _, err := t.packetConn.ReadFrom(buf[:])
-			if err != nil {
-				break
-			}
-			t.node.processBuffer(nil, buf[:n])
-		}
-	}()
-
-	select {
-	// unexpected error, wait for terminate
-	case <-listenDone:
-		t.packetConn.Close()
-		<-t.node.terminate
-
-	// terminated
-	case <-t.node.terminate:
-		t.packetConn.Close()
-		<-listenDone
-	}
+func (t *transportUdpBroadcastRWC) Write(buf []byte) (int, error) {
+	return t.packetConn.WriteTo(buf, t.broadcastAddr)
 }

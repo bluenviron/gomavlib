@@ -21,8 +21,8 @@ func (conf TransportSerial) init(node *Node) (transport, error) {
 		return nil, err
 	}
 
-	ts := TransportCustom{
+	tc := TransportCustom{
 		ReadWriteCloser: port,
 	}
-	return ts.init(node)
+	return tc.init(node)
 }

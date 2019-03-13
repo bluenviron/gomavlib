@@ -83,7 +83,7 @@ func doTest(t *testing.T, t1 TransportConf, t2 TransportConf) {
 			return
 		}
 
-		node1.WriteMessage(nil, testMsg2)
+		node1.WriteMessageAll(testMsg2)
 
 		res2, ok := node1.Read()
 		if ok == false {
@@ -101,7 +101,7 @@ func doTest(t *testing.T, t1 TransportConf, t2 TransportConf) {
 			return
 		}
 
-		node1.WriteMessage(nil, testMsg4)
+		node1.WriteMessageAll(testMsg4)
 	}()
 
 	go func() {
@@ -111,7 +111,7 @@ func doTest(t *testing.T, t1 TransportConf, t2 TransportConf) {
 		// wait connection to server
 		time.Sleep(500 * time.Millisecond)
 
-		node2.WriteMessage(nil, testMsg1)
+		node2.WriteMessageAll(testMsg1)
 
 		res, ok := node2.Read()
 		if ok == false {
@@ -124,7 +124,7 @@ func doTest(t *testing.T, t1 TransportConf, t2 TransportConf) {
 			return
 		}
 
-		node2.WriteMessage(nil, testMsg3)
+		node2.WriteMessageAll(testMsg3)
 
 		res, ok = node2.Read()
 		if ok == false {
@@ -216,7 +216,7 @@ func TestNodeCustom(t *testing.T) {
 		}
 		defer node.Close()
 
-		node.WriteMessage(nil, testMsg)
+		node.WriteMessageAll(testMsg)
 	}()
 
 	if reflect.DeepEqual(rwc.writeBuf.Bytes(), res) == false {
@@ -335,7 +335,7 @@ func TestNodeSignature(t *testing.T) {
 			return
 		}
 
-		node1.WriteMessage(nil, testMsg)
+		node1.WriteMessageAll(testMsg)
 	}()
 
 	go func() {
@@ -344,7 +344,7 @@ func TestNodeSignature(t *testing.T) {
 
 		time.Sleep(500 * time.Millisecond)
 
-		node2.WriteMessage(nil, testMsg)
+		node2.WriteMessageAll(testMsg)
 
 		_, ok := node2.Read()
 		if ok == false {

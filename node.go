@@ -74,7 +74,7 @@ func (h *heartbeatTicker) do() {
 			msg.Elem().FieldByName("CustomMode").Set(reflect.ValueOf(uint32(0)))
 			msg.Elem().FieldByName("SystemStatus").Set(reflect.ValueOf(uint8(4))) // MAV_STATE_ACTIVE
 			msg.Elem().FieldByName("MavlinkVersion").Set(reflect.ValueOf(uint8(3)))
-			h.n.WriteMessage(nil, msg.Interface().(Message))
+			h.n.WriteMessageAll(msg.Interface().(Message))
 
 		case <-h.terminate:
 			return
@@ -382,42 +382,80 @@ func (n *Node) Read() (*ReadResult, bool) {
 	return res, ok
 }
 
-// WriteMessage write a message to a given channel.
-// if conn is nil, the message is sent to all channels.
-func (n *Node) WriteMessage(targetChannel *TransportChannel, msg Message) {
-	n.write(targetChannel, msg)
+// WriteMessageTo write a message to given channel.
+func (n *Node) WriteMessageTo(targetChannel *TransportChannel, message Message) {
+	n.writeTo(targetChannel, message)
 }
 
-// WriteMessage write a frame to a given channel.
-// if conn is nil, the message is sent to all channels.
+// WriteMessageAll write a message to all channels.
+func (n *Node) WriteMessageAll(message Message) {
+	n.writeAll(message)
+}
+
+// WriteMessageExcept write a message to all channels except specified channel.
+func (n *Node) WriteMessageExcept(exceptChannel *TransportChannel, message Message) {
+	n.writeExcept(exceptChannel, message)
+}
+
+// WriteFrameTo write a frame to given channel.
 // This function is intended for routing frames to other nodes, since all
-// the frame fields must be filled manually.
-func (n *Node) WriteFrame(targetChannel *TransportChannel, frame Frame) {
-	n.write(targetChannel, frame)
+// the fields must be filled manually.
+func (n *Node) WriteFrameTo(targetChannel *TransportChannel, frame Frame) {
+	n.writeTo(targetChannel, frame)
 }
 
-func (n *Node) write(targetChannel *TransportChannel, what interface{}) {
+// WriteFrameAll write a frame to all channels.
+// This function is intended for routing frames to other nodes, since all
+// the fields must be filled manually.
+func (n *Node) WriteFrameAll(frame Frame) {
+	n.writeAll(frame)
+}
+
+// WriteFrameExcept write a frame to all channels except specified channel.
+// This function is intended for routing frames to other nodes, since all
+// the fields must be filled manually.
+func (n *Node) WriteFrameExcept(exceptChannel *TransportChannel, frame Frame) {
+	n.writeExcept(exceptChannel, frame)
+}
+
+func (n *Node) writeTo(targetChannel *TransportChannel, what interface{}) {
 	n.mutex.Lock()
 	defer n.mutex.Unlock()
 
-	var channels []*TransportChannel
-	if targetChannel == nil {
-		for c := range n.channels {
-			channels = append(channels, c)
-		}
-	} else {
-		if _, ok := n.channels[targetChannel]; ok {
-			channels = append(channels, targetChannel)
-		}
+	if _, ok := n.channels[targetChannel]; ok == false {
+		return
 	}
 
 	// route to channels
-	for _, conn := range channels {
+	// wait for responses (otherwise transports can be removed before writing)
+	targetChannel.writeChan <- what
+	<-n.writeDone
+}
+
+func (n *Node) writeAll(what interface{}) {
+	n.mutex.Lock()
+	defer n.mutex.Unlock()
+
+	for conn := range n.channels {
 		conn.writeChan <- what
 	}
+	for range n.channels {
+		<-n.writeDone
+	}
+}
 
-	// wait for responses (otherwise transports can be removed before writing)
-	for range channels {
+func (n *Node) writeExcept(exceptChannel *TransportChannel, what interface{}) {
+	n.mutex.Lock()
+	defer n.mutex.Unlock()
+
+	count := 0
+	for conn := range n.channels {
+		if conn != exceptChannel {
+			count++
+			conn.writeChan <- what
+		}
+	}
+	for i := 0; i < count; i++ {
 		<-n.writeDone
 	}
 }

@@ -103,6 +103,7 @@ func (c *udpListenerConn) Read(byt []byte) (int, error) {
 	}
 }
 
+// write synchronously, such that buffer can be freed after writing
 func (c *udpListenerConn) Write(byt []byte) (int, error) {
 	c.listener.mutex.Lock()
 	defer c.listener.mutex.Unlock()
@@ -115,8 +116,11 @@ func (c *udpListenerConn) Write(byt []byte) (int, error) {
 		return 0, udpErrorTerminated
 	}
 
-	// write synchronously, such that buffer can be freed after writing
-	c.listener.pc.SetWriteDeadline(c.writeDeadline)
+	err := c.listener.pc.SetWriteDeadline(c.writeDeadline)
+	if err != nil {
+		return 0, err
+	}
+
 	return c.listener.pc.WriteTo(byt, c.addr)
 }
 

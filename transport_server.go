@@ -101,5 +101,6 @@ func (t *transportServer) Accept() (io.ReadWriteCloser, error) {
 	}
 
 	conn := &netTimedConn{rawConn}
+
 	return conn, nil
 }

@@ -94,6 +94,7 @@ func (t *transportUdpBroadcast) Close() error {
 }
 
 func (t *transportUdpBroadcast) Read(buf []byte) (int, error) {
+	// read WITHOUT deadline
 	n, _, err := t.packetConn.ReadFrom(buf)
 
 	// wait termination, do not report errors

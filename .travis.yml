@@ -10,4 +10,6 @@ env:
 before_install:
 - go mod download
 
-script: go test -v ./...
+script:
+- go test -v .
+- go build ./dialgen

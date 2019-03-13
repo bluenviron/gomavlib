@@ -213,9 +213,19 @@ func (n *Node) Close() {
 		}
 	}()
 
+	// consume queued frames up to close(n.frameQueue)
+	go func() {
+		for {
+			_, ok := n.Read()
+			if ok == false {
+				break
+			}
+		}
+	}()
+
 	n.wg.Wait()
 
-	// close queue after ensuring no one will use it
+	// close queue after ensuring no one will write to it
 	close(n.frameQueue)
 }
 

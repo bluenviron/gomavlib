@@ -17,7 +17,7 @@ type transportSerial struct {
 	io.ReadWriteCloser
 }
 
-func (conf TransportSerial) init(node *Node) (transport, error) {
+func (conf TransportSerial) init() (transport, error) {
 	port, err := serial.OpenPort(&serial.Config{
 		Name: conf.Name,
 		Baud: conf.Baud,

@@ -17,17 +17,21 @@ import (
 	"text/template"
 )
 
-type MavlinkEnumEntry struct {
+// MavlinkEnumValue is the part of a dialect definition that contains an enum value.
+type MavlinkEnumValue struct {
 	Value       string `xml:"value,attr"`
 	Name        string `xml:"name,attr"`
 	Description string `xml:"description"`
 }
 
+// MavlinkEnum is the part of a dialect definition that contains an enum.
 type MavlinkEnum struct {
+	Name        string              `xml:"name,attr"`
 	Description string              `xml:"description"`
-	Entries     []*MavlinkEnumEntry `xml:"entry"`
+	Values      []*MavlinkEnumValue `xml:"entry"`
 }
 
+// MavlinkField is the part of a dialect definition that contains a field.
 type MavlinkField struct {
 	Extension   bool   `xml:"-"`
 	Type        string `xml:"type,attr"`
@@ -36,6 +40,7 @@ type MavlinkField struct {
 	Description string `xml:",innerxml"`
 }
 
+// MavlinkMessage is the part of a dialect definition that contains a message.
 type MavlinkMessage struct {
 	Id          uint32
 	Name        string
@@ -43,7 +48,7 @@ type MavlinkMessage struct {
 	Fields      []*MavlinkField
 }
 
-// we must unmarshal manually due to extension fields
+// UnmarshalXML implements xml.Unmarshaler since we must unmarshal manually due to extension fields
 func (m *MavlinkMessage) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	// unmarshal attributes
 	for _, a := range start.Attr {
@@ -87,6 +92,7 @@ func (m *MavlinkMessage) UnmarshalXML(d *xml.Decoder, start xml.StartElement) er
 	return nil
 }
 
+// MavlinkDefinition is a dialect definition.
 type MavlinkDefinition struct {
 	Name     string            `xml:"-"`
 	Version  int               `xml:"version"`
@@ -129,6 +135,19 @@ var Dialect = []gomavlib.Message{
 {{- end }}
 {{- end }}
 }
+{{/**/}}
+
+{{- range .Enums }}
+type {{ .Name }} int
+
+const (
+{{- $pn := .Name }}
+{{- range .Values }}
+	{{ .Name }} {{ $pn }} = {{ .Value }}
+{{- end }}
+)
+{{ end }}
+
 `))
 
 func fieldTypeToGo(f *MavlinkField) string {
@@ -202,7 +221,7 @@ func do(outfile string, mainDefAddr string) error {
 		return err == nil
 	}()
 	processed := make(map[string]struct{})
-	defs := []MavlinkDefinition{}
+	defs := []*MavlinkDefinition{}
 
 	// parse all definitions recursively
 	var process func(defAddr string) error
@@ -237,8 +256,8 @@ func do(outfile string, mainDefAddr string) error {
 		}
 
 		// parse definition
-		var def MavlinkDefinition
-		err = xml.Unmarshal(content, &def)
+		def := &MavlinkDefinition{}
+		err = xml.Unmarshal(content, def)
 		if err != nil {
 			return fmt.Errorf("unable to decode: %s", err)
 		}
@@ -258,8 +277,9 @@ func do(outfile string, mainDefAddr string) error {
 			}
 		}
 
-		// convert strings to go format
+		// process messages
 		for _, msg := range def.Messages {
+			// convert strings to go format
 			msg.Name = gomavlib.MsgNameXmlToGo(msg.Name)
 			for _, f := range msg.Fields {
 				f.Name = gomavlib.MsgFieldXmlToGo(f.Name)
@@ -273,6 +293,37 @@ func do(outfile string, mainDefAddr string) error {
 	err := process(mainDefAddr)
 	if err != nil {
 		return err
+	}
+
+	// merge enums together
+	enums := make(map[string]*MavlinkEnum)
+	for _, def := range defs {
+		for _, origenum := range def.Enums {
+			if _, ok := enums[origenum.Name]; !ok {
+				enums[origenum.Name] = &MavlinkEnum{
+					Name: origenum.Name,
+				}
+			}
+			enum := enums[origenum.Name]
+
+			for _, v := range origenum.Values {
+				enum.Values = append(enum.Values, v)
+			}
+		}
+	}
+
+	// fill enum missing values
+	for _, enum := range enums {
+		nextVal := 0
+		for _, v := range enum.Values {
+			if v.Value != "" {
+				nextVal, _ = strconv.Atoi(v.Value)
+				nextVal++
+			} else {
+				v.Value = strconv.Itoa(nextVal)
+				nextVal++
+			}
+		}
 	}
 
 	// create output folder
@@ -292,7 +343,8 @@ func do(outfile string, mainDefAddr string) error {
 			_, name := filepath.Split(mainDefAddr)
 			return strings.TrimSuffix(name, ".xml")
 		}(),
-		"Defs": defs,
+		"Defs":  defs,
+		"Enums": enums,
 	}
 	err = tpl.Execute(f, tmp)
 	if err != nil {

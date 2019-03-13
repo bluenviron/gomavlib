@@ -31,7 +31,7 @@ func NewFrameParser(conf FrameParserConf) (*FrameParser, error) {
 	for _, msg := range conf.Dialect {
 		mp, err := newMessageParser(msg)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("message %T: %s", msg, err)
 		}
 		p.messageParsers[msg.GetId()] = mp
 	}

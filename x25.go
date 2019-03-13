@@ -6,7 +6,7 @@ import (
 
 // Hash16 is an interface modeled on the standard hash.Hash32 and hash.Hash64.
 // it is implemented by 16-bits hash functions. In this library, it is used byX25.
-type Hash16 interface{
+type Hash16 interface {
 	hash.Hash
 	Sum16() uint16
 }

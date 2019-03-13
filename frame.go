@@ -82,9 +82,9 @@ func (f *FrameV2) isSigned() bool {
 type SignatureKey [32]byte
 
 func NewSignatureKey(in []byte) *SignatureKey {
-	var key SignatureKey
+	key := new(SignatureKey)
 	copy(key[:], in)
-	return &key
+	return key
 }
 
 type Signature [6]byte

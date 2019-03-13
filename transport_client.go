@@ -12,7 +12,7 @@ type transportClientConf interface {
 
 // TransportTcpClient sends and reads frames through a TCP client.
 type TransportTcpClient struct {
-	// domain name or IP of the server to connect to, ie 1.2.3.4:5600
+	// domain name or IP of the server to connect to, example: 1.2.3.4:5600
 	Address string
 }
 
@@ -22,7 +22,7 @@ func (conf TransportTcpClient) GetAddress() string {
 
 // TransportUdpClient sends and reads frames through a UDP client.
 type TransportUdpClient struct {
-	// domain name or IP of the server to connect to, ie 1.2.3.4:5600
+	// domain name or IP of the server to connect to, example: 1.2.3.4:5600
 	Address string
 }
 

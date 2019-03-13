@@ -100,6 +100,12 @@ func newMessageParser(msg Message) (*messageParser, error) {
 	mp.elemType = reflect.TypeOf(msg).Elem()
 	mp.fields = make([]messageParserField, mp.elemType.NumField())
 
+	// get name
+	if strings.HasPrefix(mp.elemType.Name(), "Message") == false {
+		return nil, fmt.Errorf("message struct name must begin with 'Message'")
+	}
+	msgName := MsgNameGoToXml(mp.elemType.Name()[len("Message"):])
+
 	// collect message fields
 	for i := 0; i < mp.elemType.NumField(); i++ {
 		field := mp.elemType.Field(i)
@@ -161,7 +167,6 @@ func newMessageParser(msg Message) (*messageParser, error) {
 	// generate CRC extra
 	// https://mavlink.io/en/guide/serialization.html#crc_extra
 	mp.crcExtra = func() byte {
-		msgName := MsgNameGoToXml(mp.elemType.Name()[len("Message"):])
 		h := NewX25()
 		h.Write([]byte(msgName + " "))
 

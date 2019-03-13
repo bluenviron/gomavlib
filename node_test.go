@@ -162,22 +162,29 @@ func TestNodeUdpBroadcastBroadcast(t *testing.T) {
 		TransportUdpBroadcast{"127.255.255.255:5601", ":5602"})
 }
 
-type CustomReadWriteCloser struct {
+type CustomTransport struct {
 	writeBuf *bytes.Buffer
 	readChan chan struct{}
 }
 
-func (c *CustomReadWriteCloser) Close() error {
+func NewCustomTransport() *CustomTransport {
+	return &CustomTransport{
+		readChan: make(chan struct{}),
+		writeBuf: bytes.NewBuffer(nil),
+	}
+}
+
+func (c *CustomTransport) Close() error {
 	close(c.readChan)
 	return nil
 }
 
-func (c *CustomReadWriteCloser) Read(buf []byte) (int, error) {
+func (c *CustomTransport) Read(buf []byte) (int, error) {
 	<-c.readChan
 	return 0, fmt.Errorf("terminated")
 }
 
-func (c *CustomReadWriteCloser) Write(buf []byte) (int, error) {
+func (c *CustomTransport) Write(buf []byte) (int, error) {
 	c.writeBuf.Write(buf)
 	return len(buf), nil
 }
@@ -193,10 +200,7 @@ func TestNodeCustom(t *testing.T) {
 	}
 	var res = []byte{253, 9, 0, 0, 0, 11, 1, 0, 0, 0, 3, 0, 0, 0, 7, 5, 4, 2, 1, 159, 218}
 
-	rwc := &CustomReadWriteCloser{
-		readChan: make(chan struct{}),
-		writeBuf: bytes.NewBuffer(nil),
-	}
+	rwc := NewCustomTransport()
 
 	func() {
 		node, err := NewNode(NodeConf{

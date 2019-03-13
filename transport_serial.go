@@ -6,9 +6,9 @@ import (
 
 // TransportSerial sends and reads frames through a serial port.
 type TransportSerial struct {
-	// the name or path of the serial port, ie /dev/ttyAMA0 or COM45
+	// the name or path of the serial port, example: /dev/ttyAMA0 or COM45
 	Name string
-	// baud rate, ie 57600
+	// baud rate, example: 57600
 	Baud int
 }
 

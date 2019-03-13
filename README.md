@@ -11,12 +11,12 @@ Mavlink is a lighweight and transport-independent protocol that is mostly used t
 ## Features
 
 * Decode and encode Mavlink v2.0 and v1.0. Supports checksums, empty-byte truncation (v2.0), signing (v2.0), message extensions (v2.0)
-* Dialect is optional, the library can work with no dialects, with a user-defined dialect or with a standard dialect. Standard dialects are provided in directory `dialect/`, with no need for generation. A Dialect generator is provided anyway.
+* Dialect is optional, the library can work a standard dialect, a custom dialect or no dialect at all. Standard dialects are provided in directory `dialect/`, with no need for generation. A Dialect generator is provided anyway.
 * Provides a ready-to-use Mavlink node with heartbeat emission and ability to communicate through multiple transports in parallel:
   * serial
   * UDP (server, client or broadcast mode)
   * TCP (server or client mode)
-  * custom reader/writer
+  * custom transport
 * UDP connections are tracked and removed when inactive
 * Support both domain names and IPs
 * Examples provided for every feature
@@ -27,7 +27,6 @@ Mavlink is a lighweight and transport-independent protocol that is mostly used t
 Go &ge; 1.11 is required. If modules are enabled (i.e. there's a go.mod file in your project folder), it is enough to write the library name in the import section of the source files that are referring to it. Go will take care of downloading the needed files:
 ```go
 import (
-    ...
     "github.com/gswly/gomavlib"
 )
 ```
@@ -39,8 +38,17 @@ go get github.com/gswly/gomavlib
 
 ## Examples
 
-* [serial_read_write](example/1serial_read_write.go)
-* [udp_read_write](example/2udp_read_write.go)
+* [serial](example/1serial.go)
+* [udp_server](example/2udp_server.go)
+* [udp_client](example/3udp_client.go)
+* [udp_broadcast](example/4udp_broadcast.go)
+* [tcp_server](example/5tcp_server.go)
+* [tcp_client](example/6tcp_client.go)
+* [custom_transport](example/7custom_transport.go)
+* [no_dialect](example/8no_dialect.go)
+* [custom_dialect](example/9custom_dialect.go)
+* [router](example/10router.go)
+* [frame_parser](example/11frame_parser.go)
 
 ## Documentation
 

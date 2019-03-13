@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-	// create a node who understands given dialect, writes messages with given
-	// system id and component id, and reads/writes through given transport.
+	// create a node which understands given dialect, writes messages with given
+	// system id and component id, and reads/writes through a serial port.
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Dialect:     ardupilotmega.Dialect,
 		SystemId:    10,
@@ -26,7 +26,7 @@ func main() {
 
 	// work in a loop
 	for {
-		// wait until a message is read.
+		// wait until a message is received.
 		res, ok := node.Read()
 		if ok == false {
 			break

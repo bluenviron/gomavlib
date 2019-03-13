@@ -72,7 +72,7 @@ func (*transportUdpBroadcastChannel) SetReadDeadline(t time.Time) error {
 
 // TransportUdpBroadcast sends and reads frames through UDP broadcast packets.
 type TransportUdpBroadcast struct {
-	// the broadcast address to which sending outgoing frames, ie 192.168.5.255:5600
+	// the broadcast address to which sending outgoing frames, example: 192.168.5.255:5600
 	BroadcastAddr string
 	// (optional) the address on which listening. if empty, it will be inferred
 	// from the broadcast address.

@@ -162,7 +162,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 		Dialect: conf.Dialect,
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("frame parser: %s", err)
 	}
 
 	n := &Node{

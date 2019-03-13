@@ -100,6 +100,17 @@ func (*MessageOpticalFlow) GetId() uint32 {
 	return 100
 }
 
+type MessagePlayTune struct {
+	TargetSystem    uint8
+	TargetComponent uint8
+	Tune            string `mavlen:"30"`
+	Tune2           string `mavext:"true" mavlen:"200"`
+}
+
+func (*MessagePlayTune) GetId() uint32 {
+	return 258
+}
+
 func TestMessageParserCRC(t *testing.T) {
 	var ins = []Message{
 		&MessageHeartbeat{},
@@ -107,6 +118,7 @@ func TestMessageParserCRC(t *testing.T) {
 		&MessageChangeOperatorControl{},
 		&MessageAttitudeQuaternionCov{},
 		&MessageOpticalFlow{},
+		&MessagePlayTune{},
 	}
 	var outs = []byte{
 		50,
@@ -114,9 +126,13 @@ func TestMessageParserCRC(t *testing.T) {
 		217,
 		167,
 		175,
+		22,
 	}
 	for i, in := range ins {
-		mp, _ := newMessageParser(in)
+		mp, err := newMessageParser(in)
+		if err != nil {
+			t.Fatal(err)
+		}
 		if mp.crcExtra != outs[i] {
 			t.Fatalf("wrong crc extra: %v vs %v", mp.crcExtra, outs[i])
 		}
@@ -179,7 +195,10 @@ var testMpV1Msgs = []Message{
 
 func TestMessageParserV1Dec(t *testing.T) {
 	for i, byt := range testMpV1Bytes {
-		mp, _ := newMessageParser(testMpV1Parsers[i])
+		mp, err := newMessageParser(testMpV1Parsers[i])
+		if err != nil {
+			t.Fatal(err)
+		}
 		msg, err := mp.decode(byt, false)
 		if err != nil {
 			t.Fatal(err)
@@ -193,7 +212,10 @@ func TestMessageParserV1Dec(t *testing.T) {
 
 func TestMessageParserV1Enc(t *testing.T) {
 	for i, msg := range testMpV1Msgs {
-		mp, _ := newMessageParser(testMpV1Parsers[i])
+		mp, err := newMessageParser(testMpV1Parsers[i])
+		if err != nil {
+			t.Fatal(err)
+		}
 		byt, err := mp.encode(msg, false)
 		if err != nil {
 			t.Fatal(err)
@@ -224,7 +246,10 @@ var testMpV2EmptyByteMsgs = []Message{
 
 func TestMessageParserV2EmptyByteDec(t *testing.T) {
 	for i, byt := range testMpV2EmptyByteBytes {
-		mp, _ := newMessageParser(testMpV2EmptyByteParsers[i])
+		mp, err := newMessageParser(testMpV2EmptyByteParsers[i])
+		if err != nil {
+			t.Fatal(err)
+		}
 		msg, err := mp.decode(byt, true)
 		if err != nil {
 			t.Fatal(err)
@@ -238,7 +263,10 @@ func TestMessageParserV2EmptyByteDec(t *testing.T) {
 
 func TestMessageParserV2EmptyByteEnc(t *testing.T) {
 	for i, msg := range testMpV2EmptyByteMsgs {
-		mp, _ := newMessageParser(testMpV2EmptyByteParsers[i])
+		mp, err := newMessageParser(testMpV2EmptyByteParsers[i])
+		if err != nil {
+			t.Fatal(err)
+		}
 		byt, err := mp.encode(msg, true)
 		if err != nil {
 			t.Fatal(err)
@@ -252,10 +280,12 @@ func TestMessageParserV2EmptyByteEnc(t *testing.T) {
 
 var testMpV2ExtensionBytes = [][]byte{
 	[]byte("\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x80\x3F\x00\x00\x80\x3F\x00\x00\x80\x3F\x07\x00\x08\x00\x09\x0A\x00\x00\x80\x3F\x00\x00\x80\x3F"),
+	[]byte("\x01\x02"),
 }
 
 var testMpV2ExtensionParsers = []Message{
 	&MessageOpticalFlow{},
+	&MessagePlayTune{},
 }
 
 var testMpV2ExtensionMsgs = []Message{
@@ -271,11 +301,20 @@ var testMpV2ExtensionMsgs = []Message{
 		FlowRateX:      1,
 		FlowRateY:      1,
 	},
+	&MessagePlayTune{
+		TargetSystem:    1,
+		TargetComponent: 2,
+		Tune:            "test1",
+		Tune2:           "test2",
+	},
 }
 
 func TestMessageParserV2ExtensionDec(t *testing.T) {
 	for i, byt := range testMpV2ExtensionBytes {
-		mp, _ := newMessageParser(testMpV2ExtensionParsers[i])
+		mp, err := newMessageParser(testMpV2ExtensionParsers[i])
+		if err != nil {
+			t.Fatal(err)
+		}
 		msg, err := mp.decode(byt, true)
 		if err != nil {
 			t.Fatal(err)
@@ -289,7 +328,10 @@ func TestMessageParserV2ExtensionDec(t *testing.T) {
 
 func TestMessageParserV2ExtensionEnc(t *testing.T) {
 	for i, msg := range testMpV2ExtensionMsgs {
-		mp, _ := newMessageParser(testMpV2ExtensionParsers[i])
+		mp, err := newMessageParser(testMpV2ExtensionParsers[i])
+		if err != nil {
+			t.Fatal(err)
+		}
 		byt, err := mp.encode(msg, true)
 		if err != nil {
 			t.Fatal(err)

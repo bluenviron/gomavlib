@@ -9,14 +9,14 @@ import (
 )
 
 func main() {
-	// create a node who understands given dialect, writes messages with given
-	// system id and component id, and reads/writes through given transport.
+	// create a node which understands given dialect, writes messages with given
+	// system id and component id, and reads/writes through UDP in broadcast mode.
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Dialect:     ardupilotmega.Dialect,
 		SystemId:    10,
 		ComponentId: 1,
 		Transports: []gomavlib.TransportConf{
-			gomavlib.TransportUdpServer{":5600"},
+			gomavlib.TransportUdpBroadcast{BroadcastAddr: "192.168.7.255:5600"},
 		},
 	})
 	if err != nil {
@@ -26,7 +26,7 @@ func main() {
 
 	// work in a loop
 	for {
-		// wait until a message is read.
+		// wait until a message is received.
 		res, ok := node.Read()
 		if ok == false {
 			break

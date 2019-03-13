@@ -39,7 +39,7 @@ type TransportUdpBroadcast struct {
 	LocalAddr string
 }
 
-type transportUdpBroadcastRWC struct {
+type transportUdpBroadcast struct {
 	conf          TransportUdpBroadcast
 	packetConn    net.PacketConn
 	broadcastAddr net.Addr
@@ -74,7 +74,7 @@ func (conf TransportUdpBroadcast) init(node *Node) (transport, error) {
 		return nil, err
 	}
 
-	br := &transportUdpBroadcastRWC{
+	br := &transportUdpBroadcast{
 		conf:          conf,
 		packetConn:    packetConn,
 		broadcastAddr: broadcastAddr,
@@ -86,15 +86,15 @@ func (conf TransportUdpBroadcast) init(node *Node) (transport, error) {
 	return tc.init(node)
 }
 
-func (t *transportUdpBroadcastRWC) Close() error {
+func (t *transportUdpBroadcast) Close() error {
 	return t.packetConn.Close()
 }
 
-func (t *transportUdpBroadcastRWC) Read(buf []byte) (int, error) {
+func (t *transportUdpBroadcast) Read(buf []byte) (int, error) {
 	n, _, err := t.packetConn.ReadFrom(buf)
 	return n, err
 }
 
-func (t *transportUdpBroadcastRWC) Write(buf []byte) (int, error) {
+func (t *transportUdpBroadcast) Write(buf []byte) (int, error) {
 	return t.packetConn.WriteTo(buf, t.broadcastAddr)
 }

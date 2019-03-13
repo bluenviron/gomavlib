@@ -7,6 +7,7 @@ import (
 )
 
 type transportClientConf interface {
+	isUdp() bool
 	getAddress() string
 }
 
@@ -59,8 +60,8 @@ func initTransportClient(node *Node, conf transportClientConf) (transport, error
 	}
 
 	t := &transportClient{
-		conf:  conf,
-		node:  node,
+		conf: conf,
+		node: node,
 	}
 	return t, nil
 }

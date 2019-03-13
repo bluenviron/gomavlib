@@ -24,8 +24,8 @@ func (TransportTcpServer) isUdp() bool {
 	return false
 }
 
-func (c TransportTcpServer) getAddress() string {
-	return c.Address
+func (conf TransportTcpServer) getAddress() string {
+	return conf.Address
 }
 
 // TransportUdpServer reads and writes frames through an UDP server.
@@ -40,8 +40,8 @@ func (TransportUdpServer) isUdp() bool {
 	return true
 }
 
-func (c TransportUdpServer) getAddress() string {
-	return c.Address
+func (conf TransportUdpServer) getAddress() string {
+	return conf.Address
 }
 
 type transportServer struct {

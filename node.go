@@ -1,6 +1,6 @@
 // gomavlib is a library that implements Mavlink 2.0 and 1.0 in the Go
-// programming language. It can be used to build UGV/UAV modules,
-// ground stations, monitoring systems or routers acting in a Mavlink network.
+// programming language. It can power UGVs, UAVs, ground stations, monitoring
+// systems or routers acting in a Mavlink network.
 //
 // Mavlink is a lighweight and transport-independent protocol that is mostly
 // used to communicate with unmanned ground vehicles (UGV) and unmanned aerial

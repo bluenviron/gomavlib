@@ -7,6 +7,32 @@ import (
 	"testing"
 )
 
+func testFrameDecode(t *testing.T, dialect []Message, key *SignatureKey, byts [][]byte, frames []Frame) {
+	parser, _ := NewFrameParser(FrameParserConf{Dialect: dialect})
+	for i, byt := range byts {
+		frame, err := parser.Decode(byt, true, key)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if reflect.DeepEqual(frame, frames[i]) == false {
+			t.Fatalf("invalid: %+v vs %+v", frame, frames[i])
+		}
+	}
+}
+
+func testFrameEncode(t *testing.T, dialect []Message, key *SignatureKey, byts [][]byte, frames []Frame) {
+	parser, _ := NewFrameParser(FrameParserConf{Dialect: dialect})
+	for i, frame := range frames {
+		byt, err := parser.Encode(frame, true, key)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if reflect.DeepEqual(byt, byts[i]) == false {
+			t.Fatalf("invalid: %+v vs %+v", byt, byts[i])
+		}
+	}
+}
+
 type MessageTest5 struct {
 	TestByte byte
 	TestUint uint32
@@ -44,8 +70,8 @@ var testFpV1Bytes = [][]byte{
 	[]byte("\xFE\x05\x27\x01\x02\x05\x10\x10\x10\x10\x10\xe5\x66"),
 }
 
-var testFpV1Frames = []*FrameV1{
-	{
+var testFpV1Frames = []Frame{
+	&FrameV1{
 		SequenceId:  0x27,
 		SystemId:    0x01,
 		ComponentId: 0x02,
@@ -57,8 +83,8 @@ var testFpV1Frames = []*FrameV1{
 	},
 }
 
-var testFpV1FramesDialect = []*FrameV1{
-	{
+var testFpV1FramesDialect = []Frame{
+	&FrameV1{
 		SequenceId:  0x27,
 		SystemId:    0x01,
 		ComponentId: 0x02,
@@ -71,63 +97,27 @@ var testFpV1FramesDialect = []*FrameV1{
 }
 
 func TestFrameParserV1RawDec(t *testing.T) {
-	parser, _ := NewFrameParser(FrameParserConf{})
-	for i, byt := range testFpV1Bytes {
-		frame, err := parser.Decode(byt, true, nil)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if reflect.DeepEqual(frame, testFpV1Frames[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", frame, testFpV1Frames[i])
-		}
-	}
+	testFrameDecode(t, nil, nil, testFpV1Bytes, testFpV1Frames)
 }
 
 func TestFrameParserV1RawEnc(t *testing.T) {
-	parser, _ := NewFrameParser(FrameParserConf{})
-	for i, frame := range testFpV1Frames {
-		byt, err := parser.Encode(frame, true, nil)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if reflect.DeepEqual(byt, testFpV1Bytes[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", byt, testFpV1Bytes[i])
-		}
-	}
+	testFrameEncode(t, nil, nil, testFpV1Bytes, testFpV1Frames)
 }
 
 func TestFrameParserV1DialectDec(t *testing.T) {
-	parser, _ := NewFrameParser(FrameParserConf{Dialect: testDialect})
-	for i, byt := range testFpV1Bytes {
-		frame, err := parser.Decode(byt, true, nil)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if reflect.DeepEqual(frame, testFpV1FramesDialect[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", frame, testFpV1FramesDialect[i])
-		}
-	}
+	testFrameDecode(t, testDialect, nil, testFpV1Bytes, testFpV1FramesDialect)
 }
 
 func TestFrameParserV1DialectEnc(t *testing.T) {
-	parser, _ := NewFrameParser(FrameParserConf{Dialect: testDialect})
-	for i, frame := range testFpV1FramesDialect {
-		byt, err := parser.Encode(frame, true, nil)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if reflect.DeepEqual(byt, testFpV1Bytes[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", byt, testFpV1Bytes[i])
-		}
-	}
+	testFrameEncode(t, testDialect, nil, testFpV1Bytes, testFpV1FramesDialect)
 }
 
 var testFpV2Bytes = [][]byte{
 	[]byte("\xFD\x05\x00\x00\x8F\x01\x02\x07\x06\x00\x10\x10\x10\x10\x10\x49\x03"),
 }
 
-var testFpV2Frames = []*FrameV2{
-	{
+var testFpV2Frames = []Frame{
+	&FrameV2{
 		IncompatibilityFlag: 0x00,
 		CompatibilityFlag:   0x00,
 		SequenceId:          0x8F,
@@ -141,8 +131,8 @@ var testFpV2Frames = []*FrameV2{
 	},
 }
 
-var testFpV2FramesDialect = []*FrameV2{
-	{
+var testFpV2FramesDialect = []Frame{
+	&FrameV2{
 		IncompatibilityFlag: 0x00,
 		CompatibilityFlag:   0x00,
 		SequenceId:          0x8F,
@@ -157,55 +147,19 @@ var testFpV2FramesDialect = []*FrameV2{
 }
 
 func TestFrameParserV2RawDec(t *testing.T) {
-	parser, _ := NewFrameParser(FrameParserConf{})
-	for i, byt := range testFpV2Bytes {
-		frame, err := parser.Decode(byt, true, nil)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if reflect.DeepEqual(frame, testFpV2Frames[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", frame, testFpV2Frames[i])
-		}
-	}
+	testFrameDecode(t, nil, nil, testFpV2Bytes, testFpV2Frames)
 }
 
 func TestFrameParserV2RawEnc(t *testing.T) {
-	parser, _ := NewFrameParser(FrameParserConf{})
-	for i, frame := range testFpV2Frames {
-		byt, err := parser.Encode(frame, true, nil)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if reflect.DeepEqual(byt, testFpV2Bytes[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", byt, testFpV2Bytes[i])
-		}
-	}
+	testFrameEncode(t, nil, nil, testFpV2Bytes, testFpV2Frames)
 }
 
 func TestFrameParserV2DialectDec(t *testing.T) {
-	parser, _ := NewFrameParser(FrameParserConf{Dialect: testDialect})
-	for i, byt := range testFpV2Bytes {
-		frame, err := parser.Decode(byt, true, nil)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if reflect.DeepEqual(frame, testFpV2FramesDialect[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", frame, testFpV2FramesDialect[i])
-		}
-	}
+	testFrameDecode(t, testDialect, nil, testFpV2Bytes, testFpV2FramesDialect)
 }
 
 func TestFrameParserV2DialectEnc(t *testing.T) {
-	parser, _ := NewFrameParser(FrameParserConf{Dialect: testDialect})
-	for i, frame := range testFpV2FramesDialect {
-		byt, err := parser.Encode(frame, true, nil)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if reflect.DeepEqual(byt, testFpV2Bytes[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", byt, testFpV2Bytes[i])
-		}
-	}
+	testFrameEncode(t, testDialect, nil, testFpV2Bytes, testFpV2FramesDialect)
 }
 
 /* Test vectors generated with
@@ -241,8 +195,8 @@ var testFpV2SigBytes = [][]byte{
 	[]byte("\xfd\t\x01\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x01\x02\x03\x05\x03\xd9\xd1\x01\x02\x00\x00\x00\x00\x00\x0eG\x04\x0c\xef\x9b"),
 }
 
-var testFpV2SigFrames = []*FrameV2{
-	{
+var testFpV2SigFrames = []Frame{
+	&FrameV2{
 		IncompatibilityFlag: 0x01,
 		CompatibilityFlag:   0x00,
 		SequenceId:          0x00,
@@ -263,40 +217,12 @@ var testFpV2SigFrames = []*FrameV2{
 	},
 }
 
+var testFpV2Key = NewSignatureKey(bytes.Repeat([]byte("\x4F"), 32))
+
 func TestFrameParserV2SignatureDec(t *testing.T) {
-	var key SignatureKey
-	copy(key[:], bytes.Repeat([]byte("\x4F"), 32))
-
-	parser, _ := NewFrameParser(FrameParserConf{
-		Dialect: []Message{&MessageHeartbeat{}},
-	})
-
-	for i, byt := range testFpV2SigBytes {
-		frame, err := parser.Decode(byt, true, &key)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if reflect.DeepEqual(frame, testFpV2SigFrames[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", frame, testFpV2SigFrames[i])
-		}
-	}
+	testFrameDecode(t, []Message{&MessageHeartbeat{}}, testFpV2Key, testFpV2SigBytes, testFpV2SigFrames)
 }
 
 func TestFrameParserV2SignatureEnc(t *testing.T) {
-	var key SignatureKey
-	copy(key[:], bytes.Repeat([]byte("\x4F"), 32))
-
-	parser, _ := NewFrameParser(FrameParserConf{
-		Dialect: []Message{&MessageHeartbeat{}},
-	})
-
-	for i, frame := range testFpV2SigFrames {
-		byt, err := parser.Encode(frame, true, &key)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if reflect.DeepEqual(byt, testFpV2SigBytes[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", byt, testFpV2SigBytes[i])
-		}
-	}
+	testFrameEncode(t, []Message{&MessageHeartbeat{}}, testFpV2Key, testFpV2SigBytes, testFpV2SigFrames)
 }

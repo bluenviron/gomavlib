@@ -26,7 +26,7 @@ EOF
 
 */
 
-func testDecode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
+func testMessageDecode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
 	for i, byt := range byts {
 		mp, err := newMessageParser(parsers[i])
 		if err != nil {
@@ -42,7 +42,7 @@ func testDecode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs 
 	}
 }
 
-func testEncode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
+func testMessageEncode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
 	for i, msg := range msgs {
 		mp, err := newMessageParser(parsers[i])
 		if err != nil {
@@ -239,11 +239,11 @@ var testMpV1Msgs = []Message{
 }
 
 func TestMessageParserV1Dec(t *testing.T) {
-	testDecode(t, testMpV1Parsers, false, testMpV1Bytes, testMpV1Msgs)
+	testMessageDecode(t, testMpV1Parsers, false, testMpV1Bytes, testMpV1Msgs)
 }
 
 func TestMessageParserV1Enc(t *testing.T) {
-	testEncode(t, testMpV1Parsers, false, testMpV1Bytes, testMpV1Msgs)
+	testMessageEncode(t, testMpV1Parsers, false, testMpV1Bytes, testMpV1Msgs)
 }
 
 var testMpV2EmptyByteBytes = [][]byte{
@@ -264,11 +264,11 @@ var testMpV2EmptyByteMsgs = []Message{
 }
 
 func TestMessageParserV2EmptyByteDec(t *testing.T) {
-	testDecode(t, testMpV2EmptyByteParsers, true, testMpV2EmptyByteBytes, testMpV2EmptyByteMsgs)
+	testMessageDecode(t, testMpV2EmptyByteParsers, true, testMpV2EmptyByteBytes, testMpV2EmptyByteMsgs)
 }
 
 func TestMessageParserV2EmptyByteEnc(t *testing.T) {
-	testEncode(t, testMpV2EmptyByteParsers, true, testMpV2EmptyByteBytes, testMpV2EmptyByteMsgs)
+	testMessageEncode(t, testMpV2EmptyByteParsers, true, testMpV2EmptyByteBytes, testMpV2EmptyByteMsgs)
 }
 
 var testMpV2ExtensionBytes = [][]byte{
@@ -303,9 +303,9 @@ var testMpV2ExtensionMsgs = []Message{
 }
 
 func TestMessageParserV2ExtensionDec(t *testing.T) {
-	testDecode(t, testMpV2ExtensionParsers, true, testMpV2ExtensionBytes, testMpV2ExtensionMsgs)
+	testMessageDecode(t, testMpV2ExtensionParsers, true, testMpV2ExtensionBytes, testMpV2ExtensionMsgs)
 }
 
 func TestMessageParserV2ExtensionEnc(t *testing.T) {
-	testEncode(t, testMpV2ExtensionParsers, true, testMpV2ExtensionBytes, testMpV2ExtensionMsgs)
+	testMessageEncode(t, testMpV2ExtensionParsers, true, testMpV2ExtensionBytes, testMpV2ExtensionMsgs)
 }

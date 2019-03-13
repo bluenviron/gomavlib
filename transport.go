@@ -14,17 +14,32 @@ const (
 	netWriteTimeout    = 10 * time.Second
 )
 
-type TransportConf interface {
-	init(n *Node) (transport, error)
-}
-
-type transport interface {
-	closePrematurely()
-	do()
-}
-
 type TransportChannel struct {
-	transport transport
-	writer    io.Writer
+	rwc       io.ReadWriteCloser
 	writeChan chan interface{}
+}
+
+type TransportConf interface {
+	init() (transport, error)
+}
+
+// a transport must also implement one of the following:
+// - transportChannelSingle
+// - transportChannelAccepter
+type transport interface {
+	isTransport()
+}
+
+// transport that provides a single channel.
+// Read() must not return any error unless Close() is called.
+type transportChannelSingle interface {
+	transport
+	io.ReadWriteCloser
+}
+
+// transport that provides multiple channels.
+type transportChannelAccepter interface {
+	transport
+	Close() error
+	Accept() (io.ReadWriteCloser, error)
 }

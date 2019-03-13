@@ -2,6 +2,7 @@ package gomavlib
 
 import (
 	"github.com/tarm/serial"
+	"io"
 )
 
 // TransportSerial reads and writes frames through a serial port.
@@ -10,6 +11,10 @@ type TransportSerial struct {
 	Name string
 	// baud rate, example: 57600
 	Baud int
+}
+
+type transportSerial struct {
+	io.ReadWriteCloser
 }
 
 func (conf TransportSerial) init(node *Node) (transport, error) {
@@ -21,8 +26,11 @@ func (conf TransportSerial) init(node *Node) (transport, error) {
 		return nil, err
 	}
 
-	tc := TransportCustom{
+	t := &transportSerial{
 		ReadWriteCloser: port,
 	}
-	return tc.init(node)
+	return t, nil
+}
+
+func (*transportSerial) isTransport() {
 }

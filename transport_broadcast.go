@@ -43,9 +43,10 @@ type transportUdpBroadcast struct {
 	conf          TransportUdpBroadcast
 	packetConn    net.PacketConn
 	broadcastAddr net.Addr
+	terminate     chan struct{}
 }
 
-func (conf TransportUdpBroadcast) init(node *Node) (transport, error) {
+func (conf TransportUdpBroadcast) init() (transport, error) {
 	_, port, err := net.SplitHostPort(conf.BroadcastAddr)
 	if err != nil {
 		return nil, fmt.Errorf("invalid broadcast address")
@@ -74,25 +75,34 @@ func (conf TransportUdpBroadcast) init(node *Node) (transport, error) {
 		return nil, err
 	}
 
-	br := &transportUdpBroadcast{
+	t := &transportUdpBroadcast{
 		conf:          conf,
 		packetConn:    packetConn,
 		broadcastAddr: broadcastAddr,
+		terminate:     make(chan struct{}, 1),
 	}
+	return t, nil
+}
 
-	tc := TransportCustom{
-		ReadWriteCloser: br,
-	}
-	return tc.init(node)
+func (*transportUdpBroadcast) isTransport() {
 }
 
 func (t *transportUdpBroadcast) Close() error {
-	return t.packetConn.Close()
+	t.terminate <- struct{}{}
+	t.packetConn.Close()
+	return nil
 }
 
 func (t *transportUdpBroadcast) Read(buf []byte) (int, error) {
 	n, _, err := t.packetConn.ReadFrom(buf)
-	return n, err
+
+	// wait termination, do not report errors
+	if err != nil {
+		<-t.terminate
+		return 0, errorTerminated
+	}
+
+	return n, nil
 }
 
 func (t *transportUdpBroadcast) Write(buf []byte) (int, error) {

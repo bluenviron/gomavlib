@@ -2,7 +2,6 @@ package gomavlib
 
 import (
 	"bytes"
-	"fmt"
 	"reflect"
 	"sync"
 	"testing"
@@ -181,7 +180,7 @@ func (c *CustomTransport) Close() error {
 
 func (c *CustomTransport) Read(buf []byte) (int, error) {
 	<-c.readChan
-	return 0, fmt.Errorf("terminated")
+	return 0, errorTerminated
 }
 
 func (c *CustomTransport) Write(buf []byte) (int, error) {

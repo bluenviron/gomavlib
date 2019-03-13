@@ -27,8 +27,8 @@ func (conf TransportTcpClient) getAddress() string {
 	return conf.Address
 }
 
-func (conf TransportTcpClient) init(n *Node) (transport, error) {
-	return initTransportClient(n, conf)
+func (conf TransportTcpClient) init() (transport, error) {
+	return initTransportClient(conf)
 }
 
 // TransportUdpClient reads and writes frames through a UDP client.
@@ -45,19 +45,18 @@ func (conf TransportUdpClient) getAddress() string {
 	return conf.Address
 }
 
-func (conf TransportUdpClient) init(n *Node) (transport, error) {
-	return initTransportClient(n, conf)
+func (conf TransportUdpClient) init() (transport, error) {
+	return initTransportClient(conf)
 }
 
 type transportClient struct {
-	conf       transportClientConf
-	mutex      sync.Mutex
-	terminated bool
-	terminate  chan struct{}
-	conn       io.ReadWriteCloser
+	conf      transportClientConf
+	mutex     sync.Mutex
+	terminate chan struct{}
+	conn      io.ReadWriteCloser
 }
 
-func initTransportClient(node *Node, conf transportClientConf) (transport, error) {
+func initTransportClient(conf transportClientConf) (transport, error) {
 	_, _, err := net.SplitHostPort(conf.getAddress())
 	if err != nil {
 		return nil, fmt.Errorf("invalid address")
@@ -67,20 +66,13 @@ func initTransportClient(node *Node, conf transportClientConf) (transport, error
 		conf:      conf,
 		terminate: make(chan struct{}, 1),
 	}
+	return t, nil
+}
 
-	tc := &TransportCustom{
-		ReadWriteCloser: t,
-	}
-	return tc.init(node)
+func (*transportClient) isTransport() {
 }
 
 func (t *transportClient) Close() error {
-	t.mutex.Lock()
-	defer t.mutex.Unlock()
-
-	if t.terminated == true {
-		return nil
-	}
 	t.terminate <- struct{}{}
 	return nil
 }
@@ -122,7 +114,7 @@ func (t *transportClient) Read(buf []byte) (int, error) {
 			select {
 			case <-dialDone:
 			case <-t.terminate:
-				return 0, fmt.Errorf("terminated")
+				return 0, errorTerminated
 			}
 
 			// wait some seconds before reconnecting
@@ -132,7 +124,7 @@ func (t *transportClient) Read(buf []byte) (int, error) {
 				case <-timer.C:
 					continue
 				case <-t.terminate:
-					return 0, fmt.Errorf("terminated")
+					return 0, errorTerminated
 				}
 			}
 
@@ -156,7 +148,7 @@ func (t *transportClient) Read(buf []byte) (int, error) {
 		case <-t.terminate:
 			t.conn.Close()
 			<-readDone
-			return 0, fmt.Errorf("terminated")
+			return 0, errorTerminated
 		}
 
 		// unexpected error, restart connection

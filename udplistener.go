@@ -27,8 +27,8 @@ func (udpNetError) Temporary() bool {
 	return false
 }
 
-var errorTimeout net.Error = udpNetError{"timeout", true}
-var errorTerminated net.Error = udpNetError{"terminated", false}
+var udpErrorTimeout net.Error = udpNetError{"timeout", true}
+var udpErrorTerminated net.Error = udpNetError{"terminated", false}
 
 type udpListenerConn struct {
 	listener      *udpListener
@@ -84,7 +84,7 @@ func (c *udpListenerConn) Read(byt []byte) (int, error) {
 		}
 	}()
 	if exit == true {
-		return 0, errorTerminated
+		return 0, udpErrorTerminated
 	}
 
 	readTimer := time.NewTimer(c.readDeadline.Sub(time.Now()))
@@ -92,11 +92,11 @@ func (c *udpListenerConn) Read(byt []byte) (int, error) {
 
 	select {
 	case <-readTimer.C:
-		return 0, errorTimeout
+		return 0, udpErrorTimeout
 
 	case buf, ok := <-c.readChan:
 		if ok == false {
-			return 0, errorTerminated
+			return 0, udpErrorTerminated
 		}
 		copy(byt, buf)
 		return len(buf), nil
@@ -108,11 +108,11 @@ func (c *udpListenerConn) Write(byt []byte) (int, error) {
 	defer c.listener.mutex.Unlock()
 
 	if c.closed == true {
-		return 0, errorTerminated
+		return 0, udpErrorTerminated
 	}
 
 	if c.listener.closed == true {
-		return 0, errorTerminated
+		return 0, udpErrorTerminated
 	}
 
 	// write synchronously, such that buffer can be freed after writing
@@ -239,7 +239,7 @@ func (l *udpListener) do() {
 func (l *udpListener) Accept() (net.Conn, error) {
 	conn, ok := <-l.acceptChan
 	if ok == false {
-		return nil, errorTerminated
+		return nil, udpErrorTerminated
 	}
 	return conn, nil
 }

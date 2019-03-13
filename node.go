@@ -10,6 +10,7 @@ package gomavlib
 
 import (
 	"fmt"
+	"io"
 	"reflect"
 	"sync"
 	"time"
@@ -36,7 +37,7 @@ type heartbeatTicker struct {
 
 func newHeartbeatTicker(n *Node, period time.Duration) *heartbeatTicker {
 	// heartbeat message must exist in dialect and correspond to standart heartbeat
-	mp, ok := n.FrameParser.messageParsers[0]
+	mp, ok := n.frameParser.messageParsers[0]
 	if ok == false || mp.crcExtra != 50 {
 		return nil
 	}
@@ -81,7 +82,7 @@ func (h *heartbeatTicker) do() {
 	}
 }
 
-type frameTransportChannelPair struct {
+type frameChannelPair struct {
 	Frame
 	*TransportChannel
 }
@@ -126,11 +127,10 @@ type Node struct {
 	conf            NodeConf
 	mutex           sync.Mutex
 	wg              sync.WaitGroup
-	terminate       chan struct{}
-	transports      []transport
+	chanAccepters   map[transportChannelAccepter]struct{}
 	channels        map[*TransportChannel]struct{}
-	FrameParser     *FrameParser
-	frameQueue      chan frameTransportChannelPair
+	frameParser     *FrameParser
+	frameQueue      chan frameChannelPair
 	writeDone       chan struct{}
 	heartbeatTicker *heartbeatTicker
 }
@@ -158,7 +158,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 	}
 
 	// init frame parser
-	FrameParser, err := NewFrameParser(FrameParserConf{
+	frameParser, err := NewFrameParser(FrameParserConf{
 		Dialect: conf.Dialect,
 	})
 	if err != nil {
@@ -166,32 +166,31 @@ func NewNode(conf NodeConf) (*Node, error) {
 	}
 
 	n := &Node{
-		conf:        conf,
-		terminate:   make(chan struct{}),
-		transports:  make([]transport, len(conf.Transports)),
-		channels:    make(map[*TransportChannel]struct{}),
-		FrameParser: FrameParser,
-		frameQueue:  make(chan frameTransportChannelPair),
-		writeDone:   make(chan struct{}),
+		conf:          conf,
+		chanAccepters: make(map[transportChannelAccepter]struct{}),
+		channels:      make(map[*TransportChannel]struct{}),
+		frameParser:   frameParser,
+		frameQueue:    make(chan frameChannelPair),
+		writeDone:     make(chan struct{}),
 	}
 
 	// init transports
-	for i, tconf := range conf.Transports {
-		tp, err := tconf.init(n)
+	for _, tconf := range conf.Transports {
+		tp, err := tconf.init()
 		if err != nil {
-			n.closePrematurely()
+			n.Close()
 			return nil, err
 		}
-		n.transports[i] = tp
-	}
 
-	// start transports
-	for _, tp := range n.transports {
-		n.wg.Add(1)
-		go func() {
-			defer n.wg.Done()
-			tp.do()
-		}()
+		if tm, ok := tp.(transportChannelAccepter); ok {
+			n.startChannelAccepter(tm)
+
+		} else if ts, ok := tp.(transportChannelSingle); ok {
+			n.startChannel(ts)
+
+		} else {
+			panic(fmt.Errorf("transport %d does not implement required interface", tp))
+		}
 	}
 
 	// start heartbeat
@@ -201,25 +200,142 @@ func NewNode(conf NodeConf) (*Node, error) {
 	return n, nil
 }
 
-// closePrematurely is called when node needs to exit before starting do()
-func (n *Node) closePrematurely() {
-	for _, tp := range n.transports {
-		if tp != nil {
-			tp.closePrematurely()
+func (n *Node) Close() {
+	func() {
+		n.mutex.Lock()
+		defer n.mutex.Unlock()
+
+		if n.heartbeatTicker != nil {
+			n.heartbeatTicker.close()
 		}
-	}
+
+		for mc := range n.chanAccepters {
+			mc.Close()
+		}
+
+		for ch := range n.channels {
+			ch.rwc.Close()
+		}
+	}()
+
+	n.wg.Wait()
+
+	// close queue after ensuring no one will use it
+	close(n.frameQueue)
 }
 
-func (n *Node) Close() {
-	if n.heartbeatTicker != nil {
-		n.heartbeatTicker.close()
-	}
+func (n *Node) startChannelAccepter(tm transportChannelAccepter) {
+	n.chanAccepters[tm] = struct{}{}
 
-	// close both transports and channels
-	close(n.terminate)
-	// join before closing channel
-	n.wg.Wait()
-	close(n.frameQueue)
+	n.wg.Add(1)
+	go func() {
+		defer n.wg.Done()
+
+		for {
+			ch, err := tm.Accept()
+			if err != nil {
+				if err != errorTerminated {
+					panic("errorTerminated is the only error allowed here")
+				}
+				break
+			}
+
+			n.startChannel(ch)
+		}
+	}()
+}
+
+func (n *Node) startChannel(rwc io.ReadWriteCloser) {
+	n.mutex.Lock()
+	defer n.mutex.Unlock()
+
+	conn := &TransportChannel{
+		rwc:       rwc,
+		writeChan: make(chan interface{}),
+	}
+	n.channels[conn] = struct{}{}
+
+	// reader
+	n.wg.Add(1)
+	go func() {
+		defer n.wg.Done()
+		defer func() {
+			n.mutex.Lock()
+			defer n.mutex.Unlock()
+			delete(n.channels, conn)
+			close(conn.writeChan)
+		}()
+
+		buf := make([]byte, netBufferSize)
+		for {
+			bufn, err := conn.rwc.Read(buf)
+			if err != nil {
+				// avoid calling twice Close()
+				if err != errorTerminated {
+					conn.rwc.Close()
+				}
+				return
+			}
+
+			frame, err := n.frameParser.Decode(buf[:bufn], !n.conf.ChecksumDisable, n.conf.SignatureInKey)
+			if err != nil {
+				fmt.Printf("SKIPPED DUE TO ERR: %v\n", err)
+				continue
+			}
+
+			n.frameQueue <- frameChannelPair{frame, conn}
+		}
+	}()
+
+	// writer
+	nextSequenceId := byte(0)
+	signatureLinkId := randomByte()
+	n.wg.Add(1)
+	go func() {
+		defer n.wg.Done()
+
+		for {
+			what, ok := <-conn.writeChan
+			if ok == false {
+				return
+			}
+
+			var f Frame
+			switch wh := what.(type) {
+			case Message:
+				// SequenceId and SignatureLinkId are unique for each channel
+				if n.conf.Version == V1 {
+					f = &FrameV1{
+						SequenceId:  nextSequenceId,
+						SystemId:    n.conf.SystemId,
+						ComponentId: n.conf.ComponentId,
+						Message:     wh,
+					}
+				} else {
+					f = &FrameV2{
+						SequenceId:      nextSequenceId,
+						SystemId:        n.conf.SystemId,
+						ComponentId:     n.conf.ComponentId,
+						Message:         wh,
+						SignatureLinkId: signatureLinkId,
+						// Timestamp in 10 microsecond units since 1st January 2015 GMT time
+						SignatureTimestamp: (uint64(time.Since(signatureReferenceDate)) / 10000),
+					}
+				}
+				nextSequenceId++
+
+			case Frame:
+				f = wh
+			}
+
+			byt, err := n.frameParser.Encode(f, !n.conf.ChecksumDisable, n.conf.SignatureOutKey)
+			if err == nil {
+				conn.rwc.Write(byt)
+			}
+
+			n.writeDone <- struct{}{}
+		}
+	}()
 }
 
 // ReadResult contains the result of node.Read()
@@ -307,75 +423,4 @@ func (n *Node) write(targetChannel *TransportChannel, what interface{}) {
 	for range channels {
 		<-n.writeDone
 	}
-}
-
-func (n *Node) addTransportChannel(conn *TransportChannel) {
-	n.mutex.Lock()
-	defer n.mutex.Unlock()
-	n.channels[conn] = struct{}{}
-
-	nextSequenceId := byte(0)
-	signatureLinkId := randomByte()
-	conn.writeChan = make(chan interface{})
-	n.wg.Add(1)
-	go func() {
-		defer n.wg.Done()
-		for {
-			what, ok := <-conn.writeChan
-			if ok == false {
-				return
-			}
-
-			var f Frame
-			switch wh := what.(type) {
-			case Message:
-				// SequenceId and SignatureLinkId are unique for each channel
-				if n.conf.Version == V1 {
-					f = &FrameV1{
-						SequenceId:  nextSequenceId,
-						SystemId:    n.conf.SystemId,
-						ComponentId: n.conf.ComponentId,
-						Message:     wh,
-					}
-				} else {
-					f = &FrameV2{
-						SequenceId:      nextSequenceId,
-						SystemId:        n.conf.SystemId,
-						ComponentId:     n.conf.ComponentId,
-						Message:         wh,
-						SignatureLinkId: signatureLinkId,
-						// Timestamp in 10 microsecond units since 1st January 2015 GMT time
-						SignatureTimestamp: (uint64(time.Since(signatureReferenceDate)) / 10000),
-					}
-				}
-				nextSequenceId++
-
-			case Frame:
-				f = wh
-			}
-
-			byt, err := n.FrameParser.Encode(f, !n.conf.ChecksumDisable, n.conf.SignatureOutKey)
-			if err == nil {
-				conn.writer.Write(byt)
-			}
-
-			n.writeDone <- struct{}{}
-		}
-	}()
-}
-
-func (n *Node) removeTransportChannel(conn *TransportChannel) {
-	n.mutex.Lock()
-	defer n.mutex.Unlock()
-	delete(n.channels, conn)
-	close(conn.writeChan)
-}
-
-func (n *Node) processBuffer(conn *TransportChannel, buf []byte) {
-	frame, err := n.FrameParser.Decode(buf, !n.conf.ChecksumDisable, n.conf.SignatureInKey)
-	if err != nil {
-		fmt.Printf("SKIPPED DUE TO ERR: %v\n", err)
-		return
-	}
-	n.frameQueue <- frameTransportChannelPair{frame, conn}
 }

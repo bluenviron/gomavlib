@@ -7,7 +7,8 @@ import (
 )
 
 type transportServerConf interface {
-	GetAddress() string
+	isUdp() bool
+	getAddress() string
 }
 
 // TransportTcpServer reads and writes frames through a TCP server.
@@ -19,7 +20,11 @@ type TransportTcpServer struct {
 	Address string
 }
 
-func (c TransportTcpServer) GetAddress() string {
+func (TransportTcpServer) isUdp() bool {
+	return false
+}
+
+func (c TransportTcpServer) getAddress() string {
 	return c.Address
 }
 
@@ -31,37 +36,39 @@ type TransportUdpServer struct {
 	Address string
 }
 
-func (c TransportUdpServer) GetAddress() string {
+func (TransportUdpServer) isUdp() bool {
+	return true
+}
+
+func (c TransportUdpServer) getAddress() string {
 	return c.Address
 }
 
 type transportServer struct {
 	conf      transportServerConf
-	node      *Node
-	terminate chan struct{}
-	isUdp     bool
 	listener  net.Listener
+	terminate chan struct{}
 }
 
-func (conf TransportTcpServer) init(n *Node) (transport, error) {
-	return initTransportServer(n, false, conf)
+func (conf TransportTcpServer) init() (transport, error) {
+	return initTransportServer(conf)
 }
 
-func (conf TransportUdpServer) init(n *Node) (transport, error) {
-	return initTransportServer(n, true, conf)
+func (conf TransportUdpServer) init() (transport, error) {
+	return initTransportServer(conf)
 }
 
-func initTransportServer(node *Node, isUdp bool, conf transportServerConf) (transport, error) {
-	_, _, err := net.SplitHostPort(conf.GetAddress())
+func initTransportServer(conf transportServerConf) (transport, error) {
+	_, _, err := net.SplitHostPort(conf.getAddress())
 	if err != nil {
 		return nil, fmt.Errorf("invalid address")
 	}
 
 	var listener net.Listener
-	if isUdp == true {
-		listener, err = newUdpListener("udp4", conf.GetAddress())
+	if conf.isUdp() == true {
+		listener, err = newUdpListener("udp4", conf.getAddress())
 	} else {
-		listener, err = net.Listen("tcp4", conf.GetAddress())
+		listener, err = net.Listen("tcp4", conf.getAddress())
 	}
 	if err != nil {
 		return nil, err
@@ -69,76 +76,30 @@ func initTransportServer(node *Node, isUdp bool, conf transportServerConf) (tran
 
 	t := &transportServer{
 		conf:      conf,
-		node:      node,
-		terminate: make(chan struct{}),
-		isUdp:     isUdp,
 		listener:  listener,
+		terminate: make(chan struct{}, 1),
 	}
 	return t, nil
 }
 
-func (t *transportServer) closePrematurely() {
-	t.listener.Close()
+func (t *transportServer) isTransport() {
 }
 
-func (t *transportServer) do() {
-	listenDone := make(chan struct{})
+func (t *transportServer) Close() error {
+	t.terminate <- struct{}{}
+	t.listener.Close()
+	return nil
+}
 
-	go func() {
-		defer func() { listenDone <- struct{}{} }()
+func (t *transportServer) Accept() (io.ReadWriteCloser, error) {
+	rawConn, err := t.listener.Accept()
 
-		for {
-			rawConn, err := t.listener.Accept()
-			if err != nil {
-				break
-			}
-
-			conn := &netTimedConn{rawConn}
-			tconn := &TransportChannel{
-				transport: t,
-				writer:    conn,
-			}
-			t.node.addTransportChannel(tconn)
-
-			t.node.wg.Add(1)
-			go func() {
-				defer t.node.wg.Done()
-				defer t.node.removeTransportChannel(tconn)
-				defer conn.Close()
-
-				var buf [netBufferSize]byte
-				for {
-					n, err := conn.Read(buf[:])
-					if err != nil {
-						break
-					}
-					t.node.processBuffer(tconn, buf[:n])
-				}
-			}()
-		}
-	}()
-
-	select {
-	// unexpected error, wait for terminate
-	case <-listenDone:
-		t.listener.Close()
-		<-t.node.terminate
-
-	// terminated
-	case <-t.node.terminate:
-		t.listener.Close()
-		<-listenDone
+	// wait termination, do not report errors
+	if err != nil {
+		<-t.terminate
+		return nil, errorTerminated
 	}
 
-	// close all channels
-	func() {
-		t.node.mutex.Lock()
-		defer t.node.mutex.Unlock()
-
-		for conn := range t.node.channels {
-			if conn.transport == t {
-				conn.writer.(io.Closer).Close()
-			}
-		}
-	}()
+	conn := &netTimedConn{rawConn}
+	return conn, nil
 }

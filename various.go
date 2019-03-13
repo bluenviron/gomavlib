@@ -1,10 +1,13 @@
 package gomavlib
 
 import (
+	"fmt"
 	"math/rand"
 	"net"
 	"time"
 )
+
+var errorTerminated = fmt.Errorf("terminated")
 
 // netTimedConn forces a net.Conn to use timeouts
 type netTimedConn struct {

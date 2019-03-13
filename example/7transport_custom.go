@@ -29,7 +29,7 @@ func (c *CustomTransport) Close() error {
 func (c *CustomTransport) Read(buf []byte) (int, error) {
 	read, ok := <-c.readChan
 	if ok == false {
-		return 0, fmt.Errorf("terminated")
+		return 0, fmt.Errorf("all right")
 	}
 
 	n := copy(buf, read)
@@ -37,7 +37,6 @@ func (c *CustomTransport) Read(buf []byte) (int, error) {
 }
 
 func (c *CustomTransport) Write(buf []byte) (int, error) {
-	fmt.Println("sent:", buf)
 	return len(buf), nil
 }
 

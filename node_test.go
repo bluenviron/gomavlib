@@ -360,3 +360,96 @@ func TestNodeSignature(t *testing.T) {
 		t.Fatalf("test failed")
 	}
 }
+
+func TestNodeRouting(t *testing.T) {
+	var testMsg = &MessageHeartbeat{
+		Type:           7,
+		Autopilot:      5,
+		BaseMode:       4,
+		CustomMode:     3,
+		SystemStatus:   2,
+		MavlinkVersion: 1,
+	}
+
+	node1, err := NewNode(NodeConf{
+		Dialect:     []Message{&MessageHeartbeat{}},
+		SystemId:    10,
+		ComponentId: 1,
+		Transports: []TransportConf{
+			TransportUdpClient{"127.0.0.1:5600"},
+		},
+		HeartbeatDisable: true,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	node2, err := NewNode(NodeConf{
+		Dialect:     []Message{&MessageHeartbeat{}},
+		SystemId:    11,
+		ComponentId: 1,
+		Transports: []TransportConf{
+			TransportUdpServer{"127.0.0.1:5600"},
+			TransportUdpClient{"127.0.0.1:5601"},
+		},
+		HeartbeatDisable: true,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	node3, err := NewNode(NodeConf{
+		Dialect:     []Message{&MessageHeartbeat{}},
+		SystemId:    12,
+		ComponentId: 1,
+		Transports: []TransportConf{
+			TransportUdpServer{"127.0.0.1:5601"},
+		},
+		HeartbeatDisable: true,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	node1.WriteMessageAll(testMsg)
+
+	success := false
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+
+		res, ok := node2.Read()
+		if ok == false {
+			return
+		}
+		node2.WriteFrameExcept(res.Channel(), res.Frame())
+	}()
+
+	go func() {
+		defer wg.Done()
+
+		res, ok := node3.Read()
+		if ok == false {
+			return
+		}
+
+		if _, ok := res.Message().(*MessageHeartbeat); !ok ||
+			res.SystemId() != 10 ||
+			res.ComponentId() != 1 {
+			t.Fatal("wrong message received")
+		}
+
+		success = true
+	}()
+
+	wg.Wait()
+	node1.Close()
+	node2.Close()
+	node3.Close()
+
+	if success == false {
+		t.Fatal("failed")
+	}
+}

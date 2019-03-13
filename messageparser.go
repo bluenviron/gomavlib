@@ -84,7 +84,7 @@ type messageParserField struct {
 	name        string
 	arrayLength byte
 	index       int
-	extension   bool
+	isExtension bool
 }
 
 type messageParser struct {
@@ -135,14 +135,14 @@ func newMessageParser(msg Message) (*messageParser, error) {
 		}
 
 		// extension
-		extension := (field.Tag.Get("mavext") == "true")
+		isExtension := (field.Tag.Get("mavext") == "true")
 
 		mp.fields[i] = messageParserField{
 			ftype:       fieldType,
 			name:        field.Name,
 			arrayLength: fieldArrayLength,
 			index:       i,
-			extension:   extension,
+			isExtension: isExtension,
 		}
 		if fieldArrayLength > 0 {
 			mp.size += typeSize * fieldArrayLength
@@ -155,7 +155,7 @@ func newMessageParser(msg Message) (*messageParser, error) {
 	// https://mavlink.io/en/guide/serialization.html#field_reordering
 	sort.Slice(mp.fields, func(i, j int) bool {
 		// sort by weight if not extension
-		if mp.fields[i].extension == false && mp.fields[j].extension == false {
+		if mp.fields[i].isExtension == false && mp.fields[j].isExtension == false {
 			if w1, w2 := typeSizes[mp.fields[i].ftype.Name()], typeSizes[mp.fields[j].ftype.Name()]; w1 != w2 {
 				return w1 > w2
 			}
@@ -172,7 +172,7 @@ func newMessageParser(msg Message) (*messageParser, error) {
 
 		for _, f := range mp.fields {
 			// skip extensions
-			if f.extension == true {
+			if f.isExtension == true {
 				continue
 			}
 
@@ -202,6 +202,11 @@ func (mp *messageParser) decode(buf []byte, isFrameV2 bool) (Message, error) {
 	// read field by field
 	reader := bytes.NewReader(buf)
 	for _, f := range mp.fields {
+		// skip extensions for v1 frames
+		if isFrameV2 == false && f.isExtension == true {
+			continue
+		}
+
 		target := msg.Elem().Field(f.index).Addr().Interface()
 
 		switch tt := target.(type) {
@@ -234,6 +239,11 @@ func (mp *messageParser) encode(msg Message, isFrameV2 bool) ([]byte, error) {
 	bbuf := bytes.NewBuffer(nil)
 
 	for _, f := range mp.fields {
+		// skip extensions for v1 frames
+		if isFrameV2 == false && f.isExtension == true {
+			continue
+		}
+
 		target := reflect.ValueOf(msg).Elem().Field(f.index).Addr().Interface()
 
 		switch tt := target.(type) {

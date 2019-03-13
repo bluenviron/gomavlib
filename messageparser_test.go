@@ -144,6 +144,8 @@ var testMpV1Bytes = [][]byte{
 	bytes.Repeat([]byte("\x01"), 31),
 	[]byte("\x01\x01\x01\x74\x65\x73\x74\x69\x6e\x67\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"),
 	append([]byte("\x02\x00\x00\x00\x00\x00\x00\x00"), bytes.Repeat([]byte("\x00\x00\x80\x3F"), 16)...),
+	// message with extension fields (skipped in v1)
+	[]byte("\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x80\x3F\x00\x00\x80\x3F\x00\x00\x80\x3F\x07\x00\x08\x00\x09\x0A"),
 }
 
 var testMpV1Parsers = []Message{
@@ -151,6 +153,7 @@ var testMpV1Parsers = []Message{
 	&MessageSysStatus{},
 	&MessageChangeOperatorControl{},
 	&MessageAttitudeQuaternionCov{},
+	&MessageOpticalFlow{},
 }
 
 var testMpV1Msgs = []Message{
@@ -190,6 +193,16 @@ var testMpV1Msgs = []Message{
 		Pitchspeed: 1,
 		Yawspeed:   1,
 		Covariance: [9]float32{1, 1, 1, 1, 1, 1, 1, 1, 1},
+	},
+	&MessageOpticalFlow{
+		TimeUsec:       3,
+		FlowCompMX:     1,
+		FlowCompMY:     1,
+		GroundDistance: 1,
+		FlowX:          7,
+		FlowY:          8,
+		SensorId:       9,
+		Quality:        0x0A,
 	},
 }
 

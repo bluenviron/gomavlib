@@ -26,6 +26,38 @@ EOF
 
 */
 
+func testDecode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
+	for i, byt := range byts {
+		mp, err := newMessageParser(parsers[i])
+		if err != nil {
+			t.Fatal(err)
+		}
+		msg, err := mp.decode(byt, isV2)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if reflect.DeepEqual(msg, msgs[i]) == false {
+			t.Fatalf("invalid: %+v vs %+v", msg, msgs[i])
+		}
+	}
+}
+
+func testEncode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
+	for i, msg := range msgs {
+		mp, err := newMessageParser(parsers[i])
+		if err != nil {
+			t.Fatal(err)
+		}
+		byt, err := mp.encode(msg, isV2)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if reflect.DeepEqual(byt, byts[i]) == false {
+			t.Fatalf("invalid: %+v vs %+v", byt, byts[i])
+		}
+	}
+}
+
 type MessageHeartbeat struct {
 	Type           uint8
 	Autopilot      uint8
@@ -207,37 +239,11 @@ var testMpV1Msgs = []Message{
 }
 
 func TestMessageParserV1Dec(t *testing.T) {
-	for i, byt := range testMpV1Bytes {
-		mp, err := newMessageParser(testMpV1Parsers[i])
-		if err != nil {
-			t.Fatal(err)
-		}
-		msg, err := mp.decode(byt, false)
-		if err != nil {
-			t.Fatal(err)
-			continue
-		}
-		if reflect.DeepEqual(msg, testMpV1Msgs[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", msg, testMpV1Msgs[i])
-		}
-	}
+	testDecode(t, testMpV1Parsers, false, testMpV1Bytes, testMpV1Msgs)
 }
 
 func TestMessageParserV1Enc(t *testing.T) {
-	for i, msg := range testMpV1Msgs {
-		mp, err := newMessageParser(testMpV1Parsers[i])
-		if err != nil {
-			t.Fatal(err)
-		}
-		byt, err := mp.encode(msg, false)
-		if err != nil {
-			t.Fatal(err)
-			continue
-		}
-		if reflect.DeepEqual(byt, testMpV1Bytes[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", byt, testMpV1Bytes[i])
-		}
-	}
+	testEncode(t, testMpV1Parsers, false, testMpV1Bytes, testMpV1Msgs)
 }
 
 var testMpV2EmptyByteBytes = [][]byte{
@@ -258,37 +264,11 @@ var testMpV2EmptyByteMsgs = []Message{
 }
 
 func TestMessageParserV2EmptyByteDec(t *testing.T) {
-	for i, byt := range testMpV2EmptyByteBytes {
-		mp, err := newMessageParser(testMpV2EmptyByteParsers[i])
-		if err != nil {
-			t.Fatal(err)
-		}
-		msg, err := mp.decode(byt, true)
-		if err != nil {
-			t.Fatal(err)
-			continue
-		}
-		if reflect.DeepEqual(msg, testMpV2EmptyByteMsgs[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", msg, testMpV2EmptyByteMsgs[i])
-		}
-	}
+	testDecode(t, testMpV2EmptyByteParsers, true, testMpV2EmptyByteBytes, testMpV2EmptyByteMsgs)
 }
 
 func TestMessageParserV2EmptyByteEnc(t *testing.T) {
-	for i, msg := range testMpV2EmptyByteMsgs {
-		mp, err := newMessageParser(testMpV2EmptyByteParsers[i])
-		if err != nil {
-			t.Fatal(err)
-		}
-		byt, err := mp.encode(msg, true)
-		if err != nil {
-			t.Fatal(err)
-			continue
-		}
-		if reflect.DeepEqual(byt, testMpV2EmptyByteBytes[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", byt, testMpV2EmptyByteBytes[i])
-		}
-	}
+	testEncode(t, testMpV2EmptyByteParsers, true, testMpV2EmptyByteBytes, testMpV2EmptyByteMsgs)
 }
 
 var testMpV2ExtensionBytes = [][]byte{
@@ -323,35 +303,9 @@ var testMpV2ExtensionMsgs = []Message{
 }
 
 func TestMessageParserV2ExtensionDec(t *testing.T) {
-	for i, byt := range testMpV2ExtensionBytes {
-		mp, err := newMessageParser(testMpV2ExtensionParsers[i])
-		if err != nil {
-			t.Fatal(err)
-		}
-		msg, err := mp.decode(byt, true)
-		if err != nil {
-			t.Fatal(err)
-			continue
-		}
-		if reflect.DeepEqual(msg, testMpV2ExtensionMsgs[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", msg, testMpV2ExtensionMsgs[i])
-		}
-	}
+	testDecode(t, testMpV2ExtensionParsers, true, testMpV2ExtensionBytes, testMpV2ExtensionMsgs)
 }
 
 func TestMessageParserV2ExtensionEnc(t *testing.T) {
-	for i, msg := range testMpV2ExtensionMsgs {
-		mp, err := newMessageParser(testMpV2ExtensionParsers[i])
-		if err != nil {
-			t.Fatal(err)
-		}
-		byt, err := mp.encode(msg, true)
-		if err != nil {
-			t.Fatal(err)
-			continue
-		}
-		if reflect.DeepEqual(byt, testMpV2ExtensionBytes[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", byt, testMpV2ExtensionBytes[i])
-		}
-	}
+	testEncode(t, testMpV2ExtensionParsers, true, testMpV2ExtensionBytes, testMpV2ExtensionMsgs)
 }

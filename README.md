@@ -40,6 +40,7 @@ go get github.com/gswly/gomavlib
 ## Examples
 
 * [serial_read_write](example/1serial_read_write.go)
+* [udp_read_write](example/2udp_read_write.go)
 
 ## Documentation
 

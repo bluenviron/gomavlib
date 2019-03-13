@@ -16,7 +16,7 @@ func main() {
 		SystemId:    10,
 		ComponentId: 1,
 		Transports: []gomavlib.TransportConf{
-			gomavlib.TransportSerial{"/dev/ttyAMA0", 57600},
+			gomavlib.TransportUdpServer{":5600"},
 		},
 	})
 	if err != nil {
@@ -34,19 +34,5 @@ func main() {
 
 		// print message details
 		fmt.Printf("received: id=%d, %+v\n", res.Message().GetId(), res.Message())
-
-		// if message is a parameter read request addressed to this node
-		if msg, ok := res.Message().(*ardupilotmega.MessageParamRequestRead); ok &&
-			msg.TargetSystem == 10 &&
-			msg.TargetComponent == 1 &&
-			msg.ParamId == "test_parameter" {
-
-			// reply to sender (and no one else) by providing requested parameter
-			node.WriteMessage(res.Channel(), &ardupilotmega.MessageParamValue{
-				ParamId:    "test_parameter",
-				ParamValue: 123456,
-				ParamType:  5, // MAV_PARAM_TYPE_UINT32
-			})
-		}
 	}
 }

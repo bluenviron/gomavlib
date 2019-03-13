@@ -45,7 +45,7 @@ func main() {
 			node.WriteMessageTo(res.Channel(), &ardupilotmega.MessageParamValue{
 				ParamId:    "test_parameter",
 				ParamValue: 123456,
-				ParamType:  5, // MAV_PARAM_TYPE_UINT32
+				ParamType:  uint8(ardupilotmega.MAV_PARAM_TYPE_UINT32),
 			})
 		}
 	}

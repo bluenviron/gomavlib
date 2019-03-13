@@ -27,12 +27,12 @@ func (c *CustomTransport) Close() error {
 }
 
 func (c *CustomTransport) Read(buf []byte) (int, error) {
-	read,ok := <-c.readChan
+	read, ok := <-c.readChan
 	if ok == false {
 		return 0, fmt.Errorf("terminated")
 	}
 
-	n := copy(buf,read)
+	n := copy(buf, read)
 	return n, nil
 }
 
@@ -52,7 +52,7 @@ func main() {
 		SystemId:    10,
 		ComponentId: 1,
 		Transports: []gomavlib.TransportConf{
-			gomavlib.TransportCustom{ transport },
+			gomavlib.TransportCustom{transport},
 		},
 	})
 	if err != nil {

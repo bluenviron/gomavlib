@@ -47,10 +47,11 @@ go get github.com/gswly/gomavlib
 * [transport_tcp_client](example/6transport_tcp_client.go)
 * [transport_custom](example/7transport_custom.go)
 * [message_write](example/8message_write.go)
-* [dialect_no](example/9dialect_no.go)
-* [dialect_custom](example/10dialect_custom.go)
-* [router](example/11router.go)
-* [frame_parser](example/12frame_parser.go)
+* [message_signature](example/9message_signature.go)
+* [dialect_no](example/10dialect_no.go)
+* [dialect_custom](example/11dialect_custom.go)
+* [router](example/12router.go)
+* [frame_parser](example/13frame_parser.go)
 
 ## Documentation
 

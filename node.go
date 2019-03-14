@@ -18,12 +18,12 @@ import (
 
 var signatureReferenceDate = time.Date(2015, 01, 01, 0, 0, 0, 0, time.UTC)
 
-type Version int
+type NodeVersion int
 
 const (
-	// V2 means wrap outgoing messages in v2 frames.
-	V2 Version = iota
-	// V1 means wrap outgoing messages in v1 frames.
+	// wrap outgoing messages in v2 frames.
+	V2 NodeVersion = iota
+	// wrap outgoing messages in v1 frames.
 	V1
 )
 
@@ -86,7 +86,7 @@ func (h *heartbeatTicker) do() {
 type NodeConf struct {
 	// Mavlink version used to encode frames. See Version
 	// for the available options.
-	Version Version
+	Version NodeVersion
 	// contains the messages which will be automatically decoded and
 	// encoded. If not provided, messages are decoded in the MessageRaw struct.
 	Dialect []Message

@@ -21,7 +21,7 @@ type FrameParser struct {
 }
 
 // NewFrameParser allocates a FrameParser, a low level frame encoder and decoder.
-//  See FrameParser for the options.
+// See FrameParser for the options.
 func NewFrameParser(conf FrameParserConf) (*FrameParser, error) {
 	p := &FrameParser{
 		conf:           conf,

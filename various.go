@@ -23,7 +23,7 @@ func (c *netTimedConn) Read(buf []byte) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	return c.conn.Read(buf[:])
+	return c.conn.Read(buf)
 }
 
 func (c *netTimedConn) Write(buf []byte) (int, error) {

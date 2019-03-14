@@ -37,8 +37,9 @@ func TestUdpListener(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				var buf [1024]byte
-				n, err := conn.Read(buf[:])
+
+				buf := make([]byte, 1024)
+				n, err := conn.Read(buf)
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -81,8 +82,9 @@ func TestUdpListener(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			var buf [1024]byte
-			n, err = conn.Read(buf[:])
+
+			buf := make([]byte, 1024)
+			n, err = conn.Read(buf)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -123,8 +125,8 @@ func TestUdpListenerDeadline(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			var buf [1024]byte
-			_, err := conn.Read(buf[:])
+			buf := make([]byte, 1024)
+			_, err := conn.Read(buf)
 			if err != nil {
 				// accept first Read()
 				if i == 0 {

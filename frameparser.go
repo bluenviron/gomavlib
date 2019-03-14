@@ -74,10 +74,12 @@ func (p *FrameParser) Checksum(f Frame) uint16 {
 // Signature computes the signature of a given frame with the given key.
 func (p *FrameParser) Signature(ff *FrameV2, key *SignatureKey) *Signature {
 	msg := ff.GetMessage().(*MessageRaw)
+	h := sha256.New()
+
+	// secret key
+	h.Write(key[:])
 
 	// the signature covers the whole message, excluding the signature itself
-	h := sha256.New()
-	h.Write(key[:])
 	h.Write([]byte{v2MagicByte})
 	h.Write([]byte{byte(len(msg.Content))})
 	h.Write([]byte{ff.IncompatibilityFlag})
@@ -91,9 +93,9 @@ func (p *FrameParser) Signature(ff *FrameV2, key *SignatureKey) *Signature {
 	h.Write([]byte{ff.SignatureLinkId})
 	h.Write(uint48Encode(ff.SignatureTimestamp))
 
-	ret := new(Signature)
-	copy(ret[:], h.Sum(nil)[:6])
-	return ret
+	sig := new(Signature)
+	copy(sig[:], h.Sum(nil)[:6])
+	return sig
 }
 
 // Decode converts a byte buffer to a Frame.

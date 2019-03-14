@@ -20,7 +20,7 @@ type Frame interface {
 	GetChecksum() uint16
 }
 
-// FrameV2 represents a 1.0 frame.
+// FrameV1 represents a 1.0 frame.
 type FrameV1 struct {
 	SequenceId  byte
 	SystemId    byte

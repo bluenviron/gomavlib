@@ -72,7 +72,7 @@ func (p *FrameParser) Checksum(f Frame) uint16 {
 	return h.Sum16()
 }
 
-// FrameSignature computes the signature of a given frame with the given key.
+// Signature computes the signature of a given frame with the given key.
 func (p *FrameParser) Signature(ff *FrameV2, key *FrameSignatureKey) *FrameSignature {
 	msg := ff.GetMessage().(*MessageRaw)
 	h := sha256.New()

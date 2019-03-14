@@ -15,7 +15,7 @@ type MessageRaw struct {
 	Content []byte
 }
 
-// GetId() implements the message interface.
+// GetId implements the message interface.
 func (m *MessageRaw) GetId() uint32 {
 	return m.Id
 }

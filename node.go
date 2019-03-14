@@ -1,4 +1,4 @@
-// gomavlib is a library that implements Mavlink 2.0 and 1.0 in the Go
+// Package gomavlib is a library that implements Mavlink 2.0 and 1.0 in the Go
 // programming language. It can power UGVs, UAVs, ground stations, monitoring
 // systems or routers acting in a Mavlink network.
 //
@@ -18,12 +18,13 @@ import (
 
 var signatureReferenceDate = time.Date(2015, 01, 01, 0, 0, 0, 0, time.UTC)
 
+// NodeVersion allows to set the frame version used in a Node to wrap outgoing messages.
 type NodeVersion int
 
 const (
-	// wrap outgoing messages in v2 frames.
+	// V2 wrap outgoing messages in v2 frames.
 	V2 NodeVersion = iota
-	// wrap outgoing messages in v1 frames.
+	// V1 wrap outgoing messages in v1 frames.
 	V1
 )
 
@@ -351,27 +352,27 @@ type NodeReadResult struct {
 	transportChannel *TransportChannel
 }
 
-// Frame() returns the Frame containing the message.
+// Frame returns the Frame containing the message.
 func (res *NodeReadResult) Frame() Frame {
 	return res.frame
 }
 
-// Message() returns the message.
+// Message returns the message.
 func (res *NodeReadResult) Message() Message {
 	return res.frame.GetMessage()
 }
 
-// SystemId() returns the sender system id.
+// SystemId returns the sender system id.
 func (res *NodeReadResult) SystemId() byte {
 	return res.frame.GetSystemId()
 }
 
-// ComponentId() returns the sender component id.
+// ComponentId returns the sender component id.
 func (res *NodeReadResult) ComponentId() byte {
 	return res.frame.GetComponentId()
 }
 
-// Channel() returns the channel used to send the message.
+// Channel returns the channel used to send the message.
 func (res *NodeReadResult) Channel() *TransportChannel {
 	return res.transportChannel
 }

@@ -14,11 +14,13 @@ const (
 	netWriteTimeout    = 10 * time.Second
 )
 
+// TransportChannel is a channel provided by a transport.
 type TransportChannel struct {
 	rwc       io.ReadWriteCloser
 	writeChan chan interface{}
 }
 
+// TransportConf is the interface implemented by all transports.
 type TransportConf interface {
 	init() (transport, error)
 }

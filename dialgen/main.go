@@ -179,7 +179,7 @@ func fieldTypeToGo(f *MavlinkField) (string, error) {
 		tags["mavext"] = "true"
 	}
 
-	typ = gomavlib.MsgTypeXmlToGo(typ)
+	typ = gomavlib.DialectTypeXmlToGo(typ)
 	if typ == "" {
 		return "", fmt.Errorf("unknown type: %s", typ)
 	}
@@ -246,13 +246,13 @@ func do(outfile string, mainDefAddr string) error {
 				}
 				return byt, nil
 
-			} else {
-				byt, err := ioutil.ReadFile(defAddr)
-				if err != nil {
-					return nil, fmt.Errorf("unable to open: %s", err)
-				}
-				return byt, nil
 			}
+
+			byt, err := ioutil.ReadFile(defAddr)
+			if err != nil {
+				return nil, fmt.Errorf("unable to open: %s", err)
+			}
+			return byt, nil
 		}()
 		if err != nil {
 			return err
@@ -283,9 +283,9 @@ func do(outfile string, mainDefAddr string) error {
 		// process messages
 		for _, msg := range def.Messages {
 			// convert strings to go format
-			msg.Name = gomavlib.MsgNameXmlToGo(msg.Name)
+			msg.Name = gomavlib.DialectMsgXmlToGo(msg.Name)
 			for _, f := range msg.Fields {
-				f.Name = gomavlib.MsgFieldXmlToGo(f.Name)
+				f.Name = gomavlib.DialectFieldXmlToGo(f.Name)
 				var err error
 				f.Type, err = fieldTypeToGo(f)
 				if err != nil {

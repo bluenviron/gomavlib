@@ -26,7 +26,8 @@ var typeSizes = map[string]byte{
 	"string":  1,
 }
 
-func MsgTypeXmlToGo(typ string) string {
+// DialectTypeXmlToGo converts a xml type to its go equivalent.
+func DialectTypeXmlToGo(typ string) string {
 	return map[string]string{
 		"double":   "float64",
 		"uint64_t": "uint64",
@@ -42,7 +43,8 @@ func MsgTypeXmlToGo(typ string) string {
 	}[typ]
 }
 
-func MsgTypeGoToXml(typ string) string {
+// DialectTypeGoToXml converts a go type to its xml equivalent.
+func DialectTypeGoToXml(typ string) string {
 	return map[string]string{
 		"float64": "double",
 		"uint64":  "uint64_t",
@@ -58,23 +60,27 @@ func MsgTypeGoToXml(typ string) string {
 	}[typ]
 }
 
-func MsgFieldGoToXml(in string) string {
+// DialectFieldGoToXml converts a go field to its xml equivalent.
+func DialectFieldGoToXml(in string) string {
 	re := regexp.MustCompile("([A-Z])")
 	in = re.ReplaceAllString(in, "_${1}")
 	return strings.ToLower(in[1:])
 }
 
-func MsgFieldXmlToGo(in string) string {
-	return MsgNameXmlToGo(in)
+// DialectFieldXmlToGo converts a xml field to its go equivalent.
+func DialectFieldXmlToGo(in string) string {
+	return DialectMsgXmlToGo(in)
 }
 
-func MsgNameGoToXml(in string) string {
+// DialectMsgGoToXml converts a go field to its xml equivalent.
+func DialectMsgGoToXml(in string) string {
 	re := regexp.MustCompile("([A-Z])")
 	in = re.ReplaceAllString(in, "_${1}")
 	return strings.ToUpper(in[1:])
 }
 
-func MsgNameXmlToGo(in string) string {
+// DialectMsgXmlToGo converts a xml field to its go equivalent.
+func DialectMsgXmlToGo(in string) string {
 	re := regexp.MustCompile("_[a-z]")
 	in = strings.ToLower(in)
 	in = re.ReplaceAllStringFunc(in, func(match string) string {
@@ -108,7 +114,7 @@ func newMessageParser(msg Message) (*messageParser, error) {
 	if strings.HasPrefix(mp.elemType.Name(), "Message") == false {
 		return nil, fmt.Errorf("message struct name must begin with 'Message'")
 	}
-	msgName := MsgNameGoToXml(mp.elemType.Name()[len("Message"):])
+	msgName := DialectMsgGoToXml(mp.elemType.Name()[len("Message"):])
 
 	// collect message fields
 	for i := 0; i < mp.elemType.NumField(); i++ {
@@ -180,8 +186,8 @@ func newMessageParser(msg Message) (*messageParser, error) {
 				continue
 			}
 
-			h.Write([]byte(MsgTypeGoToXml(f.ftype.Name()) + " "))
-			h.Write([]byte(MsgFieldGoToXml(f.name) + " "))
+			h.Write([]byte(DialectTypeGoToXml(f.ftype.Name()) + " "))
+			h.Write([]byte(DialectFieldGoToXml(f.name) + " "))
 			if f.arrayLength > 0 {
 				h.Write([]byte{f.arrayLength})
 			}

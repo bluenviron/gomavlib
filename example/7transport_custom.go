@@ -62,7 +62,6 @@ func main() {
 	// queue a dummy message
 	transport.readChan <- []byte("\xfd\t\x01\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x01\x02\x03\x05\x03\xd9\xd1\x01\x02\x00\x00\x00\x00\x00\x0eG\x04\x0c\xef\x9b")
 
-	// work in a loop
 	for {
 		// wait until a message is received.
 		res, ok := node.Read()

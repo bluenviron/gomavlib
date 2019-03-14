@@ -24,7 +24,6 @@ func main() {
 	}
 	defer node.Close()
 
-	// work in a loop
 	for {
 		// wait until a message is received.
 		res, ok := node.Read()

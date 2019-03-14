@@ -19,8 +19,6 @@ Basic example (more are available at https://github.com/gswly/gomavlib/tree/mast
   )
 
   func main() {
-  	// create a node which understands given dialect, writes messages with given
-  	// system id and component id, and reads/writes through a serial port.
   	node, err := gomavlib.NewNode(gomavlib.NodeConf{
   		Dialect:     ardupilotmega.Dialect,
   		SystemId:    10,
@@ -35,13 +33,11 @@ Basic example (more are available at https://github.com/gswly/gomavlib/tree/mast
   	defer node.Close()
 
   	for {
-  		// wait until a message is received.
   		res, ok := node.Read()
   		if ok == false {
   			break
   		}
 
-  		// print message details
   		fmt.Printf("received: id=%d, %+v\n", res.Message().GetId(), res.Message())
   	}
   }

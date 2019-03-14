@@ -12,34 +12,6 @@ import (
 	"strings"
 )
 
-var MsgTypeXmlToGo = map[string]string{
-	"double":   "float64",
-	"uint64_t": "uint64",
-	"int64_t":  "int64",
-	"float":    "float32",
-	"uint32_t": "uint32",
-	"int32_t":  "int32",
-	"uint16_t": "uint16",
-	"int16_t":  "int16",
-	"uint8_t":  "uint8",
-	"int8_t":   "int8",
-	"char":     "string",
-}
-
-var MsgTypeGoToXml = map[string]string{
-	"float64": "double",
-	"uint64":  "uint64_t",
-	"int64":   "int64_t",
-	"float32": "float",
-	"uint32":  "uint32_t",
-	"int32":   "int32_t",
-	"uint16":  "uint16_t",
-	"int16":   "int16_t",
-	"uint8":   "uint8_t",
-	"int8":    "int8_t",
-	"string":  "char",
-}
-
 var typeSizes = map[string]byte{
 	"float64": 8,
 	"uint64":  8,
@@ -52,6 +24,48 @@ var typeSizes = map[string]byte{
 	"uint8":   1,
 	"int8":    1,
 	"string":  1,
+}
+
+func MsgTypeXmlToGo(typ string) string {
+	return map[string]string{
+		"double":   "float64",
+		"uint64_t": "uint64",
+		"int64_t":  "int64",
+		"float":    "float32",
+		"uint32_t": "uint32",
+		"int32_t":  "int32",
+		"uint16_t": "uint16",
+		"int16_t":  "int16",
+		"uint8_t":  "uint8",
+		"int8_t":   "int8",
+		"char":     "string",
+	}[typ]
+}
+
+func MsgTypeGoToXml(typ string) string {
+	return map[string]string{
+		"float64": "double",
+		"uint64":  "uint64_t",
+		"int64":   "int64_t",
+		"float32": "float",
+		"uint32":  "uint32_t",
+		"int32":   "int32_t",
+		"uint16":  "uint16_t",
+		"int16":   "int16_t",
+		"uint8":   "uint8_t",
+		"int8":    "int8_t",
+		"string":  "char",
+	}[typ]
+}
+
+func MsgFieldGoToXml(in string) string {
+	re := regexp.MustCompile("([A-Z])")
+	in = re.ReplaceAllString(in, "_${1}")
+	return strings.ToLower(in[1:])
+}
+
+func MsgFieldXmlToGo(in string) string {
+	return MsgNameXmlToGo(in)
 }
 
 func MsgNameGoToXml(in string) string {
@@ -67,16 +81,6 @@ func MsgNameXmlToGo(in string) string {
 		return strings.ToUpper(match[1:2])
 	})
 	return strings.ToUpper(in[:1]) + in[1:]
-}
-
-func MsgFieldGoToXml(in string) string {
-	re := regexp.MustCompile("([A-Z])")
-	in = re.ReplaceAllString(in, "_${1}")
-	return strings.ToLower(in[1:])
-}
-
-func MsgFieldXmlToGo(in string) string {
-	return MsgNameXmlToGo(in)
 }
 
 type messageParserField struct {
@@ -176,7 +180,7 @@ func newMessageParser(msg Message) (*messageParser, error) {
 				continue
 			}
 
-			h.Write([]byte(MsgTypeGoToXml[f.ftype.Name()] + " "))
+			h.Write([]byte(MsgTypeGoToXml(f.ftype.Name()) + " "))
 			h.Write([]byte(MsgFieldGoToXml(f.name) + " "))
 			if f.arrayLength > 0 {
 				h.Write([]byte{f.arrayLength})

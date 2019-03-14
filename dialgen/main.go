@@ -179,7 +179,7 @@ func fieldTypeToGo(f *MavlinkField) string {
 		tags["mavext"] = "true"
 	}
 
-	typ = gomavlib.MsgTypeXmlToGo[typ]
+	typ = gomavlib.MsgTypeXmlToGo(typ)
 
 	out := ""
 	if arrayLen != "" {

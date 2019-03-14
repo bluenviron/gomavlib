@@ -375,7 +375,7 @@ func (res *NodeReadResult) Channel() *TransportChannel {
 }
 
 // Read reads a single message from available channels.
-// NodeReadResult contains all the properties of the received frame and message
+// NodeReadResult contains all the properties of the received message
 // (see NodeReadResult for details).
 // bool is true whenever the node is still open.
 func (n *Node) Read() (*NodeReadResult, bool) {

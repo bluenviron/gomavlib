@@ -33,10 +33,10 @@ func ipByBroadcastIp(target net.IP) net.IP {
 // TransportUdpBroadcast reads and writes frames through UDP broadcast packets.
 type TransportUdpBroadcast struct {
 	// the broadcast address to which sending outgoing frames, example: 192.168.5.255:5600
-	BroadcastAddr string
-	// (optional) the address on which listening. if empty, it will be inferred
+	BroadcastAddress string
+	// (optional) the listening. if empty, it will be computed
 	// from the broadcast address.
-	LocalAddr string
+	LocalAddress string
 }
 
 type transportUdpBroadcast struct {
@@ -47,30 +47,30 @@ type transportUdpBroadcast struct {
 }
 
 func (conf TransportUdpBroadcast) init() (transport, error) {
-	_, port, err := net.SplitHostPort(conf.BroadcastAddr)
+	_, port, err := net.SplitHostPort(conf.BroadcastAddress)
 	if err != nil {
 		return nil, fmt.Errorf("invalid broadcast address")
 	}
-	broadcastAddr, err := net.ResolveUDPAddr("udp4", conf.BroadcastAddr)
+	broadcastAddr, err := net.ResolveUDPAddr("udp4", conf.BroadcastAddress)
 	if err != nil {
 		return nil, err
 	}
 
-	if conf.LocalAddr == "" {
+	if conf.LocalAddress == "" {
 		ip := ipByBroadcastIp(broadcastAddr.IP[:4])
 		if ip == nil {
 			return nil, fmt.Errorf("cannot find local address associated to given broadcast address")
 		}
-		conf.LocalAddr = fmt.Sprintf("%s:%s", ip, port)
+		conf.LocalAddress = fmt.Sprintf("%s:%s", ip, port)
 
 	} else {
-		_, _, err = net.SplitHostPort(conf.LocalAddr)
+		_, _, err = net.SplitHostPort(conf.LocalAddress)
 		if err != nil {
 			return nil, fmt.Errorf("invalid local address")
 		}
 	}
 
-	packetConn, err := net.ListenPacket("udp4", conf.LocalAddr)
+	packetConn, err := net.ListenPacket("udp4", conf.LocalAddress)
 	if err != nil {
 		return nil, err
 	}

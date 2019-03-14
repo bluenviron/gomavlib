@@ -16,7 +16,7 @@ func main() {
 		SystemId:    10,
 		ComponentId: 1,
 		Transports: []gomavlib.TransportConf{
-			gomavlib.TransportUdpBroadcast{BroadcastAddr: "192.168.7.255:5600"},
+			gomavlib.TransportUdpBroadcast{BroadcastAddress: "192.168.7.255:5600"},
 		},
 	})
 	if err != nil {

@@ -195,6 +195,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 	return n, nil
 }
 
+// Close stops node operations and wait for all routines to return.
 func (n *Node) Close() {
 	func() {
 		n.mutex.Lock()
@@ -214,6 +215,7 @@ func (n *Node) Close() {
 	}()
 
 	// consume queued frames up to close(n.frameQueue)
+	// in case the user is not calling Read() in a loop.
 	go func() {
 		for {
 			_, ok := n.Read()
@@ -384,8 +386,8 @@ func (n *Node) Read() (*NodeReadResult, bool) {
 }
 
 // WriteMessageTo write a message to given channel.
-func (n *Node) WriteMessageTo(targetChannel *TransportChannel, message Message) {
-	n.writeTo(targetChannel, message)
+func (n *Node) WriteMessageTo(channel *TransportChannel, message Message) {
+	n.writeTo(channel, message)
 }
 
 // WriteMessageAll write a message to all channels.
@@ -401,8 +403,8 @@ func (n *Node) WriteMessageExcept(exceptChannel *TransportChannel, message Messa
 // WriteFrameTo write a frame to given channel.
 // This function is intended for routing frames to other nodes, since all
 // the fields must be filled manually.
-func (n *Node) WriteFrameTo(targetChannel *TransportChannel, frame Frame) {
-	n.writeTo(targetChannel, frame)
+func (n *Node) WriteFrameTo(channel *TransportChannel, frame Frame) {
+	n.writeTo(channel, frame)
 }
 
 // WriteFrameAll write a frame to all channels.
@@ -419,17 +421,17 @@ func (n *Node) WriteFrameExcept(exceptChannel *TransportChannel, frame Frame) {
 	n.writeExcept(exceptChannel, frame)
 }
 
-func (n *Node) writeTo(targetChannel *TransportChannel, what interface{}) {
+func (n *Node) writeTo(channel *TransportChannel, what interface{}) {
 	n.mutex.Lock()
 	defer n.mutex.Unlock()
 
-	if _, ok := n.channels[targetChannel]; ok == false {
+	if _, ok := n.channels[channel]; ok == false {
 		return
 	}
 
 	// route to channels
 	// wait for responses (otherwise transports can be removed before writing)
-	targetChannel.writeChan <- what
+	channel.writeChan <- what
 	<-n.writeDone
 }
 

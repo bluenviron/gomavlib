@@ -117,7 +117,8 @@ type NodeConf struct {
 	ChecksumDisable bool
 }
 
-// Node represents our node in the network.
+// Node is a high-level Mavlink encoder and decoder that works with transports.
+// See NodeConf for the options.
 type Node struct {
 	conf            NodeConf
 	mutex           sync.Mutex
@@ -130,8 +131,7 @@ type Node struct {
 	heartbeatTicker *heartbeatTicker
 }
 
-// NewNode allocates a Node and connects it to a mavlink network through transports.
-// See NodeConf for the options.
+// NewNode allocates a Node. See NodeConf for the options.
 func NewNode(conf NodeConf) (*Node, error) {
 	if conf.SystemId < 1 {
 		return nil, fmt.Errorf("SystemId must be >= 1")

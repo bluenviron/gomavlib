@@ -13,7 +13,7 @@ type transportClientConf interface {
 	getAddress() string
 }
 
-// TransportTcpClient reads and writes frames through a TCP client.
+// TransportTcpClient sets up a transport that works through a TCP client.
 type TransportTcpClient struct {
 	// domain name or IP of the server to connect to, example: 1.2.3.4:5600
 	Address string
@@ -31,7 +31,7 @@ func (conf TransportTcpClient) init() (transport, error) {
 	return initTransportClient(conf)
 }
 
-// TransportUdpClient reads and writes frames through a UDP client.
+// TransportUdpClient sets up a transport that works through a UDP client.
 type TransportUdpClient struct {
 	// domain name or IP of the server to connect to, example: 1.2.3.4:5600
 	Address string

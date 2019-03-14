@@ -13,7 +13,8 @@ type FrameParserConf struct {
 	Dialect []Message
 }
 
-// FrameParser is a low level frame encoder and decoder.
+// FrameParser is a low-level Mavlink encoder and decoder that works with byte
+// slices.
 type FrameParser struct {
 	conf           FrameParserConf
 	messageParsers map[uint32]*messageParser
@@ -150,7 +151,7 @@ func (p *FrameParser) Decode(buf []byte, validateChecksum bool, validateFrameSig
 		}
 
 		bufferLen := 10 + int(buf[1]) + 2
-		if ff.isSigned() {
+		if ff.IsSigned() {
 			bufferLen += 13
 		}
 		if bufferLen != len(buf) {
@@ -179,7 +180,7 @@ func (p *FrameParser) Decode(buf []byte, validateChecksum bool, validateFrameSig
 		ff.Checksum = binary.LittleEndian.Uint16(buf[offset : offset+2])
 		offset += 2
 
-		if ff.isSigned() {
+		if ff.IsSigned() {
 			ff.SignatureLinkId = buf[offset]
 			offset += 1
 			ff.SignatureTimestamp = uint48Decode(buf[offset : offset+6])
@@ -303,7 +304,7 @@ func (p *FrameParser) Encode(f Frame, fillChecksum bool, fillFrameSignatureKey *
 		}
 
 		bufferLen := 10 + len(msgContent) + 2
-		if ff.isSigned() {
+		if ff.IsSigned() {
 			bufferLen += 13
 		}
 		buf = make([]byte, bufferLen)
@@ -333,7 +334,7 @@ func (p *FrameParser) Encode(f Frame, fillChecksum bool, fillFrameSignatureKey *
 		binary.LittleEndian.PutUint16(buf[offset:offset+2], ff.Checksum)
 		offset += 2
 
-		if ff.isSigned() {
+		if ff.IsSigned() {
 			buf[offset] = ff.SignatureLinkId
 			offset += 1
 			copy(buf[offset:offset+6], uint48Encode(ff.SignatureTimestamp))

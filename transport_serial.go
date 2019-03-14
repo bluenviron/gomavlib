@@ -5,7 +5,7 @@ import (
 	"io"
 )
 
-// TransportSerial reads and writes frames through a serial port.
+// TransportSerial sets up a transport that works through a serial port.
 type TransportSerial struct {
 	// the name or path of the serial port, example: /dev/ttyAMA0 or COM45
 	Name string

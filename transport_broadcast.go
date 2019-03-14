@@ -30,7 +30,7 @@ func ipByBroadcastIp(target net.IP) net.IP {
 	return nil
 }
 
-// TransportUdpBroadcast reads and writes frames through UDP broadcast packets.
+// TransportUdpBroadcast sets up a transport that works through UDP broadcast packets.
 type TransportUdpBroadcast struct {
 	// the broadcast address to which sending outgoing frames, example: 192.168.5.255:5600
 	BroadcastAddress string

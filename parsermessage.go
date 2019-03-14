@@ -89,7 +89,7 @@ func DialectMsgXmlToGo(in string) string {
 	return strings.ToUpper(in[:1]) + in[1:]
 }
 
-type messageParserField struct {
+type parserMessageField struct {
 	ftype       reflect.Type
 	name        string
 	arrayLength byte
@@ -97,18 +97,18 @@ type messageParserField struct {
 	isExtension bool
 }
 
-type messageParser struct {
+type parserMessage struct {
 	elemType reflect.Type
 	size     byte
-	fields   []messageParserField
+	fields   []parserMessageField
 	crcExtra byte
 }
 
-func newMessageParser(msg Message) (*messageParser, error) {
-	mp := &messageParser{}
+func newParserMessage(msg Message) (*parserMessage, error) {
+	mp := &parserMessage{}
 
 	mp.elemType = reflect.TypeOf(msg).Elem()
-	mp.fields = make([]messageParserField, mp.elemType.NumField())
+	mp.fields = make([]parserMessageField, mp.elemType.NumField())
 
 	// get name
 	if strings.HasPrefix(mp.elemType.Name(), "Message") == false {
@@ -147,7 +147,7 @@ func newMessageParser(msg Message) (*messageParser, error) {
 		// extension
 		isExtension := (field.Tag.Get("mavext") == "true")
 
-		mp.fields[i] = messageParserField{
+		mp.fields[i] = parserMessageField{
 			ftype:       fieldType,
 			name:        field.Name,
 			arrayLength: fieldArrayLength,
@@ -199,7 +199,7 @@ func newMessageParser(msg Message) (*messageParser, error) {
 	return mp, nil
 }
 
-func (mp *messageParser) decode(buf []byte, isFrameV2 bool) (Message, error) {
+func (mp *parserMessage) decode(buf []byte, isFrameV2 bool) (Message, error) {
 	msg := reflect.New(mp.elemType)
 
 	// empty-byte de-truncation (and fix for extension fields)
@@ -245,7 +245,7 @@ func (mp *messageParser) decode(buf []byte, isFrameV2 bool) (Message, error) {
 	return msg.Interface().(Message), nil
 }
 
-func (mp *messageParser) encode(msg Message, isFrameV2 bool) ([]byte, error) {
+func (mp *parserMessage) encode(msg Message, isFrameV2 bool) ([]byte, error) {
 	bbuf := bytes.NewBuffer(nil)
 
 	for _, f := range mp.fields {

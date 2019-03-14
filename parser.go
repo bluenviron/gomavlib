@@ -6,42 +6,42 @@ import (
 	"fmt"
 )
 
-// FrameParserConf configures a FrameParser.
-type FrameParserConf struct {
+// ParserConf configures a Parser.
+type ParserConf struct {
 	// Dialect contains the messages which will be automatically decoded and
 	// encoded. If not provided, messages are decoded in the MessageRaw struct.
 	Dialect []Message
 }
 
-// FrameParser is a low-level Mavlink encoder and decoder that works with byte
+// Parser is a low-level Mavlink encoder and decoder that works with byte
 // slices.
-type FrameParser struct {
-	conf           FrameParserConf
-	messageParsers map[uint32]*messageParser
+type Parser struct {
+	conf           ParserConf
+	parserMessages map[uint32]*parserMessage
 }
 
-// NewFrameParser allocates a FrameParser, a low level frame encoder and decoder.
-// See FrameParser for the options.
-func NewFrameParser(conf FrameParserConf) (*FrameParser, error) {
-	p := &FrameParser{
+// NewParser allocates a Parser, a low level frame encoder and decoder.
+// See Parser for the options.
+func NewParser(conf ParserConf) (*Parser, error) {
+	p := &Parser{
 		conf:           conf,
-		messageParsers: make(map[uint32]*messageParser),
+		parserMessages: make(map[uint32]*parserMessage),
 	}
 
 	// generate message parsers
 	for _, msg := range conf.Dialect {
-		mp, err := newMessageParser(msg)
+		mp, err := newParserMessage(msg)
 		if err != nil {
 			return nil, fmt.Errorf("message %T: %s", msg, err)
 		}
-		p.messageParsers[msg.GetId()] = mp
+		p.parserMessages[msg.GetId()] = mp
 	}
 
 	return p, nil
 }
 
 // Checksum computes the checksum of a given frame.
-func (p *FrameParser) Checksum(f Frame) uint16 {
+func (p *Parser) Checksum(f Frame) uint16 {
 	msg := f.GetMessage().(*MessageRaw)
 	h := NewX25()
 
@@ -67,13 +67,13 @@ func (p *FrameParser) Checksum(f Frame) uint16 {
 	}
 
 	// CRC_EXTRA byte is added at the end of the data
-	h.Write([]byte{p.messageParsers[msg.GetId()].crcExtra})
+	h.Write([]byte{p.parserMessages[msg.GetId()].crcExtra})
 
 	return h.Sum16()
 }
 
 // Signature computes the signature of a given frame with the given key.
-func (p *FrameParser) Signature(ff *FrameV2, key *FrameSignatureKey) *FrameSignature {
+func (p *Parser) Signature(ff *FrameV2, key *FrameSignatureKey) *FrameSignature {
 	msg := ff.GetMessage().(*MessageRaw)
 	h := sha256.New()
 
@@ -100,7 +100,7 @@ func (p *FrameParser) Signature(ff *FrameV2, key *FrameSignatureKey) *FrameSigna
 }
 
 // Decode converts a byte buffer to a Frame.
-func (p *FrameParser) Decode(buf []byte, validateChecksum bool, validateFrameSignatureKey *FrameSignatureKey) (Frame, error) {
+func (p *Parser) Decode(buf []byte, validateChecksum bool, validateFrameSignatureKey *FrameSignatureKey) (Frame, error) {
 	// require at least magic byte, message length and incompatibility flag (if v2)
 	if len(buf) < 3 {
 		return nil, fmt.Errorf("insufficient packet length")
@@ -205,7 +205,7 @@ func (p *FrameParser) Decode(buf []byte, validateChecksum bool, validateFrameSig
 	}
 
 	// decode message if in dialect
-	if mp, ok := p.messageParsers[f.GetMessage().GetId()]; ok {
+	if mp, ok := p.parserMessages[f.GetMessage().GetId()]; ok {
 
 		if validateChecksum == true {
 			if sum := p.Checksum(f); sum != f.GetChecksum() {
@@ -231,10 +231,10 @@ func (p *FrameParser) Decode(buf []byte, validateChecksum bool, validateFrameSig
 }
 
 // Encode converts a Frame into a bytes buffer.
-func (p *FrameParser) Encode(f Frame, fillChecksum bool, fillFrameSignatureKey *FrameSignatureKey) ([]byte, error) {
+func (p *Parser) Encode(f Frame, fillChecksum bool, fillFrameSignatureKey *FrameSignatureKey) ([]byte, error) {
 	// encode message if not already encoded and in dialect
 	if _, ok := f.GetMessage().(*MessageRaw); ok == false {
-		if mp, ok := p.messageParsers[f.GetMessage().GetId()]; ok {
+		if mp, ok := p.parserMessages[f.GetMessage().GetId()]; ok {
 			_, isFrameV2 := f.(*FrameV2)
 			byt, err := mp.encode(f.GetMessage(), isFrameV2)
 			if err != nil {

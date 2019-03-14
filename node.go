@@ -69,13 +69,13 @@ type heartbeatTicker struct {
 	n           *Node
 	terminate   chan struct{}
 	done        chan struct{}
-	heartbeatMp *messageParser
+	heartbeatMp *parserMessage
 	period      time.Duration
 }
 
 func newHeartbeatTicker(n *Node, period time.Duration) *heartbeatTicker {
 	// heartbeat message must exist in dialect and correspond to standart heartbeat
-	mp, ok := n.frameParser.messageParsers[0]
+	mp, ok := n.parser.parserMessages[0]
 	if ok == false || mp.crcExtra != 50 {
 		return nil
 	}
@@ -163,7 +163,7 @@ type Node struct {
 	wg              sync.WaitGroup
 	chanAccepters   map[transportChannelAccepter]struct{}
 	channels        map[*TransportChannel]struct{}
-	frameParser     *FrameParser
+	parser          *Parser
 	frameQueue      chan *NodeReadResult
 	writeDone       chan struct{}
 	heartbeatTicker *heartbeatTicker
@@ -191,7 +191,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 	}
 
 	// init frame parser
-	frameParser, err := NewFrameParser(FrameParserConf{
+	parser, err := NewParser(ParserConf{
 		Dialect: conf.Dialect,
 	})
 	if err != nil {
@@ -202,7 +202,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 		conf:          conf,
 		chanAccepters: make(map[transportChannelAccepter]struct{}),
 		channels:      make(map[*TransportChannel]struct{}),
-		frameParser:   frameParser,
+		parser:        parser,
 		frameQueue:    make(chan *NodeReadResult),
 		writeDone:     make(chan struct{}),
 	}
@@ -322,7 +322,7 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 				return
 			}
 
-			frame, err := n.frameParser.Decode(buf[:bufn], !n.conf.ChecksumDisable, n.conf.SignatureInKey)
+			frame, err := n.parser.Decode(buf[:bufn], !n.conf.ChecksumDisable, n.conf.SignatureInKey)
 			if err != nil {
 				fmt.Printf("SKIPPED DUE TO ERR: %v\n", err)
 				continue
@@ -373,7 +373,7 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 				f = wh
 			}
 
-			byt, err := n.frameParser.Encode(f, !n.conf.ChecksumDisable, n.conf.SignatureOutKey)
+			byt, err := n.parser.Encode(f, !n.conf.ChecksumDisable, n.conf.SignatureOutKey)
 			if err == nil {
 				conn.rwc.Write(byt)
 			}

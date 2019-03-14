@@ -28,7 +28,7 @@ EOF
 
 func testMessageDecode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
 	for i, byt := range byts {
-		mp, err := newMessageParser(parsers[i])
+		mp, err := newParserMessage(parsers[i])
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -44,7 +44,7 @@ func testMessageDecode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte
 
 func testMessageEncode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
 	for i, msg := range msgs {
-		mp, err := newMessageParser(parsers[i])
+		mp, err := newParserMessage(parsers[i])
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -143,7 +143,7 @@ func (*MessagePlayTune) GetId() uint32 {
 	return 258
 }
 
-func TestMessageParserCRC(t *testing.T) {
+func TestParserMessageCRC(t *testing.T) {
 	var ins = []Message{
 		&MessageHeartbeat{},
 		&MessageSysStatus{},
@@ -161,7 +161,7 @@ func TestMessageParserCRC(t *testing.T) {
 		187,
 	}
 	for i, in := range ins {
-		mp, err := newMessageParser(in)
+		mp, err := newParserMessage(in)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -238,11 +238,11 @@ var testMpV1Msgs = []Message{
 	},
 }
 
-func TestMessageParserV1Dec(t *testing.T) {
+func TestParserMessageV1Dec(t *testing.T) {
 	testMessageDecode(t, testMpV1Parsers, false, testMpV1Bytes, testMpV1Msgs)
 }
 
-func TestMessageParserV1Enc(t *testing.T) {
+func TestParserMessageV1Enc(t *testing.T) {
 	testMessageEncode(t, testMpV1Parsers, false, testMpV1Bytes, testMpV1Msgs)
 }
 
@@ -263,11 +263,11 @@ var testMpV2EmptyByteMsgs = []Message{
 	},
 }
 
-func TestMessageParserV2EmptyByteDec(t *testing.T) {
+func TestParserMessageV2EmptyByteDec(t *testing.T) {
 	testMessageDecode(t, testMpV2EmptyByteParsers, true, testMpV2EmptyByteBytes, testMpV2EmptyByteMsgs)
 }
 
-func TestMessageParserV2EmptyByteEnc(t *testing.T) {
+func TestParserMessageV2EmptyByteEnc(t *testing.T) {
 	testMessageEncode(t, testMpV2EmptyByteParsers, true, testMpV2EmptyByteBytes, testMpV2EmptyByteMsgs)
 }
 
@@ -302,10 +302,10 @@ var testMpV2ExtensionMsgs = []Message{
 	},
 }
 
-func TestMessageParserV2ExtensionDec(t *testing.T) {
+func TestParserMessageV2ExtensionDec(t *testing.T) {
 	testMessageDecode(t, testMpV2ExtensionParsers, true, testMpV2ExtensionBytes, testMpV2ExtensionMsgs)
 }
 
-func TestMessageParserV2ExtensionEnc(t *testing.T) {
+func TestParserMessageV2ExtensionEnc(t *testing.T) {
 	testMessageEncode(t, testMpV2ExtensionParsers, true, testMpV2ExtensionBytes, testMpV2ExtensionMsgs)
 }

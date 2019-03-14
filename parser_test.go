@@ -8,7 +8,7 @@ import (
 )
 
 func testFrameDecode(t *testing.T, dialect []Message, key *FrameSignatureKey, byts [][]byte, frames []Frame) {
-	parser, _ := NewFrameParser(FrameParserConf{Dialect: dialect})
+	parser, _ := NewParser(ParserConf{Dialect: dialect})
 	for i, byt := range byts {
 		frame, err := parser.Decode(byt, true, key)
 		if err != nil {
@@ -21,7 +21,7 @@ func testFrameDecode(t *testing.T, dialect []Message, key *FrameSignatureKey, by
 }
 
 func testFrameEncode(t *testing.T, dialect []Message, key *FrameSignatureKey, byts [][]byte, frames []Frame) {
-	parser, _ := NewFrameParser(FrameParserConf{Dialect: dialect})
+	parser, _ := NewParser(ParserConf{Dialect: dialect})
 	for i, frame := range frames {
 		byt, err := parser.Encode(frame, true, key)
 		if err != nil {
@@ -96,19 +96,19 @@ var testFpV1FramesDialect = []Frame{
 	},
 }
 
-func TestFrameParserV1RawDec(t *testing.T) {
+func TestParserV1RawDec(t *testing.T) {
 	testFrameDecode(t, nil, nil, testFpV1Bytes, testFpV1Frames)
 }
 
-func TestFrameParserV1RawEnc(t *testing.T) {
+func TestParserV1RawEnc(t *testing.T) {
 	testFrameEncode(t, nil, nil, testFpV1Bytes, testFpV1Frames)
 }
 
-func TestFrameParserV1DialectDec(t *testing.T) {
+func TestParserV1DialectDec(t *testing.T) {
 	testFrameDecode(t, testDialect, nil, testFpV1Bytes, testFpV1FramesDialect)
 }
 
-func TestFrameParserV1DialectEnc(t *testing.T) {
+func TestParserV1DialectEnc(t *testing.T) {
 	testFrameEncode(t, testDialect, nil, testFpV1Bytes, testFpV1FramesDialect)
 }
 
@@ -146,19 +146,19 @@ var testFpV2FramesDialect = []Frame{
 	},
 }
 
-func TestFrameParserV2RawDec(t *testing.T) {
+func TestParserV2RawDec(t *testing.T) {
 	testFrameDecode(t, nil, nil, testFpV2Bytes, testFpV2Frames)
 }
 
-func TestFrameParserV2RawEnc(t *testing.T) {
+func TestParserV2RawEnc(t *testing.T) {
 	testFrameEncode(t, nil, nil, testFpV2Bytes, testFpV2Frames)
 }
 
-func TestFrameParserV2DialectDec(t *testing.T) {
+func TestParserV2DialectDec(t *testing.T) {
 	testFrameDecode(t, testDialect, nil, testFpV2Bytes, testFpV2FramesDialect)
 }
 
-func TestFrameParserV2DialectEnc(t *testing.T) {
+func TestParserV2DialectEnc(t *testing.T) {
 	testFrameEncode(t, testDialect, nil, testFpV2Bytes, testFpV2FramesDialect)
 }
 
@@ -219,10 +219,10 @@ var testFpV2SigFrames = []Frame{
 
 var testFpV2Key = NewFrameSignatureKey(bytes.Repeat([]byte("\x4F"), 32))
 
-func TestFrameParserV2FrameSignatureDec(t *testing.T) {
+func TestParserV2FrameSignatureDec(t *testing.T) {
 	testFrameDecode(t, []Message{&MessageHeartbeat{}}, testFpV2Key, testFpV2SigBytes, testFpV2SigFrames)
 }
 
-func TestFrameParserV2FrameSignatureEnc(t *testing.T) {
+func TestParserV2FrameSignatureEnc(t *testing.T) {
 	testFrameEncode(t, []Message{&MessageHeartbeat{}}, testFpV2Key, testFpV2SigBytes, testFpV2SigFrames)
 }

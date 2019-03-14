@@ -13,11 +13,12 @@ Mavlink is a lighweight and transport-independent protocol that is mostly used t
 
 * Decode and encode Mavlink v2.0 and v1.0. Supports checksums, empty-byte truncation (v2.0), signing (v2.0), message extensions (v2.0)
 * Dialect is optional, the library can work a standard dialect, a custom dialect or no dialect at all. Standard dialects are provided in directory `dialect/`, with no need for generation. A Dialect generator is provided anyway.
-* Provides a ready-to-use Mavlink node with heartbeat emission and ability to communicate through multiple transports in parallel:
+* Provides a high-level parser with ability to communicate through multiple transports in parallel:
   * serial
   * UDP (server, client or broadcast mode)
   * TCP (server or client mode)
   * custom transport
+* Provides a low-level parser with ability to encode/decode to/from byte slices
 * UDP connections are tracked and removed when inactive
 * Support both domain names and IPs
 * Examples provided for every feature
@@ -56,6 +57,14 @@ go get github.com/gswly/gomavlib
 ## Documentation
 
 https://godoc.org/github.com/gswly/gomavlib
+
+## Dialect generation
+
+Although standard dialects are provided in the `dialect/` folder, dialect definitions can be manually converted into Go structures by running the `dialgen` utility:
+```
+go get github.com/gswly/gomavlib/dialgen
+dialgen [path_or_url_to_xml_definition]
+```
 
 ## Testing
 

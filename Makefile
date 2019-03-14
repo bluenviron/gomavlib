@@ -27,7 +27,9 @@ test:
 	@docker run --rm -it \
 		-v $(PWD):/src \
 		amd64/golang:1.11-stretch \
-		sh -c "cd /src && go test -v"
+		sh -c "cd /src \
+		&& go test -v . \
+		&& go install ./dialgen"
 
 
 .PHONY: gen-dialects

@@ -72,7 +72,7 @@ func (p *FrameParser) Checksum(f Frame) uint16 {
 }
 
 // Signature computes the signature of a given frame with the given key.
-func (p *FrameParser) Signature(ff *FrameV2, key *SignatureKey) Signature {
+func (p *FrameParser) Signature(ff *FrameV2, key *SignatureKey) *Signature {
 	msg := ff.GetMessage().(*MessageRaw)
 
 	// the signature covers the whole message, excluding the signature itself
@@ -91,7 +91,7 @@ func (p *FrameParser) Signature(ff *FrameV2, key *SignatureKey) Signature {
 	h.Write([]byte{ff.SignatureLinkId})
 	h.Write(uint48Encode(ff.SignatureTimestamp))
 
-	var ret Signature
+	ret := new(Signature)
 	copy(ret[:], h.Sum(nil)[:6])
 	return ret
 }
@@ -182,6 +182,7 @@ func (p *FrameParser) Decode(buf []byte, validateChecksum bool, validateSignatur
 			offset += 1
 			ff.SignatureTimestamp = uint48Decode(buf[offset : offset+6])
 			offset += 6
+			ff.Signature = new(Signature)
 			copy(ff.Signature[:], buf[offset:offset+6])
 		}
 
@@ -195,7 +196,7 @@ func (p *FrameParser) Decode(buf []byte, validateChecksum bool, validateSignatur
 			return nil, fmt.Errorf("signature required but packet is not v2")
 		}
 
-		if sig := p.Signature(ff, validateSignatureKey); sig != ff.Signature {
+		if sig := p.Signature(ff, validateSignatureKey); *sig != *ff.Signature {
 			return nil, fmt.Errorf("wrong signature")
 		}
 	}

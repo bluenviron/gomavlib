@@ -213,7 +213,7 @@ var testFpV2SigFrames = []Frame{
 		Checksum:           53721,
 		SignatureLinkId:    1,
 		SignatureTimestamp: 2,
-		Signature:          Signature{14, 71, 4, 12, 239, 155},
+		Signature:          &Signature{14, 71, 4, 12, 239, 155},
 	},
 }
 

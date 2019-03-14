@@ -52,7 +52,7 @@ type FrameV2 struct {
 	Checksum            uint16
 	SignatureLinkId     byte
 	SignatureTimestamp  uint64
-	Signature           Signature
+	Signature           *Signature
 }
 
 func (f *FrameV2) GetVersion() int {

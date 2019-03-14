@@ -150,7 +150,7 @@ const (
 
 `))
 
-func fieldTypeToGo(f *MavlinkField) string {
+func fieldTypeToGo(f *MavlinkField) (string, error) {
 	typ := f.Type
 
 	arrayLen := ""
@@ -180,6 +180,9 @@ func fieldTypeToGo(f *MavlinkField) string {
 	}
 
 	typ = gomavlib.MsgTypeXmlToGo(typ)
+	if typ == "" {
+		return "", fmt.Errorf("unknown type: %s", typ)
+	}
 
 	out := ""
 	if arrayLen != "" {
@@ -194,7 +197,7 @@ func fieldTypeToGo(f *MavlinkField) string {
 		sort.Strings(tmp)
 		out += " `" + strings.Join(tmp, " ") + "`"
 	}
-	return out
+	return out, nil
 }
 
 func main() {
@@ -283,7 +286,11 @@ func do(outfile string, mainDefAddr string) error {
 			msg.Name = gomavlib.MsgNameXmlToGo(msg.Name)
 			for _, f := range msg.Fields {
 				f.Name = gomavlib.MsgFieldXmlToGo(f.Name)
-				f.Type = fieldTypeToGo(f)
+				var err error
+				f.Type, err = fieldTypeToGo(f)
+				if err != nil {
+					return err
+				}
 			}
 		}
 

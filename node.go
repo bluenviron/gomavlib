@@ -5,7 +5,7 @@
 // Mavlink is a lighweight and transport-independent protocol that is mostly
 // used to communicate with unmanned ground vehicles (UGV) and unmanned aerial
 // vehicles (UAV, drones, quadcopters, multirotors). It is supported by both
-// of the most common open source drone softwares (Ardupilot and PX4).
+// of the most common open-source flight controllers (Ardupilot and PX4).
 package gomavlib
 
 import (

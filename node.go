@@ -84,35 +84,35 @@ func (h *heartbeatTicker) do() {
 
 // NodeConf allows to configure a Node.
 type NodeConf struct {
-	// Version is the Mavlink version used to encode frames. See Version
+	// Mavlink version used to encode frames. See Version
 	// for the available options.
 	Version Version
-	// Dialect contains the messages which will be automatically decoded and
+	// contains the messages which will be automatically decoded and
 	// encoded. If not provided, messages are decoded in the MessageRaw struct.
 	Dialect []Message
-	// SystemId and ComponentId are used to identify this node in the network.
+	// these are used to identify this node in the network.
 	// They are added to every outgoing message.
 	SystemId    byte
 	ComponentId byte
-	// Transports contains the transport layers with which this node will
+	// contains the transport layers with which this node will
 	// communicate. Each transport contains one or more channels.
 	Transports []TransportConf
 
-	// (optional) SignatureInKey is the secret key used to verify incoming frames.
+	// (optional) the secret key used to verify incoming frames.
 	// Non signed frames are discarded. This feature requires Mavlink v2.
-	SignatureInKey *SignatureKey
-	// (optional) SignatureOutKey is the secret key used to sign outgoing frames.
+	SignatureInKey *FrameSignatureKey
+	// (optional) the secret key used to sign outgoing frames.
 	// This feature requires Mavlink v2.
-	SignatureOutKey *SignatureKey
+	SignatureOutKey *FrameSignatureKey
 
-	// (optional) HeartbeatDisable disables the periodic sending of heartbeats to
+	// (optional) disable sthe periodic sending of heartbeats to
 	// open channels.
 	HeartbeatDisable bool
-	// (optional) HeartbeatPeriod sets the period between heartbeats.
+	// (optional) set the period between heartbeats.
 	// It defaults to 5 seconds.
 	HeartbeatPeriod time.Duration
 
-	// (optional) ChecksumDisable disables checksum validation of incoming frames.
+	// (optional) disables checksum validation of incoming frames.
 	// Not recommended, useful only for debugging purposes.
 	ChecksumDisable bool
 }
@@ -125,7 +125,7 @@ type Node struct {
 	chanAccepters   map[transportChannelAccepter]struct{}
 	channels        map[*TransportChannel]struct{}
 	frameParser     *FrameParser
-	frameQueue      chan *ReadResult
+	frameQueue      chan *NodeReadResult
 	writeDone       chan struct{}
 	heartbeatTicker *heartbeatTicker
 }
@@ -165,7 +165,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 		chanAccepters: make(map[transportChannelAccepter]struct{}),
 		channels:      make(map[*TransportChannel]struct{}),
 		frameParser:   frameParser,
-		frameQueue:    make(chan *ReadResult),
+		frameQueue:    make(chan *NodeReadResult),
 		writeDone:     make(chan struct{}),
 	}
 
@@ -288,7 +288,7 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 				continue
 			}
 
-			n.frameQueue <- &ReadResult{frame, conn}
+			n.frameQueue <- &NodeReadResult{frame, conn}
 		}
 	}()
 
@@ -343,41 +343,42 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 	}()
 }
 
-// ReadResult contains the result of node.Read()
-type ReadResult struct {
+// NodeReadResult contains the result of node.Read()
+type NodeReadResult struct {
 	frame            Frame
 	transportChannel *TransportChannel
 }
 
 // Frame() returns the Frame containing the message.
-func (res *ReadResult) Frame() Frame {
+func (res *NodeReadResult) Frame() Frame {
 	return res.frame
 }
 
 // Message() returns the message.
-func (res *ReadResult) Message() Message {
+func (res *NodeReadResult) Message() Message {
 	return res.frame.GetMessage()
 }
 
 // SystemId() returns the sender system id.
-func (res *ReadResult) SystemId() byte {
+func (res *NodeReadResult) SystemId() byte {
 	return res.frame.GetSystemId()
 }
 
 // ComponentId() returns the sender component id.
-func (res *ReadResult) ComponentId() byte {
+func (res *NodeReadResult) ComponentId() byte {
 	return res.frame.GetComponentId()
 }
 
 // Channel() returns the channel used to send the message.
-func (res *ReadResult) Channel() *TransportChannel {
+func (res *NodeReadResult) Channel() *TransportChannel {
 	return res.transportChannel
 }
 
 // Read reads a single message from available channels.
-// ReadResult contains all the properties of the received message (see ReadResult for details).
+// NodeReadResult contains all the properties of the received frame and message
+// (see NodeReadResult for details).
 // bool is true whenever the node is still open.
-func (n *Node) Read() (*ReadResult, bool) {
+func (n *Node) Read() (*NodeReadResult, bool) {
 	res, ok := <-n.frameQueue
 	return res, ok
 }

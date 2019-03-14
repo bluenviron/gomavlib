@@ -52,7 +52,7 @@ type FrameV2 struct {
 	Checksum            uint16
 	SignatureLinkId     byte
 	SignatureTimestamp  uint64
-	Signature           *Signature
+	Signature           *FrameSignature
 }
 
 func (f *FrameV2) GetVersion() int {
@@ -79,12 +79,12 @@ func (f *FrameV2) isSigned() bool {
 	return (f.IncompatibilityFlag & flagSigned) != 0
 }
 
-type SignatureKey [32]byte
+type FrameSignatureKey [32]byte
 
-func NewSignatureKey(in []byte) *SignatureKey {
-	key := new(SignatureKey)
+func NewFrameSignatureKey(in []byte) *FrameSignatureKey {
+	key := new(FrameSignatureKey)
 	copy(key[:], in)
 	return key
 }
 
-type Signature [6]byte
+type FrameSignature [6]byte

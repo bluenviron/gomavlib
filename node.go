@@ -1,11 +1,52 @@
-// Package gomavlib is a library that implements Mavlink 2.0 and 1.0 in the Go
-// programming language. It can power UGVs, UAVs, ground stations, monitoring
-// systems or routers acting in a Mavlink network.
-//
-// Mavlink is a lighweight and transport-independent protocol that is mostly
-// used to communicate with unmanned ground vehicles (UGV) and unmanned aerial
-// vehicles (UAV, drones, quadcopters, multirotors). It is supported by both
-// of the most common open-source flight controllers (Ardupilot and PX4).
+/*
+Package gomavlib is a library that implements Mavlink 2.0 and 1.0 in the Go
+programming language. It can power UGVs, UAVs, ground stations, monitoring
+systems or routers acting in a Mavlink network.
+
+Mavlink is a lighweight and transport-independent protocol that is mostly
+used to communicate with unmanned ground vehicles (UGV) and unmanned aerial
+vehicles (UAV, drones, quadcopters, multirotors). It is supported by both
+of the most common open-source flight controllers (Ardupilot and PX4).
+
+Basic example (more are available at https://github.com/gswly/gomavlib/tree/master/example)
+
+  package main
+
+  import (
+  	"fmt"
+  	"github.com/gswly/gomavlib"
+  	"github.com/gswly/gomavlib/dialects/ardupilotmega"
+  )
+
+  func main() {
+  	// create a node which understands given dialect, writes messages with given
+  	// system id and component id, and reads/writes through a serial port.
+  	node, err := gomavlib.NewNode(gomavlib.NodeConf{
+  		Dialect:     ardupilotmega.Dialect,
+  		SystemId:    10,
+  		ComponentId: 1,
+  		Transports: []gomavlib.TransportConf{
+  			gomavlib.TransportSerial{"/dev/ttyAMA0", 57600},
+  		},
+  	})
+  	if err != nil {
+  		panic(err)
+  	}
+  	defer node.Close()
+
+  	for {
+  		// wait until a message is received.
+  		res, ok := node.Read()
+  		if ok == false {
+  			break
+  		}
+
+  		// print message details
+  		fmt.Printf("received: id=%d, %+v\n", res.Message().GetId(), res.Message())
+  	}
+  }
+
+*/
 package gomavlib
 
 import (

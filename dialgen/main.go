@@ -16,7 +16,8 @@ import (
 	"text/template"
 )
 
-var reIsArray = regexp.MustCompile("^(.+?)\\[([0-9]+)\\]$")
+var reMsgName = regexp.MustCompile("^[A-Z0-9_]+$")
+var reTypeIsArray = regexp.MustCompile("^(.+?)\\[([0-9]+)\\]$")
 
 type outField struct {
 	Line string
@@ -268,6 +269,10 @@ func urlDownload(desturl string) ([]byte, error) {
 }
 
 func messageProcess(msg *DialectMessage) (*outMessage, error) {
+	if m := reMsgName.FindStringSubmatch(msg.Name); m == nil {
+		return nil, fmt.Errorf("unsupported message name: %s", msg.Name)
+	}
+
 	outMsg := &outMessage{
 		Name: gomavlib.DialectMsgDefToGo(msg.Name),
 		Id:   msg.Id,
@@ -305,7 +310,7 @@ func fieldProcess(field *DialectField) (*outField, error) {
 	}
 
 	// string or array
-	if matches := reIsArray.FindStringSubmatch(typ); matches != nil {
+	if matches := reTypeIsArray.FindStringSubmatch(typ); matches != nil {
 		// string
 		if matches[1] == "char" {
 			tags["mavlen"] = matches[2]

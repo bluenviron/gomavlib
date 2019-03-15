@@ -22,7 +22,7 @@ RUN apt update && apt install -y --no-install-recommends \
     && pip3 install pymavlink
 EOF
 ) && docker run --rm -it temp python3 -c \
-"from pymavlink.dialects.v20 import common; print(common.MAVLink_optical_flow_message.crc_extra);"
+"from pymavlink.dialects.v20 import ardupilotmega; print(ardupilotmega.MAVLink_ahrs_message.crc_extra);"
 
 */
 
@@ -143,6 +143,20 @@ func (*MessagePlayTune) GetId() uint32 {
 	return 258
 }
 
+type MessageAhrs struct {
+	OmegaIx     float32 `mavname:"omegaIx"`
+	OmegaIy     float32 `mavname:"omegaIy"`
+	OmegaIz     float32 `mavname:"omegaIz"`
+	AccelWeight float32
+	RenormVal   float32
+	ErrorRp     float32
+	ErrorYaw    float32
+}
+
+func (*MessageAhrs) GetId() uint32 {
+	return 163
+}
+
 func TestParserMessageCRC(t *testing.T) {
 	var ins = []Message{
 		&MessageHeartbeat{},
@@ -151,6 +165,7 @@ func TestParserMessageCRC(t *testing.T) {
 		&MessageAttitudeQuaternionCov{},
 		&MessageOpticalFlow{},
 		&MessagePlayTune{},
+		&MessageAhrs{},
 	}
 	var outs = []byte{
 		50,
@@ -159,6 +174,7 @@ func TestParserMessageCRC(t *testing.T) {
 		167,
 		175,
 		187,
+		127,
 	}
 	for i, in := range ins {
 		mp, err := newParserMessage(in)

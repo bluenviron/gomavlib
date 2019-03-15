@@ -12,18 +12,18 @@ import (
 	"strings"
 )
 
-var typeSizes = map[string]byte{
-	"float64": 8,
-	"uint64":  8,
-	"int64":   8,
-	"float32": 4,
-	"uint32":  4,
-	"int32":   4,
-	"uint16":  2,
-	"int16":   2,
-	"uint8":   1,
-	"int8":    1,
-	"string":  1,
+var dialectTypeSizes = map[string]byte{
+	"double":   8,
+	"uint64_t": 8,
+	"int64_t":  8,
+	"float":    4,
+	"uint32_t": 4,
+	"int32_t":  4,
+	"uint16_t": 2,
+	"int16_t":  2,
+	"uint8_t":  1,
+	"int8_t":   1,
+	"char":     1,
 }
 
 // DialectTypeDefToGo converts a xml type into its go equivalent.
@@ -90,7 +90,7 @@ func DialectMsgDefToGo(in string) string {
 }
 
 type parserMessageField struct {
-	ftype       reflect.Type
+	ftype       string
 	name        string
 	arrayLength byte
 	index       int
@@ -129,8 +129,8 @@ func newParserMessage(msg Message) (*parserMessage, error) {
 		}
 
 		// validate type
-		typeSize, ok := typeSizes[fieldType.Name()]
-		if !ok {
+		defType := DialectTypeGoToDef(fieldType.Name())
+		if defType == "" {
 			fmt.Printf("invalid field type: %v\n", fieldType)
 			return nil, fmt.Errorf("invalid field type: %v", fieldType)
 		}
@@ -148,16 +148,21 @@ func newParserMessage(msg Message) (*parserMessage, error) {
 		isExtension := (field.Tag.Get("mavext") == "true")
 
 		mp.fields[i] = parserMessageField{
-			ftype:       fieldType,
-			name:        field.Name,
+			ftype: defType,
+			name: func() string {
+				if mavname := field.Tag.Get("mavname"); mavname != "" {
+					return mavname
+				}
+				return DialectFieldGoToDef(field.Name)
+			}(),
 			arrayLength: fieldArrayLength,
 			index:       i,
 			isExtension: isExtension,
 		}
 		if fieldArrayLength > 0 {
-			mp.size += typeSize * fieldArrayLength
+			mp.size += dialectTypeSizes[defType] * fieldArrayLength
 		} else {
-			mp.size += typeSize
+			mp.size += dialectTypeSizes[defType]
 		}
 	}
 
@@ -166,7 +171,7 @@ func newParserMessage(msg Message) (*parserMessage, error) {
 	sort.Slice(mp.fields, func(i, j int) bool {
 		// sort by weight if not extension
 		if mp.fields[i].isExtension == false && mp.fields[j].isExtension == false {
-			if w1, w2 := typeSizes[mp.fields[i].ftype.Name()], typeSizes[mp.fields[j].ftype.Name()]; w1 != w2 {
+			if w1, w2 := dialectTypeSizes[mp.fields[i].ftype], dialectTypeSizes[mp.fields[j].ftype]; w1 != w2 {
 				return w1 > w2
 			}
 		}
@@ -186,8 +191,9 @@ func newParserMessage(msg Message) (*parserMessage, error) {
 				continue
 			}
 
-			h.Write([]byte(DialectTypeGoToDef(f.ftype.Name()) + " "))
-			h.Write([]byte(DialectFieldGoToDef(f.name) + " "))
+			h.Write([]byte(f.ftype + " "))
+			h.Write([]byte(f.name + " "))
+
 			if f.arrayLength > 0 {
 				h.Write([]byte{f.arrayLength})
 			}

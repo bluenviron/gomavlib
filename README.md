@@ -9,6 +9,8 @@ gomavlib is a library that implements Mavlink 2.0 and 1.0 in the Go programming 
 
 Mavlink is a lighweight and endpoint-independent protocol that is mostly used to communicate with unmanned ground vehicles (UGV) and unmanned aerial vehicles (UAV, drones, quadcopters, multirotors). It is supported by both of the most common open-source flight controllers (Ardupilot and PX4).
 
+This library powers the [**mavp2p**](https://github.com/gswly/mavp2p) router.
+
 ## Features
 
 * Decode and encode Mavlink v2.0 and v1.0. Supports checksums, empty-byte truncation (v2.0), signing (v2.0), message extensions (v2.0)
@@ -89,3 +91,5 @@ Other non-Go libraries
 * [Python] https://github.com/ArduPilot/pymavlink
 * [Java] https://github.com/DrTon/jMAVlib
 * [C#] https://github.com/asvol/mavlink.net
+* [Rust] https://github.com/3drobotics/rust-mavlink
+* [JS] https://github.com/omcaree/node-mavlink

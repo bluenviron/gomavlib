@@ -142,7 +142,7 @@ type NodeConf struct {
 	// They are added to every outgoing message.
 	SystemId    byte
 	ComponentId byte
-	// contains the endpoint layers with which this node will
+	// contains the endpoint with which this node will
 	// communicate. Each endpoint contains one or more channels.
 	Endpoints []EndpointConf
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"reflect"
+	"time"
 )
 
 // ipByBroadcastIp returns the ip of an interface associated with given broadcast ip
@@ -108,5 +109,9 @@ func (t *transportUdpBroadcast) Read(buf []byte) (int, error) {
 }
 
 func (t *transportUdpBroadcast) Write(buf []byte) (int, error) {
+	err := t.packetConn.SetWriteDeadline(time.Now().Add(netWriteTimeout))
+	if err != nil {
+		return 0, err
+	}
 	return t.packetConn.WriteTo(buf, t.broadcastAddr)
 }

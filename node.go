@@ -53,6 +53,15 @@ import (
 	"time"
 )
 
+const (
+	// constant for ip-based transports
+	netBufferSize      = 512 // frames cannot go beyond len(header) + 255 + len(check) + len(sig)
+	netConnectTimeout  = 10 * time.Second
+	netReconnectPeriod = 2 * time.Second
+	netReadTimeout     = 60 * time.Second
+	netWriteTimeout    = 10 * time.Second
+)
+
 // 1st January 2015 GMT
 var signatureReferenceDate = time.Date(2015, 01, 01, 0, 0, 0, 0, time.UTC)
 

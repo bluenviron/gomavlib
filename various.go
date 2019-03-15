@@ -35,8 +35,8 @@ func (c *netTimedConn) Write(buf []byte) (int, error) {
 }
 
 func randomByte() byte {
-	buf := make([]byte, 1)
-	rand.Read(buf)
+	var buf [1]byte
+	rand.Read(buf[:])
 	return buf[0]
 }
 

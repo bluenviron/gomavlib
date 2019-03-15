@@ -100,7 +100,7 @@ func (p *Parser) Signature(ff *FrameV2, key *FrameSignatureKey) *FrameSignature 
 }
 
 // Decode converts a byte buffer to a Frame.
-func (p *Parser) Decode(buf []byte, validateChecksum bool, validateFrameSignatureKey *FrameSignatureKey) (Frame, error) {
+func (p *Parser) Decode(buf []byte, validateChecksum bool, validateSignatureKey *FrameSignatureKey) (Frame, error) {
 	// require at least magic byte, message length and incompatibility flag (if v2)
 	if len(buf) < 3 {
 		return nil, fmt.Errorf("insufficient packet length")
@@ -193,13 +193,13 @@ func (p *Parser) Decode(buf []byte, validateChecksum bool, validateFrameSignatur
 		return nil, fmt.Errorf("unrecognized magic byte: %x", buf[0])
 	}
 
-	if validateFrameSignatureKey != nil {
+	if validateSignatureKey != nil {
 		ff, ok := f.(*FrameV2)
 		if ok == false {
 			return nil, fmt.Errorf("signature required but packet is not v2")
 		}
 
-		if sig := p.Signature(ff, validateFrameSignatureKey); *sig != *ff.Signature {
+		if sig := p.Signature(ff, validateSignatureKey); *sig != *ff.Signature {
 			return nil, fmt.Errorf("wrong signature")
 		}
 	}
@@ -231,7 +231,7 @@ func (p *Parser) Decode(buf []byte, validateChecksum bool, validateFrameSignatur
 }
 
 // Encode converts a Frame into a bytes buffer.
-func (p *Parser) Encode(f Frame, fillChecksum bool, fillFrameSignatureKey *FrameSignatureKey) ([]byte, error) {
+func (p *Parser) Encode(f Frame, fillChecksum bool, fillSignatureKey *FrameSignatureKey) ([]byte, error) {
 	// encode message if not already encoded and in dialect
 	if _, ok := f.GetMessage().(*MessageRaw); ok == false {
 		if mp, ok := p.parserMessages[f.GetMessage().GetId()]; ok {
@@ -250,7 +250,7 @@ func (p *Parser) Encode(f Frame, fillChecksum bool, fillFrameSignatureKey *Frame
 
 			// if frame is going to be signed, set incompatibility flag
 			// before computing checksum
-			if ff, ok := f.(*FrameV2); ok && fillFrameSignatureKey != nil {
+			if ff, ok := f.(*FrameV2); ok && fillSignatureKey != nil {
 				ff.IncompatibilityFlag |= flagSigned
 			}
 
@@ -299,8 +299,8 @@ func (p *Parser) Encode(f Frame, fillChecksum bool, fillFrameSignatureKey *Frame
 		binary.LittleEndian.PutUint16(buf[offset:offset+2], ff.Checksum)
 
 	case *FrameV2:
-		if fillFrameSignatureKey != nil {
-			ff.Signature = p.Signature(ff, fillFrameSignatureKey)
+		if fillSignatureKey != nil {
+			ff.Signature = p.Signature(ff, fillSignatureKey)
 		}
 
 		bufferLen := 10 + len(msgContent) + 2

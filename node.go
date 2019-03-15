@@ -53,6 +53,7 @@ import (
 	"time"
 )
 
+// 1st January 2015 GMT
 var signatureReferenceDate = time.Date(2015, 01, 01, 0, 0, 0, 0, time.UTC)
 
 // NodeVersion allows to set the frame version used in a Node to wrap outgoing messages.

@@ -94,7 +94,8 @@ func (t *transportUdpBroadcast) Close() error {
 }
 
 func (t *transportUdpBroadcast) Read(buf []byte) (int, error) {
-	// read WITHOUT deadline
+	// read WITHOUT deadline. Long periods without packets are normal since
+	// we're not directly connected to someone.
 	n, _, err := t.packetConn.ReadFrom(buf)
 
 	// wait termination, do not report errors

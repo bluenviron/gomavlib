@@ -39,6 +39,14 @@ type udpListenerConn struct {
 	writeDeadline time.Time
 }
 
+func newUdpListenerConn(listener *udpListener, addr net.Addr) *udpListenerConn {
+	return &udpListenerConn{
+		listener: listener,
+		addr:     addr,
+		readChan: make(chan []byte),
+	}
+}
+
 func (c *udpListenerConn) Close() error {
 	exit := false
 	func() {
@@ -98,7 +106,9 @@ func (c *udpListenerConn) Read(byt []byte) (int, error) {
 		if ok == false {
 			return 0, udpErrorTerminated
 		}
+
 		copy(byt, buf)
+		c.listener.readDone <- struct{}{}
 		return len(buf), nil
 	}
 }
@@ -116,12 +126,12 @@ func (c *udpListenerConn) Write(byt []byte) (int, error) {
 		return 0, udpErrorTerminated
 	}
 
-	err := c.listener.pc.SetWriteDeadline(c.writeDeadline)
+	err := c.listener.packetConn.SetWriteDeadline(c.writeDeadline)
 	if err != nil {
 		return 0, err
 	}
 
-	return c.listener.pc.WriteTo(byt, c.addr)
+	return c.listener.packetConn.WriteTo(byt, c.addr)
 }
 
 func (c *udpListenerConn) SetDeadline(time.Time) error {
@@ -140,24 +150,26 @@ func (c *udpListenerConn) SetWriteDeadline(t time.Time) error {
 }
 
 type udpListener struct {
-	pc         net.PacketConn
+	packetConn net.PacketConn
 	done       chan struct{}
 	acceptChan chan net.Conn
+	readDone   chan struct{}
 	conns      map[string]*udpListenerConn
 	mutex      sync.Mutex
 	closed     bool
 }
 
 func newUdpListener(network, address string) (net.Listener, error) {
-	pc, err := net.ListenPacket(network, address)
+	packetConn, err := net.ListenPacket(network, address)
 	if err != nil {
 		return nil, err
 	}
 
 	l := &udpListener{
-		pc:         pc,
+		packetConn: packetConn,
 		done:       make(chan struct{}),
 		acceptChan: make(chan net.Conn),
+		readDone:   make(chan struct{}),
 		conns:      make(map[string]*udpListenerConn),
 	}
 	go l.do()
@@ -181,7 +193,7 @@ func (l *udpListener) Close() error {
 	}
 
 	// terminate do()
-	l.pc.Close()
+	l.packetConn.Close()
 
 	// wait do() and ensure that acceptChan is not used anymore
 	<-l.done
@@ -193,21 +205,20 @@ func (l *udpListener) Close() error {
 }
 
 func (l *udpListener) Addr() net.Addr {
-	return l.pc.LocalAddr()
+	return l.packetConn.LocalAddr()
 }
 
 func (l *udpListener) do() {
 	defer func() { l.done <- struct{}{} }()
 
+	buf := make([]byte, 2048) // MTU is ~1500
 	for {
-		// buffer is be passed to the routines so it cannot be shared
-		buf := make([]byte, 2048) // MTU is 1500
-
-		n, addr, err := l.pc.ReadFrom(buf)
+		// read WITHOUT deadline. Long periods without packets are normal since
+		// we're not directly connected to someone.
+		n, addr, err := l.packetConn.ReadFrom(buf)
 		if err != nil {
 			break
 		}
-		buf = buf[:n]
 
 		// addr changes every time ReadFrom() is called, we use its string
 		// representation as index
@@ -222,11 +233,7 @@ func (l *udpListener) do() {
 
 			conn, preExisting = l.conns[addrs]
 			if preExisting == false {
-				conn = &udpListenerConn{
-					listener: l,
-					addr:     addr,
-					readChan: make(chan []byte),
-				}
+				conn = newUdpListenerConn(l, addr)
 				l.conns[addrs] = conn
 			}
 		}()
@@ -236,7 +243,10 @@ func (l *udpListener) do() {
 		}
 
 		// route buffer to connection
-		conn.readChan <- buf
+		conn.readChan <- buf[:n]
+
+		// wait copy since buffer is shared
+		<-l.readDone
 	}
 }
 

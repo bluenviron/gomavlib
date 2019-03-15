@@ -24,7 +24,7 @@ Basic example (more are available at https://github.com/gswly/gomavlib/tree/mast
   		SystemId:    10,
   		ComponentId: 1,
   		Endpoints: []gomavlib.EndpointConf{
-  			gomavlib.EndpointSerial{"/dev/ttyAMA0", 57600},
+  			gomavlib.EndpointSerial{"/dev/ttyAMA0:57600"},
   		},
   	})
   	if err != nil {

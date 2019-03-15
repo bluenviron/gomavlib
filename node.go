@@ -345,9 +345,10 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 				return
 			}
 
-			var f Frame
 			switch wh := what.(type) {
 			case Message:
+				var f Frame
+
 				// SequenceId and SignatureLinkId are unique for each channel
 				if n.conf.Version == V1 {
 					f = &FrameV1{
@@ -369,13 +370,19 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 				}
 				nextSequenceId++
 
-			case Frame:
-				f = wh
-			}
+				byt, err := n.parser.Encode(f, !n.conf.ChecksumDisable, n.conf.SignatureOutKey)
+				if err == nil {
+					conn.rwc.Write(byt)
+				}
 
-			byt, err := n.parser.Encode(f, !n.conf.ChecksumDisable, n.conf.SignatureOutKey)
-			if err == nil {
-				conn.rwc.Write(byt)
+			case Frame:
+				f := wh
+
+				// encode without touching checksum nor signature
+				byt, err := n.parser.Encode(f, false, nil)
+				if err == nil {
+					conn.rwc.Write(byt)
+				}
 			}
 
 			n.writeDone <- struct{}{}

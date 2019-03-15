@@ -11,22 +11,22 @@ import (
 // this is an example struct that implements io.ReadWriteCloser.
 // it does not read anything and prints what it receives.
 // the only requisite is that Close() must release Read().
-type CustomTransport struct {
+type CustomEndpoint struct {
 	readChan chan []byte
 }
 
-func NewCustomTransport() *CustomTransport {
-	return &CustomTransport{
+func NewCustomEndpoint() *CustomEndpoint {
+	return &CustomEndpoint{
 		readChan: make(chan []byte),
 	}
 }
 
-func (c *CustomTransport) Close() error {
+func (c *CustomEndpoint) Close() error {
 	close(c.readChan)
 	return nil
 }
 
-func (c *CustomTransport) Read(buf []byte) (int, error) {
+func (c *CustomEndpoint) Read(buf []byte) (int, error) {
 	read, ok := <-c.readChan
 	if ok == false {
 		return 0, fmt.Errorf("all right")
@@ -36,22 +36,22 @@ func (c *CustomTransport) Read(buf []byte) (int, error) {
 	return n, nil
 }
 
-func (c *CustomTransport) Write(buf []byte) (int, error) {
+func (c *CustomEndpoint) Write(buf []byte) (int, error) {
 	return len(buf), nil
 }
 
 func main() {
-	// allocate the custom transport
-	transport := NewCustomTransport()
+	// allocate the custom endpoint
+	endpoint := NewCustomEndpoint()
 
 	// create a node which understands given dialect, writes messages with given
-	// system id and component id, and reads/writes through a custom transport.
+	// system id and component id, and reads/writes to a custom endpoint.
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Dialect:     ardupilotmega.Dialect,
 		SystemId:    10,
 		ComponentId: 1,
-		Transports: []gomavlib.TransportConf{
-			gomavlib.TransportCustom{transport},
+		Endpoints: []gomavlib.EndpointConf{
+			gomavlib.EndpointCustom{endpoint},
 		},
 	})
 	if err != nil {
@@ -60,7 +60,7 @@ func main() {
 	defer node.Close()
 
 	// queue a dummy message
-	transport.readChan <- []byte("\xfd\t\x01\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x01\x02\x03\x05\x03\xd9\xd1\x01\x02\x00\x00\x00\x00\x00\x0eG\x04\x0c\xef\x9b")
+	endpoint.readChan <- []byte("\xfd\t\x01\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x01\x02\x03\x05\x03\xd9\xd1\x01\x02\x00\x00\x00\x00\x00\x0eG\x04\x0c\xef\x9b")
 
 	for {
 		// wait until a message is received.

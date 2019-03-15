@@ -8,76 +8,76 @@ import (
 	"time"
 )
 
-type transportClientConf interface {
+type endpointClientConf interface {
 	isUdp() bool
 	getAddress() string
 }
 
-// TransportTcpClient sets up a transport that works through a TCP client.
-type TransportTcpClient struct {
+// EndpointTcpClient sets up a endpoint that works through a TCP client.
+type EndpointTcpClient struct {
 	// domain name or IP of the server to connect to, example: 1.2.3.4:5600
 	Address string
 }
 
-func (TransportTcpClient) isUdp() bool {
+func (EndpointTcpClient) isUdp() bool {
 	return false
 }
 
-func (conf TransportTcpClient) getAddress() string {
+func (conf EndpointTcpClient) getAddress() string {
 	return conf.Address
 }
 
-func (conf TransportTcpClient) init() (transport, error) {
-	return initTransportClient(conf)
+func (conf EndpointTcpClient) init() (endpoint, error) {
+	return initEndpointClient(conf)
 }
 
-// TransportUdpClient sets up a transport that works through a UDP client.
-type TransportUdpClient struct {
+// EndpointUdpClient sets up a endpoint that works through a UDP client.
+type EndpointUdpClient struct {
 	// domain name or IP of the server to connect to, example: 1.2.3.4:5600
 	Address string
 }
 
-func (TransportUdpClient) isUdp() bool {
+func (EndpointUdpClient) isUdp() bool {
 	return true
 }
 
-func (conf TransportUdpClient) getAddress() string {
+func (conf EndpointUdpClient) getAddress() string {
 	return conf.Address
 }
 
-func (conf TransportUdpClient) init() (transport, error) {
-	return initTransportClient(conf)
+func (conf EndpointUdpClient) init() (endpoint, error) {
+	return initEndpointClient(conf)
 }
 
-type transportClient struct {
-	conf      transportClientConf
+type endpointClient struct {
+	conf      endpointClientConf
 	mutex     sync.Mutex
 	terminate chan struct{}
 	conn      io.ReadWriteCloser
 }
 
-func initTransportClient(conf transportClientConf) (transport, error) {
+func initEndpointClient(conf endpointClientConf) (endpoint, error) {
 	_, _, err := net.SplitHostPort(conf.getAddress())
 	if err != nil {
 		return nil, fmt.Errorf("invalid address")
 	}
 
-	t := &transportClient{
+	t := &endpointClient{
 		conf:      conf,
 		terminate: make(chan struct{}, 1),
 	}
 	return t, nil
 }
 
-func (*transportClient) isTransport() {
+func (*endpointClient) isEndpoint() {
 }
 
-func (t *transportClient) Close() error {
+func (t *endpointClient) Close() error {
 	t.terminate <- struct{}{}
 	return nil
 }
 
-func (t *transportClient) Write(buf []byte) (int, error) {
+func (t *endpointClient) Write(buf []byte) (int, error) {
 	t.mutex.Lock()
 	defer t.mutex.Unlock()
 
@@ -87,7 +87,7 @@ func (t *transportClient) Write(buf []byte) (int, error) {
 	return 0, fmt.Errorf("disconnected")
 }
 
-func (t *transportClient) Read(buf []byte) (int, error) {
+func (t *endpointClient) Read(buf []byte) (int, error) {
 	for {
 		// mutex is not necessary since Read() is the only one that can fill and empty conn
 		if t.conn == nil {

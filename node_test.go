@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func doTest(t *testing.T, t1 TransportConf, t2 TransportConf) {
+func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 	var testMsg1 = &MessageHeartbeat{
 		Type:           1,
 		Autopilot:      2,
@@ -46,7 +46,7 @@ func doTest(t *testing.T, t1 TransportConf, t2 TransportConf) {
 		Dialect:          []Message{&MessageHeartbeat{}},
 		SystemId:         10,
 		ComponentId:      1,
-		Transports:       []TransportConf{t1},
+		Endpoints:        []EndpointConf{t1},
 		HeartbeatDisable: true,
 	})
 	if err != nil {
@@ -57,7 +57,7 @@ func doTest(t *testing.T, t1 TransportConf, t2 TransportConf) {
 		Dialect:          []Message{&MessageHeartbeat{}},
 		SystemId:         11,
 		ComponentId:      1,
-		Transports:       []TransportConf{t2},
+		Endpoints:        []EndpointConf{t2},
 		HeartbeatDisable: true,
 	})
 	if err != nil {
@@ -149,41 +149,41 @@ func doTest(t *testing.T, t1 TransportConf, t2 TransportConf) {
 }
 
 func TestNodeTcpServerClient(t *testing.T) {
-	doTest(t, TransportTcpServer{"127.0.0.1:5601"}, TransportTcpClient{"127.0.0.1:5601"})
+	doTest(t, EndpointTcpServer{"127.0.0.1:5601"}, EndpointTcpClient{"127.0.0.1:5601"})
 }
 
 func TestNodeUdpServerClient(t *testing.T) {
-	doTest(t, TransportUdpServer{"127.0.0.1:5601"}, TransportUdpClient{"127.0.0.1:5601"})
+	doTest(t, EndpointUdpServer{"127.0.0.1:5601"}, EndpointUdpClient{"127.0.0.1:5601"})
 }
 
 func TestNodeUdpBroadcastBroadcast(t *testing.T) {
-	doTest(t, TransportUdpBroadcast{"127.255.255.255:5602", ":5601"},
-		TransportUdpBroadcast{"127.255.255.255:5601", ":5602"})
+	doTest(t, EndpointUdpBroadcast{"127.255.255.255:5602", ":5601"},
+		EndpointUdpBroadcast{"127.255.255.255:5601", ":5602"})
 }
 
-type CustomTransport struct {
+type CustomEndpoint struct {
 	writeBuf *bytes.Buffer
 	readChan chan struct{}
 }
 
-func NewCustomTransport() *CustomTransport {
-	return &CustomTransport{
+func NewCustomEndpoint() *CustomEndpoint {
+	return &CustomEndpoint{
 		readChan: make(chan struct{}),
 		writeBuf: bytes.NewBuffer(nil),
 	}
 }
 
-func (c *CustomTransport) Close() error {
+func (c *CustomEndpoint) Close() error {
 	close(c.readChan)
 	return nil
 }
 
-func (c *CustomTransport) Read(buf []byte) (int, error) {
+func (c *CustomEndpoint) Read(buf []byte) (int, error) {
 	<-c.readChan
 	return 0, errorTerminated
 }
 
-func (c *CustomTransport) Write(buf []byte) (int, error) {
+func (c *CustomEndpoint) Write(buf []byte) (int, error) {
 	c.writeBuf.Write(buf)
 	return len(buf), nil
 }
@@ -199,15 +199,15 @@ func TestNodeCustom(t *testing.T) {
 	}
 	var res = []byte{253, 9, 0, 0, 0, 11, 1, 0, 0, 0, 3, 0, 0, 0, 7, 5, 4, 2, 1, 159, 218}
 
-	rwc := NewCustomTransport()
+	rwc := NewCustomEndpoint()
 
 	func() {
 		node, err := NewNode(NodeConf{
 			Dialect:     []Message{&MessageHeartbeat{}},
 			SystemId:    11,
 			ComponentId: 1,
-			Transports: []TransportConf{
-				TransportCustom{rwc},
+			Endpoints: []EndpointConf{
+				EndpointCustom{rwc},
 			},
 			HeartbeatDisable: true,
 		})
@@ -229,9 +229,9 @@ func TestNodeError(t *testing.T) {
 		Dialect:     []Message{&MessageHeartbeat{}},
 		SystemId:    11,
 		ComponentId: 1,
-		Transports: []TransportConf{
-			TransportUdpServer{"127.0.0.1:5600"},
-			TransportUdpServer{"127.0.0.1:5600"},
+		Endpoints: []EndpointConf{
+			EndpointUdpServer{"127.0.0.1:5600"},
+			EndpointUdpServer{"127.0.0.1:5600"},
 		},
 		HeartbeatDisable: true,
 	})
@@ -247,8 +247,8 @@ func TestNodeHeartbeat(t *testing.T) {
 			Dialect:     []Message{&MessageHeartbeat{}},
 			SystemId:    10,
 			ComponentId: 1,
-			Transports: []TransportConf{
-				TransportUdpServer{"127.0.0.1:5600"},
+			Endpoints: []EndpointConf{
+				EndpointUdpServer{"127.0.0.1:5600"},
 			},
 			HeartbeatDisable: true,
 		})
@@ -261,8 +261,8 @@ func TestNodeHeartbeat(t *testing.T) {
 			Dialect:     []Message{&MessageHeartbeat{}},
 			SystemId:    11,
 			ComponentId: 1,
-			Transports: []TransportConf{
-				TransportUdpClient{"127.0.0.1:5600"},
+			Endpoints: []EndpointConf{
+				EndpointUdpClient{"127.0.0.1:5600"},
 			},
 			HeartbeatDisable: false,
 			HeartbeatPeriod:  500 * time.Millisecond,
@@ -296,8 +296,8 @@ func TestNodeFrameSignature(t *testing.T) {
 		Dialect:     []Message{&MessageHeartbeat{}},
 		SystemId:    10,
 		ComponentId: 1,
-		Transports: []TransportConf{
-			TransportUdpServer{"127.0.0.1:5600"},
+		Endpoints: []EndpointConf{
+			EndpointUdpServer{"127.0.0.1:5600"},
 		},
 		HeartbeatDisable: true,
 		SignatureInKey:   key2,
@@ -311,8 +311,8 @@ func TestNodeFrameSignature(t *testing.T) {
 		Dialect:     []Message{&MessageHeartbeat{}},
 		SystemId:    11,
 		ComponentId: 1,
-		Transports: []TransportConf{
-			TransportUdpClient{"127.0.0.1:5600"},
+		Endpoints: []EndpointConf{
+			EndpointUdpClient{"127.0.0.1:5600"},
 		},
 		HeartbeatDisable: true,
 		SignatureInKey:   key1,
@@ -375,8 +375,8 @@ func TestNodeRouting(t *testing.T) {
 		Dialect:     []Message{&MessageHeartbeat{}},
 		SystemId:    10,
 		ComponentId: 1,
-		Transports: []TransportConf{
-			TransportUdpClient{"127.0.0.1:5600"},
+		Endpoints: []EndpointConf{
+			EndpointUdpClient{"127.0.0.1:5600"},
 		},
 		HeartbeatDisable: true,
 	})
@@ -388,9 +388,9 @@ func TestNodeRouting(t *testing.T) {
 		Dialect:     []Message{&MessageHeartbeat{}},
 		SystemId:    11,
 		ComponentId: 1,
-		Transports: []TransportConf{
-			TransportUdpServer{"127.0.0.1:5600"},
-			TransportUdpClient{"127.0.0.1:5601"},
+		Endpoints: []EndpointConf{
+			EndpointUdpServer{"127.0.0.1:5600"},
+			EndpointUdpClient{"127.0.0.1:5601"},
 		},
 		HeartbeatDisable: true,
 	})
@@ -402,8 +402,8 @@ func TestNodeRouting(t *testing.T) {
 		Dialect:     []Message{&MessageHeartbeat{}},
 		SystemId:    12,
 		ComponentId: 1,
-		Transports: []TransportConf{
-			TransportUdpServer{"127.0.0.1:5601"},
+		Endpoints: []EndpointConf{
+			EndpointUdpServer{"127.0.0.1:5601"},
 		},
 		HeartbeatDisable: true,
 	})

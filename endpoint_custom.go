@@ -4,23 +4,23 @@ import (
 	"io"
 )
 
-// TransportCustom sets up a transport that works through a custom interface
+// EndpointCustom sets up a endpoint that works through a custom interface
 // that provides the Read(), Write() and Close() functions.
-type TransportCustom struct {
+type EndpointCustom struct {
 	// the struct or interface implementing Read(), Write() and Close()
 	ReadWriteCloser io.ReadWriteCloser
 }
 
-type transportCustom struct {
+type endpointCustom struct {
 	io.ReadWriteCloser
 }
 
-func (conf TransportCustom) init() (transport, error) {
-	t := &transportCustom{
+func (conf EndpointCustom) init() (endpoint, error) {
+	t := &endpointCustom{
 		conf.ReadWriteCloser,
 	}
 	return t, nil
 }
 
-func (t *transportCustom) isTransport() {
+func (t *endpointCustom) isEndpoint() {
 }

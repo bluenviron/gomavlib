@@ -9,13 +9,13 @@ import (
 
 func main() {
 	// create a node which does not use dialects, writes messages with given
-	// system id and component id, and reads/writes through a serial port.
+	// system id and component id, and reads/writes to a serial port.
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Dialect:     nil,
 		SystemId:    10,
 		ComponentId: 1,
-		Transports: []gomavlib.TransportConf{
-			gomavlib.TransportSerial{"/dev/ttyAMA0", 57600},
+		Endpoints: []gomavlib.EndpointConf{
+			gomavlib.EndpointSerial{"/dev/ttyAMA0", 57600},
 		},
 	})
 	if err != nil {

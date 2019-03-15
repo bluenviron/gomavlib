@@ -5,19 +5,19 @@ import (
 	"io"
 )
 
-// TransportSerial sets up a transport that works through a serial port.
-type TransportSerial struct {
+// EndpointSerial sets up a endpoint that works through a serial port.
+type EndpointSerial struct {
 	// the name or path of the serial port, example: /dev/ttyAMA0 or COM45
 	Name string
 	// baud rate, example: 57600
 	Baud int
 }
 
-type transportSerial struct {
+type endpointSerial struct {
 	io.ReadWriteCloser
 }
 
-func (conf TransportSerial) init() (transport, error) {
+func (conf EndpointSerial) init() (endpoint, error) {
 	port, err := serial.OpenPort(&serial.Config{
 		Name: conf.Name,
 		Baud: conf.Baud,
@@ -26,11 +26,11 @@ func (conf TransportSerial) init() (transport, error) {
 		return nil, err
 	}
 
-	t := &transportSerial{
+	t := &endpointSerial{
 		ReadWriteCloser: port,
 	}
 	return t, nil
 }
 
-func (*transportSerial) isTransport() {
+func (*endpointSerial) isEndpoint() {
 }

@@ -7,17 +7,17 @@
 
 gomavlib is a library that implements Mavlink 2.0 and 1.0 in the Go programming language. It can power UGVs, UAVs, ground stations, monitoring systems or routers acting in a Mavlink network.
 
-Mavlink is a lighweight and transport-independent protocol that is mostly used to communicate with unmanned ground vehicles (UGV) and unmanned aerial vehicles (UAV, drones, quadcopters, multirotors). It is supported by both of the most common open-source flight controllers (Ardupilot and PX4).
+Mavlink is a lighweight and endpoint-independent protocol that is mostly used to communicate with unmanned ground vehicles (UGV) and unmanned aerial vehicles (UAV, drones, quadcopters, multirotors). It is supported by both of the most common open-source flight controllers (Ardupilot and PX4).
 
 ## Features
 
 * Decode and encode Mavlink v2.0 and v1.0. Supports checksums, empty-byte truncation (v2.0), signing (v2.0), message extensions (v2.0)
 * Dialect is optional, the library can work a standard dialect, a custom dialect or no dialect at all. Standard dialects are provided in directory `dialect/`, with no need for generation. A Dialect generator is provided anyway.
-* Provides a high-level parser with ability to communicate through multiple transports in parallel:
+* Provides a high-level parser with ability to communicate to multiple endpoints in parallel:
   * serial
   * UDP (server, client or broadcast mode)
   * TCP (server or client mode)
-  * custom transport
+  * custom reader/writer
 * Provides a low-level parser with ability to encode/decode to/from byte slices
 * UDP connections are tracked and removed when inactive
 * Support both domain names and IPs
@@ -40,13 +40,13 @@ go get github.com/gswly/gomavlib
 
 ## Examples
 
-* [transport_serial](example/1transport_serial.go)
-* [transport_udp_server](example/2transport_udp_server.go)
-* [transport_udp_client](example/3transport_udp_client.go)
-* [transport_udp_broadcast](example/4transport_udp_broadcast.go)
-* [transport_tcp_server](example/5transport_tcp_server.go)
-* [transport_tcp_client](example/6transport_tcp_client.go)
-* [transport_custom](example/7transport_custom.go)
+* [endpoint_serial](example/1endpoint_serial.go)
+* [endpoint_udp_server](example/2endpoint_udp_server.go)
+* [endpoint_udp_client](example/3endpoint_udp_client.go)
+* [endpoint_udp_broadcast](example/4endpoint_udp_broadcast.go)
+* [endpoint_tcp_server](example/5endpoint_tcp_server.go)
+* [endpoint_tcp_client](example/6endpoint_tcp_client.go)
+* [endpoint_custom](example/7endpoint_custom.go)
 * [message_write](example/8message_write.go)
 * [message_signature](example/9message_signature.go)
 * [dialect_no](example/10dialect_no.go)

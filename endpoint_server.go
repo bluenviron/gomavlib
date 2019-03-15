@@ -6,59 +6,59 @@ import (
 	"net"
 )
 
-type transportServerConf interface {
+type endpointServerConf interface {
 	isUdp() bool
 	getAddress() string
 }
 
-// TransportTcpServer sets up a transport that works through a TCP server.
+// EndpointTcpServer sets up a endpoint that works through a TCP server.
 // TCP can be good for routing frames through the internet, but it is not the most
 // appropriate way for transferring frames from a UAV to a GCS, since it does
 // not allow frame losses.
-type TransportTcpServer struct {
+type EndpointTcpServer struct {
 	// listen address, i.e 0.0.0.0:5600
 	Address string
 }
 
-func (TransportTcpServer) isUdp() bool {
+func (EndpointTcpServer) isUdp() bool {
 	return false
 }
 
-func (conf TransportTcpServer) getAddress() string {
+func (conf EndpointTcpServer) getAddress() string {
 	return conf.Address
 }
 
-// TransportUdpServer sets up a transport that works through an UDP server.
+// EndpointUdpServer sets up a endpoint that works through an UDP server.
 // This is the most appropriate way for transferring frames from a UAV to a GPS
 // if they are connected to the same network.
-type TransportUdpServer struct {
+type EndpointUdpServer struct {
 	// listen address, i.e 0.0.0.0:5600
 	Address string
 }
 
-func (TransportUdpServer) isUdp() bool {
+func (EndpointUdpServer) isUdp() bool {
 	return true
 }
 
-func (conf TransportUdpServer) getAddress() string {
+func (conf EndpointUdpServer) getAddress() string {
 	return conf.Address
 }
 
-type transportServer struct {
-	conf      transportServerConf
+type endpointServer struct {
+	conf      endpointServerConf
 	listener  net.Listener
 	terminate chan struct{}
 }
 
-func (conf TransportTcpServer) init() (transport, error) {
-	return initTransportServer(conf)
+func (conf EndpointTcpServer) init() (endpoint, error) {
+	return initEndpointServer(conf)
 }
 
-func (conf TransportUdpServer) init() (transport, error) {
-	return initTransportServer(conf)
+func (conf EndpointUdpServer) init() (endpoint, error) {
+	return initEndpointServer(conf)
 }
 
-func initTransportServer(conf transportServerConf) (transport, error) {
+func initEndpointServer(conf endpointServerConf) (endpoint, error) {
 	_, _, err := net.SplitHostPort(conf.getAddress())
 	if err != nil {
 		return nil, fmt.Errorf("invalid address")
@@ -74,7 +74,7 @@ func initTransportServer(conf transportServerConf) (transport, error) {
 		return nil, err
 	}
 
-	t := &transportServer{
+	t := &endpointServer{
 		conf:      conf,
 		listener:  listener,
 		terminate: make(chan struct{}, 1),
@@ -82,16 +82,16 @@ func initTransportServer(conf transportServerConf) (transport, error) {
 	return t, nil
 }
 
-func (t *transportServer) isTransport() {
+func (t *endpointServer) isEndpoint() {
 }
 
-func (t *transportServer) Close() error {
+func (t *endpointServer) Close() error {
 	t.terminate <- struct{}{}
 	t.listener.Close()
 	return nil
 }
 
-func (t *transportServer) Accept() (io.ReadWriteCloser, error) {
+func (t *endpointServer) Accept() (io.ReadWriteCloser, error) {
 	rawConn, err := t.listener.Accept()
 
 	// wait termination, do not report errors

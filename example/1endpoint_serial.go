@@ -10,13 +10,13 @@ import (
 
 func main() {
 	// create a node which understands given dialect, writes messages with given
-	// system id and component id, and reads/writes through udp in client mode.
+	// system id and component id, and reads/writes to a serial port.
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Dialect:     ardupilotmega.Dialect,
 		SystemId:    10,
 		ComponentId: 1,
-		Transports: []gomavlib.TransportConf{
-			gomavlib.TransportUdpClient{"1.2.3.4:5600"},
+		Endpoints: []gomavlib.EndpointConf{
+			gomavlib.EndpointSerial{"/dev/ttyAMA0", 57600},
 		},
 	})
 	if err != nil {

@@ -31,8 +31,8 @@ func ipByBroadcastIp(target net.IP) net.IP {
 	return nil
 }
 
-// TransportUdpBroadcast sets up a transport that works through UDP broadcast packets.
-type TransportUdpBroadcast struct {
+// EndpointUdpBroadcast sets up a endpoint that works through UDP broadcast packets.
+type EndpointUdpBroadcast struct {
 	// the broadcast address to which sending outgoing frames, example: 192.168.5.255:5600
 	BroadcastAddress string
 	// (optional) the listening. if empty, it will be computed
@@ -40,14 +40,14 @@ type TransportUdpBroadcast struct {
 	LocalAddress string
 }
 
-type transportUdpBroadcast struct {
-	conf          TransportUdpBroadcast
+type endpointUdpBroadcast struct {
+	conf          EndpointUdpBroadcast
 	packetConn    net.PacketConn
 	broadcastAddr net.Addr
 	terminate     chan struct{}
 }
 
-func (conf TransportUdpBroadcast) init() (transport, error) {
+func (conf EndpointUdpBroadcast) init() (endpoint, error) {
 	_, port, err := net.SplitHostPort(conf.BroadcastAddress)
 	if err != nil {
 		return nil, fmt.Errorf("invalid broadcast address")
@@ -76,7 +76,7 @@ func (conf TransportUdpBroadcast) init() (transport, error) {
 		return nil, err
 	}
 
-	t := &transportUdpBroadcast{
+	t := &endpointUdpBroadcast{
 		conf:          conf,
 		packetConn:    packetConn,
 		broadcastAddr: broadcastAddr,
@@ -85,16 +85,16 @@ func (conf TransportUdpBroadcast) init() (transport, error) {
 	return t, nil
 }
 
-func (*transportUdpBroadcast) isTransport() {
+func (*endpointUdpBroadcast) isEndpoint() {
 }
 
-func (t *transportUdpBroadcast) Close() error {
+func (t *endpointUdpBroadcast) Close() error {
 	t.terminate <- struct{}{}
 	t.packetConn.Close()
 	return nil
 }
 
-func (t *transportUdpBroadcast) Read(buf []byte) (int, error) {
+func (t *endpointUdpBroadcast) Read(buf []byte) (int, error) {
 	// read WITHOUT deadline. Long periods without packets are normal since
 	// we're not directly connected to someone.
 	n, _, err := t.packetConn.ReadFrom(buf)
@@ -108,7 +108,7 @@ func (t *transportUdpBroadcast) Read(buf []byte) (int, error) {
 	return n, nil
 }
 
-func (t *transportUdpBroadcast) Write(buf []byte) (int, error) {
+func (t *endpointUdpBroadcast) Write(buf []byte) (int, error) {
 	err := t.packetConn.SetWriteDeadline(time.Now().Add(netWriteTimeout))
 	if err != nil {
 		return 0, err

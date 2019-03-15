@@ -3,7 +3,7 @@ Package gomavlib is a library that implements Mavlink 2.0 and 1.0 in the Go
 programming language. It can power UGVs, UAVs, ground stations, monitoring
 systems or routers acting in a Mavlink network.
 
-Mavlink is a lighweight and transport-independent protocol that is mostly
+Mavlink is a lighweight and endpoint-independent protocol that is mostly
 used to communicate with unmanned ground vehicles (UGV) and unmanned aerial
 vehicles (UAV, drones, quadcopters, multirotors). It is supported by both
 of the most common open-source flight controllers (Ardupilot and PX4).
@@ -23,8 +23,8 @@ Basic example (more are available at https://github.com/gswly/gomavlib/tree/mast
   		Dialect:     ardupilotmega.Dialect,
   		SystemId:    10,
   		ComponentId: 1,
-  		Transports: []gomavlib.TransportConf{
-  			gomavlib.TransportSerial{"/dev/ttyAMA0", 57600},
+  		Endpoints: []gomavlib.EndpointConf{
+  			gomavlib.EndpointSerial{"/dev/ttyAMA0", 57600},
   		},
   	})
   	if err != nil {
@@ -54,7 +54,7 @@ import (
 )
 
 const (
-	// constant for ip-based transports
+	// constant for ip-based endpoints
 	netBufferSize      = 512 // frames cannot go beyond len(header) + 255 + len(check) + len(sig)
 	netConnectTimeout  = 10 * time.Second
 	netReconnectPeriod = 2 * time.Second
@@ -142,9 +142,9 @@ type NodeConf struct {
 	// They are added to every outgoing message.
 	SystemId    byte
 	ComponentId byte
-	// contains the transport layers with which this node will
-	// communicate. Each transport contains one or more channels.
-	Transports []TransportConf
+	// contains the endpoint layers with which this node will
+	// communicate. Each endpoint contains one or more channels.
+	Endpoints []EndpointConf
 
 	// (optional) the secret key used to verify incoming frames.
 	// Non signed frames are discarded. This feature requires Mavlink v2.
@@ -165,14 +165,14 @@ type NodeConf struct {
 	ChecksumDisable bool
 }
 
-// Node is a high-level Mavlink encoder and decoder that works with transports.
+// Node is a high-level Mavlink encoder and decoder that works with endpoints.
 // See NodeConf for the options.
 type Node struct {
 	conf            NodeConf
 	mutex           sync.Mutex
 	wg              sync.WaitGroup
-	chanAccepters   map[transportChannelAccepter]struct{}
-	channels        map[*TransportChannel]struct{}
+	chanAccepters   map[endpointChannelAccepter]struct{}
+	channels        map[*EndpointChannel]struct{}
 	parser          *Parser
 	frameQueue      chan *NodeReadResult
 	writeDone       chan struct{}
@@ -187,8 +187,8 @@ func NewNode(conf NodeConf) (*Node, error) {
 	if conf.ComponentId < 1 {
 		return nil, fmt.Errorf("ComponentId must be >= 1")
 	}
-	if len(conf.Transports) == 0 {
-		return nil, fmt.Errorf("at least one transport must be provided")
+	if len(conf.Endpoints) == 0 {
+		return nil, fmt.Errorf("at least one endpoint must be provided")
 	}
 	if conf.SignatureInKey != nil && conf.Version != V2 {
 		return nil, fmt.Errorf("SignatureInKey requires V2 frames")
@@ -210,29 +210,29 @@ func NewNode(conf NodeConf) (*Node, error) {
 
 	n := &Node{
 		conf:          conf,
-		chanAccepters: make(map[transportChannelAccepter]struct{}),
-		channels:      make(map[*TransportChannel]struct{}),
+		chanAccepters: make(map[endpointChannelAccepter]struct{}),
+		channels:      make(map[*EndpointChannel]struct{}),
 		parser:        parser,
 		frameQueue:    make(chan *NodeReadResult),
 		writeDone:     make(chan struct{}),
 	}
 
-	// init transports
-	for _, tconf := range conf.Transports {
+	// init endpoints
+	for _, tconf := range conf.Endpoints {
 		tp, err := tconf.init()
 		if err != nil {
 			n.Close()
 			return nil, err
 		}
 
-		if tm, ok := tp.(transportChannelAccepter); ok {
+		if tm, ok := tp.(endpointChannelAccepter); ok {
 			n.startChannelAccepter(tm)
 
-		} else if ts, ok := tp.(transportChannelSingle); ok {
+		} else if ts, ok := tp.(endpointChannelSingle); ok {
 			n.startChannel(ts)
 
 		} else {
-			panic(fmt.Errorf("transport %d does not implement required interface", tp))
+			panic(fmt.Errorf("endpoint %d does not implement required interface", tp))
 		}
 	}
 
@@ -279,7 +279,7 @@ func (n *Node) Close() {
 	close(n.frameQueue)
 }
 
-func (n *Node) startChannelAccepter(tm transportChannelAccepter) {
+func (n *Node) startChannelAccepter(tm endpointChannelAccepter) {
 	n.chanAccepters[tm] = struct{}{}
 
 	n.wg.Add(1)
@@ -304,7 +304,7 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 	n.mutex.Lock()
 	defer n.mutex.Unlock()
 
-	conn := &TransportChannel{
+	conn := &EndpointChannel{
 		rwc:       rwc,
 		writeChan: make(chan interface{}),
 	}
@@ -402,8 +402,8 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 
 // NodeReadResult contains the result of node.Read()
 type NodeReadResult struct {
-	frame            Frame
-	transportChannel *TransportChannel
+	frame           Frame
+	endpointChannel *EndpointChannel
 }
 
 // Frame returns the Frame containing the message.
@@ -427,8 +427,8 @@ func (res *NodeReadResult) ComponentId() byte {
 }
 
 // Channel returns the channel used to send the message.
-func (res *NodeReadResult) Channel() *TransportChannel {
-	return res.transportChannel
+func (res *NodeReadResult) Channel() *EndpointChannel {
+	return res.endpointChannel
 }
 
 // Read reads a single message from available channels.
@@ -441,7 +441,7 @@ func (n *Node) Read() (*NodeReadResult, bool) {
 }
 
 // WriteMessageTo write a message to given channel.
-func (n *Node) WriteMessageTo(channel *TransportChannel, message Message) {
+func (n *Node) WriteMessageTo(channel *EndpointChannel, message Message) {
 	n.writeTo(channel, message)
 }
 
@@ -451,14 +451,14 @@ func (n *Node) WriteMessageAll(message Message) {
 }
 
 // WriteMessageExcept write a message to all channels except specified channel.
-func (n *Node) WriteMessageExcept(exceptChannel *TransportChannel, message Message) {
+func (n *Node) WriteMessageExcept(exceptChannel *EndpointChannel, message Message) {
 	n.writeExcept(exceptChannel, message)
 }
 
 // WriteFrameTo write a frame to given channel.
 // This function is intended for routing frames to other nodes, since all
 // the fields must be filled manually.
-func (n *Node) WriteFrameTo(channel *TransportChannel, frame Frame) {
+func (n *Node) WriteFrameTo(channel *EndpointChannel, frame Frame) {
 	n.writeTo(channel, frame)
 }
 
@@ -472,11 +472,11 @@ func (n *Node) WriteFrameAll(frame Frame) {
 // WriteFrameExcept write a frame to all channels except specified channel.
 // This function is intended for routing frames to other nodes, since all
 // the fields must be filled manually.
-func (n *Node) WriteFrameExcept(exceptChannel *TransportChannel, frame Frame) {
+func (n *Node) WriteFrameExcept(exceptChannel *EndpointChannel, frame Frame) {
 	n.writeExcept(exceptChannel, frame)
 }
 
-func (n *Node) writeTo(channel *TransportChannel, what interface{}) {
+func (n *Node) writeTo(channel *EndpointChannel, what interface{}) {
 	n.mutex.Lock()
 	defer n.mutex.Unlock()
 
@@ -485,7 +485,7 @@ func (n *Node) writeTo(channel *TransportChannel, what interface{}) {
 	}
 
 	// route to channels
-	// wait for responses (otherwise transports can be removed before writing)
+	// wait for responses (otherwise endpoints can be removed before writing)
 	channel.writeChan <- what
 	<-n.writeDone
 }
@@ -502,7 +502,7 @@ func (n *Node) writeAll(what interface{}) {
 	}
 }
 
-func (n *Node) writeExcept(exceptChannel *TransportChannel, what interface{}) {
+func (n *Node) writeExcept(exceptChannel *EndpointChannel, what interface{}) {
 	n.mutex.Lock()
 	defer n.mutex.Unlock()
 

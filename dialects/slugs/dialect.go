@@ -1402,8 +1402,8 @@ func (*MessageGps2Raw) GetId() uint32 {
 }
 
 type MessagePowerStatus struct {
-	Vcc    uint16
-	Vservo uint16
+	Vcc    uint16 `mavname:"Vcc"`
+	Vservo uint16 `mavname:"Vservo"`
 	Flags  uint16
 }
 
@@ -1954,7 +1954,7 @@ func (*MessageExtendedSysState) GetId() uint32 {
 }
 
 type MessageAdsbVehicle struct {
-	IcaoAddress  uint32
+	IcaoAddress  uint32 `mavname:"ICAO_address"`
 	Lat          int32
 	Lon          int32
 	AltitudeType uint8
@@ -2116,8 +2116,8 @@ func (*MessageCameraInformation) GetId() uint32 {
 type MessageCameraSettings struct {
 	TimeBootMs uint32
 	ModeId     uint8
-	Zoomlevel  float32 `mavext:"true"`
-	Focuslevel float32 `mavext:"true"`
+	Zoomlevel  float32 `mavext:"true" mavname:"zoomLevel"`
+	Focuslevel float32 `mavext:"true" mavname:"focusLevel"`
 }
 
 func (*MessageCameraSettings) GetId() uint32 {
@@ -2555,9 +2555,9 @@ func (*MessageWheelDistance) GetId() uint32 {
 // slugs.xml
 
 type MessageCpuLoad struct {
-	Sensload uint8
-	Ctrlload uint8
-	Batvolt  uint16
+	Sensload uint8  `mavname:"sensLoad"`
+	Ctrlload uint8  `mavname:"ctrlLoad"`
+	Batvolt  uint16 `mavname:"batVolt"`
 }
 
 func (*MessageCpuLoad) GetId() uint32 {
@@ -2565,12 +2565,12 @@ func (*MessageCpuLoad) GetId() uint32 {
 }
 
 type MessageSensorBias struct {
-	Axbias float32
-	Aybias float32
-	Azbias float32
-	Gxbias float32
-	Gybias float32
-	Gzbias float32
+	Axbias float32 `mavname:"axBias"`
+	Aybias float32 `mavname:"ayBias"`
+	Azbias float32 `mavname:"azBias"`
+	Gxbias float32 `mavname:"gxBias"`
+	Gybias float32 `mavname:"gyBias"`
+	Gzbias float32 `mavname:"gzBias"`
 }
 
 func (*MessageSensorBias) GetId() uint32 {
@@ -2578,12 +2578,12 @@ func (*MessageSensorBias) GetId() uint32 {
 }
 
 type MessageDiagnostic struct {
-	Diagfl1 float32
-	Diagfl2 float32
-	Diagfl3 float32
-	Diagsh1 int16
-	Diagsh2 int16
-	Diagsh3 int16
+	Diagfl1 float32 `mavname:"diagFl1"`
+	Diagfl2 float32 `mavname:"diagFl2"`
+	Diagfl3 float32 `mavname:"diagFl3"`
+	Diagsh1 int16   `mavname:"diagSh1"`
+	Diagsh2 int16   `mavname:"diagSh2"`
+	Diagsh3 int16   `mavname:"diagSh3"`
 }
 
 func (*MessageDiagnostic) GetId() uint32 {
@@ -2594,12 +2594,12 @@ type MessageSlugsNavigation struct {
 	UM        float32
 	PhiC      float32
 	ThetaC    float32
-	PsidotC   float32
+	PsidotC   float32 `mavname:"psiDot_c"`
 	AyBody    float32
-	Totaldist float32
-	Dist2go   float32
-	Fromwp    uint8
-	Towp      uint8
+	Totaldist float32 `mavname:"totalDist"`
+	Dist2go   float32 `mavname:"dist2Go"`
+	Fromwp    uint8   `mavname:"fromWP"`
+	Towp      uint8   `mavname:"toWP"`
 	HC        uint16
 }
 
@@ -2627,12 +2627,12 @@ type MessageGpsDateTime struct {
 	Hour        uint8
 	Min         uint8
 	Sec         uint8
-	Clockstat   uint8
-	Vissat      uint8
-	Usesat      uint8
-	Gppgl       uint8
-	Sigusedmask uint8
-	Percentused uint8
+	Clockstat   uint8 `mavname:"clockStat"`
+	Vissat      uint8 `mavname:"visSat"`
+	Usesat      uint8 `mavname:"useSat"`
+	Gppgl       uint8 `mavname:"GppGl"`
+	Sigusedmask uint8 `mavname:"sigUsedMask"`
+	Percentused uint8 `mavname:"percentUsed"`
 }
 
 func (*MessageGpsDateTime) GetId() uint32 {
@@ -2641,9 +2641,9 @@ func (*MessageGpsDateTime) GetId() uint32 {
 
 type MessageMidLvlCmds struct {
 	Target   uint8
-	Hcommand float32
-	Ucommand float32
-	Rcommand float32
+	Hcommand float32 `mavname:"hCommand"`
+	Ucommand float32 `mavname:"uCommand"`
+	Rcommand float32 `mavname:"rCommand"`
 }
 
 func (*MessageMidLvlCmds) GetId() uint32 {
@@ -2652,7 +2652,7 @@ func (*MessageMidLvlCmds) GetId() uint32 {
 
 type MessageCtrlSrfcPt struct {
 	Target     uint8
-	Bitfieldpt uint16
+	Bitfieldpt uint16 `mavname:"bitfieldPt"`
 }
 
 func (*MessageCtrlSrfcPt) GetId() uint32 {
@@ -2664,7 +2664,7 @@ type MessageSlugsCameraOrder struct {
 	Pan      int8
 	Tilt     int8
 	Zoom     int8
-	Movehome int8
+	Movehome int8 `mavname:"moveHome"`
 }
 
 func (*MessageSlugsCameraOrder) GetId() uint32 {
@@ -2673,9 +2673,9 @@ func (*MessageSlugsCameraOrder) GetId() uint32 {
 
 type MessageControlSurface struct {
 	Target    uint8
-	Idsurface uint8
-	Mcontrol  float32
-	Bcontrol  float32
+	Idsurface uint8   `mavname:"idSurface"`
+	Mcontrol  float32 `mavname:"mControl"`
+	Bcontrol  float32 `mavname:"bControl"`
 }
 
 func (*MessageControlSurface) GetId() uint32 {
@@ -2694,7 +2694,7 @@ func (*MessageSlugsMobileLocation) GetId() uint32 {
 
 type MessageSlugsConfigurationCamera struct {
 	Target  uint8
-	Idorder uint8
+	Idorder uint8 `mavname:"idOrder"`
 	Order   uint8
 }
 
@@ -2717,7 +2717,7 @@ func (*MessageIsrLocation) GetId() uint32 {
 }
 
 type MessageVoltSensor struct {
-	R2type   uint8
+	R2type   uint8 `mavname:"r2Type"`
 	Voltage  uint16
 	Reading2 uint16
 }
@@ -2750,13 +2750,13 @@ func (*MessageUavStatus) GetId() uint32 {
 }
 
 type MessageStatusGps struct {
-	Csfails    uint16
-	Gpsquality uint8
-	Msgstype   uint8
-	Posstatus  uint8
-	Magvar     float32
-	Magdir     int8
-	Modeind    uint8
+	Csfails    uint16  `mavname:"csFails"`
+	Gpsquality uint8   `mavname:"gpsQuality"`
+	Msgstype   uint8   `mavname:"msgsType"`
+	Posstatus  uint8   `mavname:"posStatus"`
+	Magvar     float32 `mavname:"magVar"`
+	Magdir     int8    `mavname:"magDir"`
+	Modeind    uint8   `mavname:"modeInd"`
 }
 
 func (*MessageStatusGps) GetId() uint32 {
@@ -2764,13 +2764,13 @@ func (*MessageStatusGps) GetId() uint32 {
 }
 
 type MessageNovatelDiag struct {
-	Timestatus     uint8
-	Receiverstatus uint32
-	Solstatus      uint8
-	Postype        uint8
-	Veltype        uint8
-	Possolage      float32
-	Csfails        uint16
+	Timestatus     uint8   `mavname:"timeStatus"`
+	Receiverstatus uint32  `mavname:"receiverStatus"`
+	Solstatus      uint8   `mavname:"solStatus"`
+	Postype        uint8   `mavname:"posType"`
+	Veltype        uint8   `mavname:"velType"`
+	Possolage      float32 `mavname:"posSolAge"`
+	Csfails        uint16  `mavname:"csFails"`
 }
 
 func (*MessageNovatelDiag) GetId() uint32 {

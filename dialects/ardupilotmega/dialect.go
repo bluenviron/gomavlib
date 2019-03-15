@@ -1402,8 +1402,8 @@ func (*MessageGps2Raw) GetId() uint32 {
 }
 
 type MessagePowerStatus struct {
-	Vcc    uint16
-	Vservo uint16
+	Vcc    uint16 `mavname:"Vcc"`
+	Vservo uint16 `mavname:"Vservo"`
 	Flags  uint16
 }
 
@@ -1954,7 +1954,7 @@ func (*MessageExtendedSysState) GetId() uint32 {
 }
 
 type MessageAdsbVehicle struct {
-	IcaoAddress  uint32
+	IcaoAddress  uint32 `mavname:"ICAO_address"`
 	Lat          int32
 	Lon          int32
 	AltitudeType uint8
@@ -2116,8 +2116,8 @@ func (*MessageCameraInformation) GetId() uint32 {
 type MessageCameraSettings struct {
 	TimeBootMs uint32
 	ModeId     uint8
-	Zoomlevel  float32 `mavext:"true"`
-	Focuslevel float32 `mavext:"true"`
+	Zoomlevel  float32 `mavext:"true" mavname:"zoomLevel"`
+	Focuslevel float32 `mavext:"true" mavname:"focusLevel"`
 }
 
 func (*MessageCameraSettings) GetId() uint32 {
@@ -2555,14 +2555,14 @@ func (*MessageWheelDistance) GetId() uint32 {
 // uAvionix.xml
 
 type MessageUavionixAdsbOutCfg struct {
-	Icao         uint32
+	Icao         uint32 `mavname:"ICAO"`
 	Callsign     string `mavlen:"9"`
-	Emittertype  uint8
-	Aircraftsize uint8
-	Gpsoffsetlat uint8
-	Gpsoffsetlon uint8
-	Stallspeed   uint16
-	Rfselect     uint8
+	Emittertype  uint8  `mavname:"emitterType"`
+	Aircraftsize uint8  `mavname:"aircraftSize"`
+	Gpsoffsetlat uint8  `mavname:"gpsOffsetLat"`
+	Gpsoffsetlon uint8  `mavname:"gpsOffsetLon"`
+	Stallspeed   uint16 `mavname:"stallSpeed"`
+	Rfselect     uint8  `mavname:"rfSelect"`
 }
 
 func (*MessageUavionixAdsbOutCfg) GetId() uint32 {
@@ -2570,20 +2570,20 @@ func (*MessageUavionixAdsbOutCfg) GetId() uint32 {
 }
 
 type MessageUavionixAdsbOutDynamic struct {
-	Utctime         uint32
-	Gpslat          int32
-	Gpslon          int32
-	Gpsalt          int32
-	Gpsfix          uint8
-	Numsats         uint8
-	Baroaltmsl      int32
-	Accuracyhor     uint32
-	Accuracyvert    uint16
-	Accuracyvel     uint16
-	Velvert         int16
-	Velns           int16
-	Velew           int16
-	Emergencystatus uint8
+	Utctime         uint32 `mavname:"utcTime"`
+	Gpslat          int32  `mavname:"gpsLat"`
+	Gpslon          int32  `mavname:"gpsLon"`
+	Gpsalt          int32  `mavname:"gpsAlt"`
+	Gpsfix          uint8  `mavname:"gpsFix"`
+	Numsats         uint8  `mavname:"numSats"`
+	Baroaltmsl      int32  `mavname:"baroAltMSL"`
+	Accuracyhor     uint32 `mavname:"accuracyHor"`
+	Accuracyvert    uint16 `mavname:"accuracyVert"`
+	Accuracyvel     uint16 `mavname:"accuracyVel"`
+	Velvert         int16  `mavname:"velVert"`
+	Velns           int16  `mavname:"velNS"`
+	Velew           int16  `mavname:"VelEW"`
+	Emergencystatus uint8  `mavname:"emergencyStatus"`
 	State           uint16
 	Squawk          uint16
 }
@@ -2593,7 +2593,7 @@ func (*MessageUavionixAdsbOutDynamic) GetId() uint32 {
 }
 
 type MessageUavionixAdsbTransceiverHealthReport struct {
-	Rfhealth uint8
+	Rfhealth uint8 `mavname:"rfHealth"`
 }
 
 func (*MessageUavionixAdsbTransceiverHealthReport) GetId() uint32 {
@@ -2611,7 +2611,7 @@ func (*MessageIcarousHeartbeat) GetId() uint32 {
 }
 
 type MessageIcarousKinematicBands struct {
-	Numbands int8
+	Numbands int8 `mavname:"numBands"`
 	Type1    uint8
 	Min1     float32
 	Max1     float32
@@ -2797,9 +2797,9 @@ func (*MessageFenceStatus) GetId() uint32 {
 }
 
 type MessageAhrs struct {
-	Omegaix     float32
-	Omegaiy     float32
-	Omegaiz     float32
+	Omegaix     float32 `mavname:"omegaIx"`
+	Omegaiy     float32 `mavname:"omegaIy"`
+	Omegaiz     float32 `mavname:"omegaIz"`
 	AccelWeight float32
 	RenormVal   float32
 	ErrorRp     float32
@@ -2829,8 +2829,8 @@ func (*MessageSimstate) GetId() uint32 {
 }
 
 type MessageHwstatus struct {
-	Vcc    uint16
-	I2cerr uint8
+	Vcc    uint16 `mavname:"Vcc"`
+	I2cerr uint8  `mavname:"I2Cerr"`
 }
 
 func (*MessageHwstatus) GetId() uint32 {
@@ -2931,14 +2931,14 @@ type MessageAirspeedAutocal struct {
 	Vy           float32
 	Vz           float32
 	DiffPressure float32
-	Eas2tas      float32
+	Eas2tas      float32 `mavname:"EAS2TAS"`
 	Ratio        float32
 	StateX       float32
 	StateY       float32
 	StateZ       float32
-	Pax          float32
-	Pby          float32
-	Pcz          float32
+	Pax          float32 `mavname:"Pax"`
+	Pby          float32 `mavname:"Pby"`
+	Pcz          float32 `mavname:"Pcz"`
 }
 
 func (*MessageAirspeedAutocal) GetId() uint32 {
@@ -2976,9 +2976,9 @@ type MessageCompassmotStatus struct {
 	Throttle      uint16
 	Current       float32
 	Interference  uint16
-	Compensationx float32
-	Compensationy float32
-	Compensationz float32
+	Compensationx float32 `mavname:"CompensationX"`
+	Compensationy float32 `mavname:"CompensationY"`
+	Compensationz float32 `mavname:"CompensationZ"`
 }
 
 func (*MessageCompassmotStatus) GetId() uint32 {
@@ -3163,10 +3163,10 @@ type MessagePidTuning struct {
 	Axis     uint8
 	Desired  float32
 	Achieved float32
-	Ff       float32
-	P        float32
-	I        float32
-	D        float32
+	Ff       float32 `mavname:"FF"`
+	P        float32 `mavname:"P"`
+	I        float32 `mavname:"I"`
+	D        float32 `mavname:"D"`
 }
 
 func (*MessagePidTuning) GetId() uint32 {
@@ -3380,8 +3380,8 @@ func (*MessageVisionPositionDelta) GetId() uint32 {
 
 type MessageAoaSsa struct {
 	TimeUsec uint64
-	Aoa      float32
-	Ssa      float32
+	Aoa      float32 `mavname:"AOA"`
+	Ssa      float32 `mavname:"SSA"`
 }
 
 func (*MessageAoaSsa) GetId() uint32 {

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/xml"
 	"fmt"
 	"github.com/gswly/gomavlib"
 	"gopkg.in/alecthomas/kingpin.v2"
@@ -17,89 +16,33 @@ import (
 	"text/template"
 )
 
-// MavlinkEnumValue is the part of a dialect definition that contains an enum value.
-type MavlinkEnumValue struct {
-	Value       string `xml:"value,attr"`
-	Name        string `xml:"name,attr"`
-	Description string `xml:"description"`
+var reIsArray = regexp.MustCompile("^(.+?)\\[([0-9]+)\\]$")
+
+type outField struct {
+	Line string
 }
 
-// MavlinkEnum is the part of a dialect definition that contains an enum.
-type MavlinkEnum struct {
-	Name        string              `xml:"name,attr"`
-	Description string              `xml:"description"`
-	Values      []*MavlinkEnumValue `xml:"entry"`
+type outMessage struct {
+	Name   string
+	Id     int
+	Fields []*outField
 }
 
-// MavlinkField is the part of a dialect definition that contains a field.
-type MavlinkField struct {
-	Extension   bool   `xml:"-"`
-	Type        string `xml:"type,attr"`
-	Name        string `xml:"name,attr"`
-	Enum        string `xml:"enum,attr"`
-	Description string `xml:",innerxml"`
+type outDefinition struct {
+	Name     string
+	Messages []*outMessage
+	enums    []*DialectEnum
 }
 
-// MavlinkMessage is the part of a dialect definition that contains a message.
-type MavlinkMessage struct {
-	Id          uint32
-	Name        string
-	Description string
-	Fields      []*MavlinkField
+type outEnum struct {
+	Name   string
+	Values []*DialectEnumValue
 }
 
-// UnmarshalXML implements xml.Unmarshaler since we must unmarshal manually due to extension fields
-func (m *MavlinkMessage) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	// unmarshal attributes
-	for _, a := range start.Attr {
-		switch a.Name.Local {
-		case "id":
-			v, _ := strconv.Atoi(a.Value)
-			m.Id = uint32(v)
-		case "name":
-			m.Name = a.Value
-		}
-	}
-
-	inExtensions := false
-	for {
-		t, _ := d.Token()
-		if t == nil {
-			break
-		}
-		switch se := t.(type) {
-		case xml.StartElement:
-			switch se.Name.Local {
-			case "description":
-				err := d.DecodeElement(&m.Description, &se)
-				if err != nil {
-					return err
-				}
-
-			case "extensions":
-				inExtensions = true
-
-			case "field":
-				field := &MavlinkField{Extension: inExtensions}
-				err := d.DecodeElement(&field, &se)
-				if err != nil {
-					return err
-				}
-				m.Fields = append(m.Fields, field)
-			}
-		}
-	}
-	return nil
-}
-
-// MavlinkDefinition is a dialect definition.
-type MavlinkDefinition struct {
-	Name     string            `xml:"-"`
-	Version  int               `xml:"version"`
-	Dialect  int               `xml:"dialect"`
-	Includes []string          `xml:"include"`
-	Enums    []*MavlinkEnum    `xml:"enums>enum"`
-	Messages []*MavlinkMessage `xml:"messages>message"`
+type outContent struct {
+	Name  string
+	Defs  []*outDefinition
+	Enums map[string]*outEnum
 }
 
 var tpl = template.Must(template.New("").Parse(`
@@ -117,7 +60,7 @@ import (
 {{- range .Messages }}
 type Message{{ .Name }} struct {
 {{- range .Fields }}
-    {{ .Name }} {{ .Type }}
+    {{ .Line }}
 {{- end }}
 }
 
@@ -147,64 +90,13 @@ const (
 {{- end }}
 )
 {{ end }}
-
 `))
 
-func fieldTypeToGo(f *MavlinkField) (string, error) {
-	typ := f.Type
-
-	arrayLen := ""
-	tags := make(map[string]string)
-
-	if typ == "uint8_t_mavlink_version" {
-		typ = "uint8_t"
-	}
-
-	// string or array
-	re := regexp.MustCompile("^(.+?)\\[([0-9]+)\\]$")
-	if matches := re.FindStringSubmatch(typ); matches != nil {
-		// string
-		if matches[1] == "char" {
-			tags["mavlen"] = matches[2]
-			typ = "char"
-			// array
-		} else {
-			arrayLen = matches[2]
-			typ = matches[1]
-		}
-	}
-
-	// extension
-	if f.Extension == true {
-		tags["mavext"] = "true"
-	}
-
-	typ = gomavlib.DialectTypeXmlToGo(typ)
-	if typ == "" {
-		return "", fmt.Errorf("unknown type: %s", typ)
-	}
-
-	out := ""
-	if arrayLen != "" {
-		out += "[" + arrayLen + "]"
-	}
-	out += typ
-	if len(tags) > 0 {
-		var tmp []string
-		for k, v := range tags {
-			tmp = append(tmp, fmt.Sprintf("%s:\"%s\"", k, v))
-		}
-		sort.Strings(tmp)
-		out += " `" + strings.Join(tmp, " ") + "`"
-	}
-	return out, nil
-}
-
 func main() {
-	outfile := kingpin.Flag("output", "output file").Required().String()
-	mainDefAddr := kingpin.Arg("xml", "a path or url pointing to a Mavlink dialect definition in XML format").Required().String()
 	kingpin.CommandLine.Help = "Generate a Mavlink dialect library from a definition file.\n" +
 		"Example: dialgen \\\n--output=dialect.go \\\nhttps://raw.githubusercontent.com/mavlink/mavlink/master/message_definitions/v1.0/common.xml"
+	outfile := kingpin.Flag("output", "output file").Required().String()
+	mainDefAddr := kingpin.Arg("xml", "a path or url pointing to a Mavlink dialect definition in XML format").Required().String()
 	kingpin.Parse()
 
 	err := do(*outfile, *mainDefAddr)
@@ -223,104 +115,40 @@ func do(outfile string, mainDefAddr string) error {
 		_, err := url.ParseRequestURI(mainDefAddr)
 		return err == nil
 	}()
-	processed := make(map[string]struct{})
-	defs := []*MavlinkDefinition{}
+	defsProcessed := make(map[string]struct{})
+	out := &outContent{
+		Name: func() string {
+			_, name := filepath.Split(mainDefAddr)
+			return strings.TrimSuffix(name, ".xml")
+		}(),
+		Enums: make(map[string]*outEnum),
+	}
 
 	// parse all definitions recursively
-	var process func(defAddr string) error
-	process = func(defAddr string) error {
-		// skip already processed
-		if _, ok := processed[defAddr]; ok {
-			return nil
-		}
-		processed[defAddr] = struct{}{}
-
-		fmt.Printf("parsing %s...\n", defAddr)
-
-		// get definition content
-		content, err := func() ([]byte, error) {
-			if isRemote == true {
-				byt, err := dlUrl(defAddr)
-				if err != nil {
-					return nil, fmt.Errorf("unable to download: %s", err)
-				}
-				return byt, nil
-
-			}
-
-			byt, err := ioutil.ReadFile(defAddr)
-			if err != nil {
-				return nil, fmt.Errorf("unable to open: %s", err)
-			}
-			return byt, nil
-		}()
-		if err != nil {
-			return err
-		}
-
-		// parse definition
-		def := &MavlinkDefinition{}
-		err = xml.Unmarshal(content, def)
-		if err != nil {
-			return fmt.Errorf("unable to decode: %s", err)
-		}
-
-		addrPath, addrName := filepath.Split(defAddr)
-		def.Name = addrName
-
-		// process includes
-		for _, inc := range def.Includes {
-			// prepend url to remote address
-			if isRemote == true {
-				inc = addrPath + inc
-			}
-			err := process(inc)
-			if err != nil {
-				return err
-			}
-		}
-
-		// process messages
-		for _, msg := range def.Messages {
-			// convert strings to go format
-			msg.Name = gomavlib.DialectMsgXmlToGo(msg.Name)
-			for _, f := range msg.Fields {
-				f.Name = gomavlib.DialectFieldXmlToGo(f.Name)
-				var err error
-				f.Type, err = fieldTypeToGo(f)
-				if err != nil {
-					return err
-				}
-			}
-		}
-
-		defs = append(defs, def)
-		return nil
-	}
-	err := process(mainDefAddr)
+	outDefs, err := definitionProcess(defsProcessed, isRemote, mainDefAddr)
 	if err != nil {
 		return err
 	}
+	out.Defs = outDefs
 
 	// merge enums together
-	enums := make(map[string]*MavlinkEnum)
-	for _, def := range defs {
-		for _, origenum := range def.Enums {
-			if _, ok := enums[origenum.Name]; !ok {
-				enums[origenum.Name] = &MavlinkEnum{
-					Name: origenum.Name,
+	for _, def := range out.Defs {
+		for _, defEnum := range def.enums {
+			if _, ok := out.Enums[defEnum.Name]; !ok {
+				out.Enums[defEnum.Name] = &outEnum{
+					Name: defEnum.Name,
 				}
 			}
-			enum := enums[origenum.Name]
+			enum := out.Enums[defEnum.Name]
 
-			for _, v := range origenum.Values {
+			for _, v := range defEnum.Values {
 				enum.Values = append(enum.Values, v)
 			}
 		}
 	}
 
 	// fill enum missing values
-	for _, enum := range enums {
+	for _, enum := range out.Enums {
 		nextVal := 0
 		for _, v := range enum.Values {
 			if v.Value != "" {
@@ -345,22 +173,83 @@ func do(outfile string, mainDefAddr string) error {
 	defer f.Close()
 
 	// dump
-	tmp := map[string]interface{}{
-		"Name": func() string {
-			_, name := filepath.Split(mainDefAddr)
-			return strings.TrimSuffix(name, ".xml")
-		}(),
-		"Defs":  defs,
-		"Enums": enums,
-	}
-	err = tpl.Execute(f, tmp)
+	err = tpl.Execute(f, out)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func dlUrl(desturl string) ([]byte, error) {
+func definitionProcess(defsProcessed map[string]struct{}, isRemote bool, defAddr string) ([]*outDefinition, error) {
+	// skip already processed
+	if _, ok := defsProcessed[defAddr]; ok {
+		return nil, nil
+	}
+	defsProcessed[defAddr] = struct{}{}
+
+	fmt.Printf("parsing %s...\n", defAddr)
+
+	content, err := dialectGet(isRemote, defAddr)
+	if err != nil {
+		return nil, err
+	}
+
+	def, err := dialectDecode(content)
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode: %s", err)
+	}
+
+	addrPath, addrName := filepath.Split(defAddr)
+
+	outDef := &outDefinition{
+		Name:  addrName,
+		enums: def.Enums,
+	}
+	var outDefs []*outDefinition
+
+	// process includes before this definition
+	for _, inc := range def.Includes {
+		// prepend url to remote address
+		if isRemote == true {
+			inc = addrPath + inc
+		}
+		subDefs, err := definitionProcess(defsProcessed, isRemote, inc)
+		if err != nil {
+			return nil, err
+		}
+		outDefs = append(outDefs, subDefs...)
+	}
+
+	// process messages
+	for _, msg := range def.Messages {
+		outMsg, err := messageProcess(msg)
+		if err != nil {
+			return nil, err
+		}
+		outDef.Messages = append(outDef.Messages, outMsg)
+	}
+
+	outDefs = append(outDefs, outDef)
+	return outDefs, nil
+}
+
+func dialectGet(isRemote bool, defAddr string) ([]byte, error) {
+	if isRemote == true {
+		byt, err := urlDownload(defAddr)
+		if err != nil {
+			return nil, fmt.Errorf("unable to download: %s", err)
+		}
+		return byt, nil
+	}
+
+	byt, err := ioutil.ReadFile(defAddr)
+	if err != nil {
+		return nil, fmt.Errorf("unable to open: %s", err)
+	}
+	return byt, nil
+}
+
+func urlDownload(desturl string) ([]byte, error) {
 	res, err := http.Get(desturl)
 	if err != nil {
 		return nil, err
@@ -376,4 +265,81 @@ func dlUrl(desturl string) ([]byte, error) {
 		return nil, err
 	}
 	return byt, nil
+}
+
+func messageProcess(msg *DialectMessage) (*outMessage, error) {
+	outMsg := &outMessage{
+		Name: gomavlib.DialectMsgDefToGo(msg.Name),
+		Id:   msg.Id,
+	}
+
+	for _, f := range msg.Fields {
+		outField, err := fieldProcess(f)
+		if err != nil {
+			return nil, err
+		}
+		outMsg.Fields = append(outMsg.Fields, outField)
+	}
+
+	return outMsg, nil
+}
+
+func fieldProcess(field *DialectField) (*outField, error) {
+	outF := &outField{}
+	tags := make(map[string]string)
+
+	newname := gomavlib.DialectFieldDefToGo(field.Name)
+
+	// name conversion is not univoque: add tag
+	if gomavlib.DialectFieldGoToDef(newname) != field.Name {
+		tags["mavname"] = field.Name
+	}
+
+	outF.Line += newname
+
+	typ := field.Type
+	arrayLen := ""
+
+	if typ == "uint8_t_mavlink_version" {
+		typ = "uint8_t"
+	}
+
+	// string or array
+	if matches := reIsArray.FindStringSubmatch(typ); matches != nil {
+		// string
+		if matches[1] == "char" {
+			tags["mavlen"] = matches[2]
+			typ = "char"
+			// array
+		} else {
+			arrayLen = matches[2]
+			typ = matches[1]
+		}
+	}
+
+	// extension
+	if field.Extension == true {
+		tags["mavext"] = "true"
+	}
+
+	typ = gomavlib.DialectTypeDefToGo(typ)
+	if typ == "" {
+		return nil, fmt.Errorf("unknown type: %s", typ)
+	}
+
+	outF.Line += " "
+	if arrayLen != "" {
+		outF.Line += "[" + arrayLen + "]"
+	}
+	outF.Line += typ
+
+	if len(tags) > 0 {
+		var tmp []string
+		for k, v := range tags {
+			tmp = append(tmp, fmt.Sprintf("%s:\"%s\"", k, v))
+		}
+		sort.Strings(tmp)
+		outF.Line += " `" + strings.Join(tmp, " ") + "`"
+	}
+	return outF, nil
 }

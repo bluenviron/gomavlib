@@ -26,8 +26,8 @@ var typeSizes = map[string]byte{
 	"string":  1,
 }
 
-// DialectTypeXmlToGo converts a xml type to its go equivalent.
-func DialectTypeXmlToGo(typ string) string {
+// DialectTypeDefToGo converts a xml type into its go equivalent.
+func DialectTypeDefToGo(typ string) string {
 	return map[string]string{
 		"double":   "float64",
 		"uint64_t": "uint64",
@@ -43,8 +43,8 @@ func DialectTypeXmlToGo(typ string) string {
 	}[typ]
 }
 
-// DialectTypeGoToXml converts a go type to its xml equivalent.
-func DialectTypeGoToXml(typ string) string {
+// DialectTypeGoToDef converts a go type into its xml equivalent.
+func DialectTypeGoToDef(typ string) string {
 	return map[string]string{
 		"float64": "double",
 		"uint64":  "uint64_t",
@@ -60,27 +60,27 @@ func DialectTypeGoToXml(typ string) string {
 	}[typ]
 }
 
-// DialectFieldGoToXml converts a go field to its xml equivalent.
-func DialectFieldGoToXml(in string) string {
+// DialectFieldGoToDef converts a go field into its xml equivalent.
+func DialectFieldGoToDef(in string) string {
 	re := regexp.MustCompile("([A-Z])")
 	in = re.ReplaceAllString(in, "_${1}")
 	return strings.ToLower(in[1:])
 }
 
-// DialectFieldXmlToGo converts a xml field to its go equivalent.
-func DialectFieldXmlToGo(in string) string {
-	return DialectMsgXmlToGo(in)
+// DialectFieldDefToGo converts a xml field into its go equivalent.
+func DialectFieldDefToGo(in string) string {
+	return DialectMsgDefToGo(in)
 }
 
-// DialectMsgGoToXml converts a go field to its xml equivalent.
-func DialectMsgGoToXml(in string) string {
+// DialectMsgGoToDef converts a go field into its xml equivalent.
+func DialectMsgGoToDef(in string) string {
 	re := regexp.MustCompile("([A-Z])")
 	in = re.ReplaceAllString(in, "_${1}")
 	return strings.ToUpper(in[1:])
 }
 
-// DialectMsgXmlToGo converts a xml field to its go equivalent.
-func DialectMsgXmlToGo(in string) string {
+// DialectMsgDefToGo converts a xml field into its go equivalent.
+func DialectMsgDefToGo(in string) string {
 	re := regexp.MustCompile("_[a-z]")
 	in = strings.ToLower(in)
 	in = re.ReplaceAllStringFunc(in, func(match string) string {
@@ -114,7 +114,7 @@ func newParserMessage(msg Message) (*parserMessage, error) {
 	if strings.HasPrefix(mp.elemType.Name(), "Message") == false {
 		return nil, fmt.Errorf("message struct name must begin with 'Message'")
 	}
-	msgName := DialectMsgGoToXml(mp.elemType.Name()[len("Message"):])
+	msgName := DialectMsgGoToDef(mp.elemType.Name()[len("Message"):])
 
 	// collect message fields
 	for i := 0; i < mp.elemType.NumField(); i++ {
@@ -186,8 +186,8 @@ func newParserMessage(msg Message) (*parserMessage, error) {
 				continue
 			}
 
-			h.Write([]byte(DialectTypeGoToXml(f.ftype.Name()) + " "))
-			h.Write([]byte(DialectFieldGoToXml(f.name) + " "))
+			h.Write([]byte(DialectTypeGoToDef(f.ftype.Name()) + " "))
+			h.Write([]byte(DialectFieldGoToDef(f.name) + " "))
 			if f.arrayLength > 0 {
 				h.Write([]byte{f.arrayLength})
 			}

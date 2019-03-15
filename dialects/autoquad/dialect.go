@@ -1402,8 +1402,8 @@ func (*MessageGps2Raw) GetId() uint32 {
 }
 
 type MessagePowerStatus struct {
-	Vcc    uint16
-	Vservo uint16
+	Vcc    uint16 `mavname:"Vcc"`
+	Vservo uint16 `mavname:"Vservo"`
 	Flags  uint16
 }
 
@@ -1954,7 +1954,7 @@ func (*MessageExtendedSysState) GetId() uint32 {
 }
 
 type MessageAdsbVehicle struct {
-	IcaoAddress  uint32
+	IcaoAddress  uint32 `mavname:"ICAO_address"`
 	Lat          int32
 	Lon          int32
 	AltitudeType uint8
@@ -2116,8 +2116,8 @@ func (*MessageCameraInformation) GetId() uint32 {
 type MessageCameraSettings struct {
 	TimeBootMs uint32
 	ModeId     uint8
-	Zoomlevel  float32 `mavext:"true"`
-	Focuslevel float32 `mavext:"true"`
+	Zoomlevel  float32 `mavext:"true" mavname:"zoomLevel"`
+	Focuslevel float32 `mavext:"true" mavname:"focusLevel"`
 }
 
 func (*MessageCameraSettings) GetId() uint32 {
@@ -2555,7 +2555,7 @@ func (*MessageWheelDistance) GetId() uint32 {
 // autoquad.xml
 
 type MessageAqTelemetryF struct {
-	Index   uint16
+	Index   uint16 `mavname:"Index"`
 	Value1  float32
 	Value2  float32
 	Value3  float32

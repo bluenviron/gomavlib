@@ -17,7 +17,7 @@ func (*MessageIcarousHeartbeat) GetId() uint32 {
 }
 
 type MessageIcarousKinematicBands struct {
-	Numbands int8
+	Numbands int8 `mavname:"numBands"`
 	Type1    uint8
 	Min1     float32
 	Max1     float32

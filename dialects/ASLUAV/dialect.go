@@ -1402,8 +1402,8 @@ func (*MessageGps2Raw) GetId() uint32 {
 }
 
 type MessagePowerStatus struct {
-	Vcc    uint16
-	Vservo uint16
+	Vcc    uint16 `mavname:"Vcc"`
+	Vservo uint16 `mavname:"Vservo"`
 	Flags  uint16
 }
 
@@ -1954,7 +1954,7 @@ func (*MessageExtendedSysState) GetId() uint32 {
 }
 
 type MessageAdsbVehicle struct {
-	IcaoAddress  uint32
+	IcaoAddress  uint32 `mavname:"ICAO_address"`
 	Lat          int32
 	Lon          int32
 	AltitudeType uint8
@@ -2116,8 +2116,8 @@ func (*MessageCameraInformation) GetId() uint32 {
 type MessageCameraSettings struct {
 	TimeBootMs uint32
 	ModeId     uint8
-	Zoomlevel  float32 `mavext:"true"`
-	Focuslevel float32 `mavext:"true"`
+	Zoomlevel  float32 `mavext:"true" mavname:"zoomLevel"`
+	Focuslevel float32 `mavext:"true" mavname:"focusLevel"`
 }
 
 func (*MessageCameraSettings) GetId() uint32 {
@@ -2631,28 +2631,28 @@ type MessageAslctrlData struct {
 	Timestamp       uint64
 	AslctrlMode     uint8
 	H               float32
-	Href            float32
-	HrefT           float32
-	Pitchangle      float32
-	Pitchangleref   float32
+	Href            float32 `mavname:"hRef"`
+	HrefT           float32 `mavname:"hRef_t"`
+	Pitchangle      float32 `mavname:"PitchAngle"`
+	Pitchangleref   float32 `mavname:"PitchAngleRef"`
 	Q               float32
-	Qref            float32
-	Uelev           float32
-	Uthrot          float32
-	Uthrot2         float32
-	Nz              float32
-	Airspeedref     float32
-	Spoilersengaged uint8
-	Yawangle        float32
-	Yawangleref     float32
-	Rollangle       float32
-	Rollangleref    float32
+	Qref            float32 `mavname:"qRef"`
+	Uelev           float32 `mavname:"uElev"`
+	Uthrot          float32 `mavname:"uThrot"`
+	Uthrot2         float32 `mavname:"uThrot2"`
+	Nz              float32 `mavname:"nZ"`
+	Airspeedref     float32 `mavname:"AirspeedRef"`
+	Spoilersengaged uint8   `mavname:"SpoilersEngaged"`
+	Yawangle        float32 `mavname:"YawAngle"`
+	Yawangleref     float32 `mavname:"YawAngleRef"`
+	Rollangle       float32 `mavname:"RollAngle"`
+	Rollangleref    float32 `mavname:"RollAngleRef"`
 	P               float32
-	Pref            float32
+	Pref            float32 `mavname:"pRef"`
 	R               float32
-	Rref            float32
-	Uail            float32
-	Urud            float32
+	Rref            float32 `mavname:"rRef"`
+	Uail            float32 `mavname:"uAil"`
+	Urud            float32 `mavname:"uRud"`
 }
 
 func (*MessageAslctrlData) GetId() uint32 {
@@ -2678,10 +2678,10 @@ func (*MessageAslctrlDebug) GetId() uint32 {
 }
 
 type MessageAsluavStatus struct {
-	LedStatus    uint8
-	SatcomStatus uint8
-	ServoStatus  [8]uint8
-	MotorRpm     float32
+	LedStatus    uint8    `mavname:"LED_status"`
+	SatcomStatus uint8    `mavname:"SATCOM_status"`
+	ServoStatus  [8]uint8 `mavname:"Servo_status"`
+	MotorRpm     float32  `mavname:"Motor_rpm"`
 }
 
 func (*MessageAsluavStatus) GetId() uint32 {
@@ -2690,10 +2690,10 @@ func (*MessageAsluavStatus) GetId() uint32 {
 
 type MessageEkfExt struct {
 	Timestamp uint64
-	Windspeed float32
-	Winddir   float32
-	Windz     float32
-	Airspeed  float32
+	Windspeed float32 `mavname:"Windspeed"`
+	Winddir   float32 `mavname:"WindDir"`
+	Windz     float32 `mavname:"WindZ"`
+	Airspeed  float32 `mavname:"Airspeed"`
 	Beta      float32
 	Alpha     float32
 }
@@ -2704,12 +2704,12 @@ func (*MessageEkfExt) GetId() uint32 {
 
 type MessageAslObctrl struct {
 	Timestamp    uint64
-	Uelev        float32
-	Uthrot       float32
-	Uthrot2      float32
-	Uaill        float32
-	Uailr        float32
-	Urud         float32
+	Uelev        float32 `mavname:"uElev"`
+	Uthrot       float32 `mavname:"uThrot"`
+	Uthrot2      float32 `mavname:"uThrot2"`
+	Uaill        float32 `mavname:"uAilL"`
+	Uailr        float32 `mavname:"uAilR"`
+	Urud         float32 `mavname:"uRud"`
 	ObctrlStatus uint8
 }
 
@@ -2719,8 +2719,8 @@ func (*MessageAslObctrl) GetId() uint32 {
 
 type MessageSensAtmos struct {
 	Timestamp   uint64
-	Tempambient float32
-	Humidity    float32
+	Tempambient float32 `mavname:"TempAmbient"`
+	Humidity    float32 `mavname:"Humidity"`
 }
 
 func (*MessageSensAtmos) GetId() uint32 {
@@ -2732,7 +2732,7 @@ type MessageSensBatmon struct {
 	Temperature     float32
 	Voltage         uint16
 	Current         int16
-	Soc             uint8
+	Soc             uint8 `mavname:"SoC"`
 	Batterystatus   uint16
 	Serialnumber    uint16
 	Safetystatus    uint32
@@ -2751,29 +2751,29 @@ func (*MessageSensBatmon) GetId() uint32 {
 
 type MessageFwSoaringData struct {
 	Timestamp            uint64
-	Timestampmodechanged uint64
-	Xw                   float32
-	Xr                   float32
-	Xlat                 float32
-	Xlon                 float32
-	Varw                 float32
-	Varr                 float32
-	Varlat               float32
-	Varlon               float32
-	Loiterradius         float32
-	Loiterdirection      float32
-	Disttosoarpoint      float32
-	Vsinkexp             float32
-	Z1Localupdraftspeed  float32
-	Z2Deltaroll          float32
+	Timestampmodechanged uint64  `mavname:"timestampModeChanged"`
+	Xw                   float32 `mavname:"xW"`
+	Xr                   float32 `mavname:"xR"`
+	Xlat                 float32 `mavname:"xLat"`
+	Xlon                 float32 `mavname:"xLon"`
+	Varw                 float32 `mavname:"VarW"`
+	Varr                 float32 `mavname:"VarR"`
+	Varlat               float32 `mavname:"VarLat"`
+	Varlon               float32 `mavname:"VarLon"`
+	Loiterradius         float32 `mavname:"LoiterRadius"`
+	Loiterdirection      float32 `mavname:"LoiterDirection"`
+	Disttosoarpoint      float32 `mavname:"DistToSoarPoint"`
+	Vsinkexp             float32 `mavname:"vSinkExp"`
+	Z1Localupdraftspeed  float32 `mavname:"z1_LocalUpdraftSpeed"`
+	Z2Deltaroll          float32 `mavname:"z2_DeltaRoll"`
 	Z1Exp                float32
 	Z2Exp                float32
-	Thermalgsnorth       float32
-	Thermalgseast        float32
-	TseDot               float32
-	Debugvar1            float32
-	Debugvar2            float32
-	Controlmode          uint8
+	Thermalgsnorth       float32 `mavname:"ThermalGSNorth"`
+	Thermalgseast        float32 `mavname:"ThermalGSEast"`
+	TseDot               float32 `mavname:"TSE_dot"`
+	Debugvar1            float32 `mavname:"DebugVar1"`
+	Debugvar2            float32 `mavname:"DebugVar2"`
+	Controlmode          uint8   `mavname:"ControlMode"`
 	Valid                uint8
 }
 

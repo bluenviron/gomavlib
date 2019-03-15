@@ -1402,8 +1402,8 @@ func (*MessageGps2Raw) GetId() uint32 {
 }
 
 type MessagePowerStatus struct {
-	Vcc    uint16
-	Vservo uint16
+	Vcc    uint16 `mavname:"Vcc"`
+	Vservo uint16 `mavname:"Vservo"`
 	Flags  uint16
 }
 
@@ -1954,7 +1954,7 @@ func (*MessageExtendedSysState) GetId() uint32 {
 }
 
 type MessageAdsbVehicle struct {
-	IcaoAddress  uint32
+	IcaoAddress  uint32 `mavname:"ICAO_address"`
 	Lat          int32
 	Lon          int32
 	AltitudeType uint8
@@ -2116,8 +2116,8 @@ func (*MessageCameraInformation) GetId() uint32 {
 type MessageCameraSettings struct {
 	TimeBootMs uint32
 	ModeId     uint8
-	Zoomlevel  float32 `mavext:"true"`
-	Focuslevel float32 `mavext:"true"`
+	Zoomlevel  float32 `mavext:"true" mavname:"zoomLevel"`
+	Focuslevel float32 `mavext:"true" mavname:"focusLevel"`
 }
 
 func (*MessageCameraSettings) GetId() uint32 {
@@ -2663,13 +2663,13 @@ type MessageSerialUdbExtraF2A struct {
 	SueCog             uint16
 	SueSog             int16
 	SueCpuLoad         uint16
-	SueAirSpeed_3dimu  uint16
+	SueAirSpeed_3dimu  uint16 `mavname:"sue_air_speed_3DIMU"`
 	SueEstimatedWind_0 int16
 	SueEstimatedWind_1 int16
 	SueEstimatedWind_2 int16
-	SueMagfieldearth0  int16
-	SueMagfieldearth1  int16
-	SueMagfieldearth2  int16
+	SueMagfieldearth0  int16 `mavname:"sue_magFieldEarth0"`
+	SueMagfieldearth1  int16 `mavname:"sue_magFieldEarth1"`
+	SueMagfieldearth2  int16 `mavname:"sue_magFieldEarth2"`
 	SueSvs             int16
 	SueHdop            int16
 }
@@ -2736,16 +2736,16 @@ func (*MessageSerialUdbExtraF2B) GetId() uint32 {
 }
 
 type MessageSerialUdbExtraF4 struct {
-	SueRollStabilizationAilerons uint8
-	SueRollStabilizationRudder   uint8
-	SuePitchStabilization        uint8
-	SueYawStabilizationRudder    uint8
-	SueYawStabilizationAileron   uint8
-	SueAileronNavigation         uint8
-	SueRudderNavigation          uint8
-	SueAltitudeholdStabilized    uint8
-	SueAltitudeholdWaypoint      uint8
-	SueRacingMode                uint8
+	SueRollStabilizationAilerons uint8 `mavname:"sue_ROLL_STABILIZATION_AILERONS"`
+	SueRollStabilizationRudder   uint8 `mavname:"sue_ROLL_STABILIZATION_RUDDER"`
+	SuePitchStabilization        uint8 `mavname:"sue_PITCH_STABILIZATION"`
+	SueYawStabilizationRudder    uint8 `mavname:"sue_YAW_STABILIZATION_RUDDER"`
+	SueYawStabilizationAileron   uint8 `mavname:"sue_YAW_STABILIZATION_AILERON"`
+	SueAileronNavigation         uint8 `mavname:"sue_AILERON_NAVIGATION"`
+	SueRudderNavigation          uint8 `mavname:"sue_RUDDER_NAVIGATION"`
+	SueAltitudeholdStabilized    uint8 `mavname:"sue_ALTITUDEHOLD_STABILIZED"`
+	SueAltitudeholdWaypoint      uint8 `mavname:"sue_ALTITUDEHOLD_WAYPOINT"`
+	SueRacingMode                uint8 `mavname:"sue_RACING_MODE"`
 }
 
 func (*MessageSerialUdbExtraF4) GetId() uint32 {
@@ -2753,10 +2753,10 @@ func (*MessageSerialUdbExtraF4) GetId() uint32 {
 }
 
 type MessageSerialUdbExtraF5 struct {
-	SueYawkpAileron float32
-	SueYawkdAileron float32
-	SueRollkp       float32
-	SueRollkd       float32
+	SueYawkpAileron float32 `mavname:"sue_YAWKP_AILERON"`
+	SueYawkdAileron float32 `mavname:"sue_YAWKD_AILERON"`
+	SueRollkp       float32 `mavname:"sue_ROLLKP"`
+	SueRollkd       float32 `mavname:"sue_ROLLKD"`
 }
 
 func (*MessageSerialUdbExtraF5) GetId() uint32 {
@@ -2764,11 +2764,11 @@ func (*MessageSerialUdbExtraF5) GetId() uint32 {
 }
 
 type MessageSerialUdbExtraF6 struct {
-	SuePitchgain     float32
-	SuePitchkd       float32
-	SueRudderElevMix float32
-	SueRollElevMix   float32
-	SueElevatorBoost float32
+	SuePitchgain     float32 `mavname:"sue_PITCHGAIN"`
+	SuePitchkd       float32 `mavname:"sue_PITCHKD"`
+	SueRudderElevMix float32 `mavname:"sue_RUDDER_ELEV_MIX"`
+	SueRollElevMix   float32 `mavname:"sue_ROLL_ELEV_MIX"`
+	SueElevatorBoost float32 `mavname:"sue_ELEVATOR_BOOST"`
 }
 
 func (*MessageSerialUdbExtraF6) GetId() uint32 {
@@ -2776,12 +2776,12 @@ func (*MessageSerialUdbExtraF6) GetId() uint32 {
 }
 
 type MessageSerialUdbExtraF7 struct {
-	SueYawkpRudder  float32
-	SueYawkdRudder  float32
-	SueRollkpRudder float32
-	SueRollkdRudder float32
-	SueRudderBoost  float32
-	SueRtlPitchDown float32
+	SueYawkpRudder  float32 `mavname:"sue_YAWKP_RUDDER"`
+	SueYawkdRudder  float32 `mavname:"sue_YAWKD_RUDDER"`
+	SueRollkpRudder float32 `mavname:"sue_ROLLKP_RUDDER"`
+	SueRollkdRudder float32 `mavname:"sue_ROLLKD_RUDDER"`
+	SueRudderBoost  float32 `mavname:"sue_RUDDER_BOOST"`
+	SueRtlPitchDown float32 `mavname:"sue_RTL_PITCH_DOWN"`
 }
 
 func (*MessageSerialUdbExtraF7) GetId() uint32 {
@@ -2789,13 +2789,13 @@ func (*MessageSerialUdbExtraF7) GetId() uint32 {
 }
 
 type MessageSerialUdbExtraF8 struct {
-	SueHeightTargetMax    float32
-	SueHeightTargetMin    float32
-	SueAltHoldThrottleMin float32
-	SueAltHoldThrottleMax float32
-	SueAltHoldPitchMin    float32
-	SueAltHoldPitchMax    float32
-	SueAltHoldPitchHigh   float32
+	SueHeightTargetMax    float32 `mavname:"sue_HEIGHT_TARGET_MAX"`
+	SueHeightTargetMin    float32 `mavname:"sue_HEIGHT_TARGET_MIN"`
+	SueAltHoldThrottleMin float32 `mavname:"sue_ALT_HOLD_THROTTLE_MIN"`
+	SueAltHoldThrottleMax float32 `mavname:"sue_ALT_HOLD_THROTTLE_MAX"`
+	SueAltHoldPitchMin    float32 `mavname:"sue_ALT_HOLD_PITCH_MIN"`
+	SueAltHoldPitchMax    float32 `mavname:"sue_ALT_HOLD_PITCH_MAX"`
+	SueAltHoldPitchHigh   float32 `mavname:"sue_ALT_HOLD_PITCH_HIGH"`
 }
 
 func (*MessageSerialUdbExtraF8) GetId() uint32 {
@@ -2814,17 +2814,17 @@ func (*MessageSerialUdbExtraF13) GetId() uint32 {
 }
 
 type MessageSerialUdbExtraF14 struct {
-	SueWindEstimation uint8
-	SueGpsType        uint8
-	SueDr             uint8
-	SueBoardType      uint8
-	SueAirframe       uint8
-	SueRcon           int16
-	SueTrapFlags      int16
-	SueTrapSource     uint32
+	SueWindEstimation uint8  `mavname:"sue_WIND_ESTIMATION"`
+	SueGpsType        uint8  `mavname:"sue_GPS_TYPE"`
+	SueDr             uint8  `mavname:"sue_DR"`
+	SueBoardType      uint8  `mavname:"sue_BOARD_TYPE"`
+	SueAirframe       uint8  `mavname:"sue_AIRFRAME"`
+	SueRcon           int16  `mavname:"sue_RCON"`
+	SueTrapFlags      int16  `mavname:"sue_TRAP_FLAGS"`
+	SueTrapSource     uint32 `mavname:"sue_TRAP_SOURCE"`
 	SueOscFailCount   int16
-	SueClockConfig    uint8
-	SueFlightPlanType uint8
+	SueClockConfig    uint8 `mavname:"sue_CLOCK_CONFIG"`
+	SueFlightPlanType uint8 `mavname:"sue_FLIGHT_PLAN_TYPE"`
 }
 
 func (*MessageSerialUdbExtraF14) GetId() uint32 {
@@ -2832,8 +2832,8 @@ func (*MessageSerialUdbExtraF14) GetId() uint32 {
 }
 
 type MessageSerialUdbExtraF15 struct {
-	SueIdVehicleModelName    [40]uint8
-	SueIdVehicleRegistration [20]uint8
+	SueIdVehicleModelName    [40]uint8 `mavname:"sue_ID_VEHICLE_MODEL_NAME"`
+	SueIdVehicleRegistration [20]uint8 `mavname:"sue_ID_VEHICLE_REGISTRATION"`
 }
 
 func (*MessageSerialUdbExtraF15) GetId() uint32 {
@@ -2841,8 +2841,8 @@ func (*MessageSerialUdbExtraF15) GetId() uint32 {
 }
 
 type MessageSerialUdbExtraF16 struct {
-	SueIdLeadPilot    [40]uint8
-	SueIdDiyDronesUrl [70]uint8
+	SueIdLeadPilot    [40]uint8 `mavname:"sue_ID_LEAD_PILOT"`
+	SueIdDiyDronesUrl [70]uint8 `mavname:"sue_ID_DIY_DRONES_URL"`
 }
 
 func (*MessageSerialUdbExtraF16) GetId() uint32 {

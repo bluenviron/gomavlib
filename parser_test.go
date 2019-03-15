@@ -3,7 +3,7 @@ package gomavlib
 import (
 	"bytes"
 	"encoding/binary"
-	"reflect"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -11,12 +11,8 @@ func testFrameDecode(t *testing.T, dialect []Message, key *FrameSignatureKey, by
 	parser, _ := NewParser(ParserConf{Dialect: dialect})
 	for i, byt := range byts {
 		frame, err := parser.Decode(byt, true, key)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if reflect.DeepEqual(frame, frames[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", frame, frames[i])
-		}
+		require.NoError(t, err)
+		require.Equal(t, frame, frames[i])
 	}
 }
 
@@ -24,12 +20,8 @@ func testFrameEncode(t *testing.T, dialect []Message, key *FrameSignatureKey, by
 	parser, _ := NewParser(ParserConf{Dialect: dialect})
 	for i, frame := range frames {
 		byt, err := parser.Encode(frame, true, key)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if reflect.DeepEqual(byt, byts[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", byt, byts[i])
-		}
+		require.NoError(t, err)
+		require.Equal(t, byt, byts[i])
 	}
 }
 

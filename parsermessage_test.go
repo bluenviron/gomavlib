@@ -2,7 +2,7 @@ package gomavlib
 
 import (
 	"bytes"
-	"reflect"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -29,32 +29,20 @@ EOF
 func testMessageDecode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
 	for i, byt := range byts {
 		mp, err := newParserMessage(parsers[i])
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		msg, err := mp.decode(byt, isV2)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if reflect.DeepEqual(msg, msgs[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", msg, msgs[i])
-		}
+		require.NoError(t, err)
+		require.Equal(t, msg, msgs[i])
 	}
 }
 
 func testMessageEncode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
 	for i, msg := range msgs {
 		mp, err := newParserMessage(parsers[i])
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		byt, err := mp.encode(msg, isV2)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if reflect.DeepEqual(byt, byts[i]) == false {
-			t.Fatalf("invalid: %+v vs %+v", byt, byts[i])
-		}
+		require.NoError(t, err)
+		require.Equal(t, byt, byts[i])
 	}
 }
 
@@ -178,12 +166,8 @@ func TestParserMessageCRC(t *testing.T) {
 	}
 	for i, in := range ins {
 		mp, err := newParserMessage(in)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if mp.crcExtra != outs[i] {
-			t.Fatalf("wrong crc extra: %v vs %v", mp.crcExtra, outs[i])
-		}
+		require.NoError(t, err)
+		require.Equal(t, mp.crcExtra, outs[i])
 	}
 }
 

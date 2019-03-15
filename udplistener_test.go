@@ -1,8 +1,8 @@
 package gomavlib
 
 import (
+	"github.com/stretchr/testify/require"
 	"net"
-	"reflect"
 	"sync"
 	"testing"
 	"time"
@@ -13,9 +13,7 @@ func TestUdpListener(t *testing.T) {
 	testBuf2 := []byte("second part")
 
 	l, err := newUdpListener("udp4", ":18456")
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 
 	var wg sync.WaitGroup
 	wg.Add(5)
@@ -34,29 +32,17 @@ func TestUdpListener(t *testing.T) {
 				defer conn.Close()
 
 				err = conn.SetReadDeadline(time.Now().Add(5 * time.Second))
-				if err != nil {
-					t.Fatal(err)
-				}
+				require.NoError(t, err)
 
 				buf := make([]byte, 1024)
 				n, err := conn.Read(buf)
-				if err != nil {
-					t.Fatal(err)
-				}
-				if n != len(testBuf1) {
-					t.Fatal("length different")
-				}
-				if reflect.DeepEqual(buf[:n], testBuf1) == false {
-					t.Fatalf("buffer different")
-				}
+				require.NoError(t, err)
+				require.Equal(t, n, len(testBuf1))
+				require.Equal(t, buf[:n], testBuf1)
 
 				n, err = conn.Write(testBuf2)
-				if err != nil {
-					t.Fatal(err)
-				}
-				if n != len(testBuf2) {
-					t.Fatalf("unexpected length")
-				}
+				require.NoError(t, err)
+				require.Equal(t, n, len(testBuf2))
 			}()
 		}
 	}()
@@ -66,34 +52,20 @@ func TestUdpListener(t *testing.T) {
 			defer wg.Done()
 
 			conn, err := net.Dial("udp4", "127.0.0.1:18456")
-			if err != nil {
-				t.Fatal(err)
-			}
+			require.NoError(t, err)
 
 			n, err := conn.Write(testBuf1)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if n != len(testBuf1) {
-				t.Fatalf("unexpected length")
-			}
+			require.NoError(t, err)
+			require.Equal(t, n, len(testBuf1))
 
 			err = conn.SetReadDeadline(time.Now().Add(5 * time.Second))
-			if err != nil {
-				t.Fatal(err)
-			}
+			require.NoError(t, err)
 
 			buf := make([]byte, 1024)
 			n, err = conn.Read(buf)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if n != len(testBuf2) {
-				t.Fatal("length different")
-			}
-			if reflect.DeepEqual(buf[:n], testBuf2) == false {
-				t.Fatalf("buffer different")
-			}
+			require.NoError(t, err)
+			require.Equal(t, n, len(testBuf2))
+			require.Equal(t, buf[:n], testBuf2)
 		}()
 	}
 
@@ -103,9 +75,7 @@ func TestUdpListener(t *testing.T) {
 
 func TestUdpListenerDeadline(t *testing.T) {
 	l, err := newUdpListener("udp4", ":18456")
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 
 	var wg sync.WaitGroup
 	wg.Add(2)
@@ -115,15 +85,11 @@ func TestUdpListenerDeadline(t *testing.T) {
 		defer l.Close()
 
 		conn, err := l.Accept()
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 
 		for i := 0; i < 2; i++ {
 			err = conn.SetReadDeadline(time.Now().Add(500 * time.Millisecond))
-			if err != nil {
-				t.Fatal(err)
-			}
+			require.NoError(t, err)
 
 			buf := make([]byte, 1024)
 			_, err := conn.Read(buf)
@@ -145,9 +111,7 @@ func TestUdpListenerDeadline(t *testing.T) {
 		defer wg.Done()
 
 		conn, err := net.Dial("udp4", "127.0.0.1:18456")
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		defer conn.Close()
 
 		conn.Write([]byte("a"))

@@ -2,6 +2,7 @@ package gomavlib
 
 import (
 	"bytes"
+	"github.com/stretchr/testify/require"
 	"reflect"
 	"sync"
 	"testing"
@@ -49,9 +50,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 		Endpoints:        []EndpointConf{t1},
 		HeartbeatDisable: true,
 	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
 		Dialect:          []Message{&MessageHeartbeat{}},
@@ -60,9 +59,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 		Endpoints:        []EndpointConf{t2},
 		HeartbeatDisable: true,
 	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 
 	success := false
 	var wg sync.WaitGroup
@@ -211,17 +208,13 @@ func TestNodeCustom(t *testing.T) {
 			},
 			HeartbeatDisable: true,
 		})
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		defer node.Close()
 
 		node.WriteMessageAll(testMsg)
 	}()
 
-	if reflect.DeepEqual(rwc.writeBuf.Bytes(), res) == false {
-		t.Fatal("result different")
-	}
+	require.Equal(t, rwc.writeBuf.Bytes(), res)
 }
 
 func TestNodeError(t *testing.T) {
@@ -252,9 +245,7 @@ func TestNodeHeartbeat(t *testing.T) {
 			},
 			HeartbeatDisable: true,
 		})
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		defer node1.Close()
 
 		node2, err := NewNode(NodeConf{
@@ -267,9 +258,7 @@ func TestNodeHeartbeat(t *testing.T) {
 			HeartbeatDisable: false,
 			HeartbeatPeriod:  500 * time.Millisecond,
 		})
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		defer node2.Close()
 
 		_, ok := node1.Read()
@@ -303,9 +292,7 @@ func TestNodeFrameSignature(t *testing.T) {
 		SignatureInKey:   key2,
 		SignatureOutKey:  key1,
 	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
 		Dialect:     []Message{&MessageHeartbeat{}},
@@ -318,9 +305,7 @@ func TestNodeFrameSignature(t *testing.T) {
 		SignatureInKey:   key1,
 		SignatureOutKey:  key2,
 	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 
 	success := false
 	var wg sync.WaitGroup
@@ -380,9 +365,7 @@ func TestNodeRouting(t *testing.T) {
 		},
 		HeartbeatDisable: true,
 	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
 		Dialect:     []Message{&MessageHeartbeat{}},
@@ -394,9 +377,7 @@ func TestNodeRouting(t *testing.T) {
 		},
 		HeartbeatDisable: true,
 	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 
 	node3, err := NewNode(NodeConf{
 		Dialect:     []Message{&MessageHeartbeat{}},
@@ -407,9 +388,7 @@ func TestNodeRouting(t *testing.T) {
 		},
 		HeartbeatDisable: true,
 	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 
 	// wait client connection
 	time.Sleep(500 * time.Millisecond)

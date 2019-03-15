@@ -334,7 +334,7 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 
 			frame, err := n.parser.Decode(buf[:bufn], !n.conf.ChecksumDisable, n.conf.SignatureInKey)
 			if err != nil {
-				fmt.Printf("SKIPPED DUE TO ERR: %v\n", err)
+				fmt.Printf("SKIPPED: %v\n", err)
 				continue
 			}
 

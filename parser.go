@@ -209,7 +209,8 @@ func (p *Parser) Decode(buf []byte, validateChecksum bool, validateSignatureKey 
 
 		if validateChecksum == true {
 			if sum := p.Checksum(f); sum != f.GetChecksum() {
-				return nil, fmt.Errorf("wrong checksum (expected %.4x, got %.4x)", sum, f.GetChecksum())
+				return nil, fmt.Errorf("wrong checksum (expected %.4x, got %.4x, id=%d)",
+					sum, f.GetChecksum(), f.GetMessage().GetId())
 			}
 		}
 

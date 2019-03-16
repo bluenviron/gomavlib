@@ -5,11 +5,13 @@ help:
 	@echo ""
 	@echo "available actions:"
 	@echo ""
-	@echo "  format           format source files."
+	@echo "  format              format source files."
 	@echo ""
-	@echo "  test             run available tests."
+	@echo "  test                run available tests."
 	@echo ""
-	@echo "  gen-dialects     generate dialects."
+	@echo "  gen-dialects        generate dialects."
+	@echo ""
+	@echo "  run-example [name]  run example with given name."
 	@echo ""
 
 

@@ -62,7 +62,7 @@ https://godoc.org/github.com/gswly/gomavlib
 
 ## Dialect generation
 
-Although standard dialects are provided in the `dialect/` folder, dialect definitions can be manually converted into Go structures by running the `dialgen` utility:
+Although standard dialects are provided in the `dialect/` folder, dialect definitions in XML format can be converted into Go files by running the `dialgen` utility:
 ```
 go get github.com/gswly/gomavlib/dialgen
 dialgen [path_or_url_to_xml_definition]

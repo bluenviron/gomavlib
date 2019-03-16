@@ -8,8 +8,10 @@ import (
 )
 
 func main() {
-	// create a node which does not use dialects, writes messages with given
-	// system id and component id, and reads/writes to a serial port.
+	// create a node which
+	// - does not use dialects
+	// - writes messages with given system id and component id
+	// - reads/writes to a serial port
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Dialect:     nil,
 		SystemId:    10,

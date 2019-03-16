@@ -20,8 +20,10 @@ func (*MessageMyCustomMessage) GetId() uint32 {
 }
 
 func main() {
-	// create a node which does not use dialects, writes messages with given
-	// system id and component id, and reads/writes to a serial port.
+	// create a node which
+	// - understands our custom dialect
+	// - writes messages with given system id and component id
+	// - reads/writes to a serial port.
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Dialect: []gomavlib.Message{
 			&MessageMyCustomMessage{},

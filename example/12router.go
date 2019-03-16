@@ -9,8 +9,10 @@ import (
 )
 
 func main() {
-	// create a node which understands given dialect, writes messages with given
-	// system id and component id, and reads/writes to multiple endpoints.
+	// create a node which
+	// - understands ardupilotmega dialect
+	// - writes messages with given system id and component id
+	// - reads/writes to multiple endpoints
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Dialect:     ardupilotmega.Dialect,
 		SystemId:    10,

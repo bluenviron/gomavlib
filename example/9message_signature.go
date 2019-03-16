@@ -12,10 +12,12 @@ func main() {
 	// initialize a 6-bytes key. A key can have up to 32 bytes.
 	key := gomavlib.NewFrameSignatureKey([]byte("abcdef"))
 
-	// create a node which understands given dialect, writes messages with given
-	// system id and component id, and reads/writes to a serial port.
-	// incoming messages are verified via SignatureInKey, and outgoing messages
-	// are signed via SignatureOutKey.
+	// create a node which
+	// - understands ardupilotmega dialect
+	// - writes messages with given system id and component id
+	// - reads/writes to a serial port.
+	// - validates incoming messages via SignatureInKey
+	// - sign outgoing messages via SignatureOutKey
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Dialect:     ardupilotmega.Dialect,
 		SystemId:    10,

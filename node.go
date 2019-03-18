@@ -163,6 +163,10 @@ type NodeConf struct {
 	// It defaults to 5 seconds.
 	HeartbeatPeriod time.Duration
 
+	// (optional) return parse errors when calling Read()
+	// normally parse errors are ignored.
+	ReturnParseErrors bool
+
 	// (optional) disables checksum validation of incoming frames.
 	// Not recommended, useful only for debugging purposes.
 	ChecksumDisable bool
@@ -331,7 +335,9 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 			if err != nil {
 				// continue in case of parse errors
 				if _, ok := err.(*ParserError); ok {
-					// TODO: ReturnParseErrors
+					if n.conf.ReturnParseErrors == true {
+						n.frameQueue <- &NodeReadResult{nil, err, conn}
+					}
 					continue
 				}
 				// avoid calling twice Close()
@@ -341,7 +347,7 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 				return
 			}
 
-			n.frameQueue <- &NodeReadResult{frame, conn}
+			n.frameQueue <- &NodeReadResult{frame, nil, conn}
 		}
 	}()
 
@@ -375,33 +381,30 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 
 // NodeReadResult contains the result of node.Read()
 type NodeReadResult struct {
-	frame           Frame
-	endpointChannel *EndpointChannel
+	// the just read frame
+	Frame Frame
+
+	// a parse error returned instead of frame
+	// This is used only when ReturnParseErrors is true
+	Error error
+
+	// the channel used to send the frame
+	Channel *EndpointChannel
 }
 
-// Frame returns the Frame containing the message.
-func (res *NodeReadResult) Frame() Frame {
-	return res.frame
-}
-
-// Message returns the message.
+// Message returns the message inside the frame.
 func (res *NodeReadResult) Message() Message {
-	return res.frame.GetMessage()
+	return res.Frame.GetMessage()
 }
 
 // SystemId returns the sender system id.
 func (res *NodeReadResult) SystemId() byte {
-	return res.frame.GetSystemId()
+	return res.Frame.GetSystemId()
 }
 
 // ComponentId returns the sender component id.
 func (res *NodeReadResult) ComponentId() byte {
-	return res.frame.GetComponentId()
-}
-
-// Channel returns the channel used to send the message.
-func (res *NodeReadResult) Channel() *EndpointChannel {
-	return res.endpointChannel
+	return res.Frame.GetComponentId()
 }
 
 // Read reads a single message from available channels.

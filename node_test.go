@@ -93,7 +93,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 			return
 		}
 
-		if res1.Channel() != res2.Channel() {
+		if res1.Channel != res2.Channel {
 			t.Fatal("message received on two different channels")
 			return
 		}
@@ -406,7 +406,7 @@ func TestNodeRouting(t *testing.T) {
 		if ok == false {
 			return
 		}
-		node2.WriteFrameExcept(res.Channel(), res.Frame())
+		node2.WriteFrameExcept(res.Channel, res.Frame)
 	}()
 
 	go func() {

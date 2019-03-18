@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"io"
+	"math"
 	"reflect"
 	"regexp"
 	"sort"
@@ -98,10 +98,11 @@ type parserMessageField struct {
 }
 
 type parserMessage struct {
-	elemType reflect.Type
-	size     byte
-	fields   []parserMessageField
-	crcExtra byte
+	elemType     reflect.Type
+	fields       []parserMessageField
+	sizeNormal   byte
+	sizeExtended byte
+	crcExtra     byte
 }
 
 func newParserMessage(msg Message) (*parserMessage, error) {
@@ -147,6 +148,14 @@ func newParserMessage(msg Message) (*parserMessage, error) {
 		// extension
 		isExtension := (field.Tag.Get("mavext") == "true")
 
+		// size
+		var size byte
+		if fieldArrayLength > 0 {
+			size = dialectTypeSizes[defType] * fieldArrayLength
+		} else {
+			size = dialectTypeSizes[defType]
+		}
+
 		mp.fields[i] = parserMessageField{
 			ftype: defType,
 			name: func() string {
@@ -159,10 +168,10 @@ func newParserMessage(msg Message) (*parserMessage, error) {
 			index:       i,
 			isExtension: isExtension,
 		}
-		if fieldArrayLength > 0 {
-			mp.size += dialectTypeSizes[defType] * fieldArrayLength
-		} else {
-			mp.size += dialectTypeSizes[defType]
+
+		mp.sizeExtended += size
+		if isExtension == false {
+			mp.sizeNormal += size
 		}
 	}
 
@@ -208,49 +217,102 @@ func newParserMessage(msg Message) (*parserMessage, error) {
 func (mp *parserMessage) decode(buf []byte, isFrameV2 bool) (Message, error) {
 	msg := reflect.New(mp.elemType)
 
-	// empty-byte de-truncation (and fix for extension fields)
 	if isFrameV2 == true {
-		if len(buf) < int(mp.size) {
-			buf = append(buf, bytes.Repeat([]byte{0x00}, int(mp.size)-len(buf))...)
+		// in V2 buffer can be > message or < message
+		// in this case it must be filled with zeros to support empty-byte de-truncation
+		// and extension fields
+		if len(buf) < int(mp.sizeExtended) {
+			buf = append(buf, bytes.Repeat([]byte{0x00}, int(mp.sizeExtended)-len(buf))...)
+		}
+
+	} else {
+		// in V1 buffer must fit message perfectly
+		if len(buf) != int(mp.sizeNormal) {
+			return nil, fmt.Errorf("unexpected size (%d vs %d)", len(buf), mp.sizeNormal)
 		}
 	}
 
-	// TODO: REMOVE
-	reader := bytes.NewReader(buf)
-
-	// read field by field
+	// decode field by field
 	for _, f := range mp.fields {
-		// skip extensions for v1 frames
+		// skip extensions in V1 frames
 		if isFrameV2 == false && f.isExtension == true {
 			continue
 		}
 
-		target := msg.Elem().Field(f.index).Addr().Interface()
+		target := msg.Elem().Field(f.index)
 
-		switch tt := target.(type) {
-		case *string:
-			sbuf := make([]byte, f.arrayLength)
-			_, err := io.ReadFull(reader, sbuf)
-			if err != nil {
-				return nil, err
+		switch target.Kind() {
+		case reflect.Array:
+			length := target.Len()
+			for i := 0; i < length; i++ {
+				n := decodeValue(target.Index(i).Addr().Interface(), buf, nil)
+				buf = buf[n:]
 			}
-
-			// truncate string at nil
-			end := len(sbuf)
-			for end > 0 && sbuf[end-1] == 0x00 {
-				end--
-			}
-			*tt = string(sbuf[:end])
 
 		default:
-			err := binary.Read(reader, binary.LittleEndian, target)
-			if err != nil {
-				return nil, err
-			}
+			n := decodeValue(target.Addr().Interface(), buf, &f)
+			buf = buf[n:]
 		}
 	}
 
 	return msg.Interface().(Message), nil
+}
+
+func decodeValue(target interface{}, buf []byte, f *parserMessageField) int {
+	switch tt := target.(type) {
+	case *string:
+		// find nil character or string end
+		end := 0
+		for buf[end] != 0 && end < int(f.arrayLength) {
+			end++
+		}
+		*tt = string(buf[:end])
+		return int(f.arrayLength) // return length including zeros
+
+	case *int8:
+		*tt = int8(buf[0])
+		return 1
+
+	case *uint8:
+		*tt = buf[0]
+		return 1
+
+	case *int16:
+		*tt = int16(binary.LittleEndian.Uint16(buf))
+		return 2
+
+	case *uint16:
+		*tt = binary.LittleEndian.Uint16(buf)
+		return 2
+
+	case *int32:
+		*tt = int32(binary.LittleEndian.Uint32(buf))
+		return 4
+
+	case *uint32:
+		*tt = binary.LittleEndian.Uint32(buf)
+		return 4
+
+	case *int64:
+		*tt = int64(binary.LittleEndian.Uint64(buf))
+		return 8
+
+	case *uint64:
+		*tt = binary.LittleEndian.Uint64(buf)
+		return 8
+
+	case *float32:
+		*tt = math.Float32frombits(binary.LittleEndian.Uint32(buf))
+		return 4
+
+	case *float64:
+		*tt = math.Float64frombits(binary.LittleEndian.Uint64(buf))
+		return 8
+
+	default:
+		panic("unexpected type")
+	}
+	return 0
 }
 
 func (mp *parserMessage) encode(msg Message, isFrameV2 bool) ([]byte, error) {

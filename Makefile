@@ -64,6 +64,7 @@ ifeq (run-example, $(firstword $(MAKECMDGOALS)))
 endif
 run-example:
 	@docker run --rm -it \
+		--privileged \
 		-v $(PWD):/src \
 		amd64/golang:1.11-stretch \
 		sh -c "cd /src && go run example/$(EXAMPLE).go"

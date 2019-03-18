@@ -360,7 +360,6 @@ func decodeValue(target interface{}, buf []byte, f *parserMessageField) int {
 	default:
 		panic("unexpected type")
 	}
-	return 0
 }
 
 func encodeValue(buf []byte, target interface{}, f *parserMessageField) int {
@@ -412,5 +411,4 @@ func encodeValue(buf []byte, target interface{}, f *parserMessageField) int {
 	default:
 		panic("unexpected type")
 	}
-	return 0
 }

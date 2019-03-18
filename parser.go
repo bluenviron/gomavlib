@@ -16,7 +16,7 @@ func (e *ParserError) Error() string {
 	return e.str
 }
 
-func NewParserError(format string, args ...interface{}) *ParserError {
+func newParserError(format string, args ...interface{}) *ParserError {
 	return &ParserError{
 		str: fmt.Sprintf(format, args...),
 	}
@@ -222,7 +222,7 @@ func (p *Parser) Read(reader ParserReader) (Frame, error) {
 
 		// discard frame if incompatibility flag is not understood, as in recommendations
 		if ff.IncompatibilityFlag != 0 && ff.IncompatibilityFlag != flagSigned {
-			return nil, NewParserError("unknown incompatibility flag (%d)", ff.IncompatibilityFlag)
+			return nil, newParserError("unknown incompatibility flag (%d)", ff.IncompatibilityFlag)
 		}
 
 		// message
@@ -260,17 +260,17 @@ func (p *Parser) Read(reader ParserReader) (Frame, error) {
 		}
 
 	default:
-		return nil, NewParserError("unrecognized magic byte: %x", magicByte)
+		return nil, newParserError("unrecognized magic byte: %x", magicByte)
 	}
 
 	if p.conf.SignatureInKey != nil {
 		ff, ok := f.(*FrameV2)
 		if ok == false {
-			return nil, NewParserError("signature required but packet is not v2")
+			return nil, newParserError("signature required but packet is not v2")
 		}
 
 		if sig := p.Signature(ff, p.conf.SignatureInKey); *sig != *ff.Signature {
-			return nil, NewParserError("wrong signature")
+			return nil, newParserError("wrong signature")
 		}
 	}
 
@@ -278,7 +278,7 @@ func (p *Parser) Read(reader ParserReader) (Frame, error) {
 	if mp, ok := p.parserMessages[f.GetMessage().GetId()]; ok {
 		if p.conf.ChecksumDisable == false {
 			if sum := p.Checksum(f); sum != f.GetChecksum() {
-				return nil, NewParserError("wrong checksum (expected %.4x, got %.4x, id=%d)",
+				return nil, newParserError("wrong checksum (expected %.4x, got %.4x, id=%d)",
 					sum, f.GetChecksum(), f.GetMessage().GetId())
 			}
 		}
@@ -286,7 +286,7 @@ func (p *Parser) Read(reader ParserReader) (Frame, error) {
 		_, isFrameV2 := f.(*FrameV2)
 		msg, err := mp.decode(f.GetMessage().(*MessageRaw).Content, isFrameV2)
 		if err != nil {
-			return nil, NewParserError(err.Error())
+			return nil, newParserError(err.Error())
 		}
 
 		switch ff := f.(type) {

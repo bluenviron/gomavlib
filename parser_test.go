@@ -8,24 +8,27 @@ import (
 )
 
 func testFrameDecode(t *testing.T, dialect *Dialect, key *FrameSignatureKey, byts [][]byte, frames []Frame) {
-	parser, _ := NewParser(ParserConf{
-		Dialect:        dialect,
-		SignatureInKey: key,
-	})
 	for i, byt := range byts {
-		frame, err := parser.Read(bytes.NewReader(byt))
+		parser := NewParser(ParserConf{
+			Reader:         bytes.NewReader(byt),
+			Dialect:        dialect,
+			SignatureInKey: key,
+		})
+		frame, err := parser.Read()
 		require.NoError(t, err)
 		require.Equal(t, frames[i], frame)
 	}
 }
 
 func testFrameEncode(t *testing.T, dialect *Dialect, key *FrameSignatureKey, byts [][]byte, frames []Frame) {
-	parser, _ := NewParser(ParserConf{
-		Dialect: dialect,
-	})
 	for i, frame := range frames {
 		buf := bytes.NewBuffer(nil)
-		err := parser.Write(buf, frame, true, key)
+		parser := NewParser(ParserConf{
+			Writer:          buf,
+			Dialect:         dialect,
+			SignatureOutKey: key,
+		})
+		err := parser.Write(frame, false)
 		require.NoError(t, err)
 		require.Equal(t, byts[i], buf.Bytes())
 	}

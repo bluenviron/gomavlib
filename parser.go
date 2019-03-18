@@ -1,6 +1,7 @@
 package gomavlib
 
 import (
+	"bufio"
 	"crypto/sha256"
 	"encoding/binary"
 	"fmt"
@@ -22,18 +23,12 @@ func newParserError(format string, args ...interface{}) *ParserError {
 	}
 }
 
-// ParserReader is the interface that must be implemented by readers passed to Read()
-type ParserReader interface {
-	io.ByteReader
-	io.Reader
-}
-
 // ParserConf configures a Parser.
 type ParserConf struct {
 	// the reader from which frames will be read.
-	// Reader io.Reader
+	Reader io.Reader
 	// the writer to which frames will be written.
-	// Writer io.Writer
+	Writer io.Writer
 
 	// contains the messages which will be automatically decoded and
 	// encoded. If not provided, messages are decoded in the MessageRaw struct.
@@ -42,6 +37,9 @@ type ParserConf struct {
 	// (optional) the secret key used to validate incoming frames.
 	// Non-signed frames are discarded. This feature requires Mavlink v2.
 	SignatureInKey *FrameSignatureKey
+	// (optional) the secret key used to sign outgoing frames.
+	// This feature requires Mavlink v2.
+	SignatureOutKey *FrameSignatureKey
 
 	// (optional) disables checksum validation of incoming frames.
 	// Not recommended, useful only for debugging purposes.
@@ -50,17 +48,18 @@ type ParserConf struct {
 
 // Parser is a low-level Mavlink encoder and decoder that works with a Reader and a Writer.
 type Parser struct {
-	conf ParserConf
+	conf      ParserConf
+	bufreader *bufio.Reader
 }
 
 // NewParser allocates a Parser, a low level frame encoder and decoder.
 // See Parser for the options.
-func NewParser(conf ParserConf) (*Parser, error) {
+func NewParser(conf ParserConf) *Parser {
 	p := &Parser{
-		conf: conf,
+		conf:      conf,
+		bufreader: bufio.NewReaderSize(conf.Reader, netBufferSize),
 	}
-
-	return p, nil
+	return p
 }
 
 // Checksum computes the checksum of a given frame.
@@ -123,8 +122,8 @@ func (p *Parser) Signature(ff *FrameV2, key *FrameSignatureKey) *FrameSignature 
 }
 
 // Read returns the first Frame obtained from reader.
-func (p *Parser) Read(reader ParserReader) (Frame, error) {
-	magicByte, err := reader.ReadByte()
+func (p *Parser) Read() (Frame, error) {
+	magicByte, err := p.bufreader.ReadByte()
 	if err != nil {
 		return nil, err
 	}
@@ -136,30 +135,30 @@ func (p *Parser) Read(reader ParserReader) (Frame, error) {
 		f = ff
 
 		// header
-		msgLen, err := reader.ReadByte()
+		msgLen, err := p.bufreader.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		ff.SequenceId, err = reader.ReadByte()
+		ff.SequenceId, err = p.bufreader.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		ff.SystemId, err = reader.ReadByte()
+		ff.SystemId, err = p.bufreader.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		ff.ComponentId, err = reader.ReadByte()
+		ff.ComponentId, err = p.bufreader.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		msgId, err := reader.ReadByte()
+		msgId, err := p.bufreader.ReadByte()
 		if err != nil {
 			return nil, err
 		}
 
 		// message
 		msgContent := make([]byte, msgLen)
-		_, err = io.ReadFull(reader, msgContent)
+		_, err = io.ReadFull(p.bufreader, msgContent)
 		if err != nil {
 			return nil, err
 		}
@@ -169,7 +168,7 @@ func (p *Parser) Read(reader ParserReader) (Frame, error) {
 		}
 
 		// checksum
-		err = binary.Read(reader, binary.LittleEndian, &ff.Checksum)
+		err = binary.Read(p.bufreader, binary.LittleEndian, &ff.Checksum)
 		if err != nil {
 			return nil, err
 		}
@@ -179,32 +178,32 @@ func (p *Parser) Read(reader ParserReader) (Frame, error) {
 		f = ff
 
 		// header
-		msgLen, err := reader.ReadByte()
+		msgLen, err := p.bufreader.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		ff.IncompatibilityFlag, err = reader.ReadByte()
+		ff.IncompatibilityFlag, err = p.bufreader.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		ff.CompatibilityFlag, err = reader.ReadByte()
+		ff.CompatibilityFlag, err = p.bufreader.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		ff.SequenceId, err = reader.ReadByte()
+		ff.SequenceId, err = p.bufreader.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		ff.SystemId, err = reader.ReadByte()
+		ff.SystemId, err = p.bufreader.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		ff.ComponentId, err = reader.ReadByte()
+		ff.ComponentId, err = p.bufreader.ReadByte()
 		if err != nil {
 			return nil, err
 		}
 		var msgId uint32
-		err = readLittleEndianUint24(reader, &msgId)
+		err = readLittleEndianUint24(p.bufreader, &msgId)
 		if err != nil {
 			return nil, err
 		}
@@ -216,7 +215,7 @@ func (p *Parser) Read(reader ParserReader) (Frame, error) {
 
 		// message
 		msgContent := make([]byte, msgLen)
-		_, err = io.ReadFull(reader, msgContent)
+		_, err = io.ReadFull(p.bufreader, msgContent)
 		if err != nil {
 			return nil, err
 		}
@@ -226,23 +225,23 @@ func (p *Parser) Read(reader ParserReader) (Frame, error) {
 		}
 
 		// checksum
-		err = binary.Read(reader, binary.LittleEndian, &ff.Checksum)
+		err = binary.Read(p.bufreader, binary.LittleEndian, &ff.Checksum)
 		if err != nil {
 			return nil, err
 		}
 
 		// signature
 		if ff.IsSigned() {
-			ff.SignatureLinkId, err = reader.ReadByte()
+			ff.SignatureLinkId, err = p.bufreader.ReadByte()
 			if err != nil {
 				return nil, err
 			}
-			err = readLittleEndianUint48(reader, &ff.SignatureTimestamp)
+			err = readLittleEndianUint48(p.bufreader, &ff.SignatureTimestamp)
 			if err != nil {
 				return nil, err
 			}
 			ff.Signature = new(FrameSignature)
-			_, err = io.ReadFull(reader, ff.Signature[:])
+			_, err = io.ReadFull(p.bufreader, ff.Signature[:])
 			if err != nil {
 				return nil, err
 			}
@@ -292,7 +291,9 @@ func (p *Parser) Read(reader ParserReader) (Frame, error) {
 }
 
 // Write writes a Frame into writer.
-func (p *Parser) Write(writer io.Writer, f Frame, fillChecksum bool, fillSignatureKey *FrameSignatureKey) error {
+// if route is true, the frame will be written untouched,
+// without computing checksum or signature.
+func (p *Parser) Write(f Frame, route bool) error {
 	// encode message if not already encoded and in dialect
 	if p.conf.Dialect != nil {
 		if _, ok := f.GetMessage().(*MessageRaw); ok == false {
@@ -312,11 +313,11 @@ func (p *Parser) Write(writer io.Writer, f Frame, fillChecksum bool, fillSignatu
 
 				// if frame is going to be signed, set incompatibility flag
 				// before computing checksum
-				if ff, ok := f.(*FrameV2); ok && fillSignatureKey != nil {
+				if ff, ok := f.(*FrameV2); ok && route == false && p.conf.SignatureOutKey != nil {
 					ff.IncompatibilityFlag |= flagSigned
 				}
 
-				if fillChecksum == true {
+				if route == false {
 					check := p.Checksum(f)
 					switch ff := f.(type) {
 					case *FrameV1:
@@ -362,8 +363,8 @@ func (p *Parser) Write(writer io.Writer, f Frame, fillChecksum bool, fillSignatu
 		binary.LittleEndian.PutUint16(buf[offset:offset+2], ff.Checksum)
 
 	case *FrameV2:
-		if fillSignatureKey != nil {
-			ff.Signature = p.Signature(ff, fillSignatureKey)
+		if route == false && p.conf.SignatureOutKey != nil {
+			ff.Signature = p.Signature(ff, p.conf.SignatureOutKey)
 		}
 
 		bufferLen := 10 + len(msgContent) + 2
@@ -408,7 +409,7 @@ func (p *Parser) Write(writer io.Writer, f Frame, fillChecksum bool, fillSignatu
 
 	// we do not check n
 	// since io.Writer is not allowed to return n < len(buf) without throwing an error
-	_, err := writer.Write(buf)
+	_, err := p.conf.Writer.Write(buf)
 	if err != nil {
 		return err
 	}

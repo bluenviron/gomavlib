@@ -46,7 +46,6 @@ Basic example (more are available at https://github.com/gswly/gomavlib/tree/mast
 package gomavlib
 
 import (
-	"bufio"
 	"fmt"
 	"io"
 	"reflect"
@@ -158,7 +157,7 @@ type NodeConf struct {
 	// This feature requires Mavlink v2.
 	SignatureOutKey *FrameSignatureKey
 
-	// (optional) disable sthe periodic sending of heartbeats to
+	// (optional) disables the periodic sending of heartbeats to
 	// open channels.
 	HeartbeatDisable bool
 	// (optional) set the period between heartbeats.
@@ -178,7 +177,6 @@ type Node struct {
 	wg              sync.WaitGroup
 	chanAccepters   map[endpointChannelAccepter]struct{}
 	channels        map[*EndpointChannel]struct{}
-	parser          *Parser
 	frameQueue      chan *NodeReadResult
 	writeDone       chan struct{}
 	heartbeatTicker *heartbeatTicker
@@ -205,19 +203,10 @@ func NewNode(conf NodeConf) (*Node, error) {
 		conf.HeartbeatPeriod = 5 * time.Second
 	}
 
-	// init frame parser
-	parser, err := NewParser(ParserConf{
-		Dialect: conf.Dialect,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("frame parser: %s", err)
-	}
-
 	n := &Node{
 		conf:          conf,
 		chanAccepters: make(map[endpointChannelAccepter]struct{}),
 		channels:      make(map[*EndpointChannel]struct{}),
-		parser:        parser,
 		frameQueue:    make(chan *NodeReadResult),
 		writeDone:     make(chan struct{}),
 	}
@@ -315,6 +304,15 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 	}
 	n.channels[conn] = struct{}{}
 
+	parser := NewParser(ParserConf{
+		Reader:          conn.rwc,
+		Writer:          conn.rwc,
+		Dialect:         n.conf.Dialect,
+		SignatureInKey:  n.conf.SignatureInKey,
+		SignatureOutKey: n.conf.SignatureOutKey,
+		ChecksumDisable: n.conf.ChecksumDisable,
+	})
+
 	// reader
 	n.wg.Add(1)
 	go func() {
@@ -326,9 +324,8 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 			close(conn.writeChan)
 		}()
 
-		bufreader := bufio.NewReaderSize(conn.rwc, netBufferSize)
 		for {
-			frame, err := n.parser.Read(bufreader)
+			frame, err := parser.Read()
 			if err != nil {
 				// continue in case of parse errors
 				if _, ok := err.(*ParserError); ok {
@@ -384,13 +381,13 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 				}
 				nextSequenceId++
 
-				n.parser.Write(conn.rwc, f, !n.conf.ChecksumDisable, n.conf.SignatureOutKey)
+				parser.Write(f, false)
 
 			case Frame:
 				f := wh
 
 				// encode without touching checksum nor signature
-				n.parser.Write(conn.rwc, f, false, nil)
+				parser.Write(f, true)
 			}
 
 			n.writeDone <- struct{}{}

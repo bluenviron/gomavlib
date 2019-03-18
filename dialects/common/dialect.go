@@ -2552,7 +2552,7 @@ func (*MessageWheelDistance) GetId() uint32 {
 	return 9000
 }
 
-var Dialect = []gomavlib.Message{
+var Dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},
 	&MessageSysStatus{},
@@ -2727,7 +2727,7 @@ var Dialect = []gomavlib.Message{
 	&MessageSmartBatteryInfo{},
 	&MessageSmartBatteryStatus{},
 	&MessageWheelDistance{},
-}
+})
 
 type ADSB_ALTITUDE_TYPE int
 

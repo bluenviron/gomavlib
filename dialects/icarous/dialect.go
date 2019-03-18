@@ -39,11 +39,11 @@ func (*MessageIcarousKinematicBands) GetId() uint32 {
 	return 42001
 }
 
-var Dialect = []gomavlib.Message{
+var Dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// icarous.xml
 	&MessageIcarousHeartbeat{},
 	&MessageIcarousKinematicBands{},
-}
+})
 
 type ICAROUS_FMS_STATE int
 

@@ -10,9 +10,9 @@ import (
 
 func main() {
 	// create a node which
+	// - communicates through multiple endpoints
 	// - understands ardupilotmega dialect
 	// - writes messages with given system id and component id
-	// - reads/writes to multiple endpoints
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},

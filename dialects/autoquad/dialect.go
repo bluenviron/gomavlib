@@ -2598,7 +2598,7 @@ func (*MessageAqEscTelemetry) GetId() uint32 {
 	return 152
 }
 
-var Dialect = []gomavlib.Message{
+var Dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},
 	&MessageSysStatus{},
@@ -2776,7 +2776,7 @@ var Dialect = []gomavlib.Message{
 	// autoquad.xml
 	&MessageAqTelemetryF{},
 	&MessageAqEscTelemetry{},
-}
+})
 
 type ADSB_ALTITUDE_TYPE int
 

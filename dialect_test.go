@@ -28,7 +28,7 @@ EOF
 
 func testMessageDecode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
 	for i, byt := range byts {
-		mp, err := newParserMessage(parsers[i])
+		mp, err := newDialectMessage(parsers[i])
 		require.NoError(t, err)
 		msg, err := mp.decode(byt, isV2)
 		require.NoError(t, err)
@@ -38,7 +38,7 @@ func testMessageDecode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte
 
 func testMessageEncode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
 	for i, msg := range msgs {
-		mp, err := newParserMessage(parsers[i])
+		mp, err := newDialectMessage(parsers[i])
 		require.NoError(t, err)
 		byt, err := mp.encode(msg, isV2)
 		require.NoError(t, err)
@@ -145,7 +145,7 @@ func (*MessageAhrs) GetId() uint32 {
 	return 163
 }
 
-func TestParserMessageCRC(t *testing.T) {
+func TestDialectCRC(t *testing.T) {
 	var ins = []Message{
 		&MessageHeartbeat{},
 		&MessageSysStatus{},
@@ -165,7 +165,7 @@ func TestParserMessageCRC(t *testing.T) {
 		127,
 	}
 	for i, in := range ins {
-		mp, err := newParserMessage(in)
+		mp, err := newDialectMessage(in)
 		require.NoError(t, err)
 		require.Equal(t, outs[i], mp.crcExtra)
 	}
@@ -238,11 +238,11 @@ var testMpV1Msgs = []Message{
 	},
 }
 
-func TestParserMessageV1Dec(t *testing.T) {
+func TestDialectV1Dec(t *testing.T) {
 	testMessageDecode(t, testMpV1Parsers, false, testMpV1Bytes, testMpV1Msgs)
 }
 
-func TestParserMessageV1Enc(t *testing.T) {
+func TestDialectV1Enc(t *testing.T) {
 	testMessageEncode(t, testMpV1Parsers, false, testMpV1Bytes, testMpV1Msgs)
 }
 
@@ -263,11 +263,11 @@ var testMpV2EmptyByteMsgs = []Message{
 	},
 }
 
-func TestParserMessageV2EmptyByteDec(t *testing.T) {
+func TestDialectV2EmptyByteDec(t *testing.T) {
 	testMessageDecode(t, testMpV2EmptyByteParsers, true, testMpV2EmptyByteBytes, testMpV2EmptyByteMsgs)
 }
 
-func TestParserMessageV2EmptyByteEnc(t *testing.T) {
+func TestDialectV2EmptyByteEnc(t *testing.T) {
 	testMessageEncode(t, testMpV2EmptyByteParsers, true, testMpV2EmptyByteBytes, testMpV2EmptyByteMsgs)
 }
 
@@ -302,10 +302,10 @@ var testMpV2ExtensionMsgs = []Message{
 	},
 }
 
-func TestParserMessageV2ExtensionDec(t *testing.T) {
+func TestDialectV2ExtensionDec(t *testing.T) {
 	testMessageDecode(t, testMpV2ExtensionParsers, true, testMpV2ExtensionBytes, testMpV2ExtensionMsgs)
 }
 
-func TestParserMessageV2ExtensionEnc(t *testing.T) {
+func TestDialectV2ExtensionEnc(t *testing.T) {
 	testMessageEncode(t, testMpV2ExtensionParsers, true, testMpV2ExtensionBytes, testMpV2ExtensionMsgs)
 }

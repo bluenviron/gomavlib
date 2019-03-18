@@ -2600,7 +2600,7 @@ func (*MessageUavionixAdsbTransceiverHealthReport) GetId() uint32 {
 	return 10003
 }
 
-var Dialect = []gomavlib.Message{
+var Dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},
 	&MessageSysStatus{},
@@ -2779,7 +2779,7 @@ var Dialect = []gomavlib.Message{
 	&MessageUavionixAdsbOutCfg{},
 	&MessageUavionixAdsbOutDynamic{},
 	&MessageUavionixAdsbTransceiverHealthReport{},
-}
+})
 
 type ADSB_ALTITUDE_TYPE int
 

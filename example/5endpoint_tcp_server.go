@@ -10,9 +10,9 @@ import (
 
 func main() {
 	// create a node which
+	// - communicates through a TCP endpoint in server mode
 	// - understands ardupilotmega dialect
 	// - writes messages with given system id and component id
-	// - reads/writes to a TCP endpoint in server mode
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointTcpServer{":5600"},

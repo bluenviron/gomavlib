@@ -37,7 +37,7 @@ func (*MessageTestTypes) GetId() uint32 {
 	return 0
 }
 
-var Dialect = []gomavlib.Message{
+var Dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// test.xml
 	&MessageTestTypes{},
-}
+})

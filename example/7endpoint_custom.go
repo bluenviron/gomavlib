@@ -45,9 +45,9 @@ func main() {
 	endpoint := NewCustomEndpoint()
 
 	// create a node which
+	// - communicates through a custom endpoint
 	// - understands ardupilotmega dialect
 	// - writes messages with given system id and component id
-	// - reads/writes to a custom endpoint.
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointCustom{endpoint},

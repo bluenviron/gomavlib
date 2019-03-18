@@ -44,7 +44,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 	}
 
 	node1, err := NewNode(NodeConf{
-		Dialect:          []Message{&MessageHeartbeat{}},
+		Dialect:          MustDialect([]Message{&MessageHeartbeat{}}),
 		SystemId:         10,
 		ComponentId:      1,
 		Endpoints:        []EndpointConf{t1},
@@ -53,7 +53,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect:          []Message{&MessageHeartbeat{}},
+		Dialect:          MustDialect([]Message{&MessageHeartbeat{}}),
 		SystemId:         11,
 		ComponentId:      1,
 		Endpoints:        []EndpointConf{t2},
@@ -200,7 +200,7 @@ func TestNodeCustom(t *testing.T) {
 
 	func() {
 		node, err := NewNode(NodeConf{
-			Dialect:     []Message{&MessageHeartbeat{}},
+			Dialect:     MustDialect([]Message{&MessageHeartbeat{}}),
 			SystemId:    11,
 			ComponentId: 1,
 			Endpoints: []EndpointConf{
@@ -219,7 +219,7 @@ func TestNodeCustom(t *testing.T) {
 
 func TestNodeError(t *testing.T) {
 	_, err := NewNode(NodeConf{
-		Dialect:     []Message{&MessageHeartbeat{}},
+		Dialect:     MustDialect([]Message{&MessageHeartbeat{}}),
 		SystemId:    11,
 		ComponentId: 1,
 		Endpoints: []EndpointConf{
@@ -237,7 +237,7 @@ func TestNodeError(t *testing.T) {
 func TestNodeHeartbeat(t *testing.T) {
 	func() {
 		node1, err := NewNode(NodeConf{
-			Dialect:     []Message{&MessageHeartbeat{}},
+			Dialect:     MustDialect([]Message{&MessageHeartbeat{}}),
 			SystemId:    10,
 			ComponentId: 1,
 			Endpoints: []EndpointConf{
@@ -249,7 +249,7 @@ func TestNodeHeartbeat(t *testing.T) {
 		defer node1.Close()
 
 		node2, err := NewNode(NodeConf{
-			Dialect:     []Message{&MessageHeartbeat{}},
+			Dialect:     MustDialect([]Message{&MessageHeartbeat{}}),
 			SystemId:    11,
 			ComponentId: 1,
 			Endpoints: []EndpointConf{
@@ -282,7 +282,7 @@ func TestNodeFrameSignature(t *testing.T) {
 	}
 
 	node1, err := NewNode(NodeConf{
-		Dialect:     []Message{&MessageHeartbeat{}},
+		Dialect:     MustDialect([]Message{&MessageHeartbeat{}}),
 		SystemId:    10,
 		ComponentId: 1,
 		Endpoints: []EndpointConf{
@@ -295,7 +295,7 @@ func TestNodeFrameSignature(t *testing.T) {
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect:     []Message{&MessageHeartbeat{}},
+		Dialect:     MustDialect([]Message{&MessageHeartbeat{}}),
 		SystemId:    11,
 		ComponentId: 1,
 		Endpoints: []EndpointConf{
@@ -357,7 +357,7 @@ func TestNodeRouting(t *testing.T) {
 	}
 
 	node1, err := NewNode(NodeConf{
-		Dialect:     []Message{&MessageHeartbeat{}},
+		Dialect:     MustDialect([]Message{&MessageHeartbeat{}}),
 		SystemId:    10,
 		ComponentId: 1,
 		Endpoints: []EndpointConf{
@@ -368,7 +368,7 @@ func TestNodeRouting(t *testing.T) {
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect:     []Message{&MessageHeartbeat{}},
+		Dialect:     MustDialect([]Message{&MessageHeartbeat{}}),
 		SystemId:    11,
 		ComponentId: 1,
 		Endpoints: []EndpointConf{
@@ -380,7 +380,7 @@ func TestNodeRouting(t *testing.T) {
 	require.NoError(t, err)
 
 	node3, err := NewNode(NodeConf{
-		Dialect:     []Message{&MessageHeartbeat{}},
+		Dialect:     MustDialect([]Message{&MessageHeartbeat{}}),
 		SystemId:    12,
 		ComponentId: 1,
 		Endpoints: []EndpointConf{

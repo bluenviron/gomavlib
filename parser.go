@@ -31,16 +31,16 @@ type ParserReader interface {
 // ParserConf configures a Parser.
 type ParserConf struct {
 	// the reader from which frames will be read.
-	//Reader io.Reader
+	// Reader io.Reader
 	// the writer to which frames will be written.
-	//Writer io.Writer
+	// Writer io.Writer
 
 	// contains the messages which will be automatically decoded and
 	// encoded. If not provided, messages are decoded in the MessageRaw struct.
-	Dialect []Message
+	Dialect *Dialect
 
-	// (optional) the secret key used to verify incoming frames.
-	// Non signed frames are discarded. This feature requires Mavlink v2.
+	// (optional) the secret key used to validate incoming frames.
+	// Non-signed frames are discarded. This feature requires Mavlink v2.
 	SignatureInKey *FrameSignatureKey
 
 	// (optional) disables checksum validation of incoming frames.
@@ -50,25 +50,14 @@ type ParserConf struct {
 
 // Parser is a low-level Mavlink encoder and decoder that works with a Reader and a Writer.
 type Parser struct {
-	conf           ParserConf
-	parserMessages map[uint32]*parserMessage
+	conf ParserConf
 }
 
 // NewParser allocates a Parser, a low level frame encoder and decoder.
 // See Parser for the options.
 func NewParser(conf ParserConf) (*Parser, error) {
 	p := &Parser{
-		conf:           conf,
-		parserMessages: make(map[uint32]*parserMessage),
-	}
-
-	// generate message parsers
-	for _, msg := range conf.Dialect {
-		mp, err := newParserMessage(msg)
-		if err != nil {
-			return nil, fmt.Errorf("message %T: %s", msg, err)
-		}
-		p.parserMessages[msg.GetId()] = mp
+		conf: conf,
 	}
 
 	return p, nil
@@ -101,7 +90,7 @@ func (p *Parser) Checksum(f Frame) uint16 {
 	}
 
 	// CRC_EXTRA byte is added at the end of the data
-	h.Write([]byte{p.parserMessages[msg.GetId()].crcExtra})
+	h.Write([]byte{p.conf.Dialect.messages[msg.GetId()].crcExtra})
 
 	return h.Sum16()
 }
@@ -275,25 +264,27 @@ func (p *Parser) Read(reader ParserReader) (Frame, error) {
 	}
 
 	// decode message if in dialect and validate checksum
-	if mp, ok := p.parserMessages[f.GetMessage().GetId()]; ok {
-		if p.conf.ChecksumDisable == false {
-			if sum := p.Checksum(f); sum != f.GetChecksum() {
-				return nil, newParserError("wrong checksum (expected %.4x, got %.4x, id=%d)",
-					sum, f.GetChecksum(), f.GetMessage().GetId())
+	if p.conf.Dialect != nil {
+		if mp, ok := p.conf.Dialect.messages[f.GetMessage().GetId()]; ok {
+			if p.conf.ChecksumDisable == false {
+				if sum := p.Checksum(f); sum != f.GetChecksum() {
+					return nil, newParserError("wrong checksum (expected %.4x, got %.4x, id=%d)",
+						sum, f.GetChecksum(), f.GetMessage().GetId())
+				}
 			}
-		}
 
-		_, isFrameV2 := f.(*FrameV2)
-		msg, err := mp.decode(f.GetMessage().(*MessageRaw).Content, isFrameV2)
-		if err != nil {
-			return nil, newParserError(err.Error())
-		}
+			_, isFrameV2 := f.(*FrameV2)
+			msg, err := mp.decode(f.GetMessage().(*MessageRaw).Content, isFrameV2)
+			if err != nil {
+				return nil, newParserError(err.Error())
+			}
 
-		switch ff := f.(type) {
-		case *FrameV1:
-			ff.Message = msg
-		case *FrameV2:
-			ff.Message = msg
+			switch ff := f.(type) {
+			case *FrameV1:
+				ff.Message = msg
+			case *FrameV2:
+				ff.Message = msg
+			}
 		}
 	}
 
@@ -303,34 +294,36 @@ func (p *Parser) Read(reader ParserReader) (Frame, error) {
 // Write writes a Frame into writer.
 func (p *Parser) Write(writer io.Writer, f Frame, fillChecksum bool, fillSignatureKey *FrameSignatureKey) error {
 	// encode message if not already encoded and in dialect
-	if _, ok := f.GetMessage().(*MessageRaw); ok == false {
-		if mp, ok := p.parserMessages[f.GetMessage().GetId()]; ok {
-			_, isFrameV2 := f.(*FrameV2)
-			byt, err := mp.encode(f.GetMessage(), isFrameV2)
-			if err != nil {
-				return err
-			}
+	if p.conf.Dialect != nil {
+		if _, ok := f.GetMessage().(*MessageRaw); ok == false {
+			if mp, ok := p.conf.Dialect.messages[f.GetMessage().GetId()]; ok {
+				_, isFrameV2 := f.(*FrameV2)
+				byt, err := mp.encode(f.GetMessage(), isFrameV2)
+				if err != nil {
+					return err
+				}
 
-			switch ff := f.(type) {
-			case *FrameV1:
-				ff.Message = &MessageRaw{f.GetMessage().GetId(), byt}
-			case *FrameV2:
-				ff.Message = &MessageRaw{f.GetMessage().GetId(), byt}
-			}
-
-			// if frame is going to be signed, set incompatibility flag
-			// before computing checksum
-			if ff, ok := f.(*FrameV2); ok && fillSignatureKey != nil {
-				ff.IncompatibilityFlag |= flagSigned
-			}
-
-			if fillChecksum == true {
-				check := p.Checksum(f)
 				switch ff := f.(type) {
 				case *FrameV1:
-					ff.Checksum = check
+					ff.Message = &MessageRaw{f.GetMessage().GetId(), byt}
 				case *FrameV2:
-					ff.Checksum = check
+					ff.Message = &MessageRaw{f.GetMessage().GetId(), byt}
+				}
+
+				// if frame is going to be signed, set incompatibility flag
+				// before computing checksum
+				if ff, ok := f.(*FrameV2); ok && fillSignatureKey != nil {
+					ff.IncompatibilityFlag |= flagSigned
+				}
+
+				if fillChecksum == true {
+					check := p.Checksum(f)
+					switch ff := f.(type) {
+					case *FrameV1:
+						ff.Checksum = check
+					case *FrameV2:
+						ff.Checksum = check
+					}
 				}
 			}
 		}

@@ -2602,7 +2602,7 @@ func (*MessageScriptCurrent) GetId() uint32 {
 	return 184
 }
 
-var Dialect = []gomavlib.Message{
+var Dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},
 	&MessageSysStatus{},
@@ -2783,7 +2783,7 @@ var Dialect = []gomavlib.Message{
 	&MessageScriptRequestList{},
 	&MessageScriptCount{},
 	&MessageScriptCurrent{},
-}
+})
 
 type ADSB_ALTITUDE_TYPE int
 

@@ -71,14 +71,14 @@ func (*Message{{ .Name }}) GetId() uint32 {
 {{ end }}
 {{- end }}
 
-var Dialect = []gomavlib.Message{
+var Dialect = gomavlib.MustDialect([]gomavlib.Message{
 {{- range .Defs }}
     // {{ .Name }}
 {{- range .Messages }}
     &Message{{ .Name }}{},
 {{- end }}
 {{- end }}
-}
+})
 {{/**/}}
 
 {{- range .Enums }}

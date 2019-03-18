@@ -89,7 +89,39 @@ func DialectMsgDefToGo(in string) string {
 	return strings.ToUpper(in[:1]) + in[1:]
 }
 
-type parserMessageField struct {
+// Dialect contains available messages and the configuration needed to encode and
+// decode them.
+type Dialect struct {
+	messages map[uint32]*dialectMessage
+}
+
+// NewDialect allocates a Dialect.
+func NewDialect(messages []Message) (*Dialect, error) {
+	d := &Dialect{
+		messages: make(map[uint32]*dialectMessage),
+	}
+
+	for _, msg := range messages {
+		mp, err := newDialectMessage(msg)
+		if err != nil {
+			return nil, fmt.Errorf("message %T: %s", msg, err)
+		}
+		d.messages[msg.GetId()] = mp
+	}
+
+	return d, nil
+}
+
+// MustDialect is like NewDialect but panics in case of error.
+func MustDialect(messages []Message) *Dialect {
+	d, err := NewDialect(messages)
+	if err != nil {
+		panic(err)
+	}
+	return d
+}
+
+type dialectMessageField struct {
 	ftype       string
 	name        string
 	arrayLength byte
@@ -97,19 +129,19 @@ type parserMessageField struct {
 	isExtension bool
 }
 
-type parserMessage struct {
+type dialectMessage struct {
 	elemType     reflect.Type
-	fields       []parserMessageField
+	fields       []dialectMessageField
 	sizeNormal   byte
 	sizeExtended byte
 	crcExtra     byte
 }
 
-func newParserMessage(msg Message) (*parserMessage, error) {
-	mp := &parserMessage{}
+func newDialectMessage(msg Message) (*dialectMessage, error) {
+	mp := &dialectMessage{}
 
 	mp.elemType = reflect.TypeOf(msg).Elem()
-	mp.fields = make([]parserMessageField, mp.elemType.NumField())
+	mp.fields = make([]dialectMessageField, mp.elemType.NumField())
 
 	// get name
 	if strings.HasPrefix(mp.elemType.Name(), "Message") == false {
@@ -156,7 +188,7 @@ func newParserMessage(msg Message) (*parserMessage, error) {
 			size = dialectTypeSizes[defType]
 		}
 
-		mp.fields[i] = parserMessageField{
+		mp.fields[i] = dialectMessageField{
 			ftype: defType,
 			name: func() string {
 				if mavname := field.Tag.Get("mavname"); mavname != "" {
@@ -214,7 +246,7 @@ func newParserMessage(msg Message) (*parserMessage, error) {
 	return mp, nil
 }
 
-func (mp *parserMessage) decode(buf []byte, isFrameV2 bool) (Message, error) {
+func (mp *dialectMessage) decode(buf []byte, isFrameV2 bool) (Message, error) {
 	msg := reflect.New(mp.elemType)
 
 	if isFrameV2 == true {
@@ -258,7 +290,7 @@ func (mp *parserMessage) decode(buf []byte, isFrameV2 bool) (Message, error) {
 	return msg.Interface().(Message), nil
 }
 
-func (mp *parserMessage) encode(msg Message, isFrameV2 bool) ([]byte, error) {
+func (mp *dialectMessage) encode(msg Message, isFrameV2 bool) ([]byte, error) {
 	var buf []byte
 
 	if isFrameV2 == true {
@@ -306,7 +338,7 @@ func (mp *parserMessage) encode(msg Message, isFrameV2 bool) ([]byte, error) {
 	return buf, nil
 }
 
-func decodeValue(target interface{}, buf []byte, f *parserMessageField) int {
+func decodeValue(target interface{}, buf []byte, f *dialectMessageField) int {
 	switch tt := target.(type) {
 	case *string:
 		// find nil character or string end
@@ -362,7 +394,7 @@ func decodeValue(target interface{}, buf []byte, f *parserMessageField) int {
 	}
 }
 
-func encodeValue(buf []byte, target interface{}, f *parserMessageField) int {
+func encodeValue(buf []byte, target interface{}, f *dialectMessageField) int {
 	switch tt := target.(type) {
 	case *string:
 		copy(buf[:f.arrayLength], *tt)

@@ -9,9 +9,9 @@ import (
 
 func main() {
 	// create a node which
+	// - communicates through a serial port
 	// - does not use dialects
 	// - writes messages with given system id and component id
-	// - reads/writes to a serial port
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},

@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func testFrameDecode(t *testing.T, dialect []Message, key *FrameSignatureKey, byts [][]byte, frames []Frame) {
+func testFrameDecode(t *testing.T, dialect *Dialect, key *FrameSignatureKey, byts [][]byte, frames []Frame) {
 	parser, _ := NewParser(ParserConf{
 		Dialect:        dialect,
 		SignatureInKey: key,
@@ -19,7 +19,7 @@ func testFrameDecode(t *testing.T, dialect []Message, key *FrameSignatureKey, by
 	}
 }
 
-func testFrameEncode(t *testing.T, dialect []Message, key *FrameSignatureKey, byts [][]byte, frames []Frame) {
+func testFrameEncode(t *testing.T, dialect *Dialect, key *FrameSignatureKey, byts [][]byte, frames []Frame) {
 	parser, _ := NewParser(ParserConf{
 		Dialect: dialect,
 	})
@@ -58,11 +58,11 @@ func (m *MessageTest8) GetId() uint32 {
 	return 8
 }
 
-var testDialect = []Message{
+var testDialect = MustDialect([]Message{
 	&MessageTest5{},
 	&MessageTest6{},
 	&MessageTest8{},
-}
+})
 
 var testFpV1Bytes = [][]byte{
 	[]byte("\xFE\x05\x27\x01\x02\x05\x10\x10\x10\x10\x10\xe5\x66"),
@@ -218,9 +218,9 @@ var testFpV2SigFrames = []Frame{
 var testFpV2Key = NewFrameSignatureKey(bytes.Repeat([]byte("\x4F"), 32))
 
 func TestParserV2FrameSignatureDec(t *testing.T) {
-	testFrameDecode(t, []Message{&MessageHeartbeat{}}, testFpV2Key, testFpV2SigBytes, testFpV2SigFrames)
+	testFrameDecode(t, MustDialect([]Message{&MessageHeartbeat{}}), testFpV2Key, testFpV2SigBytes, testFpV2SigFrames)
 }
 
 func TestParserV2FrameSignatureEnc(t *testing.T) {
-	testFrameEncode(t, []Message{&MessageHeartbeat{}}, testFpV2Key, testFpV2SigBytes, testFpV2SigFrames)
+	testFrameEncode(t, MustDialect([]Message{&MessageHeartbeat{}}), testFpV2Key, testFpV2SigBytes, testFpV2SigFrames)
 }

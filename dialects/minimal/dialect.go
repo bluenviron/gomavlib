@@ -21,10 +21,10 @@ func (*MessageHeartbeat) GetId() uint32 {
 	return 0
 }
 
-var Dialect = []gomavlib.Message{
+var Dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// minimal.xml
 	&MessageHeartbeat{},
-}
+})
 
 type MAV_AUTOPILOT int
 

@@ -3427,7 +3427,7 @@ func (*MessageEscTelemetry_9To_12) GetId() uint32 {
 	return 11032
 }
 
-var Dialect = []gomavlib.Message{
+var Dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},
 	&MessageSysStatus{},
@@ -3670,7 +3670,7 @@ var Dialect = []gomavlib.Message{
 	&MessageEscTelemetry_1To_4{},
 	&MessageEscTelemetry_5To_8{},
 	&MessageEscTelemetry_9To_12{},
-}
+})
 
 type ACCELCAL_VEHICLE_POS int
 

@@ -80,13 +80,16 @@ type heartbeatTicker struct {
 	n           *Node
 	terminate   chan struct{}
 	done        chan struct{}
-	heartbeatMp *parserMessage
+	heartbeatMp *dialectMessage
 	period      time.Duration
 }
 
 func newHeartbeatTicker(n *Node, period time.Duration) *heartbeatTicker {
 	// heartbeat message must exist in dialect and correspond to standart heartbeat
-	mp, ok := n.parser.parserMessages[0]
+	if n.conf.Dialect == nil {
+		return nil
+	}
+	mp, ok := n.conf.Dialect.messages[0]
 	if ok == false || mp.crcExtra != 50 {
 		return nil
 	}
@@ -142,7 +145,7 @@ type NodeConf struct {
 	Version NodeVersion
 	// contains the messages which will be automatically decoded and
 	// encoded. If not provided, messages are decoded in the MessageRaw struct.
-	Dialect []Message
+	Dialect *Dialect
 	// these are used to identify this node in the network.
 	// They are added to every outgoing message.
 	SystemId    byte

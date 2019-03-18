@@ -2591,7 +2591,7 @@ func (*MessageUalbertaSysStatus) GetId() uint32 {
 	return 222
 }
 
-var Dialect = []gomavlib.Message{
+var Dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},
 	&MessageSysStatus{},
@@ -2770,7 +2770,7 @@ var Dialect = []gomavlib.Message{
 	&MessageNavFilterBias{},
 	&MessageRadioCalibration{},
 	&MessageUalbertaSysStatus{},
-}
+})
 
 type ADSB_ALTITUDE_TYPE int
 

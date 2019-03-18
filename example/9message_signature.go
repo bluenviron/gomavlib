@@ -13,9 +13,9 @@ func main() {
 	key := gomavlib.NewFrameSignatureKey([]byte("abcdef"))
 
 	// create a node which
+	// - communicates through a serial port.
 	// - understands ardupilotmega dialect
 	// - writes messages with given system id and component id
-	// - reads/writes to a serial port.
 	// - validates incoming messages via SignatureInKey
 	// - sign outgoing messages via SignatureOutKey
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{

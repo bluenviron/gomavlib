@@ -214,7 +214,7 @@ func TestNodeCustom(t *testing.T) {
 		node.WriteMessageAll(testMsg)
 	}()
 
-	require.Equal(t, rwc.writeBuf.Bytes(), res)
+	require.Equal(t, res, rwc.writeBuf.Bytes())
 }
 
 func TestNodeError(t *testing.T) {

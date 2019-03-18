@@ -32,7 +32,7 @@ func testMessageDecode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte
 		require.NoError(t, err)
 		msg, err := mp.decode(byt, isV2)
 		require.NoError(t, err)
-		require.Equal(t, msg, msgs[i])
+		require.Equal(t, msgs[i], msg)
 	}
 }
 
@@ -42,7 +42,7 @@ func testMessageEncode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte
 		require.NoError(t, err)
 		byt, err := mp.encode(msg, isV2)
 		require.NoError(t, err)
-		require.Equal(t, byt, byts[i])
+		require.Equal(t, byts[i], byt)
 	}
 }
 
@@ -167,7 +167,7 @@ func TestParserMessageCRC(t *testing.T) {
 	for i, in := range ins {
 		mp, err := newParserMessage(in)
 		require.NoError(t, err)
-		require.Equal(t, mp.crcExtra, outs[i])
+		require.Equal(t, outs[i], mp.crcExtra)
 	}
 }
 
@@ -176,7 +176,7 @@ var testMpV1Bytes = [][]byte{
 	bytes.Repeat([]byte("\x01"), 31),
 	[]byte("\x01\x01\x01\x74\x65\x73\x74\x69\x6e\x67\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"),
 	append([]byte("\x02\x00\x00\x00\x00\x00\x00\x00"), bytes.Repeat([]byte("\x00\x00\x80\x3F"), 16)...),
-	// message with extension fields (skipped in v1)
+	// message with extension fields, that are skipped in v1
 	[]byte("\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x80\x3F\x00\x00\x80\x3F\x00\x00\x80\x3F\x07\x00\x08\x00\x09\x0A"),
 }
 

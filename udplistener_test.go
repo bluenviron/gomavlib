@@ -37,12 +37,12 @@ func TestUdpListener(t *testing.T) {
 				buf := make([]byte, 1024)
 				n, err := conn.Read(buf)
 				require.NoError(t, err)
-				require.Equal(t, n, len(testBuf1))
-				require.Equal(t, buf[:n], testBuf1)
+				require.Equal(t, len(testBuf1), n)
+				require.Equal(t, testBuf1, buf[:n])
 
 				n, err = conn.Write(testBuf2)
 				require.NoError(t, err)
-				require.Equal(t, n, len(testBuf2))
+				require.Equal(t, len(testBuf2), n)
 			}()
 		}
 	}()
@@ -56,7 +56,7 @@ func TestUdpListener(t *testing.T) {
 
 			n, err := conn.Write(testBuf1)
 			require.NoError(t, err)
-			require.Equal(t, n, len(testBuf1))
+			require.Equal(t, len(testBuf1), n)
 
 			err = conn.SetReadDeadline(time.Now().Add(5 * time.Second))
 			require.NoError(t, err)
@@ -64,8 +64,8 @@ func TestUdpListener(t *testing.T) {
 			buf := make([]byte, 1024)
 			n, err = conn.Read(buf)
 			require.NoError(t, err)
-			require.Equal(t, n, len(testBuf2))
-			require.Equal(t, buf[:n], testBuf2)
+			require.Equal(t, len(testBuf2), n)
+			require.Equal(t, testBuf2, buf[:n])
 		}()
 	}
 

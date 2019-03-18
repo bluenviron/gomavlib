@@ -15,7 +15,7 @@ func testFrameDecode(t *testing.T, dialect []Message, key *FrameSignatureKey, by
 	for i, byt := range byts {
 		frame, err := parser.Read(bytes.NewReader(byt))
 		require.NoError(t, err)
-		require.Equal(t, frame, frames[i])
+		require.Equal(t, frames[i], frame)
 	}
 }
 
@@ -27,7 +27,7 @@ func testFrameEncode(t *testing.T, dialect []Message, key *FrameSignatureKey, by
 		buf := bytes.NewBuffer(nil)
 		err := parser.Write(buf, frame, true, key)
 		require.NoError(t, err)
-		require.Equal(t, buf.Bytes(), byts[i])
+		require.Equal(t, byts[i], buf.Bytes())
 	}
 }
 

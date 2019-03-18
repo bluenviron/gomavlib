@@ -20,12 +20,12 @@ Basic example (more are available at https://github.com/gswly/gomavlib/tree/mast
 
   func main() {
   	node, err := gomavlib.NewNode(gomavlib.NodeConf{
+		Endpoints: []gomavlib.EndpointConf{
+			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
+		},
   		Dialect:     ardupilotmega.Dialect,
   		SystemId:    10,
   		ComponentId: 1,
-  		Endpoints: []gomavlib.EndpointConf{
-  			gomavlib.EndpointSerial{"/dev/ttyAMA0:57600"},
-  		},
   	})
   	if err != nil {
   		panic(err)
@@ -46,6 +46,7 @@ Basic example (more are available at https://github.com/gswly/gomavlib/tree/mast
 package gomavlib
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"reflect"
@@ -132,6 +133,10 @@ func (h *heartbeatTicker) do() {
 
 // NodeConf allows to configure a Node.
 type NodeConf struct {
+	// contains the endpoint with which this node will
+	// communicate. Each endpoint contains one or more channels.
+	Endpoints []EndpointConf
+
 	// Mavlink version used to encode frames. See Version
 	// for the available options.
 	Version NodeVersion
@@ -142,9 +147,6 @@ type NodeConf struct {
 	// They are added to every outgoing message.
 	SystemId    byte
 	ComponentId byte
-	// contains the endpoint with which this node will
-	// communicate. Each endpoint contains one or more channels.
-	Endpoints []EndpointConf
 
 	// (optional) the secret key used to verify incoming frames.
 	// Non signed frames are discarded. This feature requires Mavlink v2.
@@ -321,21 +323,20 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 			close(conn.writeChan)
 		}()
 
-		buf := make([]byte, netBufferSize)
+		bufreader := bufio.NewReaderSize(conn.rwc, netBufferSize)
 		for {
-			bufn, err := conn.rwc.Read(buf)
+			frame, err := n.parser.Read(bufreader)
 			if err != nil {
+				// continue in case of parse errors
+				if _, ok := err.(*ParserError); ok {
+					// TODO: ReturnParseErrors
+					continue
+				}
 				// avoid calling twice Close()
 				if err != errorTerminated {
 					conn.rwc.Close()
 				}
 				return
-			}
-
-			frame, err := n.parser.Decode(buf[:bufn], !n.conf.ChecksumDisable, n.conf.SignatureInKey)
-			if err != nil {
-				fmt.Printf("SKIPPED: %v\n", err)
-				continue
 			}
 
 			n.frameQueue <- &NodeReadResult{frame, conn}
@@ -380,19 +381,13 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 				}
 				nextSequenceId++
 
-				byt, err := n.parser.Encode(f, !n.conf.ChecksumDisable, n.conf.SignatureOutKey)
-				if err == nil {
-					conn.rwc.Write(byt)
-				}
+				n.parser.Write(conn.rwc, f, !n.conf.ChecksumDisable, n.conf.SignatureOutKey)
 
 			case Frame:
 				f := wh
 
 				// encode without touching checksum nor signature
-				byt, err := n.parser.Encode(f, false, nil)
-				if err == nil {
-					conn.rwc.Write(byt)
-				}
+				n.parser.Write(conn.rwc, f, false, nil)
 			}
 
 			n.writeDone <- struct{}{}

@@ -19,12 +19,12 @@ func main() {
 	// - validates incoming messages via SignatureInKey
 	// - sign outgoing messages via SignatureOutKey
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
-		Dialect:     ardupilotmega.Dialect,
-		SystemId:    10,
-		ComponentId: 1,
 		Endpoints: []gomavlib.EndpointConf{
-			gomavlib.EndpointSerial{"/dev/ttyAMA0:57600"},
+			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
 		},
+		Dialect:         ardupilotmega.Dialect,
+		SystemId:        10,
+		ComponentId:     1,
 		SignatureInKey:  key,
 		SignatureOutKey: key,
 	})

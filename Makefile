@@ -65,6 +65,7 @@ endif
 run-example:
 	@docker run --rm -it \
 		--privileged \
+		--network=host \
 		-v $(PWD):/src \
 		amd64/golang:1.11-stretch \
 		sh -c "cd /src && go run example/$(EXAMPLE).go"

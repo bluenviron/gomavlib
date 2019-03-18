@@ -2,6 +2,7 @@ package gomavlib
 
 import (
 	"fmt"
+	"io"
 	"math/rand"
 	"net"
 	"time"
@@ -44,6 +45,16 @@ func uint24Decode(in []byte) uint32 {
 	return uint32(in[2])<<16 | uint32(in[1])<<8 | uint32(in[0])
 }
 
+func readLittleEndianUint24(r io.Reader, dest *uint32) error {
+	buf := make([]byte, 3)
+	_, err := io.ReadFull(r, buf)
+	if err != nil {
+		return err
+	}
+	*dest = uint24Decode(buf)
+	return nil
+}
+
 func uint24Encode(in uint32) []byte {
 	ret := make([]byte, 3)
 	ret[0] = byte(in)
@@ -55,6 +66,16 @@ func uint24Encode(in uint32) []byte {
 func uint48Decode(in []byte) uint64 {
 	return uint64(in[5])<<40 | uint64(in[4])<<32 | uint64(in[3])<<24 |
 		uint64(in[2])<<16 | uint64(in[1])<<8 | uint64(in[0])
+}
+
+func readLittleEndianUint48(r io.Reader, dest *uint64) error {
+	buf := make([]byte, 6)
+	_, err := io.ReadFull(r, buf)
+	if err != nil {
+		return err
+	}
+	*dest = uint48Decode(buf)
+	return nil
 }
 
 func uint48Encode(in uint64) []byte {

@@ -49,12 +49,12 @@ func main() {
 	// - writes messages with given system id and component id
 	// - reads/writes to a custom endpoint.
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
-		Dialect:     ardupilotmega.Dialect,
-		SystemId:    10,
-		ComponentId: 1,
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointCustom{endpoint},
 		},
+		Dialect:     ardupilotmega.Dialect,
+		SystemId:    10,
+		ComponentId: 1,
 	})
 	if err != nil {
 		panic(err)

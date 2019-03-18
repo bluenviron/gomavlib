@@ -13,7 +13,7 @@ var reSerial = regexp.MustCompile("^(.+?):([0-9]+)$")
 // EndpointSerial sets up a endpoint that works through a serial port.
 type EndpointSerial struct {
 	// the address of the serial port in format name:baudrate
-	// example: /dev/ttyAMA0:57600
+	// example: /dev/ttyUSB0:57600
 	Address string
 }
 

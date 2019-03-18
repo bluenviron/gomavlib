@@ -215,8 +215,10 @@ func (mp *parserMessage) decode(buf []byte, isFrameV2 bool) (Message, error) {
 		}
 	}
 
-	// read field by field
+	// TODO: REMOVE
 	reader := bytes.NewReader(buf)
+
+	// read field by field
 	for _, f := range mp.fields {
 		// skip extensions for v1 frames
 		if isFrameV2 == false && f.isExtension == true {

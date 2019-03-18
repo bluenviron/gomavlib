@@ -14,13 +14,13 @@ func main() {
 	// - writes messages with given system id and component id
 	// - reads/writes to multiple endpoints
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
+		Endpoints: []gomavlib.EndpointConf{
+			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
+			gomavlib.EndpointUdpClient{"1.2.3.4:5900"},
+		},
 		Dialect:     ardupilotmega.Dialect,
 		SystemId:    10,
 		ComponentId: 1,
-		Endpoints: []gomavlib.EndpointConf{
-			gomavlib.EndpointSerial{"/dev/ttyAMA0:57600"},
-			gomavlib.EndpointUdpClient{"1.2.3.4:5900"},
-		},
 	})
 	if err != nil {
 		panic(err)

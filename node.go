@@ -62,9 +62,6 @@ const (
 	netWriteTimeout    = 10 * time.Second
 )
 
-// 1st January 2015 GMT
-var signatureReferenceDate = time.Date(2015, 01, 01, 0, 0, 0, 0, time.UTC)
-
 // NodeVersion allows to set the frame version used in a Node to wrap outgoing messages.
 type NodeVersion int
 
@@ -139,18 +136,20 @@ type NodeConf struct {
 	// communicate. Each endpoint contains one or more channels.
 	Endpoints []EndpointConf
 
-	// Mavlink version used to encode frames. See Version
-	// for the available options.
-	Version NodeVersion
 	// contains the messages which will be automatically decoded and
 	// encoded. If not provided, messages are decoded in the MessageRaw struct.
 	Dialect *Dialect
+
+	// Mavlink version used to encode frames. See Version
+	// for the available options.
+	Version NodeVersion
+
 	// these are used to identify this node in the network.
 	// They are added to every outgoing message.
 	SystemId    byte
 	ComponentId byte
 
-	// (optional) the secret key used to verify incoming frames.
+	// (optional) the secret key used to validate incoming frames.
 	// Non signed frames are discarded. This feature requires Mavlink v2.
 	SignatureInKey *FrameSignatureKey
 	// (optional) the secret key used to sign outgoing frames.
@@ -308,7 +307,10 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 		Reader:          conn.rwc,
 		Writer:          conn.rwc,
 		Dialect:         n.conf.Dialect,
+		SystemId:        n.conf.SystemId,
+		ComponentId:     n.conf.ComponentId,
 		SignatureInKey:  n.conf.SignatureInKey,
+		SignatureLinkId: randomByte(),
 		SignatureOutKey: n.conf.SignatureOutKey,
 		ChecksumDisable: n.conf.ChecksumDisable,
 	})
@@ -344,8 +346,6 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 	}()
 
 	// writer
-	nextSequenceId := byte(0)
-	signatureLinkId := randomByte()
 	n.wg.Add(1)
 	go func() {
 		defer n.wg.Done()
@@ -358,36 +358,14 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 
 			switch wh := what.(type) {
 			case Message:
-				var f Frame
-
-				// SequenceId and SignatureLinkId are unique for each channel
 				if n.conf.Version == V1 {
-					f = &FrameV1{
-						SequenceId:  nextSequenceId,
-						SystemId:    n.conf.SystemId,
-						ComponentId: n.conf.ComponentId,
-						Message:     wh,
-					}
+					parser.Write(&FrameV1{Message: wh}, false)
 				} else {
-					f = &FrameV2{
-						SequenceId:      nextSequenceId,
-						SystemId:        n.conf.SystemId,
-						ComponentId:     n.conf.ComponentId,
-						Message:         wh,
-						SignatureLinkId: signatureLinkId,
-						// Timestamp in 10 microsecond units since 1st January 2015 GMT time
-						SignatureTimestamp: (uint64(time.Since(signatureReferenceDate)) / 10000),
-					}
+					parser.Write(&FrameV2{Message: wh}, false)
 				}
-				nextSequenceId++
-
-				parser.Write(f, false)
 
 			case Frame:
-				f := wh
-
-				// encode without touching checksum nor signature
-				parser.Write(f, true)
+				parser.Write(wh, true)
 			}
 
 			n.writeDone <- struct{}{}

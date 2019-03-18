@@ -10,13 +10,15 @@ import (
 )
 
 func main() {
-	buffer := bytes.NewBuffer(
+	inBuf := bytes.NewBuffer(
 		[]byte("\xfd\t\x01\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x01\x02\x03\x05\x03\xd9\xd1\x01\x02\x00\x00\x00\x00\x00\x0eG\x04\x0c\xef\x9b"))
+	outBuf := bytes.NewBuffer(nil)
 
 	// if NewNode() is not flexible enough, the library provides a low-level Mavlink
 	// frame parser, that can be allocated with NewParser().
 	parser := gomavlib.NewParser(gomavlib.ParserConf{
-		Reader:  buffer,
+		Reader:  inBuf,
+		Writer:  outBuf,
 		Dialect: ardupilotmega.Dialect,
 	})
 
@@ -27,4 +29,19 @@ func main() {
 	}
 
 	fmt.Printf("decoded: %+v\n", frame)
+
+	// encode a frame
+	frame = &gomavlib.FrameV2{
+		Message: &ardupilotmega.MessageParamValue{
+			ParamId:    "test_parameter",
+			ParamValue: 123456,
+			ParamType:  uint8(ardupilotmega.MAV_PARAM_TYPE_UINT32),
+		},
+	}
+	err = parser.Write(frame, false)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("encoded: %v\n", outBuf.Bytes())
 }

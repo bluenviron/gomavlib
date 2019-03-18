@@ -6,7 +6,11 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"time"
 )
+
+// 1st January 2015 GMT
+var signatureReferenceDate = time.Date(2015, 01, 01, 0, 0, 0, 0, time.UTC)
 
 // ParserError is the error returned in case of non-fatal parsing errors
 type ParserError struct {
@@ -34,9 +38,16 @@ type ParserConf struct {
 	// encoded. If not provided, messages are decoded in the MessageRaw struct.
 	Dialect *Dialect
 
+	// these are used to identify this node in the network.
+	// They are added to every outgoing frame.
+	SystemId    byte
+	ComponentId byte
+
 	// (optional) the secret key used to validate incoming frames.
 	// Non-signed frames are discarded. This feature requires Mavlink v2.
 	SignatureInKey *FrameSignatureKey
+	// (optional) the value to insert into the signature link id
+	SignatureLinkId byte
 	// (optional) the secret key used to sign outgoing frames.
 	// This feature requires Mavlink v2.
 	SignatureOutKey *FrameSignatureKey
@@ -48,16 +59,18 @@ type ParserConf struct {
 
 // Parser is a low-level Mavlink encoder and decoder that works with a Reader and a Writer.
 type Parser struct {
-	conf      ParserConf
-	bufreader *bufio.Reader
+	conf           ParserConf
+	bufreader      *bufio.Reader
+	nextSequenceId byte
 }
 
 // NewParser allocates a Parser, a low level frame encoder and decoder.
 // See Parser for the options.
 func NewParser(conf ParserConf) *Parser {
 	p := &Parser{
-		conf:      conf,
-		bufreader: bufio.NewReaderSize(conf.Reader, netBufferSize),
+		conf:           conf,
+		bufreader:      bufio.NewReaderSize(conf.Reader, netBufferSize),
+		nextSequenceId: 0,
 	}
 	return p
 }
@@ -121,7 +134,7 @@ func (p *Parser) Signature(ff *FrameV2, key *FrameSignatureKey) *FrameSignature 
 	return sig
 }
 
-// Read returns the first Frame obtained from reader.
+// Read returns the first Frame parsed from the reader.
 func (p *Parser) Read() (Frame, error) {
 	magicByte, err := p.bufreader.ReadByte()
 	if err != nil {
@@ -290,10 +303,31 @@ func (p *Parser) Read() (Frame, error) {
 	return f, nil
 }
 
-// Write writes a Frame into writer.
-// if route is true, the frame will be written untouched,
-// without computing checksum or signature.
+// Write writes a Frame into the writer.
+// if route is false, the following fields will be filled:
+// - sequence id
+// - system id
+// - component id
+// - checksum
+// - signature link id
+// - signature timestamp
+// - signature
+// if route is true, the frame will be left untouched.
 func (p *Parser) Write(f Frame, route bool) error {
+	if route == false {
+		switch ff := f.(type) {
+		case *FrameV1:
+			ff.SequenceId = p.nextSequenceId
+			ff.SystemId = p.conf.SystemId
+			ff.ComponentId = p.conf.ComponentId
+		case *FrameV2:
+			ff.SequenceId = p.nextSequenceId
+			ff.SystemId = p.conf.SystemId
+			ff.ComponentId = p.conf.ComponentId
+		}
+		p.nextSequenceId++
+	}
+
 	// encode message if not already encoded and in dialect
 	if p.conf.Dialect != nil {
 		if _, ok := f.GetMessage().(*MessageRaw); ok == false {
@@ -364,6 +398,9 @@ func (p *Parser) Write(f Frame, route bool) error {
 
 	case *FrameV2:
 		if route == false && p.conf.SignatureOutKey != nil {
+			ff.SignatureLinkId = p.conf.SignatureLinkId
+			// Timestamp in 10 microsecond units since 1st January 2015 GMT time
+			ff.SignatureTimestamp = uint64(time.Since(signatureReferenceDate)) / 10000
 			ff.Signature = p.Signature(ff, p.conf.SignatureOutKey)
 		}
 

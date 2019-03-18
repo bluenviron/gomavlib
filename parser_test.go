@@ -24,11 +24,10 @@ func testFrameEncode(t *testing.T, dialect *Dialect, key *FrameSignatureKey, byt
 	for i, frame := range frames {
 		buf := bytes.NewBuffer(nil)
 		parser := NewParser(ParserConf{
-			Writer:          buf,
-			Dialect:         dialect,
-			SignatureOutKey: key,
+			Writer:  buf,
+			Dialect: dialect,
 		})
-		err := parser.Write(frame, false)
+		err := parser.Write(frame, true)
 		require.NoError(t, err)
 		require.Equal(t, byts[i], buf.Bytes())
 	}

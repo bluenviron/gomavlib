@@ -258,6 +258,54 @@ func (mp *parserMessage) decode(buf []byte, isFrameV2 bool) (Message, error) {
 	return msg.Interface().(Message), nil
 }
 
+func (mp *parserMessage) encode(msg Message, isFrameV2 bool) ([]byte, error) {
+	var buf []byte
+
+	if isFrameV2 == true {
+		buf = make([]byte, mp.sizeExtended)
+	} else {
+		buf = make([]byte, mp.sizeNormal)
+	}
+
+	start := buf
+
+	// encode field by field
+	for _, f := range mp.fields {
+		// skip extensions in V1 frames
+		if isFrameV2 == false && f.isExtension == true {
+			continue
+		}
+
+		target := reflect.ValueOf(msg).Elem().Field(f.index)
+
+		switch target.Kind() {
+		case reflect.Array:
+			length := target.Len()
+			for i := 0; i < length; i++ {
+				n := encodeValue(buf, target.Index(i).Addr().Interface(), nil)
+				buf = buf[n:]
+			}
+
+		default:
+			n := encodeValue(buf, target.Addr().Interface(), &f)
+			buf = buf[n:]
+		}
+	}
+
+	buf = start
+
+	// empty-byte truncation
+	if isFrameV2 == true {
+		end := len(buf)
+		for end > 0 && buf[end-1] == 0x00 {
+			end--
+		}
+		buf = buf[:end]
+	}
+
+	return buf, nil
+}
+
 func decodeValue(target interface{}, buf []byte, f *parserMessageField) int {
 	switch tt := target.(type) {
 	case *string:
@@ -315,44 +363,54 @@ func decodeValue(target interface{}, buf []byte, f *parserMessageField) int {
 	return 0
 }
 
-func (mp *parserMessage) encode(msg Message, isFrameV2 bool) ([]byte, error) {
-	bbuf := bytes.NewBuffer(nil)
+func encodeValue(buf []byte, target interface{}, f *parserMessageField) int {
+	switch tt := target.(type) {
+	case *string:
+		copy(buf[:f.arrayLength], *tt)
+		return int(f.arrayLength) // return length including zeros
 
-	for _, f := range mp.fields {
-		// skip extensions for v1 frames
-		if isFrameV2 == false && f.isExtension == true {
-			continue
-		}
+	case *int8:
+		buf[0] = uint8(*tt)
+		return 1
 
-		target := reflect.ValueOf(msg).Elem().Field(f.index).Addr().Interface()
+	case *uint8:
+		buf[0] = *tt
+		return 1
 
-		switch tt := target.(type) {
-		case *string:
-			sbuf := make([]byte, f.arrayLength)
-			copy(sbuf, *tt)
-			_, err := bbuf.Write(sbuf)
-			if err != nil {
-				return nil, err
-			}
+	case *int16:
+		binary.LittleEndian.PutUint16(buf, uint16(*tt))
+		return 2
 
-		default:
-			err := binary.Write(bbuf, binary.LittleEndian, target)
-			if err != nil {
-				return nil, err
-			}
-		}
+	case *uint16:
+		binary.LittleEndian.PutUint16(buf, *tt)
+		return 2
+
+	case *int32:
+		binary.LittleEndian.PutUint32(buf, uint32(*tt))
+		return 4
+
+	case *uint32:
+		binary.LittleEndian.PutUint32(buf, *tt)
+		return 4
+
+	case *int64:
+		binary.LittleEndian.PutUint64(buf, uint64(*tt))
+		return 8
+
+	case *uint64:
+		binary.LittleEndian.PutUint64(buf, *tt)
+		return 8
+
+	case *float32:
+		binary.LittleEndian.PutUint32(buf, math.Float32bits(*tt))
+		return 4
+
+	case *float64:
+		binary.LittleEndian.PutUint64(buf, math.Float64bits(*tt))
+		return 8
+
+	default:
+		panic("unexpected type")
 	}
-
-	buf := bbuf.Bytes()
-
-	// empty-byte truncation
-	if isFrameV2 == true {
-		end := len(buf)
-		for end > 0 && buf[end-1] == 0x00 {
-			end--
-		}
-		buf = buf[:end]
-	}
-
-	return buf, nil
+	return 0
 }

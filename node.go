@@ -33,8 +33,8 @@ Basic example (more are available at https://github.com/gswly/gomavlib/tree/mast
   	defer node.Close()
 
   	for evt := range node.Events() {
-  		if msg,ok := evt.(*gomavlib.NodeEventFrame); ok {
-  			fmt.Printf("received: id=%d, %+v\n", msg.Message().GetId(), msg.Message())
+  		if frm,ok := evt.(*gomavlib.NodeEventFrame); ok {
+  			fmt.Printf("received: id=%d, %+v\n", frm.Message().GetId(), frm.Message())
   		}
   	}
   }

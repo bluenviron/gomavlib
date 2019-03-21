@@ -117,9 +117,9 @@ type NodeConf struct {
 // See NodeConf for the options.
 type Node struct {
 	conf          NodeConf
-	mutex         sync.Mutex
 	wg            sync.WaitGroup
 	chanAccepters map[endpointChannelAccepter]struct{}
+	channelsMutex sync.Mutex
 	channels      map[*EndpointChannel]struct{}
 	frameQueue    chan *NodeReadResult
 	writeDone     chan struct{}
@@ -184,9 +184,6 @@ func NewNode(conf NodeConf) (*Node, error) {
 // Close stops node operations and wait for all routines to return.
 func (n *Node) Close() {
 	func() {
-		n.mutex.Lock()
-		defer n.mutex.Unlock()
-
 		if n.nodeHeartbeat != nil {
 			n.nodeHeartbeat.close()
 		}
@@ -194,6 +191,9 @@ func (n *Node) Close() {
 		for mc := range n.chanAccepters {
 			mc.Close()
 		}
+
+		n.channelsMutex.Lock()
+		defer n.channelsMutex.Unlock()
 
 		for ch := range n.channels {
 			ch.rwc.Close()
@@ -239,8 +239,8 @@ func (n *Node) startChannelAccepter(tm endpointChannelAccepter) {
 }
 
 func (n *Node) startChannel(rwc io.ReadWriteCloser) {
-	n.mutex.Lock()
-	defer n.mutex.Unlock()
+	n.channelsMutex.Lock()
+	defer n.channelsMutex.Unlock()
 
 	conn := &EndpointChannel{
 		rwc:       rwc,
@@ -265,8 +265,8 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 	go func() {
 		defer n.wg.Done()
 		defer func() {
-			n.mutex.Lock()
-			defer n.mutex.Unlock()
+			n.channelsMutex.Lock()
+			defer n.channelsMutex.Unlock()
 			delete(n.channels, conn)
 			close(conn.writeChan)
 		}()
@@ -394,8 +394,8 @@ func (n *Node) WriteFrameExcept(exceptChannel *EndpointChannel, frame Frame) {
 }
 
 func (n *Node) writeTo(channel *EndpointChannel, what interface{}) {
-	n.mutex.Lock()
-	defer n.mutex.Unlock()
+	n.channelsMutex.Lock()
+	defer n.channelsMutex.Unlock()
 
 	if _, ok := n.channels[channel]; ok == false {
 		return
@@ -408,8 +408,8 @@ func (n *Node) writeTo(channel *EndpointChannel, what interface{}) {
 }
 
 func (n *Node) writeAll(what interface{}) {
-	n.mutex.Lock()
-	defer n.mutex.Unlock()
+	n.channelsMutex.Lock()
+	defer n.channelsMutex.Unlock()
 
 	for conn := range n.channels {
 		conn.writeChan <- what
@@ -420,8 +420,8 @@ func (n *Node) writeAll(what interface{}) {
 }
 
 func (n *Node) writeExcept(exceptChannel *EndpointChannel, what interface{}) {
-	n.mutex.Lock()
-	defer n.mutex.Unlock()
+	n.channelsMutex.Lock()
+	defer n.channelsMutex.Unlock()
 
 	count := 0
 	for conn := range n.channels {

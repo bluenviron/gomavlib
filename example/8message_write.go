@@ -26,28 +26,23 @@ func main() {
 	}
 	defer node.Close()
 
-	for {
-		// wait until a message is received.
-		res, ok := node.Read()
-		if ok == false {
-			break
-		}
+	for evt := range node.Events() {
+		if frm, ok := evt.(*gomavlib.NodeEventFrame); ok {
+			fmt.Printf("received: id=%d, %+v\n", frm.Message().GetId(), frm.Message())
 
-		// print message details
-		fmt.Printf("received: id=%d, %+v\n", res.Message().GetId(), res.Message())
+			// if message is a parameter read request addressed to this node
+			if msg, ok := frm.Message().(*ardupilotmega.MessageParamRequestRead); ok &&
+				msg.TargetSystem == 10 &&
+				msg.TargetComponent == 1 &&
+				msg.ParamId == "test_parameter" {
 
-		// if message is a parameter read request addressed to this node
-		if msg, ok := res.Message().(*ardupilotmega.MessageParamRequestRead); ok &&
-			msg.TargetSystem == 10 &&
-			msg.TargetComponent == 1 &&
-			msg.ParamId == "test_parameter" {
-
-			// reply to sender (and no one else) by providing requested parameter
-			node.WriteMessageTo(res.Channel, &ardupilotmega.MessageParamValue{
-				ParamId:    "test_parameter",
-				ParamValue: 123456,
-				ParamType:  uint8(ardupilotmega.MAV_PARAM_TYPE_UINT32),
-			})
+				// reply to sender (and no one else) by providing requested parameter
+				node.WriteMessageTo(frm.Channel, &ardupilotmega.MessageParamValue{
+					ParamId:    "test_parameter",
+					ParamValue: 123456,
+					ParamType:  uint8(ardupilotmega.MAV_PARAM_TYPE_UINT32),
+				})
+			}
 		}
 	}
 }

@@ -32,13 +32,10 @@ Basic example (more are available at https://github.com/gswly/gomavlib/tree/mast
   	}
   	defer node.Close()
 
-  	for {
-  		res, ok := node.Read()
-  		if ok == false {
-  			break
+  	for evt := range node.Events() {
+  		if msg,ok := evt.(*gomavlib.NodeEventFrame); ok {
+  			fmt.Printf("received: id=%d, %+v\n", msg.Message().GetId(), msg.Message())
   		}
-
-  		fmt.Printf("received: id=%d, %+v\n", res.Message().GetId(), res.Message())
   	}
   }
 
@@ -121,9 +118,9 @@ type Node struct {
 	chanAccepters map[endpointChannelAccepter]struct{}
 	channelsMutex sync.Mutex
 	channels      map[*EndpointChannel]struct{}
-	frameQueue    chan *NodeReadResult
 	writeDone     chan struct{}
 	nodeHeartbeat *nodeHeartbeat
+	eventChan     chan NodeEvent
 }
 
 // NewNode allocates a Node. See NodeConf for the options.
@@ -151,8 +148,8 @@ func NewNode(conf NodeConf) (*Node, error) {
 		conf:          conf,
 		chanAccepters: make(map[endpointChannelAccepter]struct{}),
 		channels:      make(map[*EndpointChannel]struct{}),
-		frameQueue:    make(chan *NodeReadResult),
 		writeDone:     make(chan struct{}),
+		eventChan:     make(chan NodeEvent),
 	}
 
 	// init endpoints
@@ -200,21 +197,17 @@ func (n *Node) Close() {
 		}
 	}()
 
-	// consume queued frames up to close(n.frameQueue)
-	// in case the user is not calling Read() in a loop.
+	// consume events (in case user is not calling Events()) such that we can
+	// call close(n.eventChan)
 	go func() {
-		for {
-			_, ok := n.Read()
-			if ok == false {
-				break
-			}
+		for range n.Events() {
 		}
 	}()
 
 	n.wg.Wait()
 
 	// close queue after ensuring no one will write to it
-	close(n.frameQueue)
+	close(n.eventChan)
 }
 
 func (n *Node) startChannelAccepter(tm endpointChannelAccepter) {
@@ -277,7 +270,7 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 				// continue in case of parse errors
 				if _, ok := err.(*ParserError); ok {
 					if n.conf.ReturnParseErrors == true {
-						n.frameQueue <- &NodeReadResult{nil, err, conn}
+						n.eventChan <- &NodeEventFrame{nil, err, conn}
 					}
 					continue
 				}
@@ -288,7 +281,7 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 				return
 			}
 
-			n.frameQueue <- &NodeReadResult{frame, nil, conn}
+			n.eventChan <- &NodeEventFrame{frame, nil, conn}
 		}
 	}()
 
@@ -320,41 +313,24 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 	}()
 }
 
-// NodeReadResult contains the result of node.Read()
-type NodeReadResult struct {
-	// the just read frame
-	Frame Frame
-
-	// a parse error returned instead of frame
-	// This is used only when ReturnParseErrors is true
-	Error error
-
-	// the channel used to send the frame
-	Channel *EndpointChannel
-}
-
 // Message returns the message inside the frame.
-func (res *NodeReadResult) Message() Message {
+func (res *NodeEventFrame) Message() Message {
 	return res.Frame.GetMessage()
 }
 
 // SystemId returns the sender system id.
-func (res *NodeReadResult) SystemId() byte {
+func (res *NodeEventFrame) SystemId() byte {
 	return res.Frame.GetSystemId()
 }
 
 // ComponentId returns the sender component id.
-func (res *NodeReadResult) ComponentId() byte {
+func (res *NodeEventFrame) ComponentId() byte {
 	return res.Frame.GetComponentId()
 }
 
-// Read reads a single message from available channels.
-// NodeReadResult contains all the properties of the received message
-// (see NodeReadResult for details).
-// bool is true whenever the node is still open.
-func (n *Node) Read() (*NodeReadResult, bool) {
-	res, ok := <-n.frameQueue
-	return res, ok
+// Events returns a channel from which receiving events.
+func (n *Node) Events() chan NodeEvent {
+	return n.eventChan
 }
 
 // WriteMessageTo write a message to given channel.

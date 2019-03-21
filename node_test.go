@@ -69,36 +69,34 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 		defer wg.Done()
 		defer node1.Close()
 
-		res1, ok := node1.Read()
-		if ok == false {
-			return
-		}
-		if reflect.DeepEqual(res1.Message(), testMsg1) == false ||
-			res1.SystemId() != 11 ||
-			res1.ComponentId() != 1 {
-			t.Fatal("received wrong message")
-			return
-		}
+		step := 0
 
-		node1.WriteMessageAll(testMsg2)
+		for evt := range node1.Events() {
+			switch e := evt.(type) {
+			case *NodeEventFrame:
+				switch step {
+				case 0:
+					if reflect.DeepEqual(e.Message(), testMsg1) == false ||
+						e.SystemId() != 11 ||
+						e.ComponentId() != 1 {
+						t.Fatal("received wrong message")
+						return
+					}
+					node1.WriteMessageAll(testMsg2)
+					step++
 
-		res2, ok := node1.Read()
-		if ok == false {
-			return
+				case 1:
+					if reflect.DeepEqual(e.Message(), testMsg3) == false ||
+						e.SystemId() != 11 ||
+						e.ComponentId() != 1 {
+						t.Fatal("received wrong message")
+						return
+					}
+					node1.WriteMessageAll(testMsg4)
+					return
+				}
+			}
 		}
-		if reflect.DeepEqual(res2.Message(), testMsg3) == false ||
-			res2.SystemId() != 11 ||
-			res2.ComponentId() != 1 {
-			t.Fatal("received wrong message")
-			return
-		}
-
-		if res1.Channel != res2.Channel {
-			t.Fatal("message received on two different channels")
-			return
-		}
-
-		node1.WriteMessageAll(testMsg4)
 	}()
 
 	go func() {
@@ -110,32 +108,33 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 
 		node2.WriteMessageAll(testMsg1)
 
-		res, ok := node2.Read()
-		if ok == false {
-			return
-		}
-		if reflect.DeepEqual(res.Message(), testMsg2) == false ||
-			res.SystemId() != 10 ||
-			res.ComponentId() != 1 {
-			t.Fatal("received wrong message")
-			return
-		}
+		step := 0
 
-		node2.WriteMessageAll(testMsg3)
-
-		res, ok = node2.Read()
-		if ok == false {
-			return
+		for evt := range node2.Events() {
+			switch e := evt.(type) {
+			case *NodeEventFrame:
+				switch step {
+				case 0:
+					if reflect.DeepEqual(e.Message(), testMsg2) == false ||
+						e.SystemId() != 10 ||
+						e.ComponentId() != 1 {
+						t.Fatal("received wrong message")
+						return
+					}
+					node2.WriteMessageAll(testMsg3)
+					step++
+				case 1:
+					if reflect.DeepEqual(e.Message(), testMsg4) == false ||
+						e.SystemId() != 10 ||
+						e.ComponentId() != 1 {
+						t.Fatal("received wrong message")
+						return
+					}
+					success = true
+					return
+				}
+			}
 		}
-
-		if reflect.DeepEqual(res.Message(), testMsg4) == false ||
-			res.SystemId() != 10 ||
-			res.ComponentId() != 1 {
-			t.Fatal("received wrong message")
-			return
-		}
-
-		success = true
 	}()
 
 	wg.Wait()
@@ -261,7 +260,7 @@ func TestNodeHeartbeat(t *testing.T) {
 		require.NoError(t, err)
 		defer node2.Close()
 
-		_, ok := node1.Read()
+		_, ok := <-node1.Events()
 		if ok == false {
 			t.Fatal(err)
 		}
@@ -315,7 +314,7 @@ func TestNodeFrameSignature(t *testing.T) {
 		defer wg.Done()
 		defer node1.Close()
 
-		_, ok := node1.Read()
+		_, ok := <-node1.Events()
 		if ok == false {
 			return
 		}
@@ -331,7 +330,7 @@ func TestNodeFrameSignature(t *testing.T) {
 
 		node2.WriteMessageAll(testMsg)
 
-		_, ok := node2.Read()
+		_, ok := <-node2.Events()
 		if ok == false {
 			return
 		}
@@ -402,28 +401,30 @@ func TestNodeRouting(t *testing.T) {
 	go func() {
 		defer wg.Done()
 
-		res, ok := node2.Read()
-		if ok == false {
-			return
+		for evt := range node2.Events() {
+			switch e := evt.(type) {
+			case *NodeEventFrame:
+				node2.WriteFrameExcept(e.Channel, e.Frame)
+				return
+			}
 		}
-		node2.WriteFrameExcept(res.Channel, res.Frame)
 	}()
 
 	go func() {
 		defer wg.Done()
 
-		res, ok := node3.Read()
-		if ok == false {
-			return
+		for evt := range node3.Events() {
+			switch e := evt.(type) {
+			case *NodeEventFrame:
+				if _, ok := e.Message().(*MessageHeartbeat); !ok ||
+					e.SystemId() != 10 ||
+					e.ComponentId() != 1 {
+					t.Fatal("wrong message received")
+				}
+				success = true
+				return
+			}
 		}
-
-		if _, ok := res.Message().(*MessageHeartbeat); !ok ||
-			res.SystemId() != 10 ||
-			res.ComponentId() != 1 {
-			t.Fatal("wrong message received")
-		}
-
-		success = true
 	}()
 
 	wg.Wait()

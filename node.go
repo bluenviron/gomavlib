@@ -413,9 +413,7 @@ func (n *Node) writeAll(what interface{}) {
 
 	for conn := range n.channels {
 		conn.writeChan <- what
-	}
-	for range n.channels {
-		<-n.writeDone
+		defer func() { <-n.writeDone }()
 	}
 }
 
@@ -423,14 +421,10 @@ func (n *Node) writeExcept(exceptChannel *EndpointChannel, what interface{}) {
 	n.channelsMutex.Lock()
 	defer n.channelsMutex.Unlock()
 
-	count := 0
 	for conn := range n.channels {
 		if conn != exceptChannel {
-			count++
 			conn.writeChan <- what
+			defer func() { <-n.writeDone }()
 		}
-	}
-	for i := 0; i < count; i++ {
-		<-n.writeDone
 	}
 }

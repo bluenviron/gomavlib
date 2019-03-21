@@ -60,7 +60,8 @@ type ParserConf struct {
 // Parser is a low-level Mavlink encoder and decoder that works with a Reader and a Writer.
 type Parser struct {
 	conf           ParserConf
-	bufreader      *bufio.Reader
+	readBuffer     *bufio.Reader
+	writeBuffer    []byte
 	nextSequenceId byte
 }
 
@@ -68,9 +69,9 @@ type Parser struct {
 // See Parser for the options.
 func NewParser(conf ParserConf) *Parser {
 	p := &Parser{
-		conf:           conf,
-		bufreader:      bufio.NewReaderSize(conf.Reader, netBufferSize),
-		nextSequenceId: 0,
+		conf:        conf,
+		readBuffer:  bufio.NewReaderSize(conf.Reader, netBufferSize),
+		writeBuffer: make([]byte, 0, netBufferSize),
 	}
 	return p
 }
@@ -134,9 +135,10 @@ func (p *Parser) Signature(ff *FrameV2, key *FrameSignatureKey) *FrameSignature 
 	return sig
 }
 
-// Read returns the first Frame parsed from the reader.
+// Read returns the first Frame parsed from the reader. It must not be called
+// by multiple routines in parallel.
 func (p *Parser) Read() (Frame, error) {
-	magicByte, err := p.bufreader.ReadByte()
+	magicByte, err := p.readBuffer.ReadByte()
 	if err != nil {
 		return nil, err
 	}
@@ -148,30 +150,30 @@ func (p *Parser) Read() (Frame, error) {
 		f = ff
 
 		// header
-		msgLen, err := p.bufreader.ReadByte()
+		msgLen, err := p.readBuffer.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		ff.SequenceId, err = p.bufreader.ReadByte()
+		ff.SequenceId, err = p.readBuffer.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		ff.SystemId, err = p.bufreader.ReadByte()
+		ff.SystemId, err = p.readBuffer.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		ff.ComponentId, err = p.bufreader.ReadByte()
+		ff.ComponentId, err = p.readBuffer.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		msgId, err := p.bufreader.ReadByte()
+		msgId, err := p.readBuffer.ReadByte()
 		if err != nil {
 			return nil, err
 		}
 
 		// message
 		msgContent := make([]byte, msgLen)
-		_, err = io.ReadFull(p.bufreader, msgContent)
+		_, err = io.ReadFull(p.readBuffer, msgContent)
 		if err != nil {
 			return nil, err
 		}
@@ -181,7 +183,7 @@ func (p *Parser) Read() (Frame, error) {
 		}
 
 		// checksum
-		err = binary.Read(p.bufreader, binary.LittleEndian, &ff.Checksum)
+		err = binary.Read(p.readBuffer, binary.LittleEndian, &ff.Checksum)
 		if err != nil {
 			return nil, err
 		}
@@ -191,32 +193,32 @@ func (p *Parser) Read() (Frame, error) {
 		f = ff
 
 		// header
-		msgLen, err := p.bufreader.ReadByte()
+		msgLen, err := p.readBuffer.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		ff.IncompatibilityFlag, err = p.bufreader.ReadByte()
+		ff.IncompatibilityFlag, err = p.readBuffer.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		ff.CompatibilityFlag, err = p.bufreader.ReadByte()
+		ff.CompatibilityFlag, err = p.readBuffer.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		ff.SequenceId, err = p.bufreader.ReadByte()
+		ff.SequenceId, err = p.readBuffer.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		ff.SystemId, err = p.bufreader.ReadByte()
+		ff.SystemId, err = p.readBuffer.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		ff.ComponentId, err = p.bufreader.ReadByte()
+		ff.ComponentId, err = p.readBuffer.ReadByte()
 		if err != nil {
 			return nil, err
 		}
 		var msgId uint32
-		err = readLittleEndianUint24(p.bufreader, &msgId)
+		err = readLittleEndianUint24(p.readBuffer, &msgId)
 		if err != nil {
 			return nil, err
 		}
@@ -228,7 +230,7 @@ func (p *Parser) Read() (Frame, error) {
 
 		// message
 		msgContent := make([]byte, msgLen)
-		_, err = io.ReadFull(p.bufreader, msgContent)
+		_, err = io.ReadFull(p.readBuffer, msgContent)
 		if err != nil {
 			return nil, err
 		}
@@ -238,23 +240,23 @@ func (p *Parser) Read() (Frame, error) {
 		}
 
 		// checksum
-		err = binary.Read(p.bufreader, binary.LittleEndian, &ff.Checksum)
+		err = binary.Read(p.readBuffer, binary.LittleEndian, &ff.Checksum)
 		if err != nil {
 			return nil, err
 		}
 
 		// signature
 		if ff.IsSigned() {
-			ff.SignatureLinkId, err = p.bufreader.ReadByte()
+			ff.SignatureLinkId, err = p.readBuffer.ReadByte()
 			if err != nil {
 				return nil, err
 			}
-			err = readLittleEndianUint48(p.bufreader, &ff.SignatureTimestamp)
+			err = readLittleEndianUint48(p.readBuffer, &ff.SignatureTimestamp)
 			if err != nil {
 				return nil, err
 			}
 			ff.Signature = new(FrameSignature)
-			_, err = io.ReadFull(p.bufreader, ff.Signature[:])
+			_, err = io.ReadFull(p.readBuffer, ff.Signature[:])
 			if err != nil {
 				return nil, err
 			}
@@ -303,7 +305,8 @@ func (p *Parser) Read() (Frame, error) {
 	return f, nil
 }
 
-// Write writes a Frame into the writer.
+// Write writes a Frame into the writer. It must not be called by multiple
+// routines in parallel.
 // if route is false, the following fields will be filled:
 // - sequence id
 // - system id
@@ -366,7 +369,7 @@ func (p *Parser) Write(f Frame, route bool) error {
 
 	msgContent := f.GetMessage().(*MessageRaw).Content
 
-	var buf []byte
+	offset := 0
 	switch ff := f.(type) {
 	case *FrameV1:
 		if ff.Message.GetId() > 0xFF {
@@ -374,27 +377,27 @@ func (p *Parser) Write(f Frame, route bool) error {
 		}
 
 		bufferLen := 6 + len(msgContent) + 2
-		buf = make([]byte, bufferLen)
+		p.writeBuffer = p.writeBuffer[:bufferLen]
 
-		offset := 0
-		buf[offset] = v1MagicByte
+		// header
+		p.writeBuffer[offset] = v1MagicByte
 		offset += 1
-		buf[offset] = byte(len(msgContent))
+		p.writeBuffer[offset] = byte(len(msgContent))
 		offset += 1
-		buf[offset] = ff.SequenceId
+		p.writeBuffer[offset] = ff.SequenceId
 		offset += 1
-		buf[offset] = ff.SystemId
+		p.writeBuffer[offset] = ff.SystemId
 		offset += 1
-		buf[offset] = ff.ComponentId
+		p.writeBuffer[offset] = ff.ComponentId
+		offset += 1
+		p.writeBuffer[offset] = byte(ff.Message.GetId())
 		offset += 1
 
-		buf[offset] = byte(ff.Message.GetId())
-		offset += 1
-
-		copy(buf[offset:], msgContent)
+		// message
+		copy(p.writeBuffer[offset:], msgContent)
 		offset += len(msgContent)
 
-		binary.LittleEndian.PutUint16(buf[offset:offset+2], ff.Checksum)
+		binary.LittleEndian.PutUint16(p.writeBuffer[offset:offset+2], ff.Checksum)
 
 	case *FrameV2:
 		if route == false && p.conf.SignatureOutKey != nil {
@@ -408,47 +411,44 @@ func (p *Parser) Write(f Frame, route bool) error {
 		if ff.IsSigned() {
 			bufferLen += 13
 		}
-		buf = make([]byte, bufferLen)
+		p.writeBuffer = p.writeBuffer[:bufferLen]
 
-		offset := 0
-		buf[offset] = v2MagicByte
+		// header
+		p.writeBuffer[offset] = v2MagicByte
 		offset += 1
-		buf[offset] = byte(len(msgContent))
+		p.writeBuffer[offset] = byte(len(msgContent))
 		offset += 1
-		buf[offset] = ff.IncompatibilityFlag
+		p.writeBuffer[offset] = ff.IncompatibilityFlag
 		offset += 1
-		buf[offset] = ff.CompatibilityFlag
+		p.writeBuffer[offset] = ff.CompatibilityFlag
 		offset += 1
-		buf[offset] = ff.SequenceId
+		p.writeBuffer[offset] = ff.SequenceId
 		offset += 1
-		buf[offset] = ff.SystemId
+		p.writeBuffer[offset] = ff.SystemId
 		offset += 1
-		buf[offset] = ff.ComponentId
+		p.writeBuffer[offset] = ff.ComponentId
 		offset += 1
-
-		copy(buf[7:10], uint24Encode(ff.Message.GetId()))
+		copy(p.writeBuffer[offset:offset+3], uint24Encode(ff.Message.GetId()))
 		offset += 3
 
-		copy(buf[offset:], msgContent)
+		// message
+		copy(p.writeBuffer[offset:], msgContent)
 		offset += len(msgContent)
 
-		binary.LittleEndian.PutUint16(buf[offset:offset+2], ff.Checksum)
+		binary.LittleEndian.PutUint16(p.writeBuffer[offset:offset+2], ff.Checksum)
 		offset += 2
 
 		if ff.IsSigned() {
-			buf[offset] = ff.SignatureLinkId
+			p.writeBuffer[offset] = ff.SignatureLinkId
 			offset += 1
-			copy(buf[offset:offset+6], uint48Encode(ff.SignatureTimestamp))
+			copy(p.writeBuffer[offset:offset+6], uint48Encode(ff.SignatureTimestamp))
 			offset += 6
-			copy(buf[offset:offset+6], ff.Signature[:])
+			copy(p.writeBuffer[offset:offset+6], ff.Signature[:])
 		}
 	}
 
-	// we do not check n
-	// since io.Writer is not allowed to return n < len(buf) without throwing an error
-	_, err := p.conf.Writer.Write(buf)
-	if err != nil {
-		return err
-	}
-	return nil
+	// do not check n, since io.Writer is not allowed to return n < len(buf)
+	// without throwing an error
+	_, err := p.conf.Writer.Write(p.writeBuffer)
+	return err
 }

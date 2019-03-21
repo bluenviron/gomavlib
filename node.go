@@ -48,7 +48,6 @@ package gomavlib
 import (
 	"fmt"
 	"io"
-	"reflect"
 	"sync"
 	"time"
 )
@@ -71,64 +70,6 @@ const (
 	// V1 wrap outgoing messages in v1 frames.
 	V1
 )
-
-type heartbeatTicker struct {
-	n           *Node
-	terminate   chan struct{}
-	done        chan struct{}
-	heartbeatMp *dialectMessage
-	period      time.Duration
-}
-
-func newHeartbeatTicker(n *Node, period time.Duration) *heartbeatTicker {
-	// heartbeat message must exist in dialect and correspond to standart heartbeat
-	if n.conf.Dialect == nil {
-		return nil
-	}
-	mp, ok := n.conf.Dialect.messages[0]
-	if ok == false || mp.crcExtra != 50 {
-		return nil
-	}
-
-	h := &heartbeatTicker{
-		n:           n,
-		terminate:   make(chan struct{}),
-		done:        make(chan struct{}),
-		heartbeatMp: mp,
-		period:      period,
-	}
-	go h.do()
-	return h
-}
-
-func (h *heartbeatTicker) close() {
-	h.terminate <- struct{}{}
-	<-h.done
-}
-
-func (h *heartbeatTicker) do() {
-	defer func() { h.done <- struct{}{} }()
-
-	ticker := time.NewTicker(h.period)
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-ticker.C:
-			msg := reflect.New(h.heartbeatMp.elemType)
-			msg.Elem().FieldByName("Type").Set(reflect.ValueOf(uint8(6)))      // MAV_TYPE_GCS
-			msg.Elem().FieldByName("Autopilot").Set(reflect.ValueOf(uint8(0))) // MAV_AUTOPILOT_GENERIC
-			msg.Elem().FieldByName("BaseMode").Set(reflect.ValueOf(uint8(0)))
-			msg.Elem().FieldByName("CustomMode").Set(reflect.ValueOf(uint32(0)))
-			msg.Elem().FieldByName("SystemStatus").Set(reflect.ValueOf(uint8(4))) // MAV_STATE_ACTIVE
-			msg.Elem().FieldByName("MavlinkVersion").Set(reflect.ValueOf(uint8(3)))
-			h.n.WriteMessageAll(msg.Interface().(Message))
-
-		case <-h.terminate:
-			return
-		}
-	}
-}
 
 // NodeConf allows to configure a Node.
 type NodeConf struct {
@@ -175,14 +116,14 @@ type NodeConf struct {
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
 // See NodeConf for the options.
 type Node struct {
-	conf            NodeConf
-	mutex           sync.Mutex
-	wg              sync.WaitGroup
-	chanAccepters   map[endpointChannelAccepter]struct{}
-	channels        map[*EndpointChannel]struct{}
-	frameQueue      chan *NodeReadResult
-	writeDone       chan struct{}
-	heartbeatTicker *heartbeatTicker
+	conf          NodeConf
+	mutex         sync.Mutex
+	wg            sync.WaitGroup
+	chanAccepters map[endpointChannelAccepter]struct{}
+	channels      map[*EndpointChannel]struct{}
+	frameQueue    chan *NodeReadResult
+	writeDone     chan struct{}
+	nodeHeartbeat *nodeHeartbeat
 }
 
 // NewNode allocates a Node. See NodeConf for the options.
@@ -235,7 +176,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 
 	// start heartbeat
 	if n.conf.HeartbeatDisable == false {
-		n.heartbeatTicker = newHeartbeatTicker(n, n.conf.HeartbeatPeriod)
+		n.nodeHeartbeat = newNodeHeartbeat(n, n.conf.HeartbeatPeriod)
 	}
 	return n, nil
 }
@@ -246,8 +187,8 @@ func (n *Node) Close() {
 		n.mutex.Lock()
 		defer n.mutex.Unlock()
 
-		if n.heartbeatTicker != nil {
-			n.heartbeatTicker.close()
+		if n.nodeHeartbeat != nil {
+			n.nodeHeartbeat.close()
 		}
 
 		for mc := range n.chanAccepters {

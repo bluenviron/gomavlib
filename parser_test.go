@@ -219,10 +219,29 @@ var testFpV2SigFrames = []Frame{
 
 var testFpV2Key = NewFrameSignatureKey(bytes.Repeat([]byte("\x4F"), 32))
 
-func TestParserV2FrameSignatureDec(t *testing.T) {
+func TestParserV2Signature(t *testing.T) {
+	parser := NewParser(ParserConf{})
+	sig := parser.Signature(&FrameV2{
+		IncompatibilityFlag: 0x01,
+		CompatibilityFlag:   0x00,
+		SequenceId:          0x00,
+		SystemId:            0x00,
+		ComponentId:         0x00,
+		Message: &MessageRaw{
+			Id:      0,
+			Content: []byte("\x04\x00\x00\x00\x01\x02\x03\x05\x03"),
+		},
+		Checksum:           53721,
+		SignatureLinkId:    1,
+		SignatureTimestamp: 2,
+	}, testFpV2Key)
+	require.Equal(t, &FrameSignature{14, 71, 4, 12, 239, 155}, sig)
+}
+
+func TestParserV2SignatureDec(t *testing.T) {
 	testFrameDecode(t, MustDialect([]Message{&MessageHeartbeat{}}), testFpV2Key, testFpV2SigBytes, testFpV2SigFrames)
 }
 
-func TestParserV2FrameSignatureEnc(t *testing.T) {
+func TestParserV2SignatureEnc(t *testing.T) {
 	testFrameEncode(t, MustDialect([]Message{&MessageHeartbeat{}}), testFpV2Key, testFpV2SigBytes, testFpV2SigFrames)
 }

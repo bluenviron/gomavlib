@@ -59,10 +59,11 @@ type ParserConf struct {
 
 // Parser is a low-level Mavlink encoder and decoder that works with a Reader and a Writer.
 type Parser struct {
-	conf           ParserConf
-	readBuffer     *bufio.Reader
-	writeBuffer    []byte
-	nextSequenceId byte
+	conf                 ParserConf
+	readBuffer           *bufio.Reader
+	writeBuffer          []byte
+	curWriteSequenceId   byte
+	curReadSignatureTime uint64
 }
 
 // NewParser allocates a Parser, a low level frame encoder and decoder.
@@ -275,6 +276,17 @@ func (p *Parser) Read() (Frame, error) {
 		if sig := p.Signature(ff, p.conf.SignatureInKey); *sig != *ff.Signature {
 			return nil, newParserError("wrong signature")
 		}
+
+		// in UDP, packet order is not guaranteed. Therefore, we accept frames
+		// with a timestamp within 10 seconds with respect to the previous frame.
+		if p.curReadSignatureTime > 0 &&
+			ff.SignatureTimestamp < (p.curReadSignatureTime-(10*1000000)) {
+			return nil, newParserError("signature timestamp is too old")
+		}
+
+		if ff.SignatureTimestamp > p.curReadSignatureTime {
+			p.curReadSignatureTime = ff.SignatureTimestamp
+		}
 	}
 
 	// decode message if in dialect and validate checksum
@@ -320,15 +332,15 @@ func (p *Parser) Write(f Frame, route bool) error {
 	if route == false {
 		switch ff := f.(type) {
 		case *FrameV1:
-			ff.SequenceId = p.nextSequenceId
+			ff.SequenceId = p.curWriteSequenceId
 			ff.SystemId = p.conf.SystemId
 			ff.ComponentId = p.conf.ComponentId
 		case *FrameV2:
-			ff.SequenceId = p.nextSequenceId
+			ff.SequenceId = p.curWriteSequenceId
 			ff.SystemId = p.conf.SystemId
 			ff.ComponentId = p.conf.ComponentId
 		}
-		p.nextSequenceId++
+		p.curWriteSequenceId++
 	}
 
 	// encode message if not already encoded and in dialect

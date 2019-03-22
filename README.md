@@ -13,7 +13,7 @@ This library powers the [**mavp2p**](https://github.com/gswly/mavp2p) router.
 
 ## Features
 
-* Decode and encode Mavlink v2.0 and v1.0. Supports checksums, empty-byte truncation (v2.0), signing (v2.0), message extensions (v2.0)
+* Decode and encode Mavlink v2.0 and v1.0. Supports checksums, empty-byte truncation (v2.0), signatures (v2.0), message extensions (v2.0)
 * Dialect is optional, the library can work a standard dialect, a custom dialect or no dialect at all. Standard dialects are provided in directory `dialect/`, with no need for generation. A Dialect generator is provided anyway.
 * Provides a high-level node with ability to communicate with multiple endpoints in parallel:
   * serial

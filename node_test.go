@@ -3,6 +3,7 @@ package gomavlib
 import (
 	"bytes"
 	"github.com/stretchr/testify/require"
+	"io"
 	"reflect"
 	"sync"
 	"testing"
@@ -157,63 +158,37 @@ func TestNodeUdpBroadcastBroadcast(t *testing.T) {
 		EndpointUdpBroadcast{"127.255.255.255:5601", ":5602"})
 }
 
-type CustomEndpoint struct {
-	writeBuf *bytes.Buffer
-	readChan chan struct{}
-}
+type testLoopback chan []byte
 
-func NewCustomEndpoint() *CustomEndpoint {
-	return &CustomEndpoint{
-		readChan: make(chan struct{}),
-		writeBuf: bytes.NewBuffer(nil),
-	}
-}
-
-func (c *CustomEndpoint) Close() error {
-	close(c.readChan)
+func (ch testLoopback) Close() error {
+	close(ch)
 	return nil
 }
 
-func (c *CustomEndpoint) Read(buf []byte) (int, error) {
-	<-c.readChan
-	return 0, errorTerminated
+func (ch testLoopback) Read(buf []byte) (int, error) {
+	ret, ok := <-ch
+	if ok == false {
+		return 0, errorTerminated
+	}
+	n := copy(buf, ret)
+	return n, nil
 }
 
-func (c *CustomEndpoint) Write(buf []byte) (int, error) {
-	c.writeBuf.Write(buf)
+func (ch testLoopback) Write(buf []byte) (int, error) {
+	ch <- buf
 	return len(buf), nil
 }
 
+type testEndpoint struct {
+	io.ReadCloser
+	io.Writer
+}
+
 func TestNodeCustom(t *testing.T) {
-	var testMsg = &MessageHeartbeat{
-		Type:           7,
-		Autopilot:      5,
-		BaseMode:       4,
-		CustomMode:     3,
-		SystemStatus:   2,
-		MavlinkVersion: 1,
-	}
-	var res = []byte{253, 9, 0, 0, 0, 11, 1, 0, 0, 0, 3, 0, 0, 0, 7, 5, 4, 2, 1, 159, 218}
-
-	rwc := NewCustomEndpoint()
-
-	func() {
-		node, err := NewNode(NodeConf{
-			Dialect:     MustDialect([]Message{&MessageHeartbeat{}}),
-			SystemId:    11,
-			ComponentId: 1,
-			Endpoints: []EndpointConf{
-				EndpointCustom{rwc},
-			},
-			HeartbeatDisable: true,
-		})
-		require.NoError(t, err)
-		defer node.Close()
-
-		node.WriteMessageAll(testMsg)
-	}()
-
-	require.Equal(t, res, rwc.writeBuf.Bytes())
+	l1 := make(testLoopback)
+	l2 := make(testLoopback)
+	doTest(t, EndpointCustom{&testEndpoint{l1, l2}},
+		EndpointCustom{&testEndpoint{l2, l1}})
 }
 
 func TestNodeError(t *testing.T) {

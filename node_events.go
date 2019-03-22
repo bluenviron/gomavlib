@@ -29,12 +29,16 @@ func (*NodeEventParseError) isEvent() {}
 
 // NodeEventChannelOpen is the event fired when a channel is opened
 type NodeEventChannelOpen struct {
+	// the channel
+	Channel *EndpointChannel
 }
 
 func (*NodeEventChannelOpen) isEvent() {}
 
 // NodeEventChannelClose is the event fired when a channel is closed
 type NodeEventChannelClose struct {
+	// the channel
+	Channel *EndpointChannel
 }
 
 func (*NodeEventChannelClose) isEvent() {}

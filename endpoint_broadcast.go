@@ -60,7 +60,7 @@ func (conf EndpointUdpBroadcast) init() (endpoint, error) {
 	if conf.LocalAddress == "" {
 		ip := ipByBroadcastIp(broadcastAddr.IP[:4])
 		if ip == nil {
-			return nil, fmt.Errorf("cannot find local address associated to given broadcast address")
+			return nil, fmt.Errorf("cannot find local address associated with given broadcast address")
 		}
 		conf.LocalAddress = fmt.Sprintf("%s:%s", ip, port)
 

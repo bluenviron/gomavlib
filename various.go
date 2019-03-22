@@ -45,7 +45,7 @@ func uint24Decode(in []byte) uint32 {
 	return uint32(in[2])<<16 | uint32(in[1])<<8 | uint32(in[0])
 }
 
-func readLittleEndianUint24(r io.Reader, dest *uint32) error {
+func uint24Read(r io.Reader, dest *uint32) error {
 	buf := make([]byte, 3)
 	_, err := io.ReadFull(r, buf)
 	if err != nil {
@@ -68,7 +68,7 @@ func uint48Decode(in []byte) uint64 {
 		uint64(in[2])<<16 | uint64(in[1])<<8 | uint64(in[0])
 }
 
-func readLittleEndianUint48(r io.Reader, dest *uint64) error {
+func uint48Read(r io.Reader, dest *uint64) error {
 	buf := make([]byte, 6)
 	_, err := io.ReadFull(r, buf)
 	if err != nil {

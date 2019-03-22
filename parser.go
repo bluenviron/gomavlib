@@ -219,7 +219,7 @@ func (p *Parser) Read() (Frame, error) {
 			return nil, err
 		}
 		var msgId uint32
-		err = readLittleEndianUint24(p.readBuffer, &msgId)
+		err = uint24Read(p.readBuffer, &msgId)
 		if err != nil {
 			return nil, err
 		}
@@ -252,7 +252,7 @@ func (p *Parser) Read() (Frame, error) {
 			if err != nil {
 				return nil, err
 			}
-			err = readLittleEndianUint48(p.readBuffer, &ff.SignatureTimestamp)
+			err = uint48Read(p.readBuffer, &ff.SignatureTimestamp)
 			if err != nil {
 				return nil, err
 			}

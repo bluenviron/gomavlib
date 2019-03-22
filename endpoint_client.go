@@ -174,6 +174,16 @@ func (t *endpointClient) do() {
 	}
 }
 
+func (t *endpointClient) Read(buf []byte) (int, error) {
+	src, ok := <-t.readChan
+	if ok == false {
+		return 0, errorTerminated
+	}
+	n := copy(buf, src)
+	t.readDone <- struct{}{}
+	return n, nil
+}
+
 func (t *endpointClient) Write(buf []byte) (int, error) {
 	t.writerMutex.Lock()
 	defer t.writerMutex.Unlock()
@@ -184,14 +194,4 @@ func (t *endpointClient) Write(buf []byte) (int, error) {
 	}
 
 	return t.writer.Write(buf)
-}
-
-func (t *endpointClient) Read(buf []byte) (int, error) {
-	src, ok := <-t.readChan
-	if ok == false {
-		return 0, errorTerminated
-	}
-	n := copy(buf, src)
-	t.readDone <- struct{}{}
-	return n, nil
 }

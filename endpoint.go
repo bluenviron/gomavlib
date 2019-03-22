@@ -34,7 +34,7 @@ type EndpointChannel struct {
 	writeChan chan interface{}
 }
 
-// String implements fmt.Stringer and returns infos about channel.
+// String implements fmt.Stringer and returns infos about the channel.
 func (e *EndpointChannel) String() string {
 	return e.desc
 }

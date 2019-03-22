@@ -10,7 +10,7 @@ import (
 
 // this is an example struct that implements io.ReadWriteCloser.
 // it does not read anything and prints what it receives.
-// the only requisite is that Close() must release Read().
+// the only requirement is that Close() must release Read().
 type CustomEndpoint struct {
 	readChan chan []byte
 }

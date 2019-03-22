@@ -184,7 +184,7 @@ type testEndpoint struct {
 	io.Writer
 }
 
-func TestNodeCustom(t *testing.T) {
+func TestNodeCustomCustom(t *testing.T) {
 	l1 := make(testLoopback)
 	l2 := make(testLoopback)
 	doTest(t, EndpointCustom{&testEndpoint{l1, l2}},

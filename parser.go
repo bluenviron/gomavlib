@@ -352,7 +352,6 @@ func (p *Parser) Write(f Frame, route bool) error {
 
 	msgContent := f.GetMessage().(*MessageRaw).Content
 
-	offset := 0
 	switch ff := f.(type) {
 	case *FrameV1:
 		if ff.Message.GetId() > 0xFF {
@@ -363,24 +362,17 @@ func (p *Parser) Write(f Frame, route bool) error {
 		p.writeBuffer = p.writeBuffer[:bufferLen]
 
 		// header
-		p.writeBuffer[offset] = v1MagicByte
-		offset += 1
-		p.writeBuffer[offset] = byte(len(msgContent))
-		offset += 1
-		p.writeBuffer[offset] = ff.SequenceId
-		offset += 1
-		p.writeBuffer[offset] = ff.SystemId
-		offset += 1
-		p.writeBuffer[offset] = ff.ComponentId
-		offset += 1
-		p.writeBuffer[offset] = byte(ff.Message.GetId())
-		offset += 1
+		p.writeBuffer[0] = v1MagicByte
+		p.writeBuffer[1] = byte(len(msgContent))
+		p.writeBuffer[2] = ff.SequenceId
+		p.writeBuffer[3] = ff.SystemId
+		p.writeBuffer[4] = ff.ComponentId
+		p.writeBuffer[5] = byte(ff.Message.GetId())
 
 		// message
-		copy(p.writeBuffer[offset:], msgContent)
-		offset += len(msgContent)
+		copy(p.writeBuffer[6:], msgContent)
 
-		binary.LittleEndian.PutUint16(p.writeBuffer[offset:offset+2], ff.Checksum)
+		binary.LittleEndian.PutUint16(p.writeBuffer[6+len(msgContent):], ff.Checksum)
 
 	case *FrameV2:
 		if route == false && p.conf.SignatureOutKey != nil {
@@ -397,36 +389,24 @@ func (p *Parser) Write(f Frame, route bool) error {
 		p.writeBuffer = p.writeBuffer[:bufferLen]
 
 		// header
-		p.writeBuffer[offset] = v2MagicByte
-		offset += 1
-		p.writeBuffer[offset] = byte(len(msgContent))
-		offset += 1
-		p.writeBuffer[offset] = ff.IncompatibilityFlag
-		offset += 1
-		p.writeBuffer[offset] = ff.CompatibilityFlag
-		offset += 1
-		p.writeBuffer[offset] = ff.SequenceId
-		offset += 1
-		p.writeBuffer[offset] = ff.SystemId
-		offset += 1
-		p.writeBuffer[offset] = ff.ComponentId
-		offset += 1
-		uint24Encode(p.writeBuffer[offset:offset+3], ff.Message.GetId())
-		offset += 3
+		p.writeBuffer[0] = v2MagicByte
+		p.writeBuffer[1] = byte(len(msgContent))
+		p.writeBuffer[2] = ff.IncompatibilityFlag
+		p.writeBuffer[3] = ff.CompatibilityFlag
+		p.writeBuffer[4] = ff.SequenceId
+		p.writeBuffer[5] = ff.SystemId
+		p.writeBuffer[6] = ff.ComponentId
+		uint24Encode(p.writeBuffer[7:], ff.Message.GetId())
 
 		// message
-		copy(p.writeBuffer[offset:], msgContent)
-		offset += len(msgContent)
+		copy(p.writeBuffer[10:], msgContent)
 
-		binary.LittleEndian.PutUint16(p.writeBuffer[offset:offset+2], ff.Checksum)
-		offset += 2
+		binary.LittleEndian.PutUint16(p.writeBuffer[10+len(msgContent):], ff.Checksum)
 
 		if ff.IsSigned() {
-			p.writeBuffer[offset] = ff.SignatureLinkId
-			offset += 1
-			uint48Encode(p.writeBuffer[offset:offset+6], ff.SignatureTimestamp)
-			offset += 6
-			copy(p.writeBuffer[offset:offset+6], ff.Signature[:])
+			p.writeBuffer[12+len(msgContent)] = ff.SignatureLinkId
+			uint48Encode(p.writeBuffer[13+len(msgContent):], ff.SignatureTimestamp)
+			copy(p.writeBuffer[19+len(msgContent):], ff.Signature[:])
 		}
 	}
 

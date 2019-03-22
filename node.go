@@ -325,11 +325,14 @@ func (res *NodeEventFrame) ComponentId() byte {
 	return res.Frame.GetComponentId()
 }
 
-// Events returns a channel from which receiving events. Possible events are:
-// - *NodeEventFrame
-// - *NodeEventParseError
-// - *NodeEventChannelOpen
-// - *NodeEventChannelClose
+// Events returns a channel from which receiving events.
+//
+// Possible events are:
+//   *NodeEventFrame
+//   *NodeEventParseError
+//   *NodeEventChannelOpen
+//   *NodeEventChannelClose
+//
 // see individual events for meaning and content.
 func (n *Node) Events() chan NodeEvent {
 	return n.eventChan

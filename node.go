@@ -255,10 +255,13 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 		defer n.wg.Done()
 		defer func() {
 			n.channelsMutex.Lock()
-			defer n.channelsMutex.Unlock()
 			delete(n.channels, conn)
 			close(conn.writeChan)
+			n.channelsMutex.Unlock()
+			n.eventChan <- &NodeEventChannelClose{conn}
 		}()
+
+		n.eventChan <- &NodeEventChannelOpen{conn}
 
 		for {
 			frame, err := parser.Read()

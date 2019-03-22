@@ -290,13 +290,13 @@ func (p *Parser) Read() (Frame, error) {
 
 // Write writes a Frame into the writer. It must not be called by multiple
 // routines in parallel. If route is false, the following fields will be filled:
-//   sequence id
-//   system id
-//   component id
-//   checksum
-//   signature link id
-//   signature timestamp
-//   signature
+//   SequenceId
+//   SystemId
+//   ComponentId
+//   Checksum
+//   SignatureLinkId
+//   SignatureTimestamp
+//   Signature
 // if route is true, the frame will be written untouched.
 func (p *Parser) Write(f Frame, route bool) error {
 	if route == false {

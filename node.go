@@ -287,12 +287,7 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 	go func() {
 		defer n.wg.Done()
 
-		for {
-			what, ok := <-conn.writeChan
-			if ok == false {
-				return
-			}
-
+		for what := range conn.writeChan {
 			switch wh := what.(type) {
 			case Message:
 				if n.conf.Version == V1 {

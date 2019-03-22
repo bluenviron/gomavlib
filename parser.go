@@ -153,26 +153,16 @@ func (p *Parser) Read() (Frame, error) {
 		f = ff
 
 		// header
-		msgLen, err := p.readBuffer.ReadByte()
+		buf, err := p.readBuffer.Peek(5)
 		if err != nil {
 			return nil, err
 		}
-		ff.SequenceId, err = p.readBuffer.ReadByte()
-		if err != nil {
-			return nil, err
-		}
-		ff.SystemId, err = p.readBuffer.ReadByte()
-		if err != nil {
-			return nil, err
-		}
-		ff.ComponentId, err = p.readBuffer.ReadByte()
-		if err != nil {
-			return nil, err
-		}
-		msgId, err := p.readBuffer.ReadByte()
-		if err != nil {
-			return nil, err
-		}
+		msgLen := buf[0]
+		ff.SequenceId = buf[1]
+		ff.SystemId = buf[2]
+		ff.ComponentId = buf[3]
+		msgId := buf[4]
+		p.readBuffer.Discard(5)
 
 		// message
 		msgContent := make([]byte, msgLen)
@@ -196,35 +186,18 @@ func (p *Parser) Read() (Frame, error) {
 		f = ff
 
 		// header
-		msgLen, err := p.readBuffer.ReadByte()
+		buf, err := p.readBuffer.Peek(9)
 		if err != nil {
 			return nil, err
 		}
-		ff.IncompatibilityFlag, err = p.readBuffer.ReadByte()
-		if err != nil {
-			return nil, err
-		}
-		ff.CompatibilityFlag, err = p.readBuffer.ReadByte()
-		if err != nil {
-			return nil, err
-		}
-		ff.SequenceId, err = p.readBuffer.ReadByte()
-		if err != nil {
-			return nil, err
-		}
-		ff.SystemId, err = p.readBuffer.ReadByte()
-		if err != nil {
-			return nil, err
-		}
-		ff.ComponentId, err = p.readBuffer.ReadByte()
-		if err != nil {
-			return nil, err
-		}
-		var msgId uint32
-		err = uint24Read(p.readBuffer, &msgId)
-		if err != nil {
-			return nil, err
-		}
+		msgLen := buf[0]
+		ff.IncompatibilityFlag = buf[1]
+		ff.CompatibilityFlag = buf[2]
+		ff.SequenceId = buf[3]
+		ff.SystemId = buf[4]
+		ff.ComponentId = buf[5]
+		msgId := uint24Decode(buf[6:])
+		p.readBuffer.Discard(9)
 
 		// discard frame if incompatibility flag is not understood, as in recommendations
 		if ff.IncompatibilityFlag != 0 && ff.IncompatibilityFlag != flagSigned {
@@ -250,19 +223,15 @@ func (p *Parser) Read() (Frame, error) {
 
 		// signature
 		if ff.IsSigned() {
-			ff.SignatureLinkId, err = p.readBuffer.ReadByte()
+			buf, err := p.readBuffer.Peek(13)
 			if err != nil {
 				return nil, err
 			}
-			err = uint48Read(p.readBuffer, &ff.SignatureTimestamp)
-			if err != nil {
-				return nil, err
-			}
+			ff.SignatureLinkId = buf[0]
+			ff.SignatureTimestamp = uint48Decode(buf[1:])
 			ff.Signature = new(FrameSignature)
-			_, err = io.ReadFull(p.readBuffer, ff.Signature[:])
-			if err != nil {
-				return nil, err
-			}
+			copy(ff.Signature[:], buf[7:])
+			p.readBuffer.Discard(13)
 		}
 
 	default:

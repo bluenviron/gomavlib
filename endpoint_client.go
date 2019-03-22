@@ -169,7 +169,7 @@ func (t *endpointClient) do() {
 		func() {
 			t.writerMutex.Lock()
 			defer t.writerMutex.Unlock()
-			conn = nil
+			t.writer = nil
 		}()
 	}
 }

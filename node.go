@@ -256,8 +256,8 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 		defer func() {
 			n.channelsMutex.Lock()
 			delete(n.channels, conn)
-			close(conn.writeChan)
 			n.channelsMutex.Unlock()
+			close(conn.writeChan)
 			n.eventChan <- &NodeEventChannelClose{conn}
 		}()
 

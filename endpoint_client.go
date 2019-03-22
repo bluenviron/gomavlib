@@ -93,7 +93,7 @@ func (t *endpointClient) Close() error {
 
 func (t *endpointClient) do() {
 	defer func() {
-		// consumate readChan in case user is not calling Read()
+		// consume readChan in case user is not calling Read()
 		go func() {
 			for range t.readChan {
 			}

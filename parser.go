@@ -280,7 +280,7 @@ func (p *Parser) Read() (Frame, error) {
 		// in UDP, packet order is not guaranteed. Therefore, we accept frames
 		// with a timestamp within 10 seconds with respect to the previous frame.
 		if p.curReadSignatureTime > 0 &&
-			ff.SignatureTimestamp < (p.curReadSignatureTime-(10*1000000)) {
+			ff.SignatureTimestamp < (p.curReadSignatureTime-(10*100000)) {
 			return nil, newParserError("signature timestamp is too old")
 		}
 

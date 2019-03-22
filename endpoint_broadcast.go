@@ -85,8 +85,7 @@ func (conf EndpointUdpBroadcast) init() (endpoint, error) {
 	return t, nil
 }
 
-func (*endpointUdpBroadcast) isEndpoint() {
-}
+func (*endpointUdpBroadcast) isEndpoint() {}
 
 func (t *endpointUdpBroadcast) Close() error {
 	t.terminate <- struct{}{}

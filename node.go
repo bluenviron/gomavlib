@@ -101,10 +101,6 @@ type NodeConf struct {
 	// It defaults to 5 seconds.
 	HeartbeatPeriod time.Duration
 
-	// (optional) return parse errors when calling Read()
-	// normally parse errors are ignored.
-	ReturnParseErrors bool
-
 	// (optional) disables checksum validation of incoming frames.
 	// Not recommended, useful only for debugging purposes.
 	ChecksumDisable bool
@@ -269,9 +265,7 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 			if err != nil {
 				// continue in case of parse errors
 				if _, ok := err.(*ParserError); ok {
-					if n.conf.ReturnParseErrors == true {
-						n.eventChan <- &NodeEventFrame{nil, err, conn}
-					}
+					n.eventChan <- &NodeEventParseError{err, conn}
 					continue
 				}
 				// avoid calling twice Close()
@@ -281,7 +275,7 @@ func (n *Node) startChannel(rwc io.ReadWriteCloser) {
 				return
 			}
 
-			n.eventChan <- &NodeEventFrame{frame, nil, conn}
+			n.eventChan <- &NodeEventFrame{frame, conn}
 		}
 	}()
 

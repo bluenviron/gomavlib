@@ -22,5 +22,4 @@ func (conf EndpointCustom) init() (endpoint, error) {
 	return t, nil
 }
 
-func (t *endpointCustom) isEndpoint() {
-}
+func (t *endpointCustom) isEndpoint() {}

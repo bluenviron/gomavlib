@@ -10,12 +10,31 @@ type NodeEventFrame struct {
 	// the frame
 	Frame Frame
 
-	// a parse error returned instead of Frame
-	// This is used only when ReturnParseErrors is true
+	// the channel used to send the frame
+	Channel *EndpointChannel
+}
+
+func (*NodeEventFrame) isEvent() {}
+
+// NodeEventParseError is the event fired when a parse error occurs
+type NodeEventParseError struct {
+	// the error
 	Error error
 
 	// the channel used to send the frame
 	Channel *EndpointChannel
 }
 
-func (*NodeEventFrame) isEvent() {}
+func (*NodeEventParseError) isEvent() {}
+
+// NodeEventChannelOpen is the event fired when a channel is opened
+type NodeEventChannelOpen struct {
+}
+
+func (*NodeEventChannelOpen) isEvent() {}
+
+// NodeEventChannelClose is the event fired when a channel is closed
+type NodeEventChannelClose struct {
+}
+
+func (*NodeEventChannelClose) isEvent() {}

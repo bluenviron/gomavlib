@@ -69,8 +69,7 @@ func initEndpointClient(conf endpointClientConf) (endpoint, error) {
 	return t, nil
 }
 
-func (*endpointClient) isEndpoint() {
-}
+func (*endpointClient) isEndpoint() {}
 
 func (t *endpointClient) Close() error {
 	t.terminate <- struct{}{}

@@ -1,7 +1,7 @@
 package gomavlib
 
 // Message is the interface that all mavlink messages must implements.
-// Furthermore, messages are required to be labeled MessageNameOfMessage.
+// Furthermore, message structs must be labeled MessageNameOfMessage.
 type Message interface {
 	GetId() uint32
 }

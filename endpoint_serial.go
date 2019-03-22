@@ -44,4 +44,6 @@ func (conf EndpointSerial) init() (endpoint, error) {
 	return t, nil
 }
 
-func (*endpointSerial) isEndpoint() {}
+func (t *endpointSerial) Desc() string {
+	return fmt.Sprintf("serial")
+}

@@ -82,15 +82,13 @@ func initEndpointServer(conf endpointServerConf) (endpoint, error) {
 	return t, nil
 }
 
-func (t *endpointServer) isEndpoint() {}
-
 func (t *endpointServer) Close() error {
 	t.terminate <- struct{}{}
 	t.listener.Close()
 	return nil
 }
 
-func (t *endpointServer) Accept() (io.ReadWriteCloser, error) {
+func (t *endpointServer) Accept() (endpointChannelSingle, error) {
 	rawConn, err := t.listener.Accept()
 
 	// wait termination, do not report errors
@@ -99,7 +97,24 @@ func (t *endpointServer) Accept() (io.ReadWriteCloser, error) {
 		return nil, errorTerminated
 	}
 
-	conn := &netTimedConn{rawConn}
+	conn := &endpointServerPeer{
+		desc: fmt.Sprintf("%s %s", func() string {
+			if t.conf.isUdp() {
+				return "udp"
+			}
+			return "tcp"
+		}(), rawConn.RemoteAddr()),
+		ReadWriteCloser: &netTimedConn{rawConn},
+	}
 
 	return conn, nil
+}
+
+type endpointServerPeer struct {
+	desc string
+	io.ReadWriteCloser
+}
+
+func (p *endpointServerPeer) Desc() string {
+	return p.desc
 }

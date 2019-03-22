@@ -77,7 +77,14 @@ func initEndpointClient(conf endpointClientConf) (endpoint, error) {
 	return t, nil
 }
 
-func (*endpointClient) isEndpoint() {}
+func (t *endpointClient) Desc() string {
+	return fmt.Sprintf("%s %s", func() string {
+		if t.conf.isUdp() {
+			return "udp"
+		}
+		return "tcp"
+	}(), t.conf.getAddress())
+}
 
 func (t *endpointClient) Close() error {
 	t.terminate <- struct{}{}

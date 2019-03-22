@@ -85,7 +85,9 @@ func (conf EndpointUdpBroadcast) init() (endpoint, error) {
 	return t, nil
 }
 
-func (*endpointUdpBroadcast) isEndpoint() {}
+func (t *endpointUdpBroadcast) Desc() string {
+	return fmt.Sprintf("udp %s", t.broadcastAddr)
+}
 
 func (t *endpointUdpBroadcast) Close() error {
 	t.terminate <- struct{}{}

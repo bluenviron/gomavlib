@@ -44,7 +44,6 @@ package gomavlib
 
 import (
 	"fmt"
-	"io"
 	"sync"
 	"time"
 )
@@ -163,7 +162,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 			n.startChannel(ts)
 
 		} else {
-			panic(fmt.Errorf("endpoint %d does not implement required interface", tp))
+			panic(fmt.Errorf("endpoint %T does not implement any interface", tp))
 		}
 	}
 
@@ -227,12 +226,13 @@ func (n *Node) startChannelAccepter(tm endpointChannelAccepter) {
 	}()
 }
 
-func (n *Node) startChannel(rwc io.ReadWriteCloser) {
+func (n *Node) startChannel(ch endpointChannelSingle) {
 	n.channelsMutex.Lock()
 	defer n.channelsMutex.Unlock()
 
 	conn := &EndpointChannel{
-		rwc:       rwc,
+		desc:      ch.Desc(),
+		rwc:       ch,
 		writeChan: make(chan interface{}),
 	}
 	n.channels[conn] = struct{}{}

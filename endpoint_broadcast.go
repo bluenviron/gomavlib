@@ -35,7 +35,7 @@ func ipByBroadcastIp(target net.IP) net.IP {
 type EndpointUdpBroadcast struct {
 	// the broadcast address to which sending outgoing frames, example: 192.168.5.255:5600
 	BroadcastAddress string
-	// (optional) the listening. if empty, it will be computed
+	// (optional) the listening address. if empty, it will be computed
 	// from the broadcast address.
 	LocalAddress string
 }
@@ -58,7 +58,7 @@ func (conf EndpointUdpBroadcast) init() (endpoint, error) {
 	}
 
 	if conf.LocalAddress == "" {
-		ip := ipByBroadcastIp(broadcastAddr.IP[:4])
+		ip := ipByBroadcastIp(broadcastAddr.IP.To4())
 		if ip == nil {
 			return nil, fmt.Errorf("cannot find local address associated with given broadcast address")
 		}

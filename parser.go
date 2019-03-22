@@ -93,13 +93,14 @@ func (p *Parser) Checksum(f Frame) uint16 {
 		h.Write(msg.Content)
 
 	case *FrameV2:
+		var buf [3]byte
 		h.Write([]byte{byte(len(msg.Content))})
 		h.Write([]byte{ff.IncompatibilityFlag})
 		h.Write([]byte{ff.CompatibilityFlag})
 		h.Write([]byte{ff.SequenceId})
 		h.Write([]byte{ff.SystemId})
 		h.Write([]byte{ff.ComponentId})
-		h.Write(uint24Encode(msg.Id))
+		h.Write(uint24Encode(buf[:], msg.Id))
 		h.Write(msg.Content)
 	}
 
@@ -118,6 +119,7 @@ func (p *Parser) Signature(ff *FrameV2, key *FrameSignatureKey) *FrameSignature 
 	h.Write(key[:])
 
 	// the signature covers the whole message, excluding the signature itself
+	var buf [6]byte
 	h.Write([]byte{v2MagicByte})
 	h.Write([]byte{byte(len(msg.Content))})
 	h.Write([]byte{ff.IncompatibilityFlag})
@@ -125,11 +127,11 @@ func (p *Parser) Signature(ff *FrameV2, key *FrameSignatureKey) *FrameSignature 
 	h.Write([]byte{ff.SequenceId})
 	h.Write([]byte{ff.SystemId})
 	h.Write([]byte{ff.ComponentId})
-	h.Write(uint24Encode(ff.Message.GetId()))
+	h.Write(uint24Encode(buf[:], ff.Message.GetId()))
 	h.Write(msg.Content)
 	binary.Write(h, binary.LittleEndian, ff.Checksum)
 	h.Write([]byte{ff.SignatureLinkId})
-	h.Write(uint48Encode(ff.SignatureTimestamp))
+	h.Write(uint48Encode(buf[:], ff.SignatureTimestamp))
 
 	sig := new(FrameSignature)
 	copy(sig[:], h.Sum(nil)[:6])
@@ -440,7 +442,7 @@ func (p *Parser) Write(f Frame, route bool) error {
 		offset += 1
 		p.writeBuffer[offset] = ff.ComponentId
 		offset += 1
-		copy(p.writeBuffer[offset:offset+3], uint24Encode(ff.Message.GetId()))
+		uint24Encode(p.writeBuffer[offset:offset+3], ff.Message.GetId())
 		offset += 3
 
 		// message
@@ -453,7 +455,7 @@ func (p *Parser) Write(f Frame, route bool) error {
 		if ff.IsSigned() {
 			p.writeBuffer[offset] = ff.SignatureLinkId
 			offset += 1
-			copy(p.writeBuffer[offset:offset+6], uint48Encode(ff.SignatureTimestamp))
+			uint48Encode(p.writeBuffer[offset:offset+6], ff.SignatureTimestamp)
 			offset += 6
 			copy(p.writeBuffer[offset:offset+6], ff.Signature[:])
 		}

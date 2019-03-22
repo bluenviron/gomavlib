@@ -55,12 +55,11 @@ func uint24Read(r io.Reader, dest *uint32) error {
 	return nil
 }
 
-func uint24Encode(in uint32) []byte {
-	ret := make([]byte, 3)
-	ret[0] = byte(in)
-	ret[1] = byte(in >> 8)
-	ret[2] = byte(in >> 16)
-	return ret
+func uint24Encode(buf []byte, in uint32) []byte {
+	buf[0] = byte(in)
+	buf[1] = byte(in >> 8)
+	buf[2] = byte(in >> 16)
+	return buf[:3]
 }
 
 func uint48Decode(in []byte) uint64 {
@@ -78,13 +77,12 @@ func uint48Read(r io.Reader, dest *uint64) error {
 	return nil
 }
 
-func uint48Encode(in uint64) []byte {
-	ret := make([]byte, 6)
-	ret[0] = byte(in)
-	ret[1] = byte(in >> 8)
-	ret[2] = byte(in >> 16)
-	ret[3] = byte(in >> 24)
-	ret[4] = byte(in >> 32)
-	ret[5] = byte(in >> 40)
-	return ret
+func uint48Encode(buf []byte, in uint64) []byte {
+	buf[0] = byte(in)
+	buf[1] = byte(in >> 8)
+	buf[2] = byte(in >> 16)
+	buf[3] = byte(in >> 24)
+	buf[4] = byte(in >> 32)
+	buf[5] = byte(in >> 40)
+	return buf[:6]
 }

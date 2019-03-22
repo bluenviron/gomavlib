@@ -5,20 +5,19 @@ package main
 import (
 	"fmt"
 	"github.com/gswly/gomavlib"
-	"github.com/gswly/gomavlib/dialects/ardupilotmega"
 )
 
 func main() {
 	// create a node which
 	// - communicates through multiple endpoints
-	// - understands ardupilotmega dialect
+	// - is dialect agnostic, does not attempt to decode messages (in a router it is preferable)
 	// - writes messages with given system id and component id
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
 			gomavlib.EndpointUdpClient{"1.2.3.4:5900"},
 		},
-		Dialect:     ardupilotmega.Dialect,
+		Dialect:     nil,
 		SystemId:    10,
 		ComponentId: 1,
 	})

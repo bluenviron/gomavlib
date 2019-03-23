@@ -78,7 +78,7 @@ func initEndpointClient(conf endpointClientConf) (endpoint, error) {
 }
 
 func (t *endpointClient) Desc() string {
-	return fmt.Sprintf("%s %s", func() string {
+	return fmt.Sprintf("%s:%s", func() string {
 		if t.conf.isUdp() {
 			return "udp"
 		}

@@ -98,7 +98,7 @@ func (t *endpointServer) Accept() (endpointChannelSingle, error) {
 	}
 
 	conn := &endpointServerPeer{
-		desc: fmt.Sprintf("%s %s", func() string {
+		desc: fmt.Sprintf("%s:%s", func() string {
 			if t.conf.isUdp() {
 				return "udp"
 			}

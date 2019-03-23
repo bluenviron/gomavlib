@@ -17,15 +17,11 @@ format:
 		sh -c "cd /src \
 		&& find . -type f -name '*.go' | xargs gofmt -l -w -s"
 
-define TEST_DOCKERFILE
-FROM amd64/golang:1.11-stretch
-WORKDIR /src
-COPY go.mod go.sum ./
-RUN go mod download
-endef
-export TEST_DOCKERFILE
 test:
-	echo "$$TEST_DOCKERFILE" | docker build . -f - -t gomavlib-test \
+	echo "FROM amd64/golang:1.11-stretch \n\
+		WORKDIR /src \n\
+		COPY go.mod go.sum ./ \n\
+		RUN go mod download" | docker build . -f - -t gomavlib-test \
 		&& docker run --rm -it \
 		-v $(PWD):/src \
 		gomavlib-test \
@@ -34,24 +30,20 @@ test:
 
 DIALECTS = ASLUAV ardupilotmega autoquad common icarous matrixpilot minimal \
 	paparazzi slugs standard test uAvionix ualberta
-define GEN_DIALECTS_DOCKERFILE
-FROM amd64/golang:1.11-stretch
-WORKDIR /src
-COPY go.mod go.sum ./
-RUN go mod download
-COPY . ./
-RUN go install ./dialgen
-endef
-export GEN_DIALECTS_DOCKERFILE
 gen-dialects:
 	@for DIALECT in $(DIALECTS); do \
-		echo "$$GEN_DIALECTS_DOCKERFILE" | docker build -q . -f - -t gomavlib-gen-dialects \
-			&& docker run --rm -it \
-			-v $(PWD):/src \
-			gomavlib-gen-dialects \
-			dialgen --output=dialects/$$DIALECT/dialect.go \
-			https://raw.githubusercontent.com/mavlink/mavlink/master/message_definitions/v1.0/$$DIALECT.xml \
-			|| exit 1; \
+		echo "FROM amd64/golang:1.11-stretch \n\
+		WORKDIR /src \n\
+		COPY go.mod go.sum ./ \n\
+		RUN go mod download \n\
+		COPY . ./ \n\
+		RUN go install ./dialgen" | docker build -q . -f - -t gomavlib-gen-dialects \
+		&& docker run --rm -it \
+		-v $(PWD):/src \
+		gomavlib-gen-dialects \
+		dialgen --output=dialects/$$DIALECT/dialect.go \
+		https://raw.githubusercontent.com/mavlink/mavlink/master/message_definitions/v1.0/$$DIALECT.xml \
+		|| exit 1; \
 	done
 
 ifeq (run-example, $(firstword $(MAKECMDGOALS)))

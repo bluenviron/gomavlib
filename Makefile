@@ -10,6 +10,12 @@ help:
 	@echo "  run-example [name]  run example with given name."
 	@echo ""
 
+# do not treat arguments as targets
+%:
+	@[ "$(word 1, $(MAKECMDGOALS))" != "$@" ] || { echo "unrecognized command."; exit 1; }
+
+ARGS := $(wordlist 2, $(words $(MAKECMDGOALS)), $(MAKECMDGOALS))
+
 format:
 	@docker run --rm -it \
 		-v $(PWD):/src \
@@ -46,12 +52,8 @@ gen-dialects:
 		|| exit 1; \
 	done
 
-ifeq (run-example, $(firstword $(MAKECMDGOALS)))
-  $(eval %:;@:) # do not treat arguments as targets
-  ARGS := $(wordlist 2, $(words $(MAKECMDGOALS)), $(MAKECMDGOALS))
-  EXAMPLE := $(word 1, $(ARGS))
-endif
 run-example:
+	$(eval EXAMPLE := $(word 1, $(ARGS)))
 	@docker run --rm -it \
 		--privileged \
 		--network=host \

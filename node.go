@@ -231,7 +231,7 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 	defer n.channelsMutex.Unlock()
 
 	conn := &EndpointChannel{
-		desc:      ch.Desc(),
+		label:     ch.Label(),
 		rwc:       ch,
 		writeChan: make(chan interface{}),
 	}

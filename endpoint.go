@@ -17,7 +17,7 @@ type endpoint interface{}
 // endpoint that provides a single channel.
 // Read() must not return any error unless Close() is called.
 type endpointChannelSingle interface {
-	Desc() string
+	Label() string
 	io.ReadWriteCloser
 }
 
@@ -29,12 +29,12 @@ type endpointChannelAccepter interface {
 
 // EndpointChannel is a channel provided by a endpoint.
 type EndpointChannel struct {
-	desc      string
+	label     string
 	rwc       io.ReadWriteCloser
 	writeChan chan interface{}
 }
 
-// String implements fmt.Stringer and returns infos about the channel.
+// String implements fmt.Stringer and returns the channel label.
 func (e *EndpointChannel) String() string {
-	return e.desc
+	return e.label
 }

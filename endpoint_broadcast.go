@@ -85,7 +85,7 @@ func (conf EndpointUdpBroadcast) init() (endpoint, error) {
 	return t, nil
 }
 
-func (t *endpointUdpBroadcast) Desc() string {
+func (t *endpointUdpBroadcast) Label() string {
 	return fmt.Sprintf("udp:%s", t.broadcastAddr)
 }
 

@@ -115,6 +115,6 @@ type endpointServerPeer struct {
 	io.ReadWriteCloser
 }
 
-func (p *endpointServerPeer) Desc() string {
+func (p *endpointServerPeer) Label() string {
 	return p.desc
 }

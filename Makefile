@@ -1,21 +1,15 @@
 
-.PHONY: help
 help:
 	@echo "usage: make [action] [args...]"
 	@echo ""
 	@echo "available actions:"
 	@echo ""
 	@echo "  format              format source files."
-	@echo ""
-	@echo "  test                run available tests."
-	@echo ""
+	@echo "  test                run all available tests."
 	@echo "  gen-dialects        generate dialects."
-	@echo ""
 	@echo "  run-example [name]  run example with given name."
 	@echo ""
 
-
-.PHONY: format
 format:
 	@docker run --rm -it \
 		-v $(PWD):/src \
@@ -23,8 +17,6 @@ format:
 		sh -c "cd /src \
 		&& find . -type f -name '*.go' | xargs gofmt -l -w -s"
 
-
-.PHONY: test
 test:
 	@docker run --rm -it \
 		-v $(PWD):/src \
@@ -33,8 +25,8 @@ test:
 		&& go test -v . \
 		&& go install ./dialgen"
 
-
-.PHONY: gen-dialects
+DIALECTS = ASLUAV ardupilotmega autoquad common icarous matrixpilot minimal \
+	paparazzi slugs standard test uAvionix ualberta
 define GEN_DIALECTS_DOCKERFILE
 FROM amd64/golang:1.11-stretch
 WORKDIR /src
@@ -45,7 +37,7 @@ RUN go install ./dialgen
 endef
 export GEN_DIALECTS_DOCKERFILE
 gen-dialects:
-	@for DIALECT in ASLUAV ardupilotmega autoquad common icarous matrixpilot minimal paparazzi slugs standard test uAvionix ualberta; do \
+	@for DIALECT in $(DIALECTS); do \
 		echo "$$GEN_DIALECTS_DOCKERFILE" | docker build -q . -f - -t gomavlib-gen-dialects \
 			&& docker run --rm -it \
 			-v $(PWD):/src \
@@ -55,8 +47,6 @@ gen-dialects:
 			|| exit 1; \
 	done
 
-
-.PHONY: run-example
 ifeq (run-example, $(firstword $(MAKECMDGOALS)))
   $(eval %:;@:) # do not treat arguments as targets
   ARGS := $(wordlist 2, $(words $(MAKECMDGOALS)), $(MAKECMDGOALS))

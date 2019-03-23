@@ -10,10 +10,9 @@ type nodeHeartbeat struct {
 	terminate   chan struct{}
 	done        chan struct{}
 	heartbeatMp *dialectMessage
-	period      time.Duration
 }
 
-func newNodeHeartbeat(n *Node, period time.Duration) *nodeHeartbeat {
+func newNodeHeartbeat(n *Node) *nodeHeartbeat {
 	// heartbeat message must exist in dialect and correspond to standart heartbeat
 	if n.conf.Dialect == nil {
 		return nil
@@ -25,10 +24,9 @@ func newNodeHeartbeat(n *Node, period time.Duration) *nodeHeartbeat {
 
 	h := &nodeHeartbeat{
 		n:           n,
-		terminate:   make(chan struct{}),
+		terminate:   make(chan struct{}, 1),
 		done:        make(chan struct{}),
 		heartbeatMp: mp,
-		period:      period,
 	}
 	go h.do()
 	return h
@@ -42,7 +40,7 @@ func (h *nodeHeartbeat) close() {
 func (h *nodeHeartbeat) do() {
 	defer func() { h.done <- struct{}{} }()
 
-	ticker := time.NewTicker(h.period)
+	ticker := time.NewTicker(h.n.conf.HeartbeatPeriod)
 	defer ticker.Stop()
 
 	for {

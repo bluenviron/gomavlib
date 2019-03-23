@@ -49,6 +49,9 @@ import (
 )
 
 const (
+	nodeCheckPeriod    = 10 * time.Second
+	nodeDisappearAfter = 30 * time.Second
+
 	// constant for ip-based endpoints
 	netBufferSize      = 512 // frames cannot go beyond len(header) + 255 + len(check) + len(sig)
 	netConnectTimeout  = 10 * time.Second
@@ -56,6 +59,18 @@ const (
 	netReadTimeout     = 60 * time.Second
 	netWriteTimeout    = 10 * time.Second
 )
+
+// NodeIndex is the index used to identify other nodes in the network.
+type NodeIndex struct {
+	SystemId    byte
+	ComponentId byte
+	Channel     *EndpointChannel
+}
+
+// string implements fmt.Stringer and returns the node label.
+func (i NodeIndex) String() string {
+	return fmt.Sprintf("chan=%s sid=%d cid=%d", i.Channel, i.SystemId, i.ComponentId)
+}
 
 // NodeVersion allows to set the frame version used in a Node to wrap outgoing messages.
 type NodeVersion int
@@ -111,11 +126,14 @@ type Node struct {
 	conf          NodeConf
 	wg            sync.WaitGroup
 	chanAccepters map[endpointChannelAccepter]struct{}
+	writeDone     chan struct{}
+	eventChan     chan NodeEvent
 	channelsMutex sync.Mutex
 	channels      map[*EndpointChannel]struct{}
-	writeDone     chan struct{}
+	nodeMutex     sync.Mutex
+	nodes         map[NodeIndex]time.Time
 	nodeHeartbeat *nodeHeartbeat
-	eventChan     chan NodeEvent
+	nodeChecker   *nodeChecker
 }
 
 // NewNode allocates a Node. See NodeConf for the options.
@@ -142,12 +160,12 @@ func NewNode(conf NodeConf) (*Node, error) {
 	n := &Node{
 		conf:          conf,
 		chanAccepters: make(map[endpointChannelAccepter]struct{}),
-		channels:      make(map[*EndpointChannel]struct{}),
 		writeDone:     make(chan struct{}),
 		eventChan:     make(chan NodeEvent),
+		channels:      make(map[*EndpointChannel]struct{}),
+		nodes:         make(map[NodeIndex]time.Time),
 	}
 
-	// init endpoints
 	for _, tconf := range conf.Endpoints {
 		tp, err := tconf.init()
 		if err != nil {
@@ -166,24 +184,29 @@ func NewNode(conf NodeConf) (*Node, error) {
 		}
 	}
 
-	// start heartbeat
+	n.nodeChecker = newNodeChecker(n)
+
 	if n.conf.HeartbeatDisable == false {
-		n.nodeHeartbeat = newNodeHeartbeat(n, n.conf.HeartbeatPeriod)
+		n.nodeHeartbeat = newNodeHeartbeat(n)
 	}
 	return n, nil
 }
 
 // Close stops node operations and wait for all routines to return.
 func (n *Node) Close() {
+	if n.nodeHeartbeat != nil {
+		n.nodeHeartbeat.close()
+	}
+
+	if n.nodeChecker != nil {
+		n.nodeChecker.close()
+	}
+
+	for mc := range n.chanAccepters {
+		mc.Close()
+	}
+
 	func() {
-		if n.nodeHeartbeat != nil {
-			n.nodeHeartbeat.close()
-		}
-
-		for mc := range n.chanAccepters {
-			mc.Close()
-		}
-
 		n.channelsMutex.Lock()
 		defer n.channelsMutex.Unlock()
 
@@ -230,16 +253,16 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 	n.channelsMutex.Lock()
 	defer n.channelsMutex.Unlock()
 
-	conn := &EndpointChannel{
+	channel := &EndpointChannel{
 		label:     ch.Label(),
 		rwc:       ch,
 		writeChan: make(chan interface{}),
 	}
-	n.channels[conn] = struct{}{}
+	n.channels[channel] = struct{}{}
 
 	parser := NewParser(ParserConf{
-		Reader:          conn.rwc,
-		Writer:          conn.rwc,
+		Reader:          channel.rwc,
+		Writer:          channel.rwc,
 		Dialect:         n.conf.Dialect,
 		SystemId:        n.conf.SystemId,
 		ComponentId:     n.conf.ComponentId,
@@ -255,30 +278,63 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 		defer n.wg.Done()
 		defer func() {
 			n.channelsMutex.Lock()
-			delete(n.channels, conn)
+			delete(n.channels, channel)
 			n.channelsMutex.Unlock()
-			close(conn.writeChan)
-			n.eventChan <- &NodeEventChannelClose{conn}
+			close(channel.writeChan)
+
+			// support for NodeEventNodeDisappear
+			func() {
+				n.nodeMutex.Lock()
+				defer n.nodeMutex.Unlock()
+				for i := range n.nodes {
+					if i.Channel == channel {
+						delete(n.nodes, i)
+						n.eventChan <- &NodeEventNodeDisappear{i}
+					}
+				}
+			}()
+
+			n.eventChan <- &NodeEventChannelClose{channel}
 		}()
 
-		n.eventChan <- &NodeEventChannelOpen{conn}
+		n.eventChan <- &NodeEventChannelOpen{channel}
 
 		for {
 			frame, err := parser.Read()
 			if err != nil {
 				// continue in case of parse errors
 				if _, ok := err.(*ParserError); ok {
-					n.eventChan <- &NodeEventParseError{err, conn}
+					n.eventChan <- &NodeEventParseError{err, channel}
 					continue
 				}
 				// avoid calling twice Close()
 				if err != errorTerminated {
-					conn.rwc.Close()
+					channel.rwc.Close()
 				}
 				return
 			}
 
-			n.eventChan <- &NodeEventFrame{frame, conn}
+			// support for NodeEventNodeAppear
+			nIndex := NodeIndex{
+				SystemId:    frame.GetSystemId(),
+				ComponentId: frame.GetComponentId(),
+				Channel:     channel,
+			}
+			isNodeNew := func() bool {
+				n.nodeMutex.Lock()
+				defer n.nodeMutex.Unlock()
+				if _, ok := n.nodes[nIndex]; !ok {
+					n.nodes[nIndex] = time.Now()
+					return true
+				}
+				n.nodes[nIndex] = time.Now()
+				return false
+			}()
+			if isNodeNew == true {
+				n.eventChan <- &NodeEventNodeAppear{nIndex}
+			}
+
+			n.eventChan <- &NodeEventFrame{frame, channel}
 		}
 	}()
 
@@ -287,7 +343,7 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 	go func() {
 		defer n.wg.Done()
 
-		for what := range conn.writeChan {
+		for what := range channel.writeChan {
 			switch wh := what.(type) {
 			case Message:
 				if n.conf.Version == V1 {
@@ -321,10 +377,12 @@ func (res *NodeEventFrame) ComponentId() byte {
 }
 
 // Events returns a channel from which receiving events. Possible events are:
-//   *NodeEventFrame
-//   *NodeEventParseError
 //   *NodeEventChannelOpen
 //   *NodeEventChannelClose
+//   *NodeEventFrame
+//   *NodeEventNodeAppear
+//   *NodeEventNodeDisappear
+//   *NodeEventParseError
 // See individual events for meaning and content.
 func (n *Node) Events() chan NodeEvent {
 	return n.eventChan
@@ -384,8 +442,8 @@ func (n *Node) writeAll(what interface{}) {
 	n.channelsMutex.Lock()
 	defer n.channelsMutex.Unlock()
 
-	for conn := range n.channels {
-		conn.writeChan <- what
+	for channel := range n.channels {
+		channel.writeChan <- what
 		defer func() { <-n.writeDone }()
 	}
 }
@@ -394,9 +452,9 @@ func (n *Node) writeExcept(exceptChannel *EndpointChannel, what interface{}) {
 	n.channelsMutex.Lock()
 	defer n.channelsMutex.Unlock()
 
-	for conn := range n.channels {
-		if conn != exceptChannel {
-			conn.writeChan <- what
+	for channel := range n.channels {
+		if channel != exceptChannel {
+			channel.writeChan <- what
 			defer func() { <-n.writeDone }()
 		}
 	}

@@ -29,7 +29,6 @@ func (*NodeEventParseError) isEvent() {}
 
 // NodeEventChannelOpen is the event fired when a channel is opened
 type NodeEventChannelOpen struct {
-	// the channel
 	Channel *EndpointChannel
 }
 
@@ -37,8 +36,21 @@ func (*NodeEventChannelOpen) isEvent() {}
 
 // NodeEventChannelClose is the event fired when a channel is closed
 type NodeEventChannelClose struct {
-	// the channel
 	Channel *EndpointChannel
 }
 
 func (*NodeEventChannelClose) isEvent() {}
+
+// NodeEventNodeAppear is the event fired when a new node is detected
+type NodeEventNodeAppear struct {
+	Node NodeIndex
+}
+
+func (*NodeEventNodeAppear) isEvent() {}
+
+// NodeEventNodeDisappear is the event fired when a node disappears (i.e. times out)
+type NodeEventNodeDisappear struct {
+	Node NodeIndex
+}
+
+func (*NodeEventNodeDisappear) isEvent() {}

@@ -10,7 +10,7 @@ const (
 type Frame interface {
 	// the frame version.
 	GetVersion() int
-	// Gthe system id of the author of the frame.
+	// the system id of the author of the frame.
 	GetSystemId() byte
 	// the component id of the author of the frame.
 	GetComponentId() byte

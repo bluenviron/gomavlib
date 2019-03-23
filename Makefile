@@ -31,14 +31,14 @@ test:
 DIALECTS = ASLUAV ardupilotmega autoquad common icarous matrixpilot minimal \
 	paparazzi slugs standard test uAvionix ualberta
 gen-dialects:
-	@for DIALECT in $(DIALECTS); do \
-		echo "FROM amd64/golang:1.11-stretch \n\
+	echo "FROM amd64/golang:1.11-stretch \n\
 		WORKDIR /src \n\
 		COPY go.mod go.sum ./ \n\
 		RUN go mod download \n\
 		COPY . ./ \n\
-		RUN go install ./dialgen" | docker build -q . -f - -t gomavlib-gen-dialects \
-		&& docker run --rm -it \
+		RUN go install ./dialgen" | docker build -q . -f - -t gomavlib-gen-dialects
+	@for DIALECT in $(DIALECTS); do \
+		docker run --rm -it \
 		-v $(PWD):/src \
 		gomavlib-gen-dialects \
 		dialgen --output=dialects/$$DIALECT/dialect.go \

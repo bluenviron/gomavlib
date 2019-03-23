@@ -17,12 +17,19 @@ format:
 		sh -c "cd /src \
 		&& find . -type f -name '*.go' | xargs gofmt -l -w -s"
 
+define TEST_DOCKERFILE
+FROM amd64/golang:1.11-stretch
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN go mod download
+endef
+export TEST_DOCKERFILE
 test:
-	@docker run --rm -it \
+	echo "$$TEST_DOCKERFILE" | docker build . -f - -t gomavlib-test \
+		&& docker run --rm -it \
 		-v $(PWD):/src \
-		amd64/golang:1.11-stretch \
-		sh -c "cd /src \
-		&& go test -v . \
+		gomavlib-test \
+		sh -c "go test -v . \
 		&& go install ./dialgen"
 
 DIALECTS = ASLUAV ardupilotmega autoquad common icarous matrixpilot minimal \

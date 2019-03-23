@@ -131,7 +131,7 @@ type dialectMessageField struct {
 
 type dialectMessage struct {
 	elemType     reflect.Type
-	fields       []dialectMessageField
+	fields       []*dialectMessageField
 	sizeNormal   byte
 	sizeExtended byte
 	crcExtra     byte
@@ -141,7 +141,7 @@ func newDialectMessage(msg Message) (*dialectMessage, error) {
 	mp := &dialectMessage{}
 
 	mp.elemType = reflect.TypeOf(msg).Elem()
-	mp.fields = make([]dialectMessageField, mp.elemType.NumField())
+	mp.fields = make([]*dialectMessageField, mp.elemType.NumField())
 
 	// get name
 	if strings.HasPrefix(mp.elemType.Name(), "Message") == false {
@@ -188,7 +188,7 @@ func newDialectMessage(msg Message) (*dialectMessage, error) {
 			size = dialectTypeSizes[defType]
 		}
 
-		mp.fields[i] = dialectMessageField{
+		mp.fields[i] = &dialectMessageField{
 			ftype: defType,
 			name: func() string {
 				if mavname := field.Tag.Get("mavname"); mavname != "" {
@@ -282,7 +282,7 @@ func (mp *dialectMessage) decode(buf []byte, isFrameV2 bool) (Message, error) {
 			}
 
 		default:
-			n := decodeValue(target.Addr().Interface(), buf, &f)
+			n := decodeValue(target.Addr().Interface(), buf, f)
 			buf = buf[n:]
 		}
 	}
@@ -319,7 +319,7 @@ func (mp *dialectMessage) encode(msg Message, isFrameV2 bool) ([]byte, error) {
 			}
 
 		default:
-			n := encodeValue(buf, target.Addr().Interface(), &f)
+			n := encodeValue(buf, target.Addr().Interface(), f)
 			buf = buf[n:]
 		}
 	}

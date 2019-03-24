@@ -164,7 +164,6 @@ func newDialectMessage(msg Message) (*dialectMessage, error) {
 		// validate type
 		defType := DialectTypeGoToDef(fieldType.Name())
 		if defType == "" {
-			fmt.Printf("invalid field type: %v\n", fieldType)
 			return nil, fmt.Errorf("invalid field type: %v", fieldType)
 		}
 

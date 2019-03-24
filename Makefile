@@ -4,6 +4,7 @@ help:
 	@echo ""
 	@echo "available actions:"
 	@echo ""
+	@echo "  mod-tidy            run go mod tidy."
 	@echo "  format              format source files."
 	@echo "  test                run all available tests."
 	@echo "  gen-dialects        generate dialects."
@@ -15,6 +16,10 @@ help:
 	@[ "$(word 1, $(MAKECMDGOALS))" != "$@" ] || { echo "unrecognized command."; exit 1; }
 
 ARGS := $(wordlist 2, $(words $(MAKECMDGOALS)), $(MAKECMDGOALS))
+
+mod-tidy:
+	docker run --rm -it -v $(PWD):/src amd64/golang:1.11 \
+		sh -c "cd /src && go get -m ./... && go mod tidy"
 
 format:
 	@docker run --rm -it \

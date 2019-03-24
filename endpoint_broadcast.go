@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"reflect"
+	"strconv"
 	"time"
 )
 
@@ -48,21 +49,25 @@ type endpointUdpBroadcast struct {
 }
 
 func (conf EndpointUdpBroadcast) init() (endpoint, error) {
-	_, port, err := net.SplitHostPort(conf.BroadcastAddress)
+	ipString, port, err := net.SplitHostPort(conf.BroadcastAddress)
 	if err != nil {
 		return nil, fmt.Errorf("invalid broadcast address")
 	}
-	broadcastAddr, err := net.ResolveUDPAddr("udp4", conf.BroadcastAddress)
-	if err != nil {
-		return nil, err
+	broadcastIp := net.ParseIP(ipString)
+	if broadcastIp == nil {
+		return nil, fmt.Errorf("invalid IP")
+	}
+	broadcastIp = broadcastIp.To4()
+	if broadcastIp == nil {
+		return nil, fmt.Errorf("invalid IP")
 	}
 
 	if conf.LocalAddress == "" {
-		ip := ipByBroadcastIp(broadcastAddr.IP.To4())
-		if ip == nil {
+		localIp := ipByBroadcastIp(broadcastIp)
+		if localIp == nil {
 			return nil, fmt.Errorf("cannot find local address associated with given broadcast address")
 		}
-		conf.LocalAddress = fmt.Sprintf("%s:%s", ip, port)
+		conf.LocalAddress = fmt.Sprintf("%s:%s", localIp, port)
 
 	} else {
 		_, _, err = net.SplitHostPort(conf.LocalAddress)
@@ -76,10 +81,12 @@ func (conf EndpointUdpBroadcast) init() (endpoint, error) {
 		return nil, err
 	}
 
+	iport, _ := strconv.Atoi(port)
+
 	t := &endpointUdpBroadcast{
 		conf:          conf,
 		packetConn:    packetConn,
-		broadcastAddr: broadcastAddr,
+		broadcastAddr: &net.UDPAddr{IP: broadcastIp, Port: iport},
 		terminate:     make(chan struct{}, 1),
 	}
 	return t, nil

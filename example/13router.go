@@ -17,9 +17,8 @@ func main() {
 			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
 			gomavlib.EndpointUdpClient{"1.2.3.4:5900"},
 		},
-		Dialect:     nil,
-		SystemId:    10,
-		ComponentId: 1,
+		Dialect:  nil,
+		SystemId: 10,
 	})
 	if err != nil {
 		panic(err)

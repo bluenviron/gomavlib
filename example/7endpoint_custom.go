@@ -52,9 +52,8 @@ func main() {
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointCustom{endpoint},
 		},
-		Dialect:     ardupilotmega.Dialect,
-		SystemId:    10,
-		ComponentId: 1,
+		Dialect:  ardupilotmega.Dialect,
+		SystemId: 10,
 	})
 	if err != nil {
 		panic(err)

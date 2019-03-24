@@ -17,9 +17,8 @@ func main() {
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointUdpBroadcast{BroadcastAddress: "192.168.7.255:5600"},
 		},
-		Dialect:     ardupilotmega.Dialect,
-		SystemId:    10,
-		ComponentId: 1,
+		Dialect:  ardupilotmega.Dialect,
+		SystemId: 10,
 	})
 	if err != nil {
 		panic(err)

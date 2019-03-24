@@ -25,7 +25,6 @@ Basic example (more are available at https://github.com/gswly/gomavlib/tree/mast
 		},
   		Dialect:     ardupilotmega.Dialect,
   		SystemId:    10,
-  		ComponentId: 1,
   	})
   	if err != nil {
   		panic(err)
@@ -98,6 +97,7 @@ type NodeConf struct {
 
 	// these are used to identify this node in the network.
 	// They are added to every outgoing message.
+	// ComponentId is optional and defaults to 1.
 	SystemId    byte
 	ComponentId byte
 
@@ -142,7 +142,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 		return nil, fmt.Errorf("SystemId must be >= 1")
 	}
 	if conf.ComponentId < 1 {
-		return nil, fmt.Errorf("ComponentId must be >= 1")
+		conf.ComponentId = 1
 	}
 	if len(conf.Endpoints) == 0 {
 		return nil, fmt.Errorf("at least one endpoint must be provided")

@@ -17,9 +17,8 @@ func main() {
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointTcpClient{"1.2.3.4:5600"},
 		},
-		Dialect:     ardupilotmega.Dialect,
-		SystemId:    10,
-		ComponentId: 1,
+		Dialect:  ardupilotmega.Dialect,
+		SystemId: 10,
 	})
 	if err != nil {
 		panic(err)

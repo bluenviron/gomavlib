@@ -24,7 +24,6 @@ func main() {
 		},
 		Dialect:         ardupilotmega.Dialect,
 		SystemId:        10,
-		ComponentId:     1,
 		SignatureInKey:  key,
 		SignatureOutKey: key,
 	})

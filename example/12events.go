@@ -30,22 +30,22 @@ func main() {
 	for evt := range node.Events() {
 		switch ee := evt.(type) {
 		case *gomavlib.NodeEventFrame:
-			fmt.Println("frame received: %v\n", ee)
+			fmt.Printf("frame received: %v\n", ee)
 
 		case *gomavlib.NodeEventParseError:
-			fmt.Println("parse error: %v\n", ee)
+			fmt.Printf("parse error: %v\n", ee)
 
 		case *gomavlib.NodeEventChannelOpen:
-			fmt.Println("channel opened: %v\n", ee)
+			fmt.Printf("channel opened: %v\n", ee)
 
 		case *gomavlib.NodeEventChannelClose:
-			fmt.Println("channel closed: %v\n", ee)
+			fmt.Printf("channel closed: %v\n", ee)
 
 		case *gomavlib.NodeEventNodeAppear:
-			fmt.Println("node appeared: %v\n", ee)
+			fmt.Printf("node appeared: %v\n", ee)
 
 		case *gomavlib.NodeEventNodeDisappear:
-			fmt.Println("node disappeared: %v\n", ee)
+			fmt.Printf("node disappeared: %v\n", ee)
 		}
 	}
 }

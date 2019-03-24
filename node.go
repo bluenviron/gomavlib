@@ -95,10 +95,10 @@ type NodeConf struct {
 	// for the available options.
 	Version NodeVersion
 
-	// these are used to identify this node in the network.
-	// They are added to every outgoing message.
-	// ComponentId is optional and defaults to 1.
-	SystemId    byte
+	// the system id, added to every outgoing frame and used to identify this
+	// node in the network.
+	SystemId byte
+	// (optional) the component id, added to every outgoing frame, defaults to 1.
 	ComponentId byte
 
 	// (optional) the secret key used to validate incoming frames.
@@ -260,7 +260,7 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 	}
 	n.channels[channel] = struct{}{}
 
-	parser := NewParser(ParserConf{
+	parser, _ := NewParser(ParserConf{
 		Reader:          channel.rwc,
 		Writer:          channel.rwc,
 		Dialect:         n.conf.Dialect,

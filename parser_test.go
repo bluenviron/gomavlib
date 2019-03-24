@@ -9,11 +9,14 @@ import (
 
 func testFrameDecode(t *testing.T, dialect *Dialect, key *FrameSignatureKey, byts [][]byte, frames []Frame) {
 	for i, byt := range byts {
-		parser := NewParser(ParserConf{
+		parser, err := NewParser(ParserConf{
 			Reader:         bytes.NewReader(byt),
+			Writer:         bytes.NewBuffer(nil),
 			Dialect:        dialect,
+			SystemId:       1,
 			SignatureInKey: key,
 		})
+		require.NoError(t, err)
 		frame, err := parser.Read()
 		require.NoError(t, err)
 		require.Equal(t, frames[i], frame)
@@ -23,11 +26,14 @@ func testFrameDecode(t *testing.T, dialect *Dialect, key *FrameSignatureKey, byt
 func testFrameEncode(t *testing.T, dialect *Dialect, key *FrameSignatureKey, byts [][]byte, frames []Frame) {
 	for i, frame := range frames {
 		buf := bytes.NewBuffer(nil)
-		parser := NewParser(ParserConf{
-			Writer:  buf,
-			Dialect: dialect,
+		parser, err := NewParser(ParserConf{
+			Reader:   bytes.NewBuffer(nil),
+			Writer:   buf,
+			SystemId: 1,
+			Dialect:  dialect,
 		})
-		err := parser.Write(frame, true)
+		require.NoError(t, err)
+		err = parser.Write(frame, true)
 		require.NoError(t, err)
 		require.Equal(t, byts[i], buf.Bytes())
 	}
@@ -220,7 +226,12 @@ var testFpV2SigFrames = []Frame{
 var testFpV2Key = NewFrameSignatureKey(bytes.Repeat([]byte("\x4F"), 32))
 
 func TestParserV2Signature(t *testing.T) {
-	parser := NewParser(ParserConf{})
+	parser, err := NewParser(ParserConf{
+		Reader:   bytes.NewBuffer(nil),
+		Writer:   bytes.NewBuffer(nil),
+		SystemId: 1,
+	})
+	require.NoError(t, err)
 	sig := parser.Signature(&FrameV2{
 		IncompatibilityFlag: 0x01,
 		CompatibilityFlag:   0x00,

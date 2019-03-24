@@ -38,9 +38,10 @@ type ParserConf struct {
 	// encoded. If not provided, messages are decoded in the MessageRaw struct.
 	Dialect *Dialect
 
-	// these are used to identify this node in the network.
-	// They are added to every outgoing frame.
-	SystemId    byte
+	// the system id, added to every outgoing frame and used to identify this
+	// node in the network.
+	SystemId byte
+	// (optional) the component id, added to every outgoing frame, defaults to 1.
 	ComponentId byte
 
 	// (optional) the secret key used to validate incoming frames.
@@ -68,13 +69,26 @@ type Parser struct {
 
 // NewParser allocates a Parser, a low level frame encoder and decoder.
 // See Parser for the options.
-func NewParser(conf ParserConf) *Parser {
+func NewParser(conf ParserConf) (*Parser, error) {
+	if conf.Reader == nil {
+		return nil, fmt.Errorf("reader not provided")
+	}
+	if conf.Writer == nil {
+		return nil, fmt.Errorf("writer not provided")
+	}
+	if conf.SystemId < 1 {
+		return nil, fmt.Errorf("SystemId must be >= 1")
+	}
+	if conf.ComponentId < 1 {
+		conf.ComponentId = 1
+	}
+
 	p := &Parser{
 		conf:        conf,
 		readBuffer:  bufio.NewReaderSize(conf.Reader, netBufferSize),
 		writeBuffer: make([]byte, 0, netBufferSize),
 	}
-	return p
+	return p, nil
 }
 
 // Checksum computes the checksum of a given frame.

@@ -16,7 +16,7 @@ type endpointServerConf interface {
 // appropriate way for transferring frames from a UAV to a GCS, since it does
 // not allow frame losses.
 type EndpointTcpServer struct {
-	// listen address, i.e 0.0.0.0:5600
+	// listen address, example: 0.0.0.0:5600
 	Address string
 }
 
@@ -32,7 +32,7 @@ func (conf EndpointTcpServer) getAddress() string {
 // This is the most appropriate way for transferring frames from a UAV to a GPS
 // if they are connected to the same network.
 type EndpointUdpServer struct {
-	// listen address, i.e 0.0.0.0:5600
+	// listen address, example: 0.0.0.0:5600
 	Address string
 }
 

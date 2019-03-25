@@ -32,12 +32,11 @@ test:
 	echo "FROM amd64/golang:1.11-stretch \n\
 		WORKDIR /src \n\
 		COPY go.mod go.sum ./ \n\
-		RUN go mod download" | docker build . -f - -t gomavlib-test \
-		&& docker run --rm -it \
-		-v $(PWD):/src \
-		gomavlib-test \
-		sh -c "go test -v . \
-		&& go install ./dialgen"
+		RUN go mod download \n\
+		COPY *.go ./ \n\
+		RUN go test -v . \n\
+		COPY dialgen ./dialgen \n\
+		RUN go install ./dialgen" | docker build . -f - -t gomavlib-test
 
 DIALECTS = ASLUAV ardupilotmega autoquad common icarous matrixpilot minimal \
 	paparazzi slugs standard test uAvionix ualberta
@@ -46,7 +45,8 @@ gen-dialects:
 		WORKDIR /src \n\
 		COPY go.mod go.sum ./ \n\
 		RUN go mod download \n\
-		COPY . ./ \n\
+		COPY *.go ./ \n\
+		COPY dialgen ./dialgen \n\
 		RUN go install ./dialgen" | docker build -q . -f - -t gomavlib-gen-dialects
 	@for DIALECT in $(DIALECTS); do \
 		docker run --rm -it \

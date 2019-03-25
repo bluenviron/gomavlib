@@ -52,10 +52,6 @@ type ParserConf struct {
 	// (optional) the secret key used to sign outgoing frames.
 	// This feature requires Mavlink v2.
 	SignatureOutKey *FrameSignatureKey
-
-	// (optional) disables checksum validation of incoming frames.
-	// Not recommended, useful only for debugging purposes.
-	ChecksumDisable bool
 }
 
 // Parser is a low-level Mavlink encoder and decoder that works with a Reader and a Writer.
@@ -277,11 +273,9 @@ func (p *Parser) Read() (Frame, error) {
 	// decode message if in dialect and validate checksum
 	if p.conf.Dialect != nil {
 		if mp, ok := p.conf.Dialect.messages[f.GetMessage().GetId()]; ok {
-			if p.conf.ChecksumDisable == false {
-				if sum := p.Checksum(f); sum != f.GetChecksum() {
-					return nil, newParserError("wrong checksum (expected %.4x, got %.4x, id=%d)",
-						sum, f.GetChecksum(), f.GetMessage().GetId())
-				}
+			if sum := p.Checksum(f); sum != f.GetChecksum() {
+				return nil, newParserError("wrong checksum (expected %.4x, got %.4x, id=%d)",
+					sum, f.GetChecksum(), f.GetMessage().GetId())
 			}
 
 			_, isFrameV2 := f.(*FrameV2)

@@ -114,10 +114,6 @@ type NodeConf struct {
 	// (optional) set the period between heartbeats.
 	// It defaults to 5 seconds.
 	HeartbeatPeriod time.Duration
-
-	// (optional) disables checksum validation of incoming frames.
-	// Not recommended, useful only for debugging purposes.
-	ChecksumDisable bool
 }
 
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
@@ -269,7 +265,6 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 		SignatureInKey:  n.conf.SignatureInKey,
 		SignatureLinkId: randomByte(),
 		SignatureOutKey: n.conf.SignatureOutKey,
-		ChecksumDisable: n.conf.ChecksumDisable,
 	})
 
 	// reader

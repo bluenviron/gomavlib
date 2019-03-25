@@ -91,7 +91,7 @@ type NodeConf struct {
 	// encoded. If not provided, messages are decoded in the MessageRaw struct.
 	Dialect *Dialect
 
-	// Mavlink version used to encode frames. See Version
+	// Mavlink version used to encode frames. See NodeVersion
 	// for the available options.
 	Version NodeVersion
 

@@ -31,13 +31,13 @@ func main() {
 	// create a node which
 	// - communicates through a serial port
 	// - understands our custom dialect
-	// - writes messages with given system id and component id
+	// - writes messages with given system id
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
 		},
-		Dialect:  dialect,
-		SystemId: 10,
+		Dialect:     dialect,
+		OutSystemId: 10,
 	})
 	if err != nil {
 		panic(err)

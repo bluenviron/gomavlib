@@ -46,8 +46,8 @@ func testFrameDecode(t *testing.T, dialect *Dialect, key *FrameSignatureKey, byt
 			Reader:         bytes.NewReader(byt),
 			Writer:         bytes.NewBuffer(nil),
 			Dialect:        dialect,
-			SystemId:       1,
-			SignatureInKey: key,
+			OutSystemId:    1,
+			InSignatureKey: key,
 		})
 		require.NoError(t, err)
 		frame, err := parser.Read()
@@ -60,10 +60,10 @@ func testFrameEncode(t *testing.T, dialect *Dialect, key *FrameSignatureKey, byt
 	for i, frame := range frames {
 		buf := bytes.NewBuffer(nil)
 		parser, err := NewParser(ParserConf{
-			Reader:   bytes.NewBuffer(nil),
-			Writer:   buf,
-			SystemId: 1,
-			Dialect:  dialect,
+			Reader:      bytes.NewBuffer(nil),
+			Writer:      buf,
+			OutSystemId: 1,
+			Dialect:     dialect,
 		})
 		require.NoError(t, err)
 		err = parser.Write(frame, true)

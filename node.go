@@ -24,7 +24,7 @@ Basic example (more are available at https://github.com/gswly/gomavlib/tree/mast
 			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
 		},
   		Dialect:     ardupilotmega.Dialect,
-  		SystemId:    10,
+  		OutSystemId: 10,
   	})
   	if err != nil {
   		panic(err)
@@ -91,22 +91,21 @@ type NodeConf struct {
 	// encoded. If not provided, messages are decoded in the MessageRaw struct.
 	Dialect *Dialect
 
+	// (optional) the secret key used to validate incoming frames.
+	// Non signed frames are discarded, as well as frames with a version < v2.
+	InSignatureKey *FrameSignatureKey
+
 	// Mavlink version used to encode frames. See NodeVersion
 	// for the available options.
-	Version NodeVersion
-
+	OutVersion NodeVersion
 	// the system id, added to every outgoing frame and used to identify this
 	// node in the network.
-	SystemId byte
+	OutSystemId byte
 	// (optional) the component id, added to every outgoing frame, defaults to 1.
-	ComponentId byte
-
-	// (optional) the secret key used to validate incoming frames.
-	// Non signed frames are discarded. This feature requires Mavlink v2.
-	SignatureInKey *FrameSignatureKey
+	OutComponentId byte
 	// (optional) the secret key used to sign outgoing frames.
 	// This feature requires Mavlink v2.
-	SignatureOutKey *FrameSignatureKey
+	OutSignatureKey *FrameSignatureKey
 
 	// (optional) disables the periodic sending of heartbeats to
 	// open channels.
@@ -134,19 +133,16 @@ type Node struct {
 
 // NewNode allocates a Node. See NodeConf for the options.
 func NewNode(conf NodeConf) (*Node, error) {
-	if conf.SystemId < 1 {
+	if conf.OutSystemId < 1 {
 		return nil, fmt.Errorf("SystemId must be >= 1")
 	}
-	if conf.ComponentId < 1 {
-		conf.ComponentId = 1
+	if conf.OutComponentId < 1 {
+		conf.OutComponentId = 1
 	}
 	if len(conf.Endpoints) == 0 {
 		return nil, fmt.Errorf("at least one endpoint must be provided")
 	}
-	if conf.SignatureInKey != nil && conf.Version != V2 {
-		return nil, fmt.Errorf("SignatureInKey requires V2 frames")
-	}
-	if conf.SignatureOutKey != nil && conf.Version != V2 {
+	if conf.OutSignatureKey != nil && conf.OutVersion != V2 {
 		return nil, fmt.Errorf("SignatureOutKey requires V2 frames")
 	}
 	if conf.HeartbeatPeriod == 0 {
@@ -257,14 +253,14 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 	n.channels[channel] = struct{}{}
 
 	parser, _ := NewParser(ParserConf{
-		Reader:          channel.rwc,
-		Writer:          channel.rwc,
-		Dialect:         n.conf.Dialect,
-		SystemId:        n.conf.SystemId,
-		ComponentId:     n.conf.ComponentId,
-		SignatureInKey:  n.conf.SignatureInKey,
-		SignatureLinkId: randomByte(),
-		SignatureOutKey: n.conf.SignatureOutKey,
+		Reader:             channel.rwc,
+		Writer:             channel.rwc,
+		Dialect:            n.conf.Dialect,
+		InSignatureKey:     n.conf.InSignatureKey,
+		OutSystemId:        n.conf.OutSystemId,
+		OutComponentId:     n.conf.OutComponentId,
+		OutSignatureLinkId: randomByte(),
+		OutSignatureKey:    n.conf.OutSignatureKey,
 	})
 
 	// reader
@@ -341,7 +337,7 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 		for what := range channel.writeChan {
 			switch wh := what.(type) {
 			case Message:
-				if n.conf.Version == V1 {
+				if n.conf.OutVersion == V1 {
 					parser.Write(&FrameV1{Message: wh}, false)
 				} else {
 					parser.Write(&FrameV2{Message: wh}, false)

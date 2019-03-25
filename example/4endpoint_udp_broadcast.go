@@ -12,13 +12,13 @@ func main() {
 	// create a node which
 	// - communicates through an UDP endpoint in broadcast mode
 	// - understands ardupilotmega dialect
-	// - writes messages with given system id and component id
+	// - writes messages with given system id
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointUdpBroadcast{BroadcastAddress: "192.168.7.255:5600"},
 		},
-		Dialect:  ardupilotmega.Dialect,
-		SystemId: 10,
+		Dialect:     ardupilotmega.Dialect,
+		OutSystemId: 10,
 	})
 	if err != nil {
 		panic(err)

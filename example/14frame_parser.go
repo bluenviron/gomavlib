@@ -17,10 +17,10 @@ func main() {
 	// if NewNode() is not flexible enough, the library provides a low-level Mavlink
 	// frame parser, that can be allocated with NewParser().
 	parser, err := gomavlib.NewParser(gomavlib.ParserConf{
-		Reader:   inBuf,
-		Writer:   outBuf,
-		Dialect:  ardupilotmega.Dialect,
-		SystemId: 10,
+		Reader:      inBuf,
+		Writer:      outBuf,
+		Dialect:     ardupilotmega.Dialect,
+		OutSystemId: 10,
 	})
 	if err != nil {
 		panic(err)

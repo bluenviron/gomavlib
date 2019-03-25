@@ -46,7 +46,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 
 	node1, err := NewNode(NodeConf{
 		Dialect:          MustDialect([]Message{&MessageHeartbeat{}}),
-		SystemId:         10,
+		OutSystemId:      10,
 		Endpoints:        []EndpointConf{t1},
 		HeartbeatDisable: true,
 	})
@@ -54,7 +54,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 
 	node2, err := NewNode(NodeConf{
 		Dialect:          MustDialect([]Message{&MessageHeartbeat{}}),
-		SystemId:         11,
+		OutSystemId:      11,
 		Endpoints:        []EndpointConf{t2},
 		HeartbeatDisable: true,
 	})
@@ -191,8 +191,8 @@ func TestNodeCustomCustom(t *testing.T) {
 
 func TestNodeError(t *testing.T) {
 	_, err := NewNode(NodeConf{
-		Dialect:  MustDialect([]Message{&MessageHeartbeat{}}),
-		SystemId: 11,
+		Dialect:     MustDialect([]Message{&MessageHeartbeat{}}),
+		OutSystemId: 11,
 		Endpoints: []EndpointConf{
 			EndpointUdpServer{"127.0.0.1:5600"},
 			EndpointUdpServer{"127.0.0.1:5600"},
@@ -208,8 +208,8 @@ func TestNodeError(t *testing.T) {
 func TestNodeHeartbeat(t *testing.T) {
 	func() {
 		node1, err := NewNode(NodeConf{
-			Dialect:  MustDialect([]Message{&MessageHeartbeat{}}),
-			SystemId: 10,
+			Dialect:     MustDialect([]Message{&MessageHeartbeat{}}),
+			OutSystemId: 10,
 			Endpoints: []EndpointConf{
 				EndpointUdpServer{"127.0.0.1:5600"},
 			},
@@ -219,8 +219,8 @@ func TestNodeHeartbeat(t *testing.T) {
 		defer node1.Close()
 
 		node2, err := NewNode(NodeConf{
-			Dialect:  MustDialect([]Message{&MessageHeartbeat{}}),
-			SystemId: 11,
+			Dialect:     MustDialect([]Message{&MessageHeartbeat{}}),
+			OutSystemId: 11,
 			Endpoints: []EndpointConf{
 				EndpointUdpClient{"127.0.0.1:5600"},
 			},
@@ -251,26 +251,26 @@ func TestNodeFrameSignature(t *testing.T) {
 	}
 
 	node1, err := NewNode(NodeConf{
-		Dialect:  MustDialect([]Message{&MessageHeartbeat{}}),
-		SystemId: 10,
+		Dialect: MustDialect([]Message{&MessageHeartbeat{}}),
 		Endpoints: []EndpointConf{
 			EndpointUdpServer{"127.0.0.1:5600"},
 		},
 		HeartbeatDisable: true,
-		SignatureInKey:   key2,
-		SignatureOutKey:  key1,
+		InSignatureKey:   key2,
+		OutSystemId:      10,
+		OutSignatureKey:  key1,
 	})
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect:  MustDialect([]Message{&MessageHeartbeat{}}),
-		SystemId: 11,
+		Dialect: MustDialect([]Message{&MessageHeartbeat{}}),
 		Endpoints: []EndpointConf{
 			EndpointUdpClient{"127.0.0.1:5600"},
 		},
 		HeartbeatDisable: true,
-		SignatureInKey:   key1,
-		SignatureOutKey:  key2,
+		InSignatureKey:   key1,
+		OutSystemId:      11,
+		OutSignatureKey:  key2,
 	})
 	require.NoError(t, err)
 
@@ -324,8 +324,8 @@ func TestNodeRouting(t *testing.T) {
 	}
 
 	node1, err := NewNode(NodeConf{
-		Dialect:  MustDialect([]Message{&MessageHeartbeat{}}),
-		SystemId: 10,
+		Dialect:     MustDialect([]Message{&MessageHeartbeat{}}),
+		OutSystemId: 10,
 		Endpoints: []EndpointConf{
 			EndpointUdpClient{"127.0.0.1:5600"},
 		},
@@ -334,8 +334,8 @@ func TestNodeRouting(t *testing.T) {
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect:  MustDialect([]Message{&MessageHeartbeat{}}),
-		SystemId: 11,
+		Dialect:     MustDialect([]Message{&MessageHeartbeat{}}),
+		OutSystemId: 11,
 		Endpoints: []EndpointConf{
 			EndpointUdpServer{"127.0.0.1:5600"},
 			EndpointUdpClient{"127.0.0.1:5601"},
@@ -345,8 +345,8 @@ func TestNodeRouting(t *testing.T) {
 	require.NoError(t, err)
 
 	node3, err := NewNode(NodeConf{
-		Dialect:  MustDialect([]Message{&MessageHeartbeat{}}),
-		SystemId: 12,
+		Dialect:     MustDialect([]Message{&MessageHeartbeat{}}),
+		OutSystemId: 12,
 		Endpoints: []EndpointConf{
 			EndpointUdpServer{"127.0.0.1:5601"},
 		},

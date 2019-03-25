@@ -38,20 +38,20 @@ type ParserConf struct {
 	// encoded. If not provided, messages are decoded in the MessageRaw struct.
 	Dialect *Dialect
 
-	// the system id, added to every outgoing frame and used to identify this
-	// node in the network.
-	SystemId byte
-	// (optional) the component id, added to every outgoing frame, defaults to 1.
-	ComponentId byte
-
 	// (optional) the secret key used to validate incoming frames.
 	// Non-signed frames are discarded. This feature requires Mavlink v2.
-	SignatureInKey *FrameSignatureKey
+	InSignatureKey *FrameSignatureKey
+
+	// the system id, added to every outgoing frame and used to identify this
+	// node in the network.
+	OutSystemId byte
+	// (optional) the component id, added to every outgoing frame, defaults to 1.
+	OutComponentId byte
 	// (optional) the value to insert into the signature link id
-	SignatureLinkId byte
+	OutSignatureLinkId byte
 	// (optional) the secret key used to sign outgoing frames.
 	// This feature requires Mavlink v2.
-	SignatureOutKey *FrameSignatureKey
+	OutSignatureKey *FrameSignatureKey
 }
 
 // Parser is a low-level Mavlink encoder and decoder that works with a Reader and a Writer.
@@ -72,11 +72,11 @@ func NewParser(conf ParserConf) (*Parser, error) {
 	if conf.Writer == nil {
 		return nil, fmt.Errorf("writer not provided")
 	}
-	if conf.SystemId < 1 {
+	if conf.OutSystemId < 1 {
 		return nil, fmt.Errorf("SystemId must be >= 1")
 	}
-	if conf.ComponentId < 1 {
-		conf.ComponentId = 1
+	if conf.OutComponentId < 1 {
+		conf.OutComponentId = 1
 	}
 
 	p := &Parser{
@@ -248,13 +248,13 @@ func (p *Parser) Read() (Frame, error) {
 		return nil, newParserError("unrecognized magic byte: %x", magicByte)
 	}
 
-	if p.conf.SignatureInKey != nil {
+	if p.conf.InSignatureKey != nil {
 		ff, ok := f.(*FrameV2)
 		if ok == false {
 			return nil, newParserError("signature required but packet is not v2")
 		}
 
-		if sig := p.Signature(ff, p.conf.SignatureInKey); *sig != *ff.Signature {
+		if sig := p.Signature(ff, p.conf.InSignatureKey); *sig != *ff.Signature {
 			return nil, newParserError("wrong signature")
 		}
 
@@ -311,12 +311,12 @@ func (p *Parser) Write(f Frame, route bool) error {
 		switch ff := f.(type) {
 		case *FrameV1:
 			ff.SequenceId = p.curWriteSequenceId
-			ff.SystemId = p.conf.SystemId
-			ff.ComponentId = p.conf.ComponentId
+			ff.SystemId = p.conf.OutSystemId
+			ff.ComponentId = p.conf.OutComponentId
 		case *FrameV2:
 			ff.SequenceId = p.curWriteSequenceId
-			ff.SystemId = p.conf.SystemId
-			ff.ComponentId = p.conf.ComponentId
+			ff.SystemId = p.conf.OutSystemId
+			ff.ComponentId = p.conf.OutComponentId
 		}
 		p.curWriteSequenceId++
 	}
@@ -340,7 +340,7 @@ func (p *Parser) Write(f Frame, route bool) error {
 
 				// if frame is going to be signed, set incompatibility flag
 				// before computing checksum
-				if ff, ok := f.(*FrameV2); ok && route == false && p.conf.SignatureOutKey != nil {
+				if ff, ok := f.(*FrameV2); ok && route == false && p.conf.OutSignatureKey != nil {
 					ff.IncompatibilityFlag |= flagSigned
 				}
 
@@ -382,11 +382,11 @@ func (p *Parser) Write(f Frame, route bool) error {
 		binary.LittleEndian.PutUint16(p.writeBuffer[6+len(msgContent):], ff.Checksum)
 
 	case *FrameV2:
-		if route == false && p.conf.SignatureOutKey != nil {
-			ff.SignatureLinkId = p.conf.SignatureLinkId
+		if route == false && p.conf.OutSignatureKey != nil {
+			ff.SignatureLinkId = p.conf.OutSignatureLinkId
 			// Timestamp in 10 microsecond units since 1st January 2015 GMT time
 			ff.SignatureTimestamp = uint64(time.Since(signatureReferenceDate)) / 10000
-			ff.Signature = p.Signature(ff, p.conf.SignatureOutKey)
+			ff.Signature = p.Signature(ff, p.conf.OutSignatureKey)
 		}
 
 		bufferLen := 10 + len(msgContent) + 2

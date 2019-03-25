@@ -11,14 +11,14 @@ func main() {
 	// create a node which
 	// - communicates through multiple endpoints
 	// - is dialect agnostic, does not attempt to decode messages (in a router it is preferable)
-	// - writes messages with given system id and component id
+	// - writes messages with given system id
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
 			gomavlib.EndpointUdpClient{"1.2.3.4:5900"},
 		},
-		Dialect:  nil,
-		SystemId: 10,
+		Dialect:     nil,
+		OutSystemId: 10,
 	})
 	if err != nil {
 		panic(err)

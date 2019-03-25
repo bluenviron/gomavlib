@@ -71,7 +71,7 @@ func (*Message{{ .Name }}) GetId() uint32 {
 {{ end }}
 {{- end }}
 
-var Dialect = gomavlib.MustDialect([]gomavlib.Message{
+var dialect = gomavlib.MustDialect([]gomavlib.Message{
 {{- range .Defs }}
     // {{ .Name }}
 {{- range .Messages }}
@@ -80,6 +80,8 @@ var Dialect = gomavlib.MustDialect([]gomavlib.Message{
 {{- end }}
 })
 {{/**/}}
+// dialect content is not exposed directly such that it is displayed nicely on godoc.
+var Dialect = dialect
 
 {{- range .Enums }}
 type {{ .Name }} int

@@ -2602,7 +2602,7 @@ func (*MessageScriptCurrent) GetId() uint32 {
 	return 184
 }
 
-var Dialect = gomavlib.MustDialect([]gomavlib.Message{
+var dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},
 	&MessageSysStatus{},
@@ -2784,6 +2784,9 @@ var Dialect = gomavlib.MustDialect([]gomavlib.Message{
 	&MessageScriptCount{},
 	&MessageScriptCurrent{},
 })
+
+// dialect content is not exposed directly such that it is displayed nicely on godoc.
+var Dialect = dialect
 
 type ADSB_ALTITUDE_TYPE int
 

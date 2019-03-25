@@ -21,10 +21,13 @@ func (*MessageHeartbeat) GetId() uint32 {
 	return 0
 }
 
-var Dialect = gomavlib.MustDialect([]gomavlib.Message{
+var dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// minimal.xml
 	&MessageHeartbeat{},
 })
+
+// dialect content is not exposed directly such that it is displayed nicely on godoc.
+var Dialect = dialect
 
 type MAV_AUTOPILOT int
 

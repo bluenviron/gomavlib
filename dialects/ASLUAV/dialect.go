@@ -2829,7 +2829,7 @@ func (*MessageGsmLinkStatus) GetId() uint32 {
 	return 213
 }
 
-var Dialect = gomavlib.MustDialect([]gomavlib.Message{
+var dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},
 	&MessageSysStatus{},
@@ -3021,6 +3021,9 @@ var Dialect = gomavlib.MustDialect([]gomavlib.Message{
 	&MessageSensPowerBoard{},
 	&MessageGsmLinkStatus{},
 })
+
+// dialect content is not exposed directly such that it is displayed nicely on godoc.
+var Dialect = dialect
 
 type ADSB_ALTITUDE_TYPE int
 

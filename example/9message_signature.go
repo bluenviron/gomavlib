@@ -16,16 +16,16 @@ func main() {
 	// - communicates through a serial port.
 	// - understands ardupilotmega dialect
 	// - writes messages with given system id
-	// - validates incoming messages via SignatureInKey
-	// - sign outgoing messages via SignatureOutKey
+	// - validates incoming messages via InSignatureKey
+	// - sign outgoing messages via OutSignatureKey
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
 		},
 		Dialect:         ardupilotmega.Dialect,
 		OutSystemId:     10,
-		SignatureInKey:  key,
-		SignatureOutKey: key,
+		InSignatureKey:  key,
+		OutSignatureKey: key,
 	})
 	if err != nil {
 		panic(err)

@@ -143,7 +143,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 		return nil, fmt.Errorf("at least one endpoint must be provided")
 	}
 	if conf.OutSignatureKey != nil && conf.OutVersion != V2 {
-		return nil, fmt.Errorf("SignatureOutKey requires V2 frames")
+		return nil, fmt.Errorf("OutSignatureKey requires V2 frames")
 	}
 	if conf.HeartbeatPeriod == 0 {
 		conf.HeartbeatPeriod = 5 * time.Second

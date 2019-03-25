@@ -1,6 +1,7 @@
 package gomavlib
 
 import (
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -42,9 +43,6 @@ func TestX25(t *testing.T) {
 		h := NewX25()
 		h.Write(in)
 		out := h.Sum16()
-
-		if out != outs[i] {
-			t.Fatalf("wrong result: %.4x vs %.4x", out, outs[i])
-		}
+		require.Equal(t, outs[i], out)
 	}
 }

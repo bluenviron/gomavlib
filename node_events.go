@@ -16,6 +16,21 @@ type NodeEventFrame struct {
 
 func (*NodeEventFrame) isEvent() {}
 
+// Message returns the message inside the frame.
+func (res *NodeEventFrame) Message() Message {
+	return res.Frame.GetMessage()
+}
+
+// SystemId returns the frame system id.
+func (res *NodeEventFrame) SystemId() byte {
+	return res.Frame.GetSystemId()
+}
+
+// ComponentId returns the frame component id.
+func (res *NodeEventFrame) ComponentId() byte {
+	return res.Frame.GetComponentId()
+}
+
 // NodeEventParseError is the event fired when a parse error occurs
 type NodeEventParseError struct {
 	// the error

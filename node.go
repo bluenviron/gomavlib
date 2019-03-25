@@ -361,21 +361,6 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 	}()
 }
 
-// Message returns the message inside the frame.
-func (res *NodeEventFrame) Message() Message {
-	return res.Frame.GetMessage()
-}
-
-// SystemId returns the sender system id.
-func (res *NodeEventFrame) SystemId() byte {
-	return res.Frame.GetSystemId()
-}
-
-// ComponentId returns the sender component id.
-func (res *NodeEventFrame) ComponentId() byte {
-	return res.Frame.GetComponentId()
-}
-
 // Events returns a channel from which receiving events. Possible events are:
 //   *NodeEventChannelOpen
 //   *NodeEventChannelClose

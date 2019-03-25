@@ -6,46 +6,6 @@ import (
 	"testing"
 )
 
-/* Test vectors generated with
-
-( docker build - -t temp << EOF
-FROM amd64/python:3-stretch
-RUN apt update && apt install -y --no-install-recommends \
-    git \
-    gcc \
-    python3-dev \
-    python3-setuptools \
-    python3-wheel \
-    python3-pip \
-    python3-future \
-    python3-lxml \
-    && pip3 install pymavlink
-EOF
-) && docker run --rm -it temp python3 -c \
-"from pymavlink.dialects.v20 import ardupilotmega; print(ardupilotmega.MAVLink_ahrs_message.crc_extra);"
-
-*/
-
-func testMessageDecode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
-	for i, byt := range byts {
-		mp, err := newDialectMessage(parsers[i])
-		require.NoError(t, err)
-		msg, err := mp.decode(byt, isV2)
-		require.NoError(t, err)
-		require.Equal(t, msgs[i], msg)
-	}
-}
-
-func testMessageEncode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
-	for i, msg := range msgs {
-		mp, err := newDialectMessage(parsers[i])
-		require.NoError(t, err)
-		byt, err := mp.encode(msg, isV2)
-		require.NoError(t, err)
-		require.Equal(t, byts[i], byt)
-	}
-}
-
 type MessageHeartbeat struct {
 	Type           uint8
 	Autopilot      uint8
@@ -145,6 +105,26 @@ func (*MessageAhrs) GetId() uint32 {
 	return 163
 }
 
+/* Test vectors generated with
+
+( docker build - -t temp << EOF
+FROM amd64/python:3-stretch
+RUN apt update && apt install -y --no-install-recommends \
+    git \
+    gcc \
+    python3-dev \
+    python3-setuptools \
+    python3-wheel \
+    python3-pip \
+    python3-future \
+    python3-lxml \
+    && pip3 install pymavlink
+EOF
+) && docker run --rm -it temp python3 -c \
+"from pymavlink.dialects.v20 import ardupilotmega; print(ardupilotmega.MAVLink_ahrs_message.crc_extra);"
+
+*/
+
 func TestDialectCRC(t *testing.T) {
 	var ins = []Message{
 		&MessageHeartbeat{},
@@ -168,6 +148,26 @@ func TestDialectCRC(t *testing.T) {
 		mp, err := newDialectMessage(in)
 		require.NoError(t, err)
 		require.Equal(t, outs[i], mp.crcExtra)
+	}
+}
+
+func testMessageDecode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
+	for i, byt := range byts {
+		mp, err := newDialectMessage(parsers[i])
+		require.NoError(t, err)
+		msg, err := mp.decode(byt, isV2)
+		require.NoError(t, err)
+		require.Equal(t, msgs[i], msg)
+	}
+}
+
+func testMessageEncode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
+	for i, msg := range msgs {
+		mp, err := newDialectMessage(parsers[i])
+		require.NoError(t, err)
+		byt, err := mp.encode(msg, isV2)
+		require.NoError(t, err)
+		require.Equal(t, byts[i], byt)
 	}
 }
 
@@ -248,10 +248,12 @@ func TestDialectV1Enc(t *testing.T) {
 
 var testMpV2EmptyByteBytes = [][]byte{
 	[]byte("\x00\x01\x02\x74\x65\x73\x74\x69\x6e\x67"),
+	[]byte("\x00\x00\x80\x3f\x00\x00\x00\x40\x00\x00\x40\x40\x00\x00\x80\x40\x00\x00\xa0\x40"),
 }
 
 var testMpV2EmptyByteParsers = []Message{
 	&MessageChangeOperatorControl{},
+	&MessageAhrs{},
 }
 
 var testMpV2EmptyByteMsgs = []Message{
@@ -260,6 +262,15 @@ var testMpV2EmptyByteMsgs = []Message{
 		ControlRequest: 1,
 		Version:        2,
 		Passkey:        "testing",
+	},
+	&MessageAhrs{
+		OmegaIx:     1,
+		OmegaIy:     2,
+		OmegaIz:     3,
+		AccelWeight: 4,
+		RenormVal:   5,
+		ErrorRp:     0,
+		ErrorYaw:    0,
 	},
 }
 
@@ -271,17 +282,17 @@ func TestDialectV2EmptyByteEnc(t *testing.T) {
 	testMessageEncode(t, testMpV2EmptyByteParsers, true, testMpV2EmptyByteBytes, testMpV2EmptyByteMsgs)
 }
 
-var testMpV2ExtensionBytes = [][]byte{
+var testMpV2ExtensionsBytes = [][]byte{
 	[]byte("\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x80\x3F\x00\x00\x80\x3F\x00\x00\x80\x3F\x07\x00\x08\x00\x09\x0A\x00\x00\x80\x3F\x00\x00\x80\x3F"),
 	[]byte("\x01\x02\x74\x65\x73\x74\x31\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x74\x65\x73\x74\x32"),
 }
 
-var testMpV2ExtensionParsers = []Message{
+var testMpV2ExtensionsParsers = []Message{
 	&MessageOpticalFlow{},
 	&MessagePlayTune{},
 }
 
-var testMpV2ExtensionMsgs = []Message{
+var testMpV2ExtensionsMsgs = []Message{
 	&MessageOpticalFlow{
 		TimeUsec:       3,
 		FlowCompMX:     1,
@@ -302,10 +313,10 @@ var testMpV2ExtensionMsgs = []Message{
 	},
 }
 
-func TestDialectV2ExtensionDec(t *testing.T) {
-	testMessageDecode(t, testMpV2ExtensionParsers, true, testMpV2ExtensionBytes, testMpV2ExtensionMsgs)
+func TestDialectV2ExtensionsDec(t *testing.T) {
+	testMessageDecode(t, testMpV2ExtensionsParsers, true, testMpV2ExtensionsBytes, testMpV2ExtensionsMsgs)
 }
 
-func TestDialectV2ExtensionEnc(t *testing.T) {
-	testMessageEncode(t, testMpV2ExtensionParsers, true, testMpV2ExtensionBytes, testMpV2ExtensionMsgs)
+func TestDialectV2ExtensionsEnc(t *testing.T) {
+	testMessageEncode(t, testMpV2ExtensionsParsers, true, testMpV2ExtensionsBytes, testMpV2ExtensionsMsgs)
 }

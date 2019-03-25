@@ -38,9 +38,9 @@ test:
 		COPY dialgen ./dialgen \n\
 		RUN go install ./dialgen" | docker build . -f - -t gomavlib-test
 
-DIALECTS = ASLUAV ardupilotmega autoquad common icarous matrixpilot minimal \
-	paparazzi slugs standard test uAvionix ualberta
 gen-dialects:
+	$(eval DIALECTS := ASLUAV ardupilotmega autoquad common icarous matrixpilot minimal \
+		paparazzi slugs standard test uAvionix ualberta)
 	echo "FROM amd64/golang:1.11-stretch \n\
 		WORKDIR /src \n\
 		COPY go.mod go.sum ./ \n\
@@ -48,7 +48,7 @@ gen-dialects:
 		COPY *.go ./ \n\
 		COPY dialgen ./dialgen \n\
 		RUN go install ./dialgen" | docker build -q . -f - -t gomavlib-gen-dialects
-	@for DIALECT in $(DIALECTS); do \
+	for DIALECT in $(DIALECTS); do \
 		docker run --rm -it \
 		-v $(PWD):/src \
 		gomavlib-gen-dialects \

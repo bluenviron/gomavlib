@@ -2829,6 +2829,21 @@ func (*MessageGsmLinkStatus) GetId() uint32 {
 	return 213
 }
 
+type MessageSatcomLinkStatus struct {
+	Timestamp          uint64
+	LastHeartbeat      uint64
+	FailedSessions     uint16
+	SuccessfulSessions uint16
+	SignalQuality      uint8
+	RingPending        uint8
+	TxSessionPending   uint8
+	RxSessionPending   uint8
+}
+
+func (*MessageSatcomLinkStatus) GetId() uint32 {
+	return 214
+}
+
 var dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},
@@ -3020,6 +3035,7 @@ var dialect = gomavlib.MustDialect([]gomavlib.Message{
 	&MessageSensorpodStatus{},
 	&MessageSensPowerBoard{},
 	&MessageGsmLinkStatus{},
+	&MessageSatcomLinkStatus{},
 })
 
 // dialect content is not exposed directly such that it is displayed nicely on godoc.
@@ -3978,6 +3994,14 @@ const (
 	MOTOR_TEST_THROTTLE_PWM     MOTOR_TEST_THROTTLE_TYPE = 1
 	MOTOR_TEST_THROTTLE_PILOT   MOTOR_TEST_THROTTLE_TYPE = 2
 	MOTOR_TEST_COMPASS_CAL      MOTOR_TEST_THROTTLE_TYPE = 3
+)
+
+type PARACHUTE_ACTION int
+
+const (
+	PARACHUTE_DISABLE PARACHUTE_ACTION = 0
+	PARACHUTE_ENABLE  PARACHUTE_ACTION = 1
+	PARACHUTE_RELEASE PARACHUTE_ACTION = 2
 )
 
 type PARAM_ACK int

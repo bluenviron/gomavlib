@@ -59,19 +59,7 @@ const (
 	netWriteTimeout    = 10 * time.Second
 )
 
-// NodeIndex is the index used to identify other nodes in the network.
-type NodeIndex struct {
-	SystemId    byte
-	ComponentId byte
-	Channel     *EndpointChannel
-}
-
-// string implements fmt.Stringer and returns the node label.
-func (i NodeIndex) String() string {
-	return fmt.Sprintf("chan=%s sid=%d cid=%d", i.Channel, i.SystemId, i.ComponentId)
-}
-
-// NodeVersion allows to set the frame version used in a Node to wrap outgoing messages.
+// NodeVersion allows to set the frame version used to wrap outgoing messages.
 type NodeVersion int
 
 const (
@@ -126,7 +114,7 @@ type Node struct {
 	channelsMutex sync.Mutex
 	channels      map[*EndpointChannel]struct{}
 	nodeMutex     sync.Mutex
-	nodes         map[NodeIndex]time.Time
+	nodes         map[NodeIdentifier]time.Time
 	nodeHeartbeat *nodeHeartbeat
 	nodeChecker   *nodeChecker
 }
@@ -155,7 +143,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 		writeDone:     make(chan struct{}),
 		eventChan:     make(chan NodeEvent),
 		channels:      make(map[*EndpointChannel]struct{}),
-		nodes:         make(map[NodeIndex]time.Time),
+		nodes:         make(map[NodeIdentifier]time.Time),
 	}
 
 	for _, tconf := range conf.Endpoints {
@@ -273,7 +261,7 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 			n.channelsMutex.Unlock()
 			close(channel.writeChan)
 
-			// support for NodeEventNodeDisappear
+			// call NodeEventNodeDisappear
 			func() {
 				n.nodeMutex.Lock()
 				defer n.nodeMutex.Unlock()
@@ -305,28 +293,28 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 				return
 			}
 
-			nodeIndex := NodeIndex{
+			nodeId := NodeIdentifier{
+				Channel:     channel,
 				SystemId:    frame.GetSystemId(),
 				ComponentId: frame.GetComponentId(),
-				Channel:     channel,
 			}
 
-			// support for NodeEventNodeAppear
+			// call NodeEventNodeAppear
 			isNodeNew := func() bool {
 				n.nodeMutex.Lock()
 				defer n.nodeMutex.Unlock()
-				if _, ok := n.nodes[nodeIndex]; !ok {
-					n.nodes[nodeIndex] = time.Now()
+				if _, ok := n.nodes[nodeId]; !ok {
+					n.nodes[nodeId] = time.Now()
 					return true
 				}
-				n.nodes[nodeIndex] = time.Now()
+				n.nodes[nodeId] = time.Now()
 				return false
 			}()
 			if isNodeNew == true {
-				n.eventChan <- &NodeEventNodeAppear{nodeIndex}
+				n.eventChan <- &NodeEventNodeAppear{nodeId}
 			}
 
-			n.eventChan <- &NodeEventFrame{frame, channel, nodeIndex}
+			n.eventChan <- &NodeEventFrame{frame, channel, nodeId}
 		}
 	}()
 

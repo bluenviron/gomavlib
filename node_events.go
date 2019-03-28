@@ -14,7 +14,7 @@ type NodeEventFrame struct {
 	Channel *EndpointChannel
 
 	// the node which sent the frame
-	Node NodeIndex
+	Node NodeIdentifier
 }
 
 func (*NodeEventFrame) isEvent() {}
@@ -61,14 +61,14 @@ func (*NodeEventChannelClose) isEvent() {}
 
 // NodeEventNodeAppear is the event fired when a new node is detected
 type NodeEventNodeAppear struct {
-	Node NodeIndex
+	Node NodeIdentifier
 }
 
 func (*NodeEventNodeAppear) isEvent() {}
 
 // NodeEventNodeDisappear is the event fired when a node disappears (i.e. times out)
 type NodeEventNodeDisappear struct {
-	Node NodeIndex
+	Node NodeIdentifier
 }
 
 func (*NodeEventNodeDisappear) isEvent() {}

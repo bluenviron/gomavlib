@@ -6,7 +6,17 @@ import (
 	"github.com/gswly/gomavlib"
 )
 
+// Version contains the dialect version. It is used in the mavlink_version field
+// of the HEARTBEAT message.
 var Version = 3
+
+// Dialect contains the dialect object that can be passed to the library.
+var Dialect = dialect
+
+var dialect = gomavlib.MustDialect([]gomavlib.Message{
+	// minimal.xml
+	&MessageHeartbeat{},
+})
 
 // minimal.xml
 
@@ -22,14 +32,6 @@ type MessageHeartbeat struct {
 func (*MessageHeartbeat) GetId() uint32 {
 	return 0
 }
-
-// dialect content is not exposed directly such that it is displayed nicely on godoc.
-var dialect = gomavlib.MustDialect([]gomavlib.Message{
-	// minimal.xml
-	&MessageHeartbeat{},
-})
-
-var Dialect = dialect
 
 type MAV_AUTOPILOT int
 

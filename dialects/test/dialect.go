@@ -37,10 +37,10 @@ func (*MessageTestTypes) GetId() uint32 {
 	return 0
 }
 
+// dialect content is not exposed directly such that it is displayed nicely on godoc.
 var dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// test.xml
 	&MessageTestTypes{},
 })
 
-// dialect content is not exposed directly such that it is displayed nicely on godoc.
 var Dialect = dialect

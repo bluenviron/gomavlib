@@ -2960,6 +2960,7 @@ func (*MessageSerialUdbExtraF22) GetId() uint32 {
 	return 188
 }
 
+// dialect content is not exposed directly such that it is displayed nicely on godoc.
 var dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},
@@ -3165,7 +3166,6 @@ var dialect = gomavlib.MustDialect([]gomavlib.Message{
 	&MessageSerialUdbExtraF22{},
 })
 
-// dialect content is not exposed directly such that it is displayed nicely on godoc.
 var Dialect = dialect
 
 type ADSB_ALTITUDE_TYPE int

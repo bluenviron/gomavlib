@@ -3427,6 +3427,7 @@ func (*MessageEscTelemetry_9To_12) GetId() uint32 {
 	return 11032
 }
 
+// dialect content is not exposed directly such that it is displayed nicely on godoc.
 var dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},
@@ -3672,7 +3673,6 @@ var dialect = gomavlib.MustDialect([]gomavlib.Message{
 	&MessageEscTelemetry_9To_12{},
 })
 
-// dialect content is not exposed directly such that it is displayed nicely on godoc.
 var Dialect = dialect
 
 type ACCELCAL_VEHICLE_POS int

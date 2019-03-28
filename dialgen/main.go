@@ -32,12 +32,12 @@ type outMessage struct {
 type outDefinition struct {
 	Name     string
 	Messages []*outMessage
-	enums    []*DialectEnum
+	enums    []*DefinitionEnum
 }
 
 type outEnum struct {
 	Name   string
-	Values []*DialectEnumValue
+	Values []*DefinitionEnumValue
 }
 
 type outContent struct {
@@ -71,6 +71,7 @@ func (*Message{{ .Name }}) GetId() uint32 {
 {{ end }}
 {{- end }}
 
+// dialect content is not exposed directly such that it is displayed nicely on godoc.
 var dialect = gomavlib.MustDialect([]gomavlib.Message{
 {{- range .Defs }}
     // {{ .Name }}
@@ -79,8 +80,7 @@ var dialect = gomavlib.MustDialect([]gomavlib.Message{
 {{- end }}
 {{- end }}
 })
-{{/**/}}
-// dialect content is not exposed directly such that it is displayed nicely on godoc.
+
 var Dialect = dialect
 
 {{- range .Enums }}
@@ -197,7 +197,7 @@ func definitionProcess(defsProcessed map[string]struct{}, isRemote bool, defAddr
 		return nil, err
 	}
 
-	def, err := dialectDecode(content)
+	def, err := definitionDecode(content)
 	if err != nil {
 		return nil, fmt.Errorf("unable to decode: %s", err)
 	}
@@ -270,7 +270,7 @@ func urlDownload(desturl string) ([]byte, error) {
 	return byt, nil
 }
 
-func messageProcess(msg *DialectMessage) (*outMessage, error) {
+func messageProcess(msg *DefinitionMessage) (*outMessage, error) {
 	if m := reMsgName.FindStringSubmatch(msg.Name); m == nil {
 		return nil, fmt.Errorf("unsupported message name: %s", msg.Name)
 	}

@@ -39,13 +39,13 @@ func (*MessageIcarousKinematicBands) GetId() uint32 {
 	return 42001
 }
 
+// dialect content is not exposed directly such that it is displayed nicely on godoc.
 var dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// icarous.xml
 	&MessageIcarousHeartbeat{},
 	&MessageIcarousKinematicBands{},
 })
 
-// dialect content is not exposed directly such that it is displayed nicely on godoc.
 var Dialect = dialect
 
 type ICAROUS_FMS_STATE int

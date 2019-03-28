@@ -2554,6 +2554,7 @@ func (*MessageWheelDistance) GetId() uint32 {
 
 // standard.xml
 
+// dialect content is not exposed directly such that it is displayed nicely on godoc.
 var dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},
@@ -2732,7 +2733,6 @@ var dialect = gomavlib.MustDialect([]gomavlib.Message{
 	// standard.xml
 })
 
-// dialect content is not exposed directly such that it is displayed nicely on godoc.
 var Dialect = dialect
 
 type ADSB_ALTITUDE_TYPE int

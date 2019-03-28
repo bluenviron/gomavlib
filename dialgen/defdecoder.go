@@ -5,18 +5,18 @@ import (
 	"strconv"
 )
 
-// DialectEnumValue is the part of a dialect definition that contains an enum value.
-type DialectEnumValue struct {
+// DefinitionEnumValue is the part of a dialect definition that contains an enum value.
+type DefinitionEnumValue struct {
 	Value       string `xml:"value,attr"`
 	Name        string `xml:"name,attr"`
 	Description string `xml:"description"`
 }
 
-// DialectEnum is the part of a dialect definition that contains an enum.
-type DialectEnum struct {
-	Name        string              `xml:"name,attr"`
-	Description string              `xml:"description"`
-	Values      []*DialectEnumValue `xml:"entry"`
+// DefinitionEnum is the part of a dialect definition that contains an enum.
+type DefinitionEnum struct {
+	Name        string                 `xml:"name,attr"`
+	Description string                 `xml:"description"`
+	Values      []*DefinitionEnumValue `xml:"entry"`
 }
 
 // DialectField is the part of a dialect definition that contains a field.
@@ -28,8 +28,8 @@ type DialectField struct {
 	Description string `xml:",innerxml"`
 }
 
-// DialectMessage is the part of a dialect definition that contains a message.
-type DialectMessage struct {
+// DefinitionMessage is the part of a dialect definition that contains a message.
+type DefinitionMessage struct {
 	Id          int
 	Name        string
 	Description string
@@ -38,7 +38,7 @@ type DialectMessage struct {
 
 // UnmarshalXML implements xml.Unmarshaler
 // we must unmarshal manually due to extension fields
-func (m *DialectMessage) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+func (m *DefinitionMessage) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	// unmarshal attributes
 	for _, a := range start.Attr {
 		switch a.Name.Local {
@@ -81,17 +81,17 @@ func (m *DialectMessage) UnmarshalXML(d *xml.Decoder, start xml.StartElement) er
 	return nil
 }
 
-// DialectDefinition is a Mavlink dialect definition.
-type DialectDefinition struct {
-	Version  int               `xml:"version"`
-	Dialect  int               `xml:"dialect"`
-	Includes []string          `xml:"include"`
-	Enums    []*DialectEnum    `xml:"enums>enum"`
-	Messages []*DialectMessage `xml:"messages>message"`
+// Definition is a Mavlink dialect definition.
+type Definition struct {
+	Version  string               `xml:"version"`
+	Dialect  int                  `xml:"dialect"`
+	Includes []string             `xml:"include"`
+	Enums    []*DefinitionEnum    `xml:"enums>enum"`
+	Messages []*DefinitionMessage `xml:"messages>message"`
 }
 
-func dialectDecode(content []byte) (*DialectDefinition, error) {
-	def := &DialectDefinition{}
+func definitionDecode(content []byte) (*Definition, error) {
+	def := &Definition{}
 	err := xml.Unmarshal(content, def)
 	return def, err
 }

@@ -10,11 +10,11 @@ type NodeEventFrame struct {
 	// the frame
 	Frame Frame
 
-	// the channel used to send the frame
-	Channel *EndpointChannel
-
 	// the node which sent the frame
 	Node NodeIdentifier
+
+	// the channel from which the frame was received
+	Channel *EndpointChannel
 }
 
 func (*NodeEventFrame) isEvent() {}

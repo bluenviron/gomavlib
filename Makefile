@@ -39,8 +39,6 @@ test:
 		RUN go install ./dialgen" | docker build . -f - -t gomavlib-test
 
 gen-dialects:
-	$(eval DIALECTS := ASLUAV ardupilotmega autoquad common icarous matrixpilot minimal \
-		paparazzi slugs standard test uAvionix ualberta)
 	echo "FROM amd64/golang:1.11-stretch \n\
 		WORKDIR /src \n\
 		COPY go.mod go.sum ./ \n\
@@ -48,13 +46,21 @@ gen-dialects:
 		COPY *.go ./ \n\
 		COPY dialgen ./dialgen \n\
 		RUN go install ./dialgen" | docker build -q . -f - -t gomavlib-gen-dialects
-	for DIALECT in $(DIALECTS); do \
-		docker run --rm -it \
+	docker run --rm -it \
 		-v $(PWD):/src \
 		gomavlib-gen-dialects \
+		make gen-dialects-nodocker
+
+gen-dialects-nodocker:
+	$(eval COMMIT = $(shell curl -s -L https://api.github.com/repos/mavlink/mavlink/commits/master \
+		| grep -o '"sha": ".\+"' | sed 's/"sha": "\(.\+\)"/\1/' | head -n1))
+	$(eval DIALECTS = $(shell curl -s -L https://api.github.com/repos/mavlink/mavlink/contents/message_definitions/v1.0?ref=$(COMMIT) \
+		| grep -o '"name": ".\+\.xml"' | sed 's/"name": "\(.\+\)\.xml"/\1/'))
+	@for DIALECT in $(DIALECTS); do \
 		dialgen --output=dialects/$$DIALECT/dialect.go \
-		https://raw.githubusercontent.com/mavlink/mavlink/master/message_definitions/v1.0/$$DIALECT.xml \
-		|| exit 1; \
+			--preamble="Generated from rev https://github.com/mavlink/mavlink/tree/$(COMMIT)" \
+			https://raw.githubusercontent.com/mavlink/mavlink/$(COMMIT)/message_definitions/v1.0/$$DIALECT.xml \
+			|| exit 1; \
 	done
 
 run-example:

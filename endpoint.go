@@ -26,15 +26,3 @@ type endpointChannelAccepter interface {
 	Close() error
 	Accept() (endpointChannelSingle, error)
 }
-
-// EndpointChannel is a channel provided by a endpoint.
-type EndpointChannel struct {
-	label     string
-	rwc       io.ReadWriteCloser
-	writeChan chan interface{}
-}
-
-// String implements fmt.Stringer and returns the channel label.
-func (e *EndpointChannel) String() string {
-	return e.label
-}

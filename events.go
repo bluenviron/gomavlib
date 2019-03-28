@@ -14,7 +14,7 @@ type EventFrame struct {
 	Node RemoteNode
 
 	// the channel from which the frame was received
-	Channel *EndpointChannel
+	Channel *Channel
 }
 
 func (*EventFrame) isEvent() {}
@@ -40,21 +40,21 @@ type EventParseError struct {
 	Error error
 
 	// the channel used to send the frame
-	Channel *EndpointChannel
+	Channel *Channel
 }
 
 func (*EventParseError) isEvent() {}
 
 // EventChannelOpen is the event fired when a channel is opened
 type EventChannelOpen struct {
-	Channel *EndpointChannel
+	Channel *Channel
 }
 
 func (*EventChannelOpen) isEvent() {}
 
 // EventChannelClose is the event fired when a channel is closed
 type EventChannelClose struct {
-	Channel *EndpointChannel
+	Channel *Channel
 }
 
 func (*EventChannelClose) isEvent() {}

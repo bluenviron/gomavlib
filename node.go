@@ -113,7 +113,7 @@ type Node struct {
 	writeDone       chan struct{}
 	eventChan       chan Event
 	channelsMutex   sync.Mutex
-	channels        map[*EndpointChannel]struct{}
+	channels        map[*Channel]struct{}
 	remoteNodeMutex sync.Mutex
 	remoteNodes     map[RemoteNode]time.Time
 	nodeHeartbeat   *nodeHeartbeat
@@ -143,7 +143,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 		chanAccepters: make(map[endpointChannelAccepter]struct{}),
 		writeDone:     make(chan struct{}),
 		eventChan:     make(chan Event),
-		channels:      make(map[*EndpointChannel]struct{}),
+		channels:      make(map[*Channel]struct{}),
 		remoteNodes:   make(map[RemoteNode]time.Time),
 	}
 
@@ -234,7 +234,7 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 	n.channelsMutex.Lock()
 	defer n.channelsMutex.Unlock()
 
-	channel := &EndpointChannel{
+	channel := &Channel{
 		label:     ch.Label(),
 		rwc:       ch,
 		writeChan: make(chan interface{}),
@@ -355,7 +355,7 @@ func (n *Node) Events() chan Event {
 }
 
 // WriteMessageTo write a message to given channel.
-func (n *Node) WriteMessageTo(channel *EndpointChannel, message Message) {
+func (n *Node) WriteMessageTo(channel *Channel, message Message) {
 	n.writeTo(channel, message)
 }
 
@@ -365,14 +365,14 @@ func (n *Node) WriteMessageAll(message Message) {
 }
 
 // WriteMessageExcept write a message to all channels except specified channel.
-func (n *Node) WriteMessageExcept(exceptChannel *EndpointChannel, message Message) {
+func (n *Node) WriteMessageExcept(exceptChannel *Channel, message Message) {
 	n.writeExcept(exceptChannel, message)
 }
 
 // WriteFrameTo write a frame to given channel.
 // This function is intended for routing frames to other nodes, since all
 // fields must be filled manually.
-func (n *Node) WriteFrameTo(channel *EndpointChannel, frame Frame) {
+func (n *Node) WriteFrameTo(channel *Channel, frame Frame) {
 	n.writeTo(channel, frame)
 }
 
@@ -386,11 +386,11 @@ func (n *Node) WriteFrameAll(frame Frame) {
 // WriteFrameExcept write a frame to all channels except specified channel.
 // This function is intended for routing frames to other nodes, since all
 // fields must be filled manually.
-func (n *Node) WriteFrameExcept(exceptChannel *EndpointChannel, frame Frame) {
+func (n *Node) WriteFrameExcept(exceptChannel *Channel, frame Frame) {
 	n.writeExcept(exceptChannel, frame)
 }
 
-func (n *Node) writeTo(channel *EndpointChannel, what interface{}) {
+func (n *Node) writeTo(channel *Channel, what interface{}) {
 	n.channelsMutex.Lock()
 	defer n.channelsMutex.Unlock()
 
@@ -414,7 +414,7 @@ func (n *Node) writeAll(what interface{}) {
 	}
 }
 
-func (n *Node) writeExcept(exceptChannel *EndpointChannel, what interface{}) {
+func (n *Node) writeExcept(exceptChannel *Channel, what interface{}) {
 	n.channelsMutex.Lock()
 	defer n.channelsMutex.Unlock()
 

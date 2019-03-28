@@ -6,12 +6,18 @@ import (
 	"testing"
 )
 
+type MAV_TYPE int
+type MAV_AUTOPILOT int
+type MAV_MODE_FLAG int
+type MAV_STATE int
+type MAV_SYS_STATUS_SENSOR int
+
 type MessageHeartbeat struct {
-	Type           uint8
-	Autopilot      uint8
-	BaseMode       uint8
+	Type           MAV_TYPE      `mavenum:"uint8"`
+	Autopilot      MAV_AUTOPILOT `mavenum:"uint8"`
+	BaseMode       MAV_MODE_FLAG `mavenum:"uint8"`
 	CustomMode     uint32
-	SystemStatus   uint8
+	SystemStatus   MAV_STATE `mavenum:"uint8"`
 	MavlinkVersion uint8
 }
 
@@ -20,9 +26,9 @@ func (m *MessageHeartbeat) GetId() uint32 {
 }
 
 type MessageSysStatus struct {
-	OnboardControlSensorsPresent uint32
-	OnboardControlSensorsEnabled uint32
-	OnboardControlSensorsHealth  uint32
+	OnboardControlSensorsPresent MAV_SYS_STATUS_SENSOR `mavenum:"uint32"`
+	OnboardControlSensorsEnabled MAV_SYS_STATUS_SENSOR `mavenum:"uint32"`
+	OnboardControlSensorsHealth  MAV_SYS_STATUS_SENSOR `mavenum:"uint32"`
 	Load                         uint16
 	VoltageBattery               uint16
 	CurrentBattery               int16
@@ -145,7 +151,7 @@ func TestDialectCRC(t *testing.T) {
 		127,
 	}
 	for i, in := range ins {
-		mp, err := newDefinitionMessage(in)
+		mp, err := newdefinitionMessage(in)
 		require.NoError(t, err)
 		require.Equal(t, outs[i], mp.crcExtra)
 	}
@@ -153,7 +159,7 @@ func TestDialectCRC(t *testing.T) {
 
 func testMessageDecode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
 	for i, byt := range byts {
-		mp, err := newDefinitionMessage(parsers[i])
+		mp, err := newdefinitionMessage(parsers[i])
 		require.NoError(t, err)
 		msg, err := mp.decode(byt, isV2)
 		require.NoError(t, err)
@@ -163,7 +169,7 @@ func testMessageDecode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte
 
 func testMessageEncode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
 	for i, msg := range msgs {
-		mp, err := newDefinitionMessage(parsers[i])
+		mp, err := newdefinitionMessage(parsers[i])
 		require.NoError(t, err)
 		byt, err := mp.encode(msg, isV2)
 		require.NoError(t, err)

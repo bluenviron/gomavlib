@@ -55,7 +55,7 @@ const (
 // ICAROUS heartbeat
 type MessageIcarousHeartbeat struct {
 	// See the FMS_STATE enum.
-	Status uint8
+	Status ICAROUS_FMS_STATE `mavenum:"uint8"`
 }
 
 func (*MessageIcarousHeartbeat) GetId() uint32 {
@@ -67,31 +67,31 @@ type MessageIcarousKinematicBands struct {
 	// Number of track bands
 	Numbands int8 `mavname:"numBands"`
 	// See the TRACK_BAND_TYPES enum.
-	Type1 uint8
+	Type1 ICAROUS_TRACK_BAND_TYPES `mavenum:"uint8"`
 	// min angle (degrees)
 	Min1 float32
 	// max angle (degrees)
 	Max1 float32
 	// See the TRACK_BAND_TYPES enum.
-	Type2 uint8
+	Type2 ICAROUS_TRACK_BAND_TYPES `mavenum:"uint8"`
 	// min angle (degrees)
 	Min2 float32
 	// max angle (degrees)
 	Max2 float32
 	// See the TRACK_BAND_TYPES enum.
-	Type3 uint8
+	Type3 ICAROUS_TRACK_BAND_TYPES `mavenum:"uint8"`
 	// min angle (degrees)
 	Min3 float32
 	// max angle (degrees)
 	Max3 float32
 	// See the TRACK_BAND_TYPES enum.
-	Type4 uint8
+	Type4 ICAROUS_TRACK_BAND_TYPES `mavenum:"uint8"`
 	// min angle (degrees)
 	Min4 float32
 	// max angle (degrees)
 	Max4 float32
 	// See the TRACK_BAND_TYPES enum.
-	Type5 uint8
+	Type5 ICAROUS_TRACK_BAND_TYPES `mavenum:"uint8"`
 	// min angle (degrees)
 	Min5 float32
 	// max angle (degrees)

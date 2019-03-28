@@ -47,12 +47,12 @@ func (h *nodeHeartbeat) do() {
 		select {
 		case <-ticker.C:
 			msg := reflect.New(h.heartbeatMp.elemType)
-			msg.Elem().FieldByName("Type").Set(reflect.ValueOf(uint8(6)))      // MAV_TYPE_GCS
-			msg.Elem().FieldByName("Autopilot").Set(reflect.ValueOf(uint8(0))) // MAV_AUTOPILOT_GENERIC
-			msg.Elem().FieldByName("BaseMode").Set(reflect.ValueOf(uint8(0)))
-			msg.Elem().FieldByName("CustomMode").Set(reflect.ValueOf(uint32(0)))
-			msg.Elem().FieldByName("SystemStatus").Set(reflect.ValueOf(uint8(4))) // MAV_STATE_ACTIVE
-			msg.Elem().FieldByName("MavlinkVersion").Set(reflect.ValueOf(uint8(3)))
+			msg.Elem().FieldByName("Type").SetInt(6)      // MAV_TYPE_GCS
+			msg.Elem().FieldByName("Autopilot").SetInt(0) // MAV_AUTOPILOT_GENERIC
+			msg.Elem().FieldByName("BaseMode").SetInt(0)
+			msg.Elem().FieldByName("CustomMode").SetUint(0)
+			msg.Elem().FieldByName("SystemStatus").SetInt(4) // MAV_STATE_ACTIVE
+			msg.Elem().FieldByName("MavlinkVersion").SetUint(3)
 			h.n.WriteMessageAll(msg.Interface().(Message))
 
 		case <-h.terminate:

@@ -298,15 +298,15 @@ const (
 // The heartbeat message shows that a system or component is present and responding. The type and autopilot fields (along with the message component id), allow the receiving system to treat further messages from this system appropriately (e.g. by laying out the user interface based on the autopilot).
 type MessageHeartbeat struct {
 	// Type of the system (quadrotor, helicopter, etc.). Components use the same type as their associated system.
-	Type uint8
+	Type MAV_TYPE `mavenum:"uint8"`
 	// Autopilot type / class.
-	Autopilot uint8
+	Autopilot MAV_AUTOPILOT `mavenum:"uint8"`
 	// System mode bitmap.
-	BaseMode uint8
+	BaseMode MAV_MODE_FLAG `mavenum:"uint8"`
 	// A bitfield for use for autopilot-specific flags
 	CustomMode uint32
 	// System status flag.
-	SystemStatus uint8
+	SystemStatus MAV_STATE `mavenum:"uint8"`
 	// MAVLink version, not writable by user, gets added by protocol because of magic data type: uint8_t_mavlink_version
 	MavlinkVersion uint8
 }

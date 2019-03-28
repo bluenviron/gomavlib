@@ -206,6 +206,7 @@ func TestNodeError(t *testing.T) {
 }
 
 func TestNodeHeartbeat(t *testing.T) {
+	success := false
 	func() {
 		node1, err := NewNode(NodeConf{
 			Dialect:     MustDialect([]Message{&MessageHeartbeat{}}),
@@ -230,11 +231,19 @@ func TestNodeHeartbeat(t *testing.T) {
 		require.NoError(t, err)
 		defer node2.Close()
 
-		_, ok := <-node1.Events()
-		if ok == false {
-			t.Fatal(err)
+		for evt := range node1.Events() {
+			if ee, ok := evt.(*EventFrame); ok {
+				if _, ok = ee.Message().(*MessageHeartbeat); ok {
+					success = true
+					break
+				}
+			}
 		}
 	}()
+
+	if success == false {
+		t.Fatalf("failed")
+	}
 }
 
 func TestNodeFrameSignature(t *testing.T) {
@@ -286,8 +295,6 @@ func TestNodeFrameSignature(t *testing.T) {
 		if ok == false {
 			return
 		}
-
-		node1.WriteMessageAll(testMsg)
 	}()
 
 	go func() {

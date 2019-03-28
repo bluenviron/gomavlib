@@ -2169,15 +2169,15 @@ const (
 // The heartbeat message shows that a system or component is present and responding. The type and autopilot fields (along with the message component id), allow the receiving system to treat further messages from this system appropriately (e.g. by laying out the user interface based on the autopilot).
 type MessageHeartbeat struct {
 	// Type of the system (quadrotor, helicopter, etc.). Components use the same type as their associated system.
-	Type uint8
+	Type MAV_TYPE `mavenum:"uint8"`
 	// Autopilot type / class.
-	Autopilot uint8
+	Autopilot MAV_AUTOPILOT `mavenum:"uint8"`
 	// System mode bitmap.
-	BaseMode uint8
+	BaseMode MAV_MODE_FLAG `mavenum:"uint8"`
 	// A bitfield for use for autopilot-specific flags
 	CustomMode uint32
 	// System status flag.
-	SystemStatus uint8
+	SystemStatus MAV_STATE `mavenum:"uint8"`
 	// MAVLink version, not writable by user, gets added by protocol because of magic data type: uint8_t_mavlink_version
 	MavlinkVersion uint8
 }
@@ -2189,11 +2189,11 @@ func (*MessageHeartbeat) GetId() uint32 {
 // The general system state. If the system is following the MAVLink standard, the system state is mainly defined by three orthogonal states/modes: The system mode, which is either LOCKED (motors shut down and locked), MANUAL (system under RC control), GUIDED (system with autonomous position control, position setpoint controlled manually) or AUTO (system guided by path/waypoint planner). The NAV_MODE defined the current flight state: LIFTOFF (often an open-loop maneuver), LANDING, WAYPOINTS or VECTOR. This represents the internal navigation state machine. The system status shows whether the system is currently active or not and if an emergency occurred. During the CRITICAL and EMERGENCY states the MAV is still considered to be active, but should start emergency procedures autonomously. After a failure occurred it should first move from active to critical to allow manual intervention and then move to emergency after a certain timeout.
 type MessageSysStatus struct {
 	// Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.
-	OnboardControlSensorsPresent uint32
+	OnboardControlSensorsPresent MAV_SYS_STATUS_SENSOR `mavenum:"uint32"`
 	// Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.
-	OnboardControlSensorsEnabled uint32
+	OnboardControlSensorsEnabled MAV_SYS_STATUS_SENSOR `mavenum:"uint32"`
 	// Bitmap showing which onboard controllers and sensors are operational or have an error:  Value of 0: not enabled. Value of 1: enabled.
-	OnboardControlSensorsHealth uint32
+	OnboardControlSensorsHealth MAV_SYS_STATUS_SENSOR `mavenum:"uint32"`
 	// Maximum usage in percent of the mainloop time. Values: [0-1000] - should always be below 1000
 	Load uint16
 	// Battery voltage
@@ -2293,7 +2293,7 @@ type MessageSetMode struct {
 	// The system setting the mode
 	TargetSystem uint8
 	// The new base mode.
-	BaseMode uint8
+	BaseMode MAV_MODE `mavenum:"uint8"`
 	// The new autopilot-specific mode. This field can be ignored by an autopilot.
 	CustomMode uint32
 }
@@ -2337,7 +2337,7 @@ type MessageParamValue struct {
 	// Onboard parameter value
 	ParamValue float32
 	// Onboard parameter type.
-	ParamType uint8
+	ParamType MAV_PARAM_TYPE `mavenum:"uint8"`
 	// Total number of onboard parameters
 	ParamCount uint16
 	// Index of this onboard parameter
@@ -2359,7 +2359,7 @@ type MessageParamSet struct {
 	// Onboard parameter value
 	ParamValue float32
 	// Onboard parameter type.
-	ParamType uint8
+	ParamType MAV_PARAM_TYPE `mavenum:"uint8"`
 }
 
 func (*MessageParamSet) GetId() uint32 {
@@ -2371,7 +2371,7 @@ type MessageGpsRawInt struct {
 	// Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude the number.
 	TimeUsec uint64
 	// GPS fix type.
-	FixType uint8
+	FixType GPS_FIX_TYPE `mavenum:"uint8"`
 	// Latitude (WGS84, EGM96 ellipsoid)
 	Lat int32
 	// Longitude (WGS84, EGM96 ellipsoid)
@@ -2723,7 +2723,7 @@ type MessageMissionRequestPartialList struct {
 	// End index, -1 by default (-1: send list to end). Else a valid index of the list
 	EndIndex int16
 	// Mission type.
-	MissionType uint8 `mavext:"true"`
+	MissionType MAV_MISSION_TYPE `mavenum:"uint8" mavext:"true"`
 }
 
 func (*MessageMissionRequestPartialList) GetId() uint32 {
@@ -2741,7 +2741,7 @@ type MessageMissionWritePartialList struct {
 	// End index, equal or greater than start index.
 	EndIndex int16
 	// Mission type.
-	MissionType uint8 `mavext:"true"`
+	MissionType MAV_MISSION_TYPE `mavenum:"uint8" mavext:"true"`
 }
 
 func (*MessageMissionWritePartialList) GetId() uint32 {
@@ -2757,9 +2757,9 @@ type MessageMissionItem struct {
 	// Sequence
 	Seq uint16
 	// The coordinate system of the waypoint.
-	Frame uint8
+	Frame MAV_FRAME `mavenum:"uint8"`
 	// The scheduled action for the waypoint.
-	Command uint16
+	Command MAV_CMD `mavenum:"uint16"`
 	// false:0, true:1
 	Current uint8
 	// Autocontinue to next waypoint
@@ -2779,7 +2779,7 @@ type MessageMissionItem struct {
 	// PARAM7 / local: Z coordinate, global: altitude (relative or absolute, depending on frame).
 	Z float32
 	// Mission type.
-	MissionType uint8 `mavext:"true"`
+	MissionType MAV_MISSION_TYPE `mavenum:"uint8" mavext:"true"`
 }
 
 func (*MessageMissionItem) GetId() uint32 {
@@ -2795,7 +2795,7 @@ type MessageMissionRequest struct {
 	// Sequence
 	Seq uint16
 	// Mission type.
-	MissionType uint8 `mavext:"true"`
+	MissionType MAV_MISSION_TYPE `mavenum:"uint8" mavext:"true"`
 }
 
 func (*MessageMissionRequest) GetId() uint32 {
@@ -2833,7 +2833,7 @@ type MessageMissionRequestList struct {
 	// Component ID
 	TargetComponent uint8
 	// Mission type.
-	MissionType uint8 `mavext:"true"`
+	MissionType MAV_MISSION_TYPE `mavenum:"uint8" mavext:"true"`
 }
 
 func (*MessageMissionRequestList) GetId() uint32 {
@@ -2849,7 +2849,7 @@ type MessageMissionCount struct {
 	// Number of mission items in the sequence
 	Count uint16
 	// Mission type.
-	MissionType uint8 `mavext:"true"`
+	MissionType MAV_MISSION_TYPE `mavenum:"uint8" mavext:"true"`
 }
 
 func (*MessageMissionCount) GetId() uint32 {
@@ -2863,7 +2863,7 @@ type MessageMissionClearAll struct {
 	// Component ID
 	TargetComponent uint8
 	// Mission type.
-	MissionType uint8 `mavext:"true"`
+	MissionType MAV_MISSION_TYPE `mavenum:"uint8" mavext:"true"`
 }
 
 func (*MessageMissionClearAll) GetId() uint32 {
@@ -2887,9 +2887,9 @@ type MessageMissionAck struct {
 	// Component ID
 	TargetComponent uint8
 	// Mission result.
-	Type uint8
+	Type MAV_MISSION_RESULT `mavenum:"uint8"`
 	// Mission type.
-	MissionType uint8 `mavext:"true"`
+	MissionType MAV_MISSION_TYPE `mavenum:"uint8" mavext:"true"`
 }
 
 func (*MessageMissionAck) GetId() uint32 {
@@ -2965,7 +2965,7 @@ type MessageMissionRequestInt struct {
 	// Sequence
 	Seq uint16
 	// Mission type.
-	MissionType uint8 `mavext:"true"`
+	MissionType MAV_MISSION_TYPE `mavenum:"uint8" mavext:"true"`
 }
 
 func (*MessageMissionRequestInt) GetId() uint32 {
@@ -2979,7 +2979,7 @@ type MessageSafetySetAllowedArea struct {
 	// Component ID
 	TargetComponent uint8
 	// Coordinate frame. Can be either global, GPS, right-handed with Z axis up or local, right handed, Z axis down.
-	Frame uint8
+	Frame MAV_FRAME `mavenum:"uint8"`
 	// x position 1 / Latitude 1
 	P1x float32
 	// y position 1 / Longitude 1
@@ -3001,7 +3001,7 @@ func (*MessageSafetySetAllowedArea) GetId() uint32 {
 // Read out the safety zone the MAV currently assumes.
 type MessageSafetyAllowedArea struct {
 	// Coordinate frame. Can be either global, GPS, right-handed with Z axis up or local, right handed, Z axis down.
-	Frame uint8
+	Frame MAV_FRAME `mavenum:"uint8"`
 	// x position 1 / Latitude 1
 	P1x float32
 	// y position 1 / Longitude 1
@@ -3069,7 +3069,7 @@ type MessageGlobalPositionIntCov struct {
 	// Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude the number.
 	TimeUsec uint64
 	// Class id of the estimator this estimate originated from.
-	EstimatorType uint8
+	EstimatorType MAV_ESTIMATOR_TYPE `mavenum:"uint8"`
 	// Latitude
 	Lat int32
 	// Longitude
@@ -3097,7 +3097,7 @@ type MessageLocalPositionNedCov struct {
 	// Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude the number.
 	TimeUsec uint64
 	// Class id of the estimator this estimate originated from.
-	EstimatorType uint8
+	EstimatorType MAV_ESTIMATOR_TYPE `mavenum:"uint8"`
 	// X Position
 	X float32
 	// Y Position
@@ -3283,9 +3283,9 @@ type MessageMissionItemInt struct {
 	// Waypoint ID (sequence number). Starts at zero. Increases monotonically for each waypoint, no gaps in the sequence (0,1,2,3,4).
 	Seq uint16
 	// The coordinate system of the waypoint.
-	Frame uint8
+	Frame MAV_FRAME `mavenum:"uint8"`
 	// The scheduled action for the waypoint.
-	Command uint16
+	Command MAV_CMD `mavenum:"uint16"`
 	// false:0, true:1
 	Current uint8
 	// Autocontinue to next waypoint
@@ -3305,7 +3305,7 @@ type MessageMissionItemInt struct {
 	// PARAM7 / z position: global: altitude in meters (relative or absolute, depending on frame.
 	Z float32
 	// Mission type.
-	MissionType uint8 `mavext:"true"`
+	MissionType MAV_MISSION_TYPE `mavenum:"uint8" mavext:"true"`
 }
 
 func (*MessageMissionItemInt) GetId() uint32 {
@@ -3339,9 +3339,9 @@ type MessageCommandInt struct {
 	// Component ID
 	TargetComponent uint8
 	// The coordinate system of the COMMAND.
-	Frame uint8
+	Frame MAV_FRAME `mavenum:"uint8"`
 	// The scheduled action for the mission item.
-	Command uint16
+	Command MAV_CMD `mavenum:"uint16"`
 	// false:0, true:1
 	Current uint8
 	// autocontinue to next wp
@@ -3373,7 +3373,7 @@ type MessageCommandLong struct {
 	// Component which should execute the command, 0 for all components
 	TargetComponent uint8
 	// Command ID (of command to send).
-	Command uint16
+	Command MAV_CMD `mavenum:"uint16"`
 	// 0: First transmission of this command. 1-255: Confirmation transmissions (e.g. for kill command)
 	Confirmation uint8
 	// Parameter 1 (for the specific command).
@@ -3399,9 +3399,9 @@ func (*MessageCommandLong) GetId() uint32 {
 // Report status of a command. Includes feedback whether the command was executed.
 type MessageCommandAck struct {
 	// Command ID (of acknowledged command).
-	Command uint16
+	Command MAV_CMD `mavenum:"uint16"`
 	// Result of command.
-	Result uint8
+	Result MAV_RESULT `mavenum:"uint8"`
 	// WIP: Also used as result_param1, it can be set with a enum containing the errors reasons of why the command was denied or the progress percentage or 255 if unknown the progress when result is MAV_RESULT_IN_PROGRESS.
 	Progress uint8 `mavext:"true"`
 	// WIP: Additional parameter of the result, example: which parameter of MAV_CMD_NAV_WAYPOINT caused it to be denied.
@@ -3495,9 +3495,9 @@ type MessageSetPositionTargetLocalNed struct {
 	// Component ID
 	TargetComponent uint8
 	// Valid options are: MAV_FRAME_LOCAL_NED = 1, MAV_FRAME_LOCAL_OFFSET_NED = 7, MAV_FRAME_BODY_NED = 8, MAV_FRAME_BODY_OFFSET_NED = 9
-	CoordinateFrame uint8
+	CoordinateFrame MAV_FRAME `mavenum:"uint8"`
 	// Bitmap to indicate which dimensions should be ignored by the vehicle.
-	TypeMask uint16
+	TypeMask POSITION_TARGET_TYPEMASK `mavenum:"uint16"`
 	// X Position in NED frame
 	X float32
 	// Y Position in NED frame
@@ -3531,9 +3531,9 @@ type MessagePositionTargetLocalNed struct {
 	// Timestamp (time since system boot).
 	TimeBootMs uint32
 	// Valid options are: MAV_FRAME_LOCAL_NED = 1, MAV_FRAME_LOCAL_OFFSET_NED = 7, MAV_FRAME_BODY_NED = 8, MAV_FRAME_BODY_OFFSET_NED = 9
-	CoordinateFrame uint8
+	CoordinateFrame MAV_FRAME `mavenum:"uint8"`
 	// Bitmap to indicate which dimensions should be ignored by the vehicle.
-	TypeMask uint16
+	TypeMask POSITION_TARGET_TYPEMASK `mavenum:"uint16"`
 	// X Position in NED frame
 	X float32
 	// Y Position in NED frame
@@ -3571,9 +3571,9 @@ type MessageSetPositionTargetGlobalInt struct {
 	// Component ID
 	TargetComponent uint8
 	// Valid options are: MAV_FRAME_GLOBAL_INT = 5, MAV_FRAME_GLOBAL_RELATIVE_ALT_INT = 6, MAV_FRAME_GLOBAL_TERRAIN_ALT_INT = 11
-	CoordinateFrame uint8
+	CoordinateFrame MAV_FRAME `mavenum:"uint8"`
 	// Bitmap to indicate which dimensions should be ignored by the vehicle.
-	TypeMask uint16
+	TypeMask POSITION_TARGET_TYPEMASK `mavenum:"uint16"`
 	// X Position in WGS84 frame
 	LatInt int32
 	// Y Position in WGS84 frame
@@ -3607,9 +3607,9 @@ type MessagePositionTargetGlobalInt struct {
 	// Timestamp (time since system boot). The rationale for the timestamp in the setpoint is to allow the system to compensate for the transport delay of the setpoint. This allows the system to compensate processing latency.
 	TimeBootMs uint32
 	// Valid options are: MAV_FRAME_GLOBAL_INT = 5, MAV_FRAME_GLOBAL_RELATIVE_ALT_INT = 6, MAV_FRAME_GLOBAL_TERRAIN_ALT_INT = 11
-	CoordinateFrame uint8
+	CoordinateFrame MAV_FRAME `mavenum:"uint8"`
 	// Bitmap to indicate which dimensions should be ignored by the vehicle.
-	TypeMask uint16
+	TypeMask POSITION_TARGET_TYPEMASK `mavenum:"uint16"`
 	// X Position in WGS84 frame
 	LatInt int32
 	// Y Position in WGS84 frame
@@ -3721,7 +3721,7 @@ type MessageHilControls struct {
 	// Aux 4, -1 .. 1
 	Aux4 float32
 	// System mode.
-	Mode uint8
+	Mode MAV_MODE `mavenum:"uint8"`
 	// Navigation mode (MAV_NAV_MODE)
 	NavMode uint8
 }
@@ -3773,7 +3773,7 @@ type MessageHilActuatorControls struct {
 	// Control outputs -1 .. 1. Channel assignment depends on the simulated hardware.
 	Controls [16]float32
 	// System mode. Includes arming state.
-	Mode uint8
+	Mode MAV_MODE_FLAG `mavenum:"uint8"`
 	// Flags as bitfield, reserved for future use.
 	Flags uint64
 }
@@ -4367,7 +4367,7 @@ type MessageGps2Raw struct {
 	// Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude the number.
 	TimeUsec uint64
 	// GPS fix type.
-	FixType uint8
+	FixType GPS_FIX_TYPE `mavenum:"uint8"`
 	// Latitude (WGS84)
 	Lat int32
 	// Longitude (WGS84)
@@ -4401,7 +4401,7 @@ type MessagePowerStatus struct {
 	// Servo rail voltage.
 	Vservo uint16 `mavname:"Vservo"`
 	// Bitmap of power supply status flags.
-	Flags uint16
+	Flags MAV_POWER_STATUS `mavenum:"uint16"`
 }
 
 func (*MessagePowerStatus) GetId() uint32 {
@@ -4411,9 +4411,9 @@ func (*MessagePowerStatus) GetId() uint32 {
 // Control a serial port. This can be used for raw access to an onboard serial peripheral such as a GPS or telemetry radio. It is designed to make it possible to update the devices firmware via MAVLink messages or change the devices settings. A message with zero bytes can be used to change just the baudrate.
 type MessageSerialControl struct {
 	// Serial control device type.
-	Device uint8
+	Device SERIAL_CONTROL_DEV `mavenum:"uint8"`
 	// Bitmap of serial control flags.
-	Flags uint8
+	Flags SERIAL_CONTROL_FLAG `mavenum:"uint8"`
 	// Timeout for reply data
 	Timeout uint16
 	// Baudrate of transfer. Zero means no change.
@@ -4445,7 +4445,7 @@ type MessageGpsRtk struct {
 	// Current number of sats used for RTK calculation.
 	Nsats uint8
 	// Coordinate system of baseline
-	BaselineCoordsType uint8
+	BaselineCoordsType RTK_BASELINE_COORDINATE_SYSTEM `mavenum:"uint8"`
 	// Current baseline in ECEF x or NED north component.
 	BaselineAMm int32
 	// Current baseline in ECEF y or NED east component.
@@ -4479,7 +4479,7 @@ type MessageGps2Rtk struct {
 	// Current number of sats used for RTK calculation.
 	Nsats uint8
 	// Coordinate system of baseline
-	BaselineCoordsType uint8
+	BaselineCoordsType RTK_BASELINE_COORDINATE_SYSTEM `mavenum:"uint8"`
 	// Current baseline in ECEF x or NED north component.
 	BaselineAMm int32
 	// Current baseline in ECEF y or NED east component.
@@ -4527,7 +4527,7 @@ func (*MessageScaledImu3) GetId() uint32 {
 // Handshake message to initiate, control and stop image streaming when using the Image Transmission Protocol: https://mavlink.io/en/services/image_transmission.html.
 type MessageDataTransmissionHandshake struct {
 	// Type of requested/acknowledged data.
-	Type uint8
+	Type MAVLINK_DATA_STREAM_TYPE `mavenum:"uint8"`
 	// total data size (set on ACK only).
 	Size uint32
 	// Width of a matrix or image.
@@ -4569,11 +4569,11 @@ type MessageDistanceSensor struct {
 	// Current distance reading
 	CurrentDistance uint16
 	// Type of distance sensor.
-	Type uint8
+	Type MAV_DISTANCE_SENSOR `mavenum:"uint8"`
 	// Onboard ID of the sensor
 	Id uint8
 	// Direction the sensor faces. downward-facing: ROTATION_PITCH_270, upward-facing: ROTATION_PITCH_90, backward-facing: ROTATION_PITCH_180, forward-facing: ROTATION_NONE, left-facing: ROTATION_YAW_90, right-facing: ROTATION_YAW_270
-	Orientation uint8
+	Orientation MAV_SENSOR_ORIENTATION `mavenum:"uint8"`
 	// Measurement variance. Max standard deviation is 6cm. 255 if unknown.
 	Covariance uint8
 	// Horizontal Field of View (angle) where the distance measurement is valid and the field of view is known. Otherwise this is set to 0.
@@ -4857,9 +4857,9 @@ type MessageBatteryStatus struct {
 	// Battery ID
 	Id uint8
 	// Function of the battery
-	BatteryFunction uint8
+	BatteryFunction MAV_BATTERY_FUNCTION `mavenum:"uint8"`
 	// Type (chemistry) of the battery
-	Type uint8
+	Type MAV_BATTERY_TYPE `mavenum:"uint8"`
 	// Temperature of the battery. INT16_MAX for unknown temperature.
 	Temperature int16
 	// Battery voltage of cells. Cells above the valid cell count for this battery should have the UINT16_MAX value.
@@ -4875,7 +4875,7 @@ type MessageBatteryStatus struct {
 	// Remaining battery time, 0: autopilot does not provide remaining battery time estimate
 	TimeRemaining int32 `mavext:"true"`
 	// State for extent of discharge, provided by autopilot for warning or external reactions
-	ChargeState uint8 `mavext:"true"`
+	ChargeState MAV_BATTERY_CHARGE_STATE `mavenum:"uint8" mavext:"true"`
 }
 
 func (*MessageBatteryStatus) GetId() uint32 {
@@ -4885,7 +4885,7 @@ func (*MessageBatteryStatus) GetId() uint32 {
 // Version and capability of autopilot software
 type MessageAutopilotVersion struct {
 	// Bitmap of capabilities
-	Capabilities uint64
+	Capabilities MAV_PROTOCOL_CAPABILITY `mavenum:"uint64"`
 	// Firmware version number
 	FlightSwVersion uint32
 	// Middleware version number
@@ -4921,7 +4921,7 @@ type MessageLandingTarget struct {
 	// The ID of the target if multiple targets are present
 	TargetNum uint8
 	// Coordinate frame used for following fields.
-	Frame uint8
+	Frame MAV_FRAME `mavenum:"uint8"`
 	// X-axis angular offset of the target from the center of the image
 	AngleX float32
 	// Y-axis angular offset of the target from the center of the image
@@ -4941,7 +4941,7 @@ type MessageLandingTarget struct {
 	// Quaternion of landing target orientation (w, x, y, z order, zero-rotation is 1, 0, 0, 0)
 	Q [4]float32 `mavext:"true"`
 	// Type of landing target
-	Type uint8 `mavext:"true"`
+	Type LANDING_TARGET_TYPE `mavenum:"uint8" mavext:"true"`
 	// Boolean indicating whether the position fields (x, y, z, q, type) contain valid target position information (valid: 1, invalid: 0). Default is 0 (invalid).
 	PositionValid uint8 `mavext:"true"`
 }
@@ -4955,7 +4955,7 @@ type MessageEstimatorStatus struct {
 	// Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude the number.
 	TimeUsec uint64
 	// Bitmap indicating which EKF outputs are valid.
-	Flags uint16
+	Flags ESTIMATOR_STATUS_FLAGS `mavenum:"uint16"`
 	// Velocity innovation test ratio
 	VelRatio float32
 	// Horizontal position innovation test ratio
@@ -5011,7 +5011,7 @@ type MessageGpsInput struct {
 	// ID of the GPS for multiple GPS inputs
 	GpsId uint8
 	// Bitmap indicating which GPS input flags fields to ignore.  All other fields must be provided.
-	IgnoreFlags uint16
+	IgnoreFlags GPS_INPUT_IGNORE_FLAGS `mavenum:"uint16"`
 	// GPS time (from start of GPS week)
 	TimeWeekMs uint32
 	// GPS week number
@@ -5065,11 +5065,11 @@ func (*MessageGpsRtcmData) GetId() uint32 {
 // Message appropriate for high latency connections like Iridium
 type MessageHighLatency struct {
 	// Bitmap of enabled system modes.
-	BaseMode uint8
+	BaseMode MAV_MODE_FLAG `mavenum:"uint8"`
 	// A bitfield for use for autopilot-specific flags.
 	CustomMode uint32
 	// The landed state. Is set to MAV_LANDED_STATE_UNDEFINED if landed state is unknown.
-	LandedState uint8
+	LandedState MAV_LANDED_STATE `mavenum:"uint8"`
 	// roll
 	Roll int16
 	// pitch
@@ -5099,7 +5099,7 @@ type MessageHighLatency struct {
 	// Number of satellites visible. If unknown, set to 255
 	GpsNsat uint8
 	// GPS Fix type.
-	GpsFixType uint8
+	GpsFixType GPS_FIX_TYPE `mavenum:"uint8"`
 	// Remaining battery (percentage)
 	BatteryRemaining uint8
 	// Autopilot temperature (degrees C)
@@ -5123,9 +5123,9 @@ type MessageHighLatency2 struct {
 	// Timestamp (milliseconds since boot or Unix epoch)
 	Timestamp uint32
 	// Type of the MAV (quadrotor, helicopter, etc.)
-	Type uint8
+	Type MAV_TYPE `mavenum:"uint8"`
 	// Autopilot type / class.
-	Autopilot uint8
+	Autopilot MAV_AUTOPILOT `mavenum:"uint8"`
 	// A bitfield for use for autopilot-specific flags (2 byte version).
 	CustomMode uint16
 	// Latitude
@@ -5167,7 +5167,7 @@ type MessageHighLatency2 struct {
 	// Current waypoint number
 	WpNum uint16
 	// Bitmap of failure flags.
-	FailureFlags uint16
+	FailureFlags HL_FAILURE_FLAG `mavenum:"uint16"`
 	// Field for custom payload.
 	Custom0 int8
 	// Field for custom payload.
@@ -5279,9 +5279,9 @@ func (*MessageMessageInterval) GetId() uint32 {
 // Provides state for additional features
 type MessageExtendedSysState struct {
 	// The VTOL state if applicable. Is set to MAV_VTOL_STATE_UNDEFINED if UAV is not in VTOL configuration.
-	VtolState uint8
+	VtolState MAV_VTOL_STATE `mavenum:"uint8"`
 	// The landed state. Is set to MAV_LANDED_STATE_UNDEFINED if landed state is unknown.
-	LandedState uint8
+	LandedState MAV_LANDED_STATE `mavenum:"uint8"`
 }
 
 func (*MessageExtendedSysState) GetId() uint32 {
@@ -5297,7 +5297,7 @@ type MessageAdsbVehicle struct {
 	// Longitude
 	Lon int32
 	// ADSB altitude type.
-	AltitudeType uint8
+	AltitudeType ADSB_ALTITUDE_TYPE `mavenum:"uint8"`
 	// Altitude(ASL)
 	Altitude int32
 	// Course over ground
@@ -5309,11 +5309,11 @@ type MessageAdsbVehicle struct {
 	// The callsign, 8+null
 	Callsign string `mavlen:"9"`
 	// ADSB emitter type.
-	EmitterType uint8
+	EmitterType ADSB_EMITTER_TYPE `mavenum:"uint8"`
 	// Time since last communication in seconds
 	Tslc uint8
 	// Bitmap to indicate various statuses including valid data fields
-	Flags uint16
+	Flags ADSB_FLAGS `mavenum:"uint16"`
 	// Squawk code
 	Squawk uint16
 }
@@ -5325,13 +5325,13 @@ func (*MessageAdsbVehicle) GetId() uint32 {
 // Information about a potential collision
 type MessageCollision struct {
 	// Collision data source
-	Src uint8
+	Src MAV_COLLISION_SRC `mavenum:"uint8"`
 	// Unique identifier, domain based on src field
 	Id uint32
 	// Action that is being taken to avoid this collision
-	Action uint8
+	Action MAV_COLLISION_ACTION `mavenum:"uint8"`
 	// How concerned the aircraft is about this collision
-	ThreatLevel uint8
+	ThreatLevel MAV_COLLISION_THREAT_LEVEL `mavenum:"uint8"`
 	// Estimated time until collision occurs
 	TimeToMinimumDelta float32
 	// Closest vertical distance between vehicle and object
@@ -5427,7 +5427,7 @@ func (*MessageNamedValueInt) GetId() uint32 {
 // Status text message. These messages are printed in yellow in the COMM console of QGroundControl. WARNING: They consume quite some bandwidth, so use only for important status and error messages. If implemented wisely, these messages are buffered on the MCU and sent only at a limited rate (e.g. 10 Hz).
 type MessageStatustext struct {
 	// Severity of status. Relies on the definitions within RFC-5424.
-	Severity uint8
+	Severity MAV_SEVERITY `mavenum:"uint8"`
 	// Status text message, without null termination character
 	Text string `mavlen:"50"`
 }
@@ -5519,7 +5519,7 @@ type MessageCameraInformation struct {
 	// Reserved for a lens ID
 	LensId uint8
 	// Bitmap of camera capability flags.
-	Flags uint32
+	Flags CAMERA_CAP_FLAGS `mavenum:"uint32"`
 	// Camera definition version (iteration)
 	CamDefinitionVersion uint16
 	// Camera definition URI (if any, otherwise only basic functions will be available).
@@ -5535,7 +5535,7 @@ type MessageCameraSettings struct {
 	// Timestamp (time since system boot).
 	TimeBootMs uint32
 	// Camera mode
-	ModeId uint8
+	ModeId CAMERA_MODE `mavenum:"uint8"`
 	// Current zoom level (0.0 to 100.0, NaN if not known)
 	Zoomlevel float32 `mavext:"true" mavname:"zoomLevel"`
 	// Current focus level (0.0 to 100.0, NaN if not known)
@@ -5717,9 +5717,9 @@ type MessageVideoStreamInformation struct {
 	// Number of streams available.
 	Count uint8
 	// Type of stream.
-	Type uint8
+	Type VIDEO_STREAM_TYPE `mavenum:"uint8"`
 	// Bitmap of stream status flags.
-	Flags uint16
+	Flags VIDEO_STREAM_STATUS_FLAGS `mavenum:"uint16"`
 	// Frame rate.
 	Framerate float32
 	// Horizontal resolution.
@@ -5747,7 +5747,7 @@ type MessageVideoStreamStatus struct {
 	// Video Stream ID (1 for first, 2 for second, etc.)
 	StreamId uint8
 	// Bitmap of stream status flags
-	Flags uint16
+	Flags VIDEO_STREAM_STATUS_FLAGS `mavenum:"uint16"`
 	// Frame rate
 	Framerate float32
 	// Horizontal resolution
@@ -5803,9 +5803,9 @@ type MessageUavcanNodeStatus struct {
 	// Time since the start-up of the node.
 	UptimeSec uint32
 	// Generalized node health status.
-	Health uint8
+	Health UAVCAN_NODE_HEALTH `mavenum:"uint8"`
 	// Generalized operating mode.
-	Mode uint8
+	Mode UAVCAN_NODE_MODE `mavenum:"uint8"`
 	// Not used currently.
 	SubMode uint8
 	// Vendor-specific status information.
@@ -5877,7 +5877,7 @@ type MessageParamExtValue struct {
 	// Parameter value
 	ParamValue string `mavlen:"128"`
 	// Parameter type.
-	ParamType uint8
+	ParamType MAV_PARAM_EXT_TYPE `mavenum:"uint8"`
 	// Total number of parameters
 	ParamCount uint16
 	// Index of this parameter
@@ -5899,7 +5899,7 @@ type MessageParamExtSet struct {
 	// Parameter value
 	ParamValue string `mavlen:"128"`
 	// Parameter type.
-	ParamType uint8
+	ParamType MAV_PARAM_EXT_TYPE `mavenum:"uint8"`
 }
 
 func (*MessageParamExtSet) GetId() uint32 {
@@ -5913,9 +5913,9 @@ type MessageParamExtAck struct {
 	// Parameter value (new value if PARAM_ACK_ACCEPTED, current value otherwise)
 	ParamValue string `mavlen:"128"`
 	// Parameter type.
-	ParamType uint8
+	ParamType MAV_PARAM_EXT_TYPE `mavenum:"uint8"`
 	// Result code.
-	ParamResult uint8
+	ParamResult PARAM_ACK `mavenum:"uint8"`
 }
 
 func (*MessageParamExtAck) GetId() uint32 {
@@ -5927,7 +5927,7 @@ type MessageObstacleDistance struct {
 	// Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude the number.
 	TimeUsec uint64
 	// Class id of the distance sensor type.
-	SensorType uint8
+	SensorType MAV_DISTANCE_SENSOR `mavenum:"uint8"`
 	// Distance of obstacles around the UAV with index 0 corresponding to local North. A value of 0 means that the obstacle is right in front of the sensor. A value of max_distance +1 means no obstacle is present. A value of UINT16_MAX for unknown/not used. In a array element, one unit corresponds to 1cm.
 	Distances [72]uint16
 	// Angular width in degrees of each array element.
@@ -5947,9 +5947,9 @@ type MessageOdometry struct {
 	// Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude the number.
 	TimeUsec uint64
 	// Coordinate frame of reference for the pose data.
-	FrameId uint8
+	FrameId MAV_FRAME `mavenum:"uint8"`
 	// Coordinate frame of reference for the velocity in free space (twist) data.
-	ChildFrameId uint8
+	ChildFrameId MAV_FRAME `mavenum:"uint8"`
 	// X Position
 	X float32
 	// Y Position
@@ -6039,9 +6039,9 @@ func (*MessageTrajectoryRepresentationBezier) GetId() uint32 {
 // Report current used cellular network status
 type MessageCellularStatus struct {
 	// Status bitmap
-	Status uint16
+	Status CELLULAR_NETWORK_STATUS_FLAG `mavenum:"uint16"`
 	// Cellular network radio type: gsm, cdma, lte...
-	Type uint8
+	Type CELLULAR_NETWORK_RADIO_TYPE `mavenum:"uint8"`
 	// Cellular network RSSI/RSRP in dBm, absolute value
 	Quality uint8
 	// Mobile country code. If unknown, set to: UINT16_MAX
@@ -6093,9 +6093,9 @@ type MessageUtmGlobalPosition struct {
 	// Time until next update. Set to 0 if unknown or in data driven mode.
 	UpdateRate uint16
 	// Flight state
-	FlightState uint8
+	FlightState UTM_FLIGHT_STATE `mavenum:"uint8"`
 	// Bitwise OR combination of the data available flags.
-	Flags uint8
+	Flags UTM_DATA_AVAIL_FLAGS `mavenum:"uint8"`
 }
 
 func (*MessageUtmGlobalPosition) GetId() uint32 {
@@ -6125,7 +6125,7 @@ type MessageOrbitExecutionStatus struct {
 	// Radius of the orbit circle. Positive values orbit clockwise, negative values orbit counter-clockwise.
 	Radius float32
 	// The coordinate system of the fields: x, y, z.
-	Frame uint8
+	Frame MAV_FRAME `mavenum:"uint8"`
 	// X coordinate of center point. Coordinate system depends on frame field: local = x position in meters * 1e4, global = latitude in degrees * 1e7.
 	X int32
 	// Y coordinate of center point.  Coordinate system depends on frame field: local = x position in meters * 1e4, global = latitude in degrees * 1e7.
@@ -6141,7 +6141,7 @@ func (*MessageOrbitExecutionStatus) GetId() uint32 {
 // Status text message (use only for important status and error messages). The full message payload can be used for status text, but we recommend that updates be kept concise. Note: The message is intended as a less restrictive replacement for STATUSTEXT.
 type MessageStatustextLong struct {
 	// Severity of status. Relies on the definitions within RFC-5424.
-	Severity uint8
+	Severity MAV_SEVERITY `mavenum:"uint8"`
 	// Status text message, without null termination character.
 	Text string `mavlen:"254"`
 }
@@ -6189,7 +6189,7 @@ type MessageSmartBatteryStatus struct {
 	// Battery temperature. -1: field not provided.
 	Temperature int16
 	// Fault/health indications.
-	FaultBitmask int32
+	FaultBitmask MAV_SMART_BATTERY_FAULT `mavenum:"int32"`
 	// Estimated remaining battery time. -1: field not provided.
 	TimeRemaining int32
 	// The cell number of the first index in the 'voltages' array field. Using this field allows you to specify cell voltages for batteries with more than 16 cells.
@@ -6373,7 +6373,7 @@ type MessageCtrlSrfcPt struct {
 	// The system setting the commands
 	Target uint8
 	// Bitfield containing the passthrough configuration, see CONTROL_SURFACE_FLAG ENUM.
-	Bitfieldpt uint16 `mavname:"bitfieldPt"`
+	Bitfieldpt CONTROL_SURFACE_FLAG `mavenum:"uint16" mavname:"bitfieldPt"`
 }
 
 func (*MessageCtrlSrfcPt) GetId() uint32 {

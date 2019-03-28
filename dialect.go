@@ -12,81 +12,74 @@ import (
 	"strings"
 )
 
-var dialectTypeSizes = map[string]byte{
-	"double":   8,
-	"uint64_t": 8,
-	"int64_t":  8,
-	"float":    4,
-	"uint32_t": 4,
-	"int32_t":  4,
-	"uint16_t": 2,
-	"int16_t":  2,
-	"uint8_t":  1,
-	"int8_t":   1,
-	"char":     1,
+type dialectFieldType int
+
+const (
+	typeDouble dialectFieldType = iota + 1
+	typeUint64
+	typeInt64
+	typeFloat
+	typeUint32
+	typeInt32
+	typeUint16
+	typeInt16
+	typeUint8
+	typeInt8
+	typeChar
+)
+
+var dialectFieldTypeFromGo = map[string]dialectFieldType{
+	"float64": typeDouble,
+	"uint64":  typeUint64,
+	"int64":   typeInt64,
+	"float32": typeFloat,
+	"uint32":  typeUint32,
+	"int32":   typeInt32,
+	"uint16":  typeUint16,
+	"int16":   typeInt16,
+	"uint8":   typeUint8,
+	"int8":    typeInt8,
+	"string":  typeChar,
 }
 
-// DialectTypeDefToGo converts a xml type into its go equivalent.
-func DialectTypeDefToGo(typ string) string {
-	return map[string]string{
-		"double":   "float64",
-		"uint64_t": "uint64",
-		"int64_t":  "int64",
-		"float":    "float32",
-		"uint32_t": "uint32",
-		"int32_t":  "int32",
-		"uint16_t": "uint16",
-		"int16_t":  "int16",
-		"uint8_t":  "uint8",
-		"int8_t":   "int8",
-		"char":     "string",
-	}[typ]
+var dialectFieldTypeString = map[dialectFieldType]string{
+	typeDouble: "double",
+	typeUint64: "uint64_t",
+	typeInt64:  "int64_t",
+	typeFloat:  "float",
+	typeUint32: "uint32_t",
+	typeInt32:  "int32_t",
+	typeUint16: "uint16_t",
+	typeInt16:  "int16_t",
+	typeUint8:  "uint8_t",
+	typeInt8:   "int8_t",
+	typeChar:   "char",
 }
 
-// DialectTypeGoToDef converts a go type into its xml equivalent.
-func DialectTypeGoToDef(typ string) string {
-	return map[string]string{
-		"float64": "double",
-		"uint64":  "uint64_t",
-		"int64":   "int64_t",
-		"float32": "float",
-		"uint32":  "uint32_t",
-		"int32":   "int32_t",
-		"uint16":  "uint16_t",
-		"int16":   "int16_t",
-		"uint8":   "uint8_t",
-		"int8":    "int8_t",
-		"string":  "char",
-	}[typ]
+var dialectFieldTypeSizes = map[dialectFieldType]byte{
+	typeDouble: 8,
+	typeUint64: 8,
+	typeInt64:  8,
+	typeFloat:  4,
+	typeUint32: 4,
+	typeInt32:  4,
+	typeUint16: 2,
+	typeInt16:  2,
+	typeUint8:  1,
+	typeInt8:   1,
+	typeChar:   1,
 }
 
-// DialectFieldGoToDef converts a go field into its xml equivalent.
-func DialectFieldGoToDef(in string) string {
+func dialectFieldGoToDef(in string) string {
 	re := regexp.MustCompile("([A-Z])")
 	in = re.ReplaceAllString(in, "_${1}")
 	return strings.ToLower(in[1:])
 }
 
-// DialectFieldDefToGo converts a xml field into its go equivalent.
-func DialectFieldDefToGo(in string) string {
-	return DialectMsgDefToGo(in)
-}
-
-// DialectMsgGoToDef converts a go field into its xml equivalent.
-func DialectMsgGoToDef(in string) string {
+func dialectMsgGoToDef(in string) string {
 	re := regexp.MustCompile("([A-Z])")
 	in = re.ReplaceAllString(in, "_${1}")
 	return strings.ToUpper(in[1:])
-}
-
-// DialectMsgDefToGo converts a xml field into its go equivalent.
-func DialectMsgDefToGo(in string) string {
-	re := regexp.MustCompile("_[a-z]")
-	in = strings.ToLower(in)
-	in = re.ReplaceAllStringFunc(in, func(match string) string {
-		return strings.ToUpper(match[1:2])
-	})
-	return strings.ToUpper(in[:1]) + in[1:]
 }
 
 // Dialect contains available messages and the configuration needed to encode and
@@ -102,7 +95,7 @@ func NewDialect(messages []Message) (*Dialect, error) {
 	}
 
 	for _, msg := range messages {
-		mp, err := newDefinitionMessage(msg)
+		mp, err := newdefinitionMessage(msg)
 		if err != nil {
 			return nil, fmt.Errorf("message %T: %s", msg, err)
 		}
@@ -122,7 +115,8 @@ func MustDialect(messages []Message) *Dialect {
 }
 
 type dialectMessageField struct {
-	ftype       string
+	isEnum      bool
+	ftype       dialectFieldType
 	name        string
 	arrayLength byte
 	index       int
@@ -137,7 +131,7 @@ type dialectMessage struct {
 	crcExtra     byte
 }
 
-func newDefinitionMessage(msg Message) (*dialectMessage, error) {
+func newdefinitionMessage(msg Message) (*dialectMessage, error) {
 	mp := &dialectMessage{}
 
 	mp.elemType = reflect.TypeOf(msg).Elem()
@@ -147,33 +141,58 @@ func newDefinitionMessage(msg Message) (*dialectMessage, error) {
 	if strings.HasPrefix(mp.elemType.Name(), "Message") == false {
 		return nil, fmt.Errorf("message struct name must begin with 'Message'")
 	}
-	msgName := DialectMsgGoToDef(mp.elemType.Name()[len("Message"):])
+	msgName := dialectMsgGoToDef(mp.elemType.Name()[len("Message"):])
 
 	// collect message fields
 	for i := 0; i < mp.elemType.NumField(); i++ {
 		field := mp.elemType.Field(i)
 		fieldType := field.Type
 		fieldArrayLength := byte(0)
+		isEnum := false
+		var ftype dialectFieldType
 
-		// array
-		if fieldType.Kind() == reflect.Array {
-			fieldArrayLength = byte(fieldType.Len())
-			fieldType = fieldType.Elem()
-		}
+		// enum
+		if field.Tag.Get("mavenum") != "" {
+			isEnum = true
 
-		// validate type
-		defType := DialectTypeGoToDef(fieldType.Name())
-		if defType == "" {
-			return nil, fmt.Errorf("invalid field type: %v", fieldType)
-		}
-
-		// string
-		if fieldType.Kind() == reflect.String {
-			slen, err := strconv.Atoi(field.Tag.Get("mavlen"))
-			if err != nil {
-				return nil, err
+			ftype = dialectFieldTypeFromGo[field.Tag.Get("mavenum")]
+			if ftype == 0 {
+				return nil, fmt.Errorf("enum but tag not specified")
 			}
-			fieldArrayLength = byte(slen)
+
+			switch ftype {
+			case typeUint8:
+			case typeUint16:
+			case typeUint32:
+			case typeInt32:
+			case typeUint64:
+				break
+
+			default:
+				return nil, fmt.Errorf("invalid mav type: %v", ftype)
+			}
+
+		} else {
+			// array
+			if fieldType.Kind() == reflect.Array {
+				fieldArrayLength = byte(fieldType.Len())
+				fieldType = fieldType.Elem()
+			}
+
+			// validate type
+			ftype = dialectFieldTypeFromGo[fieldType.Name()]
+			if ftype == 0 {
+				return nil, fmt.Errorf("invalid field type: %v", fieldType)
+			}
+
+			// string
+			if fieldType.Kind() == reflect.String {
+				slen, err := strconv.Atoi(field.Tag.Get("mavlen"))
+				if err != nil {
+					return nil, err
+				}
+				fieldArrayLength = byte(slen)
+			}
 		}
 
 		// extension
@@ -182,18 +201,19 @@ func newDefinitionMessage(msg Message) (*dialectMessage, error) {
 		// size
 		var size byte
 		if fieldArrayLength > 0 {
-			size = dialectTypeSizes[defType] * fieldArrayLength
+			size = dialectFieldTypeSizes[ftype] * fieldArrayLength
 		} else {
-			size = dialectTypeSizes[defType]
+			size = dialectFieldTypeSizes[ftype]
 		}
 
 		mp.fields[i] = &dialectMessageField{
-			ftype: defType,
+			isEnum: isEnum,
+			ftype:  ftype,
 			name: func() string {
 				if mavname := field.Tag.Get("mavname"); mavname != "" {
 					return mavname
 				}
-				return DialectFieldGoToDef(field.Name)
+				return dialectFieldGoToDef(field.Name)
 			}(),
 			arrayLength: fieldArrayLength,
 			index:       i,
@@ -211,7 +231,7 @@ func newDefinitionMessage(msg Message) (*dialectMessage, error) {
 	sort.Slice(mp.fields, func(i, j int) bool {
 		// sort by weight if not extension
 		if mp.fields[i].isExtension == false && mp.fields[j].isExtension == false {
-			if w1, w2 := dialectTypeSizes[mp.fields[i].ftype], dialectTypeSizes[mp.fields[j].ftype]; w1 != w2 {
+			if w1, w2 := dialectFieldTypeSizes[mp.fields[i].ftype], dialectFieldTypeSizes[mp.fields[j].ftype]; w1 != w2 {
 				return w1 > w2
 			}
 		}
@@ -231,7 +251,7 @@ func newDefinitionMessage(msg Message) (*dialectMessage, error) {
 				continue
 			}
 
-			h.Write([]byte(f.ftype + " "))
+			h.Write([]byte(dialectFieldTypeString[f.ftype] + " "))
 			h.Write([]byte(f.name + " "))
 
 			if f.arrayLength > 0 {
@@ -276,7 +296,7 @@ func (mp *dialectMessage) decode(buf []byte, isFrameV2 bool) (Message, error) {
 		case reflect.Array:
 			length := target.Len()
 			for i := 0; i < length; i++ {
-				n := decodeValue(target.Index(i).Addr().Interface(), buf, nil)
+				n := decodeValue(target.Index(i).Addr().Interface(), buf, f)
 				buf = buf[n:]
 			}
 
@@ -313,7 +333,7 @@ func (mp *dialectMessage) encode(msg Message, isFrameV2 bool) ([]byte, error) {
 		case reflect.Array:
 			length := target.Len()
 			for i := 0; i < length; i++ {
-				n := encodeValue(buf, target.Index(i).Addr().Interface(), nil)
+				n := encodeValue(buf, target.Index(i).Addr().Interface(), f)
 				buf = buf[n:]
 			}
 
@@ -338,6 +358,33 @@ func (mp *dialectMessage) encode(msg Message, isFrameV2 bool) ([]byte, error) {
 }
 
 func decodeValue(target interface{}, buf []byte, f *dialectMessageField) int {
+	if f.isEnum == true {
+		switch f.ftype {
+		case typeUint8:
+			reflect.ValueOf(target).Elem().SetInt(int64(buf[0]))
+			return 1
+
+		case typeUint16:
+			reflect.ValueOf(target).Elem().SetInt(int64(binary.LittleEndian.Uint16(buf)))
+			return 2
+
+		case typeUint32:
+			reflect.ValueOf(target).Elem().SetInt(int64(binary.LittleEndian.Uint32(buf)))
+			return 4
+
+		case typeInt32:
+			reflect.ValueOf(target).Elem().SetInt(int64(binary.LittleEndian.Uint32(buf)))
+			return 4
+
+		case typeUint64:
+			reflect.ValueOf(target).Elem().SetInt(int64(binary.LittleEndian.Uint64(buf)))
+			return 8
+
+		default:
+			panic("unexpected type")
+		}
+	}
+
 	switch tt := target.(type) {
 	case *string:
 		// find nil character or string end
@@ -394,6 +441,33 @@ func decodeValue(target interface{}, buf []byte, f *dialectMessageField) int {
 }
 
 func encodeValue(buf []byte, target interface{}, f *dialectMessageField) int {
+	if f.isEnum == true {
+		switch f.ftype {
+		case typeUint8:
+			buf[0] = byte(reflect.ValueOf(target).Elem().Int())
+			return 1
+
+		case typeUint16:
+			binary.LittleEndian.PutUint16(buf, uint16(reflect.ValueOf(target).Elem().Int()))
+			return 2
+
+		case typeUint32:
+			binary.LittleEndian.PutUint32(buf, uint32(reflect.ValueOf(target).Elem().Int()))
+			return 4
+
+		case typeInt32:
+			binary.LittleEndian.PutUint32(buf, uint32(reflect.ValueOf(target).Elem().Int()))
+			return 4
+
+		case typeUint64:
+			binary.LittleEndian.PutUint64(buf, uint64(reflect.ValueOf(target).Elem().Int()))
+			return 8
+
+		default:
+			panic("unexpected type")
+		}
+	}
+
 	switch tt := target.(type) {
 	case *string:
 		copy(buf[:f.arrayLength], *tt)

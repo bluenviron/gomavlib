@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/gswly/gomavlib"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"io/ioutil"
 	"net/http"
@@ -18,6 +17,43 @@ import (
 
 var reMsgName = regexp.MustCompile("^[A-Z0-9_]+$")
 var reTypeIsArray = regexp.MustCompile("^(.+?)\\[([0-9]+)\\]$")
+
+var dialectTypeToGo = map[string]string{
+	"double":   "float64",
+	"uint64_t": "uint64",
+	"int64_t":  "int64",
+	"float":    "float32",
+	"uint32_t": "uint32",
+	"int32_t":  "int32",
+	"uint16_t": "uint16",
+	"int16_t":  "int16",
+	"uint8_t":  "uint8",
+	"int8_t":   "int8",
+	"char":     "string",
+}
+
+func dialectFieldGoToDef(in string) string {
+	re := regexp.MustCompile("([A-Z])")
+	in = re.ReplaceAllString(in, "_${1}")
+	return strings.ToLower(in[1:])
+}
+
+func dialectFieldDefToGo(in string) string {
+	return dialectMsgDefToGo(in)
+}
+
+func dialectMsgDefToGo(in string) string {
+	re := regexp.MustCompile("_[a-z]")
+	in = strings.ToLower(in)
+	in = re.ReplaceAllStringFunc(in, func(match string) string {
+		return strings.ToUpper(match[1:2])
+	})
+	return strings.ToUpper(in[:1]) + in[1:]
+}
+
+func filterDesc(in string) string {
+	return strings.Replace(in, "\n", "", -1)
+}
 
 type outEnumValue struct {
 	Value       string
@@ -108,10 +144,6 @@ func (*Message{{ .Name }}) GetId() uint32 {
 {{ end }}
 {{ end }}
 `))
-
-func filterDesc(in string) string {
-	return strings.Replace(in, "\n", "", -1)
-}
 
 func main() {
 	kingpin.CommandLine.Help = "Generate a Mavlink dialect library from a definition file.\n" +
@@ -318,13 +350,13 @@ func urlDownload(desturl string) ([]byte, error) {
 	return byt, nil
 }
 
-func messageProcess(msg *DefinitionMessage) (*outMessage, error) {
+func messageProcess(msg *definitionMessage) (*outMessage, error) {
 	if m := reMsgName.FindStringSubmatch(msg.Name); m == nil {
 		return nil, fmt.Errorf("unsupported message name: %s", msg.Name)
 	}
 
 	outMsg := &outMessage{
-		Name:        gomavlib.DialectMsgDefToGo(msg.Name),
+		Name:        dialectMsgDefToGo(msg.Name),
 		Description: filterDesc(msg.Description),
 		Id:          msg.Id,
 	}
@@ -340,16 +372,16 @@ func messageProcess(msg *DefinitionMessage) (*outMessage, error) {
 	return outMsg, nil
 }
 
-func fieldProcess(field *DialectField) (*outField, error) {
+func fieldProcess(field *dialectField) (*outField, error) {
 	outF := &outField{
 		Description: filterDesc(field.Description),
 	}
 	tags := make(map[string]string)
 
-	newname := gomavlib.DialectFieldDefToGo(field.Name)
+	newname := dialectFieldDefToGo(field.Name)
 
 	// name conversion is not univoque: add tag
-	if gomavlib.DialectFieldGoToDef(newname) != field.Name {
+	if dialectFieldGoToDef(newname) != field.Name {
 		tags["mavname"] = field.Name
 	}
 
@@ -380,7 +412,7 @@ func fieldProcess(field *DialectField) (*outField, error) {
 		tags["mavext"] = "true"
 	}
 
-	typ = gomavlib.DialectTypeDefToGo(typ)
+	typ = dialectTypeToGo[typ]
 	if typ == "" {
 		return nil, fmt.Errorf("unknown type: %s", typ)
 	}
@@ -389,7 +421,12 @@ func fieldProcess(field *DialectField) (*outField, error) {
 	if arrayLen != "" {
 		outF.Line += "[" + arrayLen + "]"
 	}
-	outF.Line += typ
+	if field.Enum != "" {
+		outF.Line += field.Enum
+		tags["mavenum"] = typ
+	} else {
+		outF.Line += typ
+	}
 
 	if len(tags) > 0 {
 		var tmp []string

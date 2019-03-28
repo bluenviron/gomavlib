@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-// RemoteNode is the unique identifier used to detect other nodes in the network.
+// RemoteNode is the unique identifier used to detect other nodes in a Channel.
 type RemoteNode struct {
 	Channel     *Channel
 	SystemId    byte

@@ -73,7 +73,7 @@ const (
 type NodeConf struct {
 	// contains the endpoint with which this node will
 	// communicate. Each endpoint contains zero or more channels, which contains
-	// zero or more remoteNodes.
+	// zero or more remote nodes.
 	Endpoints []EndpointConf
 
 	// contains the messages which will be automatically decoded and

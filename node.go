@@ -73,7 +73,7 @@ const (
 type NodeConf struct {
 	// contains the endpoint with which this node will
 	// communicate. Each endpoint contains zero or more channels, which contains
-	// zero or more nodes.
+	// zero or more remoteNodes.
 	Endpoints []EndpointConf
 
 	// contains the messages which will be automatically decoded and
@@ -107,17 +107,17 @@ type NodeConf struct {
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
 // See NodeConf for the options.
 type Node struct {
-	conf          NodeConf
-	wg            sync.WaitGroup
-	chanAccepters map[endpointChannelAccepter]struct{}
-	writeDone     chan struct{}
-	eventChan     chan Event
-	channelsMutex sync.Mutex
-	channels      map[*EndpointChannel]struct{}
-	nodeMutex     sync.Mutex
-	nodes         map[NodeIdentifier]time.Time
-	nodeHeartbeat *nodeHeartbeat
-	nodeChecker   *nodeChecker
+	conf            NodeConf
+	wg              sync.WaitGroup
+	chanAccepters   map[endpointChannelAccepter]struct{}
+	writeDone       chan struct{}
+	eventChan       chan Event
+	channelsMutex   sync.Mutex
+	channels        map[*EndpointChannel]struct{}
+	remoteNodeMutex sync.Mutex
+	remoteNodes     map[RemoteNode]time.Time
+	nodeHeartbeat   *nodeHeartbeat
+	nodeChecker     *nodeChecker
 }
 
 // NewNode allocates a Node. See NodeConf for the options.
@@ -144,7 +144,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 		writeDone:     make(chan struct{}),
 		eventChan:     make(chan Event),
 		channels:      make(map[*EndpointChannel]struct{}),
-		nodes:         make(map[NodeIdentifier]time.Time),
+		remoteNodes:   make(map[RemoteNode]time.Time),
 	}
 
 	for _, tconf := range conf.Endpoints {
@@ -264,11 +264,11 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 
 			// call EventNodeDisappear
 			func() {
-				n.nodeMutex.Lock()
-				defer n.nodeMutex.Unlock()
-				for i := range n.nodes {
+				n.remoteNodeMutex.Lock()
+				defer n.remoteNodeMutex.Unlock()
+				for i := range n.remoteNodes {
 					if i.Channel == channel {
-						delete(n.nodes, i)
+						delete(n.remoteNodes, i)
 						n.eventChan <- &EventNodeDisappear{i}
 					}
 				}
@@ -294,7 +294,7 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 				return
 			}
 
-			nodeId := NodeIdentifier{
+			nodeId := RemoteNode{
 				Channel:     channel,
 				SystemId:    frame.GetSystemId(),
 				ComponentId: frame.GetComponentId(),
@@ -302,13 +302,13 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 
 			// call EventNodeAppear
 			isNodeNew := func() bool {
-				n.nodeMutex.Lock()
-				defer n.nodeMutex.Unlock()
-				if _, ok := n.nodes[nodeId]; !ok {
-					n.nodes[nodeId] = time.Now()
+				n.remoteNodeMutex.Lock()
+				defer n.remoteNodeMutex.Unlock()
+				if _, ok := n.remoteNodes[nodeId]; !ok {
+					n.remoteNodes[nodeId] = time.Now()
 					return true
 				}
-				n.nodes[nodeId] = time.Now()
+				n.remoteNodes[nodeId] = time.Now()
 				return false
 			}()
 			if isNodeNew == true {
@@ -371,21 +371,21 @@ func (n *Node) WriteMessageExcept(exceptChannel *EndpointChannel, message Messag
 
 // WriteFrameTo write a frame to given channel.
 // This function is intended for routing frames to other nodes, since all
-// the fields must be filled manually.
+// fields must be filled manually.
 func (n *Node) WriteFrameTo(channel *EndpointChannel, frame Frame) {
 	n.writeTo(channel, frame)
 }
 
 // WriteFrameAll write a frame to all channels.
 // This function is intended for routing frames to other nodes, since all
-// the fields must be filled manually.
+// fields must be filled manually.
 func (n *Node) WriteFrameAll(frame Frame) {
 	n.writeAll(frame)
 }
 
 // WriteFrameExcept write a frame to all channels except specified channel.
 // This function is intended for routing frames to other nodes, since all
-// the fields must be filled manually.
+// fields must be filled manually.
 func (n *Node) WriteFrameExcept(exceptChannel *EndpointChannel, frame Frame) {
 	n.writeExcept(exceptChannel, frame)
 }

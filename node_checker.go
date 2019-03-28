@@ -35,12 +35,12 @@ func (h *nodeChecker) do() {
 		select {
 		case <-ticker.C:
 			func() {
-				h.n.nodeMutex.Lock()
-				defer h.n.nodeMutex.Unlock()
-				for i, t := range h.n.nodes {
+				h.n.remoteNodeMutex.Lock()
+				defer h.n.remoteNodeMutex.Unlock()
+				for i, t := range h.n.remoteNodes {
 					// delete nodes after a period of inactivity
 					if time.Since(t) >= nodeDisappearAfter {
-						delete(h.n.nodes, i)
+						delete(h.n.remoteNodes, i)
 						h.n.eventChan <- &EventNodeDisappear{i}
 					}
 				}

@@ -6,6 +6,8 @@ import (
 	"github.com/gswly/gomavlib"
 )
 
+var Version = 3
+
 // test.xml
 
 type MessageTestTypes struct {

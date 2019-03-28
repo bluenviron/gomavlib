@@ -6,6 +6,8 @@ import (
 	"github.com/gswly/gomavlib"
 )
 
+var Version = 0
+
 // icarous.xml
 
 type MessageIcarousHeartbeat struct {

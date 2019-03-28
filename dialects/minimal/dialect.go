@@ -6,6 +6,8 @@ import (
 	"github.com/gswly/gomavlib"
 )
 
+var Version = 3
+
 // minimal.xml
 
 type MessageHeartbeat struct {

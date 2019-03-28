@@ -305,27 +305,28 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 				return
 			}
 
-			// support for NodeEventNodeAppear
-			nIndex := NodeIndex{
+			nodeIndex := NodeIndex{
 				SystemId:    frame.GetSystemId(),
 				ComponentId: frame.GetComponentId(),
 				Channel:     channel,
 			}
+
+			// support for NodeEventNodeAppear
 			isNodeNew := func() bool {
 				n.nodeMutex.Lock()
 				defer n.nodeMutex.Unlock()
-				if _, ok := n.nodes[nIndex]; !ok {
-					n.nodes[nIndex] = time.Now()
+				if _, ok := n.nodes[nodeIndex]; !ok {
+					n.nodes[nodeIndex] = time.Now()
 					return true
 				}
-				n.nodes[nIndex] = time.Now()
+				n.nodes[nodeIndex] = time.Now()
 				return false
 			}()
 			if isNodeNew == true {
-				n.eventChan <- &NodeEventNodeAppear{nIndex}
+				n.eventChan <- &NodeEventNodeAppear{nodeIndex}
 			}
 
-			n.eventChan <- &NodeEventFrame{frame, channel}
+			n.eventChan <- &NodeEventFrame{frame, channel, nodeIndex}
 		}
 	}()
 

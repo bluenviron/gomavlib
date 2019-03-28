@@ -19,25 +19,34 @@ import (
 var reMsgName = regexp.MustCompile("^[A-Z0-9_]+$")
 var reTypeIsArray = regexp.MustCompile("^(.+?)\\[([0-9]+)\\]$")
 
+type outEnumValue struct {
+	Value       string
+	Name        string
+	Description string
+}
+
+type outEnum struct {
+	Name        string
+	Description string
+	Values      []*outEnumValue
+}
+
 type outField struct {
-	Line string
+	Description string
+	Line        string
 }
 
 type outMessage struct {
-	Name   string
-	Id     int
-	Fields []*outField
+	Name        string
+	Description string
+	Id          int
+	Fields      []*outField
 }
 
 type outDefinition struct {
 	Name     string
+	Enums    []*outEnum
 	Messages []*outMessage
-	enums    []*DefinitionEnum
-}
-
-type outEnum struct {
-	Name   string
-	Values []*DefinitionEnumValue
 }
 
 var tpl = template.Must(template.New("").Parse(
@@ -64,13 +73,28 @@ var dialect = gomavlib.MustDialect([]gomavlib.Message{
 {{- end }}
 {{- end }}
 })
-{{/**/}}
-{{- range .Defs }}
+
+{{ range .Enums }}
+// {{ .Description }}
+type {{ .Name }} int
+
+const (
+{{- $pn := .Name }}
+{{- range .Values }}
+	// {{ .Description }}
+	{{ .Name }} {{ $pn }} = {{ .Value }}
+{{- end }}
+)
+{{ end }}
+
+{{ range .Defs }}
 // {{ .Name }}
-{{/**/}}
-{{- range .Messages }}
+
+{{ range .Messages }}
+// {{ .Description }}
 type Message{{ .Name }} struct {
 {{- range .Fields }}
+	// {{ .Description }}
     {{ .Line }}
 {{- end }}
 }
@@ -79,19 +103,12 @@ func (*Message{{ .Name }}) GetId() uint32 {
     return {{ .Id }}
 }
 {{ end }}
-{{- end }}
-
-{{- range .Enums }}
-type {{ .Name }} int
-
-const (
-{{- $pn := .Name }}
-{{- range .Values }}
-	{{ .Name }} {{ $pn }} = {{ .Value }}
-{{- end }}
-)
 {{ end }}
 `))
+
+func filterDesc(in string) string {
+	return strings.Replace(in, "\n", "", -1)
+}
 
 func main() {
 	kingpin.CommandLine.Help = "Generate a Mavlink dialect library from a definition file.\n" +
@@ -130,10 +147,11 @@ func do(outfile string, mainDefAddr string) error {
 	// merge enums together
 	enums := make(map[string]*outEnum)
 	for _, def := range outDefs {
-		for _, defEnum := range def.enums {
+		for _, defEnum := range def.Enums {
 			if _, ok := enums[defEnum.Name]; !ok {
 				enums[defEnum.Name] = &outEnum{
-					Name: defEnum.Name,
+					Name:        defEnum.Name,
+					Description: defEnum.Description,
 				}
 			}
 			enum := enums[defEnum.Name]
@@ -205,10 +223,6 @@ func definitionProcess(version *string, defsProcessed map[string]struct{}, isRem
 
 	addrPath, addrName := filepath.Split(defAddr)
 
-	outDef := &outDefinition{
-		Name:  addrName,
-		enums: def.Enums,
-	}
 	var outDefs []*outDefinition
 
 	// version
@@ -230,6 +244,26 @@ func definitionProcess(version *string, defsProcessed map[string]struct{}, isRem
 			return nil, err
 		}
 		outDefs = append(outDefs, subDefs...)
+	}
+
+	outDef := &outDefinition{
+		Name: addrName,
+	}
+
+	// enums
+	for _, enum := range def.Enums {
+		oute := &outEnum{
+			Name:        enum.Name,
+			Description: filterDesc(enum.Description),
+		}
+		for _, val := range enum.Values {
+			oute.Values = append(oute.Values, &outEnumValue{
+				Value:       val.Value,
+				Name:        val.Name,
+				Description: filterDesc(val.Description),
+			})
+		}
+		outDef.Enums = append(outDef.Enums, oute)
 	}
 
 	// messages
@@ -285,8 +319,9 @@ func messageProcess(msg *DefinitionMessage) (*outMessage, error) {
 	}
 
 	outMsg := &outMessage{
-		Name: gomavlib.DialectMsgDefToGo(msg.Name),
-		Id:   msg.Id,
+		Name:        gomavlib.DialectMsgDefToGo(msg.Name),
+		Description: filterDesc(msg.Description),
+		Id:          msg.Id,
 	}
 
 	for _, f := range msg.Fields {
@@ -301,7 +336,9 @@ func messageProcess(msg *DefinitionMessage) (*outMessage, error) {
 }
 
 func fieldProcess(field *DialectField) (*outField, error) {
-	outF := &outField{}
+	outF := &outField{
+		Description: filterDesc(field.Description),
+	}
 	tags := make(map[string]string)
 
 	newname := gomavlib.DialectFieldDefToGo(field.Name)

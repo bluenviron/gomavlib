@@ -45,7 +45,7 @@ func main() {
 	defer node.Close()
 
 	for evt := range node.Events() {
-		if frm, ok := evt.(*gomavlib.NodeEventFrame); ok {
+		if frm, ok := evt.(*gomavlib.EventFrame); ok {
 			fmt.Printf("received: id=%d, %+v\n", frm.Message().GetId(), frm.Message())
 		}
 	}

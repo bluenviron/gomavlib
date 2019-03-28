@@ -28,22 +28,22 @@ func main() {
 	// gomavlib provides different kinds of event
 	for evt := range node.Events() {
 		switch ee := evt.(type) {
-		case *gomavlib.NodeEventFrame:
+		case *gomavlib.EventFrame:
 			fmt.Printf("frame received: %v\n", ee)
 
-		case *gomavlib.NodeEventParseError:
+		case *gomavlib.EventParseError:
 			fmt.Printf("parse error: %v\n", ee)
 
-		case *gomavlib.NodeEventChannelOpen:
+		case *gomavlib.EventChannelOpen:
 			fmt.Printf("channel opened: %v\n", ee)
 
-		case *gomavlib.NodeEventChannelClose:
+		case *gomavlib.EventChannelClose:
 			fmt.Printf("channel closed: %v\n", ee)
 
-		case *gomavlib.NodeEventNodeAppear:
+		case *gomavlib.EventNodeAppear:
 			fmt.Printf("node appeared: %v\n", ee)
 
-		case *gomavlib.NodeEventNodeDisappear:
+		case *gomavlib.EventNodeDisappear:
 			fmt.Printf("node disappeared: %v\n", ee)
 		}
 	}

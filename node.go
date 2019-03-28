@@ -32,7 +32,7 @@ Basic example (more are available at https://github.com/gswly/gomavlib/tree/mast
   	defer node.Close()
 
   	for evt := range node.Events() {
-  		if frm,ok := evt.(*gomavlib.NodeEventFrame); ok {
+  		if frm,ok := evt.(*gomavlib.EventFrame); ok {
   			fmt.Printf("received: id=%d, %+v\n", frm.Message().GetId(), frm.Message())
   		}
   	}
@@ -59,12 +59,12 @@ const (
 	netWriteTimeout    = 10 * time.Second
 )
 
-// NodeVersion allows to set the frame version used to wrap outgoing messages.
-type NodeVersion int
+// Version allows to set the frame version used to wrap outgoing messages.
+type Version int
 
 const (
 	// V2 wrap outgoing messages in v2 frames.
-	V2 NodeVersion = iota
+	V2 Version = iota
 	// V1 wrap outgoing messages in v1 frames.
 	V1
 )
@@ -84,9 +84,9 @@ type NodeConf struct {
 	// Non signed frames are discarded, as well as frames with a version < v2.
 	InSignatureKey *FrameSignatureKey
 
-	// Mavlink version used to encode frames. See NodeVersion
+	// Mavlink version used to encode frames. See Version
 	// for the available options.
-	OutVersion NodeVersion
+	OutVersion Version
 	// the system id, added to every outgoing frame and used to identify this
 	// node in the network.
 	OutSystemId byte
@@ -111,7 +111,7 @@ type Node struct {
 	wg            sync.WaitGroup
 	chanAccepters map[endpointChannelAccepter]struct{}
 	writeDone     chan struct{}
-	eventChan     chan NodeEvent
+	eventChan     chan Event
 	channelsMutex sync.Mutex
 	channels      map[*EndpointChannel]struct{}
 	nodeMutex     sync.Mutex
@@ -142,7 +142,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 		conf:          conf,
 		chanAccepters: make(map[endpointChannelAccepter]struct{}),
 		writeDone:     make(chan struct{}),
-		eventChan:     make(chan NodeEvent),
+		eventChan:     make(chan Event),
 		channels:      make(map[*EndpointChannel]struct{}),
 		nodes:         make(map[NodeIdentifier]time.Time),
 	}
@@ -262,29 +262,29 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 			n.channelsMutex.Unlock()
 			close(channel.writeChan)
 
-			// call NodeEventNodeDisappear
+			// call EventNodeDisappear
 			func() {
 				n.nodeMutex.Lock()
 				defer n.nodeMutex.Unlock()
 				for i := range n.nodes {
 					if i.Channel == channel {
 						delete(n.nodes, i)
-						n.eventChan <- &NodeEventNodeDisappear{i}
+						n.eventChan <- &EventNodeDisappear{i}
 					}
 				}
 			}()
 
-			n.eventChan <- &NodeEventChannelClose{channel}
+			n.eventChan <- &EventChannelClose{channel}
 		}()
 
-		n.eventChan <- &NodeEventChannelOpen{channel}
+		n.eventChan <- &EventChannelOpen{channel}
 
 		for {
 			frame, err := parser.Read()
 			if err != nil {
 				// continue in case of parse errors
 				if _, ok := err.(*ParserError); ok {
-					n.eventChan <- &NodeEventParseError{err, channel}
+					n.eventChan <- &EventParseError{err, channel}
 					continue
 				}
 				// avoid calling twice Close()
@@ -300,7 +300,7 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 				ComponentId: frame.GetComponentId(),
 			}
 
-			// call NodeEventNodeAppear
+			// call EventNodeAppear
 			isNodeNew := func() bool {
 				n.nodeMutex.Lock()
 				defer n.nodeMutex.Unlock()
@@ -312,10 +312,10 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 				return false
 			}()
 			if isNodeNew == true {
-				n.eventChan <- &NodeEventNodeAppear{nodeId}
+				n.eventChan <- &EventNodeAppear{nodeId}
 			}
 
-			n.eventChan <- &NodeEventFrame{frame, channel, nodeId}
+			n.eventChan <- &EventFrame{frame, nodeId, channel}
 		}
 	}()
 
@@ -343,14 +343,14 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 }
 
 // Events returns a channel from which receiving events. Possible events are:
-//   *NodeEventChannelOpen
-//   *NodeEventChannelClose
-//   *NodeEventFrame
-//   *NodeEventNodeAppear
-//   *NodeEventNodeDisappear
-//   *NodeEventParseError
+//   *EventChannelOpen
+//   *EventChannelClose
+//   *EventFrame
+//   *EventNodeAppear
+//   *EventNodeDisappear
+//   *EventParseError
 // See individual events for meaning and content.
-func (n *Node) Events() chan NodeEvent {
+func (n *Node) Events() chan Event {
 	return n.eventChan
 }
 

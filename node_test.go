@@ -72,7 +72,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 
 		for evt := range node1.Events() {
 			switch e := evt.(type) {
-			case *NodeEventFrame:
+			case *EventFrame:
 				switch step {
 				case 0:
 					if reflect.DeepEqual(e.Message(), testMsg1) == false ||
@@ -111,7 +111,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 
 		for evt := range node2.Events() {
 			switch e := evt.(type) {
-			case *NodeEventFrame:
+			case *EventFrame:
 				switch step {
 				case 0:
 					if reflect.DeepEqual(e.Message(), testMsg2) == false ||
@@ -368,7 +368,7 @@ func TestNodeRouting(t *testing.T) {
 
 		for evt := range node2.Events() {
 			switch e := evt.(type) {
-			case *NodeEventFrame:
+			case *EventFrame:
 				node2.WriteFrameExcept(e.Channel, e.Frame)
 				return
 			}
@@ -380,7 +380,7 @@ func TestNodeRouting(t *testing.T) {
 
 		for evt := range node3.Events() {
 			switch e := evt.(type) {
-			case *NodeEventFrame:
+			case *EventFrame:
 				if _, ok := e.Message().(*MessageHeartbeat); !ok ||
 					e.SystemId() != 10 ||
 					e.ComponentId() != 1 {

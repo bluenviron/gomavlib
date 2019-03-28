@@ -38,9 +38,10 @@ func (h *nodeChecker) do() {
 				h.n.nodeMutex.Lock()
 				defer h.n.nodeMutex.Unlock()
 				for i, t := range h.n.nodes {
+					// delete nodes after a period of inactivity
 					if time.Since(t) >= nodeDisappearAfter {
 						delete(h.n.nodes, i)
-						h.n.eventChan <- &NodeEventNodeDisappear{i}
+						h.n.eventChan <- &EventNodeDisappear{i}
 					}
 				}
 			}()

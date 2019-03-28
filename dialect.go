@@ -155,6 +155,10 @@ func newdefinitionMessage(msg Message) (*dialectMessage, error) {
 		if field.Tag.Get("mavenum") != "" {
 			isEnum = true
 
+			if fieldType.Kind() != reflect.Int {
+				return nil, fmt.Errorf("an enum must be an int")
+			}
+
 			ftype = dialectFieldTypeFromGo[field.Tag.Get("mavenum")]
 			if ftype == 0 {
 				return nil, fmt.Errorf("enum but tag not specified")
@@ -296,12 +300,12 @@ func (mp *dialectMessage) decode(buf []byte, isFrameV2 bool) (Message, error) {
 		case reflect.Array:
 			length := target.Len()
 			for i := 0; i < length; i++ {
-				n := decodeValue(target.Index(i).Addr().Interface(), buf, f)
+				n := decodeValue(target.Index(i), buf, f)
 				buf = buf[n:]
 			}
 
 		default:
-			n := decodeValue(target.Addr().Interface(), buf, f)
+			n := decodeValue(target, buf, f)
 			buf = buf[n:]
 		}
 	}
@@ -333,12 +337,12 @@ func (mp *dialectMessage) encode(msg Message, isFrameV2 bool) ([]byte, error) {
 		case reflect.Array:
 			length := target.Len()
 			for i := 0; i < length; i++ {
-				n := encodeValue(buf, target.Index(i).Addr().Interface(), f)
+				n := encodeValue(buf, target.Index(i), f)
 				buf = buf[n:]
 			}
 
 		default:
-			n := encodeValue(buf, target.Addr().Interface(), f)
+			n := encodeValue(buf, target, f)
 			buf = buf[n:]
 		}
 	}
@@ -357,27 +361,27 @@ func (mp *dialectMessage) encode(msg Message, isFrameV2 bool) ([]byte, error) {
 	return buf, nil
 }
 
-func decodeValue(target interface{}, buf []byte, f *dialectMessageField) int {
+func decodeValue(target reflect.Value, buf []byte, f *dialectMessageField) int {
 	if f.isEnum == true {
 		switch f.ftype {
 		case typeUint8:
-			reflect.ValueOf(target).Elem().SetInt(int64(buf[0]))
+			target.SetInt(int64(buf[0]))
 			return 1
 
 		case typeUint16:
-			reflect.ValueOf(target).Elem().SetInt(int64(binary.LittleEndian.Uint16(buf)))
+			target.SetInt(int64(binary.LittleEndian.Uint16(buf)))
 			return 2
 
 		case typeUint32:
-			reflect.ValueOf(target).Elem().SetInt(int64(binary.LittleEndian.Uint32(buf)))
+			target.SetInt(int64(binary.LittleEndian.Uint32(buf)))
 			return 4
 
 		case typeInt32:
-			reflect.ValueOf(target).Elem().SetInt(int64(binary.LittleEndian.Uint32(buf)))
+			target.SetInt(int64(binary.LittleEndian.Uint32(buf)))
 			return 4
 
 		case typeUint64:
-			reflect.ValueOf(target).Elem().SetInt(int64(binary.LittleEndian.Uint64(buf)))
+			target.SetInt(int64(binary.LittleEndian.Uint64(buf)))
 			return 8
 
 		default:
@@ -385,7 +389,7 @@ func decodeValue(target interface{}, buf []byte, f *dialectMessageField) int {
 		}
 	}
 
-	switch tt := target.(type) {
+	switch tt := target.Addr().Interface().(type) {
 	case *string:
 		// find nil character or string end
 		end := 0
@@ -440,27 +444,27 @@ func decodeValue(target interface{}, buf []byte, f *dialectMessageField) int {
 	}
 }
 
-func encodeValue(buf []byte, target interface{}, f *dialectMessageField) int {
+func encodeValue(buf []byte, target reflect.Value, f *dialectMessageField) int {
 	if f.isEnum == true {
 		switch f.ftype {
 		case typeUint8:
-			buf[0] = byte(reflect.ValueOf(target).Elem().Int())
+			buf[0] = byte(target.Int())
 			return 1
 
 		case typeUint16:
-			binary.LittleEndian.PutUint16(buf, uint16(reflect.ValueOf(target).Elem().Int()))
+			binary.LittleEndian.PutUint16(buf, uint16(target.Int()))
 			return 2
 
 		case typeUint32:
-			binary.LittleEndian.PutUint32(buf, uint32(reflect.ValueOf(target).Elem().Int()))
+			binary.LittleEndian.PutUint32(buf, uint32(target.Int()))
 			return 4
 
 		case typeInt32:
-			binary.LittleEndian.PutUint32(buf, uint32(reflect.ValueOf(target).Elem().Int()))
+			binary.LittleEndian.PutUint32(buf, uint32(target.Int()))
 			return 4
 
 		case typeUint64:
-			binary.LittleEndian.PutUint64(buf, uint64(reflect.ValueOf(target).Elem().Int()))
+			binary.LittleEndian.PutUint64(buf, uint64(target.Int()))
 			return 8
 
 		default:
@@ -468,7 +472,7 @@ func encodeValue(buf []byte, target interface{}, f *dialectMessageField) int {
 		}
 	}
 
-	switch tt := target.(type) {
+	switch tt := target.Addr().Interface().(type) {
 	case *string:
 		copy(buf[:f.arrayLength], *tt)
 		return int(f.arrayLength) // return length including zeros

@@ -39,7 +39,7 @@ func main() {
 		Message: &ardupilotmega.MessageParamValue{
 			ParamId:    "test_parameter",
 			ParamValue: 123456,
-			ParamType:  uint8(ardupilotmega.MAV_PARAM_TYPE_UINT32),
+			ParamType:  ardupilotmega.MAV_PARAM_TYPE_UINT32,
 		},
 	}
 	err = parser.Write(frame, false)

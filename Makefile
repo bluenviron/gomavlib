@@ -58,7 +58,7 @@ gen-dialects-nodocker:
 		| grep -o '"name": ".\+\.xml"' | sed 's/"name": "\(.\+\)\.xml"/\1/'))
 	@for DIALECT in $(DIALECTS); do \
 		dialgen --output=dialects/$$DIALECT/dialect.go \
-			--preamble="Generated from rev https://github.com/mavlink/mavlink/tree/$(COMMIT)" \
+			--preamble="Generated from revision https://github.com/mavlink/mavlink/tree/$(COMMIT)" \
 			https://raw.githubusercontent.com/mavlink/mavlink/$(COMMIT)/message_definitions/v1.0/$$DIALECT.xml \
 			|| exit 1; \
 	done

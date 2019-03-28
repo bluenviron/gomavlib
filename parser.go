@@ -64,7 +64,7 @@ type Parser struct {
 }
 
 // NewParser allocates a Parser, a low level frame encoder and decoder.
-// See Parser for the options.
+// See ParserConf for the options.
 func NewParser(conf ParserConf) (*Parser, error) {
 	if conf.Reader == nil {
 		return nil, fmt.Errorf("reader not provided")

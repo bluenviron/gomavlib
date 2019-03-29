@@ -36,7 +36,7 @@ func main() {
 				msg.ParamId == "test_parameter" {
 
 				// reply to sender (and no one else) by providing requested parameter
-				node.WriteMessageTo(frm.Channel(), &ardupilotmega.MessageParamValue{
+				node.WriteMessageTo(frm.Channel, &ardupilotmega.MessageParamValue{
 					ParamId:    "test_parameter",
 					ParamValue: 123456,
 					ParamType:  ardupilotmega.MAV_PARAM_TYPE_UINT32,

@@ -5,13 +5,27 @@ type Event interface {
 	isEvent()
 }
 
+// EventChannelOpen is the event fired when a channel is opened
+type EventChannelOpen struct {
+	Channel *Channel
+}
+
+func (*EventChannelOpen) isEvent() {}
+
+// EventChannelClose is the event fired when a channel is closed
+type EventChannelClose struct {
+	Channel *Channel
+}
+
+func (*EventChannelClose) isEvent() {}
+
 // EventFrame is the event fired when a frame is received
 type EventFrame struct {
 	// the frame
 	Frame Frame
 
-	// the node which sent the frame
-	Node RemoteNode
+	// the channel from which the frame was received
+	Channel *Channel
 }
 
 func (*EventFrame) isEvent() {}
@@ -31,11 +45,6 @@ func (res *EventFrame) Message() Message {
 	return res.Frame.GetMessage()
 }
 
-// Channel returns the channel from which the frame was received
-func (res *EventFrame) Channel() *Channel {
-	return res.Node.Channel
-}
-
 // EventParseError is the event fired when a parse error occurs
 type EventParseError struct {
 	// the error
@@ -46,31 +55,3 @@ type EventParseError struct {
 }
 
 func (*EventParseError) isEvent() {}
-
-// EventChannelOpen is the event fired when a channel is opened
-type EventChannelOpen struct {
-	Channel *Channel
-}
-
-func (*EventChannelOpen) isEvent() {}
-
-// EventChannelClose is the event fired when a channel is closed
-type EventChannelClose struct {
-	Channel *Channel
-}
-
-func (*EventChannelClose) isEvent() {}
-
-// EventNodeAppear is the event fired when a new node is detected
-type EventNodeAppear struct {
-	Node RemoteNode
-}
-
-func (*EventNodeAppear) isEvent() {}
-
-// EventNodeDisappear is the event fired when a node disappears (i.e. times out)
-type EventNodeDisappear struct {
-	Node RemoteNode
-}
-
-func (*EventNodeDisappear) isEvent() {}

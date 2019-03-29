@@ -39,12 +39,6 @@ func main() {
 
 		case *gomavlib.EventChannelClose:
 			fmt.Printf("channel closed: %v\n", ee)
-
-		case *gomavlib.EventNodeAppear:
-			fmt.Printf("node appeared: %v\n", ee)
-
-		case *gomavlib.EventNodeDisappear:
-			fmt.Printf("node disappeared: %v\n", ee)
 		}
 	}
 }

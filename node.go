@@ -107,17 +107,14 @@ type NodeConf struct {
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
 // See NodeConf for the options.
 type Node struct {
-	conf            NodeConf
-	wg              sync.WaitGroup
-	chanAccepters   map[endpointChannelAccepter]struct{}
-	writeDone       chan struct{}
-	eventChan       chan Event
-	channelsMutex   sync.Mutex
-	channels        map[*Channel]struct{}
-	remoteNodeMutex sync.Mutex
-	remoteNodes     map[RemoteNode]time.Time
-	nodeHeartbeat   *nodeHeartbeat
-	nodeChecker     *nodeChecker
+	conf          NodeConf
+	wg            sync.WaitGroup
+	chanAccepters map[endpointChannelAccepter]struct{}
+	writeDone     chan struct{}
+	eventChan     chan Event
+	channelsMutex sync.Mutex
+	channels      map[*Channel]struct{}
+	nodeHeartbeat *nodeHeartbeat
 }
 
 // NewNode allocates a Node. See NodeConf for the options.
@@ -144,7 +141,6 @@ func NewNode(conf NodeConf) (*Node, error) {
 		writeDone:     make(chan struct{}),
 		eventChan:     make(chan Event),
 		channels:      make(map[*Channel]struct{}),
-		remoteNodes:   make(map[RemoteNode]time.Time),
 	}
 
 	for _, tconf := range conf.Endpoints {
@@ -165,8 +161,6 @@ func NewNode(conf NodeConf) (*Node, error) {
 		}
 	}
 
-	n.nodeChecker = newNodeChecker(n)
-
 	if n.conf.HeartbeatDisable == false {
 		n.nodeHeartbeat = newNodeHeartbeat(n)
 	}
@@ -177,10 +171,6 @@ func NewNode(conf NodeConf) (*Node, error) {
 func (n *Node) Close() {
 	if n.nodeHeartbeat != nil {
 		n.nodeHeartbeat.close()
-	}
-
-	if n.nodeChecker != nil {
-		n.nodeChecker.close()
 	}
 
 	for mc := range n.chanAccepters {
@@ -262,19 +252,6 @@ func (n *Node) createChannel(e Endpoint, label string, rwc io.ReadWriteCloser) {
 			delete(n.channels, channel)
 			n.channelsMutex.Unlock()
 			close(channel.writeChan)
-
-			// call EventNodeDisappear
-			func() {
-				n.remoteNodeMutex.Lock()
-				defer n.remoteNodeMutex.Unlock()
-				for remNode := range n.remoteNodes {
-					if remNode.Channel == channel {
-						delete(n.remoteNodes, remNode)
-						n.eventChan <- &EventNodeDisappear{remNode}
-					}
-				}
-			}()
-
 			n.eventChan <- &EventChannelClose{channel}
 		}()
 
@@ -295,28 +272,7 @@ func (n *Node) createChannel(e Endpoint, label string, rwc io.ReadWriteCloser) {
 				return
 			}
 
-			nodeId := RemoteNode{
-				Channel:     channel,
-				SystemId:    frame.GetSystemId(),
-				ComponentId: frame.GetComponentId(),
-			}
-
-			// call EventNodeAppear
-			isNodeNew := func() bool {
-				n.remoteNodeMutex.Lock()
-				defer n.remoteNodeMutex.Unlock()
-				if _, ok := n.remoteNodes[nodeId]; !ok {
-					n.remoteNodes[nodeId] = time.Now()
-					return true
-				}
-				n.remoteNodes[nodeId] = time.Now()
-				return false
-			}()
-			if isNodeNew == true {
-				n.eventChan <- &EventNodeAppear{nodeId}
-			}
-
-			n.eventChan <- &EventFrame{frame, nodeId}
+			n.eventChan <- &EventFrame{frame, channel}
 		}
 	}()
 
@@ -347,8 +303,6 @@ func (n *Node) createChannel(e Endpoint, label string, rwc io.ReadWriteCloser) {
 //   *EventChannelOpen
 //   *EventChannelClose
 //   *EventFrame
-//   *EventNodeAppear
-//   *EventNodeDisappear
 //   *EventParseError
 // See individual events for meaning and content.
 func (n *Node) Events() chan Event {

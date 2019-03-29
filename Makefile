@@ -17,6 +17,12 @@ help:
 
 ARGS := $(wordlist 2, $(words $(MAKECMDGOALS)), $(MAKECMDGOALS))
 
+blank :=
+define NL
+
+$(blank)
+endef
+
 mod-tidy:
 	docker run --rm -it -v $(PWD):/src amd64/golang:1.11 \
 		sh -c "cd /src && go get -m ./... && go mod tidy"
@@ -33,10 +39,16 @@ test:
 		WORKDIR /src \n\
 		COPY go.mod go.sum ./ \n\
 		RUN go mod download \n\
-		COPY *.go ./ \n\
-		RUN go test -v . \n\
+		COPY Makefile *.go ./ \n\
 		COPY dialgen ./dialgen \n\
-		RUN go install ./dialgen" | docker build . -f - -t gomavlib-test
+		COPY dialects ./dialects \n\
+		COPY example ./example" | docker build . -f - -t gomavlib-test
+	docker run --rm -it gomavlib-test make test-nodocker
+
+test-nodocker:
+	go test -v .
+	go build -o /dev/null ./dialgen
+	$(foreach f, $(wildcard example/*), go build -o /dev/null $(f)$(NL))
 
 gen-dialects:
 	echo "FROM amd64/golang:1.11-stretch \n\

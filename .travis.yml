@@ -11,5 +11,4 @@ before_install:
 - go mod download
 
 script:
-- go test -v .
-- go install ./dialgen
+- make test-nodocker

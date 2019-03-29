@@ -18,10 +18,11 @@ type EndpointSerial struct {
 }
 
 type endpointSerial struct {
+	conf EndpointSerial
 	io.ReadWriteCloser
 }
 
-func (conf EndpointSerial) init() (endpoint, error) {
+func (conf EndpointSerial) init() (Endpoint, error) {
 	matches := reSerial.FindStringSubmatch(conf.Address)
 	if matches == nil {
 		return nil, fmt.Errorf("invalid address")
@@ -39,9 +40,16 @@ func (conf EndpointSerial) init() (endpoint, error) {
 	}
 
 	t := &endpointSerial{
+		conf:            conf,
 		ReadWriteCloser: port,
 	}
 	return t, nil
+}
+
+func (t *endpointSerial) isEndpoint() {}
+
+func (t *endpointSerial) Conf() interface{} {
+	return t.conf
 }
 
 func (t *endpointSerial) Label() string {

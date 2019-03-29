@@ -48,7 +48,7 @@ type endpointUdpBroadcast struct {
 	terminate     chan struct{}
 }
 
-func (conf EndpointUdpBroadcast) init() (endpoint, error) {
+func (conf EndpointUdpBroadcast) init() (Endpoint, error) {
 	ipString, port, err := net.SplitHostPort(conf.BroadcastAddress)
 	if err != nil {
 		return nil, fmt.Errorf("invalid broadcast address")
@@ -90,6 +90,12 @@ func (conf EndpointUdpBroadcast) init() (endpoint, error) {
 		terminate:     make(chan struct{}, 1),
 	}
 	return t, nil
+}
+
+func (t *endpointUdpBroadcast) isEndpoint() {}
+
+func (t *endpointUdpBroadcast) Conf() interface{} {
+	return t.conf
 }
 
 func (t *endpointUdpBroadcast) Label() string {

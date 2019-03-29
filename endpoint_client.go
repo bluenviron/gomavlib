@@ -14,6 +14,9 @@ type endpointClientConf interface {
 }
 
 // EndpointTcpClient sets up a endpoint that works through a TCP client.
+// TCP is fit for routing frames through the internet, but is not the most
+// appropriate way for transferring frames from a UAV to a GCS, since it does
+// not allow frame losses.
 type EndpointTcpClient struct {
 	// domain name or IP of the server to connect to, example: 1.2.3.4:5600
 	Address string
@@ -27,7 +30,7 @@ func (conf EndpointTcpClient) getAddress() string {
 	return conf.Address
 }
 
-func (conf EndpointTcpClient) init() (endpoint, error) {
+func (conf EndpointTcpClient) init() (Endpoint, error) {
 	return initEndpointClient(conf)
 }
 
@@ -45,7 +48,7 @@ func (conf EndpointUdpClient) getAddress() string {
 	return conf.Address
 }
 
-func (conf EndpointUdpClient) init() (endpoint, error) {
+func (conf EndpointUdpClient) init() (Endpoint, error) {
 	return initEndpointClient(conf)
 }
 
@@ -58,7 +61,7 @@ type endpointClient struct {
 	writer      io.Writer
 }
 
-func initEndpointClient(conf endpointClientConf) (endpoint, error) {
+func initEndpointClient(conf endpointClientConf) (Endpoint, error) {
 	_, _, err := net.SplitHostPort(conf.getAddress())
 	if err != nil {
 		return nil, fmt.Errorf("invalid address")
@@ -75,6 +78,12 @@ func initEndpointClient(conf endpointClientConf) (endpoint, error) {
 	// in this way we connect immediately, not after the first Read()
 	go t.do()
 	return t, nil
+}
+
+func (t *endpointClient) isEndpoint() {}
+
+func (t *endpointClient) Conf() interface{} {
+	return t.conf
 }
 
 func (t *endpointClient) Label() string {

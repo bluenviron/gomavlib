@@ -43,6 +43,7 @@ package gomavlib
 
 import (
 	"fmt"
+	"io"
 	"sync"
 	"time"
 )
@@ -71,9 +72,8 @@ const (
 
 // NodeConf allows to configure a Node.
 type NodeConf struct {
-	// contains the endpoint with which this node will
-	// communicate. Each endpoint contains zero or more channels, which contains
-	// zero or more remote nodes.
+	// contains the endpoints with which this node will
+	// communicate. Each endpoint contains zero or more channels
 	Endpoints []EndpointConf
 
 	// contains the messages which will be automatically decoded and
@@ -158,7 +158,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 			n.startChannelAccepter(tm)
 
 		} else if ts, ok := tp.(endpointChannelSingle); ok {
-			n.startChannel(ts)
+			n.createChannel(ts, ts.Label(), ts)
 
 		} else {
 			panic(fmt.Errorf("endpoint %T does not implement any interface", tp))
@@ -217,7 +217,7 @@ func (n *Node) startChannelAccepter(tm endpointChannelAccepter) {
 		defer n.wg.Done()
 
 		for {
-			ch, err := tm.Accept()
+			label, rwc, err := tm.Accept()
 			if err != nil {
 				if err != errorTerminated {
 					panic("errorTerminated is the only error allowed here")
@@ -225,18 +225,19 @@ func (n *Node) startChannelAccepter(tm endpointChannelAccepter) {
 				break
 			}
 
-			n.startChannel(ch)
+			n.createChannel(tm, label, rwc)
 		}
 	}()
 }
 
-func (n *Node) startChannel(ch endpointChannelSingle) {
+func (n *Node) createChannel(e Endpoint, label string, rwc io.ReadWriteCloser) {
 	n.channelsMutex.Lock()
 	defer n.channelsMutex.Unlock()
 
 	channel := &Channel{
-		label:     ch.Label(),
-		rwc:       ch,
+		Endpoint:  e,
+		label:     label,
+		rwc:       rwc,
 		writeChan: make(chan interface{}),
 	}
 	n.channels[channel] = struct{}{}

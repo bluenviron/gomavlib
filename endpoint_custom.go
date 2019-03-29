@@ -12,14 +12,22 @@ type EndpointCustom struct {
 }
 
 type endpointCustom struct {
+	conf EndpointCustom
 	io.ReadWriteCloser
 }
 
-func (conf EndpointCustom) init() (endpoint, error) {
+func (conf EndpointCustom) init() (Endpoint, error) {
 	t := &endpointCustom{
-		conf.ReadWriteCloser,
+		conf:            conf,
+		ReadWriteCloser: conf.ReadWriteCloser,
 	}
 	return t, nil
+}
+
+func (t *endpointCustom) isEndpoint() {}
+
+func (t *endpointCustom) Conf() interface{} {
+	return t.conf
 }
 
 func (t *endpointCustom) Label() string {

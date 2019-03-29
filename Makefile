@@ -70,12 +70,9 @@ gen-dialects-nodocker:
 		| grep -o '"name": ".\+\.xml"' | sed 's/"name": "\(.\+\)\.xml"/\1/'))
 	rm -rf dialects/*
 	echo "package dialects" >> dialects/dialects.go
-	@for DIALECT in $(DIALECTS); do \
-		dialgen --output=dialects/$$DIALECT/dialect.go \
-			--preamble="Generated from revision https://github.com/mavlink/mavlink/tree/$(COMMIT)" \
-			https://raw.githubusercontent.com/mavlink/mavlink/$(COMMIT)/message_definitions/v1.0/$$DIALECT.xml \
-			|| exit 1; \
-	done
+	$(foreach d, $(DIALECTS), dialgen -q --output=dialects/$(d)/dialect.go \
+		--preamble="Generated from revision https://github.com/mavlink/mavlink/tree/$(COMMIT)" \
+		https://raw.githubusercontent.com/mavlink/mavlink/$(COMMIT)/message_definitions/v1.0/$(d).xml$(NL))
 
 run-example:
 	$(eval EXAMPLE := $(word 1, $(ARGS)))

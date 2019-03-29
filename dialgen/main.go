@@ -148,24 +148,25 @@ func (*Message{{ .Name }}) GetId() uint32 {
 func main() {
 	kingpin.CommandLine.Help = "Generate a Mavlink dialect library from a definition file.\n" +
 		"Example: dialgen \\\n--output=dialect.go \\\nhttps://raw.githubusercontent.com/mavlink/mavlink/master/message_definitions/v1.0/common.xml"
+
+	quiet := kingpin.Flag("quiet", "suppress info messages during execution.").Short('q').Bool()
 	outfile := kingpin.Flag("output", "output file").Required().String()
 	preamble := kingpin.Flag("preamble", "preamble comment").String()
 	mainDefAddr := kingpin.Arg("xml", "a path or url pointing to a Mavlink dialect definition in XML format").Required().String()
+
 	kingpin.Parse()
 
-	err := do(*outfile, *preamble, *mainDefAddr)
+	err := do(*quiet, *outfile, *preamble, *mainDefAddr)
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
 		os.Exit(1)
 	}
 }
 
-func do(outfile string, preamble string, mainDefAddr string) error {
+func do(quiet bool, outfile string, preamble string, mainDefAddr string) error {
 	if strings.HasSuffix(outfile, ".go") == false {
 		return fmt.Errorf("output file must end with .go")
 	}
-
-	fmt.Printf("DIALECT %s\n", mainDefAddr)
 
 	version := ""
 	defsProcessed := make(map[string]struct{})
@@ -175,7 +176,7 @@ func do(outfile string, preamble string, mainDefAddr string) error {
 	}()
 
 	// parse all definitions recursively
-	outDefs, err := definitionProcess(&version, defsProcessed, isRemote, mainDefAddr)
+	outDefs, err := definitionProcess(quiet, &version, defsProcessed, isRemote, mainDefAddr)
 	if err != nil {
 		return err
 	}
@@ -239,14 +240,16 @@ func do(outfile string, preamble string, mainDefAddr string) error {
 	})
 }
 
-func definitionProcess(version *string, defsProcessed map[string]struct{}, isRemote bool, defAddr string) ([]*outDefinition, error) {
+func definitionProcess(quiet bool, version *string, defsProcessed map[string]struct{}, isRemote bool, defAddr string) ([]*outDefinition, error) {
 	// skip already processed
 	if _, ok := defsProcessed[defAddr]; ok {
 		return nil, nil
 	}
 	defsProcessed[defAddr] = struct{}{}
 
-	fmt.Printf("definition %s\n", defAddr)
+	if quiet == false {
+		fmt.Printf("definition %s\n", defAddr)
+	}
 
 	content, err := definitionGet(isRemote, defAddr)
 	if err != nil {
@@ -276,7 +279,7 @@ func definitionProcess(version *string, defsProcessed map[string]struct{}, isRem
 		if isRemote == true {
 			inc = addrPath + inc
 		}
-		subDefs, err := definitionProcess(version, defsProcessed, isRemote, inc)
+		subDefs, err := definitionProcess(quiet, version, defsProcessed, isRemote, inc)
 		if err != nil {
 			return nil, err
 		}

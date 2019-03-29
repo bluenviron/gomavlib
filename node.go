@@ -49,9 +49,6 @@ import (
 )
 
 const (
-	nodeCheckPeriod    = 10 * time.Second
-	nodeDisappearAfter = 30 * time.Second
-
 	// constant for ip-based endpoints
 	netBufferSize      = 512 // frames cannot go beyond len(header) + 255 + len(check) + len(sig)
 	netConnectTimeout  = 10 * time.Second

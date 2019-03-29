@@ -266,10 +266,10 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 			func() {
 				n.remoteNodeMutex.Lock()
 				defer n.remoteNodeMutex.Unlock()
-				for i := range n.remoteNodes {
-					if i.Channel == channel {
-						delete(n.remoteNodes, i)
-						n.eventChan <- &EventNodeDisappear{i}
+				for remNode := range n.remoteNodes {
+					if remNode.Channel == channel {
+						delete(n.remoteNodes, remNode)
+						n.eventChan <- &EventNodeDisappear{remNode}
 					}
 				}
 			}()

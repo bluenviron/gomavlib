@@ -12,17 +12,9 @@ type EventFrame struct {
 
 	// the node which sent the frame
 	Node RemoteNode
-
-	// the channel from which the frame was received
-	Channel *Channel
 }
 
 func (*EventFrame) isEvent() {}
-
-// Message returns the message inside the frame.
-func (res *EventFrame) Message() Message {
-	return res.Frame.GetMessage()
-}
 
 // SystemId returns the frame system id.
 func (res *EventFrame) SystemId() byte {
@@ -32,6 +24,16 @@ func (res *EventFrame) SystemId() byte {
 // ComponentId returns the frame component id.
 func (res *EventFrame) ComponentId() byte {
 	return res.Frame.GetComponentId()
+}
+
+// Message returns the message inside the frame.
+func (res *EventFrame) Message() Message {
+	return res.Frame.GetMessage()
+}
+
+// Channel returns the channel from which the frame was received
+func (res *EventFrame) Channel() *Channel {
+	return res.Node.Channel
 }
 
 // EventParseError is the event fired when a parse error occurs

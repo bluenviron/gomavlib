@@ -315,7 +315,7 @@ func (n *Node) startChannel(ch endpointChannelSingle) {
 				n.eventChan <- &EventNodeAppear{nodeId}
 			}
 
-			n.eventChan <- &EventFrame{frame, nodeId, channel}
+			n.eventChan <- &EventFrame{frame, nodeId}
 		}
 	}()
 

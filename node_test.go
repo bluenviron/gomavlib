@@ -376,7 +376,7 @@ func TestNodeRouting(t *testing.T) {
 		for evt := range node2.Events() {
 			switch e := evt.(type) {
 			case *EventFrame:
-				node2.WriteFrameExcept(e.Channel, e.Frame)
+				node2.WriteFrameExcept(e.Channel(), e.Frame)
 				return
 			}
 		}

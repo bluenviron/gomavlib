@@ -4,18 +4,12 @@ help:
 	@echo ""
 	@echo "available actions:"
 	@echo ""
-	@echo "  mod-tidy            run go mod tidy"
-	@echo "  format              format source files"
-	@echo "  test                run all available tests"
-	@echo "  gen-dialects        generate dialects"
-	@echo "  run-example [name]  run example with given name"
+	@echo "  mod-tidy              run go mod tidy"
+	@echo "  format                format source files"
+	@echo "  test                  run all available tests"
+	@echo "  gen-dialects          generate dialects"
+	@echo "  run-example E=[name]  run example with given name"
 	@echo ""
-
-# do not treat arguments as targets
-%:
-	@[ "$(word 1, $(MAKECMDGOALS))" != "$@" ] || { echo "unrecognized command."; exit 1; }
-
-ARGS := $(wordlist 2, $(words $(MAKECMDGOALS)), $(MAKECMDGOALS))
 
 blank :=
 define NL
@@ -75,10 +69,9 @@ gen-dialects-nodocker:
 		https://raw.githubusercontent.com/mavlink/mavlink/$(COMMIT)/message_definitions/v1.0/$(d).xml$(NL))
 
 run-example:
-	$(eval EXAMPLE := $(word 1, $(ARGS)))
 	@docker run --rm -it \
 		--privileged \
 		--network=host \
 		-v $(PWD):/src \
 		amd64/golang:1.11-stretch \
-		sh -c "cd /src && go run example/$(EXAMPLE).go"
+		sh -c "cd /src && go run example/$(E).go"

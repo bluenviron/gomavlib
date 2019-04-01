@@ -78,7 +78,7 @@ type NodeConf struct {
 	Dialect *Dialect
 
 	// (optional) the secret key used to validate incoming frames.
-	// Non signed frames are discarded, as well as frames with a version < v2.
+	// Non signed frames are discarded, as well as frames with a version < 2.0.
 	InSignatureKey *FrameSignatureKey
 
 	// Mavlink version used to encode frames. See Version
@@ -90,7 +90,7 @@ type NodeConf struct {
 	// (optional) the component id, added to every outgoing frame, defaults to 1.
 	OutComponentId byte
 	// (optional) the secret key used to sign outgoing frames.
-	// This feature requires Mavlink v2.
+	// This feature requires a version >= 2.0.
 	OutSignatureKey *FrameSignatureKey
 
 	// (optional) disables the periodic sending of heartbeats to
@@ -102,7 +102,6 @@ type NodeConf struct {
 }
 
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
-// See NodeConf for the options.
 type Node struct {
 	conf          NodeConf
 	wg            sync.WaitGroup

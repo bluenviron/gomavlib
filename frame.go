@@ -93,7 +93,7 @@ func (f *FrameV2) GetChecksum() uint16 {
 	return f.Checksum
 }
 
-// IsSigned checks wherever the frame is signed.
+// IsSigned checks whether the frame contains a signature. It does not validate the signature.
 func (f *FrameV2) IsSigned() bool {
 	return (f.IncompatibilityFlag & flagSigned) != 0
 }

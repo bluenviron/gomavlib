@@ -18,7 +18,8 @@ $(blank)
 endef
 
 mod-tidy:
-	docker run --rm -it -v $(PWD):/src amd64/golang:1.11 \
+	docker run --rm -it -v $(PWD):/src \
+		amd64/golang:1.11 \
 		sh -c "cd /src && go get -m ./... && go mod tidy"
 
 format:

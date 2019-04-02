@@ -90,6 +90,7 @@ var tpl = template.Must(template.New("").Parse(
 {{- if .Preamble }}
 //
 // {{ .Preamble }}
+//
 {{- end }}
 package {{ .Name }}
 

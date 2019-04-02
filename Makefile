@@ -8,7 +8,7 @@ help:
 	@echo "  format                format source files"
 	@echo "  test                  run all available tests"
 	@echo "  gen-dialects          generate dialects"
-	@echo "  run-example E=[name]  run example with given name"
+	@echo "  run-example E=[name]  run example by name"
 	@echo ""
 
 blank :=

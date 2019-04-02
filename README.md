@@ -7,13 +7,13 @@
 
 gomavlib is a library that implements Mavlink 2.0 and 1.0 in the Go programming language. It can power UGVs, UAVs, ground stations, monitoring systems or routers acting in a Mavlink network.
 
-Mavlink is a lighweight and transport-independent protocol that is mostly used to communicate with unmanned ground vehicles (UGV) and unmanned aerial vehicles (UAV, drones, quadcopters, multirotors). It is supported by both of the most common open-source flight controllers (Ardupilot and PX4).
+Mavlink is a lighweight and transport-independent protocol that is mostly used to communicate with unmanned ground vehicles (UGV) and unmanned aerial vehicles (UAV, drones, quadcopters, multirotors). It is supported by the most common open-source flight controllers (Ardupilot and PX4).
 
 This library powers the [**mavp2p**](https://github.com/gswly/mavp2p) router.
 
 ## Features
 
-* Decode and encode Mavlink v2.0 and v1.0. Supports checksums, empty-byte truncation (v2.0), signatures (v2.0), message extensions (v2.0)
+* Decodes and encodes Mavlink v2.0 and v1.0. Supports checksums, empty-byte truncation (v2.0), signatures (v2.0), message extensions (v2.0)
 * Dialect is optional, the library can work a standard dialect, a custom dialect or no dialect at all. Standard dialects are provided in directory `dialects/`, with no need for generation. A Dialect generator is provided anyway.
 * Provides a high-level node with ability to communicate with multiple endpoints in parallel:
   * serial
@@ -22,7 +22,7 @@ This library powers the [**mavp2p**](https://github.com/gswly/mavp2p) router.
   * custom reader/writer
 * Provides a low-level parser with ability to decode/encode frames from/to a reader/writer
 * UDP connections are tracked and removed when inactive
-* Support both domain names and IPs
+* Supports both domain names and IPs
 * Examples provided for every feature
 * Comprehensive test suite
 

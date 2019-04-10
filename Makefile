@@ -64,7 +64,7 @@ gen-dialects-nodocker:
 		| grep -o '"name": ".\+\.xml"' | sed 's/"name": "\(.\+\)\.xml"/\1/'))
 	rm -rf dialects/*
 	echo "package dialects" > dialects/dialects.go
-	$(foreach d, $(DIALECTS), go run ./dialgen -q --output=dialects/$(d)/dialect.go \
+	$(foreach d, $(DIALECTS), CGO_ENABLED=0 go run ./dialgen -q --output=dialects/$(d)/dialect.go \
 		--preamble="Generated from revision https://github.com/mavlink/mavlink/tree/$(COMMIT)" \
 		https://raw.githubusercontent.com/mavlink/mavlink/$(COMMIT)/message_definitions/v1.0/$(d).xml$(NL))
 	find ./dialects -type f -name '*.go' | xargs gofmt -l -w -s

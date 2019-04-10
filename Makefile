@@ -51,8 +51,7 @@ gen-dialects:
 		COPY go.mod go.sum ./ \n\
 		RUN go mod download \n\
 		COPY *.go ./ \n\
-		COPY dialgen ./dialgen \n\
-		RUN go install ./dialgen" | docker build -q . -f - -t gomavlib-gen-dialects
+		COPY dialgen ./dialgen" | docker build -q . -f - -t gomavlib-gen-dialects
 	docker run --rm -it \
 		-v $(PWD):/src \
 		gomavlib-gen-dialects \
@@ -64,10 +63,11 @@ gen-dialects-nodocker:
 	$(eval DIALECTS = $(shell curl -s -L https://api.github.com/repos/mavlink/mavlink/contents/message_definitions/v1.0?ref=$(COMMIT) \
 		| grep -o '"name": ".\+\.xml"' | sed 's/"name": "\(.\+\)\.xml"/\1/'))
 	rm -rf dialects/*
-	echo "package dialects" >> dialects/dialects.go
-	$(foreach d, $(DIALECTS), dialgen -q --output=dialects/$(d)/dialect.go \
+	echo "package dialects" > dialects/dialects.go
+	$(foreach d, $(DIALECTS), go run ./dialgen -q --output=dialects/$(d)/dialect.go \
 		--preamble="Generated from revision https://github.com/mavlink/mavlink/tree/$(COMMIT)" \
 		https://raw.githubusercontent.com/mavlink/mavlink/$(COMMIT)/message_definitions/v1.0/$(d).xml$(NL))
+	find ./dialects -type f -name '*.go' | xargs gofmt -l -w -s
 
 run-example:
 	@docker run --rm -it \

@@ -47,7 +47,7 @@ func (h *nodeHeartbeat) do() {
 		select {
 		case <-ticker.C:
 			msg := reflect.New(h.heartbeatMp.elemType)
-			msg.Elem().FieldByName("Type").SetInt(6)      // MAV_TYPE_GCS
+			msg.Elem().FieldByName("Type").SetInt(int64(h.n.conf.HeartbeatSystemType))
 			msg.Elem().FieldByName("Autopilot").SetInt(0) // MAV_AUTOPILOT_GENERIC
 			msg.Elem().FieldByName("BaseMode").SetInt(0)
 			msg.Elem().FieldByName("CustomMode").SetUint(0)

@@ -69,11 +69,11 @@ const (
 
 // NodeConf allows to configure a Node.
 type NodeConf struct {
-	// contains the endpoints with which this node will
+	// the endpoints with which this node will
 	// communicate. Each endpoint contains zero or more channels
 	Endpoints []EndpointConf
 
-	// contains the messages which will be automatically decoded and
+	// the messages which will be automatically decoded and
 	// encoded. If not provided, messages are decoded in the MessageRaw struct.
 	Dialect *Dialect
 
@@ -93,12 +93,13 @@ type NodeConf struct {
 	// This feature requires a version >= 2.0.
 	OutSignatureKey *FrameSignatureKey
 
-	// (optional) disables the periodic sending of heartbeats to
-	// open channels.
+	// (optional) disables the periodic sending of heartbeats to open channels.
 	HeartbeatDisable bool
-	// (optional) set the period between heartbeats.
-	// It defaults to 5 seconds.
+	// (optional) the period between heartbeats. It defaults to 5 seconds.
 	HeartbeatPeriod time.Duration
+	// (optional) the system type advertised by heartbeats.
+	// It defaults to MAV_TYPE_GCS
+	HeartbeatSystemType int
 }
 
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
@@ -129,6 +130,9 @@ func NewNode(conf NodeConf) (*Node, error) {
 	}
 	if conf.HeartbeatPeriod == 0 {
 		conf.HeartbeatPeriod = 5 * time.Second
+	}
+	if conf.HeartbeatSystemType == 0 {
+		conf.HeartbeatSystemType = 6 // MAV_TYPE_GCS
 	}
 
 	n := &Node{

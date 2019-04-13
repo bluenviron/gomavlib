@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// create a node which
-	// - communicates through an UDP endpoint in client mode
+	// - communicates with an UDP endpoint in client mode
 	// - understands ardupilotmega dialect
 	// - writes messages with given system id
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{

@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// create a node which
-	// - communicates through multiple endpoints
+	// - communicates with multiple endpoints
 	// - is dialect agnostic, does not attempt to decode messages (in a router it is preferable)
 	// - writes messages with given system id
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{

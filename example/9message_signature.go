@@ -13,7 +13,7 @@ func main() {
 	key := gomavlib.NewFrameSignatureKey([]byte("abcdef"))
 
 	// create a node which
-	// - communicates through a serial port.
+	// - communicates with a serial port.
 	// - understands ardupilotmega dialect
 	// - writes messages with given system id
 	// - validates incoming messages via InSignatureKey

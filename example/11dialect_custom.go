@@ -29,7 +29,7 @@ func main() {
 	}
 
 	// create a node which
-	// - communicates through a serial port
+	// - communicates with a serial port
 	// - understands our custom dialect
 	// - writes messages with given system id
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{

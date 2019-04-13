@@ -40,6 +40,12 @@ func (h *nodeHeartbeat) close() {
 func (h *nodeHeartbeat) do() {
 	defer func() { h.done <- struct{}{} }()
 
+	// take version from dialect if possible
+	mavlinkVersion := uint64(3)
+	if h.n.conf.Dialect != nil {
+		mavlinkVersion = uint64(h.n.conf.Dialect.version)
+	}
+
 	ticker := time.NewTicker(h.n.conf.HeartbeatPeriod)
 	defer ticker.Stop()
 
@@ -52,7 +58,7 @@ func (h *nodeHeartbeat) do() {
 			msg.Elem().FieldByName("BaseMode").SetInt(0)
 			msg.Elem().FieldByName("CustomMode").SetUint(0)
 			msg.Elem().FieldByName("SystemStatus").SetInt(4) // MAV_STATE_ACTIVE
-			msg.Elem().FieldByName("MavlinkVersion").SetUint(3)
+			msg.Elem().FieldByName("MavlinkVersion").SetUint(mavlinkVersion)
 			h.n.WriteMessageAll(msg.Interface().(Message))
 
 		case <-h.terminate:

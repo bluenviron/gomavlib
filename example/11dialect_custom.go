@@ -8,21 +8,21 @@ import (
 )
 
 // this is a custom message.
-// It must be prefixed with Message and implement the gomavlib.Message interface.
-type MessageMyCustomMessage struct {
+// It must be prefixed with "Message" and implement the gomavlib.Message interface.
+type MessageCustom struct {
 	Param1 uint8
 	Param2 uint8
 	Param3 uint32
 }
 
-func (*MessageMyCustomMessage) GetId() uint32 {
+func (*MessageCustom) GetId() uint32 {
 	return 304
 }
 
 func main() {
 	// create a custom dialect from messages
 	dialect, err := gomavlib.NewDialect([]gomavlib.Message{
-		&MessageMyCustomMessage{},
+		&MessageCustom{},
 	})
 	if err != nil {
 		panic(err)

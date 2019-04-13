@@ -85,12 +85,14 @@ func dialectMsgGoToDef(in string) string {
 // Dialect contains available messages and the configuration needed to encode and
 // decode them.
 type Dialect struct {
+	version  uint
 	messages map[uint32]*dialectMessage
 }
 
 // NewDialect allocates a Dialect.
-func NewDialect(messages []Message) (*Dialect, error) {
+func NewDialect(version uint, messages []Message) (*Dialect, error) {
 	d := &Dialect{
+		version:  version,
 		messages: make(map[uint32]*dialectMessage),
 	}
 
@@ -106,8 +108,8 @@ func NewDialect(messages []Message) (*Dialect, error) {
 }
 
 // MustDialect is like NewDialect but panics in case of error.
-func MustDialect(messages []Message) *Dialect {
-	d, err := NewDialect(messages)
+func MustDialect(version uint, messages []Message) *Dialect {
+	d, err := NewDialect(version, messages)
 	if err != nil {
 		panic(err)
 	}

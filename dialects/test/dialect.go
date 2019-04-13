@@ -8,14 +8,10 @@ import (
 	"github.com/gswly/gomavlib"
 )
 
-// Version contains the dialect version. It is used in the mavlink_version field
-// of the HEARTBEAT message.
-var Version = 3
-
 // Dialect contains the dialect object that can be passed to the library.
 var Dialect = dialect
 
-var dialect = gomavlib.MustDialect([]gomavlib.Message{
+var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	// test.xml
 	&MessageTestTypes{},
 })

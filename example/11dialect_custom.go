@@ -21,7 +21,7 @@ func (*MessageCustom) GetId() uint32 {
 
 func main() {
 	// create a custom dialect from messages
-	dialect, err := gomavlib.NewDialect([]gomavlib.Message{
+	dialect, err := gomavlib.NewDialect(3, []gomavlib.Message{
 		&MessageCustom{},
 	})
 	if err != nil {

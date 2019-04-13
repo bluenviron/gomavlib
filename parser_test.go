@@ -34,7 +34,7 @@ func (m *MessageTest8) GetId() uint32 {
 	return 8
 }
 
-var testDialect = MustDialect([]Message{
+var testDialect = MustDialect(3, []Message{
 	&MessageTest5{},
 	&MessageTest6{},
 	&MessageTest8{},
@@ -245,7 +245,7 @@ print(''.join('\\\x{:02x}'.format(x) for x in f.read()));"
 
 var testFpV2SigKey = NewFrameSignatureKey(bytes.Repeat([]byte("\x4F"), 32))
 
-var testFpV2SigDialect = MustDialect([]Message{
+var testFpV2SigDialect = MustDialect(3, []Message{
 	&MessageHeartbeat{},
 	&MessageOpticalFlow{},
 })

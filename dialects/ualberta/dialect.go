@@ -11,6 +11,7 @@ import (
 // Dialect contains the dialect object that can be passed to the library.
 var Dialect = dialect
 
+// dialect is not exposed directly such that it is not displayed in godoc.
 var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	// common.xml
 	&MessageHeartbeat{},

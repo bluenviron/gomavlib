@@ -7,6 +7,19 @@ import (
 	"testing"
 )
 
+func TestParserNil(t *testing.T) {
+	parser, err := NewParser(ParserConf{
+		Reader:         bytes.NewReader(nil),
+		Writer:         bytes.NewBuffer(nil),
+		Dialect:        nil,
+		OutSystemId:    1,
+	})
+	require.NoError(t, err)
+	frame := &FrameV1{ Message: nil }
+	err = parser.Write(frame, true)
+	require.Error(t, err)
+}
+
 type MessageTest5 struct {
 	TestByte byte
 	TestUint uint32

@@ -321,9 +321,10 @@ func (p *Parser) Write(f Frame, route bool) error {
 		p.curWriteSequenceId++
 	}
 
-	// encode message if not already encoded and in dialect
-	if p.conf.Dialect != nil {
-		if _, ok := f.GetMessage().(*MessageRaw); ok == false {
+	// message must be encoded
+	if _, ok := f.GetMessage().(*MessageRaw); ok == false {
+		// use dialect if available
+		if p.conf.Dialect != nil {
 			if mp, ok := p.conf.Dialect.messages[f.GetMessage().GetId()]; ok {
 				_, isFrameV2 := f.(*FrameV2)
 				byt, err := mp.encode(f.GetMessage(), isFrameV2)
@@ -354,6 +355,8 @@ func (p *Parser) Write(f Frame, route bool) error {
 					}
 				}
 			}
+		} else {
+			return fmt.Errorf("message cannot be encoded since it is neither in the dialect nor raw")
 		}
 	}
 

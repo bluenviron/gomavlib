@@ -307,6 +307,10 @@ func (p *Parser) Read() (Frame, error) {
 //   Signature
 // if route is true, the frame will be written untouched.
 func (p *Parser) Write(f Frame, route bool) error {
+	if f.GetMessage() == nil {
+		return fmt.Errorf("message is nil")
+	}
+
 	if route == false {
 		switch ff := f.(type) {
 		case *FrameV1:

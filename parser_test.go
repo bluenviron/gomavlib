@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestParserNil(t *testing.T) {
+func TestParserNilEncode(t *testing.T) {
 	parser, err := NewParser(ParserConf{
 		Reader:         bytes.NewReader(nil),
 		Writer:         bytes.NewBuffer(nil),
@@ -17,6 +17,18 @@ func TestParserNil(t *testing.T) {
 	require.NoError(t, err)
 	frame := &FrameV1{ Message: nil }
 	err = parser.Write(frame, true)
+	require.Error(t, err)
+}
+
+func TestParserNilDecode(t *testing.T) {
+	parser, err := NewParser(ParserConf{
+		Reader:         bytes.NewReader([]byte("\xfe\x00\x01\x02\x03\x04\x05\x06\x07\x08")),
+		Writer:         bytes.NewBuffer(nil),
+		Dialect:        nil,
+		OutSystemId:    1,
+	})
+	require.NoError(t, err)
+	_,err = parser.Read()
 	require.Error(t, err)
 }
 

@@ -1,8 +1,8 @@
 package gomavlib
 
 const (
-	v1MagicByte = '\xFE'
-	v2MagicByte = '\xFD'
+	v1MagicByte = 0xfe
+	v2MagicByte = 0xfd
 	flagSigned  = 0x01
 )
 

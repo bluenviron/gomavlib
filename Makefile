@@ -43,7 +43,7 @@ test:
 test-nodocker:
 	go test -v .
 	go build -o /dev/null ./dialgen
-	$(foreach f, $(wildcard example/*), go build -o /dev/null $(f)$(NL))
+	$(foreach f, $(shell ls example/*), go build -o /dev/null $(f)$(NL))
 
 gen-dialects:
 	echo "FROM amd64/golang:1.11-stretch \n\

@@ -97,7 +97,7 @@ func NewDialect(version uint, messages []Message) (*Dialect, error) {
 	}
 
 	for _, msg := range messages {
-		mp, err := newdefinitionMessage(msg)
+		mp, err := newDialectMessage(msg)
 		if err != nil {
 			return nil, fmt.Errorf("message %T: %s", msg, err)
 		}
@@ -133,10 +133,10 @@ type dialectMessage struct {
 	crcExtra     byte
 }
 
-func newdefinitionMessage(msg Message) (*dialectMessage, error) {
+func newDialectMessage(msg Message) (*dialectMessage, error) {
 	mp := &dialectMessage{}
-
 	mp.elemType = reflect.TypeOf(msg).Elem()
+
 	mp.fields = make([]*dialectMessageField, mp.elemType.NumField())
 
 	// get name

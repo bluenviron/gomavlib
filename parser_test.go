@@ -7,29 +7,42 @@ import (
 	"testing"
 )
 
-func TestParserNilEncode(t *testing.T) {
+func TestParserMsgNilEncode(t *testing.T) {
 	parser, err := NewParser(ParserConf{
-		Reader:         bytes.NewReader(nil),
-		Writer:         bytes.NewBuffer(nil),
-		Dialect:        nil,
-		OutSystemId:    1,
+		Reader:      bytes.NewReader(nil),
+		Writer:      bytes.NewBuffer(nil),
+		Dialect:     nil,
+		OutSystemId: 1,
 	})
 	require.NoError(t, err)
-	frame := &FrameV1{ Message: nil }
+	frame := &FrameV1{Message: nil}
 	err = parser.Write(frame, true)
 	require.Error(t, err)
 }
 
-func TestParserNilDecode(t *testing.T) {
+func TestParserContentNilEncode(t *testing.T) {
 	parser, err := NewParser(ParserConf{
-		Reader:         bytes.NewReader([]byte("\xfe\x00\x01\x02\x03\x04\x05\x06\x07\x08")),
-		Writer:         bytes.NewBuffer(nil),
-		Dialect:        nil,
-		OutSystemId:    1,
+		Reader:      bytes.NewReader(nil),
+		Writer:      bytes.NewBuffer(nil),
+		Dialect:     nil,
+		OutSystemId: 1,
 	})
 	require.NoError(t, err)
-	_,err = parser.Read()
-	require.Error(t, err)
+	frame := &FrameV1{Message: &MessageRaw{Content: nil}}
+	err = parser.Write(frame, true)
+	require.NoError(t, err)
+}
+
+func TestParserContentNilDecode(t *testing.T) {
+	parser, err := NewParser(ParserConf{
+		Reader:      bytes.NewReader([]byte("\xfe\x00\x01\x02\x03\x04\x07\x08")),
+		Writer:      bytes.NewBuffer(nil),
+		Dialect:     nil,
+		OutSystemId: 1,
+	})
+	require.NoError(t, err)
+	_, err = parser.Read()
+	require.NoError(t, err)
 }
 
 type MessageTest5 struct {

@@ -151,7 +151,7 @@ func TestDialectCRC(t *testing.T) {
 		127,
 	}
 	for i, in := range ins {
-		mp, err := newdefinitionMessage(in)
+		mp, err := newDialectMessage(in)
 		require.NoError(t, err)
 		require.Equal(t, outs[i], mp.crcExtra)
 	}
@@ -159,7 +159,7 @@ func TestDialectCRC(t *testing.T) {
 
 func testMessageDecode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
 	for i, byt := range byts {
-		mp, err := newdefinitionMessage(parsers[i])
+		mp, err := newDialectMessage(parsers[i])
 		require.NoError(t, err)
 		msg, err := mp.decode(byt, isV2)
 		require.NoError(t, err)
@@ -169,7 +169,7 @@ func testMessageDecode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte
 
 func testMessageEncode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
 	for i, msg := range msgs {
-		mp, err := newdefinitionMessage(parsers[i])
+		mp, err := newDialectMessage(parsers[i])
 		require.NoError(t, err)
 		byt, err := mp.encode(msg, isV2)
 		require.NoError(t, err)

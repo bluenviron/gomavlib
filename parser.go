@@ -174,15 +174,14 @@ func (p *Parser) Read() (Frame, error) {
 		msgId := buf[4]
 		p.readBuffer.Discard(5)
 
-		if msgLen == 0 {
-			return nil, fmt.Errorf("invalid message length")
-		}
-
 		// message
-		msgContent := make([]byte, msgLen)
-		_, err = io.ReadFull(p.readBuffer, msgContent)
-		if err != nil {
-			return nil, err
+		var msgContent []byte
+		if msgLen > 0 {
+			msgContent = make([]byte, msgLen)
+			_, err = io.ReadFull(p.readBuffer, msgContent)
+			if err != nil {
+				return nil, err
+			}
 		}
 		ff.Message = &MessageRaw{
 			Id:      uint32(msgId),
@@ -213,20 +212,19 @@ func (p *Parser) Read() (Frame, error) {
 		msgId := uint24Decode(buf[6:])
 		p.readBuffer.Discard(9)
 
-		if msgLen == 0 {
-			return nil, fmt.Errorf("invalid message length")
-		}
-
 		// discard frame if incompatibility flag is not understood, as in recommendations
 		if ff.IncompatibilityFlag != 0 && ff.IncompatibilityFlag != flagSigned {
 			return nil, newParserError("unknown incompatibility flag (%d)", ff.IncompatibilityFlag)
 		}
 
 		// message
-		msgContent := make([]byte, msgLen)
-		_, err = io.ReadFull(p.readBuffer, msgContent)
-		if err != nil {
-			return nil, err
+		var msgContent []byte
+		if msgLen > 0 {
+			msgContent = make([]byte, msgLen)
+			_, err = io.ReadFull(p.readBuffer, msgContent)
+			if err != nil {
+				return nil, err
+			}
 		}
 		ff.Message = &MessageRaw{
 			Id:      msgId,
@@ -366,13 +364,16 @@ func (p *Parser) Write(f Frame, route bool) error {
 						ff.Checksum = check
 					}
 				}
+			} else {
+				return fmt.Errorf("message cannot be encoded since it is not in the dialect")
 			}
 		} else {
-			return fmt.Errorf("message cannot be encoded since it is neither in the dialect nor raw")
+			return fmt.Errorf("message cannot be encoded since dialect is nil")
 		}
 	}
 
 	msgContent := f.GetMessage().(*MessageRaw).Content
+	msgLen := len(msgContent)
 
 	switch ff := f.(type) {
 	case *FrameV1:
@@ -380,21 +381,23 @@ func (p *Parser) Write(f Frame, route bool) error {
 			return fmt.Errorf("cannot send a message with an id > 0xFF and a V1 frame")
 		}
 
-		bufferLen := 6 + len(msgContent) + 2
+		bufferLen := 6 + msgLen + 2
 		p.writeBuffer = p.writeBuffer[:bufferLen]
 
 		// header
 		p.writeBuffer[0] = v1MagicByte
-		p.writeBuffer[1] = byte(len(msgContent))
+		p.writeBuffer[1] = byte(msgLen)
 		p.writeBuffer[2] = ff.SequenceId
 		p.writeBuffer[3] = ff.SystemId
 		p.writeBuffer[4] = ff.ComponentId
 		p.writeBuffer[5] = byte(ff.Message.GetId())
 
 		// message
-		copy(p.writeBuffer[6:], msgContent)
+		if msgLen > 0 {
+			copy(p.writeBuffer[6:], msgContent)
+		}
 
-		binary.LittleEndian.PutUint16(p.writeBuffer[6+len(msgContent):], ff.Checksum)
+		binary.LittleEndian.PutUint16(p.writeBuffer[6+msgLen:], ff.Checksum)
 
 	case *FrameV2:
 		if route == false && p.conf.OutSignatureKey != nil {
@@ -404,7 +407,7 @@ func (p *Parser) Write(f Frame, route bool) error {
 			ff.Signature = p.Signature(ff, p.conf.OutSignatureKey)
 		}
 
-		bufferLen := 10 + len(msgContent) + 2
+		bufferLen := 10 + msgLen + 2
 		if ff.IsSigned() {
 			bufferLen += 13
 		}
@@ -412,7 +415,7 @@ func (p *Parser) Write(f Frame, route bool) error {
 
 		// header
 		p.writeBuffer[0] = v2MagicByte
-		p.writeBuffer[1] = byte(len(msgContent))
+		p.writeBuffer[1] = byte(msgLen)
 		p.writeBuffer[2] = ff.IncompatibilityFlag
 		p.writeBuffer[3] = ff.CompatibilityFlag
 		p.writeBuffer[4] = ff.SequenceId
@@ -421,14 +424,16 @@ func (p *Parser) Write(f Frame, route bool) error {
 		uint24Encode(p.writeBuffer[7:], ff.Message.GetId())
 
 		// message
-		copy(p.writeBuffer[10:], msgContent)
+		if msgLen > 0 {
+			copy(p.writeBuffer[10:], msgContent)
+		}
 
-		binary.LittleEndian.PutUint16(p.writeBuffer[10+len(msgContent):], ff.Checksum)
+		binary.LittleEndian.PutUint16(p.writeBuffer[10+msgLen:], ff.Checksum)
 
 		if ff.IsSigned() {
-			p.writeBuffer[12+len(msgContent)] = ff.SignatureLinkId
-			uint48Encode(p.writeBuffer[13+len(msgContent):], ff.SignatureTimestamp)
-			copy(p.writeBuffer[19+len(msgContent):], ff.Signature[:])
+			p.writeBuffer[12+msgLen] = ff.SignatureLinkId
+			uint48Encode(p.writeBuffer[13+msgLen:], ff.SignatureTimestamp)
+			copy(p.writeBuffer[19+msgLen:], ff.Signature[:])
 		}
 	}
 

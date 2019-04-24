@@ -326,21 +326,21 @@ func (n *Node) WriteMessageExcept(exceptChannel *Channel, message Message) {
 
 // WriteFrameTo write a frame to given channel.
 // This function is intended for routing frames to other nodes, since all
-// fields must be filled manually.
+// frame fields must be filled manually.
 func (n *Node) WriteFrameTo(channel *Channel, frame Frame) {
 	n.writeTo(channel, frame)
 }
 
 // WriteFrameAll write a frame to all channels.
 // This function is intended for routing frames to other nodes, since all
-// fields must be filled manually.
+// frame fields must be filled manually.
 func (n *Node) WriteFrameAll(frame Frame) {
 	n.writeAll(frame)
 }
 
 // WriteFrameExcept write a frame to all channels except specified channel.
 // This function is intended for routing frames to other nodes, since all
-// fields must be filled manually.
+// frame fields must be filled manually.
 func (n *Node) WriteFrameExcept(exceptChannel *Channel, frame Frame) {
 	n.writeExcept(exceptChannel, frame)
 }

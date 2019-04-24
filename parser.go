@@ -174,6 +174,10 @@ func (p *Parser) Read() (Frame, error) {
 		msgId := buf[4]
 		p.readBuffer.Discard(5)
 
+		if msgLen == 0 {
+			return nil, fmt.Errorf("invalid message length")
+		}
+
 		// message
 		msgContent := make([]byte, msgLen)
 		_, err = io.ReadFull(p.readBuffer, msgContent)
@@ -208,6 +212,10 @@ func (p *Parser) Read() (Frame, error) {
 		ff.ComponentId = buf[5]
 		msgId := uint24Decode(buf[6:])
 		p.readBuffer.Discard(9)
+
+		if msgLen == 0 {
+			return nil, fmt.Errorf("invalid message length")
+		}
 
 		// discard frame if incompatibility flag is not understood, as in recommendations
 		if ff.IncompatibilityFlag != 0 && ff.IncompatibilityFlag != flagSigned {

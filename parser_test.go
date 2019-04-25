@@ -110,12 +110,12 @@ func testFrameEncode(t *testing.T, dialect *Dialect, key *FrameSignatureKey, byt
 	}
 }
 
-var testFpV1Bytes = [][]byte{
+var testParserV1Bytes = [][]byte{
 	[]byte("\xFE\x05\x27\x01\x02\x05\x10\x10\x10\x10\x10\xe5\x66"),
 	[]byte("\xFE\x05\x27\x01\x02\x08\x10\x10\x10\x10\x10\xfa\xc7"),
 }
 
-var testFpV1Frames = []Frame{
+var testParserV1Frames = []Frame{
 	&FrameV1{
 		SequenceId:  0x27,
 		SystemId:    0x01,
@@ -138,7 +138,7 @@ var testFpV1Frames = []Frame{
 	},
 }
 
-var testFpV1FramesDialect = []Frame{
+var testParserV1FramesDialect = []Frame{
 	&FrameV1{
 		SequenceId:  0x27,
 		SystemId:    0x01,
@@ -162,26 +162,26 @@ var testFpV1FramesDialect = []Frame{
 }
 
 func TestParserV1RawDec(t *testing.T) {
-	testFrameDecode(t, nil, nil, testFpV1Bytes, testFpV1Frames)
+	testFrameDecode(t, nil, nil, testParserV1Bytes, testParserV1Frames)
 }
 
 func TestParserV1RawEnc(t *testing.T) {
-	testFrameEncode(t, nil, nil, testFpV1Bytes, testFpV1Frames)
+	testFrameEncode(t, nil, nil, testParserV1Bytes, testParserV1Frames)
 }
 
 func TestParserV1DialectDec(t *testing.T) {
-	testFrameDecode(t, testDialect, nil, testFpV1Bytes, testFpV1FramesDialect)
+	testFrameDecode(t, testDialect, nil, testParserV1Bytes, testParserV1FramesDialect)
 }
 
 func TestParserV1DialectEnc(t *testing.T) {
-	testFrameEncode(t, testDialect, nil, testFpV1Bytes, testFpV1FramesDialect)
+	testFrameEncode(t, testDialect, nil, testParserV1Bytes, testParserV1FramesDialect)
 }
 
-var testFpV2Bytes = [][]byte{
+var testParserV2Bytes = [][]byte{
 	[]byte("\xFD\x05\x00\x00\x8F\x01\x02\x07\x06\x00\x10\x10\x10\x10\x10\x49\x03"),
 }
 
-var testFpV2Frames = []Frame{
+var testParserV2Frames = []Frame{
 	&FrameV2{
 		IncompatibilityFlag: 0x00,
 		CompatibilityFlag:   0x00,
@@ -196,7 +196,7 @@ var testFpV2Frames = []Frame{
 	},
 }
 
-var testFpV2FramesDialect = []Frame{
+var testParserV2FramesDialect = []Frame{
 	&FrameV2{
 		IncompatibilityFlag: 0x00,
 		CompatibilityFlag:   0x00,
@@ -212,19 +212,19 @@ var testFpV2FramesDialect = []Frame{
 }
 
 func TestParserV2RawDec(t *testing.T) {
-	testFrameDecode(t, nil, nil, testFpV2Bytes, testFpV2Frames)
+	testFrameDecode(t, nil, nil, testParserV2Bytes, testParserV2Frames)
 }
 
 func TestParserV2RawEnc(t *testing.T) {
-	testFrameEncode(t, nil, nil, testFpV2Bytes, testFpV2Frames)
+	testFrameEncode(t, nil, nil, testParserV2Bytes, testParserV2Frames)
 }
 
 func TestParserV2DialectDec(t *testing.T) {
-	testFrameDecode(t, testDialect, nil, testFpV2Bytes, testFpV2FramesDialect)
+	testFrameDecode(t, testDialect, nil, testParserV2Bytes, testParserV2FramesDialect)
 }
 
 func TestParserV2DialectEnc(t *testing.T) {
-	testFrameEncode(t, testDialect, nil, testFpV2Bytes, testFpV2FramesDialect)
+	testFrameEncode(t, testDialect, nil, testParserV2Bytes, testParserV2FramesDialect)
 }
 
 /* Test vectors generated with
@@ -281,19 +281,19 @@ print(''.join('\\\x{:02x}'.format(x) for x in f.read()));"
 
 */
 
-var testFpV2SigKey = NewFrameSignatureKey(bytes.Repeat([]byte("\x4F"), 32))
+var testParserV2SigKey = NewFrameSignatureKey(bytes.Repeat([]byte("\x4F"), 32))
 
-var testFpV2SigDialect = MustDialect(3, []Message{
+var testParserV2SigDialect = MustDialect(3, []Message{
 	&MessageHeartbeat{},
 	&MessageOpticalFlow{},
 })
 
-var testFpV2SigBytes = [][]byte{
+var testParserV2SigBytes = [][]byte{
 	[]byte("\xfd\x09\x01\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x01\x02\x03\x05\x03\xd9\xd1\x01\x02\x00\x00\x00\x00\x00\x0e\x47\x04\x0c\xef\x9b"),
 	[]byte("\xfd\x22\x01\x00\x00\x00\x00\x64\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\xa0\x40\x00\x00\xc0\x40\x00\x00\x00\x41\x03\x00\x04\x00\x02\x07\x00\x00\x00\x00\x00\x00\x80\x3f\x77\xfb\x03\x04\x00\x00\x00\x00\x00\xa8\x88\x09\x39\xb2\x60"),
 }
 
-var testFpV2SigFrames = []Frame{
+var testParserV2SigFrames = []Frame{
 	&FrameV2{
 		IncompatibilityFlag: 0x01,
 		CompatibilityFlag:   0x00,
@@ -338,9 +338,9 @@ var testFpV2SigFrames = []Frame{
 }
 
 func TestParserV2SignatureDec(t *testing.T) {
-	testFrameDecode(t, testFpV2SigDialect, testFpV2SigKey, testFpV2SigBytes, testFpV2SigFrames)
+	testFrameDecode(t, testParserV2SigDialect, testParserV2SigKey, testParserV2SigBytes, testParserV2SigFrames)
 }
 
 func TestParserV2SignatureEnc(t *testing.T) {
-	testFrameEncode(t, testFpV2SigDialect, testFpV2SigKey, testFpV2SigBytes, testFpV2SigFrames)
+	testFrameEncode(t, testParserV2SigDialect, testParserV2SigKey, testParserV2SigBytes, testParserV2SigFrames)
 }

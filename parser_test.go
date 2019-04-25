@@ -20,31 +20,6 @@ func TestParserMsgNilEncode(t *testing.T) {
 	require.Error(t, err)
 }
 
-func TestParserContentNilEncode(t *testing.T) {
-	parser, err := NewParser(ParserConf{
-		Reader:      bytes.NewReader(nil),
-		Writer:      bytes.NewBuffer(nil),
-		Dialect:     nil,
-		OutSystemId: 1,
-	})
-	require.NoError(t, err)
-	frame := &FrameV1{Message: &MessageRaw{Content: nil}}
-	err = parser.Write(frame, true)
-	require.NoError(t, err)
-}
-
-func TestParserContentNilDecode(t *testing.T) {
-	parser, err := NewParser(ParserConf{
-		Reader:      bytes.NewReader([]byte("\xfe\x00\x01\x02\x03\x04\x07\x08")),
-		Writer:      bytes.NewBuffer(nil),
-		Dialect:     nil,
-		OutSystemId: 1,
-	})
-	require.NoError(t, err)
-	_, err = parser.Read()
-	require.NoError(t, err)
-}
-
 type MessageTest5 struct {
 	TestByte byte
 	TestUint uint32
@@ -111,11 +86,23 @@ func testFrameEncode(t *testing.T, dialect *Dialect, key *FrameSignatureKey, byt
 }
 
 var testParserV1Bytes = [][]byte{
+	// message with nil content (allowed)
+	[]byte("\xFE\x00\x01\x02\x03\x04\x07\x08"),
 	[]byte("\xFE\x05\x27\x01\x02\x05\x10\x10\x10\x10\x10\xe5\x66"),
 	[]byte("\xFE\x05\x27\x01\x02\x08\x10\x10\x10\x10\x10\xfa\xc7"),
 }
 
-var testParserV1Frames = []Frame{
+var testParserV1FramesRaw = []Frame{
+	&FrameV1{ // message with nil content (allowed)
+		SequenceId:  0x01,
+		SystemId:    0x02,
+		ComponentId: 0x03,
+		Message: &MessageRaw{
+			Id:      4,
+			Content: nil,
+		},
+		Checksum: 0x0807,
+	},
 	&FrameV1{
 		SequenceId:  0x27,
 		SystemId:    0x01,
@@ -139,6 +126,16 @@ var testParserV1Frames = []Frame{
 }
 
 var testParserV1FramesDialect = []Frame{
+	&FrameV1{ // message with nil content (allowed)
+		SequenceId:  0x01,
+		SystemId:    0x02,
+		ComponentId: 0x03,
+		Message: &MessageRaw{
+			Id:      4,
+			Content: nil,
+		},
+		Checksum: 0x0807,
+	},
 	&FrameV1{
 		SequenceId:  0x27,
 		SystemId:    0x01,
@@ -162,11 +159,11 @@ var testParserV1FramesDialect = []Frame{
 }
 
 func TestParserV1RawDec(t *testing.T) {
-	testFrameDecode(t, nil, nil, testParserV1Bytes, testParserV1Frames)
+	testFrameDecode(t, nil, nil, testParserV1Bytes, testParserV1FramesRaw)
 }
 
 func TestParserV1RawEnc(t *testing.T) {
-	testFrameEncode(t, nil, nil, testParserV1Bytes, testParserV1Frames)
+	testFrameEncode(t, nil, nil, testParserV1Bytes, testParserV1FramesRaw)
 }
 
 func TestParserV1DialectDec(t *testing.T) {
@@ -178,10 +175,23 @@ func TestParserV1DialectEnc(t *testing.T) {
 }
 
 var testParserV2Bytes = [][]byte{
+	[]byte("\xFD\x00\x00\x00\x03\x04\x05\x04\x00\x00\xb7\x0a"),
 	[]byte("\xFD\x05\x00\x00\x8F\x01\x02\x07\x06\x00\x10\x10\x10\x10\x10\x49\x03"),
 }
 
-var testParserV2Frames = []Frame{
+var testParserV2FramesRaw = []Frame{
+	&FrameV2{ // message with nil content (allowed)
+		IncompatibilityFlag: 0,
+		CompatibilityFlag:   0,
+		SequenceId:          3,
+		SystemId:            4,
+		ComponentId:         5,
+		Message: &MessageRaw{
+			4,
+			nil,
+		},
+		Checksum: 0x0ab7,
+	},
 	&FrameV2{
 		IncompatibilityFlag: 0x00,
 		CompatibilityFlag:   0x00,
@@ -197,6 +207,18 @@ var testParserV2Frames = []Frame{
 }
 
 var testParserV2FramesDialect = []Frame{
+	&FrameV2{ // message with nil content (allowed)
+		IncompatibilityFlag: 0,
+		CompatibilityFlag:   0,
+		SequenceId:          3,
+		SystemId:            4,
+		ComponentId:         5,
+		Message: &MessageRaw{
+			4,
+			nil,
+		},
+		Checksum: 0x0ab7,
+	},
 	&FrameV2{
 		IncompatibilityFlag: 0x00,
 		CompatibilityFlag:   0x00,
@@ -212,11 +234,11 @@ var testParserV2FramesDialect = []Frame{
 }
 
 func TestParserV2RawDec(t *testing.T) {
-	testFrameDecode(t, nil, nil, testParserV2Bytes, testParserV2Frames)
+	testFrameDecode(t, nil, nil, testParserV2Bytes, testParserV2FramesRaw)
 }
 
 func TestParserV2RawEnc(t *testing.T) {
-	testFrameEncode(t, nil, nil, testParserV2Bytes, testParserV2Frames)
+	testFrameEncode(t, nil, nil, testParserV2Bytes, testParserV2FramesRaw)
 }
 
 func TestParserV2DialectDec(t *testing.T) {

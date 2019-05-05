@@ -316,9 +316,16 @@ func (p *Parser) Write(f Frame, route bool) error {
 	if f.GetMessage() == nil {
 		return fmt.Errorf("message is nil")
 	}
+	if _, ok := f.GetMessage().(*MessageRaw); ok && route == false {
+		return fmt.Errorf("raw messages can only be routed, since we cannot always compute their checksum")
+	}
+
+	// do not touch the original frame, but work with a separate object
+	// in such way that the frame can be encoded in parallel by other parsers
+	safeFrame := f.Clone()
 
 	if route == false {
-		switch ff := f.(type) {
+		switch ff := safeFrame.(type) {
 		case *FrameV1:
 			ff.SequenceId = p.curWriteSequenceId
 			ff.SystemId = p.conf.OutSystemId
@@ -332,50 +339,48 @@ func (p *Parser) Write(f Frame, route bool) error {
 	}
 
 	// message must be encoded
-	if _, ok := f.GetMessage().(*MessageRaw); ok == false {
-		// use dialect if available
-		if p.conf.Dialect != nil {
-			if mp, ok := p.conf.Dialect.messages[f.GetMessage().GetId()]; ok {
-				_, isFrameV2 := f.(*FrameV2)
-				byt, err := mp.encode(f.GetMessage(), isFrameV2)
-				if err != nil {
-					return err
-				}
+	if _, ok := safeFrame.GetMessage().(*MessageRaw); !ok {
+		if p.conf.Dialect == nil {
+			return fmt.Errorf("message cannot be encoded since dialect is nil")
+		}
 
-				switch ff := f.(type) {
-				case *FrameV1:
-					ff.Message = &MessageRaw{f.GetMessage().GetId(), byt}
-				case *FrameV2:
-					ff.Message = &MessageRaw{f.GetMessage().GetId(), byt}
-				}
+		mp, ok := p.conf.Dialect.messages[safeFrame.GetMessage().GetId()]
+		if ok == false {
+			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
+		}
 
-				// if frame is going to be signed, set incompatibility flag
-				// before computing checksum
-				if ff, ok := f.(*FrameV2); ok && route == false && p.conf.OutSignatureKey != nil {
+		_, isFrameV2 := safeFrame.(*FrameV2)
+		byt, err := mp.encode(safeFrame.GetMessage(), isFrameV2)
+		if err != nil {
+			return err
+		}
+
+		msgRaw := &MessageRaw{safeFrame.GetMessage().GetId(), byt}
+		switch ff := safeFrame.(type) {
+		case *FrameV1:
+			ff.Message = msgRaw
+		case *FrameV2:
+			ff.Message = msgRaw
+		}
+
+		if route == false {
+			switch ff := safeFrame.(type) {
+			case *FrameV1:
+				ff.Checksum = p.Checksum(ff)
+			case *FrameV2:
+				// set incompatibility flag before computing checksum
+				if p.conf.OutSignatureKey != nil {
 					ff.IncompatibilityFlag |= flagSigned
 				}
-
-				if route == false {
-					check := p.Checksum(f)
-					switch ff := f.(type) {
-					case *FrameV1:
-						ff.Checksum = check
-					case *FrameV2:
-						ff.Checksum = check
-					}
-				}
-			} else {
-				return fmt.Errorf("message cannot be encoded since it is not in the dialect")
+				ff.Checksum = p.Checksum(ff)
 			}
-		} else {
-			return fmt.Errorf("message cannot be encoded since dialect is nil")
 		}
 	}
 
-	msgContent := f.GetMessage().(*MessageRaw).Content
+	msgContent := safeFrame.GetMessage().(*MessageRaw).Content
 	msgLen := len(msgContent)
 
-	switch ff := f.(type) {
+	switch ff := safeFrame.(type) {
 	case *FrameV1:
 		if ff.Message.GetId() > 0xFF {
 			return fmt.Errorf("cannot send a message with an id > 0xFF and a V1 frame")

@@ -18,6 +18,8 @@ type Frame interface {
 	GetMessage() Message
 	// the frame checksum.
 	GetChecksum() uint16
+	// generate a clone of the frame
+	Clone() Frame
 }
 
 // FrameV1 represents a 1.0 frame.
@@ -27,6 +29,17 @@ type FrameV1 struct {
 	ComponentId byte
 	Message     Message
 	Checksum    uint16
+}
+
+// Clone is part of the Frame interface.
+func (f *FrameV1) Clone() Frame {
+	return &FrameV1{
+		SequenceId:  f.SequenceId,
+		SystemId:    f.SystemId,
+		ComponentId: f.ComponentId,
+		Message:     f.Message,
+		Checksum:    f.Checksum,
+	}
 }
 
 // GetVersion is part of the Frame interface.
@@ -66,6 +79,22 @@ type FrameV2 struct {
 	SignatureLinkId     byte
 	SignatureTimestamp  uint64
 	Signature           *FrameSignature
+}
+
+// Clone is part of the Frame interface.
+func (f *FrameV2) Clone() Frame {
+	return &FrameV2{
+		IncompatibilityFlag: f.IncompatibilityFlag,
+		CompatibilityFlag:   f.CompatibilityFlag,
+		SequenceId:          f.SequenceId,
+		SystemId:            f.SystemId,
+		ComponentId:         f.ComponentId,
+		Message:             f.Message,
+		Checksum:            f.Checksum,
+		SignatureLinkId:     f.SignatureLinkId,
+		SignatureTimestamp:  f.SignatureTimestamp,
+		Signature:           f.Signature,
+	}
 }
 
 // GetVersion is part of the Frame interface.

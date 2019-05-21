@@ -71,7 +71,7 @@ dialgen --output=dialect.go [path_or_url_to_xml_definition]
 
 ## Testing
 
-If you want to edit the library and test the results, unit tests can be run with:
+If you want to edit the library and test the results, unit tests can be launched with:
 ```
 make test
 ```

@@ -304,6 +304,7 @@ func (p *Parser) Read() (Frame, error) {
 
 // Write writes a Frame into the writer. It must not be called by multiple
 // routines in parallel. If route is false, the following fields will be filled:
+//   IncompatibilityFlag
 //   SequenceId
 //   SystemId
 //   ComponentId

@@ -1,25 +1,25 @@
 package gomavlib
 
-// Event is the interface implemented by all events received through node.Events()
+// Event is the interface implemented by all events received through node.Events().
 type Event interface {
 	isEvent()
 }
 
-// EventChannelOpen is the event fired when a channel is opened
+// EventChannelOpen is the event fired when a channel is opened.
 type EventChannelOpen struct {
 	Channel *Channel
 }
 
 func (*EventChannelOpen) isEvent() {}
 
-// EventChannelClose is the event fired when a channel is closed
+// EventChannelClose is the event fired when a channel is closed.
 type EventChannelClose struct {
 	Channel *Channel
 }
 
 func (*EventChannelClose) isEvent() {}
 
-// EventFrame is the event fired when a frame is received
+// EventFrame is the event fired when a frame is received.
 type EventFrame struct {
 	// the frame
 	Frame Frame
@@ -45,7 +45,7 @@ func (res *EventFrame) Message() Message {
 	return res.Frame.GetMessage()
 }
 
-// EventParseError is the event fired when a parse error occurs
+// EventParseError is the event fired when a parse error occurs.
 type EventParseError struct {
 	// the error
 	Error error

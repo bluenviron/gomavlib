@@ -130,7 +130,7 @@ func (f *FrameV2) IsSigned() bool {
 // SignatureKey is a key able to sign and validate V2 frames.
 type SignatureKey [32]byte
 
-// NewSignatureKey allocates a SignatureKey
+// NewSignatureKey allocates a SignatureKey.
 func NewSignatureKey(in []byte) *SignatureKey {
 	key := new(SignatureKey)
 	copy(key[:], in)

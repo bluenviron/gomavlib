@@ -12,7 +12,7 @@ import (
 // 1st January 2015 GMT
 var signatureReferenceDate = time.Date(2015, 01, 01, 0, 0, 0, 0, time.UTC)
 
-// ParserError is the error returned in case of non-fatal parsing errors
+// ParserError is the error returned in case of non-fatal parsing errors.
 type ParserError struct {
 	str string
 }

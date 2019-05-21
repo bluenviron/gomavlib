@@ -131,32 +131,6 @@ EOF
 
 */
 
-func TestDialectCRC(t *testing.T) {
-	var ins = []Message{
-		&MessageHeartbeat{},
-		&MessageSysStatus{},
-		&MessageChangeOperatorControl{},
-		&MessageAttitudeQuaternionCov{},
-		&MessageOpticalFlow{},
-		&MessagePlayTune{},
-		&MessageAhrs{},
-	}
-	var outs = []byte{
-		50,
-		124,
-		217,
-		167,
-		175,
-		187,
-		127,
-	}
-	for i, in := range ins {
-		mp, err := newDialectMessage(in)
-		require.NoError(t, err)
-		require.Equal(t, outs[i], mp.crcExtra)
-	}
-}
-
 func testMessageDecode(t *testing.T, parsers []Message, isV2 bool, byts [][]byte, msgs []Message) {
 	for i, byt := range byts {
 		mp, err := newDialectMessage(parsers[i])
@@ -244,14 +218,6 @@ var testMpV1Msgs = []Message{
 	},
 }
 
-func TestDialectV1Dec(t *testing.T) {
-	testMessageDecode(t, testMpV1Parsers, false, testMpV1Bytes, testMpV1Msgs)
-}
-
-func TestDialectV1Enc(t *testing.T) {
-	testMessageEncode(t, testMpV1Parsers, false, testMpV1Bytes, testMpV1Msgs)
-}
-
 var testMpV2EmptyByteBytes = [][]byte{
 	[]byte("\x00\x01\x02\x74\x65\x73\x74\x69\x6e\x67"),
 	[]byte("\x00\x00\x80\x3f\x00\x00\x00\x40\x00\x00\x40\x40\x00\x00\x80\x40\x00\x00\xa0\x40"),
@@ -278,14 +244,6 @@ var testMpV2EmptyByteMsgs = []Message{
 		ErrorRp:     0,
 		ErrorYaw:    0,
 	},
-}
-
-func TestDialectV2EmptyByteDec(t *testing.T) {
-	testMessageDecode(t, testMpV2EmptyByteParsers, true, testMpV2EmptyByteBytes, testMpV2EmptyByteMsgs)
-}
-
-func TestDialectV2EmptyByteEnc(t *testing.T) {
-	testMessageEncode(t, testMpV2EmptyByteParsers, true, testMpV2EmptyByteBytes, testMpV2EmptyByteMsgs)
 }
 
 var testMpV2ExtensionsBytes = [][]byte{
@@ -319,10 +277,52 @@ var testMpV2ExtensionsMsgs = []Message{
 	},
 }
 
-func TestDialectV2ExtensionsDec(t *testing.T) {
+func TestDialectCRC(t *testing.T) {
+	var ins = []Message{
+		&MessageHeartbeat{},
+		&MessageSysStatus{},
+		&MessageChangeOperatorControl{},
+		&MessageAttitudeQuaternionCov{},
+		&MessageOpticalFlow{},
+		&MessagePlayTune{},
+		&MessageAhrs{},
+	}
+	var outs = []byte{
+		50,
+		124,
+		217,
+		167,
+		175,
+		187,
+		127,
+	}
+	for i, in := range ins {
+		mp, err := newDialectMessage(in)
+		require.NoError(t, err)
+		require.Equal(t, outs[i], mp.crcExtra)
+	}
+}
+
+func TestDialectDecV1(t *testing.T) {
+	testMessageDecode(t, testMpV1Parsers, false, testMpV1Bytes, testMpV1Msgs)
+}
+
+func TestDialectEncV1(t *testing.T) {
+	testMessageEncode(t, testMpV1Parsers, false, testMpV1Bytes, testMpV1Msgs)
+}
+
+func TestDialectEmptyByteDecV2(t *testing.T) {
+	testMessageDecode(t, testMpV2EmptyByteParsers, true, testMpV2EmptyByteBytes, testMpV2EmptyByteMsgs)
+}
+
+func TestDialectEmptyByteEncV2(t *testing.T) {
+	testMessageEncode(t, testMpV2EmptyByteParsers, true, testMpV2EmptyByteBytes, testMpV2EmptyByteMsgs)
+}
+
+func TestDialectExtensionsDecV2(t *testing.T) {
 	testMessageDecode(t, testMpV2ExtensionsParsers, true, testMpV2ExtensionsBytes, testMpV2ExtensionsMsgs)
 }
 
-func TestDialectV2ExtensionsEnc(t *testing.T) {
+func TestDialectExtensionsEncV2(t *testing.T) {
 	testMessageEncode(t, testMpV2ExtensionsParsers, true, testMpV2ExtensionsBytes, testMpV2ExtensionsMsgs)
 }

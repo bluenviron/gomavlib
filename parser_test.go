@@ -7,19 +7,6 @@ import (
 	"testing"
 )
 
-func TestParserMsgNilEncode(t *testing.T) {
-	parser, err := NewParser(ParserConf{
-		Reader:      bytes.NewReader(nil),
-		Writer:      bytes.NewBuffer(nil),
-		Dialect:     nil,
-		OutSystemId: 1,
-	})
-	require.NoError(t, err)
-	frame := &FrameV1{Message: nil}
-	err = parser.Write(frame, true)
-	require.Error(t, err)
-}
-
 type MessageTest5 struct {
 	TestByte byte
 	TestUint uint32
@@ -158,22 +145,6 @@ var testParserV1FramesDialect = []Frame{
 	},
 }
 
-func TestParserV1RawDec(t *testing.T) {
-	testFrameDecode(t, nil, nil, testParserV1Bytes, testParserV1FramesRaw)
-}
-
-func TestParserV1RawEnc(t *testing.T) {
-	testFrameEncode(t, nil, nil, testParserV1Bytes, testParserV1FramesRaw)
-}
-
-func TestParserV1DialectDec(t *testing.T) {
-	testFrameDecode(t, testDialect, nil, testParserV1Bytes, testParserV1FramesDialect)
-}
-
-func TestParserV1DialectEnc(t *testing.T) {
-	testFrameEncode(t, testDialect, nil, testParserV1Bytes, testParserV1FramesDialect)
-}
-
 var testParserV2Bytes = [][]byte{
 	[]byte("\xFD\x00\x00\x00\x03\x04\x05\x04\x00\x00\xb7\x0a"),
 	[]byte("\xFD\x05\x00\x00\x8F\x01\x02\x07\x06\x00\x10\x10\x10\x10\x10\x49\x03"),
@@ -231,22 +202,6 @@ var testParserV2FramesDialect = []Frame{
 		},
 		Checksum: 0x0349,
 	},
-}
-
-func TestParserV2RawDec(t *testing.T) {
-	testFrameDecode(t, nil, nil, testParserV2Bytes, testParserV2FramesRaw)
-}
-
-func TestParserV2RawEnc(t *testing.T) {
-	testFrameEncode(t, nil, nil, testParserV2Bytes, testParserV2FramesRaw)
-}
-
-func TestParserV2DialectDec(t *testing.T) {
-	testFrameDecode(t, testDialect, nil, testParserV2Bytes, testParserV2FramesDialect)
-}
-
-func TestParserV2DialectEnc(t *testing.T) {
-	testFrameEncode(t, testDialect, nil, testParserV2Bytes, testParserV2FramesDialect)
 }
 
 /* Test vectors generated with
@@ -359,10 +314,55 @@ var testParserV2SigFrames = []Frame{
 	},
 }
 
-func TestParserV2SignatureDec(t *testing.T) {
+func TestParserRawDecV1(t *testing.T) {
+	testFrameDecode(t, nil, nil, testParserV1Bytes, testParserV1FramesRaw)
+}
+
+func TestParserRawEncV1(t *testing.T) {
+	testFrameEncode(t, nil, nil, testParserV1Bytes, testParserV1FramesRaw)
+}
+
+func TestParserRawDecV2(t *testing.T) {
+	testFrameDecode(t, nil, nil, testParserV2Bytes, testParserV2FramesRaw)
+}
+
+func TestParserRawEncV2(t *testing.T) {
+	testFrameEncode(t, nil, nil, testParserV2Bytes, testParserV2FramesRaw)
+}
+
+func TestParserDialectDecV1(t *testing.T) {
+	testFrameDecode(t, testDialect, nil, testParserV1Bytes, testParserV1FramesDialect)
+}
+
+func TestParserDialectEncV1(t *testing.T) {
+	testFrameEncode(t, testDialect, nil, testParserV1Bytes, testParserV1FramesDialect)
+}
+
+func TestParserDialectDecV2(t *testing.T) {
+	testFrameDecode(t, testDialect, nil, testParserV2Bytes, testParserV2FramesDialect)
+}
+
+func TestParserDialectEncV2(t *testing.T) {
+	testFrameEncode(t, testDialect, nil, testParserV2Bytes, testParserV2FramesDialect)
+}
+
+func TestParserSignatureDecV2(t *testing.T) {
 	testFrameDecode(t, testParserV2SigDialect, testParserV2SigKey, testParserV2SigBytes, testParserV2SigFrames)
 }
 
-func TestParserV2SignatureEnc(t *testing.T) {
+func TestParserSignatureEncV2(t *testing.T) {
 	testFrameEncode(t, testParserV2SigDialect, testParserV2SigKey, testParserV2SigBytes, testParserV2SigFrames)
+}
+
+func TestParserNilMsgEncode(t *testing.T) {
+	parser, err := NewParser(ParserConf{
+		Reader:      bytes.NewReader(nil),
+		Writer:      bytes.NewBuffer(nil),
+		Dialect:     nil,
+		OutSystemId: 1,
+	})
+	require.NoError(t, err)
+	frame := &FrameV1{Message: nil}
+	err = parser.Write(frame, true)
+	require.Error(t, err)
 }

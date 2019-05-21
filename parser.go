@@ -40,7 +40,7 @@ type ParserConf struct {
 
 	// (optional) the secret key used to validate incoming frames.
 	// Non-signed frames are discarded. This feature requires Mavlink v2.
-	InSignatureKey *FrameSignatureKey
+	InSignatureKey *SignatureKey
 
 	// the system id, added to every outgoing frame and used to identify this
 	// node in the network.
@@ -51,7 +51,7 @@ type ParserConf struct {
 	OutSignatureLinkId byte
 	// (optional) the secret key used to sign outgoing frames.
 	// This feature requires Mavlink v2.
-	OutSignatureKey *FrameSignatureKey
+	OutSignatureKey *SignatureKey
 }
 
 // Parser is a low-level Mavlink encoder and decoder that works with a Reader and a Writer.
@@ -121,7 +121,7 @@ func (p *Parser) Checksum(f Frame) uint16 {
 }
 
 // Signature computes the signature of a given frame with the given key.
-func (p *Parser) Signature(ff *FrameV2, key *FrameSignatureKey) *FrameSignature {
+func (p *Parser) Signature(ff *FrameV2, key *SignatureKey) *Signature {
 	msg := ff.GetMessage().(*MessageRaw)
 	h := sha256.New()
 
@@ -143,7 +143,7 @@ func (p *Parser) Signature(ff *FrameV2, key *FrameSignatureKey) *FrameSignature 
 	h.Write([]byte{ff.SignatureLinkId})
 	h.Write(uint48Encode(buf[:], ff.SignatureTimestamp))
 
-	sig := new(FrameSignature)
+	sig := new(Signature)
 	copy(sig[:], h.Sum(nil)[:6])
 	return sig
 }
@@ -245,7 +245,7 @@ func (p *Parser) Read() (Frame, error) {
 			}
 			ff.SignatureLinkId = buf[0]
 			ff.SignatureTimestamp = uint48Decode(buf[1:])
-			ff.Signature = new(FrameSignature)
+			ff.Signature = new(Signature)
 			copy(ff.Signature[:], buf[7:])
 			p.readBuffer.Discard(13)
 		}

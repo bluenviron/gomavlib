@@ -78,7 +78,7 @@ type FrameV2 struct {
 	Checksum            uint16
 	SignatureLinkId     byte
 	SignatureTimestamp  uint64
-	Signature           *FrameSignature
+	Signature           *Signature
 }
 
 // Clone is part of the Frame interface.
@@ -127,15 +127,15 @@ func (f *FrameV2) IsSigned() bool {
 	return (f.IncompatibilityFlag & flagSigned) != 0
 }
 
-// FrameSignatureKey is a key able to sign and validate V2 frames.
-type FrameSignatureKey [32]byte
+// SignatureKey is a key able to sign and validate V2 frames.
+type SignatureKey [32]byte
 
-// NewFrameSignatureKey allocates a FrameSignatureKey
-func NewFrameSignatureKey(in []byte) *FrameSignatureKey {
-	key := new(FrameSignatureKey)
+// NewSignatureKey allocates a SignatureKey
+func NewSignatureKey(in []byte) *SignatureKey {
+	key := new(SignatureKey)
 	copy(key[:], in)
 	return key
 }
 
-// FrameSignature is a V2 frame signature.
-type FrameSignature [6]byte
+// Signature is a V2 frame signature.
+type Signature [6]byte

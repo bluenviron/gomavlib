@@ -79,7 +79,7 @@ type NodeConf struct {
 
 	// (optional) the secret key used to validate incoming frames.
 	// Non signed frames are discarded, as well as frames with a version < 2.0.
-	InSignatureKey *FrameSignatureKey
+	InSignatureKey *SignatureKey
 
 	// Mavlink version used to encode frames. See Version
 	// for the available options.
@@ -91,7 +91,7 @@ type NodeConf struct {
 	OutComponentId byte
 	// (optional) the secret key used to sign outgoing frames.
 	// This feature requires a version >= 2.0.
-	OutSignatureKey *FrameSignatureKey
+	OutSignatureKey *SignatureKey
 
 	// (optional) disables the periodic sending of heartbeats to open channels.
 	HeartbeatDisable bool

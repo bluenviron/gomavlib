@@ -246,9 +246,9 @@ func TestNodeHeartbeat(t *testing.T) {
 	}
 }
 
-func TestNodeFrameSignature(t *testing.T) {
-	key1 := NewFrameSignatureKey(bytes.Repeat([]byte("\x4F"), 32))
-	key2 := NewFrameSignatureKey(bytes.Repeat([]byte("\xA8"), 32))
+func TestNodeSignature(t *testing.T) {
+	key1 := NewSignatureKey(bytes.Repeat([]byte("\x4F"), 32))
+	key2 := NewSignatureKey(bytes.Repeat([]byte("\xA8"), 32))
 
 	var testMsg = &MessageHeartbeat{
 		Type:           7,

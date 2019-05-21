@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// initialize a 6-bytes key. A key can have up to 32 bytes.
-	key := gomavlib.NewFrameSignatureKey([]byte("abcdef"))
+	key := gomavlib.NewSignatureKey([]byte("abcdef"))
 
 	// create a node which
 	// - communicates with a serial port.

@@ -40,7 +40,7 @@ var testDialect = MustDialect(3, []Message{
 	&MessageTest8{},
 })
 
-func testFrameDecode(t *testing.T, dialect *Dialect, key *FrameSignatureKey, byts [][]byte, frames []Frame) {
+func testFrameDecode(t *testing.T, dialect *Dialect, key *SignatureKey, byts [][]byte, frames []Frame) {
 	for i, byt := range byts {
 		parser, err := NewParser(ParserConf{
 			Reader:         bytes.NewReader(byt),
@@ -56,7 +56,7 @@ func testFrameDecode(t *testing.T, dialect *Dialect, key *FrameSignatureKey, byt
 	}
 }
 
-func testFrameEncode(t *testing.T, dialect *Dialect, key *FrameSignatureKey, byts [][]byte, frames []Frame) {
+func testFrameEncode(t *testing.T, dialect *Dialect, key *SignatureKey, byts [][]byte, frames []Frame) {
 	for i, frame := range frames {
 		buf := bytes.NewBuffer(nil)
 		parser, err := NewParser(ParserConf{
@@ -258,7 +258,7 @@ print(''.join('\\\x{:02x}'.format(x) for x in f.read()));"
 
 */
 
-var testParserV2SigKey = NewFrameSignatureKey(bytes.Repeat([]byte("\x4F"), 32))
+var testParserV2SigKey = NewSignatureKey(bytes.Repeat([]byte("\x4F"), 32))
 
 var testParserV2SigDialect = MustDialect(3, []Message{
 	&MessageHeartbeat{},
@@ -288,7 +288,7 @@ var testParserV2SigFrames = []Frame{
 		Checksum:           0xd1d9,
 		SignatureLinkId:    1,
 		SignatureTimestamp: 2,
-		Signature:          &FrameSignature{0x0e, 0x47, 0x04, 0x0c, 0xef, 0x9b},
+		Signature:          &Signature{0x0e, 0x47, 0x04, 0x0c, 0xef, 0x9b},
 	},
 	&FrameV2{
 		IncompatibilityFlag: 0x01,
@@ -310,7 +310,7 @@ var testParserV2SigFrames = []Frame{
 		Checksum:           0xfb77,
 		SignatureLinkId:    3,
 		SignatureTimestamp: 4,
-		Signature:          &FrameSignature{0xa8, 0x88, 0x9, 0x39, 0xb2, 0x60},
+		Signature:          &Signature{0xa8, 0x88, 0x9, 0x39, 0xb2, 0x60},
 	},
 }
 

@@ -403,6 +403,7 @@ func (p *Parser) Write(f Frame, route bool) error {
 			copy(p.writeBuffer[6:], msgContent)
 		}
 
+		// checksum
 		binary.LittleEndian.PutUint16(p.writeBuffer[6+msgLen:], ff.Checksum)
 
 	case *FrameV2:
@@ -434,8 +435,10 @@ func (p *Parser) Write(f Frame, route bool) error {
 			copy(p.writeBuffer[10:], msgContent)
 		}
 
+		// checksum
 		binary.LittleEndian.PutUint16(p.writeBuffer[10+msgLen:], ff.Checksum)
 
+		// signature
 		if ff.IsSigned() {
 			p.writeBuffer[12+msgLen] = ff.SignatureLinkId
 			uint48Encode(p.writeBuffer[13+msgLen:], ff.SignatureTimestamp)

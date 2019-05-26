@@ -103,14 +103,14 @@ func (p *Parser) Checksum(f Frame) uint16 {
 		h.Write(msg.Content)
 
 	case *FrameV2:
-		var buf [3]byte
+		buf := make([]byte, 3)
 		h.Write([]byte{byte(len(msg.Content))})
 		h.Write([]byte{ff.IncompatibilityFlag})
 		h.Write([]byte{ff.CompatibilityFlag})
 		h.Write([]byte{ff.SequenceId})
 		h.Write([]byte{ff.SystemId})
 		h.Write([]byte{ff.ComponentId})
-		h.Write(uint24Encode(buf[:], msg.Id))
+		h.Write(uint24Encode(buf, msg.Id))
 		h.Write(msg.Content)
 	}
 
@@ -129,7 +129,7 @@ func (p *Parser) Signature(ff *FrameV2, key *SignatureKey) *Signature {
 	h.Write(key[:])
 
 	// the signature covers the whole message, excluding the signature itself
-	var buf [6]byte
+	buf := make([]byte, 6)
 	h.Write([]byte{v2MagicByte})
 	h.Write([]byte{byte(len(msg.Content))})
 	h.Write([]byte{ff.IncompatibilityFlag})
@@ -137,11 +137,12 @@ func (p *Parser) Signature(ff *FrameV2, key *SignatureKey) *Signature {
 	h.Write([]byte{ff.SequenceId})
 	h.Write([]byte{ff.SystemId})
 	h.Write([]byte{ff.ComponentId})
-	h.Write(uint24Encode(buf[:], ff.Message.GetId()))
+	h.Write(uint24Encode(buf, ff.Message.GetId()))
 	h.Write(msg.Content)
-	binary.Write(h, binary.LittleEndian, ff.Checksum)
+	binary.LittleEndian.PutUint16(buf, ff.Checksum)
+	h.Write(buf[:2])
 	h.Write([]byte{ff.SignatureLinkId})
-	h.Write(uint48Encode(buf[:], ff.SignatureTimestamp))
+	h.Write(uint48Encode(buf, ff.SignatureTimestamp))
 
 	sig := new(Signature)
 	copy(sig[:], h.Sum(nil)[:6])
@@ -189,10 +190,12 @@ func (p *Parser) Read() (Frame, error) {
 		}
 
 		// checksum
-		err = binary.Read(p.readBuffer, binary.LittleEndian, &ff.Checksum)
+		buf, err = p.readBuffer.Peek(2)
 		if err != nil {
 			return nil, err
 		}
+		ff.Checksum = binary.LittleEndian.Uint16(buf)
+		p.readBuffer.Discard(2)
 
 	case v2MagicByte:
 		ff := &FrameV2{}
@@ -232,10 +235,12 @@ func (p *Parser) Read() (Frame, error) {
 		}
 
 		// checksum
-		err = binary.Read(p.readBuffer, binary.LittleEndian, &ff.Checksum)
+		buf, err = p.readBuffer.Peek(2)
 		if err != nil {
 			return nil, err
 		}
+		ff.Checksum = binary.LittleEndian.Uint16(buf)
+		p.readBuffer.Discard(2)
 
 		// signature
 		if ff.IsSigned() {

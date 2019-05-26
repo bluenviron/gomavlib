@@ -122,6 +122,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 					}
 					node2.WriteMessageAll(testMsg3)
 					step++
+
 				case 1:
 					if reflect.DeepEqual(e.Message(), testMsg4) == false ||
 						e.SystemId() != 10 ||
@@ -199,9 +200,50 @@ func TestNodeError(t *testing.T) {
 		},
 		HeartbeatDisable: true,
 	})
+	require.Error(t, err)
+}
 
-	if err == nil {
-		t.Fatal("no error")
+func TestNodeCloseInLoop(t *testing.T) {
+	node1, err := NewNode(NodeConf{
+		Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+		OutSystemId: 11,
+		Endpoints: []EndpointConf{
+			EndpointUdpServer{"127.0.0.1:5600"},
+		},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+
+	node2, err := NewNode(NodeConf{
+		Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+		OutSystemId: 11,
+		Endpoints: []EndpointConf{
+			EndpointUdpClient{"127.0.0.1:5600"},
+		},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+
+	go func() {
+		defer node2.Close()
+		for ee := range node2.Events() {
+			switch ee.(type) {
+			case *EventChannelOpen:
+				node2.WriteMessageAll(&MessageHeartbeat{
+					Type:           1,
+					Autopilot:      2,
+					BaseMode:       3,
+					CustomMode:     6,
+					SystemStatus:   4,
+					MavlinkVersion: 5,
+				})
+				return
+			}
+		}
+	}()
+
+	for range node1.Events() {
+		node1.Close()
 	}
 }
 

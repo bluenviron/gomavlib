@@ -13,9 +13,10 @@ type Channel struct {
 
 	label     string
 	rwc       io.ReadWriteCloser
-	writeChan chan interface{}
 	n         *Node
 	parser    *Parser
+	writeChan chan interface{}
+	writeDone chan struct{}
 }
 
 // String implements fmt.Stringer and returns the channel label.
@@ -39,72 +40,56 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) *Chan
 		Endpoint:  e,
 		label:     label,
 		rwc:       rwc,
-		writeChan: make(chan interface{}),
 		n:         n,
 		parser:    parser,
+		writeChan: make(chan interface{}),
+		writeDone: make(chan struct{}),
 	}
 
 	return ch
 }
 
 func (ch *Channel) close() {
-	ch.rwc.Close()
+	// wait for writing
+	close(ch.writeChan)
+	<- ch.writeDone
 }
 
-func (ch *Channel) start() {
-	ch.n.wg.Add(2)
+func (ch *Channel) runReader() {
+	defer func() { ch.n.eventsIn <- &eventInChannelClosed{ch} }()
 
-	// reader
-	go func() {
-		defer ch.n.wg.Done()
+	ch.n.eventsOut <- &EventChannelOpen{ch}
 
-		defer func() {
-			ch.n.channelsMutex.Lock()
-			delete(ch.n.channels, ch)
-			ch.n.channelsMutex.Unlock()
-			close(ch.writeChan)
-			ch.n.eventChan <- &EventChannelClose{ch}
-		}()
+	for {
+		frame, err := ch.parser.Read()
+		if err != nil {
+			// continue in case of parse errors
+			if _, ok := err.(*ParserError); ok {
+				ch.n.eventsOut <- &EventParseError{err, ch}
+				continue
+			}
+			return
+		}
 
-		ch.n.eventChan <- &EventChannelOpen{ch}
+		ch.n.eventsOut <- &EventFrame{frame, ch}
+	}
+}
 
-		for {
-			frame, err := ch.parser.Read()
-			if err != nil {
-				// continue in case of parse errors
-				if _, ok := err.(*ParserError); ok {
-					ch.n.eventChan <- &EventParseError{err, ch}
-					continue
-				}
-				// avoid calling twice Close()
-				if err != errorTerminated {
-					ch.rwc.Close()
-				}
-				return
+func (ch *Channel) runWriter() {
+	defer func() { ch.writeDone <- struct{}{} }()
+	defer ch.rwc.Close()
+
+	for what := range ch.writeChan {
+		switch wh := what.(type) {
+		case Message:
+			if ch.n.conf.OutVersion == V1 {
+				ch.parser.Write(&FrameV1{Message: wh}, false)
+			} else {
+				ch.parser.Write(&FrameV2{Message: wh}, false)
 			}
 
-			ch.n.eventChan <- &EventFrame{frame, ch}
+		case Frame:
+			ch.parser.Write(wh, true)
 		}
-	}()
-
-	// writer
-	go func() {
-		defer ch.n.wg.Done()
-
-		for what := range ch.writeChan {
-			switch wh := what.(type) {
-			case Message:
-				if ch.n.conf.OutVersion == V1 {
-					ch.parser.Write(&FrameV1{Message: wh}, false)
-				} else {
-					ch.parser.Write(&FrameV2{Message: wh}, false)
-				}
-
-			case Frame:
-				ch.parser.Write(wh, true)
-			}
-
-			ch.n.writeDone <- struct{}{}
-		}
-	}()
+	}
 }

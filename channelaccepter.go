@@ -17,23 +17,17 @@ func (ca *channelAccepter) close() {
 	ca.eca.Close()
 }
 
-func (ca *channelAccepter) start() {
-	ca.n.wg.Add(1)
-
-	go func() {
-		defer ca.n.wg.Done()
-
-		for {
-			label, rwc, err := ca.eca.Accept()
-			if err != nil {
-				if err != errorTerminated {
-					panic("errorTerminated is the only error allowed here")
-				}
-				break
+func (ca *channelAccepter) run() {
+	for {
+		label, rwc, err := ca.eca.Accept()
+		if err != nil {
+			if err != errorTerminated {
+				panic("errorTerminated is the only error allowed here")
 			}
-
-			ch := ca.n.createChannel(ca.eca, label, rwc)
-			ch.start()
+			break
 		}
-	}()
+
+		ch := newChannel(ca.n, ca.eca, label, rwc)
+		ca.n.eventsIn <- &eventInChannelNew{ch}
+	}
 }

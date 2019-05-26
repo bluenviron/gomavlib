@@ -43,7 +43,6 @@ package gomavlib
 
 import (
 	"fmt"
-	"io"
 	"sync"
 	"time"
 )
@@ -104,12 +103,13 @@ type NodeConf struct {
 
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
 type Node struct {
-	conf             NodeConf
-	wg               sync.WaitGroup
-	writeDone        chan struct{}
-	eventChan        chan Event
+	conf      NodeConf
+	eventsOut chan Event
+	eventsIn  chan eventIn
+	wg        sync.WaitGroup
+	done      chan struct{}
+
 	channelAccepters map[*channelAccepter]struct{}
-	channelsMutex    sync.Mutex
 	channels         map[*Channel]struct{}
 	nodeHeartbeat    *nodeHeartbeat
 }
@@ -137,8 +137,9 @@ func NewNode(conf NodeConf) (*Node, error) {
 
 	n := &Node{
 		conf:             conf,
-		writeDone:        make(chan struct{}),
-		eventChan:        make(chan Event),
+		eventsOut:        make(chan Event),
+		eventsIn:         make(chan eventIn),
+		done:             make(chan struct{}),
 		channelAccepters: make(map[*channelAccepter]struct{}),
 		channels:         make(map[*Channel]struct{}),
 	}
@@ -147,10 +148,10 @@ func NewNode(conf NodeConf) (*Node, error) {
 		tp, err := tconf.init()
 		if err != nil {
 			for ca := range n.channels {
-				ca.close()
+				ca.rwc.Close()
 			}
 			for ca := range n.channelAccepters {
-				ca.close()
+				ca.eca.Close()
 			}
 			return nil, err
 		}
@@ -160,7 +161,8 @@ func NewNode(conf NodeConf) (*Node, error) {
 			n.channelAccepters[ca] = struct{}{}
 
 		} else if ts, ok := tp.(endpointChannelSingle); ok {
-			n.createChannel(ts, ts.Label(), ts)
+			ch := newChannel(n, ts, ts.Label(), ts)
+			n.channels[ch] = struct{}{}
 
 		} else {
 			panic(fmt.Errorf("endpoint %T does not implement any interface", tp))
@@ -176,59 +178,111 @@ func NewNode(conf NodeConf) (*Node, error) {
 
 func (n *Node) start() {
 	if n.nodeHeartbeat != nil {
-		n.nodeHeartbeat.start()
+		n.wg.Add(1)
+		go func() {
+			defer n.wg.Done()
+			n.nodeHeartbeat.run()
+		}()
 	}
 
-	// start channels before channelAccepters
-	// since channelAccepters can create new channels
 	for ch := range n.channels {
-		ch.start()
+		n.startChannel(ch)
 	}
 
 	for ca := range n.channelAccepters {
-		ca.start()
+		n.wg.Add(1)
+		go func(ca *channelAccepter) {
+			defer n.wg.Done()
+			ca.run()
+		}(ca)
 	}
+
+	go func() {
+	outer:
+		for rawEvt := range n.eventsIn {
+			switch evt := rawEvt.(type) {
+			case *eventInChannelNew:
+				n.channels[evt.ch] = struct{}{}
+				n.startChannel(evt.ch)
+
+			case *eventInChannelClosed:
+				delete(n.channels, evt.ch)
+				n.eventsOut <- &EventChannelClose{evt.ch}
+				evt.ch.close()
+
+			case *eventInWriteTo:
+				if _, ok := n.channels[evt.ch]; ok == false {
+					return
+				}
+				evt.ch.writeChan <- evt.what
+
+			case *eventInWriteAll:
+				for ch := range n.channels {
+					ch.writeChan <- evt.what
+				}
+
+			case *eventInWriteExcept:
+				for ch := range n.channels {
+					if ch != evt.except {
+						ch.writeChan <- evt.what
+					}
+				}
+
+			case *eventInClose:
+				break outer
+			}
+		}
+
+		// consume events up to close()
+		go func() {
+			for range n.eventsIn {
+			}
+		}()
+
+		if n.nodeHeartbeat != nil {
+			n.nodeHeartbeat.close()
+		}
+
+		// close channels first since if we close udpListener
+		// then its channels are closed too
+		for ch := range n.channels {
+			ch.close()
+		}
+
+		for ca := range n.channelAccepters {
+			ca.close()
+		}
+
+		n.wg.Wait()
+		close(n.eventsIn)
+		close(n.eventsOut)
+		n.done <- struct{}{}
+	}()
+}
+
+func (n *Node) startChannel(ch *Channel) {
+	n.wg.Add(2)
+	go func(ch *Channel) {
+		defer n.wg.Done()
+		ch.runReader()
+	}(ch)
+	go func(ch *Channel) {
+		defer n.wg.Done()
+		ch.runWriter()
+	}(ch)
 }
 
 // Close stops node operations and wait for all routines to return.
 func (n *Node) Close() {
-	if n.nodeHeartbeat != nil {
-		n.nodeHeartbeat.close()
-	}
-
-	for ca := range n.channelAccepters {
-		ca.close()
-	}
-
-	func() {
-		n.channelsMutex.Lock()
-		defer n.channelsMutex.Unlock()
-
-		for ch := range n.channels {
-			ch.close()
-		}
-	}()
-
-	// consume events (in case user is not calling Events()) such that we can
-	// call close(n.eventChan)
+	// consume events up to close()
+	// in case user is not calling Events()
 	go func() {
-		for range n.Events() {
+		for range n.eventsOut {
 		}
 	}()
 
-	n.wg.Wait()
-
-	// close queue after ensuring no one will write to it
-	close(n.eventChan)
-}
-
-func (n *Node) createChannel(e Endpoint, label string, rwc io.ReadWriteCloser) *Channel {
-	n.channelsMutex.Lock()
-	defer n.channelsMutex.Unlock()
-
-	ch := newChannel(n, e, label, rwc)
-	n.channels[ch] = struct{}{}
-	return ch
+	n.eventsIn <- &eventInClose{}
+	<-n.done
 }
 
 // Events returns a channel from which receiving events. Possible events are:
@@ -238,77 +292,41 @@ func (n *Node) createChannel(e Endpoint, label string, rwc io.ReadWriteCloser) *
 //   *EventParseError
 // See individual events for meaning and content.
 func (n *Node) Events() chan Event {
-	return n.eventChan
+	return n.eventsOut
 }
 
 // WriteMessageTo writes a message to given channel.
 func (n *Node) WriteMessageTo(channel *Channel, message Message) {
-	n.writeTo(channel, message)
+	n.eventsIn <- &eventInWriteTo{channel, message}
 }
 
 // WriteMessageAll writes a message to all channels.
 func (n *Node) WriteMessageAll(message Message) {
-	n.writeAll(message)
+	n.eventsIn <- &eventInWriteAll{message}
 }
 
 // WriteMessageExcept writes a message to all channels except specified channel.
 func (n *Node) WriteMessageExcept(exceptChannel *Channel, message Message) {
-	n.writeExcept(exceptChannel, message)
+	n.eventsIn <- &eventInWriteExcept{exceptChannel, message}
 }
 
 // WriteFrameTo writes a frame to given channel.
 // This function is intended for routing frames to other nodes, since all
 // frame fields must be filled manually.
 func (n *Node) WriteFrameTo(channel *Channel, frame Frame) {
-	n.writeTo(channel, frame)
+	n.eventsIn <- &eventInWriteTo{channel, frame}
 }
 
 // WriteFrameAll writes a frame to all channels.
 // This function is intended for routing frames to other nodes, since all
 // frame fields must be filled manually.
 func (n *Node) WriteFrameAll(frame Frame) {
-	n.writeAll(frame)
+	n.eventsIn <- &eventInWriteAll{frame}
 }
 
 // WriteFrameExcept writes a frame to all channels except specified channel.
 // This function is intended for routing frames to other nodes, since all
 // frame fields must be filled manually.
 func (n *Node) WriteFrameExcept(exceptChannel *Channel, frame Frame) {
-	n.writeExcept(exceptChannel, frame)
-}
-
-func (n *Node) writeTo(channel *Channel, what interface{}) {
-	n.channelsMutex.Lock()
-	defer n.channelsMutex.Unlock()
-
-	if _, ok := n.channels[channel]; ok == false {
-		return
-	}
-
-	// route to channels
-	// wait for responses (otherwise endpoints can be removed before writing)
-	channel.writeChan <- what
-	<-n.writeDone
-}
-
-func (n *Node) writeAll(what interface{}) {
-	n.channelsMutex.Lock()
-	defer n.channelsMutex.Unlock()
-
-	for channel := range n.channels {
-		channel.writeChan <- what
-		defer func() { <-n.writeDone }()
-	}
-}
-
-func (n *Node) writeExcept(exceptChannel *Channel, what interface{}) {
-	n.channelsMutex.Lock()
-	defer n.channelsMutex.Unlock()
-
-	for channel := range n.channels {
-		if channel != exceptChannel {
-			channel.writeChan <- what
-			defer func() { <-n.writeDone }()
-		}
-	}
+	n.eventsIn <- &eventInWriteExcept{exceptChannel, frame}
 }

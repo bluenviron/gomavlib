@@ -1,8 +1,49 @@
 package gomavlib
 
+type eventIn interface {
+	isEventIn()
+}
+
+type eventInChannelNew struct {
+	ch *Channel
+}
+
+func (*eventInChannelNew) isEventIn() {}
+
+type eventInChannelClosed struct {
+	ch *Channel
+}
+
+func (*eventInChannelClosed) isEventIn() {}
+
+type eventInWriteTo struct {
+	ch   *Channel
+	what interface{}
+}
+
+func (*eventInWriteTo) isEventIn() {}
+
+type eventInWriteAll struct {
+	what interface{}
+}
+
+func (*eventInWriteAll) isEventIn() {}
+
+type eventInWriteExcept struct {
+	except *Channel
+	what   interface{}
+}
+
+func (*eventInWriteExcept) isEventIn() {}
+
+type eventInClose struct {
+}
+
+func (*eventInClose) isEventIn() {}
+
 // Event is the interface implemented by all events received through node.Events().
 type Event interface {
-	isEvent()
+	isEventOut()
 }
 
 // EventChannelOpen is the event fired when a channel is opened.
@@ -10,14 +51,14 @@ type EventChannelOpen struct {
 	Channel *Channel
 }
 
-func (*EventChannelOpen) isEvent() {}
+func (*EventChannelOpen) isEventOut() {}
 
 // EventChannelClose is the event fired when a channel is closed.
 type EventChannelClose struct {
 	Channel *Channel
 }
 
-func (*EventChannelClose) isEvent() {}
+func (*EventChannelClose) isEventOut() {}
 
 // EventFrame is the event fired when a frame is received.
 type EventFrame struct {
@@ -28,7 +69,7 @@ type EventFrame struct {
 	Channel *Channel
 }
 
-func (*EventFrame) isEvent() {}
+func (*EventFrame) isEventOut() {}
 
 // SystemId returns the frame system id.
 func (res *EventFrame) SystemId() byte {
@@ -54,4 +95,4 @@ type EventParseError struct {
 	Channel *Channel
 }
 
-func (*EventParseError) isEvent() {}
+func (*EventParseError) isEventOut() {}

@@ -104,14 +104,14 @@ type NodeConf struct {
 
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
 type Node struct {
-	conf          NodeConf
-	wg            sync.WaitGroup
-	chanAccepters map[endpointChannelAccepter]struct{}
-	writeDone     chan struct{}
-	eventChan     chan Event
-	channelsMutex sync.Mutex
-	channels      map[*Channel]struct{}
-	nodeHeartbeat *nodeHeartbeat
+	conf             NodeConf
+	wg               sync.WaitGroup
+	writeDone        chan struct{}
+	eventChan        chan Event
+	channelAccepters map[*channelAccepter]struct{}
+	channelsMutex    sync.Mutex
+	channels         map[*Channel]struct{}
+	nodeHeartbeat    *nodeHeartbeat
 }
 
 // NewNode allocates a Node. See NodeConf for the options.
@@ -136,22 +136,28 @@ func NewNode(conf NodeConf) (*Node, error) {
 	}
 
 	n := &Node{
-		conf:          conf,
-		chanAccepters: make(map[endpointChannelAccepter]struct{}),
-		writeDone:     make(chan struct{}),
-		eventChan:     make(chan Event),
-		channels:      make(map[*Channel]struct{}),
+		conf:             conf,
+		writeDone:        make(chan struct{}),
+		eventChan:        make(chan Event),
+		channelAccepters: make(map[*channelAccepter]struct{}),
+		channels:         make(map[*Channel]struct{}),
 	}
 
 	for _, tconf := range conf.Endpoints {
 		tp, err := tconf.init()
 		if err != nil {
-			n.Close()
+			for ca := range n.channels {
+				ca.close()
+			}
+			for ca := range n.channelAccepters {
+				ca.close()
+			}
 			return nil, err
 		}
 
-		if tm, ok := tp.(endpointChannelAccepter); ok {
-			n.startChannelAccepter(tm)
+		if eca, ok := tp.(endpointChannelAccepter); ok {
+			ca := newChannelAccepter(n, eca)
+			n.channelAccepters[ca] = struct{}{}
 
 		} else if ts, ok := tp.(endpointChannelSingle); ok {
 			n.createChannel(ts, ts.Label(), ts)
@@ -161,10 +167,27 @@ func NewNode(conf NodeConf) (*Node, error) {
 		}
 	}
 
-	if n.conf.HeartbeatDisable == false {
-		n.nodeHeartbeat = newNodeHeartbeat(n)
-	}
+	n.nodeHeartbeat = newNodeHeartbeat(n)
+
+	n.start()
+
 	return n, nil
+}
+
+func (n *Node) start() {
+	if n.nodeHeartbeat != nil {
+		n.nodeHeartbeat.start()
+	}
+
+	// start channels before channelAccepters
+	// since channelAccepters can create new channels
+	for ch := range n.channels {
+		ch.start()
+	}
+
+	for ca := range n.channelAccepters {
+		ca.start()
+	}
 }
 
 // Close stops node operations and wait for all routines to return.
@@ -173,8 +196,8 @@ func (n *Node) Close() {
 		n.nodeHeartbeat.close()
 	}
 
-	for mc := range n.chanAccepters {
-		mc.Close()
+	for ca := range n.channelAccepters {
+		ca.close()
 	}
 
 	func() {
@@ -182,7 +205,7 @@ func (n *Node) Close() {
 		defer n.channelsMutex.Unlock()
 
 		for ch := range n.channels {
-			ch.rwc.Close()
+			ch.close()
 		}
 	}()
 
@@ -199,104 +222,13 @@ func (n *Node) Close() {
 	close(n.eventChan)
 }
 
-func (n *Node) startChannelAccepter(tm endpointChannelAccepter) {
-	n.chanAccepters[tm] = struct{}{}
-
-	n.wg.Add(1)
-	go func() {
-		defer n.wg.Done()
-
-		for {
-			label, rwc, err := tm.Accept()
-			if err != nil {
-				if err != errorTerminated {
-					panic("errorTerminated is the only error allowed here")
-				}
-				break
-			}
-
-			n.createChannel(tm, label, rwc)
-		}
-	}()
-}
-
-func (n *Node) createChannel(e Endpoint, label string, rwc io.ReadWriteCloser) {
+func (n *Node) createChannel(e Endpoint, label string, rwc io.ReadWriteCloser) *Channel {
 	n.channelsMutex.Lock()
 	defer n.channelsMutex.Unlock()
 
-	channel := &Channel{
-		Endpoint:  e,
-		label:     label,
-		rwc:       rwc,
-		writeChan: make(chan interface{}),
-	}
-	n.channels[channel] = struct{}{}
-
-	parser, _ := NewParser(ParserConf{
-		Reader:             channel.rwc,
-		Writer:             channel.rwc,
-		Dialect:            n.conf.Dialect,
-		InSignatureKey:     n.conf.InSignatureKey,
-		OutSystemId:        n.conf.OutSystemId,
-		OutComponentId:     n.conf.OutComponentId,
-		OutSignatureLinkId: randomByte(),
-		OutSignatureKey:    n.conf.OutSignatureKey,
-	})
-
-	// reader
-	n.wg.Add(1)
-	go func() {
-		defer n.wg.Done()
-		defer func() {
-			n.channelsMutex.Lock()
-			delete(n.channels, channel)
-			n.channelsMutex.Unlock()
-			close(channel.writeChan)
-			n.eventChan <- &EventChannelClose{channel}
-		}()
-
-		n.eventChan <- &EventChannelOpen{channel}
-
-		for {
-			frame, err := parser.Read()
-			if err != nil {
-				// continue in case of parse errors
-				if _, ok := err.(*ParserError); ok {
-					n.eventChan <- &EventParseError{err, channel}
-					continue
-				}
-				// avoid calling twice Close()
-				if err != errorTerminated {
-					channel.rwc.Close()
-				}
-				return
-			}
-
-			n.eventChan <- &EventFrame{frame, channel}
-		}
-	}()
-
-	// writer
-	n.wg.Add(1)
-	go func() {
-		defer n.wg.Done()
-
-		for what := range channel.writeChan {
-			switch wh := what.(type) {
-			case Message:
-				if n.conf.OutVersion == V1 {
-					parser.Write(&FrameV1{Message: wh}, false)
-				} else {
-					parser.Write(&FrameV2{Message: wh}, false)
-				}
-
-			case Frame:
-				parser.Write(wh, true)
-			}
-
-			n.writeDone <- struct{}{}
-		}
-	}()
+	ch := newChannel(n, e, label, rwc)
+	n.channels[ch] = struct{}{}
+	return ch
 }
 
 // Events returns a channel from which receiving events. Possible events are:

@@ -12,7 +12,7 @@ func TestUdpListener(t *testing.T) {
 	testBuf1 := []byte("testing testing 1 2 3")
 	testBuf2 := []byte("second part")
 
-	l, err := newUdpListener("udp4", ":18456")
+	l, err := newUdpListener("udp4", "127.0.0.1:18456")
 	require.NoError(t, err)
 
 	var wg sync.WaitGroup
@@ -74,7 +74,7 @@ func TestUdpListener(t *testing.T) {
 }
 
 func TestUdpListenerDeadline(t *testing.T) {
-	l, err := newUdpListener("udp4", ":18456")
+	l, err := newUdpListener("udp4", "127.0.0.1:18456")
 	require.NoError(t, err)
 
 	var wg sync.WaitGroup
@@ -118,4 +118,11 @@ func TestUdpListenerDeadline(t *testing.T) {
 	}()
 
 	wg.Wait()
+}
+
+func TestUdpListenerDoubleClose(t *testing.T) {
+	l, err := newUdpListener("udp4", "127.0.0.1:18456")
+	require.NoError(t, err)
+	l.Close()
+	l.Close()
 }

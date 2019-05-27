@@ -57,8 +57,8 @@ func (c *udpListenerConn) RemoteAddr() net.Addr {
 }
 
 func (c *udpListenerConn) Close() error {
-	c.listener.mutex.Lock()
-	defer c.listener.mutex.Unlock()
+	c.listener.readMutex.Lock()
+	defer c.listener.readMutex.Unlock()
 
 	if c.closed == true {
 		return nil
@@ -78,6 +78,7 @@ func (c *udpListenerConn) Close() error {
 	return nil
 }
 
+// read synchronously, such that buffer can be freed after reading
 func (c *udpListenerConn) Read(byt []byte) (int, error) {
 	var buf []byte
 	var ok bool
@@ -106,12 +107,8 @@ func (c *udpListenerConn) Read(byt []byte) (int, error) {
 
 // write synchronously, such that buffer can be freed after writing
 func (c *udpListenerConn) Write(byt []byte) (int, error) {
-	c.listener.mutex.Lock()
-	defer c.listener.mutex.Unlock()
-
-	if c.closed == true {
-		return 0, udpErrorTerminated
-	}
+	c.listener.writeMutex.Lock()
+	defer c.listener.writeMutex.Unlock()
 
 	if !c.writeDeadline.IsZero() {
 		err := c.listener.packetConn.SetWriteDeadline(c.writeDeadline)
@@ -140,10 +137,11 @@ func (c *udpListenerConn) SetWriteDeadline(t time.Time) error {
 
 type udpListener struct {
 	packetConn net.PacketConn
+	conns      map[string]*udpListenerConn
 	acceptChan chan net.Conn
 	readDone   chan struct{}
-	conns      map[string]*udpListenerConn
-	mutex      sync.Mutex
+	readMutex  sync.Mutex
+	writeMutex sync.Mutex
 	closed     bool
 }
 
@@ -155,9 +153,9 @@ func newUdpListener(network, address string) (net.Listener, error) {
 
 	l := &udpListener{
 		packetConn: packetConn,
+		conns:      make(map[string]*udpListenerConn),
 		acceptChan: make(chan net.Conn),
 		readDone:   make(chan struct{}),
-		conns:      make(map[string]*udpListenerConn),
 	}
 
 	go l.reader()
@@ -166,8 +164,8 @@ func newUdpListener(network, address string) (net.Listener, error) {
 }
 
 func (l *udpListener) Close() error {
-	l.mutex.Lock()
-	defer l.mutex.Unlock()
+	l.readMutex.Lock()
+	defer l.readMutex.Unlock()
 
 	if l.closed == true {
 		return nil
@@ -206,8 +204,8 @@ func (l *udpListener) reader() {
 		addrs := addr.String()
 
 		func() {
-			l.mutex.Lock()
-			defer l.mutex.Unlock()
+			l.readMutex.Lock()
+			defer l.readMutex.Unlock()
 
 			conn, preExisting := l.conns[addrs]
 

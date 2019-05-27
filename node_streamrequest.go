@@ -139,6 +139,10 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 			sr.n.WriteMessageTo(evt.Channel, msg.Interface().(Message))
 		}
 
-		sr.n.eventsOut <- &EventStreamRequested{evt.Channel}
+		sr.n.eventsOut <- &EventStreamRequested{
+			Channel:     evt.Channel,
+			SystemId:    evt.SystemId(),
+			ComponentId: evt.ComponentId(),
+		}
 	}
 }

@@ -99,8 +99,12 @@ func (*EventParseError) isEventOut() {}
 
 // EventStreamRequested is the event fired when an automatic stream request is sent.
 type EventStreamRequested struct {
-	// the channel to which the stream request has been sent
+	// the channel to which the stream request is addressed
 	Channel *Channel
+	// the system id to which the stream requests is addressed
+	SystemId byte
+	// the component id to which the stream requests is addressed
+	ComponentId byte
 }
 
 func (*EventStreamRequested) isEventOut() {}

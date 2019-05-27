@@ -22,7 +22,7 @@ This library powers the [**mavp2p**](https://github.com/gswly/mavp2p) router.
     * TCP (server or client mode)
     * custom reader/writer
   * automatic heartbeat emission
-  * (disabled by default) automatic stream requests to Ardupilot devices
+  * automatic stream requests to Ardupilot devices (disabled by default)
 * Provides a low-level API ("Parser") with ability to decode/encode frames from/to a generic reader/writer
 * UDP connections are tracked and removed when inactive
 * Supports both domain names and IPs
@@ -58,7 +58,8 @@ go get github.com/gswly/gomavlib
 * [dialect_custom](example/11dialect_custom.go)
 * [events](example/12events.go)
 * [router](example/13router.go)
-* [frame_parser](example/14frame_parser.go)
+* [stream_requests](example/14stream_requests.go)
+* [parser](example/15parser.go)
 
 ## Documentation
 

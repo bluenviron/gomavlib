@@ -50,7 +50,7 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) *Chan
 }
 
 func (ch *Channel) close() {
-	// wait for writing
+	// wait until all packets have been written
 	close(ch.writeChan)
 	<-ch.writeDone
 }

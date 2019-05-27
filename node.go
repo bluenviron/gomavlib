@@ -123,9 +123,9 @@ type NodeConf struct {
 
 	// (optional) automatically request streams to detected Ardupilot devices,
 	// that need an explicit request in order to emit telemetry stream.
-	AprsEnable bool
+	StreamRequestEnable bool
 	// (optional) the requested stream frequency in Hz. It defaults to 1.
-	AprsFrequency int
+	StreamRequestFrequency int
 }
 
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
@@ -163,8 +163,8 @@ func NewNode(conf NodeConf) (*Node, error) {
 	if conf.HeartbeatAutopilotType == 0 {
 		conf.HeartbeatAutopilotType = 0 // MAV_AUTOPILOT_GENERIC
 	}
-	if conf.AprsFrequency == 0 {
-		conf.AprsFrequency = 1
+	if conf.StreamRequestFrequency == 0 {
+		conf.StreamRequestFrequency = 1
 	}
 
 	n := &Node{

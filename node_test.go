@@ -455,8 +455,8 @@ func TestNodeStreamRequest(t *testing.T) {
 			Endpoints: []EndpointConf{
 				EndpointUdpServer{"127.0.0.1:5600"},
 			},
-			HeartbeatDisable: true,
-			AprsEnable:       true,
+			HeartbeatDisable:    true,
+			StreamRequestEnable: true,
 		})
 		require.NoError(t, err)
 		defer node1.Close()

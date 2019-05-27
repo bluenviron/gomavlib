@@ -18,9 +18,9 @@ func main() {
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
 		},
-		Dialect:     ardupilotmega.Dialect,
-		OutSystemId: 10,
-		AprsEnable:  true,
+		Dialect:             ardupilotmega.Dialect,
+		OutSystemId:         10,
+		StreamRequestEnable: true,
 	})
 	if err != nil {
 		panic(err)

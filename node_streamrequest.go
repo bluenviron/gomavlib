@@ -25,7 +25,7 @@ type nodeStreamRequest struct {
 
 func newNodeStreamRequest(n *Node) *nodeStreamRequest {
 	// module is disabled
-	if n.conf.AprsEnable == false {
+	if n.conf.StreamRequestEnable == false {
 		return nil
 	}
 
@@ -136,7 +136,7 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 			msg.Elem().FieldByName("TargetSystem").SetUint(uint64(evt.SystemId()))
 			msg.Elem().FieldByName("TargetComponent").SetUint(uint64(evt.ComponentId()))
 			msg.Elem().FieldByName("ReqStreamId").SetUint(uint64(stream))
-			msg.Elem().FieldByName("ReqMessageRate").SetUint(uint64(sr.n.conf.AprsFrequency))
+			msg.Elem().FieldByName("ReqMessageRate").SetUint(uint64(sr.n.conf.StreamRequestFrequency))
 			msg.Elem().FieldByName("StartStop").SetUint(uint64(1))
 			sr.n.WriteMessageTo(evt.Channel, msg.Interface().(Message))
 		}

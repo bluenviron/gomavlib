@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	STREAM_REQUEST_PERIOD = 30 * time.Second
+	_STREAM_REQUEST_PERIOD = 30 * time.Second
 )
 
 type streamNode struct {
@@ -72,7 +72,7 @@ func (sr *nodeStreamRequest) run() {
 				defer sr.lastRequestsMutex.Unlock()
 
 				for rnode, t := range sr.lastRequests {
-					if now.Sub(t) >= STREAM_REQUEST_PERIOD {
+					if now.Sub(t) >= _STREAM_REQUEST_PERIOD {
 						delete(sr.lastRequests, rnode)
 					}
 				}
@@ -110,7 +110,7 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 			request = true
 
 		} else {
-			if now.Sub(sr.lastRequests[rnode]) >= STREAM_REQUEST_PERIOD {
+			if now.Sub(sr.lastRequests[rnode]) >= _STREAM_REQUEST_PERIOD {
 				request = true
 				sr.lastRequests[rnode] = now
 			}

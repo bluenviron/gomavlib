@@ -19,11 +19,6 @@ type Channel struct {
 	allWritten chan struct{}
 }
 
-// String implements fmt.Stringer and returns the channel label.
-func (e *Channel) String() string {
-	return e.label
-}
-
 func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) *Channel {
 	parser, _ := NewParser(ParserConf{
 		Reader:             rwc,
@@ -47,6 +42,11 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) *Chan
 	}
 
 	return ch
+}
+
+// String implements fmt.Stringer and returns the channel label.
+func (ch *Channel) String() string {
+	return ch.label
 }
 
 func (ch *Channel) close() {

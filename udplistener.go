@@ -30,18 +30,25 @@ func (udpNetError) Temporary() bool {
 var udpErrorTimeout net.Error = udpNetError{"timeout", true}
 var udpErrorTerminated net.Error = udpNetError{"terminated", false}
 
+type udpListenerConnIndex struct {
+	IP   [4]byte
+	Port int
+}
+
 type udpListenerConn struct {
 	listener      *udpListener
-	addr          net.Addr
+	index         udpListenerConnIndex
+	addr          *net.UDPAddr
 	readChan      chan []byte
 	closed        bool
 	readDeadline  time.Time
 	writeDeadline time.Time
 }
 
-func newUdpListenerConn(listener *udpListener, addr net.Addr) *udpListenerConn {
+func newUdpListenerConn(listener *udpListener, index udpListenerConnIndex, addr *net.UDPAddr) *udpListenerConn {
 	return &udpListenerConn{
 		listener: listener,
+		index:    index,
 		addr:     addr,
 		readChan: make(chan []byte),
 	}
@@ -65,7 +72,7 @@ func (c *udpListenerConn) Close() error {
 	}
 
 	c.closed = true
-	delete(c.listener.conns, c.addr.String())
+	delete(c.listener.conns, c.index)
 
 	// release anyone waiting on Read()
 	close(c.readChan)
@@ -137,7 +144,7 @@ func (c *udpListenerConn) SetWriteDeadline(t time.Time) error {
 
 type udpListener struct {
 	packetConn net.PacketConn
-	conns      map[string]*udpListenerConn
+	conns      map[udpListenerConnIndex]*udpListenerConn
 	acceptChan chan net.Conn
 	readDone   chan struct{}
 	readMutex  sync.Mutex
@@ -153,7 +160,7 @@ func newUdpListener(network, address string) (net.Listener, error) {
 
 	l := &udpListener{
 		packetConn: packetConn,
-		conns:      make(map[string]*udpListenerConn),
+		conns:      make(map[udpListenerConnIndex]*udpListenerConn),
 		acceptChan: make(chan net.Conn),
 		readDone:   make(chan struct{}),
 	}
@@ -199,23 +206,25 @@ func (l *udpListener) reader() {
 			break
 		}
 
-		// addr changes every time ReadFrom() is called, we use its string
-		// representation as index
-		addrs := addr.String()
+		// use ip and port as connection index
+		uaddr := addr.(*net.UDPAddr)
+		connIndex := udpListenerConnIndex{}
+		connIndex.Port = uaddr.Port
+		copy(connIndex.IP[:], uaddr.IP)
 
 		func() {
 			l.readMutex.Lock()
 			defer l.readMutex.Unlock()
 
-			conn, preExisting := l.conns[addrs]
+			conn, preExisting := l.conns[connIndex]
 
 			if preExisting == false && l.closed == true {
 				// listener is closed, ignore new connection
 
 			} else {
 				if preExisting == false {
-					conn = newUdpListenerConn(l, addr)
-					l.conns[addrs] = conn
+					conn = newUdpListenerConn(l, connIndex, uaddr)
+					l.conns[connIndex] = conn
 					l.acceptChan <- conn
 				}
 

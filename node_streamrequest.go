@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	STREAM_REQUEST_AGAIN_AFTER_INACTIVITY = 30 * time.Second
+	STREAM_REQUEST_PERIOD = 30 * time.Second
 )
 
 type streamNode struct {
@@ -17,10 +17,10 @@ type streamNode struct {
 }
 
 type nodeStreamRequest struct {
-	n                   *Node
-	terminate           chan struct{}
-	lastHeartbeatsMutex sync.Mutex
-	lastHeartbeats      map[streamNode]time.Time
+	n                 *Node
+	terminate         chan struct{}
+	lastRequestsMutex sync.Mutex
+	lastRequests      map[streamNode]time.Time
 }
 
 func newNodeStreamRequest(n *Node) *nodeStreamRequest {
@@ -47,9 +47,9 @@ func newNodeStreamRequest(n *Node) *nodeStreamRequest {
 	}
 
 	sr := &nodeStreamRequest{
-		n:              n,
-		terminate:      make(chan struct{}),
-		lastHeartbeats: make(map[streamNode]time.Time),
+		n:            n,
+		terminate:    make(chan struct{}),
+		lastRequests: make(map[streamNode]time.Time),
 	}
 
 	return sr
@@ -68,12 +68,12 @@ func (sr *nodeStreamRequest) run() {
 		// periodic cleanup
 		case now := <-ticker.C:
 			func() {
-				sr.lastHeartbeatsMutex.Lock()
-				defer sr.lastHeartbeatsMutex.Unlock()
+				sr.lastRequestsMutex.Lock()
+				defer sr.lastRequestsMutex.Unlock()
 
-				for rnode, t := range sr.lastHeartbeats {
-					if now.Sub(t) >= STREAM_REQUEST_AGAIN_AFTER_INACTIVITY {
-						delete(sr.lastHeartbeats, rnode)
+				for rnode, t := range sr.lastRequests {
+					if now.Sub(t) >= STREAM_REQUEST_PERIOD {
+						delete(sr.lastRequests, rnode)
 					}
 				}
 			}()
@@ -97,25 +97,23 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 		ComponentId: evt.ComponentId(),
 	}
 
-	// request streams if sender is new or not seen in some time
+	// request streams if sender is new or a request has not been sent in some time
 	request := false
 	func() {
-		sr.lastHeartbeatsMutex.Lock()
-		defer sr.lastHeartbeatsMutex.Unlock()
+		sr.lastRequestsMutex.Lock()
+		defer sr.lastRequestsMutex.Unlock()
 
 		now := time.Now()
 
-		if _, ok := sr.lastHeartbeats[rnode]; !ok {
-			sr.lastHeartbeats[rnode] = time.Now()
+		if _, ok := sr.lastRequests[rnode]; !ok {
+			sr.lastRequests[rnode] = time.Now()
 			request = true
 
 		} else {
-			if now.Sub(sr.lastHeartbeats[rnode]) >= STREAM_REQUEST_AGAIN_AFTER_INACTIVITY {
+			if now.Sub(sr.lastRequests[rnode]) >= STREAM_REQUEST_PERIOD {
 				request = true
+				sr.lastRequests[rnode] = now
 			}
-
-			// always update last seen
-			sr.lastHeartbeats[rnode] = now
 		}
 	}()
 

@@ -23,9 +23,7 @@ func TestUdpListener(t *testing.T) {
 
 		for i := 0; i < 2; i++ {
 			conn, err := l.Accept()
-			if err != nil {
-				t.Fatal(err)
-			}
+			require.NoError(t, err)
 
 			go func() {
 				defer wg.Done()
@@ -50,6 +48,7 @@ func TestUdpListener(t *testing.T) {
 
 			conn, err := net.Dial("udp4", "127.0.0.1:18456")
 			require.NoError(t, err)
+			defer conn.Close()
 
 			n, err := conn.Write(testBuf1)
 			require.NoError(t, err)

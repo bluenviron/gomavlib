@@ -79,22 +79,29 @@ func (c *udpListenerConn) Close() error {
 }
 
 func (c *udpListenerConn) Read(byt []byte) (int, error) {
-	readTimer := time.NewTimer(c.readDeadline.Sub(time.Now()))
-	defer readTimer.Stop()
+	var buf []byte
+	var ok bool
 
-	select {
-	case <-readTimer.C:
-		return 0, udpErrorTimeout
+	if !c.readDeadline.IsZero() {
+		readTimer := time.NewTimer(c.readDeadline.Sub(time.Now()))
+		defer readTimer.Stop()
 
-	case buf, ok := <-c.readChan:
-		if ok == false {
-			return 0, udpErrorTerminated
+		select {
+		case <-readTimer.C:
+			return 0, udpErrorTimeout
+		case buf, ok = <-c.readChan:
 		}
-
-		copy(byt, buf)
-		c.listener.readDone <- struct{}{}
-		return len(buf), nil
+	} else {
+		buf, ok = <-c.readChan
 	}
+
+	if ok == false {
+		return 0, udpErrorTerminated
+	}
+
+	copy(byt, buf)
+	c.listener.readDone <- struct{}{}
+	return len(buf), nil
 }
 
 // write synchronously, such that buffer can be freed after writing
@@ -106,9 +113,11 @@ func (c *udpListenerConn) Write(byt []byte) (int, error) {
 		return 0, udpErrorTerminated
 	}
 
-	err := c.listener.packetConn.SetWriteDeadline(c.writeDeadline)
-	if err != nil {
-		return 0, err
+	if !c.writeDeadline.IsZero() {
+		err := c.listener.packetConn.SetWriteDeadline(c.writeDeadline)
+		if err != nil {
+			return 0, err
+		}
 	}
 
 	return c.listener.packetConn.WriteTo(byt, c.addr)

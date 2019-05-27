@@ -66,6 +66,24 @@ const (
 	V1
 )
 
+type goroutinePool sync.WaitGroup
+
+type goroutinePoolRunnable interface {
+	run()
+}
+
+func (wg *goroutinePool) Start(what goroutinePoolRunnable) {
+	(*sync.WaitGroup)(wg).Add(1)
+	go func() {
+		defer (*sync.WaitGroup)(wg).Done()
+		what.run()
+	}()
+}
+
+func (wg *goroutinePool) Wait() {
+	(*sync.WaitGroup)(wg).Wait()
+}
+
 // NodeConf allows to configure a Node.
 type NodeConf struct {
 	// the endpoints with which this node will
@@ -103,12 +121,10 @@ type NodeConf struct {
 
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
 type Node struct {
-	conf      NodeConf
-	eventsOut chan Event
-	eventsIn  chan eventIn
-	wg        sync.WaitGroup
-	done      chan struct{}
-
+	conf             NodeConf
+	eventsOut        chan Event
+	eventsIn         chan eventIn
+	pool             goroutinePool
 	channelAccepters map[*channelAccepter]struct{}
 	channels         map[*Channel]struct{}
 	nodeHeartbeat    *nodeHeartbeat
@@ -139,7 +155,6 @@ func NewNode(conf NodeConf) (*Node, error) {
 		conf:             conf,
 		eventsOut:        make(chan Event),
 		eventsIn:         make(chan eventIn),
-		done:             make(chan struct{}),
 		channelAccepters: make(map[*channelAccepter]struct{}),
 		channels:         make(map[*Channel]struct{}),
 	}
@@ -171,106 +186,79 @@ func NewNode(conf NodeConf) (*Node, error) {
 
 	n.nodeHeartbeat = newNodeHeartbeat(n)
 
-	n.start()
+	if n.nodeHeartbeat != nil {
+		n.pool.Start(n.nodeHeartbeat)
+	}
+
+	for ch := range n.channels {
+		n.pool.Start(ch)
+	}
+
+	for ca := range n.channelAccepters {
+		n.pool.Start(ca)
+	}
+
+	n.pool.Start(n)
 
 	return n, nil
 }
 
-func (n *Node) start() {
-	if n.nodeHeartbeat != nil {
-		n.wg.Add(1)
-		go func() {
-			defer n.wg.Done()
-			n.nodeHeartbeat.run()
-		}()
+func (n *Node) run() {
+outer:
+	for rawEvt := range n.eventsIn {
+		switch evt := rawEvt.(type) {
+		case *eventInChannelNew:
+			n.channels[evt.ch] = struct{}{}
+			n.pool.Start(evt.ch)
+
+		case *eventInChannelClosed:
+			delete(n.channels, evt.ch)
+			n.eventsOut <- &EventChannelClose{evt.ch}
+			evt.ch.close()
+
+		case *eventInWriteTo:
+			if _, ok := n.channels[evt.ch]; ok == false {
+				return
+			}
+			evt.ch.writeChan <- evt.what
+
+		case *eventInWriteAll:
+			for ch := range n.channels {
+				ch.writeChan <- evt.what
+			}
+
+		case *eventInWriteExcept:
+			for ch := range n.channels {
+				if ch != evt.except {
+					ch.writeChan <- evt.what
+				}
+			}
+
+		case *eventInClose:
+			break outer
+		}
 	}
 
-	for ch := range n.channels {
-		n.startChannel(ch)
+	// consume events up to close()
+	go func() {
+		for range n.eventsIn {
+		}
+	}()
+
+	if n.nodeHeartbeat != nil {
+		n.nodeHeartbeat.close()
 	}
 
 	for ca := range n.channelAccepters {
-		n.wg.Add(1)
-		go func(ca *channelAccepter) {
-			defer n.wg.Done()
-			ca.run()
-		}(ca)
+		ca.close()
 	}
 
-	go func() {
-	outer:
-		for rawEvt := range n.eventsIn {
-			switch evt := rawEvt.(type) {
-			case *eventInChannelNew:
-				n.channels[evt.ch] = struct{}{}
-				n.startChannel(evt.ch)
-
-			case *eventInChannelClosed:
-				delete(n.channels, evt.ch)
-				n.eventsOut <- &EventChannelClose{evt.ch}
-				evt.ch.close()
-
-			case *eventInWriteTo:
-				if _, ok := n.channels[evt.ch]; ok == false {
-					return
-				}
-				evt.ch.writeChan <- evt.what
-
-			case *eventInWriteAll:
-				for ch := range n.channels {
-					ch.writeChan <- evt.what
-				}
-
-			case *eventInWriteExcept:
-				for ch := range n.channels {
-					if ch != evt.except {
-						ch.writeChan <- evt.what
-					}
-				}
-
-			case *eventInClose:
-				break outer
-			}
-		}
-
-		// consume events up to close()
-		go func() {
-			for range n.eventsIn {
-			}
-		}()
-
-		if n.nodeHeartbeat != nil {
-			n.nodeHeartbeat.close()
-		}
-
-		for ca := range n.channelAccepters {
-			ca.close()
-		}
-
-		for ch := range n.channels {
-			ch.close()
-		}
-
-		n.wg.Wait()
-		close(n.eventsIn)
-		close(n.eventsOut)
-		n.done <- struct{}{}
-	}()
+	for ch := range n.channels {
+		ch.close()
+	}
 }
 
-func (n *Node) startChannel(ch *Channel) {
-	n.wg.Add(2)
-	go func(ch *Channel) {
-		defer n.wg.Done()
-		ch.runReader()
-	}(ch)
-	go func(ch *Channel) {
-		defer n.wg.Done()
-		ch.runWriter()
-	}(ch)
-}
-
-// Close stops node operations and wait for all routines to return.
+// Close halts node operations and waits for all routines to return.
 func (n *Node) Close() {
 	// consume events up to close()
 	// in case user is not calling Events()
@@ -280,7 +268,9 @@ func (n *Node) Close() {
 	}()
 
 	n.eventsIn <- &eventInClose{}
-	<-n.done
+	n.pool.Wait()
+	close(n.eventsIn)
+	close(n.eventsOut)
 }
 
 // Events returns a channel from which receiving events. Possible events are:

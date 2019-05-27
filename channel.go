@@ -11,12 +11,12 @@ type Channel struct {
 	// the endpoint which the channel belongs to
 	Endpoint Endpoint
 
-	label     string
-	rwc       io.ReadWriteCloser
-	n         *Node
-	parser    *Parser
-	writeChan chan interface{}
-	writeDone chan struct{}
+	label      string
+	rwc        io.ReadWriteCloser
+	n          *Node
+	parser     *Parser
+	writeChan  chan interface{}
+	allWritten chan struct{}
 }
 
 // String implements fmt.Stringer and returns the channel label.
@@ -37,13 +37,13 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) *Chan
 	})
 
 	ch := &Channel{
-		Endpoint:  e,
-		label:     label,
-		rwc:       rwc,
-		n:         n,
-		parser:    parser,
-		writeChan: make(chan interface{}),
-		writeDone: make(chan struct{}),
+		Endpoint:   e,
+		label:      label,
+		rwc:        rwc,
+		n:          n,
+		parser:     parser,
+		writeChan:  make(chan interface{}),
+		allWritten: make(chan struct{}),
 	}
 
 	return ch
@@ -52,44 +52,55 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) *Chan
 func (ch *Channel) close() {
 	// wait until all packets have been written
 	close(ch.writeChan)
-	<-ch.writeDone
+	<-ch.allWritten
 }
 
-func (ch *Channel) runReader() {
-	defer func() { ch.n.eventsIn <- &eventInChannelClosed{ch} }()
+func (ch *Channel) run() {
+	// reader
+	readerDone := make(chan struct{})
+	go func() {
+		defer func() { readerDone <- struct{}{} }()
+		defer func() { ch.n.eventsIn <- &eventInChannelClosed{ch} }()
 
-	ch.n.eventsOut <- &EventChannelOpen{ch}
+		ch.n.eventsOut <- &EventChannelOpen{ch}
 
-	for {
-		frame, err := ch.parser.Read()
-		if err != nil {
-			// continue in case of parse errors
-			if _, ok := err.(*ParserError); ok {
-				ch.n.eventsOut <- &EventParseError{err, ch}
-				continue
-			}
-			return
-		}
-
-		ch.n.eventsOut <- &EventFrame{frame, ch}
-	}
-}
-
-func (ch *Channel) runWriter() {
-	defer func() { ch.writeDone <- struct{}{} }()
-	defer ch.rwc.Close()
-
-	for what := range ch.writeChan {
-		switch wh := what.(type) {
-		case Message:
-			if ch.n.conf.OutVersion == V1 {
-				ch.parser.Write(&FrameV1{Message: wh}, false)
-			} else {
-				ch.parser.Write(&FrameV2{Message: wh}, false)
+		for {
+			frame, err := ch.parser.Read()
+			if err != nil {
+				// continue in case of parse errors
+				if _, ok := err.(*ParserError); ok {
+					ch.n.eventsOut <- &EventParseError{err, ch}
+					continue
+				}
+				return
 			}
 
-		case Frame:
-			ch.parser.Write(wh, true)
+			ch.n.eventsOut <- &EventFrame{frame, ch}
 		}
-	}
+	}()
+
+	// writer
+	writerDone := make(chan struct{})
+	go func() {
+		defer func() { writerDone <- struct{}{} }()
+		defer func() { ch.allWritten <- struct{}{} }()
+		defer ch.rwc.Close()
+
+		for what := range ch.writeChan {
+			switch wh := what.(type) {
+			case Message:
+				if ch.n.conf.OutVersion == V1 {
+					ch.parser.Write(&FrameV1{Message: wh}, false)
+				} else {
+					ch.parser.Write(&FrameV2{Message: wh}, false)
+				}
+
+			case Frame:
+				ch.parser.Write(wh, true)
+			}
+		}
+	}()
+
+	<-readerDone
+	<-writerDone
 }

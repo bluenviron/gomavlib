@@ -31,9 +31,6 @@ func TestUdpListener(t *testing.T) {
 				defer wg.Done()
 				defer conn.Close()
 
-				err = conn.SetReadDeadline(time.Now().Add(5 * time.Second))
-				require.NoError(t, err)
-
 				buf := make([]byte, 1024)
 				n, err := conn.Read(buf)
 				require.NoError(t, err)
@@ -57,9 +54,6 @@ func TestUdpListener(t *testing.T) {
 			n, err := conn.Write(testBuf1)
 			require.NoError(t, err)
 			require.Equal(t, len(testBuf1), n)
-
-			err = conn.SetReadDeadline(time.Now().Add(5 * time.Second))
-			require.NoError(t, err)
 
 			buf := make([]byte, 1024)
 			n, err = conn.Read(buf)
@@ -86,6 +80,7 @@ func TestUdpListenerDeadline(t *testing.T) {
 
 		conn, err := l.Accept()
 		require.NoError(t, err)
+		defer conn.Close()
 
 		for i := 0; i < 2; i++ {
 			err = conn.SetReadDeadline(time.Now().Add(500 * time.Millisecond))

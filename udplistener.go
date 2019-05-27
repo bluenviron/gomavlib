@@ -47,30 +47,6 @@ func newUdpListenerConn(listener *udpListener, addr net.Addr) *udpListenerConn {
 	}
 }
 
-func (c *udpListenerConn) Close() error {
-	exit := false
-	func() {
-		c.listener.mutex.Lock()
-		defer c.listener.mutex.Unlock()
-
-		if c.closed == true {
-			exit = true
-			return
-		}
-		c.closed = true
-
-		delete(c.listener.conns, c.addr.String())
-	}()
-	if exit == true {
-		return nil
-	}
-
-	// release anyone waiting on Read()
-	close(c.readChan)
-
-	return nil
-}
-
 func (c *udpListenerConn) LocalAddr() net.Addr {
 	// not implemented
 	return nil
@@ -80,21 +56,29 @@ func (c *udpListenerConn) RemoteAddr() net.Addr {
 	return c.addr
 }
 
-func (c *udpListenerConn) Read(byt []byte) (int, error) {
-	exit := false
-	func() {
-		c.listener.mutex.Lock()
-		defer c.listener.mutex.Unlock()
+func (c *udpListenerConn) Close() error {
+	c.listener.mutex.Lock()
+	defer c.listener.mutex.Unlock()
 
-		if c.closed == true {
-			exit = true
-			return
-		}
-	}()
-	if exit == true {
-		return 0, udpErrorTerminated
+	if c.closed == true {
+		return nil
 	}
 
+	c.closed = true
+	delete(c.listener.conns, c.addr.String())
+
+	// release anyone waiting on Read()
+	close(c.readChan)
+
+	// close socket when both listener and connections are closed
+	if c.listener.closed == true && len(c.listener.conns) == 0 {
+		c.listener.packetConn.Close()
+	}
+
+	return nil
+}
+
+func (c *udpListenerConn) Read(byt []byte) (int, error) {
 	readTimer := time.NewTimer(c.readDeadline.Sub(time.Now()))
 	defer readTimer.Stop()
 
@@ -119,10 +103,6 @@ func (c *udpListenerConn) Write(byt []byte) (int, error) {
 	defer c.listener.mutex.Unlock()
 
 	if c.closed == true {
-		return 0, udpErrorTerminated
-	}
-
-	if c.listener.closed == true {
 		return 0, udpErrorTerminated
 	}
 
@@ -151,7 +131,6 @@ func (c *udpListenerConn) SetWriteDeadline(t time.Time) error {
 
 type udpListener struct {
 	packetConn net.PacketConn
-	done       chan struct{}
 	acceptChan chan net.Conn
 	readDone   chan struct{}
 	conns      map[string]*udpListenerConn
@@ -167,39 +146,33 @@ func newUdpListener(network, address string) (net.Listener, error) {
 
 	l := &udpListener{
 		packetConn: packetConn,
-		done:       make(chan struct{}),
 		acceptChan: make(chan net.Conn),
 		readDone:   make(chan struct{}),
 		conns:      make(map[string]*udpListenerConn),
 	}
-	go l.do()
+
+	go l.reader()
+
 	return l, nil
 }
 
 func (l *udpListener) Close() error {
-	exit := false
-	func() {
-		l.mutex.Lock()
-		defer l.mutex.Unlock()
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
 
-		if l.closed == true {
-			exit = true
-			return
-		}
-		l.closed = true
-	}()
-	if exit == true {
+	if l.closed == true {
 		return nil
 	}
 
-	// terminate do()
-	l.packetConn.Close()
-
-	// wait do() and ensure that acceptChan is not used anymore
-	<-l.done
+	l.closed = true
 
 	// release anyone waiting on Accept()
 	close(l.acceptChan)
+
+	// close socket when both listener and connections are closed
+	if len(l.conns) == 0 {
+		l.packetConn.Close()
+	}
 
 	return nil
 }
@@ -208,10 +181,9 @@ func (l *udpListener) Addr() net.Addr {
 	return l.packetConn.LocalAddr()
 }
 
-func (l *udpListener) do() {
-	defer func() { l.done <- struct{}{} }()
-
+func (l *udpListener) reader() {
 	buf := make([]byte, 2048) // MTU is ~1500
+
 	for {
 		// read WITHOUT deadline. Long periods without packets are normal since
 		// we're not directly connected to someone.
@@ -224,29 +196,29 @@ func (l *udpListener) do() {
 		// representation as index
 		addrs := addr.String()
 
-		var conn *udpListenerConn
-		var preExisting bool
-
 		func() {
 			l.mutex.Lock()
 			defer l.mutex.Unlock()
 
-			conn, preExisting = l.conns[addrs]
-			if preExisting == false {
-				conn = newUdpListenerConn(l, addr)
-				l.conns[addrs] = conn
+			conn, preExisting := l.conns[addrs]
+
+			if preExisting == false && l.closed == true {
+				// listener is closed, ignore new connection
+
+			} else {
+				if preExisting == false {
+					conn = newUdpListenerConn(l, addr)
+					l.conns[addrs] = conn
+					l.acceptChan <- conn
+				}
+
+				// route buffer to connection
+				conn.readChan <- buf[:n]
+
+				// wait copy since buffer is shared
+				<-l.readDone
 			}
 		}()
-
-		if preExisting == false {
-			l.acceptChan <- conn
-		}
-
-		// route buffer to connection
-		conn.readChan <- buf[:n]
-
-		// wait copy since buffer is shared
-		<-l.readDone
 	}
 }
 

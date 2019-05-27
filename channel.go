@@ -52,7 +52,7 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) *Chan
 func (ch *Channel) close() {
 	// wait for writing
 	close(ch.writeChan)
-	<- ch.writeDone
+	<-ch.writeDone
 }
 
 func (ch *Channel) runReader() {

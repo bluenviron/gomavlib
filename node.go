@@ -243,14 +243,12 @@ func (n *Node) start() {
 			n.nodeHeartbeat.close()
 		}
 
-		// close channels first since if we close udpListener
-		// then its channels are closed too
-		for ch := range n.channels {
-			ch.close()
-		}
-
 		for ca := range n.channelAccepters {
 			ca.close()
+		}
+
+		for ch := range n.channels {
+			ch.close()
 		}
 
 		n.wg.Wait()

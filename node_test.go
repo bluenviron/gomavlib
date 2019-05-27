@@ -226,20 +226,18 @@ func TestNodeCloseInLoop(t *testing.T) {
 
 	go func() {
 		defer node2.Close()
-		for ee := range node2.Events() {
-			switch ee.(type) {
-			case *EventChannelOpen:
-				node2.WriteMessageAll(&MessageHeartbeat{
-					Type:           1,
-					Autopilot:      2,
-					BaseMode:       3,
-					CustomMode:     6,
-					SystemStatus:   4,
-					MavlinkVersion: 5,
-				})
-				return
-			}
-		}
+
+		// wait connection to server
+		time.Sleep(500 * time.Millisecond)
+
+		node2.WriteMessageAll(&MessageHeartbeat{
+			Type:           1,
+			Autopilot:      2,
+			BaseMode:       3,
+			CustomMode:     6,
+			SystemStatus:   4,
+			MavlinkVersion: 5,
+		})
 	}()
 
 	for range node1.Events() {

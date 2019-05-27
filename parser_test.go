@@ -40,14 +40,14 @@ var testDialect = MustDialect(3, []Message{
 	&MessageTest8{},
 })
 
-func testFrameDecode(t *testing.T, dialect *Dialect, key *SignatureKey, byts [][]byte, frames []Frame) {
+func testFrameDecode(t *testing.T, dialect *Dialect, key *Key, byts [][]byte, frames []Frame) {
 	for i, byt := range byts {
 		parser, err := NewParser(ParserConf{
-			Reader:         bytes.NewReader(byt),
-			Writer:         bytes.NewBuffer(nil),
-			Dialect:        dialect,
-			OutSystemId:    1,
-			InSignatureKey: key,
+			Reader:      bytes.NewReader(byt),
+			Writer:      bytes.NewBuffer(nil),
+			Dialect:     dialect,
+			OutSystemId: 1,
+			InKey:       key,
 		})
 		require.NoError(t, err)
 		frame, err := parser.Read()
@@ -56,7 +56,7 @@ func testFrameDecode(t *testing.T, dialect *Dialect, key *SignatureKey, byts [][
 	}
 }
 
-func testFrameEncode(t *testing.T, dialect *Dialect, key *SignatureKey, byts [][]byte, frames []Frame) {
+func testFrameEncode(t *testing.T, dialect *Dialect, key *Key, byts [][]byte, frames []Frame) {
 	for i, frame := range frames {
 		buf := bytes.NewBuffer(nil)
 		parser, err := NewParser(ParserConf{
@@ -258,7 +258,7 @@ print(''.join('\\\x{:02x}'.format(x) for x in f.read()));"
 
 */
 
-var testParserV2SigKey = NewSignatureKey(bytes.Repeat([]byte("\x4F"), 32))
+var testParserV2SigKey = NewKey(bytes.Repeat([]byte("\x4F"), 32))
 
 var testParserV2SigDialect = MustDialect(3, []Message{
 	&MessageHeartbeat{},
@@ -372,11 +372,11 @@ func TestParserNilMsgEncode(t *testing.T) {
 // therefore Write() can be called by multiple routines in parallel
 func TestParserFrameIsConst(t *testing.T) {
 	parser, err := NewParser(ParserConf{
-		Reader:          bytes.NewReader(nil),
-		Writer:          bytes.NewBuffer(nil),
-		Dialect:         MustDialect(3, []Message{&MessageHeartbeat{}}),
-		OutSystemId:     1,
-		OutSignatureKey: testParserV2SigKey,
+		Reader:      bytes.NewReader(nil),
+		Writer:      bytes.NewBuffer(nil),
+		Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+		OutSystemId: 1,
+		OutKey:      testParserV2SigKey,
 	})
 	require.NoError(t, err)
 

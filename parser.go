@@ -40,7 +40,7 @@ type ParserConf struct {
 
 	// (optional) the secret key used to validate incoming frames.
 	// Non-signed frames are discarded. This feature requires Mavlink v2.
-	InSignatureKey *SignatureKey
+	InKey *Key
 
 	// the system id, added to every outgoing frame and used to identify this
 	// node in the network.
@@ -51,7 +51,7 @@ type ParserConf struct {
 	OutSignatureLinkId byte
 	// (optional) the secret key used to sign outgoing frames.
 	// This feature requires Mavlink v2.
-	OutSignatureKey *SignatureKey
+	OutKey *Key
 }
 
 // Parser is a low-level Mavlink encoder and decoder that works with a Reader and a Writer.
@@ -121,7 +121,7 @@ func (p *Parser) Checksum(f Frame) uint16 {
 }
 
 // Signature computes the signature of a given frame with the given key.
-func (p *Parser) Signature(ff *FrameV2, key *SignatureKey) *Signature {
+func (p *Parser) Signature(ff *FrameV2, key *Key) *Signature {
 	msg := ff.GetMessage().(*MessageRaw)
 	h := sha256.New()
 
@@ -259,13 +259,13 @@ func (p *Parser) Read() (Frame, error) {
 		return nil, newParserError("unrecognized magic byte: %x", magicByte)
 	}
 
-	if p.conf.InSignatureKey != nil {
+	if p.conf.InKey != nil {
 		ff, ok := f.(*FrameV2)
 		if ok == false {
 			return nil, newParserError("signature required but packet is not v2")
 		}
 
-		if sig := p.Signature(ff, p.conf.InSignatureKey); *sig != *ff.Signature {
+		if sig := p.Signature(ff, p.conf.InKey); *sig != *ff.Signature {
 			return nil, newParserError("wrong signature")
 		}
 
@@ -375,7 +375,7 @@ func (p *Parser) Write(f Frame, route bool) error {
 				ff.Checksum = p.Checksum(ff)
 			case *FrameV2:
 				// set incompatibility flag before computing checksum
-				if p.conf.OutSignatureKey != nil {
+				if p.conf.OutKey != nil {
 					ff.IncompatibilityFlag |= flagSigned
 				}
 				ff.Checksum = p.Checksum(ff)
@@ -412,11 +412,11 @@ func (p *Parser) Write(f Frame, route bool) error {
 		binary.LittleEndian.PutUint16(p.writeBuffer[6+msgLen:], ff.Checksum)
 
 	case *FrameV2:
-		if route == false && p.conf.OutSignatureKey != nil {
+		if route == false && p.conf.OutKey != nil {
 			ff.SignatureLinkId = p.conf.OutSignatureLinkId
 			// Timestamp in 10 microsecond units since 1st January 2015 GMT time
 			ff.SignatureTimestamp = uint64(time.Since(signatureReferenceDate)) / 10000
-			ff.Signature = p.Signature(ff, p.conf.OutSignatureKey)
+			ff.Signature = p.Signature(ff, p.conf.OutKey)
 		}
 
 		bufferLen := 10 + msgLen + 2

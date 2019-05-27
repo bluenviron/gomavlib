@@ -96,7 +96,7 @@ type NodeConf struct {
 
 	// (optional) the secret key used to validate incoming frames.
 	// Non signed frames are discarded, as well as frames with a version < 2.0.
-	InSignatureKey *SignatureKey
+	InKey *Key
 
 	// Mavlink version used to encode frames. See Version
 	// for the available options.
@@ -108,7 +108,7 @@ type NodeConf struct {
 	OutComponentId byte
 	// (optional) the secret key used to sign outgoing frames.
 	// This feature requires a version >= 2.0.
-	OutSignatureKey *SignatureKey
+	OutKey *Key
 
 	// (optional) disables the periodic sending of heartbeats to open channels.
 	HeartbeatDisable bool
@@ -151,8 +151,8 @@ func NewNode(conf NodeConf) (*Node, error) {
 	if len(conf.Endpoints) == 0 {
 		return nil, fmt.Errorf("at least one endpoint must be provided")
 	}
-	if conf.OutSignatureKey != nil && conf.OutVersion != V2 {
-		return nil, fmt.Errorf("OutSignatureKey requires V2 frames")
+	if conf.OutKey != nil && conf.OutVersion != V2 {
+		return nil, fmt.Errorf("OutKey requires V2 frames")
 	}
 	if conf.HeartbeatPeriod == 0 {
 		conf.HeartbeatPeriod = 5 * time.Second

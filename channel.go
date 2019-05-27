@@ -29,11 +29,11 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) *Chan
 		Reader:             rwc,
 		Writer:             rwc,
 		Dialect:            n.conf.Dialect,
-		InSignatureKey:     n.conf.InSignatureKey,
+		InKey:              n.conf.InKey,
 		OutSystemId:        n.conf.OutSystemId,
 		OutComponentId:     n.conf.OutComponentId,
 		OutSignatureLinkId: randomByte(),
-		OutSignatureKey:    n.conf.OutSignatureKey,
+		OutKey:             n.conf.OutKey,
 	})
 
 	ch := &Channel{

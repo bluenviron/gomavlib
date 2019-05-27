@@ -244,8 +244,8 @@ func TestNodeCloseInLoop(t *testing.T) {
 }
 
 func TestNodeSignature(t *testing.T) {
-	key1 := NewSignatureKey(bytes.Repeat([]byte("\x4F"), 32))
-	key2 := NewSignatureKey(bytes.Repeat([]byte("\xA8"), 32))
+	key1 := NewKey(bytes.Repeat([]byte("\x4F"), 32))
+	key2 := NewKey(bytes.Repeat([]byte("\xA8"), 32))
 
 	var testMsg = &MessageHeartbeat{
 		Type:           7,
@@ -262,9 +262,9 @@ func TestNodeSignature(t *testing.T) {
 			EndpointUdpServer{"127.0.0.1:5600"},
 		},
 		HeartbeatDisable: true,
-		InSignatureKey:   key2,
+		InKey:            key2,
 		OutSystemId:      10,
-		OutSignatureKey:  key1,
+		OutKey:           key1,
 	})
 	require.NoError(t, err)
 
@@ -274,9 +274,9 @@ func TestNodeSignature(t *testing.T) {
 			EndpointUdpClient{"127.0.0.1:5600"},
 		},
 		HeartbeatDisable: true,
-		InSignatureKey:   key1,
+		InKey:            key1,
 		OutSystemId:      11,
-		OutSignatureKey:  key2,
+		OutKey:           key2,
 	})
 	require.NoError(t, err)
 

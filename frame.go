@@ -127,12 +127,12 @@ func (f *FrameV2) IsSigned() bool {
 	return (f.IncompatibilityFlag & flagSigned) != 0
 }
 
-// SignatureKey is a key able to sign and validate V2 frames.
-type SignatureKey [32]byte
+// Key is a key able to sign and validate V2 frames.
+type Key [32]byte
 
-// NewSignatureKey allocates a SignatureKey.
-func NewSignatureKey(in []byte) *SignatureKey {
-	key := new(SignatureKey)
+// NewKey allocates a Key.
+func NewKey(in []byte) *Key {
+	key := new(Key)
 	copy(key[:], in)
 	return key
 }

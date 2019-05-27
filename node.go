@@ -305,6 +305,7 @@ func (n *Node) Close() {
 //   *EventChannelClose
 //   *EventFrame
 //   *EventParseError
+//   *EventStreamRequested
 // See individual events for meaning and content.
 func (n *Node) Events() chan Event {
 	return n.eventsOut

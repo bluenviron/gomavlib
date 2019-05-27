@@ -140,5 +140,7 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 			msg.Elem().FieldByName("StartStop").SetUint(uint64(1))
 			sr.n.WriteMessageTo(evt.Channel, msg.Interface().(Message))
 		}
+
+		sr.n.eventsOut <- &EventStreamRequested{evt.Channel}
 	}
 }

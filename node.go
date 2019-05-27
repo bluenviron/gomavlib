@@ -117,17 +117,27 @@ type NodeConf struct {
 	// (optional) the system type advertised by heartbeats.
 	// It defaults to MAV_TYPE_GCS
 	HeartbeatSystemType int
+	// (optional) the autopilot type advertised by heartbeats.
+	// It defaults to MAV_AUTOPILOT_GENERIC
+	HeartbeatAutopilotType int
+
+	// (optional) automatically request streams to detected Ardupilot devices,
+	// that need an explicit request in order to emit telemetry stream.
+	AprsEnable bool
+	// (optional) the requested stream frequency in Hz. It defaults to 1.
+	AprsFrequency int
 }
 
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
 type Node struct {
-	conf             NodeConf
-	eventsOut        chan Event
-	eventsIn         chan eventIn
-	pool             goroutinePool
-	channelAccepters map[*channelAccepter]struct{}
-	channels         map[*Channel]struct{}
-	nodeHeartbeat    *nodeHeartbeat
+	conf              NodeConf
+	eventsOut         chan Event
+	eventsIn          chan eventIn
+	pool              goroutinePool
+	channelAccepters  map[*channelAccepter]struct{}
+	channels          map[*Channel]struct{}
+	nodeHeartbeat     *nodeHeartbeat
+	nodeStreamRequest *nodeStreamRequest
 }
 
 // NewNode allocates a Node. See NodeConf for the options.
@@ -150,6 +160,12 @@ func NewNode(conf NodeConf) (*Node, error) {
 	if conf.HeartbeatSystemType == 0 {
 		conf.HeartbeatSystemType = 6 // MAV_TYPE_GCS
 	}
+	if conf.HeartbeatAutopilotType == 0 {
+		conf.HeartbeatAutopilotType = 0 // MAV_AUTOPILOT_GENERIC
+	}
+	if conf.AprsFrequency == 0 {
+		conf.AprsFrequency = 1
+	}
 
 	n := &Node{
 		conf:             conf,
@@ -159,6 +175,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 		channels:         make(map[*Channel]struct{}),
 	}
 
+	// endpoints
 	for _, tconf := range conf.Endpoints {
 		tp, err := tconf.init()
 		if err != nil {
@@ -184,10 +201,16 @@ func NewNode(conf NodeConf) (*Node, error) {
 		}
 	}
 
+	// modules
 	n.nodeHeartbeat = newNodeHeartbeat(n)
+	n.nodeStreamRequest = newNodeStreamRequest(n)
 
 	if n.nodeHeartbeat != nil {
 		n.pool.Start(n.nodeHeartbeat)
+	}
+
+	if n.nodeStreamRequest != nil {
+		n.pool.Start(n.nodeStreamRequest)
 	}
 
 	for ch := range n.channels {
@@ -247,6 +270,10 @@ outer:
 
 	if n.nodeHeartbeat != nil {
 		n.nodeHeartbeat.close()
+	}
+
+	if n.nodeStreamRequest != nil {
+		n.nodeStreamRequest.close()
 	}
 
 	for ca := range n.channelAccepters {

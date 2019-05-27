@@ -139,9 +139,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 
 	wg.Wait()
 
-	if success == false {
-		t.Fatalf("test failed")
-	}
+	require.Equal(t, true, success)
 }
 
 func TestNodeTcpServerClient(t *testing.T) {
@@ -245,47 +243,6 @@ func TestNodeCloseInLoop(t *testing.T) {
 	}
 }
 
-func TestNodeHeartbeat(t *testing.T) {
-	success := false
-	func() {
-		node1, err := NewNode(NodeConf{
-			Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
-			OutSystemId: 10,
-			Endpoints: []EndpointConf{
-				EndpointUdpServer{"127.0.0.1:5600"},
-			},
-			HeartbeatDisable: true,
-		})
-		require.NoError(t, err)
-		defer node1.Close()
-
-		node2, err := NewNode(NodeConf{
-			Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
-			OutSystemId: 11,
-			Endpoints: []EndpointConf{
-				EndpointUdpClient{"127.0.0.1:5600"},
-			},
-			HeartbeatDisable: false,
-			HeartbeatPeriod:  500 * time.Millisecond,
-		})
-		require.NoError(t, err)
-		defer node2.Close()
-
-		for evt := range node1.Events() {
-			if ee, ok := evt.(*EventFrame); ok {
-				if _, ok = ee.Message().(*MessageHeartbeat); ok {
-					success = true
-					break
-				}
-			}
-		}
-	}()
-
-	if success == false {
-		t.Fatalf("failed")
-	}
-}
-
 func TestNodeSignature(t *testing.T) {
 	key1 := NewSignatureKey(bytes.Repeat([]byte("\x4F"), 32))
 	key2 := NewSignatureKey(bytes.Repeat([]byte("\xA8"), 32))
@@ -355,9 +312,7 @@ func TestNodeSignature(t *testing.T) {
 
 	wg.Wait()
 
-	if success == false {
-		t.Fatalf("test failed")
-	}
+	require.Equal(t, true, success)
 }
 
 func TestNodeRouting(t *testing.T) {
@@ -444,7 +399,98 @@ func TestNodeRouting(t *testing.T) {
 	node2.Close()
 	node3.Close()
 
-	if success == false {
-		t.Fatal("failed")
-	}
+	require.Equal(t, true, success)
+}
+
+func TestNodeHeartbeat(t *testing.T) {
+	success := false
+
+	func() {
+		node1, err := NewNode(NodeConf{
+			Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+			OutSystemId: 10,
+			Endpoints: []EndpointConf{
+				EndpointUdpServer{"127.0.0.1:5600"},
+			},
+			HeartbeatDisable: true,
+		})
+		require.NoError(t, err)
+		defer node1.Close()
+
+		node2, err := NewNode(NodeConf{
+			Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+			OutSystemId: 11,
+			Endpoints: []EndpointConf{
+				EndpointUdpClient{"127.0.0.1:5600"},
+			},
+			HeartbeatDisable: false,
+			HeartbeatPeriod:  500 * time.Millisecond,
+		})
+		require.NoError(t, err)
+		defer node2.Close()
+
+		for evt := range node1.Events() {
+			if ee, ok := evt.(*EventFrame); ok {
+				if _, ok = ee.Message().(*MessageHeartbeat); ok {
+					success = true
+					break
+				}
+			}
+		}
+	}()
+
+	require.Equal(t, true, success)
+}
+
+func TestNodeStreamRequest(t *testing.T) {
+	success := false
+
+	func() {
+		node1, err := NewNode(NodeConf{
+			Dialect: MustDialect(3, []Message{
+				&MessageHeartbeat{},
+				&MessageRequestDataStream{},
+			}),
+			OutSystemId: 10,
+			Endpoints: []EndpointConf{
+				EndpointUdpServer{"127.0.0.1:5600"},
+			},
+			HeartbeatDisable: true,
+			AprsEnable:       true,
+		})
+		require.NoError(t, err)
+		defer node1.Close()
+
+		node2, err := NewNode(NodeConf{
+			Dialect: MustDialect(3, []Message{
+				&MessageHeartbeat{},
+				&MessageRequestDataStream{},
+			}),
+			OutSystemId: 10,
+			Endpoints: []EndpointConf{
+				EndpointUdpClient{"127.0.0.1:5600"},
+			},
+			HeartbeatDisable:       false,
+			HeartbeatPeriod:        500 * time.Millisecond,
+			HeartbeatAutopilotType: 3, // MAV_AUTOPILOT_ARDUPILOTMEGA
+		})
+		require.NoError(t, err)
+		defer node2.Close()
+
+		go func() {
+			for range node1.Events() {
+			}
+		}()
+
+		for evt := range node2.Events() {
+			if ee, ok := evt.(*EventFrame); ok {
+				if _, ok = ee.Message().(*MessageRequestDataStream); ok {
+					success = true
+					break
+				}
+			}
+		}
+	}()
+
+	require.Equal(t, true, success)
 }

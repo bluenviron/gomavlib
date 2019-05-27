@@ -21,8 +21,20 @@ type MessageHeartbeat struct {
 	MavlinkVersion uint8
 }
 
-func (m *MessageHeartbeat) GetId() uint32 {
+func (*MessageHeartbeat) GetId() uint32 {
 	return 0
+}
+
+type MessageRequestDataStream struct {
+	TargetSystem    uint8
+	TargetComponent uint8
+	ReqStreamId     uint8
+	ReqMessageRate  uint16
+	StartStop       uint8
+}
+
+func (*MessageRequestDataStream) GetId() uint32 {
+	return 66
 }
 
 type MessageSysStatus struct {

@@ -6,30 +6,30 @@ import (
 )
 
 type nodeHeartbeat struct {
-	n           *Node
-	terminate   chan struct{}
-	heartbeatMp *dialectMessage
+	n         *Node
+	terminate chan struct{}
 }
 
 func newNodeHeartbeat(n *Node) *nodeHeartbeat {
-	// heartbeat is disabled
+	// module is disabled
 	if n.conf.HeartbeatDisable == true {
 		return nil
 	}
 
-	// heartbeat message must exist in dialect and correspond to standart heartbeat
+	// dialect must be enabled
 	if n.conf.Dialect == nil {
 		return nil
 	}
+
+	// heartbeat message must exist in dialect and correspond to standard
 	mp, ok := n.conf.Dialect.messages[0]
 	if ok == false || mp.crcExtra != 50 {
 		return nil
 	}
 
 	h := &nodeHeartbeat{
-		n:           n,
-		terminate:   make(chan struct{}, 1),
-		heartbeatMp: mp,
+		n:         n,
+		terminate: make(chan struct{}, 1),
 	}
 
 	return h
@@ -52,9 +52,9 @@ func (h *nodeHeartbeat) run() {
 	for {
 		select {
 		case <-ticker.C:
-			msg := reflect.New(h.heartbeatMp.elemType)
+			msg := reflect.New(h.n.conf.Dialect.messages[0].elemType)
 			msg.Elem().FieldByName("Type").SetInt(int64(h.n.conf.HeartbeatSystemType))
-			msg.Elem().FieldByName("Autopilot").SetInt(0) // MAV_AUTOPILOT_GENERIC
+			msg.Elem().FieldByName("Autopilot").SetInt(int64(h.n.conf.HeartbeatAutopilotType))
 			msg.Elem().FieldByName("BaseMode").SetInt(0)
 			msg.Elem().FieldByName("CustomMode").SetUint(0)
 			msg.Elem().FieldByName("SystemStatus").SetInt(4) // MAV_STATE_ACTIVE

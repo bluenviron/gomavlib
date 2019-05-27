@@ -15,11 +15,14 @@ This library powers the [**mavp2p**](https://github.com/gswly/mavp2p) router.
 
 * Decodes and encodes Mavlink v2.0 and v1.0. Supports checksums, empty-byte truncation (v2.0), signatures (v2.0), message extensions (v2.0)
 * Dialect is optional, the library can work a standard dialect, a custom dialect or no dialect at all. Standard dialects are provided in directory `dialects/`, with no need for generation. A dialect generator is provided anyway.
-* Provides a high-level API ("Node") with ability to communicate with multiple endpoints in parallel:
-  * serial
-  * UDP (server, client or broadcast mode)
-  * TCP (server or client mode)
-  * custom reader/writer
+* Provides a high-level API ("Node") with:
+  * ability to communicate with multiple endpoints in parallel:
+    * serial
+    * UDP (server, client or broadcast mode)
+    * TCP (server or client mode)
+    * custom reader/writer
+  * automatic heartbeat emission
+  * (disabled by default) automatic stream requests to Ardupilot devices
 * Provides a low-level API ("Parser") with ability to decode/encode frames from/to a generic reader/writer
 * UDP connections are tracked and removed when inactive
 * Supports both domain names and IPs

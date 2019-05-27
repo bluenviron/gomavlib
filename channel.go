@@ -75,7 +75,13 @@ func (ch *Channel) run() {
 				return
 			}
 
-			ch.n.eventsOut <- &EventFrame{frame, ch}
+			evt := &EventFrame{frame, ch}
+
+			if ch.n.nodeStreamRequest != nil {
+				ch.n.nodeStreamRequest.onEventFrame(evt)
+			}
+
+			ch.n.eventsOut <- evt
 		}
 	}()
 

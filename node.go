@@ -49,11 +49,11 @@ import (
 
 const (
 	// constant for ip-based endpoints
-	netBufferSize      = 512 // frames cannot go beyond len(header) + 255 + len(check) + len(sig)
-	netConnectTimeout  = 10 * time.Second
-	netReconnectPeriod = 2 * time.Second
-	netReadTimeout     = 60 * time.Second
-	netWriteTimeout    = 10 * time.Second
+	_NET_BUFFER_SIZE      = 512 // frames cannot go beyond len(header) + 255 + len(check) + len(sig)
+	_NET_CONNECT_TIMEOUT  = 10 * time.Second
+	_NET_RECONNECT_PERIOD = 2 * time.Second
+	_NET_READ_TIMEOUT     = 60 * time.Second
+	_NET_WRITE_TIMEOUT    = 10 * time.Second
 )
 
 // Version allows to set the frame version used to wrap outgoing messages.

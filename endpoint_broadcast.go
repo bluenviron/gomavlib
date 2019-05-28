@@ -123,7 +123,7 @@ func (t *endpointUdpBroadcast) Read(buf []byte) (int, error) {
 }
 
 func (t *endpointUdpBroadcast) Write(buf []byte) (int, error) {
-	err := t.packetConn.SetWriteDeadline(time.Now().Add(netWriteTimeout))
+	err := t.packetConn.SetWriteDeadline(time.Now().Add(_NET_WRITE_TIMEOUT))
 	if err != nil {
 		return 0, err
 	}

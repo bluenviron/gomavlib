@@ -81,8 +81,8 @@ func NewParser(conf ParserConf) (*Parser, error) {
 
 	p := &Parser{
 		conf:        conf,
-		readBuffer:  bufio.NewReaderSize(conf.Reader, netBufferSize),
-		writeBuffer: make([]byte, 0, netBufferSize),
+		readBuffer:  bufio.NewReaderSize(conf.Reader, _NET_BUFFER_SIZE),
+		writeBuffer: make([]byte, 0, _NET_BUFFER_SIZE),
 	}
 	return p, nil
 }

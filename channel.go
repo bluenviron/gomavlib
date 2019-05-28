@@ -63,6 +63,7 @@ func (ch *Channel) run() {
 	readerDone := make(chan struct{})
 	go func() {
 		defer func() { readerDone <- struct{}{} }()
+		defer func() { ch.n.eventsOut <- &EventChannelClose{ch} }()
 		defer func() { ch.n.eventsIn <- &eventInChannelClosed{ch} }()
 
 		ch.n.eventsOut <- &EventChannelOpen{ch}

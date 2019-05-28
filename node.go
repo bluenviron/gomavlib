@@ -168,7 +168,9 @@ func NewNode(conf NodeConf) (*Node, error) {
 	}
 
 	n := &Node{
-		conf:             conf,
+		conf: conf,
+		// these can be unbuffered as long as eventsIn's goroutine
+		// does not write to eventsOut
 		eventsOut:        make(chan Event),
 		eventsIn:         make(chan eventIn),
 		channelAccepters: make(map[*channelAccepter]struct{}),
@@ -236,7 +238,6 @@ outer:
 
 		case *eventInChannelClosed:
 			delete(n.channels, evt.ch)
-			n.eventsOut <- &EventChannelClose{evt.ch}
 			evt.ch.close()
 
 		case *eventInWriteTo:

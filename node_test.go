@@ -238,8 +238,64 @@ func TestNodeCloseInLoop(t *testing.T) {
 		})
 	}()
 
-	for range node1.Events() {
-		node1.Close()
+	for evt := range node1.Events() {
+		if _, ok := evt.(*EventChannelOpen); ok {
+			node1.Close()
+		}
+	}
+}
+
+func TestNodeWriteMultipleInLoop(t *testing.T) {
+	node1, err := NewNode(NodeConf{
+		Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+		OutSystemId: 11,
+		Endpoints: []EndpointConf{
+			EndpointUdpServer{"127.0.0.1:5600"},
+		},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+
+	node2, err := NewNode(NodeConf{
+		Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+		OutSystemId: 11,
+		Endpoints: []EndpointConf{
+			EndpointUdpClient{"127.0.0.1:5600"},
+		},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+
+	go func() {
+		defer node2.Close()
+
+		// wait connection to server
+		time.Sleep(500 * time.Millisecond)
+
+		node2.WriteMessageAll(&MessageHeartbeat{
+			Type:           1,
+			Autopilot:      2,
+			BaseMode:       3,
+			CustomMode:     6,
+			SystemStatus:   4,
+			MavlinkVersion: 5,
+		})
+	}()
+
+	for evt := range node1.Events() {
+		if _, ok := evt.(*EventChannelOpen); ok {
+			for i := 0; i < 100; i++ {
+				node1.WriteMessageAll(&MessageHeartbeat{
+					Type:           1,
+					Autopilot:      2,
+					BaseMode:       3,
+					CustomMode:     6,
+					SystemStatus:   4,
+					MavlinkVersion: 5,
+				})
+			}
+			node1.Close()
+		}
 	}
 }
 

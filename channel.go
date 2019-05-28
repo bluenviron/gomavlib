@@ -50,9 +50,12 @@ func (ch *Channel) String() string {
 }
 
 func (ch *Channel) close() {
-	// wait until all packets have been written
+	// wait until all frame have been written
 	close(ch.writeChan)
 	<-ch.allWritten
+
+	// close reader/writer after ensuring all frames have been written
+	ch.rwc.Close()
 }
 
 func (ch *Channel) run() {
@@ -90,7 +93,6 @@ func (ch *Channel) run() {
 	go func() {
 		defer func() { writerDone <- struct{}{} }()
 		defer func() { ch.allWritten <- struct{}{} }()
-		defer ch.rwc.Close()
 
 		for what := range ch.writeChan {
 			switch wh := what.(type) {

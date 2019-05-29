@@ -29,7 +29,7 @@ func (conf EndpointTcpServer) getAddress() string {
 }
 
 // EndpointUdpServer sets up a endpoint that works through an UDP server.
-// This is the most appropriate way for transferring frames from a UAV to a GPS
+// This is the most appropriate way for transferring frames from a UAV to a GCS
 // if they are connected to the same network.
 type EndpointUdpServer struct {
 	// listen address, example: 0.0.0.0:5600

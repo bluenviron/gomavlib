@@ -2,7 +2,7 @@
 //
 // Generated from revision https://github.com/mavlink/mavlink/tree/95031e31a5eec47dc951fc09e2939071b8cf3c2b
 //
-package python_array_test
+package pythonarraytest
 
 import (
 	"github.com/gswly/gomavlib"

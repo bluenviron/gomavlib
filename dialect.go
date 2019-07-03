@@ -168,13 +168,15 @@ func newDialectMessage(msg Message) (*dialectMessage, error) {
 				return nil, fmt.Errorf("an enum must be an int")
 			}
 
-			if len(field.Tag.Get("mavenum")) == 0 {
+			tagEnum := field.Tag.Get("mavenum")
+
+			if len(tagEnum) == 0 {
 				return nil, fmt.Errorf("enum but tag not specified")
 			}
 
-			dialectType = dialectFieldTypeFromGo[field.Tag.Get("mavenum")]
+			dialectType = dialectFieldTypeFromGo[tagEnum]
 			if dialectType == 0 {
-				return nil, fmt.Errorf("invalid go type: %v", field.Tag.Get("mavenum"))
+				return nil, fmt.Errorf("invalid go type: %v", tagEnum)
 			}
 
 			switch dialectType {
@@ -195,13 +197,22 @@ func newDialectMessage(msg Message) (*dialectMessage, error) {
 				return nil, fmt.Errorf("invalid go type: %v", goType.Name())
 			}
 
-			// string
+			// string or char
 			if goType.Kind() == reflect.String {
-				slen, err := strconv.Atoi(field.Tag.Get("mavlen"))
-				if err != nil {
-					return nil, err
+				tagLen := field.Tag.Get("mavlen")
+
+				// char
+				if len(tagLen) == 0 {
+					arrayLength = 1
+
+					// string
+				} else {
+					slen, err := strconv.Atoi(tagLen)
+					if err != nil {
+						return nil, fmt.Errorf("string has invalid length: %v", tagLen)
+					}
+					arrayLength = byte(slen)
 				}
-				arrayLength = byte(slen)
 			}
 		}
 

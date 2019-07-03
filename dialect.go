@@ -148,25 +148,36 @@ func newDialectMessage(msg Message) (*dialectMessage, error) {
 	// collect message fields
 	for i := 0; i < mp.elemType.NumField(); i++ {
 		field := mp.elemType.Field(i)
-		fieldType := field.Type
-		fieldArrayLength := byte(0)
+		arrayLength := byte(0)
+		goType := field.Type
+
+		// array
+		if goType.Kind() == reflect.Array {
+			arrayLength = byte(goType.Len())
+			goType = goType.Elem()
+		}
+
 		isEnum := false
-		var ftype dialectFieldType
+		var dialectType dialectFieldType
 
 		// enum
 		if field.Tag.Get("mavenum") != "" {
 			isEnum = true
 
-			if fieldType.Kind() != reflect.Int {
+			if goType.Kind() != reflect.Int {
 				return nil, fmt.Errorf("an enum must be an int")
 			}
 
-			ftype = dialectFieldTypeFromGo[field.Tag.Get("mavenum")]
-			if ftype == 0 {
+			if len(field.Tag.Get("mavenum")) == 0 {
 				return nil, fmt.Errorf("enum but tag not specified")
 			}
 
-			switch ftype {
+			dialectType = dialectFieldTypeFromGo[field.Tag.Get("mavenum")]
+			if dialectType == 0 {
+				return nil, fmt.Errorf("invalid go type: %v", field.Tag.Get("mavenum"))
+			}
+
+			switch dialectType {
 			case typeUint8:
 			case typeUint16:
 			case typeUint32:
@@ -175,29 +186,22 @@ func newDialectMessage(msg Message) (*dialectMessage, error) {
 				break
 
 			default:
-				return nil, fmt.Errorf("invalid mav type: %v", ftype)
+				return nil, fmt.Errorf("type %v cannot be used as enum", dialectType)
 			}
 
 		} else {
-			// array
-			if fieldType.Kind() == reflect.Array {
-				fieldArrayLength = byte(fieldType.Len())
-				fieldType = fieldType.Elem()
-			}
-
-			// validate type
-			ftype = dialectFieldTypeFromGo[fieldType.Name()]
-			if ftype == 0 {
-				return nil, fmt.Errorf("invalid field type: %v", fieldType)
+			dialectType = dialectFieldTypeFromGo[goType.Name()]
+			if dialectType == 0 {
+				return nil, fmt.Errorf("invalid go type: %v", goType.Name())
 			}
 
 			// string
-			if fieldType.Kind() == reflect.String {
+			if goType.Kind() == reflect.String {
 				slen, err := strconv.Atoi(field.Tag.Get("mavlen"))
 				if err != nil {
 					return nil, err
 				}
-				fieldArrayLength = byte(slen)
+				arrayLength = byte(slen)
 			}
 		}
 
@@ -206,22 +210,22 @@ func newDialectMessage(msg Message) (*dialectMessage, error) {
 
 		// size
 		var size byte
-		if fieldArrayLength > 0 {
-			size = dialectFieldTypeSizes[ftype] * fieldArrayLength
+		if arrayLength > 0 {
+			size = dialectFieldTypeSizes[dialectType] * arrayLength
 		} else {
-			size = dialectFieldTypeSizes[ftype]
+			size = dialectFieldTypeSizes[dialectType]
 		}
 
 		mp.fields[i] = &dialectMessageField{
 			isEnum: isEnum,
-			ftype:  ftype,
+			ftype:  dialectType,
 			name: func() string {
 				if mavname := field.Tag.Get("mavname"); mavname != "" {
 					return mavname
 				}
 				return dialectFieldGoToDef(field.Name)
 			}(),
-			arrayLength: fieldArrayLength,
+			arrayLength: arrayLength,
 			index:       i,
 			isExtension: isExtension,
 		}

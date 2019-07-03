@@ -42,7 +42,7 @@ test:
 test-nodocker:
 	go test -v .
 	go build -o /dev/null ./dialgen
-	$(foreach f, $(shell ls example/*), go build -o /dev/null $(f)$(NL))
+	$(foreach f,$(shell ls example/*),go build -o /dev/null $(f)$(NL))
 
 gen-dialects:
 	echo "FROM $(BASE_IMAGE) \n\
@@ -61,7 +61,7 @@ gen-dialects-nodocker:
 	| grep -o '"name": ".\+\.xml"' | sed 's/"name": "\(.\+\)\.xml"/\1/'))
 	rm -rf dialects/*
 	echo "package dialects" > dialects/dialects.go
-	$(foreach d, $(DIALECTS), go run ./dialgen -q --output=dialects/$(d)/dialect.go \
+	$(foreach d,$(DIALECTS),go run ./dialgen -q --output=dialects/$(d)/dialect.go \
 	--preamble="Generated from revision https://github.com/mavlink/mavlink/tree/$(COMMIT)" \
 	https://raw.githubusercontent.com/mavlink/mavlink/$(COMMIT)/message_definitions/v1.0/$(d).xml$(NL))
 	find ./dialects -type f -name '*.go' | xargs gofmt -l -w -s

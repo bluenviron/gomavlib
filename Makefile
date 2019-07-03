@@ -1,4 +1,6 @@
 
+BASE_IMAGE = amd64/golang:1.11-stretch
+
 help:
 	@echo "usage: make [action] [args...]"
 	@echo ""
@@ -18,19 +20,16 @@ $(blank)
 endef
 
 mod-tidy:
-	docker run --rm -it -v $(PWD):/src \
-	amd64/golang:1.11 \
+	docker run --rm -it -v $(PWD):/src $(BASE_IMAGE) \
 	sh -c "cd /src && go get -m ./... && go mod tidy"
 
 format:
-	@docker run --rm -it \
-	-v $(PWD):/src \
-	amd64/golang:1.11-stretch \
+	docker run --rm -it -v $(PWD):/src $(BASE_IMAGE) \
 	sh -c "cd /src \
 	&& find . -type f -name '*.go' | xargs gofmt -l -w -s"
 
 test:
-	echo "FROM amd64/golang:1.11-stretch \n\
+	echo "FROM $(BASE_IMAGE) \n\
 	WORKDIR /src \n\
 	COPY go.mod go.sum ./ \n\
 	RUN go mod download \n\
@@ -46,15 +45,13 @@ test-nodocker:
 	$(foreach f, $(shell ls example/*), go build -o /dev/null $(f)$(NL))
 
 gen-dialects:
-	echo "FROM amd64/golang:1.11-stretch \n\
+	echo "FROM $(BASE_IMAGE) \n\
 	WORKDIR /src \n\
 	COPY go.mod go.sum ./ \n\
 	RUN go mod download \n\
 	COPY *.go ./ \n\
 	COPY dialgen ./dialgen" | docker build -q . -f - -t gomavlib-gen-dialects
-	docker run --rm -it \
-	-v $(PWD):/src \
-	gomavlib-gen-dialects \
+	docker run --rm -it -v $(PWD):/src gomavlib-gen-dialects \
 	make gen-dialects-nodocker
 
 gen-dialects-nodocker:
@@ -70,9 +67,6 @@ gen-dialects-nodocker:
 	find ./dialects -type f -name '*.go' | xargs gofmt -l -w -s
 
 run-example:
-	@docker run --rm -it \
-	--privileged \
-	--network=host \
-	-v $(PWD):/src \
-	amd64/golang:1.11-stretch \
+	docker run --rm -it --privileged --network=host \
+	-v $(PWD):/src $(BASE_IMAGE) \
 	sh -c "cd /src && go run example/$(E).go"

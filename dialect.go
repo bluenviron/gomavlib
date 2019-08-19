@@ -369,7 +369,7 @@ func (mp *dialectMessage) encode(msg Message, isFrameV2 bool) ([]byte, error) {
 	// empty-byte truncation
 	if isFrameV2 == true {
 		end := len(buf)
-		for end > 0 && buf[end-1] == 0x00 {
+		for end > 1 && buf[end-1] == 0x00 {
 			end--
 		}
 		buf = buf[:end]

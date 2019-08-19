@@ -278,16 +278,21 @@ var testMpV1Msgs = []Message{
 }
 
 var testMpV2EmptyByteParsers = []Message{
+	&MessageAhrs{},
 	&MessageChangeOperatorControl{},
 	&MessageAhrs{},
 }
 
 var testMpV2EmptyByteBytes = [][]byte{
+	// even with truncation, message length must be at least 1 byte
+	// https://github.com/mavlink/c_library_v2/blob/master/mavlink_helpers.h#L103
+	[]byte("\x00"),
 	[]byte("\x00\x01\x02\x74\x65\x73\x74\x69\x6e\x67"),
 	[]byte("\x00\x00\x80\x3f\x00\x00\x00\x40\x00\x00\x40\x40\x00\x00\x80\x40\x00\x00\xa0\x40"),
 }
 
 var testMpV2EmptyByteMsgs = []Message{
+	&MessageAhrs{},
 	&MessageChangeOperatorControl{
 		TargetSystem:   0,
 		ControlRequest: 1,

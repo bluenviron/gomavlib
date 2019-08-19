@@ -367,6 +367,8 @@ func (mp *dialectMessage) encode(msg Message, isFrameV2 bool) ([]byte, error) {
 	buf = start
 
 	// empty-byte truncation
+	// even with truncation, message length must be at least 1 byte
+	// https://github.com/mavlink/c_library_v2/blob/master/mavlink_helpers.h#L103
 	if isFrameV2 == true {
 		end := len(buf)
 		for end > 1 && buf[end-1] == 0x00 {

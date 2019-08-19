@@ -290,8 +290,8 @@ func (mp *dialectMessage) decode(buf []byte, isFrameV2 bool) (Message, error) {
 	msg := reflect.New(mp.elemType)
 
 	if isFrameV2 == true {
-		// in V2 buffer can be > message or < message
-		// in this case it must be filled with zeros to support empty-byte de-truncation
+		// in V2 buffer length can be > message or < message
+		// in this latter case it must be filled with zeros to support empty-byte de-truncation
 		// and extension fields
 		if len(buf) < int(mp.sizeExtended) {
 			buf = append(buf, bytes.Repeat([]byte{0x00}, int(mp.sizeExtended)-len(buf))...)

@@ -14,7 +14,7 @@ This library powers the [**mavp2p**](https://github.com/gswly/mavp2p) router.
 ## Features
 
 * Decodes and encodes Mavlink v2.0 and v1.0. Supports checksums, empty-byte truncation (v2.0), signatures (v2.0), message extensions (v2.0)
-* Dialects are modular and optional, the library can work a standard dialect (standard dialects are provided in directory `dialects/`), a custom dialect or no dialect at all. A dialect generator is provided to convert XML-based custom dialects into their Go representation.
+* Dialects are optional, the library can work a standard dialect (standard dialects are provided in directory `dialects/`), a custom dialect or no dialect at all. A dialect generator is provided to convert XML-based custom dialects into their Go representation.
 * Provides a high-level API (`Node`) with:
   * ability to communicate with multiple endpoints in parallel:
     * serial

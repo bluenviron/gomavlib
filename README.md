@@ -1,15 +1,15 @@
 
 # gomavlib
 
-[![GoDoc](https://godoc.org/github.com/gswly/gomavlib?status.svg)](https://godoc.org/github.com/gswly/gomavlib)
-[![Go Report Card](https://goreportcard.com/badge/github.com/gswly/gomavlib)](https://goreportcard.com/report/github.com/gswly/gomavlib)
-[![Build Status](https://travis-ci.org/gswly/gomavlib.svg?branch=master)](https://travis-ci.org/gswly/gomavlib)
+[![GoDoc](https://godoc.org/github.com/aler9/gomavlib?status.svg)](https://godoc.org/github.com/aler9/gomavlib)
+[![Go Report Card](https://goreportcard.com/badge/github.com/aler9/gomavlib)](https://goreportcard.com/report/github.com/aler9/gomavlib)
+[![Build Status](https://travis-ci.org/aler9/gomavlib.svg?branch=master)](https://travis-ci.org/aler9/gomavlib)
 
 gomavlib is a library that implements Mavlink 2.0 and 1.0 in the Go programming language. It can power UGVs, UAVs, ground stations, monitoring systems or routers acting in a Mavlink network.
 
 Mavlink is a lighweight and transport-independent protocol that is mostly used to communicate with unmanned ground vehicles (UGV) and unmanned aerial vehicles (UAV, drones, quadcopters, multirotors). It is supported by the most popular open-source flight controllers (Ardupilot and PX4).
 
-This library powers the [**mavp2p**](https://github.com/gswly/mavp2p) router.
+This library powers the [**mavp2p**](https://github.com/aler9/mavp2p) router.
 
 ## Features
 
@@ -34,13 +34,13 @@ This library powers the [**mavp2p**](https://github.com/gswly/mavp2p) router.
 Go &ge; 1.11 is required. If modules are enabled (i.e. there's a go.mod file in your project folder), it is enough to write the library name in the import section of the source files that are referring to it. Go will take care of downloading the needed files:
 ```go
 import (
-    "github.com/gswly/gomavlib"
+    "github.com/aler9/gomavlib"
 )
 ```
 
 If modules are not enabled, the library must be downloaded manually:
 ```
-go get github.com/gswly/gomavlib
+go get github.com/aler9/gomavlib
 ```
 
 ## Examples
@@ -63,13 +63,13 @@ go get github.com/gswly/gomavlib
 
 ## Documentation
 
-https://godoc.org/github.com/gswly/gomavlib
+https://godoc.org/github.com/aler9/gomavlib
 
 ## Dialect generation
 
 Although standard dialects are provided in the `dialects/` folder, dialect definitions in XML format can be converted into Go files by running the `dialgen` utility:
 ```
-go get github.com/gswly/gomavlib/dialgen
+go get github.com/aler9/gomavlib/dialgen
 dialgen --output=dialect.go [path_or_url_to_xml_definition]
 ```
 

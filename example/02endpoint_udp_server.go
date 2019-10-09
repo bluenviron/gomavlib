@@ -4,8 +4,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/gswly/gomavlib"
-	"github.com/gswly/gomavlib/dialects/ardupilotmega"
+	"github.com/aler9/gomavlib"
+	"github.com/aler9/gomavlib/dialects/ardupilotmega"
 )
 
 func main() {

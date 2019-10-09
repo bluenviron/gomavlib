@@ -5,7 +5,7 @@
 package standard
 
 import (
-	"github.com/gswly/gomavlib"
+	"github.com/aler9/gomavlib"
 )
 
 // Dialect contains the dialect object that can be passed to the library.

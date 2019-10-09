@@ -8,14 +8,14 @@ to communicate with unmanned ground vehicles (UGV) and unmanned aerial vehicles
 (UAV, drones, quadcopters, multirotors). It is supported by the most common
 open-source flight controllers (Ardupilot and PX4).
 
-Basic example (more are available at https://github.com/gswly/gomavlib/tree/master/example)
+Basic example (more are available at https://github.com/aler9/gomavlib/tree/master/example)
 
   package main
 
   import (
   	"fmt"
-  	"github.com/gswly/gomavlib"
-  	"github.com/gswly/gomavlib/dialects/ardupilotmega"
+  	"github.com/aler9/gomavlib"
+  	"github.com/aler9/gomavlib/dialects/ardupilotmega"
   )
 
   func main() {

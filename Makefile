@@ -1,8 +1,8 @@
 
-BASE_IMAGE = amd64/golang:1.11-stretch
+BASE_IMAGE = amd64/golang:1.13-alpine3.10
 
 help:
-	@echo "usage: make [action] [args...]"
+	@echo "usage: make [action]"
 	@echo ""
 	@echo "available actions:"
 	@echo ""
@@ -20,41 +20,54 @@ $(blank)
 endef
 
 mod-tidy:
-	docker run --rm -it -v $(PWD):/src $(BASE_IMAGE) \
-	sh -c "cd /src && go get -m ./... && go mod tidy"
+	docker run --rm -it -v $(PWD):/s $(BASE_IMAGE) \
+	sh -c "apk add git && cd /s && go get -m ./... && go mod tidy"
 
 format:
-	docker run --rm -it -v $(PWD):/src $(BASE_IMAGE) \
-	sh -c "cd /src \
-	&& find . -type f -name '*.go' | xargs gofmt -l -w -s"
+	docker run --rm -it -v $(PWD):/s $(BASE_IMAGE) \
+	sh -c "cd /s && find . -type f -name '*.go' | xargs gofmt -l -w -s"
+
+define DOCKERFILE_TEST
+FROM $(BASE_IMAGE)
+RUN apk add --no-cache git make
+WORKDIR /s
+COPY go.mod go.sum ./
+RUN go mod download
+COPY Makefile *.go ./
+COPY dialgen ./dialgen
+COPY dialects ./dialects
+COPY example ./example
+endef
+export DOCKERFILE_TEST
 
 test:
-	echo "FROM $(BASE_IMAGE) \n\
-	WORKDIR /src \n\
-	COPY go.mod go.sum ./ \n\
-	RUN go mod download \n\
-	COPY Makefile *.go ./ \n\
-	COPY dialgen ./dialgen \n\
-	COPY dialects ./dialects \n\
-	COPY example ./example" | docker build . -f - -t gomavlib-test
+	echo "$$DOCKERFILE_TEST" | docker build . -f - -t gomavlib-test
 	docker run --rm -it gomavlib-test make test-nodocker
 
 test-nodocker:
+	$(eval export CGO_ENABLED = 0)
 	go test -v ./...
 	go build -o /dev/null ./dialgen
 	$(foreach f,$(shell ls example/*),go build -o /dev/null $(f)$(NL))
 
+define DOCKERFILE_GEN_DIALECTS
+FROM $(BASE_IMAGE)
+RUN apk add --no-cache git make curl
+WORKDIR /s
+COPY go.mod go.sum ./
+RUN go mod download
+COPY *.go ./
+COPY dialgen ./dialgen
+endef
+export DOCKERFILE_GEN_DIALECTS
+
 gen-dialects:
-	echo "FROM $(BASE_IMAGE) \n\
-	WORKDIR /src \n\
-	COPY go.mod go.sum ./ \n\
-	RUN go mod download \n\
-	COPY *.go ./ \n\
-	COPY dialgen ./dialgen" | docker build -q . -f - -t gomavlib-gen-dialects
-	docker run --rm -it -v $(PWD):/src gomavlib-gen-dialects \
+	echo "$$DOCKERFILE_GEN_DIALECTS" | docker build . -f - -t gomavlib-gen-dialects
+	docker run --rm -it -v $(PWD):/s gomavlib-gen-dialects \
 	make gen-dialects-nodocker
 
 gen-dialects-nodocker:
+	$(eval export CGO_ENABLED = 0)
 	$(eval COMMIT = $(shell curl -s -L https://api.github.com/repos/mavlink/mavlink/commits/master \
 	| grep -o '"sha": ".\+"' | sed 's/"sha": "\(.\+\)"/\1/' | head -n1))
 	$(eval DIALECTS = $(shell curl -s -L https://api.github.com/repos/mavlink/mavlink/contents/message_definitions/v1.0?ref=$(COMMIT) \
@@ -68,5 +81,5 @@ gen-dialects-nodocker:
 
 run-example:
 	docker run --rm -it --privileged --network=host \
-	-v $(PWD):/src $(BASE_IMAGE) \
-	sh -c "cd /src && go run example/$(E).go"
+	-v $(PWD):/s $(BASE_IMAGE) \
+	sh -c "cd /s && go run example/$(E).go"

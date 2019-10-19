@@ -14,7 +14,7 @@ This library powers the [**mavp2p**](https://github.com/aler9/mavp2p) router.
 ## Features
 
 * Decodes and encodes Mavlink v2.0 and v1.0. Supports checksums, empty-byte truncation (v2.0), signatures (v2.0), message extensions (v2.0)
-* Dialects are optional, the library can work a standard dialect (standard dialects are provided in directory `dialects/`), a custom dialect or no dialect at all. A dialect generator is provided to convert XML-based custom dialects into their Go representation.
+* Dialects are optional, the library can work with standard dialects (standard dialects are provided in directory `dialects/`), custom dialects or no dialects at all. In case of custom dialects, a dialect generator is available in order to convert XML definitions into their Go representation.
 * Provides a high-level API (`Node`) with:
   * ability to communicate with multiple endpoints in parallel:
     * serial
@@ -67,15 +67,15 @@ https://godoc.org/github.com/aler9/gomavlib
 
 ## Dialect generation
 
-Although standard dialects are provided in the `dialects/` folder, dialect definitions in XML format can be converted into Go files by running the `dialgen` utility:
+Standard dialects are provided in the `dialects/` folder, but it's also possible to use custom dialects, that must be converted into Go files by using the `dialgen` utility:
 ```
 go get github.com/aler9/gomavlib/dialgen
-dialgen --output=dialect.go [path_or_url_to_xml_definition]
+dialgen --output=dialect.go my_dialect.xml
 ```
 
 ## Testing
 
-If you want to edit the library and test the results, unit tests can be launched with:
+If you want to hack the library and test the results, unit tests can be launched with:
 ```
 make test
 ```

@@ -82,7 +82,7 @@ make test
 
 ## Links
 
-Protocol references
+Protocol documentation
 * main website https://mavlink.io/en/
 * packet format https://mavlink.io/en/guide/serialization.html
 * common dialect https://github.com/mavlink/mavlink/blob/master/message_definitions/v1.0/common.xml

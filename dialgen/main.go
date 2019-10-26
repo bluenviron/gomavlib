@@ -149,6 +149,7 @@ package {{ .PkgName }}
 
 import (
 	"testing"
+
 	"github.com/stretchr/testify/require"
 )
 

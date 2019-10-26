@@ -2,12 +2,13 @@ package gomavlib
 
 import (
 	"bytes"
-	"github.com/stretchr/testify/require"
 	"io"
 	"reflect"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {

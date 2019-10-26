@@ -1,29 +1,10 @@
 package gomavlib
 
 import (
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
-
-/* Test vectors generated with
-
-( docker build - -t temp << EOF
-FROM amd64/python:3-stretch
-RUN apt update && apt install -y --no-install-recommends \
-    git \
-    gcc \
-    python3-dev \
-    python3-setuptools \
-    python3-wheel \
-    python3-pip \
-    python3-future \
-    python3-lxml \
-    && pip3 install pymavlink
-EOF
-) && docker run --rm -it temp python3 -c \
-"from pymavlink.mavutil import x25crc; print('%.4x' % x25crc('\x01').crc);"
-
-*/
 
 func TestX25(t *testing.T) {
 	ins := [][]byte{

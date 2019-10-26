@@ -3,8 +3,9 @@ package gomavlib
 import (
 	"bytes"
 	"encoding/binary"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 var testCasesFrames = []struct {

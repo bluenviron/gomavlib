@@ -1,11 +1,12 @@
 package gomavlib
 
 import (
-	"github.com/stretchr/testify/require"
 	"net"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestUdpListener(t *testing.T) {

@@ -34,7 +34,7 @@ type ParserConf struct {
 	// the writer to which frames will be written.
 	Writer io.Writer
 
-	// contains the messages which will be automatically decoded and
+	// (optional) the messages which will be automatically decoded and
 	// encoded. If not provided, messages are decoded in the MessageRaw struct.
 	Dialect *Dialect
 
@@ -308,7 +308,8 @@ func (p *Parser) Read() (Frame, error) {
 }
 
 // Write writes a Frame into the writer. It must not be called by multiple
-// routines in parallel. If route is false, the following fields will be filled:
+// routines in parallel. If route is false, the following fields will be filled
+// by the library:
 //   IncompatibilityFlag
 //   SequenceId
 //   SystemId

@@ -90,7 +90,7 @@ type NodeConf struct {
 	// communicate. Each endpoint contains zero or more channels
 	Endpoints []EndpointConf
 
-	// the messages which will be automatically decoded and
+	// (optional) the messages which will be automatically decoded and
 	// encoded. If not provided, messages are decoded in the MessageRaw struct.
 	Dialect *Dialect
 

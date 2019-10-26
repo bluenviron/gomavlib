@@ -46,14 +46,14 @@ type Event interface {
 	isEventOut()
 }
 
-// EventChannelOpen is the event fired when a channel is opened.
+// EventChannelOpen is the event fired when a channel gets opened.
 type EventChannelOpen struct {
 	Channel *Channel
 }
 
 func (*EventChannelOpen) isEventOut() {}
 
-// EventChannelClose is the event fired when a channel is closed.
+// EventChannelClose is the event fired when a channel gets closed.
 type EventChannelClose struct {
 	Channel *Channel
 }

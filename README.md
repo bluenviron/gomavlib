@@ -31,16 +31,11 @@ This library powers the [**mavp2p**](https://github.com/aler9/mavp2p) router.
 
 ## Installation
 
-Go &ge; 1.11 is required. If modules are enabled (i.e. there's a go.mod file in your project folder), it is enough to write the library name in the import section of the source files that are referring to it. Go will take care of downloading the needed files:
+Go &ge; 1.12 is required, and modules must be enabled (i.e. there must be a file called `go.mod` in your project folder). To install the library, it is enough to write its name in the import section of the source files that will use it. Go will take care of downloading the needed files:
 ```go
 import (
     "github.com/aler9/gomavlib"
 )
-```
-
-If modules are not enabled, the library must be downloaded manually:
-```
-go get github.com/aler9/gomavlib
 ```
 
 ## Examples

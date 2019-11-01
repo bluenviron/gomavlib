@@ -49,7 +49,7 @@ import (
 * [endpoint_custom](example/endpoint_custom.go)
 * [message_read](example/message_read.go)
 * [message_write](example/message_write.go)
-* [message_signature](example/message_signature.go)
+* [signature](example/signature.go)
 * [dialect_no](example/dialect_no.go)
 * [dialect_custom](example/dialect_custom.go)
 * [events](example/events.go)

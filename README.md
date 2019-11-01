@@ -47,6 +47,7 @@ import (
 * [endpoint_tcp_server](example/endpoint_tcp_server.go)
 * [endpoint_tcp_client](example/endpoint_tcp_client.go)
 * [endpoint_custom](example/endpoint_custom.go)
+* [message_read](example/message_read.go)
 * [message_write](example/message_write.go)
 * [message_signature](example/message_signature.go)
 * [dialect_no](example/dialect_no.go)

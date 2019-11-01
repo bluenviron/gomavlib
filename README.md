@@ -40,21 +40,21 @@ import (
 
 ## Examples
 
-* [endpoint_serial](example/01endpoint_serial.go)
-* [endpoint_udp_server](example/02endpoint_udp_server.go)
-* [endpoint_udp_client](example/03endpoint_udp_client.go)
-* [endpoint_udp_broadcast](example/04endpoint_udp_broadcast.go)
-* [endpoint_tcp_server](example/05endpoint_tcp_server.go)
-* [endpoint_tcp_client](example/06endpoint_tcp_client.go)
-* [endpoint_custom](example/07endpoint_custom.go)
-* [message_write](example/08message_write.go)
-* [message_signature](example/09message_signature.go)
-* [dialect_no](example/10dialect_no.go)
-* [dialect_custom](example/11dialect_custom.go)
-* [events](example/12events.go)
-* [router](example/13router.go)
-* [stream_requests](example/14stream_requests.go)
-* [parser](example/15parser.go)
+* [endpoint_serial](example/endpoint_serial.go)
+* [endpoint_udp_server](example/endpoint_udp_server.go)
+* [endpoint_udp_client](example/endpoint_udp_client.go)
+* [endpoint_udp_broadcast](example/endpoint_udp_broadcast.go)
+* [endpoint_tcp_server](example/endpoint_tcp_server.go)
+* [endpoint_tcp_client](example/endpoint_tcp_client.go)
+* [endpoint_custom](example/endpoint_custom.go)
+* [message_write](example/message_write.go)
+* [message_signature](example/message_signature.go)
+* [dialect_no](example/dialect_no.go)
+* [dialect_custom](example/dialect_custom.go)
+* [events](example/events.go)
+* [router](example/router.go)
+* [stream_requests](example/stream_requests.go)
+* [parser](example/parser.go)
 
 ## Documentation
 

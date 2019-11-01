@@ -5,6 +5,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+
 	"github.com/aler9/gomavlib"
 	"github.com/aler9/gomavlib/dialects/ardupilotmega"
 )

@@ -34,7 +34,7 @@ func main() {
 				fmt.Printf("received heartbeat (type %d)\n", msg.Type)
 
 			case *ardupilotmega.MessageServoOutputRaw:
-				fmt.Printf("received servo output with values: %d %d %d %d %d %d %d %d",
+				fmt.Printf("received servo output with values: %d %d %d %d %d %d %d %d\n",
 					msg.Servo1Raw, msg.Servo2Raw, msg.Servo3Raw, msg.Servo4Raw,
 					msg.Servo5Raw, msg.Servo6Raw, msg.Servo7Raw, msg.Servo8Raw)
 			}

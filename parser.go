@@ -168,12 +168,12 @@ func (p *Parser) Read() (Frame, error) {
 		if err != nil {
 			return nil, err
 		}
+		p.readBuffer.Discard(5)
 		msgLen := buf[0]
 		ff.SequenceId = buf[1]
 		ff.SystemId = buf[2]
 		ff.ComponentId = buf[3]
 		msgId := buf[4]
-		p.readBuffer.Discard(5)
 
 		// message
 		var msgContent []byte
@@ -194,8 +194,8 @@ func (p *Parser) Read() (Frame, error) {
 		if err != nil {
 			return nil, err
 		}
-		ff.Checksum = binary.LittleEndian.Uint16(buf)
 		p.readBuffer.Discard(2)
+		ff.Checksum = binary.LittleEndian.Uint16(buf)
 
 	case v2MagicByte:
 		ff := &FrameV2{}
@@ -206,6 +206,7 @@ func (p *Parser) Read() (Frame, error) {
 		if err != nil {
 			return nil, err
 		}
+		p.readBuffer.Discard(9)
 		msgLen := buf[0]
 		ff.IncompatibilityFlag = buf[1]
 		ff.CompatibilityFlag = buf[2]
@@ -213,7 +214,6 @@ func (p *Parser) Read() (Frame, error) {
 		ff.SystemId = buf[4]
 		ff.ComponentId = buf[5]
 		msgId := uint24Decode(buf[6:])
-		p.readBuffer.Discard(9)
 
 		// discard frame if incompatibility flag is not understood, as in recommendations
 		if ff.IncompatibilityFlag != 0 && ff.IncompatibilityFlag != flagSigned {
@@ -239,8 +239,8 @@ func (p *Parser) Read() (Frame, error) {
 		if err != nil {
 			return nil, err
 		}
-		ff.Checksum = binary.LittleEndian.Uint16(buf)
 		p.readBuffer.Discard(2)
+		ff.Checksum = binary.LittleEndian.Uint16(buf)
 
 		// signature
 		if ff.IsSigned() {
@@ -248,11 +248,11 @@ func (p *Parser) Read() (Frame, error) {
 			if err != nil {
 				return nil, err
 			}
+			p.readBuffer.Discard(13)
 			ff.SignatureLinkId = buf[0]
 			ff.SignatureTimestamp = uint48Decode(buf[1:])
 			ff.Signature = new(Signature)
 			copy(ff.Signature[:], buf[7:])
-			p.readBuffer.Discard(13)
 		}
 
 	default:

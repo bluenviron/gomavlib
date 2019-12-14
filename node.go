@@ -318,8 +318,8 @@ func (n *Node) WriteMessageExcept(exceptChannel *Channel, message Message) {
 }
 
 // WriteFrameTo writes a frame to given channel.
-// This function is intended for routing frames to other nodes, since all
-// frame fields must be filled manually.
+// This function is intended only for routing pre-existing frames to other nodes,
+// since all frame fields must be filled manually.
 func (n *Node) WriteFrameTo(channel *Channel, frame Frame) {
 	n.eventsIn <- &eventInWriteTo{channel, frame}
 }

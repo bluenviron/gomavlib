@@ -102,7 +102,7 @@ func (ch *Channel) run() {
 				ch.parser.WriteMessage(wh)
 
 			case Frame:
-				ch.parser.WriteFrameRaw(wh)
+				ch.parser.WriteFrame(wh)
 			}
 		}
 	}()

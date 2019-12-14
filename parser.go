@@ -49,7 +49,7 @@ type ParserConf struct {
 	Dialect *Dialect
 
 	// (optional) the secret key used to validate incoming frames.
-	// Non-signed frames are discarded. This feature requires Mavlink v2.
+	// Non-signed frames are discarded. This feature requires v2 frames.
 	InKey *Key
 
 	// the system id, added to every outgoing frame and used to identify this
@@ -60,10 +60,11 @@ type ParserConf struct {
 	OutVersion Version
 	// (optional) the component id, added to every outgoing frame, defaults to 1.
 	OutComponentId byte
-	// (optional) the value to insert into the signature link id
+	// (optional) the value to insert into the signature link id.
+	// This feature requires v2 frames.
 	OutSignatureLinkId byte
 	// (optional) the secret key used to sign outgoing frames.
-	// This feature requires Mavlink v2.
+	// This feature requires v2 frames.
 	OutKey *Key
 }
 
@@ -319,6 +320,7 @@ func (p *Parser) Read() (Frame, error) {
 }
 
 // WriteMessage writes a Message into the writer.
+// It must not be called by multiple routines in parallel.
 func (p *Parser) WriteMessage(message Message) error {
 	var f Frame
 	if p.conf.OutVersion == V1 {
@@ -326,13 +328,10 @@ func (p *Parser) WriteMessage(message Message) error {
 	} else {
 		f = &FrameV2{Message: message}
 	}
-	return p.WriteFrameAndFill(f)
+	return p.writeFrameAndFill(f)
 }
 
-// WriteFrameAndFill writes a Frame into the writer.
-// It must not be called by multiple routines in parallel.
-// Only Frame.Message must be set, all the other Frame fields will be filled by the library.
-func (p *Parser) WriteFrameAndFill(frame Frame) error {
+func (p *Parser) writeFrameAndFill(frame Frame) error {
 	if frame.GetMessage() == nil {
 		return fmt.Errorf("message is nil")
 	}
@@ -406,14 +405,14 @@ func (p *Parser) WriteFrameAndFill(frame Frame) error {
 		ff.Signature = p.signature(ff, p.conf.OutKey)
 	}
 
-	return p.WriteFrameRaw(safeFrame)
+	return p.WriteFrame(safeFrame)
 }
 
-// WriteFrameRaw writes a Frame into the writer.
+// WriteFrame writes a Frame into the writer.
 // It must not be called by multiple routines in parallel.
-// All the Frame fields must be properly set, as the frame will be written untouched.
-// To automatically fill most of the Frame fields, use WriteFrameAndFill.
-func (p *Parser) WriteFrameRaw(frame Frame) error {
+// This function is intended only for routing pre-existing frames to other nodes,
+// since all frame fields must be filled manually.
+func (p *Parser) WriteFrame(frame Frame) error {
 	if frame.GetMessage() == nil {
 		return fmt.Errorf("message is nil")
 	}

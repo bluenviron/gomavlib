@@ -56,16 +56,6 @@ const (
 	_NET_WRITE_TIMEOUT    = 10 * time.Second
 )
 
-// Version allows to set the frame version used to wrap outgoing messages.
-type Version int
-
-const (
-	// V2 wrap outgoing messages in v2 frames.
-	V2 Version = iota
-	// V1 wrap outgoing messages in v1 frames.
-	V1
-)
-
 type goroutinePool sync.WaitGroup
 
 type goroutinePoolRunnable interface {
@@ -98,12 +88,12 @@ type NodeConf struct {
 	// Non signed frames are discarded, as well as frames with a version < 2.0.
 	InKey *Key
 
-	// Mavlink version used to encode frames. See Version
-	// for the available options.
-	OutVersion Version
 	// the system id, added to every outgoing frame and used to identify this
 	// node in the network.
 	OutSystemId byte
+	// (optional) Mavlink version used to encode messages. See Version
+	// for the available options. If not provided, v1 will be used.
+	OutVersion Version
 	// (optional) the component id, added to every outgoing frame, defaults to 1.
 	OutComponentId byte
 	// (optional) the secret key used to sign outgoing frames.

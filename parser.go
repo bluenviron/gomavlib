@@ -12,6 +12,16 @@ import (
 // 1st January 2015 GMT
 var signatureReferenceDate = time.Date(2015, 01, 01, 0, 0, 0, 0, time.UTC)
 
+// Version allows to set the frame version used to wrap outgoing messages.
+type Version int
+
+const (
+	// V2 wrap outgoing messages in v2 frames.
+	V1 Version = iota
+	// V1 wrap outgoing messages in v1 frames.
+	V2
+)
+
 // ParserError is the error returned in case of non-fatal parsing errors.
 type ParserError struct {
 	str string
@@ -45,6 +55,9 @@ type ParserConf struct {
 	// the system id, added to every outgoing frame and used to identify this
 	// node in the network.
 	OutSystemId byte
+	// (optional) Mavlink version used to encode messages. See Version
+	// for the available options. If not provided, v1 will be used.
+	OutVersion Version
 	// (optional) the component id, added to every outgoing frame, defaults to 1.
 	OutComponentId byte
 	// (optional) the value to insert into the signature link id
@@ -303,6 +316,17 @@ func (p *Parser) Read() (Frame, error) {
 	}
 
 	return f, nil
+}
+
+// WriteMessage writes a Message into the writer.
+func (p *Parser) WriteMessage(message Message) error {
+	var f Frame
+	if p.conf.OutVersion == V1 {
+		f = &FrameV1{Message: message}
+	} else {
+		f = &FrameV2{Message: message}
+	}
+	return p.WriteFrameAndFill(f)
 }
 
 // WriteFrameAndFill writes a Frame into the writer.

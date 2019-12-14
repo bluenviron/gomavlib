@@ -26,6 +26,7 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) *Chan
 		Dialect:            n.conf.Dialect,
 		InKey:              n.conf.InKey,
 		OutSystemId:        n.conf.OutSystemId,
+		OutVersion:         n.conf.OutVersion,
 		OutComponentId:     n.conf.OutComponentId,
 		OutSignatureLinkId: randomByte(),
 		OutKey:             n.conf.OutKey,
@@ -98,11 +99,7 @@ func (ch *Channel) run() {
 		for what := range ch.writeChan {
 			switch wh := what.(type) {
 			case Message:
-				if ch.n.conf.OutVersion == V1 {
-					ch.parser.WriteFrameAndFill(&FrameV1{Message: wh})
-				} else {
-					ch.parser.WriteFrameAndFill(&FrameV2{Message: wh})
-				}
+				ch.parser.WriteMessage(wh)
 
 			case Frame:
 				ch.parser.WriteFrameRaw(wh)

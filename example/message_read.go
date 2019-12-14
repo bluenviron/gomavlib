@@ -26,6 +26,7 @@ func main() {
 	}
 	defer node.Close()
 
+	// print selected messages
 	for evt := range node.Events() {
 		if frm, ok := evt.(*gomavlib.EventFrame); ok {
 

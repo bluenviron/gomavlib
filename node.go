@@ -92,7 +92,7 @@ type NodeConf struct {
 	// node in the network.
 	OutSystemId byte
 	// (optional) Mavlink version used to encode messages. See Version
-	// for the available options. If not provided, v1 will be used.
+	// for the available options. If not provided, v2 will be used.
 	OutVersion Version
 	// (optional) the component id, added to every outgoing frame, defaults to 1.
 	OutComponentId byte

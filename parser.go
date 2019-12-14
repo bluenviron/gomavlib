@@ -309,7 +309,7 @@ func (p *Parser) Read() (Frame, error) {
 
 // WriteAndFill writes a Frame into the writer.
 // It must not be called by multiple routines in parallel.
-// All Frame fields, except for Message, will be filled by the library.
+// Only Frame.Message must be set, all the other Frame fields will be filled by the library.
 func (p *Parser) WriteAndFill(f Frame) error {
 	if f.GetMessage() == nil {
 		return fmt.Errorf("message is nil")
@@ -331,6 +331,16 @@ func (p *Parser) WriteAndFill(f Frame) error {
 		ff.ComponentId = p.conf.OutComponentId
 	}
 	p.curWriteSequenceId++
+
+	// fill CompatibilityFlag, IncompatibilityFlag if v2
+	if ff, ok := safeFrame.(*FrameV2); ok {
+		ff.CompatibilityFlag = 0
+		ff.IncompatibilityFlag = 0
+
+		if p.conf.OutKey != nil {
+			ff.IncompatibilityFlag |= flagSigned
+		}
+	}
 
 	// encode message if it is not already encoded
 	if _, ok := safeFrame.GetMessage().(*MessageRaw); !ok {
@@ -357,20 +367,16 @@ func (p *Parser) WriteAndFill(f Frame) error {
 			ff.Message = msgRaw
 		}
 
-		// compute checksum
+		// fill checksum
 		switch ff := safeFrame.(type) {
 		case *FrameV1:
 			ff.Checksum = p.Checksum(ff)
 		case *FrameV2:
-			// set incompatibility flag before computing checksum
-			if p.conf.OutKey != nil {
-				ff.IncompatibilityFlag |= flagSigned
-			}
 			ff.Checksum = p.Checksum(ff)
 		}
 	}
 
-	// compute signature if v2
+	// fill SignatureLinkId, SignatureTimestamp, Signature if v2
 	if ff, ok := safeFrame.(*FrameV2); ok && p.conf.OutKey != nil {
 		ff.SignatureLinkId = p.conf.OutSignatureLinkId
 		// Timestamp in 10 microsecond units since 1st January 2015 GMT time
@@ -383,8 +389,8 @@ func (p *Parser) WriteAndFill(f Frame) error {
 
 // WriteRaw writes a Frame into the writer.
 // It must not be called by multiple routines in parallel.
-// The frame will be written untouched, and all its field must be properly set.
-// This function is intended for routing frames to other nodes, since all fields must be filled manually.
+// All the Frame fields must be properly set, as the frame will be written untouched.
+// To automatically fill most of the Frame fields, use WriteAndFill.
 func (p *Parser) WriteRaw(f Frame) error {
 	if f.GetMessage() == nil {
 		return fmt.Errorf("message is nil")

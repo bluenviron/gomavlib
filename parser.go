@@ -396,40 +396,33 @@ func (p *Parser) WriteRaw(f Frame) error {
 		return fmt.Errorf("message is nil")
 	}
 
-	// do not touch the original frame, but work with a separate object
-	// in such way that the frame can be encoded by other parsers in parallel
-	safeFrame := f.Clone()
-
 	// encode message if it is not already encoded
-	if _, ok := safeFrame.GetMessage().(*MessageRaw); !ok {
+	msg := f.GetMessage()
+	if _, ok := msg.(*MessageRaw); !ok {
 		if p.conf.Dialect == nil {
 			return fmt.Errorf("message cannot be encoded since dialect is nil")
 		}
 
-		mp, ok := p.conf.Dialect.messages[safeFrame.GetMessage().GetId()]
+		mp, ok := p.conf.Dialect.messages[msg.GetId()]
 		if ok == false {
 			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
 		}
 
-		_, isFrameV2 := safeFrame.(*FrameV2)
-		byt, err := mp.encode(safeFrame.GetMessage(), isFrameV2)
+		_, isFrameV2 := f.(*FrameV2)
+		byt, err := mp.encode(msg, isFrameV2)
 		if err != nil {
 			return err
 		}
 
-		msgRaw := &MessageRaw{safeFrame.GetMessage().GetId(), byt}
-		switch ff := safeFrame.(type) {
-		case *FrameV1:
-			ff.Message = msgRaw
-		case *FrameV2:
-			ff.Message = msgRaw
-		}
+		// do not touch ff.Message
+		// in such way that the frame can be encoded by other parsers in parallel
+		msg = &MessageRaw{msg.GetId(), byt}
 	}
 
-	msgContent := safeFrame.GetMessage().(*MessageRaw).Content
+	msgContent := msg.(*MessageRaw).Content
 	msgLen := len(msgContent)
 
-	switch ff := safeFrame.(type) {
+	switch ff := f.(type) {
 	case *FrameV1:
 		if ff.Message.GetId() > 0xFF {
 			return fmt.Errorf("cannot send a message with an id > 0xFF and a V1 frame")

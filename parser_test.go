@@ -210,67 +210,59 @@ func TestParserEncode(t *testing.T) {
 	}
 }
 
-var casesParserwriteFrameAndFill = []struct {
-	name  string
-	frame Frame
-	raw   []byte
+var casesParserWriteMessage = []struct {
+	name string
+	ver  Version
+	key  *Key
+	msg  Message
+	raw  []byte
 }{
 	{
 		"v1 frame",
-		&FrameV1{
-			Message: &MessageTest5{
-				'\x10',
-				binary.LittleEndian.Uint32([]byte("\x10\x10\x10\x10")),
-			},
+		V1,
+		nil,
+		&MessageTest5{
+			'\x10',
+			binary.LittleEndian.Uint32([]byte("\x10\x10\x10\x10")),
 		},
 		[]byte("\xFE\x05\x00\x01\x01\x05\x10\x10\x10\x10\x10\x75\x84"),
 	},
 	{
-		"v1 frame, again",
-		&FrameV1{
-			Message: &MessageTest5{
-				'\x10',
-				binary.LittleEndian.Uint32([]byte("\x10\x10\x10\x10")),
-			},
+		"v2 frame, signed",
+		V2,
+		NewKey(bytes.Repeat([]byte("\x4F"), 32)),
+		&MessageHeartbeat{
+			Type:           1,
+			Autopilot:      2,
+			BaseMode:       3,
+			CustomMode:     4,
+			SystemStatus:   5,
+			MavlinkVersion: 3,
 		},
-		[]byte("\xFE\x05\x01\x01\x01\x05\x10\x10\x10\x10\x10\x52\xA8"),
-	},
-	{
-		"v2 frame with decoded message, signed",
-		&FrameV2{
-			Message: &MessageHeartbeat{
-				Type:           1,
-				Autopilot:      2,
-				BaseMode:       3,
-				CustomMode:     4,
-				SystemStatus:   5,
-				MavlinkVersion: 3,
-			},
-		},
-		[]byte("\xFD\x09\x01\x00\x02\x01\x01\x00\x00\x00\x04\x00\x00\x00\x01\x02\x03\x05\x03\x28\xf3\x00\xe0\xf8\xd4\xb6\x8e\x0c\xff\x39\x30\x7f\xf6\x2e"),
+		[]byte("\xFD\x09\x01\x00\x00\x01\x01\x00\x00\x00\x04\x00\x00\x00\x01\x02\x03\x05\x03\x19\xe7\x00\xe0\xf8\xd4\xb6\x8e\x0c\xe7\x5d\x07\x46\x81\xd4"),
 	},
 }
 
-func TestParserwriteFrameAndFill(t *testing.T) {
+func TestParserWriteMessage(t *testing.T) {
 	// fake current time in order to obtain deterministic signatures
 	wayback := time.Date(2019, time.May, 18, 1, 2, 3, 4, time.UTC)
 	patch := monkey.Patch(time.Now, func() time.Time { return wayback })
 	defer patch.Unpatch()
 
-	// use a single parser for all tests
-	buf := bytes.NewBuffer(nil)
-	parser, err := NewParser(ParserConf{
-		Reader:      bytes.NewBuffer(nil),
-		Writer:      buf,
-		OutSystemId: 1,
-		Dialect:     testDialect,
-		OutKey:      NewKey(bytes.Repeat([]byte("\x4F"), 32)),
-	})
-	require.NoError(t, err)
-
-	for _, c := range casesParserwriteFrameAndFill {
+	for _, c := range casesParserWriteMessage {
 		t.Run(c.name, func(t *testing.T) {
-			err = parser.writeFrameAndFill(c.frame)
+			buf := bytes.NewBuffer(nil)
+			parser, err := NewParser(ParserConf{
+				Reader:      bytes.NewBuffer(nil),
+				Writer:      buf,
+				Dialect:     testDialect,
+				OutSystemId: 1,
+				OutVersion:  c.ver,
+				OutKey:      c.key,
+			})
+			require.NoError(t, err)
+
+			err = parser.WriteMessage(c.msg)
 			require.NoError(t, err)
 			require.Equal(t, c.raw, buf.Bytes())
 			buf.Next(len(c.raw))

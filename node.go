@@ -325,15 +325,15 @@ func (n *Node) WriteFrameTo(channel *Channel, frame Frame) {
 }
 
 // WriteFrameAll writes a frame to all channels.
-// This function is intended for routing frames to other nodes, since all
-// frame fields must be filled manually.
+// This function is intended only for routing pre-existing frames to other nodes,
+// since all frame fields must be filled manually.
 func (n *Node) WriteFrameAll(frame Frame) {
 	n.eventsIn <- &eventInWriteAll{frame}
 }
 
 // WriteFrameExcept writes a frame to all channels except specified channel.
-// This function is intended for routing frames to other nodes, since all
-// frame fields must be filled manually.
+// This function is intended only for routing pre-existing frames to other nodes,
+// since all frame fields must be filled manually.
 func (n *Node) WriteFrameExcept(exceptChannel *Channel, frame Frame) {
 	n.eventsIn <- &eventInWriteExcept{exceptChannel, frame}
 }

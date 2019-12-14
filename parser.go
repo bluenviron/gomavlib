@@ -87,8 +87,7 @@ func NewParser(conf ParserConf) (*Parser, error) {
 	return p, nil
 }
 
-// Checksum computes the checksum of a given frame.
-func (p *Parser) Checksum(f Frame) uint16 {
+func (p *Parser) checksum(f Frame) uint16 {
 	msg := f.GetMessage().(*MessageRaw)
 	h := NewX25()
 
@@ -120,8 +119,7 @@ func (p *Parser) Checksum(f Frame) uint16 {
 	return h.Sum16()
 }
 
-// Signature computes the signature of a given frame with the given key.
-func (p *Parser) Signature(ff *FrameV2, key *Key) *Signature {
+func (p *Parser) signature(ff *FrameV2, key *Key) *Signature {
 	msg := ff.GetMessage().(*MessageRaw)
 	h := sha256.New()
 
@@ -265,7 +263,7 @@ func (p *Parser) Read() (Frame, error) {
 			return nil, newParserError("signature required but packet is not v2")
 		}
 
-		if sig := p.Signature(ff, p.conf.InKey); *sig != *ff.Signature {
+		if sig := p.signature(ff, p.conf.InKey); *sig != *ff.Signature {
 			return nil, newParserError("wrong signature")
 		}
 
@@ -284,7 +282,7 @@ func (p *Parser) Read() (Frame, error) {
 	// decode message if in dialect and validate checksum
 	if p.conf.Dialect != nil {
 		if mp, ok := p.conf.Dialect.messages[f.GetMessage().GetId()]; ok {
-			if sum := p.Checksum(f); sum != f.GetChecksum() {
+			if sum := p.checksum(f); sum != f.GetChecksum() {
 				return nil, newParserError("wrong checksum (expected %.4x, got %.4x, id=%d)",
 					sum, f.GetChecksum(), f.GetMessage().GetId())
 			}
@@ -370,9 +368,9 @@ func (p *Parser) WriteAndFill(f Frame) error {
 		// fill checksum
 		switch ff := safeFrame.(type) {
 		case *FrameV1:
-			ff.Checksum = p.Checksum(ff)
+			ff.Checksum = p.checksum(ff)
 		case *FrameV2:
-			ff.Checksum = p.Checksum(ff)
+			ff.Checksum = p.checksum(ff)
 		}
 	}
 
@@ -381,7 +379,7 @@ func (p *Parser) WriteAndFill(f Frame) error {
 		ff.SignatureLinkId = p.conf.OutSignatureLinkId
 		// Timestamp in 10 microsecond units since 1st January 2015 GMT time
 		ff.SignatureTimestamp = uint64(time.Since(signatureReferenceDate)) / 10000
-		ff.Signature = p.Signature(ff, p.conf.OutKey)
+		ff.Signature = p.signature(ff, p.conf.OutKey)
 	}
 
 	return p.WriteRaw(safeFrame)

@@ -149,7 +149,7 @@ func (p *Parser) Signature(ff *FrameV2, key *Key) *Signature {
 	return sig
 }
 
-// Read returns the first Frame parsed from the reader. It must not be called
+// Read reads a Frame from the reader. It must not be called
 // by multiple routines in parallel.
 func (p *Parser) Read() (Frame, error) {
 	magicByte, err := p.readBuffer.ReadByte()
@@ -309,15 +309,7 @@ func (p *Parser) Read() (Frame, error) {
 
 // WriteAndFill writes a Frame into the writer.
 // It must not be called by multiple routines in parallel.
-// The following Frame fields will be filled by the library:
-//   IncompatibilityFlag
-//   SequenceId
-//   SystemId
-//   ComponentId
-//   Checksum
-//   SignatureLinkId
-//   SignatureTimestamp
-//   Signature
+// All Frame fields, except for Message, will be filled by the library.
 func (p *Parser) WriteAndFill(f Frame) error {
 	if f.GetMessage() == nil {
 		return fmt.Errorf("message is nil")
@@ -392,7 +384,7 @@ func (p *Parser) WriteAndFill(f Frame) error {
 // WriteRaw writes a Frame into the writer.
 // It must not be called by multiple routines in parallel.
 // The frame will be written untouched, and all its field must be properly set.
-// This function is intended for routing frames to other nodes, since all frame fields must be filled manually.
+// This function is intended for routing frames to other nodes, since all fields must be filled manually.
 func (p *Parser) WriteRaw(f Frame) error {
 	if f.GetMessage() == nil {
 		return fmt.Errorf("message is nil")

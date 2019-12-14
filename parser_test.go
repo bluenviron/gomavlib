@@ -8,14 +8,16 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var testCasesFrames = []struct {
-	name  string
-	key   *Key
-	frame Frame
-	raw   []byte
+var casesParser = []struct {
+	name    string
+	dialect *Dialect
+	key     *Key
+	frame   Frame
+	raw     []byte
 }{
 	{
 		"v1 frame with nil content",
+		nil,
 		nil,
 		&FrameV1{
 			SequenceId:  0x01,
@@ -30,7 +32,24 @@ var testCasesFrames = []struct {
 		[]byte("\xFE\x00\x01\x02\x03\x04\x07\x08"),
 	},
 	{
-		"v1 frame",
+		"v1 frame with encoded message",
+		nil,
+		nil,
+		&FrameV1{
+			SequenceId:  0x27,
+			SystemId:    0x01,
+			ComponentId: 0x02,
+			Message: &MessageRaw{
+				8,
+				[]byte("\x10\x10\x10\x10\x10"),
+			},
+			Checksum: 0xc7fa,
+		},
+		[]byte("\xFE\x05\x27\x01\x02\x08\x10\x10\x10\x10\x10\xfa\xc7"),
+	},
+	{
+		"v1 frame with decoded message",
+		testDialect,
 		nil,
 		&FrameV1{
 			SequenceId:  0x27,
@@ -45,22 +64,8 @@ var testCasesFrames = []struct {
 		[]byte("\xFE\x05\x27\x01\x02\x05\x10\x10\x10\x10\x10\xe5\x66"),
 	},
 	{
-		"v1 frame",
-		nil,
-		&FrameV1{
-			SequenceId:  0x27,
-			SystemId:    0x01,
-			ComponentId: 0x02,
-			Message: &MessageTest8{
-				'\x10',
-				binary.LittleEndian.Uint32([]byte("\x10\x10\x10\x10")),
-			},
-			Checksum: 0xc7fa,
-		},
-		[]byte("\xFE\x05\x27\x01\x02\x08\x10\x10\x10\x10\x10\xfa\xc7"),
-	},
-	{
 		"v2 frame with nil content",
+		testDialect,
 		nil,
 		&FrameV2{
 			IncompatibilityFlag: 0,
@@ -77,7 +82,26 @@ var testCasesFrames = []struct {
 		[]byte("\xFD\x00\x00\x00\x03\x04\x05\x04\x00\x00\xb7\x0a"),
 	},
 	{
-		"v2 frame",
+		"v2 frame with encoded message",
+		nil,
+		nil,
+		&FrameV2{
+			IncompatibilityFlag: 0x00,
+			CompatibilityFlag:   0x00,
+			SequenceId:          0x8F,
+			SystemId:            0x01,
+			ComponentId:         0x02,
+			Message: &MessageRaw{
+				0x0607,
+				[]byte("\x10\x10\x10\x10\x10"),
+			},
+			Checksum: 0x0349,
+		},
+		[]byte("\xFD\x05\x00\x00\x8F\x01\x02\x07\x06\x00\x10\x10\x10\x10\x10\x49\x03"),
+	},
+	{
+		"v2 frame with decoded message",
+		testDialect,
 		nil,
 		&FrameV2{
 			IncompatibilityFlag: 0x00,
@@ -94,7 +118,8 @@ var testCasesFrames = []struct {
 		[]byte("\xFD\x05\x00\x00\x8F\x01\x02\x07\x06\x00\x10\x10\x10\x10\x10\x49\x03"),
 	},
 	{
-		"v2 frame signed",
+		"v2 frame with decoded message, signed",
+		testDialect,
 		NewKey(bytes.Repeat([]byte("\x4F"), 32)),
 		&FrameV2{
 			IncompatibilityFlag: 0x01,
@@ -118,7 +143,8 @@ var testCasesFrames = []struct {
 		[]byte("\xfd\x09\x01\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x01\x02\x03\x05\x03\xd9\xd1\x01\x02\x00\x00\x00\x00\x00\x0e\x47\x04\x0c\xef\x9b"),
 	},
 	{
-		"v2 frame signed",
+		"v2 frame with decoded message, signed",
+		testDialect,
 		NewKey(bytes.Repeat([]byte("\x4F"), 32)),
 		&FrameV2{
 			IncompatibilityFlag: 0x01,
@@ -147,12 +173,12 @@ var testCasesFrames = []struct {
 }
 
 func TestParserDecode(t *testing.T) {
-	for _, c := range testCasesFrames {
+	for _, c := range casesParser {
 		t.Run(c.name, func(t *testing.T) {
 			parser, err := NewParser(ParserConf{
 				Reader:      bytes.NewReader(c.raw),
 				Writer:      bytes.NewBuffer(nil),
-				Dialect:     testDialect,
+				Dialect:     c.dialect,
 				OutSystemId: 1,
 				InKey:       c.key,
 			})
@@ -165,14 +191,14 @@ func TestParserDecode(t *testing.T) {
 }
 
 func TestParserEncode(t *testing.T) {
-	for _, c := range testCasesFrames {
+	for _, c := range casesParser {
 		t.Run(c.name, func(t *testing.T) {
 			buf := bytes.NewBuffer(nil)
 			parser, err := NewParser(ParserConf{
 				Reader:      bytes.NewBuffer(nil),
 				Writer:      buf,
 				OutSystemId: 1,
-				Dialect:     testDialect,
+				Dialect:     c.dialect,
 			})
 			require.NoError(t, err)
 			err = parser.WriteRaw(c.frame)

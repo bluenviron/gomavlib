@@ -210,49 +210,6 @@ func TestParserEncode(t *testing.T) {
 	}
 }
 
-func TestParserEncodeNilMsg(t *testing.T) {
-	parser, err := NewParser(ParserConf{
-		Reader:      bytes.NewReader(nil),
-		Writer:      bytes.NewBuffer(nil),
-		Dialect:     nil,
-		OutSystemId: 1,
-	})
-	require.NoError(t, err)
-
-	frame := &FrameV1{Message: nil}
-	err = parser.WriteRaw(frame)
-	require.Error(t, err)
-}
-
-// ensure that the Frame is left untouched by the encoding procedure, and
-// therefore Write() can be called by multiple routines in parallel
-func TestParserFrameIsConst(t *testing.T) {
-	parser, err := NewParser(ParserConf{
-		Reader:      bytes.NewReader(nil),
-		Writer:      bytes.NewBuffer(nil),
-		Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
-		OutSystemId: 1,
-		OutKey:      NewKey(bytes.Repeat([]byte("\x7C"), 32)),
-	})
-	require.NoError(t, err)
-
-	frame := &FrameV2{
-		Message: &MessageHeartbeat{
-			Type:           1,
-			Autopilot:      2,
-			BaseMode:       3,
-			CustomMode:     4,
-			SystemStatus:   5,
-			MavlinkVersion: 3,
-		},
-	}
-	original := frame.Clone()
-
-	err = parser.WriteRaw(frame)
-	require.NoError(t, err)
-	require.Equal(t, frame, original)
-}
-
 var casesParserWriteAndFill = []struct {
 	name  string
 	frame Frame
@@ -319,4 +276,51 @@ func TestParserWriteAndFill(t *testing.T) {
 			buf.Next(len(c.raw))
 		})
 	}
+}
+
+func TestParserEncodeNilMsg(t *testing.T) {
+	parser, err := NewParser(ParserConf{
+		Reader:      bytes.NewReader(nil),
+		Writer:      bytes.NewBuffer(nil),
+		Dialect:     nil,
+		OutSystemId: 1,
+	})
+	require.NoError(t, err)
+
+	frame := &FrameV1{Message: nil}
+	err = parser.WriteRaw(frame)
+	require.Error(t, err)
+}
+
+// ensure that the Frame is left untouched by the encoding procedure, and
+// therefore WriteAndFill() and WriteRaw() can be called by multiple routines in parallel
+func TestParserWriteFrameIsConst(t *testing.T) {
+	parser, err := NewParser(ParserConf{
+		Reader:      bytes.NewReader(nil),
+		Writer:      bytes.NewBuffer(nil),
+		Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+		OutSystemId: 1,
+		OutKey:      NewKey(bytes.Repeat([]byte("\x7C"), 32)),
+	})
+	require.NoError(t, err)
+
+	frame := &FrameV2{
+		Message: &MessageHeartbeat{
+			Type:           1,
+			Autopilot:      2,
+			BaseMode:       3,
+			CustomMode:     4,
+			SystemStatus:   5,
+			MavlinkVersion: 3,
+		},
+	}
+	original := frame.Clone()
+
+	err = parser.WriteAndFill(frame)
+	require.NoError(t, err)
+	require.Equal(t, frame, original)
+
+	err = parser.WriteRaw(frame)
+	require.NoError(t, err)
+	require.Equal(t, frame, original)
 }

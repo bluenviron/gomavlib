@@ -307,9 +307,9 @@ func (p *Parser) Read() (Frame, error) {
 	return f, nil
 }
 
-// Write writes a Frame into the writer. It must not be called by multiple
-// routines in parallel. If route is false, the following fields will be filled
-// by the library:
+// WriteAndFill writes a Frame into the writer.
+// It must not be called by multiple routines in parallel.
+// The following Frame fields will be filled by the library:
 //   IncompatibilityFlag
 //   SequenceId
 //   SystemId
@@ -318,34 +318,29 @@ func (p *Parser) Read() (Frame, error) {
 //   SignatureLinkId
 //   SignatureTimestamp
 //   Signature
-// if route is true, the frame will be written untouched.
-func (p *Parser) Write(f Frame, route bool) error {
+func (p *Parser) WriteAndFill(f Frame) error {
 	if f.GetMessage() == nil {
 		return fmt.Errorf("message is nil")
 	}
-	if _, ok := f.GetMessage().(*MessageRaw); ok && route == false {
-		return fmt.Errorf("raw messages can only be routed, since we cannot always compute their checksum")
-	}
 
 	// do not touch the original frame, but work with a separate object
-	// in such way that the frame can be encoded in parallel by other parsers
+	// in such way that the frame can be encoded by other parsers in parallel
 	safeFrame := f.Clone()
 
-	if route == false {
-		switch ff := safeFrame.(type) {
-		case *FrameV1:
-			ff.SequenceId = p.curWriteSequenceId
-			ff.SystemId = p.conf.OutSystemId
-			ff.ComponentId = p.conf.OutComponentId
-		case *FrameV2:
-			ff.SequenceId = p.curWriteSequenceId
-			ff.SystemId = p.conf.OutSystemId
-			ff.ComponentId = p.conf.OutComponentId
-		}
-		p.curWriteSequenceId++
+	// fill SequenceId, SystemId, ComponentId
+	switch ff := safeFrame.(type) {
+	case *FrameV1:
+		ff.SequenceId = p.curWriteSequenceId
+		ff.SystemId = p.conf.OutSystemId
+		ff.ComponentId = p.conf.OutComponentId
+	case *FrameV2:
+		ff.SequenceId = p.curWriteSequenceId
+		ff.SystemId = p.conf.OutSystemId
+		ff.ComponentId = p.conf.OutComponentId
 	}
+	p.curWriteSequenceId++
 
-	// message must be encoded
+	// encode message if it is not already encoded
 	if _, ok := safeFrame.GetMessage().(*MessageRaw); !ok {
 		if p.conf.Dialect == nil {
 			return fmt.Errorf("message cannot be encoded since dialect is nil")
@@ -370,17 +365,66 @@ func (p *Parser) Write(f Frame, route bool) error {
 			ff.Message = msgRaw
 		}
 
-		if route == false {
-			switch ff := safeFrame.(type) {
-			case *FrameV1:
-				ff.Checksum = p.Checksum(ff)
-			case *FrameV2:
-				// set incompatibility flag before computing checksum
-				if p.conf.OutKey != nil {
-					ff.IncompatibilityFlag |= flagSigned
-				}
-				ff.Checksum = p.Checksum(ff)
+		// compute checksum
+		switch ff := safeFrame.(type) {
+		case *FrameV1:
+			ff.Checksum = p.Checksum(ff)
+		case *FrameV2:
+			// set incompatibility flag before computing checksum
+			if p.conf.OutKey != nil {
+				ff.IncompatibilityFlag |= flagSigned
 			}
+			ff.Checksum = p.Checksum(ff)
+		}
+	}
+
+	// compute signature if v2
+	if ff, ok := safeFrame.(*FrameV2); ok && p.conf.OutKey != nil {
+		ff.SignatureLinkId = p.conf.OutSignatureLinkId
+		// Timestamp in 10 microsecond units since 1st January 2015 GMT time
+		ff.SignatureTimestamp = uint64(time.Since(signatureReferenceDate)) / 10000
+		ff.Signature = p.Signature(ff, p.conf.OutKey)
+	}
+
+	return p.WriteRaw(safeFrame)
+}
+
+// WriteRaw writes a Frame into the writer.
+// It must not be called by multiple routines in parallel.
+// The frame will be written untouched, and all its field must be properly set.
+// This function is intended for routing frames to other nodes, since all frame fields must be filled manually.
+func (p *Parser) WriteRaw(f Frame) error {
+	if f.GetMessage() == nil {
+		return fmt.Errorf("message is nil")
+	}
+
+	// do not touch the original frame, but work with a separate object
+	// in such way that the frame can be encoded by other parsers in parallel
+	safeFrame := f.Clone()
+
+	// encode message if it is not already encoded
+	if _, ok := safeFrame.GetMessage().(*MessageRaw); !ok {
+		if p.conf.Dialect == nil {
+			return fmt.Errorf("message cannot be encoded since dialect is nil")
+		}
+
+		mp, ok := p.conf.Dialect.messages[safeFrame.GetMessage().GetId()]
+		if ok == false {
+			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
+		}
+
+		_, isFrameV2 := safeFrame.(*FrameV2)
+		byt, err := mp.encode(safeFrame.GetMessage(), isFrameV2)
+		if err != nil {
+			return err
+		}
+
+		msgRaw := &MessageRaw{safeFrame.GetMessage().GetId(), byt}
+		switch ff := safeFrame.(type) {
+		case *FrameV1:
+			ff.Message = msgRaw
+		case *FrameV2:
+			ff.Message = msgRaw
 		}
 	}
 
@@ -413,13 +457,6 @@ func (p *Parser) Write(f Frame, route bool) error {
 		binary.LittleEndian.PutUint16(p.writeBuffer[6+msgLen:], ff.Checksum)
 
 	case *FrameV2:
-		if route == false && p.conf.OutKey != nil {
-			ff.SignatureLinkId = p.conf.OutSignatureLinkId
-			// Timestamp in 10 microsecond units since 1st January 2015 GMT time
-			ff.SignatureTimestamp = uint64(time.Since(signatureReferenceDate)) / 10000
-			ff.Signature = p.Signature(ff, p.conf.OutKey)
-		}
-
 		bufferLen := 10 + msgLen + 2
 		if ff.IsSigned() {
 			bufferLen += 13

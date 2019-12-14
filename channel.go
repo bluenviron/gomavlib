@@ -99,13 +99,13 @@ func (ch *Channel) run() {
 			switch wh := what.(type) {
 			case Message:
 				if ch.n.conf.OutVersion == V1 {
-					ch.parser.Write(&FrameV1{Message: wh}, false)
+					ch.parser.WriteAndFill(&FrameV1{Message: wh})
 				} else {
-					ch.parser.Write(&FrameV2{Message: wh}, false)
+					ch.parser.WriteAndFill(&FrameV2{Message: wh})
 				}
 
 			case Frame:
-				ch.parser.Write(wh, true)
+				ch.parser.WriteRaw(wh)
 			}
 		}
 	}()

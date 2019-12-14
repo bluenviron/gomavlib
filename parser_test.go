@@ -175,7 +175,7 @@ func TestParserEncode(t *testing.T) {
 				Dialect:     testDialect,
 			})
 			require.NoError(t, err)
-			err = parser.Write(c.frame, true)
+			err = parser.WriteRaw(c.frame)
 			require.NoError(t, err)
 			require.Equal(t, c.raw, buf.Bytes())
 		})
@@ -192,7 +192,7 @@ func TestParserEncodeNilMsg(t *testing.T) {
 	require.NoError(t, err)
 
 	frame := &FrameV1{Message: nil}
-	err = parser.Write(frame, true)
+	err = parser.WriteRaw(frame)
 	require.Error(t, err)
 }
 
@@ -220,7 +220,7 @@ func TestParserFrameIsConst(t *testing.T) {
 	}
 	original := frame.Clone()
 
-	err = parser.Write(frame, false)
+	err = parser.WriteRaw(frame)
 	require.NoError(t, err)
 	require.Equal(t, frame, original)
 }

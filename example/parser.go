@@ -27,7 +27,7 @@ func main() {
 		panic(err)
 	}
 
-	// parse buffer and obtain a frame
+	// read a frame
 	frame, err := parser.Read()
 	if err != nil {
 		panic(err)
@@ -35,15 +35,14 @@ func main() {
 
 	fmt.Printf("decoded: %+v\n", frame)
 
-	// encode a frame
-	frame = &gomavlib.FrameV2{
+	// write a frame
+	err = parser.WriteAndFill(&gomavlib.FrameV2{
 		Message: &ardupilotmega.MessageParamValue{
 			ParamId:    "test_parameter",
 			ParamValue: 123456,
 			ParamType:  ardupilotmega.MAV_PARAM_TYPE_UINT32,
 		},
-	}
-	err = parser.Write(frame, false)
+	})
 	if err != nil {
 		panic(err)
 	}

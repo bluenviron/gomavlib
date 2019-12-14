@@ -36,7 +36,7 @@ func main() {
 	fmt.Printf("decoded: %+v\n", frame)
 
 	// write a frame
-	err = parser.WriteAndFill(&gomavlib.FrameV2{
+	err = parser.WriteFrameAndFill(&gomavlib.FrameV2{
 		Message: &ardupilotmega.MessageParamValue{
 			ParamId:    "test_parameter",
 			ParamValue: 123456,

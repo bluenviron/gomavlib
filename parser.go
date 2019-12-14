@@ -305,10 +305,10 @@ func (p *Parser) Read() (Frame, error) {
 	return f, nil
 }
 
-// WriteAndFill writes a Frame into the writer.
+// WriteFrameAndFill writes a Frame into the writer.
 // It must not be called by multiple routines in parallel.
 // Only Frame.Message must be set, all the other Frame fields will be filled by the library.
-func (p *Parser) WriteAndFill(f Frame) error {
+func (p *Parser) WriteFrameAndFill(f Frame) error {
 	if f.GetMessage() == nil {
 		return fmt.Errorf("message is nil")
 	}
@@ -382,14 +382,14 @@ func (p *Parser) WriteAndFill(f Frame) error {
 		ff.Signature = p.signature(ff, p.conf.OutKey)
 	}
 
-	return p.WriteRaw(safeFrame)
+	return p.WriteFrameRaw(safeFrame)
 }
 
-// WriteRaw writes a Frame into the writer.
+// WriteFrameRaw writes a Frame into the writer.
 // It must not be called by multiple routines in parallel.
 // All the Frame fields must be properly set, as the frame will be written untouched.
-// To automatically fill most of the Frame fields, use WriteAndFill.
-func (p *Parser) WriteRaw(f Frame) error {
+// To automatically fill most of the Frame fields, use WriteFrameAndFill.
+func (p *Parser) WriteFrameRaw(f Frame) error {
 	if f.GetMessage() == nil {
 		return fmt.Errorf("message is nil")
 	}

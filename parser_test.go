@@ -203,14 +203,14 @@ func TestParserEncode(t *testing.T) {
 				Dialect:     c.dialect,
 			})
 			require.NoError(t, err)
-			err = parser.WriteRaw(c.frame)
+			err = parser.WriteFrameRaw(c.frame)
 			require.NoError(t, err)
 			require.Equal(t, c.raw, buf.Bytes())
 		})
 	}
 }
 
-var casesParserWriteAndFill = []struct {
+var casesParserWriteFrameAndFill = []struct {
 	name  string
 	frame Frame
 	raw   []byte
@@ -251,7 +251,7 @@ var casesParserWriteAndFill = []struct {
 	},
 }
 
-func TestParserWriteAndFill(t *testing.T) {
+func TestParserWriteFrameAndFill(t *testing.T) {
 	// fake current time in order to obtain deterministic signatures
 	wayback := time.Date(2019, time.May, 18, 1, 2, 3, 4, time.UTC)
 	patch := monkey.Patch(time.Now, func() time.Time { return wayback })
@@ -268,9 +268,9 @@ func TestParserWriteAndFill(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	for _, c := range casesParserWriteAndFill {
+	for _, c := range casesParserWriteFrameAndFill {
 		t.Run(c.name, func(t *testing.T) {
-			err = parser.WriteAndFill(c.frame)
+			err = parser.WriteFrameAndFill(c.frame)
 			require.NoError(t, err)
 			require.Equal(t, c.raw, buf.Bytes())
 			buf.Next(len(c.raw))
@@ -288,12 +288,12 @@ func TestParserEncodeNilMsg(t *testing.T) {
 	require.NoError(t, err)
 
 	frame := &FrameV1{Message: nil}
-	err = parser.WriteRaw(frame)
+	err = parser.WriteFrameRaw(frame)
 	require.Error(t, err)
 }
 
 // ensure that the Frame is left untouched by the encoding procedure, and
-// therefore WriteAndFill() and WriteRaw() can be called by multiple routines in parallel
+// therefore WriteFrameAndFill() and WriteFrameRaw() can be called by multiple routines in parallel
 func TestParserWriteFrameIsConst(t *testing.T) {
 	parser, err := NewParser(ParserConf{
 		Reader:      bytes.NewReader(nil),
@@ -316,11 +316,11 @@ func TestParserWriteFrameIsConst(t *testing.T) {
 	}
 	original := frame.Clone()
 
-	err = parser.WriteAndFill(frame)
+	err = parser.WriteFrameAndFill(frame)
 	require.NoError(t, err)
 	require.Equal(t, frame, original)
 
-	err = parser.WriteRaw(frame)
+	err = parser.WriteFrameRaw(frame)
 	require.NoError(t, err)
 	require.Equal(t, frame, original)
 }

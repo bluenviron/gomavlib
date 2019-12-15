@@ -16,7 +16,7 @@ var signatureReferenceDate = time.Date(2015, 01, 01, 0, 0, 0, 0, time.UTC)
 type Version int
 
 const (
-	// V2 (default) wraps outgoing messages in v2 frames.
+	// V2 wraps outgoing messages in v2 frames.
 	V2 Version = iota + 1
 	// V1 wraps outgoing messages in v1 frames.
 	V1
@@ -44,8 +44,8 @@ type ParserConf struct {
 	// the writer to which frames will be written.
 	Writer io.Writer
 
-	// (optional) the messages which will be automatically decoded and
-	// encoded. If not provided, messages are decoded in the MessageRaw struct.
+	// (optional) the dialect which contains the messages that will be encoded and decoded.
+	// If not provided, messages are decoded in the MessageRaw struct.
 	Dialect *Dialect
 
 	// (optional) the secret key used to validate incoming frames.

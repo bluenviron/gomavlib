@@ -81,8 +81,8 @@ type NodeConf struct {
 	// communicate. Each endpoint contains zero or more channels
 	Endpoints []EndpointConf
 
-	// (optional) the messages which will be automatically decoded and
-	// encoded. If not provided, messages are decoded in the MessageRaw struct.
+	// (optional) the dialect which contains the messages that will be encoded and decoded.
+	// If not provided, messages are decoded in the MessageRaw struct.
 	Dialect *Dialect
 
 	// (optional) the secret key used to validate incoming frames.
@@ -212,28 +212,6 @@ func NewNode(conf NodeConf) (*Node, error) {
 		default:
 			panic(fmt.Errorf("endpoint %T does not implement any interface", tp))
 		}
-
-		/*if eca, ok := tp.(endpointChannelAccepter); ok {
-			ca, err := newChannelAccepter(n, eca)
-			if err != nil {
-				closeExisting()
-				return nil, err
-			}
-
-			n.channelAccepters[ca] = struct{}{}
-
-		} else if ts, ok := tp.(endpointChannelSingle); ok {
-			ch, err := newChannel(n, ts, ts.Label(), ts)
-			if err != nil {
-				closeExisting()
-				return nil, err
-			}
-
-			n.channels[ch] = struct{}{}
-
-		} else {
-			panic(fmt.Errorf("endpoint %T does not implement any interface", tp))
-		}*/
 	}
 
 	// modules

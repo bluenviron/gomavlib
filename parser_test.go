@@ -287,8 +287,8 @@ func TestParserEncodeNilMsg(t *testing.T) {
 	require.Error(t, err)
 }
 
-// ensure that the Frame is left untouched by the encoding procedure, and
-// therefore writeFrameAndFill() and WriteFrame() can be called by multiple routines in parallel
+// ensure that the Frame is left untouched by WriteFrame()
+// and therefore the function can be called by multiple routines in parallel
 func TestParserWriteFrameIsConst(t *testing.T) {
 	parser, err := NewParser(ParserConf{
 		Reader:      bytes.NewReader(nil),
@@ -311,10 +311,6 @@ func TestParserWriteFrameIsConst(t *testing.T) {
 		},
 	}
 	original := frame.Clone()
-
-	err = parser.writeFrameAndFill(frame)
-	require.NoError(t, err)
-	require.Equal(t, frame, original)
 
 	err = parser.WriteFrame(frame)
 	require.NoError(t, err)

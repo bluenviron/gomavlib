@@ -17,7 +17,7 @@ type Version int
 
 const (
 	// V2 (default) wraps outgoing messages in v2 frames.
-	V2 Version = iota
+	V2 Version = iota + 1
 	// V1 wraps outgoing messages in v1 frames.
 	V1
 )
@@ -52,12 +52,12 @@ type ParserConf struct {
 	// Non-signed frames are discarded. This feature requires v2 frames.
 	InKey *Key
 
+	// Mavlink version used to encode messages. See Version
+	// for the available options.
+	OutVersion Version
 	// the system id, added to every outgoing frame and used to identify this
 	// node in the network.
 	OutSystemId byte
-	// (optional) Mavlink version used to encode messages. See Version
-	// for the available options. If not provided, v2 will be used.
-	OutVersion Version
 	// (optional) the component id, added to every outgoing frame, defaults to 1.
 	OutComponentId byte
 	// (optional) the value to insert into the signature link id.
@@ -81,16 +81,23 @@ type Parser struct {
 // See ParserConf for the options.
 func NewParser(conf ParserConf) (*Parser, error) {
 	if conf.Reader == nil {
-		return nil, fmt.Errorf("reader not provided")
+		return nil, fmt.Errorf("Reader not provided")
 	}
 	if conf.Writer == nil {
-		return nil, fmt.Errorf("writer not provided")
+		return nil, fmt.Errorf("Writer not provided")
+	}
+
+	if conf.OutVersion == 0 {
+		return nil, fmt.Errorf("OutVersion not provided")
 	}
 	if conf.OutSystemId < 1 {
 		return nil, fmt.Errorf("SystemId must be >= 1")
 	}
 	if conf.OutComponentId < 1 {
 		conf.OutComponentId = 1
+	}
+	if conf.OutKey != nil && conf.OutVersion != V2 {
+		return nil, fmt.Errorf("OutKey requires V2 frames")
 	}
 
 	p := &Parser{

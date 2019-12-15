@@ -20,6 +20,7 @@ func main() {
 			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
 		},
 		Dialect:             ardupilotmega.Dialect,
+		OutVersion:          gomavlib.V1, // Ardupilot uses V1
 		OutSystemId:         10,
 		StreamRequestEnable: true,
 	})

@@ -19,8 +19,8 @@ type Channel struct {
 	allWritten chan struct{}
 }
 
-func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) *Channel {
-	parser, _ := NewParser(ParserConf{
+func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Channel, error) {
+	parser, err := NewParser(ParserConf{
 		Reader:             rwc,
 		Writer:             rwc,
 		Dialect:            n.conf.Dialect,
@@ -31,8 +31,11 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) *Chan
 		OutSignatureLinkId: randomByte(),
 		OutKey:             n.conf.OutKey,
 	})
+	if err != nil {
+		return nil, err
+	}
 
-	ch := &Channel{
+	return &Channel{
 		Endpoint:   e,
 		label:      label,
 		rwc:        rwc,
@@ -40,9 +43,7 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) *Chan
 		parser:     parser,
 		writeChan:  make(chan interface{}),
 		allWritten: make(chan struct{}),
-	}
-
-	return ch
+	}, nil
 }
 
 // String implements fmt.Stringer and returns the channel label.

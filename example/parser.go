@@ -21,6 +21,7 @@ func main() {
 		Reader:      inBuf,
 		Writer:      outBuf,
 		Dialect:     ardupilotmega.Dialect,
+		OutVersion:  gomavlib.V2, // change to V1 if you're unable to write to the target
 		OutSystemId: 10,
 	})
 	if err != nil {

@@ -181,6 +181,7 @@ func TestParserDecode(t *testing.T) {
 				Reader:      bytes.NewReader(c.raw),
 				Writer:      bytes.NewBuffer(nil),
 				Dialect:     c.dialect,
+				OutVersion:  V2,
 				OutSystemId: 1,
 				InKey:       c.key,
 			})
@@ -199,6 +200,7 @@ func TestParserEncode(t *testing.T) {
 			parser, err := NewParser(ParserConf{
 				Reader:      bytes.NewBuffer(nil),
 				Writer:      buf,
+				OutVersion:  V2,
 				OutSystemId: 1,
 				Dialect:     c.dialect,
 			})
@@ -256,8 +258,8 @@ func TestParserWriteMessage(t *testing.T) {
 				Reader:      bytes.NewBuffer(nil),
 				Writer:      buf,
 				Dialect:     testDialect,
-				OutSystemId: 1,
 				OutVersion:  c.ver,
+				OutSystemId: 1,
 				OutKey:      c.key,
 			})
 			require.NoError(t, err)
@@ -275,6 +277,7 @@ func TestParserEncodeNilMsg(t *testing.T) {
 		Reader:      bytes.NewReader(nil),
 		Writer:      bytes.NewBuffer(nil),
 		Dialect:     nil,
+		OutVersion:  V2,
 		OutSystemId: 1,
 	})
 	require.NoError(t, err)
@@ -291,6 +294,7 @@ func TestParserWriteFrameIsConst(t *testing.T) {
 		Reader:      bytes.NewReader(nil),
 		Writer:      bytes.NewBuffer(nil),
 		Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+		OutVersion:  V2,
 		OutSystemId: 1,
 		OutKey:      NewKey(bytes.Repeat([]byte("\x7C"), 32)),
 	})

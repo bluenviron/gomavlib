@@ -24,6 +24,7 @@ Basic example (more are available at https://github.com/aler9/gomavlib/tree/mast
 			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
 		},
   		Dialect:     ardupilotmega.Dialect,
+		OutVersion:  gomavlib.V2,
   		OutSystemId: 10,
   	})
   	if err != nil {
@@ -88,12 +89,12 @@ type NodeConf struct {
 	// Non signed frames are discarded, as well as frames with a version < 2.0.
 	InKey *Key
 
+	// Mavlink version used to encode messages. See Version
+	// for the available options.
+	OutVersion Version
 	// the system id, added to every outgoing frame and used to identify this
 	// node in the network.
 	OutSystemId byte
-	// (optional) Mavlink version used to encode messages. See Version
-	// for the available options. If not provided, v2 will be used.
-	OutVersion Version
 	// (optional) the component id, added to every outgoing frame, defaults to 1.
 	OutComponentId byte
 	// (optional) the secret key used to sign outgoing frames.
@@ -132,17 +133,8 @@ type Node struct {
 
 // NewNode allocates a Node. See NodeConf for the options.
 func NewNode(conf NodeConf) (*Node, error) {
-	if conf.OutSystemId < 1 {
-		return nil, fmt.Errorf("SystemId must be >= 1")
-	}
-	if conf.OutComponentId < 1 {
-		conf.OutComponentId = 1
-	}
 	if len(conf.Endpoints) == 0 {
 		return nil, fmt.Errorf("at least one endpoint must be provided")
-	}
-	if conf.OutKey != nil && conf.OutVersion != V2 {
-		return nil, fmt.Errorf("OutKey requires V2 frames")
 	}
 	if conf.HeartbeatPeriod == 0 {
 		conf.HeartbeatPeriod = 5 * time.Second
@@ -157,6 +149,20 @@ func NewNode(conf NodeConf) (*Node, error) {
 		conf.StreamRequestFrequency = 4
 	}
 
+	// check Parser configuration here, since Parser is created dynamically
+	if conf.OutVersion == 0 {
+		return nil, fmt.Errorf("OutVersion not provided")
+	}
+	if conf.OutSystemId < 1 {
+		return nil, fmt.Errorf("SystemId must be >= 1")
+	}
+	if conf.OutComponentId < 1 {
+		conf.OutComponentId = 1
+	}
+	if conf.OutKey != nil && conf.OutVersion != V2 {
+		return nil, fmt.Errorf("OutKey requires V2 frames")
+	}
+
 	n := &Node{
 		conf: conf,
 		// these can be unbuffered as long as eventsIn's goroutine
@@ -167,30 +173,67 @@ func NewNode(conf NodeConf) (*Node, error) {
 		channels:         make(map[*Channel]struct{}),
 	}
 
+	closeExisting := func() {
+		for ca := range n.channels {
+			ca.rwc.Close()
+		}
+		for ca := range n.channelAccepters {
+			ca.eca.Close()
+		}
+	}
+
 	// endpoints
 	for _, tconf := range conf.Endpoints {
 		tp, err := tconf.init()
 		if err != nil {
-			for ca := range n.channels {
-				ca.rwc.Close()
-			}
-			for ca := range n.channelAccepters {
-				ca.eca.Close()
-			}
+			closeExisting()
 			return nil, err
 		}
 
-		if eca, ok := tp.(endpointChannelAccepter); ok {
-			ca := newChannelAccepter(n, eca)
+		switch ttp := tp.(type) {
+		case endpointChannelAccepter:
+			ca, err := newChannelAccepter(n, ttp)
+			if err != nil {
+				closeExisting()
+				return nil, err
+			}
+
+			n.channelAccepters[ca] = struct{}{}
+
+		case endpointChannelSingle:
+			ch, err := newChannel(n, ttp, ttp.Label(), ttp)
+			if err != nil {
+				closeExisting()
+				return nil, err
+			}
+
+			n.channels[ch] = struct{}{}
+
+		default:
+			panic(fmt.Errorf("endpoint %T does not implement any interface", tp))
+		}
+
+		/*if eca, ok := tp.(endpointChannelAccepter); ok {
+			ca, err := newChannelAccepter(n, eca)
+			if err != nil {
+				closeExisting()
+				return nil, err
+			}
+
 			n.channelAccepters[ca] = struct{}{}
 
 		} else if ts, ok := tp.(endpointChannelSingle); ok {
-			ch := newChannel(n, ts, ts.Label(), ts)
+			ch, err := newChannel(n, ts, ts.Label(), ts)
+			if err != nil {
+				closeExisting()
+				return nil, err
+			}
+
 			n.channels[ch] = struct{}{}
 
 		} else {
 			panic(fmt.Errorf("endpoint %T does not implement any interface", tp))
-		}
+		}*/
 	}
 
 	// modules

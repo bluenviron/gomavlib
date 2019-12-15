@@ -24,6 +24,7 @@ func main() {
 			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
 		},
 		Dialect:     ardupilotmega.Dialect,
+		OutVersion:  gomavlib.V2, // V2 is mandatory for signatures
 		OutSystemId: 10,
 		InKey:       key,
 		OutKey:      key,

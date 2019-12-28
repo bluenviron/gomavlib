@@ -33,10 +33,7 @@ RUN apk add --no-cache git make
 WORKDIR /s
 COPY go.mod go.sum ./
 RUN go mod download
-COPY Makefile *.go ./
-COPY dialgen ./dialgen
-COPY dialects ./dialects
-COPY example ./example
+COPY . ./
 endef
 export DOCKERFILE_TEST
 

@@ -66,7 +66,7 @@ https://godoc.org/github.com/aler9/gomavlib
 Standard dialects are provided in the `dialects/` folder, but it's also possible to use custom dialects, that must be converted into Go files by using the `dialgen` utility:
 ```
 go get github.com/aler9/gomavlib/dialgen
-dialgen --output=dialect.go my_dialect.xml
+dialgen my_dialect.xml > dialect.go
 ```
 
 ## Testing

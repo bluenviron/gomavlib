@@ -55,8 +55,6 @@ RUN apk add --no-cache git make curl
 WORKDIR /s
 COPY go.mod go.sum ./
 RUN go mod download
-COPY *.go ./
-COPY dialgen ./dialgen
 endef
 export DOCKERFILE_GEN_DIALECTS
 

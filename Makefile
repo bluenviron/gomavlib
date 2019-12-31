@@ -1,4 +1,6 @@
 
+.PHONY: $(shell ls)
+
 BASE_IMAGE = amd64/golang:1.13-alpine3.10
 
 help:
@@ -9,7 +11,7 @@ help:
 	@echo "  mod-tidy              run go mod tidy"
 	@echo "  format                format source files"
 	@echo "  test                  run all available tests"
-	@echo "  gen-dialects          generate dialects"
+	@echo "  dialects              generate dialects"
 	@echo "  run-example E=[name]  run example by name"
 	@echo ""
 
@@ -38,8 +40,8 @@ endef
 export DOCKERFILE_TEST
 
 test:
-	echo "$$DOCKERFILE_TEST" | docker build . -f - -t gomavlib-test
-	docker run --rm -it gomavlib-test make test-nodocker
+	echo "$$DOCKERFILE_TEST" | docker build . -f - -t temp
+	docker run --rm -it temp make test-nodocker
 
 test-nodocker:
 	$(eval export CGO_ENABLED = 0)
@@ -58,12 +60,12 @@ COPY dialgen ./dialgen
 endef
 export DOCKERFILE_GEN_DIALECTS
 
-gen-dialects:
-	echo "$$DOCKERFILE_GEN_DIALECTS" | docker build . -f - -t gomavlib-gen-dialects
-	docker run --rm -it -v $(PWD):/s gomavlib-gen-dialects \
-	make gen-dialects-nodocker
+dialects:
+	echo "$$DOCKERFILE_GEN_DIALECTS" | docker build . -f - -t temp
+	docker run --rm -it -v $(PWD):/s temp \
+	make dialects-nodocker
 
-gen-dialects-nodocker:
+dialects-nodocker:
 	$(eval export CGO_ENABLED = 0)
 	$(eval COMMIT = $(shell curl -s -L https://api.github.com/repos/mavlink/mavlink/commits/master \
 	| grep -o '"sha": ".\+"' | sed 's/"sha": "\(.\+\)"/\1/' | head -n1))
@@ -77,6 +79,8 @@ gen-dialects-nodocker:
 	find ./dialects -type f -name '*.go' | xargs gofmt -l -w -s
 
 run-example:
-	docker run --rm -it --privileged --network=host \
+	docker run --rm -it \
+	--privileged \
+	--network=host \
 	-v $(PWD):/s $(BASE_IMAGE) \
 	sh -c "cd /s && go run example/$(E).go"

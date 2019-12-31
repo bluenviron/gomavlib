@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"gopkg.in/alecthomas/kingpin.v2"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -13,6 +12,8 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+
+	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 var reMsgName = regexp.MustCompile("^[A-Z0-9_]+$")

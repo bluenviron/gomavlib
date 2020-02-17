@@ -26,8 +26,7 @@ This library powers the [**mavp2p**](https://github.com/aler9/mavp2p) router.
 * Provides a low-level API (`Parser`) with ability to decode/encode frames from/to a generic reader/writer
 * UDP connections are tracked and removed when inactive
 * Supports both domain names and IPs
-* Examples provided for every feature
-* Comprehensive test suite
+* Examples provided for every feature, comprehensive test suite, continuous integration
 
 ## Installation
 

@@ -47,7 +47,7 @@ test-nodocker:
 	$(eval export CGO_ENABLED = 0)
 	go test -v ./...
 	go build -o /dev/null ./dialgen
-	$(foreach f,$(shell ls example/*),go build -o /dev/null $(f)$(NL))
+	$(foreach f,$(shell ls examples/*),go build -o /dev/null $(f)$(NL))
 
 define DOCKERFILE_GEN_DIALECTS
 FROM $(BASE_IMAGE)
@@ -108,4 +108,4 @@ run-example:
 	--privileged \
 	--network=host \
 	-v $(PWD):/s $(BASE_IMAGE) \
-	sh -c "cd /s && go run example/$(E).go"
+	sh -c "cd /s && go run examples/$(E).go"

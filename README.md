@@ -39,22 +39,22 @@ import (
 
 ## Examples
 
-* [endpoint_serial](example/endpoint_serial.go)
-* [endpoint_udp_server](example/endpoint_udp_server.go)
-* [endpoint_udp_client](example/endpoint_udp_client.go)
-* [endpoint_udp_broadcast](example/endpoint_udp_broadcast.go)
-* [endpoint_tcp_server](example/endpoint_tcp_server.go)
-* [endpoint_tcp_client](example/endpoint_tcp_client.go)
-* [endpoint_custom](example/endpoint_custom.go)
-* [message_read](example/message_read.go)
-* [message_write](example/message_write.go)
-* [signature](example/signature.go)
-* [dialect_no](example/dialect_no.go)
-* [dialect_custom](example/dialect_custom.go)
-* [events](example/events.go)
-* [router](example/router.go)
-* [stream_requests](example/stream_requests.go)
-* [parser](example/parser.go)
+* [endpoint_serial](examples/endpoint_serial.go)
+* [endpoint_udp_server](examples/endpoint_udp_server.go)
+* [endpoint_udp_client](examples/endpoint_udp_client.go)
+* [endpoint_udp_broadcast](examples/endpoint_udp_broadcast.go)
+* [endpoint_tcp_server](examples/endpoint_tcp_server.go)
+* [endpoint_tcp_client](examples/endpoint_tcp_client.go)
+* [endpoint_custom](examples/endpoint_custom.go)
+* [message_read](examples/message_read.go)
+* [message_write](examples/message_write.go)
+* [signature](examples/signature.go)
+* [dialect_no](examples/dialect_no.go)
+* [dialect_custom](examples/dialect_custom.go)
+* [events](examples/events.go)
+* [router](examples/router.go)
+* [stream_requests](examples/stream_requests.go)
+* [parser](examples/parser.go)
 
 ## Documentation
 

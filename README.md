@@ -56,17 +56,17 @@ import (
 * [stream_requests](examples/stream_requests.go)
 * [parser](examples/parser.go)
 
-## Documentation
-
-https://godoc.org/github.com/aler9/gomavlib
-
 ## Dialect generation
 
-Standard dialects are provided in the `dialects/` folder, but it's also possible to use custom dialects, that must be converted into Go files by using the `dialgen` utility:
+Standard dialects are provided in the `dialects/` folder, but it's also possible to use custom dialects, that can be converted into Go files by running:
 ```
 go get github.com/aler9/gomavlib/dialgen
 dialgen my_dialect.xml > dialect.go
 ```
+
+## Documentation
+
+https://godoc.org/github.com/aler9/gomavlib
 
 ## Testing
 

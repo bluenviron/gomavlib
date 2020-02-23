@@ -46,7 +46,7 @@ test:
 test-nodocker:
 	$(eval export CGO_ENABLED = 0)
 	go test -v ./...
-	go build -o /dev/null ./dialgen
+	go build -o /dev/null ./commands/...
 	$(foreach f,$(shell ls examples/*),go build -o /dev/null $(f)$(NL))
 
 define DOCKERFILE_GEN_DIALECTS
@@ -94,7 +94,7 @@ dialects-nodocker:
 
 	$(foreach D,$(DIALECTS), \
 	mkdir -p dialects/$(D) \
-	&& go run ./dialgen \
+	&& go run ./commands/dialgen \
 	--preamble="Generated from revision https://github.com/mavlink/mavlink/tree/$(COMMIT)" \
 	https://raw.githubusercontent.com/mavlink/mavlink/$(COMMIT)/message_definitions/v1.0/$(D).xml \
 	> dialects/$(D)/dialect.go \

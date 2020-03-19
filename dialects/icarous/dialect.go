@@ -8,6 +8,7 @@ package icarous
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/aler9/gomavlib"
 )
@@ -84,6 +85,15 @@ func (e *ICAROUS_FMS_STATE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e ICAROUS_FMS_STATE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 //
 type ICAROUS_TRACK_BAND_TYPES int
 
@@ -123,6 +133,15 @@ func (e *ICAROUS_TRACK_BAND_TYPES) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e ICAROUS_TRACK_BAND_TYPES) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // icarous.xml

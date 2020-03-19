@@ -97,6 +97,7 @@ package {{ .PkgName }}
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/aler9/gomavlib"
 )
@@ -147,6 +148,15 @@ func (e *{{ .Name }}) UnmarshalText(text []byte) error {
 {{- end }}
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e {{ .Name }}) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 {{ end }}

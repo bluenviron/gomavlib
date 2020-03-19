@@ -8,6 +8,7 @@ package minimal
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/aler9/gomavlib"
 )
@@ -182,6 +183,15 @@ func (e *MAV_AUTOPILOT) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_AUTOPILOT) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Commands to be executed by the MAV. They can be executed on user request, or as part of a mission script. If the action is used in a mission, the parameter mapping to the waypoint/mission message is as follows: Param 1, Param 2, Param 3, Param 4, X: Param 5, Y:Param 6, Z:Param 7. This command list is similar what ARINC 424 is for commercial aircraft: A data format how to interpret waypoint/mission data. See https://mavlink.io/en/guide/xml_schema.html#MAV_CMD for information about the structure of the MAV_CMD entries
 type MAV_CMD int
 
@@ -207,6 +217,15 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_CMD) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Component ids (values) for the different types and instances of onboard hardware/software that might make up a MAVLink system (autopilot, cameras, servos, GPS systems, avoidance systems etc.).      Components must use the appropriate ID in their source address when sending messages. Components can also use IDs to determine if they are the intended recipient of an incoming message. The MAV_COMP_ID_ALL value is used to indicate messages that must be processed by all components.      When creating new entries, components that can have multiple instances (e.g. cameras, servos etc.) should be allocated sequential values. An appropriate number of values should be left free after these components to allow the number of instances to be expanded.
@@ -1048,6 +1067,15 @@ func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_COMPONENT) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // These flags encode the MAV mode.
 type MAV_MODE_FLAG int
 
@@ -1124,6 +1152,15 @@ func (e *MAV_MODE_FLAG) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_MODE_FLAG) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // These values encode the bit positions of the decode position. These values can be used to read the value of a flag bit by combining the base_mode variable with AND with the flag position value. The result will be either 0 or 1, depending on if the flag is set or not.
 type MAV_MODE_FLAG_DECODE_POSITION int
 
@@ -1198,6 +1235,15 @@ func (e *MAV_MODE_FLAG_DECODE_POSITION) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_MODE_FLAG_DECODE_POSITION) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 //
@@ -1281,6 +1327,15 @@ func (e *MAV_STATE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_STATE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // MAVLINK component type reported in HEARTBEAT message. Flight controllers must report the type of the vehicle on which they are mounted (e.g. MAV_TYPE_OCTOROTOR). All other components must report a value appropriate for their type (e.g. a camera must use MAV_TYPE_CAMERA).
@@ -1539,6 +1594,15 @@ func (e *MAV_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // minimal.xml

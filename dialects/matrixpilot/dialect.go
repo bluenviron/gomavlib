@@ -8,6 +8,7 @@ package matrixpilot
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/aler9/gomavlib"
 )
@@ -280,6 +281,15 @@ func (e *ADSB_ALTITUDE_TYPE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e ADSB_ALTITUDE_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // ADSB classification for the type of vehicle emitting the transponder signal
 type ADSB_EMITTER_TYPE int
 
@@ -440,6 +450,15 @@ func (e *ADSB_EMITTER_TYPE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e ADSB_EMITTER_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // These flags indicate status such as data validity of each data source. Set = data valid
 type ADSB_FLAGS int
 
@@ -528,6 +547,15 @@ func (e *ADSB_FLAGS) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e ADSB_FLAGS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // These flags are used in the AIS_VESSEL.fields bitmask to indicate validity of data in the other message fields. When set, the data is valid.
@@ -639,6 +667,15 @@ func (e *AIS_FLAGS) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e AIS_FLAGS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Navigational status of AIS vessel, enum duplicated from AIS standard, https://gpsd.gitlab.io/gpsd/AIVDM.html
@@ -771,6 +808,15 @@ func (e *AIS_NAV_STATUS) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e AIS_NAV_STATUS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Type of AIS vessel, enum duplicated from AIS standard, https://gpsd.gitlab.io/gpsd/AIVDM.html
@@ -1493,6 +1539,15 @@ func (e *AIS_TYPE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e AIS_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Camera capability flags (Bitmap)
 type CAMERA_CAP_FLAGS int
 
@@ -1576,6 +1631,15 @@ func (e *CAMERA_CAP_FLAGS) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e CAMERA_CAP_FLAGS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Camera Modes.
 type CAMERA_MODE int
 
@@ -1615,6 +1679,15 @@ func (e *CAMERA_MODE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e CAMERA_MODE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Zoom types for MAV_CMD_SET_CAMERA_ZOOM
@@ -1663,6 +1736,15 @@ func (e *CAMERA_ZOOM_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e CAMERA_ZOOM_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Cellular network radio type
@@ -1720,6 +1802,15 @@ func (e *CELLULAR_NETWORK_RADIO_TYPE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e CELLULAR_NETWORK_RADIO_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // These flags encode the cellular network status
 type CELLULAR_NETWORK_STATUS_FLAG int
 
@@ -1745,6 +1836,15 @@ func (e *CELLULAR_NETWORK_STATUS_FLAG) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e CELLULAR_NETWORK_STATUS_FLAG) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Component capability flags (Bitmap)
@@ -1779,6 +1879,15 @@ func (e *COMPONENT_CAP_FLAGS) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e COMPONENT_CAP_FLAGS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Flags in EKF_STATUS message
@@ -1885,6 +1994,15 @@ func (e *ESTIMATOR_STATUS_FLAGS) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e ESTIMATOR_STATUS_FLAGS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 //
 type FENCE_ACTION int
 
@@ -1940,6 +2058,15 @@ func (e *FENCE_ACTION) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e FENCE_ACTION) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 //
 type FENCE_BREACH int
 
@@ -1988,6 +2115,15 @@ func (e *FENCE_BREACH) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e FENCE_BREACH) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Actions being taken to mitigate/prevent fence breach
 type FENCE_MITIGATE int
 
@@ -2027,6 +2163,15 @@ func (e *FENCE_MITIGATE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e FENCE_MITIGATE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // These values define the type of firmware release.  These values indicate the first version or release of this type.  For example the first alpha release would be 64, the second would be 65.
@@ -2082,6 +2227,15 @@ func (e *FIRMWARE_VERSION_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e FIRMWARE_VERSION_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Gimbal device (low level) capability flags (bitmap)
@@ -2188,6 +2342,15 @@ func (e *GIMBAL_DEVICE_CAP_FLAGS) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e GIMBAL_DEVICE_CAP_FLAGS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Gimbal device (low level) error flags (bitmap, 0 means no error)
 type GIMBAL_DEVICE_ERROR_FLAGS int
 
@@ -2264,6 +2427,15 @@ func (e *GIMBAL_DEVICE_ERROR_FLAGS) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e GIMBAL_DEVICE_ERROR_FLAGS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Flags for gimbal device (lower level) operation.
 type GIMBAL_DEVICE_FLAGS int
 
@@ -2317,6 +2489,15 @@ func (e *GIMBAL_DEVICE_FLAGS) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e GIMBAL_DEVICE_FLAGS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Gimbal manager high level capability flags (bitmap). The first 16 bits are identical to the GIMBAL_DEVICE_CAP_FLAGS which are identical with GIMBAL_DEVICE_FLAGS. However, the gimbal manager does not need to copy the flags from the gimbal but can also enhance the capabilities and thus add flags.
@@ -2472,6 +2653,15 @@ func (e *GIMBAL_MANAGER_CAP_FLAGS) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e GIMBAL_MANAGER_CAP_FLAGS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Flags for high level gimbal manager operation The first 16 bytes are identical to the GIMBAL_DEVICE_FLAGS.
 type GIMBAL_MANAGER_FLAGS int
 
@@ -2546,6 +2736,15 @@ func (e *GIMBAL_MANAGER_FLAGS) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e GIMBAL_MANAGER_FLAGS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Type of GPS fix
@@ -2631,6 +2830,15 @@ func (e *GPS_FIX_TYPE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e GPS_FIX_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 //
 type GPS_INPUT_IGNORE_FLAGS int
 
@@ -2705,6 +2913,15 @@ func (e *GPS_INPUT_IGNORE_FLAGS) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e GPS_INPUT_IGNORE_FLAGS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Flags to report failure cases over the high latency telemtry.
@@ -2825,6 +3042,15 @@ func (e *HL_FAILURE_FLAG) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e HL_FAILURE_FLAG) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Type of landing target
 type LANDING_TARGET_TYPE int
 
@@ -2871,6 +3097,15 @@ func (e *LANDING_TARGET_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e LANDING_TARGET_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 //
@@ -2935,6 +3170,15 @@ func (e *MAVLINK_DATA_STREAM_TYPE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAVLINK_DATA_STREAM_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 //
 type MAV_ARM_AUTH_DENIED_REASON int
 
@@ -2995,6 +3239,15 @@ func (e *MAV_ARM_AUTH_DENIED_REASON) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_ARM_AUTH_DENIED_REASON) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Micro air vehicle / autopilot classes. This identifies the individual model.
@@ -3157,6 +3410,15 @@ func (e *MAV_AUTOPILOT) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_AUTOPILOT) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Enumeration for battery charge states.
 type MAV_BATTERY_CHARGE_STATE int
 
@@ -3233,6 +3495,15 @@ func (e *MAV_BATTERY_CHARGE_STATE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_BATTERY_CHARGE_STATE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Enumeration of battery functions
 type MAV_BATTERY_FUNCTION int
 
@@ -3288,6 +3559,15 @@ func (e *MAV_BATTERY_FUNCTION) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_BATTERY_FUNCTION) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Enumeration of battery types
 type MAV_BATTERY_TYPE int
 
@@ -3341,6 +3621,15 @@ func (e *MAV_BATTERY_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_BATTERY_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Commands to be executed by the MAV. They can be executed on user request, or as part of a mission script. If the action is used in a mission, the parameter mapping to the waypoint/mission message is as follows: Param 1, Param 2, Param 3, Param 4, X: Param 5, Y:Param 6, Z:Param 7. This command list is similar what ARINC 424 is for commercial aircraft: A data format how to interpret waypoint/mission data. NaN and INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current yaw or latitude rather than a specific value). See https://mavlink.io/en/guide/xml_schema.html#MAV_CMD for information about the structure of the MAV_CMD entries
@@ -4378,6 +4667,15 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_CMD) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // ACK / NACK / ERROR values as a result of MAV_CMDs and for mission item transmission.
 type MAV_CMD_ACK int
 
@@ -4461,6 +4759,15 @@ func (e *MAV_CMD_ACK) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_CMD_ACK) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Possible actions an aircraft can take to avoid a collision.
 type MAV_COLLISION_ACTION int
 
@@ -4530,6 +4837,15 @@ func (e *MAV_COLLISION_ACTION) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_COLLISION_ACTION) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Source of information about this collision.
 type MAV_COLLISION_SRC int
 
@@ -4562,6 +4878,15 @@ func (e *MAV_COLLISION_SRC) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_COLLISION_SRC) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Aircraft-rated danger from this threat.
@@ -4603,6 +4928,15 @@ func (e *MAV_COLLISION_THREAT_LEVEL) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_COLLISION_THREAT_LEVEL) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Component ids (values) for the different types and instances of onboard hardware/software that might make up a MAVLink system (autopilot, cameras, servos, GPS systems, avoidance systems etc.).      Components must use the appropriate ID in their source address when sending messages. Components can also use IDs to determine if they are the intended recipient of an incoming message. The MAV_COMP_ID_ALL value is used to indicate messages that must be processed by all components.      When creating new entries, components that can have multiple instances (e.g. cameras, servos etc.) should be allocated sequential values. An appropriate number of values should be left free after these components to allow the number of instances to be expanded.
@@ -5486,6 +5820,15 @@ func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_COMPONENT) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // A data stream is not a fixed set of messages, but rather a     recommendation to the autopilot software. Individual autopilots may or may not obey     the recommended messages.
 type MAV_DATA_STREAM int
 
@@ -5569,6 +5912,15 @@ func (e *MAV_DATA_STREAM) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_DATA_STREAM) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Enumeration of distance sensor types
 type MAV_DISTANCE_SENSOR int
 
@@ -5624,6 +5976,15 @@ func (e *MAV_DISTANCE_SENSOR) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_DISTANCE_SENSOR) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Bitmap of options for the MAV_CMD_DO_REPOSITION
 type MAV_DO_REPOSITION_FLAGS int
 
@@ -5649,6 +6010,15 @@ func (e *MAV_DO_REPOSITION_FLAGS) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_DO_REPOSITION_FLAGS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Enumeration of estimator types
@@ -5732,6 +6102,15 @@ func (e *MAV_ESTIMATOR_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_ESTIMATOR_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 //
@@ -5908,6 +6287,15 @@ func (e *MAV_FRAME) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_FRAME) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Actions that may be specified in MAV_CMD_OVERRIDE_GOTO to override mission execution.
 type MAV_GOTO int
 
@@ -5954,6 +6342,15 @@ func (e *MAV_GOTO) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_GOTO) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Enumeration of landed detector states
@@ -6009,6 +6406,15 @@ func (e *MAV_LANDED_STATE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_LANDED_STATE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Result of mission operation (in a MISSION_ACK message).
@@ -6143,6 +6549,15 @@ func (e *MAV_MISSION_RESULT) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_MISSION_RESULT) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Type of mission items being requested/sent in mission protocol.
 type MAV_MISSION_TYPE int
 
@@ -6189,6 +6604,15 @@ func (e *MAV_MISSION_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_MISSION_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // These defines are predefined OR-combined mode flags. There is no need to use values from this enum, but it               simplifies the use of the mode flags. Note that manual input is enabled in all modes as a safety override.
@@ -6288,6 +6712,15 @@ func (e *MAV_MODE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_MODE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // These flags encode the MAV mode.
 type MAV_MODE_FLAG int
 
@@ -6362,6 +6795,15 @@ func (e *MAV_MODE_FLAG) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_MODE_FLAG) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // These values encode the bit positions of the decode position. These values can be used to read the value of a flag bit by combining the base_mode variable with AND with the flag position value. The result will be either 0 or 1, depending on if the flag is set or not.
@@ -6440,6 +6882,15 @@ func (e *MAV_MODE_FLAG_DECODE_POSITION) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_MODE_FLAG_DECODE_POSITION) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Enumeration of possible mount operation modes. This message is used by obsolete/deprecated gimbal messages.
 type MAV_MOUNT_MODE int
 
@@ -6502,6 +6953,15 @@ func (e *MAV_MOUNT_MODE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_MOUNT_MODE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 //
 type MAV_ODID_AUTH_TYPE int
 
@@ -6557,6 +7017,15 @@ func (e *MAV_ODID_AUTH_TYPE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_ODID_AUTH_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 //
 type MAV_ODID_DESC_TYPE int
 
@@ -6582,6 +7051,15 @@ func (e *MAV_ODID_DESC_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_ODID_DESC_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 //
@@ -6616,6 +7094,15 @@ func (e *MAV_ODID_HEIGHT_REF) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_ODID_HEIGHT_REF) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 //
@@ -6729,6 +7216,15 @@ func (e *MAV_ODID_HOR_ACC) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_ODID_HOR_ACC) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 //
 type MAV_ODID_ID_TYPE int
 
@@ -6777,6 +7273,15 @@ func (e *MAV_ODID_ID_TYPE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_ODID_ID_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 //
 type MAV_ODID_LOCATION_SRC int
 
@@ -6818,6 +7323,15 @@ func (e *MAV_ODID_LOCATION_SRC) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_ODID_LOCATION_SRC) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 //
 type MAV_ODID_OPERATOR_ID_TYPE int
 
@@ -6843,6 +7357,15 @@ func (e *MAV_ODID_OPERATOR_ID_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_ODID_OPERATOR_ID_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 //
@@ -6900,6 +7423,15 @@ func (e *MAV_ODID_SPEED_ACC) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_ODID_SPEED_ACC) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 //
 type MAV_ODID_STATUS int
 
@@ -6939,6 +7471,15 @@ func (e *MAV_ODID_STATUS) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_ODID_STATUS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 //
@@ -7073,6 +7614,15 @@ func (e *MAV_ODID_TIME_ACC) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_ODID_TIME_ACC) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 //
 type MAV_ODID_UA_TYPE int
 
@@ -7205,6 +7755,15 @@ func (e *MAV_ODID_UA_TYPE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_ODID_UA_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 //
 type MAV_ODID_VER_ACC int
 
@@ -7272,6 +7831,15 @@ func (e *MAV_ODID_VER_ACC) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_ODID_VER_ACC) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Specifies the datatype of a MAVLink extended parameter.
@@ -7371,6 +7939,15 @@ func (e *MAV_PARAM_EXT_TYPE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_PARAM_EXT_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Specifies the datatype of a MAVLink parameter.
 type MAV_PARAM_TYPE int
 
@@ -7461,6 +8038,15 @@ func (e *MAV_PARAM_TYPE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_PARAM_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Power supply status flags (bitmask)
 type MAV_POWER_STATUS int
 
@@ -7521,6 +8107,15 @@ func (e *MAV_POWER_STATUS) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_POWER_STATUS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Action required when performing CMD_PREFLIGHT_STORAGE
@@ -7590,6 +8185,15 @@ func (e *MAV_PREFLIGHT_STORAGE_ACTION) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_PREFLIGHT_STORAGE_ACTION) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Bitmask of (optional) autopilot capabilities (64 bit). If a bit is set, the autopilot supports this capability.
@@ -7731,6 +8335,15 @@ func (e *MAV_PROTOCOL_CAPABILITY) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_PROTOCOL_CAPABILITY) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Result from a MAVLink command (MAV_CMD)
 type MAV_RESULT int
 
@@ -7793,6 +8406,15 @@ func (e *MAV_RESULT) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_RESULT) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // The ROI (region of interest) for the vehicle. This can be                be used by the vehicle for camera/vehicle attitude alignment (see                MAV_CMD_NAV_ROI).
 type MAV_ROI int
 
@@ -7846,6 +8468,15 @@ func (e *MAV_ROI) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_ROI) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Enumeration of sensor orientation, according to its rotations
@@ -8162,6 +8793,15 @@ func (e *MAV_SENSOR_ORIENTATION) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_SENSOR_ORIENTATION) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Indicates the severity level, generally used for status messages to indicate their relative urgency. Based on RFC-5424 using expanded definitions at: http://www.kiwisyslog.com/kb/info:-syslog-message-levels/.
 type MAV_SEVERITY int
 
@@ -8238,6 +8878,15 @@ func (e *MAV_SEVERITY) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_SEVERITY) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Smart battery supply status/fault flags (bitmask) for health indication.
 type MAV_SMART_BATTERY_FAULT int
 
@@ -8298,6 +8947,15 @@ func (e *MAV_SMART_BATTERY_FAULT) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_SMART_BATTERY_FAULT) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 //
@@ -8381,6 +9039,15 @@ func (e *MAV_STATE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_STATE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // These encode the sensors whose status is sent as part of the SYS_STATUS message.
@@ -8613,6 +9280,15 @@ func (e *MAV_SYS_STATUS_SENSOR) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_SYS_STATUS_SENSOR) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 //
 type MAV_TUNNEL_PAYLOAD_TYPE int
 
@@ -8708,6 +9384,15 @@ func (e *MAV_TUNNEL_PAYLOAD_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_TUNNEL_PAYLOAD_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // MAVLINK component type reported in HEARTBEAT message. Flight controllers must report the type of the vehicle on which they are mounted (e.g. MAV_TYPE_OCTOROTOR). All other components must report a value appropriate for their type (e.g. a camera must use MAV_TYPE_CAMERA).
@@ -8968,6 +9653,15 @@ func (e *MAV_TYPE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Enumeration of VTOL states
 type MAV_VTOL_STATE int
 
@@ -9023,6 +9717,15 @@ func (e *MAV_VTOL_STATE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e MAV_VTOL_STATE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 //
 type MOTOR_TEST_ORDER int
 
@@ -9062,6 +9765,15 @@ func (e *MOTOR_TEST_ORDER) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MOTOR_TEST_ORDER) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 //
@@ -9110,6 +9822,15 @@ func (e *MOTOR_TEST_THROTTLE_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MOTOR_TEST_THROTTLE_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Yaw behaviour during orbit flight.
@@ -9167,6 +9888,15 @@ func (e *ORBIT_YAW_BEHAVIOUR) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e ORBIT_YAW_BEHAVIOUR) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 //
 type PARACHUTE_ACTION int
 
@@ -9206,6 +9936,15 @@ func (e *PARACHUTE_ACTION) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e PARACHUTE_ACTION) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Result from a PARAM_EXT_SET message.
@@ -9254,6 +9993,15 @@ func (e *PARAM_ACK) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e PARAM_ACK) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Bitmap to indicate which dimensions should be ignored by the vehicle: a value of 0b0000000000000000 or 0b0000001000000000 indicates that none of the setpoint dimensions should be ignored. If bit 9 is set the floats afx afy afz should be interpreted as force instead of acceleration.
@@ -9360,6 +10108,15 @@ func (e *POSITION_TARGET_TYPEMASK) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e POSITION_TARGET_TYPEMASK) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Precision land modes (used in MAV_CMD_NAV_LAND).
 type PRECISION_LAND_MODE int
 
@@ -9401,6 +10158,15 @@ func (e *PRECISION_LAND_MODE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e PRECISION_LAND_MODE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // RC type
 type RC_TYPE int
 
@@ -9435,6 +10201,15 @@ func (e *RC_TYPE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e RC_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // RTK GPS baseline coordinate system, used for RTK corrections
 type RTK_BASELINE_COORDINATE_SYSTEM int
 
@@ -9467,6 +10242,15 @@ func (e *RTK_BASELINE_COORDINATE_SYSTEM) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e RTK_BASELINE_COORDINATE_SYSTEM) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // SERIAL_CONTROL device types
@@ -9594,6 +10378,15 @@ func (e *SERIAL_CONTROL_DEV) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e SERIAL_CONTROL_DEV) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // SERIAL_CONTROL flags (bitmask)
 type SERIAL_CONTROL_FLAG int
 
@@ -9649,6 +10442,15 @@ func (e *SERIAL_CONTROL_FLAG) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e SERIAL_CONTROL_FLAG) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Focus types for MAV_CMD_SET_CAMERA_FOCUS
 type SET_FOCUS_TYPE int
 
@@ -9695,6 +10497,15 @@ func (e *SET_FOCUS_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e SET_FOCUS_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Flags to indicate the status of camera storage.
@@ -9745,6 +10556,15 @@ func (e *STORAGE_STATUS) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e STORAGE_STATUS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Tune formats (used for vehicle buzzer/tone generation).
 type TUNE_FORMAT int
 
@@ -9777,6 +10597,15 @@ func (e *TUNE_FORMAT) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e TUNE_FORMAT) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Generalized UAVCAN node health
@@ -9825,6 +10654,15 @@ func (e *UAVCAN_NODE_HEALTH) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e UAVCAN_NODE_HEALTH) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Generalized UAVCAN node mode
@@ -9880,6 +10718,15 @@ func (e *UAVCAN_NODE_MODE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e UAVCAN_NODE_MODE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Flags for the global position report.
@@ -9958,6 +10805,15 @@ func (e *UTM_DATA_AVAIL_FLAGS) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e UTM_DATA_AVAIL_FLAGS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Airborne status of UAS.
 type UTM_FLIGHT_STATE int
 
@@ -10013,6 +10869,15 @@ func (e *UTM_FLIGHT_STATE) UnmarshalText(text []byte) error {
 	return errors.New("invalid value")
 }
 
+// String implements the fmt.Stringer interface.
+func (e UTM_FLIGHT_STATE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Stream status flags (Bitmap)
 type VIDEO_STREAM_STATUS_FLAGS int
 
@@ -10045,6 +10910,15 @@ func (e *VIDEO_STREAM_STATUS_FLAGS) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e VIDEO_STREAM_STATUS_FLAGS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Video stream types
@@ -10093,6 +10967,15 @@ func (e *VIDEO_STREAM_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e VIDEO_STREAM_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // Direction of VTOL transition
@@ -10148,6 +11031,15 @@ func (e *VTOL_TRANSITION_HEADING) UnmarshalText(text []byte) error {
 		return nil
 	}
 	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e VTOL_TRANSITION_HEADING) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
 }
 
 // common.xml

@@ -181,6 +181,7 @@ func newDialectMessage(msg Message) (*dialectMessage, error) {
 
 			switch dialectType {
 			case typeUint8:
+			case typeInt8:
 			case typeUint16:
 			case typeUint32:
 			case typeInt32:
@@ -188,7 +189,7 @@ func newDialectMessage(msg Message) (*dialectMessage, error) {
 				break
 
 			default:
-				return nil, fmt.Errorf("type %v cannot be used as enum", dialectType)
+				return nil, fmt.Errorf("type '%v' cannot be used as enum", tagEnum)
 			}
 
 		} else {
@@ -387,6 +388,10 @@ func decodeValue(target reflect.Value, buf []byte, f *dialectMessageField) int {
 			target.SetInt(int64(buf[0]))
 			return 1
 
+		case typeInt8:
+			target.SetInt(int64(buf[0]))
+			return 1
+
 		case typeUint16:
 			target.SetInt(int64(binary.LittleEndian.Uint16(buf)))
 			return 2
@@ -467,6 +472,10 @@ func encodeValue(buf []byte, target reflect.Value, f *dialectMessageField) int {
 	if f.isEnum == true {
 		switch f.ftype {
 		case typeUint8:
+			buf[0] = byte(target.Int())
+			return 1
+
+		case typeInt8:
 			buf[0] = byte(target.Int())
 			return 1
 

@@ -77,7 +77,7 @@ func initEndpointServer(conf endpointServerConf) (Endpoint, error) {
 	t := &endpointServer{
 		conf:      conf,
 		listener:  listener,
-		terminate: make(chan struct{}, 1),
+		terminate: make(chan struct{}),
 	}
 	return t, nil
 }
@@ -89,7 +89,7 @@ func (t *endpointServer) Conf() interface{} {
 }
 
 func (t *endpointServer) Close() error {
-	t.terminate <- struct{}{}
+	close(t.terminate)
 	t.listener.Close()
 	return nil
 }

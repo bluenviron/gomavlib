@@ -64,7 +64,7 @@ func (ch *Channel) run() {
 	// reader
 	readerDone := make(chan struct{})
 	go func() {
-		defer func() { readerDone <- struct{}{} }()
+		defer close(readerDone)
 		defer func() { ch.n.eventsOut <- &EventChannelClose{ch} }()
 		defer func() { ch.n.eventsIn <- &eventInChannelClosed{ch} }()
 
@@ -94,7 +94,7 @@ func (ch *Channel) run() {
 	// writer
 	writerDone := make(chan struct{})
 	go func() {
-		defer func() { writerDone <- struct{}{} }()
+		defer close(writerDone)
 		defer func() { ch.allWritten <- struct{}{} }()
 
 		for what := range ch.writeChan {

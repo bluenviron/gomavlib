@@ -56,7 +56,7 @@ func newNodeStreamRequest(n *Node) *nodeStreamRequest {
 }
 
 func (sr *nodeStreamRequest) close() {
-	sr.terminate <- struct{}{}
+	close(sr.terminate)
 }
 
 func (sr *nodeStreamRequest) run() {

@@ -95,7 +95,6 @@ dialects-nodocker:
 	$(foreach D,$(DIALECTS), \
 	mkdir -p dialects/$(D) \
 	&& go run ./commands/dialgen \
-	--preamble="Generated from revision https://github.com/mavlink/mavlink/tree/$(COMMIT)" \
 	https://raw.githubusercontent.com/mavlink/mavlink/$(COMMIT)/message_definitions/v1.0/$(D).xml \
 	> dialects/$(D)/dialect.go \
 	&& echo "$$TEST_TEMPLATE" | sed 's/PACKAGE_NAME/$(D)/' > dialects/$(D)/dialect_test.go \

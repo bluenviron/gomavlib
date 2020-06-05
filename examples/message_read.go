@@ -32,9 +32,11 @@ func main() {
 		if frm, ok := evt.(*gomavlib.EventFrame); ok {
 
 			switch msg := frm.Message().(type) {
+			// if frm.Message() is a *ardupilotmega.MessageHeartbeat, access its fields
 			case *ardupilotmega.MessageHeartbeat:
 				fmt.Printf("received heartbeat (type %d)\n", msg.Type)
 
+			// if frm.Message() is a *ardupilotmega.MessageServoOutputRaw, access its fields
 			case *ardupilotmega.MessageServoOutputRaw:
 				fmt.Printf("received servo output with values: %d %d %d %d %d %d %d %d\n",
 					msg.Servo1Raw, msg.Servo2Raw, msg.Servo3Raw, msg.Servo4Raw,

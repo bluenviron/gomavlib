@@ -2106,6 +2106,8 @@ const (
 	//
 	FAILURE_UNIT_SENSOR_DISTANCE_SENSOR FAILURE_UNIT = 7
 	//
+	FAILURE_UNIT_SENSOR_AIRSPEED FAILURE_UNIT = 8
+	//
 	FAILURE_UNIT_SYSTEM_BATTERY FAILURE_UNIT = 100
 	//
 	FAILURE_UNIT_SYSTEM_MOTOR FAILURE_UNIT = 101
@@ -2138,6 +2140,8 @@ func (e FAILURE_UNIT) MarshalText() ([]byte, error) {
 		return []byte("FAILURE_UNIT_SENSOR_VIO"), nil
 	case FAILURE_UNIT_SENSOR_DISTANCE_SENSOR:
 		return []byte("FAILURE_UNIT_SENSOR_DISTANCE_SENSOR"), nil
+	case FAILURE_UNIT_SENSOR_AIRSPEED:
+		return []byte("FAILURE_UNIT_SENSOR_AIRSPEED"), nil
 	case FAILURE_UNIT_SYSTEM_BATTERY:
 		return []byte("FAILURE_UNIT_SYSTEM_BATTERY"), nil
 	case FAILURE_UNIT_SYSTEM_MOTOR:
@@ -2180,6 +2184,9 @@ func (e *FAILURE_UNIT) UnmarshalText(text []byte) error {
 		return nil
 	case "FAILURE_UNIT_SENSOR_DISTANCE_SENSOR":
 		*e = FAILURE_UNIT_SENSOR_DISTANCE_SENSOR
+		return nil
+	case "FAILURE_UNIT_SENSOR_AIRSPEED":
+		*e = FAILURE_UNIT_SENSOR_AIRSPEED
 		return nil
 	case "FAILURE_UNIT_SYSTEM_BATTERY":
 		*e = FAILURE_UNIT_SYSTEM_BATTERY
@@ -15110,7 +15117,7 @@ type MessageCameraCaptureStatus struct {
 	RecordingTimeMs uint32
 	// Available storage capacity.
 	AvailableCapacity float32
-	// Total number of images.
+	// Total number of images captured ('forever', or until reset using MAV_CMD_STORAGE_FORMAT).
 	ImageCount int32 `mavext:"true"`
 }
 
@@ -15136,7 +15143,7 @@ type MessageCameraImageCaptured struct {
 	RelativeAlt int32
 	// Quaternion of camera orientation (w, x, y, z order, zero-rotation is 0, 0, 0, 0)
 	Q [4]float32
-	// Zero based index of this image (image count -1)
+	// Zero based index of this image (i.e. a new image will have index CAMERA_CAPTURE_STATUS.image count -1)
 	ImageIndex int32
 	// Boolean indicating success (1) or failure (0) while capturing this image.
 	CaptureResult int8

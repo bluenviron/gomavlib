@@ -2067,7 +2067,7 @@ func (e COMPONENT_CAP_FLAGS) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
-// Flags in EKF_STATUS message
+// Flags in ESTIMATOR_STATUS message
 type ESTIMATOR_STATUS_FLAGS int
 
 const (

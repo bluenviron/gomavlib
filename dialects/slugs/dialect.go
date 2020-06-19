@@ -14237,6 +14237,8 @@ type MessageDistanceSensor struct {
 	VerticalFov float32 `mavext:"true"`
 	// Quaternion of the sensor orientation in vehicle body frame (w, x, y, z order, zero-rotation is 1, 0, 0, 0). Zero-rotation is along the vehicle body x-axis. This field is required if the orientation is set to MAV_SENSOR_ROTATION_CUSTOM. Set it to 0 if invalid."
 	Quaternion [4]float32 `mavext:"true"`
+	// Signal quality of the sensor. Specific to each sensor type, representing the relation of the signal strength with the target reflectivity, distance, size or aspect, but normalised as a percentage. 0 = unknown/unset signal quality, 1 = invalid signal, 100 = perfect signal.
+	SignalQuality uint8 `mavext:"true"`
 }
 
 func (*MessageDistanceSensor) GetId() uint32 {

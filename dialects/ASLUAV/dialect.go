@@ -5527,8 +5527,8 @@ const (
 	MAV_COMP_ID_USER42 MAV_COMPONENT = 66
 	// Id for a component on privately managed MAVLink network. Can be used for any purpose but may not be published by components outside of the private network.
 	MAV_COMP_ID_USER43 MAV_COMPONENT = 67
-	// Id for a component on privately managed MAVLink network. Can be used for any purpose but may not be published by components outside of the private network.
-	MAV_COMP_ID_USER44 MAV_COMPONENT = 68
+	// Telemetry radio (e.g. SiK radio, or other component that emits RADIO_STATUS messages).
+	MAV_COMP_ID_TELEMETRY_RADIO MAV_COMPONENT = 68
 	// Id for a component on privately managed MAVLink network. Can be used for any purpose but may not be published by components outside of the private network.
 	MAV_COMP_ID_USER45 MAV_COMPONENT = 69
 	// Id for a component on privately managed MAVLink network. Can be used for any purpose but may not be published by components outside of the private network.
@@ -5784,8 +5784,8 @@ func (e MAV_COMPONENT) MarshalText() ([]byte, error) {
 		return []byte("MAV_COMP_ID_USER42"), nil
 	case MAV_COMP_ID_USER43:
 		return []byte("MAV_COMP_ID_USER43"), nil
-	case MAV_COMP_ID_USER44:
-		return []byte("MAV_COMP_ID_USER44"), nil
+	case MAV_COMP_ID_TELEMETRY_RADIO:
+		return []byte("MAV_COMP_ID_TELEMETRY_RADIO"), nil
 	case MAV_COMP_ID_USER45:
 		return []byte("MAV_COMP_ID_USER45"), nil
 	case MAV_COMP_ID_USER46:
@@ -6088,8 +6088,8 @@ func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
 	case "MAV_COMP_ID_USER43":
 		*e = MAV_COMP_ID_USER43
 		return nil
-	case "MAV_COMP_ID_USER44":
-		*e = MAV_COMP_ID_USER44
+	case "MAV_COMP_ID_TELEMETRY_RADIO":
+		*e = MAV_COMP_ID_TELEMETRY_RADIO
 		return nil
 	case "MAV_COMP_ID_USER45":
 		*e = MAV_COMP_ID_USER45

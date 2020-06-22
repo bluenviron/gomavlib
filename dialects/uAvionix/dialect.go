@@ -4040,7 +4040,7 @@ const (
 	MAV_CMD_NAV_LAST MAV_CMD = 95
 	// Delay mission state machine.
 	MAV_CMD_CONDITION_DELAY MAV_CMD = 112
-	// Ascend/descend at rate.  Delay mission state machine until desired altitude reached.
+	// Ascend/descend to target altitude at specified rate. Delay mission state machine until desired altitude reached.
 	MAV_CMD_CONDITION_CHANGE_ALT MAV_CMD = 113
 	// Delay mission state machine until within desired distance of next NAV point.
 	MAV_CMD_CONDITION_DISTANCE MAV_CMD = 114

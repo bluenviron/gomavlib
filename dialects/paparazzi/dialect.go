@@ -1865,6 +1865,49 @@ func (e COMPONENT_CAP_FLAGS) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
+// Possible values for COMPONENT_INFORMATION.comp_metadata_type.
+type COMP_METADATA_TYPE int
+
+const (
+	// Version information which also includes information on other optional supported COMP_METADATA_TYPE's. Must be supported. Only downloadable from vehicle.
+	COMP_METADATA_TYPE_VERSION COMP_METADATA_TYPE = 0
+	// Parameter meta data.
+	COMP_METADATA_TYPE_PARAMETER COMP_METADATA_TYPE = 1
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e COMP_METADATA_TYPE) MarshalText() ([]byte, error) {
+	switch e {
+	case COMP_METADATA_TYPE_VERSION:
+		return []byte("COMP_METADATA_TYPE_VERSION"), nil
+	case COMP_METADATA_TYPE_PARAMETER:
+		return []byte("COMP_METADATA_TYPE_PARAMETER"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *COMP_METADATA_TYPE) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "COMP_METADATA_TYPE_VERSION":
+		*e = COMP_METADATA_TYPE_VERSION
+		return nil
+	case "COMP_METADATA_TYPE_PARAMETER":
+		*e = COMP_METADATA_TYPE_PARAMETER
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e COMP_METADATA_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Flags in ESTIMATOR_STATUS message
 type ESTIMATOR_STATUS_FLAGS int
 
@@ -7411,6 +7454,191 @@ func (e MAV_ODID_AUTH_TYPE) String() string {
 }
 
 //
+type MAV_ODID_CATEGORY_EU int
+
+const (
+	// The category for the UA, according to the EU specification, is undeclared.
+	MAV_ODID_CATEGORY_EU_UNDECLARED MAV_ODID_CATEGORY_EU = 0
+	// The category for the UA, according to the EU specification, is the Open category.
+	MAV_ODID_CATEGORY_EU_OPEN MAV_ODID_CATEGORY_EU = 1
+	// The category for the UA, according to the EU specification, is the Specific category.
+	MAV_ODID_CATEGORY_EU_SPECIFIC MAV_ODID_CATEGORY_EU = 2
+	// The category for the UA, according to the EU specification, is the Certified category.
+	MAV_ODID_CATEGORY_EU_CERTIFIED MAV_ODID_CATEGORY_EU = 3
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e MAV_ODID_CATEGORY_EU) MarshalText() ([]byte, error) {
+	switch e {
+	case MAV_ODID_CATEGORY_EU_UNDECLARED:
+		return []byte("MAV_ODID_CATEGORY_EU_UNDECLARED"), nil
+	case MAV_ODID_CATEGORY_EU_OPEN:
+		return []byte("MAV_ODID_CATEGORY_EU_OPEN"), nil
+	case MAV_ODID_CATEGORY_EU_SPECIFIC:
+		return []byte("MAV_ODID_CATEGORY_EU_SPECIFIC"), nil
+	case MAV_ODID_CATEGORY_EU_CERTIFIED:
+		return []byte("MAV_ODID_CATEGORY_EU_CERTIFIED"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *MAV_ODID_CATEGORY_EU) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "MAV_ODID_CATEGORY_EU_UNDECLARED":
+		*e = MAV_ODID_CATEGORY_EU_UNDECLARED
+		return nil
+	case "MAV_ODID_CATEGORY_EU_OPEN":
+		*e = MAV_ODID_CATEGORY_EU_OPEN
+		return nil
+	case "MAV_ODID_CATEGORY_EU_SPECIFIC":
+		*e = MAV_ODID_CATEGORY_EU_SPECIFIC
+		return nil
+	case "MAV_ODID_CATEGORY_EU_CERTIFIED":
+		*e = MAV_ODID_CATEGORY_EU_CERTIFIED
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_ODID_CATEGORY_EU) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+//
+type MAV_ODID_CLASSIFICATION_TYPE int
+
+const (
+	// The classification type for the UA is undeclared.
+	MAV_ODID_CLASSIFICATION_TYPE_UNDECLARED MAV_ODID_CLASSIFICATION_TYPE = 0
+	// The classification type for the UA follows EU (European Union) specifications.
+	MAV_ODID_CLASSIFICATION_TYPE_EU MAV_ODID_CLASSIFICATION_TYPE = 1
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e MAV_ODID_CLASSIFICATION_TYPE) MarshalText() ([]byte, error) {
+	switch e {
+	case MAV_ODID_CLASSIFICATION_TYPE_UNDECLARED:
+		return []byte("MAV_ODID_CLASSIFICATION_TYPE_UNDECLARED"), nil
+	case MAV_ODID_CLASSIFICATION_TYPE_EU:
+		return []byte("MAV_ODID_CLASSIFICATION_TYPE_EU"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *MAV_ODID_CLASSIFICATION_TYPE) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "MAV_ODID_CLASSIFICATION_TYPE_UNDECLARED":
+		*e = MAV_ODID_CLASSIFICATION_TYPE_UNDECLARED
+		return nil
+	case "MAV_ODID_CLASSIFICATION_TYPE_EU":
+		*e = MAV_ODID_CLASSIFICATION_TYPE_EU
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_ODID_CLASSIFICATION_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+//
+type MAV_ODID_CLASS_EU int
+
+const (
+	// The class for the UA, according to the EU specification, is undeclared.
+	MAV_ODID_CLASS_EU_UNDECLARED MAV_ODID_CLASS_EU = 0
+	// The class for the UA, according to the EU specification, is Class 0.
+	MAV_ODID_CLASS_EU_CLASS_0 MAV_ODID_CLASS_EU = 1
+	// The class for the UA, according to the EU specification, is Class 1.
+	MAV_ODID_CLASS_EU_CLASS_1 MAV_ODID_CLASS_EU = 2
+	// The class for the UA, according to the EU specification, is Class 2.
+	MAV_ODID_CLASS_EU_CLASS_2 MAV_ODID_CLASS_EU = 3
+	// The class for the UA, according to the EU specification, is Class 3.
+	MAV_ODID_CLASS_EU_CLASS_3 MAV_ODID_CLASS_EU = 4
+	// The class for the UA, according to the EU specification, is Class 4.
+	MAV_ODID_CLASS_EU_CLASS_4 MAV_ODID_CLASS_EU = 5
+	// The class for the UA, according to the EU specification, is Class 5.
+	MAV_ODID_CLASS_EU_CLASS_5 MAV_ODID_CLASS_EU = 6
+	// The class for the UA, according to the EU specification, is Class 6.
+	MAV_ODID_CLASS_EU_CLASS_6 MAV_ODID_CLASS_EU = 7
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e MAV_ODID_CLASS_EU) MarshalText() ([]byte, error) {
+	switch e {
+	case MAV_ODID_CLASS_EU_UNDECLARED:
+		return []byte("MAV_ODID_CLASS_EU_UNDECLARED"), nil
+	case MAV_ODID_CLASS_EU_CLASS_0:
+		return []byte("MAV_ODID_CLASS_EU_CLASS_0"), nil
+	case MAV_ODID_CLASS_EU_CLASS_1:
+		return []byte("MAV_ODID_CLASS_EU_CLASS_1"), nil
+	case MAV_ODID_CLASS_EU_CLASS_2:
+		return []byte("MAV_ODID_CLASS_EU_CLASS_2"), nil
+	case MAV_ODID_CLASS_EU_CLASS_3:
+		return []byte("MAV_ODID_CLASS_EU_CLASS_3"), nil
+	case MAV_ODID_CLASS_EU_CLASS_4:
+		return []byte("MAV_ODID_CLASS_EU_CLASS_4"), nil
+	case MAV_ODID_CLASS_EU_CLASS_5:
+		return []byte("MAV_ODID_CLASS_EU_CLASS_5"), nil
+	case MAV_ODID_CLASS_EU_CLASS_6:
+		return []byte("MAV_ODID_CLASS_EU_CLASS_6"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *MAV_ODID_CLASS_EU) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "MAV_ODID_CLASS_EU_UNDECLARED":
+		*e = MAV_ODID_CLASS_EU_UNDECLARED
+		return nil
+	case "MAV_ODID_CLASS_EU_CLASS_0":
+		*e = MAV_ODID_CLASS_EU_CLASS_0
+		return nil
+	case "MAV_ODID_CLASS_EU_CLASS_1":
+		*e = MAV_ODID_CLASS_EU_CLASS_1
+		return nil
+	case "MAV_ODID_CLASS_EU_CLASS_2":
+		*e = MAV_ODID_CLASS_EU_CLASS_2
+		return nil
+	case "MAV_ODID_CLASS_EU_CLASS_3":
+		*e = MAV_ODID_CLASS_EU_CLASS_3
+		return nil
+	case "MAV_ODID_CLASS_EU_CLASS_4":
+		*e = MAV_ODID_CLASS_EU_CLASS_4
+		return nil
+	case "MAV_ODID_CLASS_EU_CLASS_5":
+		*e = MAV_ODID_CLASS_EU_CLASS_5
+		return nil
+	case "MAV_ODID_CLASS_EU_CLASS_6":
+		*e = MAV_ODID_CLASS_EU_CLASS_6
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_ODID_CLASS_EU) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+//
 type MAV_ODID_DESC_TYPE int
 
 const (
@@ -7667,56 +7895,6 @@ func (e MAV_ODID_ID_TYPE) String() string {
 }
 
 //
-type MAV_ODID_LOCATION_SRC int
-
-const (
-	// The location of the operator is the same as the take-off location.
-	MAV_ODID_LOCATION_SRC_TAKEOFF MAV_ODID_LOCATION_SRC = 0
-	// The location of the operator is based on live GNSS data.
-	MAV_ODID_LOCATION_SRC_LIVE_GNSS MAV_ODID_LOCATION_SRC = 1
-	// The location of the operator is a fixed location.
-	MAV_ODID_LOCATION_SRC_FIXED MAV_ODID_LOCATION_SRC = 2
-)
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e MAV_ODID_LOCATION_SRC) MarshalText() ([]byte, error) {
-	switch e {
-	case MAV_ODID_LOCATION_SRC_TAKEOFF:
-		return []byte("MAV_ODID_LOCATION_SRC_TAKEOFF"), nil
-	case MAV_ODID_LOCATION_SRC_LIVE_GNSS:
-		return []byte("MAV_ODID_LOCATION_SRC_LIVE_GNSS"), nil
-	case MAV_ODID_LOCATION_SRC_FIXED:
-		return []byte("MAV_ODID_LOCATION_SRC_FIXED"), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *MAV_ODID_LOCATION_SRC) UnmarshalText(text []byte) error {
-	switch string(text) {
-	case "MAV_ODID_LOCATION_SRC_TAKEOFF":
-		*e = MAV_ODID_LOCATION_SRC_TAKEOFF
-		return nil
-	case "MAV_ODID_LOCATION_SRC_LIVE_GNSS":
-		*e = MAV_ODID_LOCATION_SRC_LIVE_GNSS
-		return nil
-	case "MAV_ODID_LOCATION_SRC_FIXED":
-		*e = MAV_ODID_LOCATION_SRC_FIXED
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e MAV_ODID_LOCATION_SRC) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
-	}
-	return strconv.FormatInt(int64(e), 10)
-}
-
-//
 type MAV_ODID_OPERATOR_ID_TYPE int
 
 const (
@@ -7745,6 +7923,56 @@ func (e *MAV_ODID_OPERATOR_ID_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_OPERATOR_ID_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+//
+type MAV_ODID_OPERATOR_LOCATION_TYPE int
+
+const (
+	// The location of the operator is the same as the take-off location.
+	MAV_ODID_OPERATOR_LOCATION_TYPE_TAKEOFF MAV_ODID_OPERATOR_LOCATION_TYPE = 0
+	// The location of the operator is based on live GNSS data.
+	MAV_ODID_OPERATOR_LOCATION_TYPE_LIVE_GNSS MAV_ODID_OPERATOR_LOCATION_TYPE = 1
+	// The location of the operator is a fixed location.
+	MAV_ODID_OPERATOR_LOCATION_TYPE_FIXED MAV_ODID_OPERATOR_LOCATION_TYPE = 2
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e MAV_ODID_OPERATOR_LOCATION_TYPE) MarshalText() ([]byte, error) {
+	switch e {
+	case MAV_ODID_OPERATOR_LOCATION_TYPE_TAKEOFF:
+		return []byte("MAV_ODID_OPERATOR_LOCATION_TYPE_TAKEOFF"), nil
+	case MAV_ODID_OPERATOR_LOCATION_TYPE_LIVE_GNSS:
+		return []byte("MAV_ODID_OPERATOR_LOCATION_TYPE_LIVE_GNSS"), nil
+	case MAV_ODID_OPERATOR_LOCATION_TYPE_FIXED:
+		return []byte("MAV_ODID_OPERATOR_LOCATION_TYPE_FIXED"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *MAV_ODID_OPERATOR_LOCATION_TYPE) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "MAV_ODID_OPERATOR_LOCATION_TYPE_TAKEOFF":
+		*e = MAV_ODID_OPERATOR_LOCATION_TYPE_TAKEOFF
+		return nil
+	case "MAV_ODID_OPERATOR_LOCATION_TYPE_LIVE_GNSS":
+		*e = MAV_ODID_OPERATOR_LOCATION_TYPE_LIVE_GNSS
+		return nil
+	case "MAV_ODID_OPERATOR_LOCATION_TYPE_FIXED":
+		*e = MAV_ODID_OPERATOR_LOCATION_TYPE_FIXED
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_ODID_OPERATOR_LOCATION_TYPE) String() string {
 	byts, err := e.MarshalText()
 	if err == nil {
 		return string(byts)
@@ -7826,6 +8054,8 @@ const (
 	MAV_ODID_STATUS_GROUND MAV_ODID_STATUS = 1
 	// The UA is in the air.
 	MAV_ODID_STATUS_AIRBORNE MAV_ODID_STATUS = 2
+	// The UA is having an emergency.
+	MAV_ODID_STATUS_EMERGENCY MAV_ODID_STATUS = 3
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -7837,6 +8067,8 @@ func (e MAV_ODID_STATUS) MarshalText() ([]byte, error) {
 		return []byte("MAV_ODID_STATUS_GROUND"), nil
 	case MAV_ODID_STATUS_AIRBORNE:
 		return []byte("MAV_ODID_STATUS_AIRBORNE"), nil
+	case MAV_ODID_STATUS_EMERGENCY:
+		return []byte("MAV_ODID_STATUS_EMERGENCY"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -7852,6 +8084,9 @@ func (e *MAV_ODID_STATUS) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_ODID_STATUS_AIRBORNE":
 		*e = MAV_ODID_STATUS_AIRBORNE
+		return nil
+	case "MAV_ODID_STATUS_EMERGENCY":
+		*e = MAV_ODID_STATUS_EMERGENCY
 		return nil
 	}
 	return errors.New("invalid value")
@@ -16006,20 +16241,16 @@ func (*MessageOnboardComputerStatus) GetId() uint32 {
 type MessageComponentInformation struct {
 	// Timestamp (time since system boot).
 	TimeBootMs uint32
-	// Name of the component vendor
-	VendorName [32]uint8
-	// Name of the component model
-	ModelName [32]uint8
-	// Version of the component firmware, encoded as: (Dev &amp; 0xff) &lt;&lt; 24 | (Patch &amp; 0xff) &lt;&lt; 16 | (Minor &amp; 0xff) &lt;&lt; 8 | (Major &amp; 0xff)
-	FirmwareVersion uint32
-	// Version of the component hardware, encoded as: (Dev &amp; 0xff) &lt;&lt; 24 | (Patch &amp; 0xff) &lt;&lt; 16 | (Minor &amp; 0xff) &lt;&lt; 8 | (Major &amp; 0xff)
-	HardwareVersion uint32
-	// Bitmap of component capability flags.
-	CapabilityFlags COMPONENT_CAP_FLAGS `mavenum:"uint32"`
-	// Component definition version (iteration)
-	ComponentDefinitionVersion uint16
-	// Component definition URI (if any, otherwise only basic functions will be available). The XML format is not yet specified and work in progress.
-	ComponentDefinitionUri string `mavlen:"140"`
+	// The type of metadata being requested.
+	MetadataType COMP_METADATA_TYPE `mavenum:"uint32"`
+	// Unique uid for this metadata which a gcs can use for created cached metadata and understanding whether it's cache it up to date or whether it needs to download new data.
+	MetadataUid uint32
+	// Component definition URI. If prefix mavlinkftp:// file is downloaded from vehicle over mavlink ftp protocol. If prefix http[s]:// file is downloaded over internet. Files are json format. They can end in .gz to indicate file is in gzip format.
+	MetadataUri string `mavlen:"70"`
+	// Unique uid for the translation file associated with the metadata.
+	TranslationUid uint32
+	// The translations for strings within the metadata file. If null the either do not exist or may be included in the metadata file itself. The translations specified here supercede any which may be in the metadata file itself. The uri format is the same as component_metadata_uri . Files are in Json Translation spec format. Empty string indicates no tranlsation file.
+	TranslationUri string `mavlen:"70"`
 }
 
 func (*MessageComponentInformation) GetId() uint32 {
@@ -16070,7 +16301,7 @@ func (*MessageWheelDistance) GetId() uint32 {
 	return 9000
 }
 
-// Data for filling the OpenDroneID Basic ID message. This and the below messages are primarily meant for feeding data to/from an OpenDroneID implementation. E.g. https://github.com/opendroneid/opendroneid-core-c. See also the ASTM Remote ID standard at https://www.astm.org/Standards/F3411.htm. The usage of these messages is documented at https://mavlink.io/en/services/opendroneid.html.
+// Data for filling the OpenDroneID Basic ID message. This and the below messages are primarily meant for feeding data to/from an OpenDroneID implementation. E.g. https://github.com/opendroneid/opendroneid-core-c. These messages are compatible with the ASTM Remote ID standard at https://www.astm.org/Standards/F3411.htm and the ASD-STAN Direct Remote ID standard. The usage of these messages is documented at https://mavlink.io/en/services/opendroneid.html.
 type MessageOpenDroneIdBasicId struct {
 	// System ID (0 for broadcast).
 	TargetSystem uint8
@@ -16188,8 +16419,10 @@ type MessageOpenDroneIdSystem struct {
 	TargetComponent uint8
 	// Only used for drone ID data received from other UAs. See detailed description at https://mavlink.io/en/services/opendroneid.html.
 	IdOrMac [20]uint8
-	// Specifies the location source for the operator location.
-	Flags MAV_ODID_LOCATION_SRC `mavenum:"uint8"`
+	// Specifies the operator location type.
+	OperatorLocationType MAV_ODID_OPERATOR_LOCATION_TYPE `mavenum:"uint8"`
+	// Specifies the classification type of the UA.
+	ClassificationType MAV_ODID_CLASSIFICATION_TYPE `mavenum:"uint8"`
 	// Latitude of the operator. If unknown: 0 (both Lat/Lon).
 	OperatorLatitude int32
 	// Longitude of the operator. If unknown: 0 (both Lat/Lon).
@@ -16202,6 +16435,10 @@ type MessageOpenDroneIdSystem struct {
 	AreaCeiling float32
 	// Area Operations Floor relative to WGS84. If unknown: -1000 m.
 	AreaFloor float32
+	// When classification_type is MAV_ODID_CLASSIFICATION_TYPE_EU, specifies the category of the UA.
+	CategoryEu MAV_ODID_CATEGORY_EU `mavenum:"uint8"`
+	// When classification_type is MAV_ODID_CLASSIFICATION_TYPE_EU, specifies the class of the UA.
+	ClassEu MAV_ODID_CLASS_EU `mavenum:"uint8"`
 }
 
 func (*MessageOpenDroneIdSystem) GetId() uint32 {

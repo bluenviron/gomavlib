@@ -19758,6 +19758,10 @@ func (*MessageGimbalDeviceSetAttitude) GetId() uint32 {
 
 // Message reporting the status of a gimbal device. This message should be broadcasted by a gimbal device component. The angles encoded in the quaternion are in the global frame (roll: positive is tilt to the right, pitch: positive is tilting up, yaw is turn to the right). This message should be broadcast at a low regular rate (e.g. 10Hz).
 type MessageGimbalDeviceAttitudeStatus struct {
+	// System ID
+	TargetSystem uint8
+	// Component ID
+	TargetComponent uint8
 	// Timestamp (time since system boot).
 	TimeBootMs uint32
 	// Current gimbal flags set.
@@ -19800,6 +19804,10 @@ type MessageAutopilotStateForGimbalDevice struct {
 	VEstimatedDelayUs uint32
 	// Feed forward Z component of angular velocity, positive is yawing to the right, NaN to be ignored. This is to indicate if the autopilot is actively yawing.
 	FeedForwardAngularVelocityZ float32
+	// Bitmap indicating which estimator outputs are valid.
+	EstimatorStatus ESTIMATOR_STATUS_FLAGS `mavenum:"uint16"`
+	// The landed state. Is set to MAV_LANDED_STATE_UNDEFINED if landed state is unknown.
+	LandedState MAV_LANDED_STATE `mavenum:"uint8"`
 }
 
 func (*MessageAutopilotStateForGimbalDevice) GetId() uint32 {

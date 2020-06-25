@@ -72,6 +72,7 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessageCommandInt{},
 	&MessageCommandLong{},
 	&MessageCommandAck{},
+	&MessageCommandCancel{},
 	&MessageManualSetpoint{},
 	&MessageSetAttitudeTarget{},
 	&MessageAttitudeTarget{},
@@ -4063,7 +4064,7 @@ const (
 	MAV_CMD_NAV_LOITER_UNLIM MAV_CMD = 17
 	// Loiter around this waypoint for X turns
 	MAV_CMD_NAV_LOITER_TURNS MAV_CMD = 18
-	// Loiter at the specified latitude, longitude and altitude for a certain amount of time. Multicopter vehicles stop at the point (within a vehicle-specific acceptance radius). Forward-moving vehicles (e.g. fixed-wing) circle the point with the specified radius/direction. If the Heading Required parameter (2) is non-zero forward moving aircraft will only leave the loiter circle once heading towards the next waypoint.
+	// Loiter at the specified latitude, longitude and altitude for a certain amount of time. Multicopter vehicles stop at the point (within a vehicle-specific acceptance radius). Forward-only moving vehicles (e.g. fixed-wing) circle the point with the specified radius/direction. If the Heading Required parameter (2) is non-zero forward moving aircraft will only leave the loiter circle once heading towards the next waypoint.
 	MAV_CMD_NAV_LOITER_TIME MAV_CMD = 19
 	// Return to launch location
 	MAV_CMD_NAV_RETURN_TO_LAUNCH MAV_CMD = 20
@@ -4079,7 +4080,7 @@ const (
 	MAV_CMD_NAV_FOLLOW MAV_CMD = 25
 	// Continue on the current course and climb/descend to specified altitude.  When the altitude is reached continue to the next command (i.e., don't proceed to the next command until the desired altitude is reached.
 	MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT MAV_CMD = 30
-	// Begin loiter at the specified Latitude and Longitude.  If Lat=Lon=0, then loiter at the current position.  Don't consider the navigation command complete (don't leave loiter) until the altitude has been reached.  Additionally, if the Heading Required parameter is non-zero the  aircraft will not leave the loiter until heading toward the next waypoint.
+	// Begin loiter at the specified Latitude and Longitude.  If Lat=Lon=0, then loiter at the current position.  Don't consider the navigation command complete (don't leave loiter) until the altitude has been reached. Additionally, if the Heading Required parameter is non-zero the aircraft will not leave the loiter until heading toward the next waypoint.
 	MAV_CMD_NAV_LOITER_TO_ALT MAV_CMD = 31
 	// Begin following a target
 	MAV_CMD_DO_FOLLOW MAV_CMD = 32
@@ -8852,7 +8853,7 @@ const (
 	MAV_PROTOCOL_CAPABILITY_MISSION_FLOAT MAV_PROTOCOL_CAPABILITY = 1
 	// Autopilot supports the new param float message type.
 	MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT MAV_PROTOCOL_CAPABILITY = 2
-	// Autopilot supports MISSION_INT scaled integer message type.
+	// Autopilot supports MISSION_ITEM_INT scaled integer message type.
 	MAV_PROTOCOL_CAPABILITY_MISSION_INT MAV_PROTOCOL_CAPABILITY = 4
 	// Autopilot supports COMMAND_INT scaled integer message type.
 	MAV_PROTOCOL_CAPABILITY_COMMAND_INT MAV_PROTOCOL_CAPABILITY = 8
@@ -9006,8 +9007,10 @@ const (
 	MAV_RESULT_UNSUPPORTED MAV_RESULT = 3
 	// Command is valid, but execution has failed. This is used to indicate any non-temporary or unexpected problem, i.e. any problem that must be fixed before the command can succeed/be retried. For example, attempting to write a file when out of memory, attempting to arm when sensors are not calibrated, etc.
 	MAV_RESULT_FAILED MAV_RESULT = 4
-	// Command is valid and is being executed. This will be followed by further progress updates, i.e. the component may send further COMMAND_ACK messages with result MAV_RESULT_IN_PROGRESS (at a rate decided by the implementation), and must terminate by sending a COMMAND_ACK message with final result of the operation. The COMMAND_ACK.progress field can be used to indicate the progress of the operation. There is no need for the sender to retry the command, but if done during execution, the component will return MAV_RESULT_IN_PROGRESS with an updated progress.
+	// Command is valid and is being executed. This will be followed by further progress updates, i.e. the component may send further COMMAND_ACK messages with result MAV_RESULT_IN_PROGRESS (at a rate decided by the implementation), and must terminate by sending a COMMAND_ACK message with final result of the operation. The COMMAND_ACK.progress field can be used to indicate the progress of the operation.
 	MAV_RESULT_IN_PROGRESS MAV_RESULT = 5
+	// Command has been cancelled (as a result of receiving a COMMAND_CANCEL message).
+	MAV_RESULT_CANCELLED MAV_RESULT = 6
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -9025,6 +9028,8 @@ func (e MAV_RESULT) MarshalText() ([]byte, error) {
 		return []byte("MAV_RESULT_FAILED"), nil
 	case MAV_RESULT_IN_PROGRESS:
 		return []byte("MAV_RESULT_IN_PROGRESS"), nil
+	case MAV_RESULT_CANCELLED:
+		return []byte("MAV_RESULT_CANCELLED"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -9049,6 +9054,9 @@ func (e *MAV_RESULT) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_RESULT_IN_PROGRESS":
 		*e = MAV_RESULT_IN_PROGRESS
+		return nil
+	case "MAV_RESULT_CANCELLED":
+		*e = MAV_RESULT_CANCELLED
 		return nil
 	}
 	return errors.New("invalid value")
@@ -13140,6 +13148,20 @@ type MessageCommandAck struct {
 
 func (*MessageCommandAck) GetId() uint32 {
 	return 77
+}
+
+// Cancel a long running command. The target system should respond with a COMMAND_ACK to the original command with result=MAV_RESULT_CANCELLED if the long running process was cancelled. If it has already completed, the cancel action can be ignored. The cancel action can be retried until some sort of acknowledgement to the original command has been received. The command microservice is documented at https://mavlink.io/en/services/command.html
+type MessageCommandCancel struct {
+	// System executing long running command. Should not be broadcast (0).
+	TargetSystem uint8
+	// Component executing long running command.
+	TargetComponent uint8
+	// Command ID (of command to cancel).
+	Command MAV_CMD `mavenum:"uint16"`
+}
+
+func (*MessageCommandCancel) GetId() uint32 {
+	return 80
 }
 
 // Setpoint in roll, pitch, yaw and thrust from the operator

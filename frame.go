@@ -9,7 +9,7 @@ const (
 // Frame is the interface implemented by frames of every supported version.
 type Frame interface {
 	// the frame version.
-	GetVersion() int
+	GetVersion() Version
 	// the system id of the author of the frame.
 	GetSystemId() byte
 	// the component id of the author of the frame.
@@ -43,8 +43,8 @@ func (f *FrameV1) Clone() Frame {
 }
 
 // GetVersion is part of the Frame interface.
-func (f *FrameV1) GetVersion() int {
-	return 1
+func (f *FrameV1) GetVersion() Version {
+	return V1
 }
 
 // GetSystemId is part of the Frame interface.
@@ -98,8 +98,8 @@ func (f *FrameV2) Clone() Frame {
 }
 
 // GetVersion is part of the Frame interface.
-func (f *FrameV2) GetVersion() int {
-	return 2
+func (f *FrameV2) GetVersion() Version {
+	return V2
 }
 
 // GetSystemId is part of the Frame interface.

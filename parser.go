@@ -12,15 +12,23 @@ import (
 // 1st January 2015 GMT
 var signatureReferenceDate = time.Date(2015, 01, 01, 0, 0, 0, 0, time.UTC)
 
-// Version allows to set the frame version used to wrap outgoing messages.
+// Version is the Mavlink version of a frame
 type Version int
 
 const (
-	// V2 wraps outgoing messages in v2 frames.
-	V2 Version = iota + 1
-	// V1 wraps outgoing messages in v1 frames.
-	V1
+	// V2 is a Mavlink 2.0 frame
+	V2 Version = 2
+	// V1 is a Mavlink 1.0 frame
+	V1 Version = 1
 )
+
+// String implements fmt.Stringer and returns the version label.
+func (v Version) String() string {
+	if v == V1 {
+		return "V1"
+	}
+	return "V2"
+}
 
 // ParserError is the error returned in case of non-fatal parsing errors.
 type ParserError struct {

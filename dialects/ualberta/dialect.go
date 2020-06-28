@@ -4182,7 +4182,7 @@ const (
 	MAV_CMD_PREFLIGHT_STORAGE MAV_CMD = 245
 	// Request the reboot or shutdown of system components.
 	MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN MAV_CMD = 246
-	// Request a target system to start, cancel, or restart upgrade of one (or all) of its components. For example, the command might be sent to a companion computer to cause it to upgrade a connected flight controller. The system doing the upgrade will report progress using the normal command protocol sequence (COMMAND_ACK regularly sent with result=MAV_RESULT_IN_PROGRESS, followed by a final result of MAV_RESULT_ACCEPTED or MAV_RESULT_FAILED). The operation can be cancelled, in which case the updating system would send COMMAND_ACK with MAV_RESULT_ACCEPTED. The operation can be restarted, in which case the updating system should respond with progress updates (as though it had a new message).
+	// Request a target system to start an upgrade of one (or all) of its components. For example, the command might be sent to a companion computer to cause it to upgrade a connected flight controller. The system doing the upgrade will report progress using the normal command protocol sequence for a long running operation. Command protocol information: https://mavlink.io/en/services/command.html.
 	MAV_CMD_DO_UPGRADE MAV_CMD = 247
 	// Override current mission with command to pause mission, pause mission and move to position, continue/resume mission. When param 1 indicates that the mission is paused (MAV_GOTO_DO_HOLD), param 2 defines whether it holds in place or moves to another position.
 	MAV_CMD_OVERRIDE_GOTO MAV_CMD = 252

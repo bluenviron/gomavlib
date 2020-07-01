@@ -177,6 +177,7 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessageGimbalDeviceSetAttitude{},
 	&MessageGimbalDeviceAttitudeStatus{},
 	&MessageAutopilotStateForGimbalDevice{},
+	&MessageGimbalManagerSetTiltpan{},
 	&MessageWifiConfigAp{},
 	&MessageProtocolVersion{},
 	&MessageAisVessel{},
@@ -3995,7 +3996,7 @@ const (
 	MAV_CMD_DO_SET_CAM_TRIGG_DIST MAV_CMD = 206
 	// Mission command to enable the geofence
 	MAV_CMD_DO_FENCE_ENABLE MAV_CMD = 207
-	// Mission command to trigger a parachute
+	// Mission item/command to release a parachute or enable/disable auto release.
 	MAV_CMD_DO_PARACHUTE MAV_CMD = 208
 	// Mission command to perform motor test.
 	MAV_CMD_DO_MOTOR_TEST MAV_CMD = 209
@@ -4078,7 +4079,7 @@ const (
 	// Jump to the matching tag in the mission list. Repeat this action for the specified number of times. A mission should contain a single matching tag for each jump. If this is not the case then a jump to a missing tag should complete the mission, and a jump where there are multiple matching tags should always select the one with the lowest mission sequence number.
 	MAV_CMD_DO_JUMP_TAG MAV_CMD = 601
 	// High level setpoint to be sent to a gimbal manager to set a gimbal attitude. It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. Note: a gimbal is never to react to this command but only the gimbal manager.
-	MAV_CMD_DO_GIMBAL_MANAGER_ATTITUDE MAV_CMD = 1000
+	MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN MAV_CMD = 1000
 	// If the gimbal manager supports visual tracking (GIMBAL_MANAGER_CAP_FLAGS_HAS_TRACKING_POINT is set), this command allows to initiate the tracking. Such a tracking gimbal manager would usually be an integrated camera/gimbal, or alternatively a companion computer connected to a camera.
 	MAV_CMD_DO_GIMBAL_MANAGER_TRACK_POINT MAV_CMD = 1001
 	// If the gimbal supports visual tracking (GIMBAL_MANAGER_CAP_FLAGS_HAS_TRACKING_RECTANGLE is set), this command allows to initiate the tracking. Such a tracking gimbal manager would usually be an integrated camera/gimbal, or alternatively a companion computer connected to a camera.
@@ -4374,8 +4375,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_JUMP_TAG"), nil
 	case MAV_CMD_DO_JUMP_TAG:
 		return []byte("MAV_CMD_DO_JUMP_TAG"), nil
-	case MAV_CMD_DO_GIMBAL_MANAGER_ATTITUDE:
-		return []byte("MAV_CMD_DO_GIMBAL_MANAGER_ATTITUDE"), nil
+	case MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN:
+		return []byte("MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN"), nil
 	case MAV_CMD_DO_GIMBAL_MANAGER_TRACK_POINT:
 		return []byte("MAV_CMD_DO_GIMBAL_MANAGER_TRACK_POINT"), nil
 	case MAV_CMD_DO_GIMBAL_MANAGER_TRACK_RECTANGLE:
@@ -4772,8 +4773,8 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 	case "MAV_CMD_DO_JUMP_TAG":
 		*e = MAV_CMD_DO_JUMP_TAG
 		return nil
-	case "MAV_CMD_DO_GIMBAL_MANAGER_ATTITUDE":
-		*e = MAV_CMD_DO_GIMBAL_MANAGER_ATTITUDE
+	case "MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN":
+		*e = MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN
 		return nil
 	case "MAV_CMD_DO_GIMBAL_MANAGER_TRACK_POINT":
 		*e = MAV_CMD_DO_GIMBAL_MANAGER_TRACK_POINT
@@ -10479,15 +10480,15 @@ func (e ORBIT_YAW_BEHAVIOUR) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
-//
+// Parachute actions. Trigger release and enable/disable auto-release.
 type PARACHUTE_ACTION int
 
 const (
-	// Disable parachute release.
+	// Disable auto-release of parachute (i.e. release triggered by crash detectors).
 	PARACHUTE_DISABLE PARACHUTE_ACTION = 0
-	// Enable parachute release.
+	// Enable auto-release of parachute.
 	PARACHUTE_ENABLE PARACHUTE_ACTION = 1
-	// Release parachute.
+	// Release parachute and kill motors.
 	PARACHUTE_RELEASE PARACHUTE_ACTION = 2
 )
 
@@ -16238,6 +16239,30 @@ type MessageAutopilotStateForGimbalDevice struct {
 
 func (*MessageAutopilotStateForGimbalDevice) GetId() uint32 {
 	return 286
+}
+
+// High level message to control a gimbal's tilt and pan angles. This message is to be sent to the gimbal manager (e.g. from a ground station). Angles and rates can be set to NaN according to use case.
+type MessageGimbalManagerSetTiltpan struct {
+	// System ID
+	TargetSystem uint8
+	// Component ID
+	TargetComponent uint8
+	// High level gimbal manager flags to use.
+	Flags GIMBAL_MANAGER_FLAGS `mavenum:"uint32"`
+	// Component ID of gimbal device to address (or 1-6 for non-MAVLink gimbal), 0 for all gimbal device components. (Send command multiple times for more than one but not all gimbals.)
+	GimbalDeviceId uint8
+	// Tilt/pitch angle (positive: up, negative: down, NaN to be ignored).
+	Tilt float32
+	// Pan/yaw angle (positive: to the right, negative: to the left, NaN to be ignored).
+	Pan float32
+	// Tilt/pitch angular rate (positive: up, negative: down, NaN to be ignored).
+	TiltRate float32
+	// Pan/yaw angular rate (positive: to the right, negative: to the left, NaN to be ignored).
+	PanRate float32
+}
+
+func (*MessageGimbalManagerSetTiltpan) GetId() uint32 {
+	return 287
 }
 
 // Configure WiFi AP SSID, password, and mode. This message is re-emitted as an acknowledgement by the AP. The message may also be explicitly requested using MAV_CMD_REQUEST_MESSAGE

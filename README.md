@@ -1,9 +1,9 @@
 
 # gomavlib
 
-[![GoDoc](https://godoc.org/github.com/aler9/gomavlib?status.svg)](https://godoc.org/github.com/aler9/gomavlib)
-[![Go Report Card](https://goreportcard.com/badge/github.com/aler9/gomavlib)](https://goreportcard.com/report/github.com/aler9/gomavlib)
 [![Build Status](https://travis-ci.org/aler9/gomavlib.svg?branch=master)](https://travis-ci.org/aler9/gomavlib)
+[![Go Report Card](https://goreportcard.com/badge/github.com/aler9/gomavlib)](https://goreportcard.com/report/github.com/aler9/gomavlib)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-blue)](https://pkg.go.dev/github.com/aler9/gomavlib?tab=doc)
 
 gomavlib is a library that implements the Mavlink protocol (2.0 and 1.0) in the Go programming language. It can power UGVs, UAVs, ground stations, monitoring systems or routers acting in a Mavlink network.
 
@@ -66,7 +66,7 @@ dialgen my_dialect.xml > dialect.go
 
 ## Documentation
 
-https://godoc.org/github.com/aler9/gomavlib
+https://pkg.go.dev/github.com/aler9/gomavlib
 
 ## Testing
 

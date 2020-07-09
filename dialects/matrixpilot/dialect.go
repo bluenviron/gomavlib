@@ -194,6 +194,7 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessageTrajectoryRepresentationBezier{},
 	&MessageCellularStatus{},
 	&MessageIsbdLinkStatus{},
+	&MessageCellularConfig{},
 	&MessageRawRpm{},
 	&MessageUtmGlobalPosition{},
 	&MessageDebugFloatArray{},
@@ -1746,6 +1747,120 @@ func (e CAMERA_ZOOM_TYPE) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
+// Possible responses from a CELLULAR_CONFIG message.
+type CELLULAR_CONFIG_RESPONSE int
+
+const (
+	// Changes accepted.
+	CELLULAR_CONFIG_RESPONSE_ACCEPTED CELLULAR_CONFIG_RESPONSE = 0
+	// Invalid APN.
+	CELLULAR_CONFIG_RESPONSE_APN_ERROR CELLULAR_CONFIG_RESPONSE = 1
+	// Invalid PIN.
+	CELLULAR_CONFIG_RESPONSE_PIN_ERROR CELLULAR_CONFIG_RESPONSE = 2
+	// Changes rejected.
+	CELLULAR_CONFIG_RESPONSE_REJECTED CELLULAR_CONFIG_RESPONSE = 3
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e CELLULAR_CONFIG_RESPONSE) MarshalText() ([]byte, error) {
+	switch e {
+	case CELLULAR_CONFIG_RESPONSE_ACCEPTED:
+		return []byte("CELLULAR_CONFIG_RESPONSE_ACCEPTED"), nil
+	case CELLULAR_CONFIG_RESPONSE_APN_ERROR:
+		return []byte("CELLULAR_CONFIG_RESPONSE_APN_ERROR"), nil
+	case CELLULAR_CONFIG_RESPONSE_PIN_ERROR:
+		return []byte("CELLULAR_CONFIG_RESPONSE_PIN_ERROR"), nil
+	case CELLULAR_CONFIG_RESPONSE_REJECTED:
+		return []byte("CELLULAR_CONFIG_RESPONSE_REJECTED"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *CELLULAR_CONFIG_RESPONSE) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "CELLULAR_CONFIG_RESPONSE_ACCEPTED":
+		*e = CELLULAR_CONFIG_RESPONSE_ACCEPTED
+		return nil
+	case "CELLULAR_CONFIG_RESPONSE_APN_ERROR":
+		*e = CELLULAR_CONFIG_RESPONSE_APN_ERROR
+		return nil
+	case "CELLULAR_CONFIG_RESPONSE_PIN_ERROR":
+		*e = CELLULAR_CONFIG_RESPONSE_PIN_ERROR
+		return nil
+	case "CELLULAR_CONFIG_RESPONSE_REJECTED":
+		*e = CELLULAR_CONFIG_RESPONSE_REJECTED
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e CELLULAR_CONFIG_RESPONSE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+// These flags are used to diagnose the failure state of CELLULAR_STATUS
+type CELLULAR_NETWORK_FAILED_REASON int
+
+const (
+	// No error
+	CELLULAR_NETWORK_FAILED_REASON_NONE CELLULAR_NETWORK_FAILED_REASON = 0
+	// Error state is unknown
+	CELLULAR_NETWORK_FAILED_REASON_UNKNOWN CELLULAR_NETWORK_FAILED_REASON = 1
+	// SIM is required for the modem but missing
+	CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING CELLULAR_NETWORK_FAILED_REASON = 2
+	// SIM is available, but not usuable for connection
+	CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR CELLULAR_NETWORK_FAILED_REASON = 3
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e CELLULAR_NETWORK_FAILED_REASON) MarshalText() ([]byte, error) {
+	switch e {
+	case CELLULAR_NETWORK_FAILED_REASON_NONE:
+		return []byte("CELLULAR_NETWORK_FAILED_REASON_NONE"), nil
+	case CELLULAR_NETWORK_FAILED_REASON_UNKNOWN:
+		return []byte("CELLULAR_NETWORK_FAILED_REASON_UNKNOWN"), nil
+	case CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING:
+		return []byte("CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING"), nil
+	case CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR:
+		return []byte("CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *CELLULAR_NETWORK_FAILED_REASON) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "CELLULAR_NETWORK_FAILED_REASON_NONE":
+		*e = CELLULAR_NETWORK_FAILED_REASON_NONE
+		return nil
+	case "CELLULAR_NETWORK_FAILED_REASON_UNKNOWN":
+		*e = CELLULAR_NETWORK_FAILED_REASON_UNKNOWN
+		return nil
+	case "CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING":
+		*e = CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING
+		return nil
+	case "CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR":
+		*e = CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e CELLULAR_NETWORK_FAILED_REASON) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Cellular network radio type
 type CELLULAR_NETWORK_RADIO_TYPE int
 
@@ -1811,34 +1926,118 @@ func (e CELLULAR_NETWORK_RADIO_TYPE) String() string {
 }
 
 // These flags encode the cellular network status
-type CELLULAR_NETWORK_STATUS_FLAG int
+type CELLULAR_STATUS_FLAG int
 
 const (
-	// Roaming is active
-	CELLULAR_NETWORK_STATUS_FLAG_ROAMING CELLULAR_NETWORK_STATUS_FLAG = 1
+	// State unknown or not reportable.
+	CELLULAR_STATUS_FLAG_UNKNOWN CELLULAR_STATUS_FLAG = 0
+	// Modem is unusable
+	CELLULAR_STATUS_FLAG_FAILED CELLULAR_STATUS_FLAG = 1
+	// Modem is being initialized
+	CELLULAR_STATUS_FLAG_INITIALIZING CELLULAR_STATUS_FLAG = 2
+	// Modem is locked
+	CELLULAR_STATUS_FLAG_LOCKED CELLULAR_STATUS_FLAG = 3
+	// Modem is not enabled and is powered down
+	CELLULAR_STATUS_FLAG_DISABLED CELLULAR_STATUS_FLAG = 4
+	// Modem is currently transitioning to the CELLULAR_STATUS_FLAG_DISABLED state
+	CELLULAR_STATUS_FLAG_DISABLING CELLULAR_STATUS_FLAG = 5
+	// Modem is currently transitioning to the CELLULAR_STATUS_FLAG_ENABLED state
+	CELLULAR_STATUS_FLAG_ENABLING CELLULAR_STATUS_FLAG = 6
+	// Modem is enabled and powered on but not registered with a network provider and not available for data connections
+	CELLULAR_STATUS_FLAG_ENABLED CELLULAR_STATUS_FLAG = 7
+	// Modem is searching for a network provider to register
+	CELLULAR_STATUS_FLAG_SEARCHING CELLULAR_STATUS_FLAG = 8
+	// Modem is registered with a network provider, and data connections and messaging may be available for use
+	CELLULAR_STATUS_FLAG_REGISTERED CELLULAR_STATUS_FLAG = 9
+	// Modem is disconnecting and deactivating the last active packet data bearer. This state will not be entered if more than one packet data bearer is active and one of the active bearers is deactivated
+	CELLULAR_STATUS_FLAG_DISCONNECTING CELLULAR_STATUS_FLAG = 10
+	// Modem is activating and connecting the first packet data bearer. Subsequent bearer activations when another bearer is already active do not cause this state to be entered
+	CELLULAR_STATUS_FLAG_CONNECTING CELLULAR_STATUS_FLAG = 11
+	// One or more packet data bearers is active and connected
+	CELLULAR_STATUS_FLAG_CONNECTED CELLULAR_STATUS_FLAG = 12
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
-func (e CELLULAR_NETWORK_STATUS_FLAG) MarshalText() ([]byte, error) {
+func (e CELLULAR_STATUS_FLAG) MarshalText() ([]byte, error) {
 	switch e {
-	case CELLULAR_NETWORK_STATUS_FLAG_ROAMING:
-		return []byte("CELLULAR_NETWORK_STATUS_FLAG_ROAMING"), nil
+	case CELLULAR_STATUS_FLAG_UNKNOWN:
+		return []byte("CELLULAR_STATUS_FLAG_UNKNOWN"), nil
+	case CELLULAR_STATUS_FLAG_FAILED:
+		return []byte("CELLULAR_STATUS_FLAG_FAILED"), nil
+	case CELLULAR_STATUS_FLAG_INITIALIZING:
+		return []byte("CELLULAR_STATUS_FLAG_INITIALIZING"), nil
+	case CELLULAR_STATUS_FLAG_LOCKED:
+		return []byte("CELLULAR_STATUS_FLAG_LOCKED"), nil
+	case CELLULAR_STATUS_FLAG_DISABLED:
+		return []byte("CELLULAR_STATUS_FLAG_DISABLED"), nil
+	case CELLULAR_STATUS_FLAG_DISABLING:
+		return []byte("CELLULAR_STATUS_FLAG_DISABLING"), nil
+	case CELLULAR_STATUS_FLAG_ENABLING:
+		return []byte("CELLULAR_STATUS_FLAG_ENABLING"), nil
+	case CELLULAR_STATUS_FLAG_ENABLED:
+		return []byte("CELLULAR_STATUS_FLAG_ENABLED"), nil
+	case CELLULAR_STATUS_FLAG_SEARCHING:
+		return []byte("CELLULAR_STATUS_FLAG_SEARCHING"), nil
+	case CELLULAR_STATUS_FLAG_REGISTERED:
+		return []byte("CELLULAR_STATUS_FLAG_REGISTERED"), nil
+	case CELLULAR_STATUS_FLAG_DISCONNECTING:
+		return []byte("CELLULAR_STATUS_FLAG_DISCONNECTING"), nil
+	case CELLULAR_STATUS_FLAG_CONNECTING:
+		return []byte("CELLULAR_STATUS_FLAG_CONNECTING"), nil
+	case CELLULAR_STATUS_FLAG_CONNECTED:
+		return []byte("CELLULAR_STATUS_FLAG_CONNECTED"), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *CELLULAR_NETWORK_STATUS_FLAG) UnmarshalText(text []byte) error {
+func (e *CELLULAR_STATUS_FLAG) UnmarshalText(text []byte) error {
 	switch string(text) {
-	case "CELLULAR_NETWORK_STATUS_FLAG_ROAMING":
-		*e = CELLULAR_NETWORK_STATUS_FLAG_ROAMING
+	case "CELLULAR_STATUS_FLAG_UNKNOWN":
+		*e = CELLULAR_STATUS_FLAG_UNKNOWN
+		return nil
+	case "CELLULAR_STATUS_FLAG_FAILED":
+		*e = CELLULAR_STATUS_FLAG_FAILED
+		return nil
+	case "CELLULAR_STATUS_FLAG_INITIALIZING":
+		*e = CELLULAR_STATUS_FLAG_INITIALIZING
+		return nil
+	case "CELLULAR_STATUS_FLAG_LOCKED":
+		*e = CELLULAR_STATUS_FLAG_LOCKED
+		return nil
+	case "CELLULAR_STATUS_FLAG_DISABLED":
+		*e = CELLULAR_STATUS_FLAG_DISABLED
+		return nil
+	case "CELLULAR_STATUS_FLAG_DISABLING":
+		*e = CELLULAR_STATUS_FLAG_DISABLING
+		return nil
+	case "CELLULAR_STATUS_FLAG_ENABLING":
+		*e = CELLULAR_STATUS_FLAG_ENABLING
+		return nil
+	case "CELLULAR_STATUS_FLAG_ENABLED":
+		*e = CELLULAR_STATUS_FLAG_ENABLED
+		return nil
+	case "CELLULAR_STATUS_FLAG_SEARCHING":
+		*e = CELLULAR_STATUS_FLAG_SEARCHING
+		return nil
+	case "CELLULAR_STATUS_FLAG_REGISTERED":
+		*e = CELLULAR_STATUS_FLAG_REGISTERED
+		return nil
+	case "CELLULAR_STATUS_FLAG_DISCONNECTING":
+		*e = CELLULAR_STATUS_FLAG_DISCONNECTING
+		return nil
+	case "CELLULAR_STATUS_FLAG_CONNECTING":
+		*e = CELLULAR_STATUS_FLAG_CONNECTING
+		return nil
+	case "CELLULAR_STATUS_FLAG_CONNECTED":
+		*e = CELLULAR_STATUS_FLAG_CONNECTED
 		return nil
 	}
 	return errors.New("invalid value")
 }
 
 // String implements the fmt.Stringer interface.
-func (e CELLULAR_NETWORK_STATUS_FLAG) String() string {
+func (e CELLULAR_STATUS_FLAG) String() string {
 	byts, err := e.MarshalText()
 	if err == nil {
 		return string(byts)
@@ -3984,6 +4183,8 @@ const (
 	MAV_CMD_DO_FLIGHTTERMINATION MAV_CMD = 185
 	// Change altitude set point.
 	MAV_CMD_DO_CHANGE_ALTITUDE MAV_CMD = 186
+	// Sets actuators (e.g. servos) to a desired value. The actuator numbers are mapped to specific outputs (e.g. on any MAIN or AUX PWM or UAVCAN) using a flight-stack specific mechanism (i.e. a parameter).
+	MAV_CMD_DO_SET_ACTUATOR MAV_CMD = 187
 	// Mission command to perform a landing. This is used as a marker in a mission to tell the autopilot where a sequence of mission items that represents a landing starts. It may also be sent via a COMMAND_LONG to trigger a landing, in which case the nearest (geographically) landing sequence in the mission will be used. The Latitude/Longitude is optional, and may be set to 0 if not needed. If specified then it will be used to help find the closest landing sequence.
 	MAV_CMD_DO_LAND_START MAV_CMD = 189
 	// Mission command to perform a landing from a rally point.
@@ -4283,6 +4484,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_DO_FLIGHTTERMINATION"), nil
 	case MAV_CMD_DO_CHANGE_ALTITUDE:
 		return []byte("MAV_CMD_DO_CHANGE_ALTITUDE"), nil
+	case MAV_CMD_DO_SET_ACTUATOR:
+		return []byte("MAV_CMD_DO_SET_ACTUATOR"), nil
 	case MAV_CMD_DO_LAND_START:
 		return []byte("MAV_CMD_DO_LAND_START"), nil
 	case MAV_CMD_DO_RALLY_LAND:
@@ -4623,6 +4826,9 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_DO_CHANGE_ALTITUDE":
 		*e = MAV_CMD_DO_CHANGE_ALTITUDE
+		return nil
+	case "MAV_CMD_DO_SET_ACTUATOR":
+		*e = MAV_CMD_DO_SET_ACTUATOR
 		return nil
 	case "MAV_CMD_DO_LAND_START":
 		*e = MAV_CMD_DO_LAND_START
@@ -16108,20 +16314,20 @@ func (*MessageTrajectoryRepresentationBezier) GetId() uint32 {
 
 // Report current used cellular network status
 type MessageCellularStatus struct {
-	// Status bitmap
-	Status CELLULAR_NETWORK_STATUS_FLAG `mavenum:"uint16"`
+	// Cellular modem status
+	Status CELLULAR_STATUS_FLAG `mavenum:"uint8"`
+	// Failure reason when status in in CELLUAR_STATUS_FAILED
+	FailureReason CELLULAR_NETWORK_FAILED_REASON `mavenum:"uint8"`
 	// Cellular network radio type: gsm, cdma, lte...
 	Type CELLULAR_NETWORK_RADIO_TYPE `mavenum:"uint8"`
-	// Cellular network RSSI/RSRP in dBm, absolute value
+	// Signal quality in percent. If unknown, set to UINT8_MAX
 	Quality uint8
-	// Mobile country code. If unknown, set to: UINT16_MAX
+	// Mobile country code. If unknown, set to UINT16_MAX
 	Mcc uint16
-	// Mobile network code. If unknown, set to: UINT16_MAX
+	// Mobile network code. If unknown, set to UINT16_MAX
 	Mnc uint16
-	// Location area code. If unknown, set to: 0
+	// Location area code. If unknown, set to 0
 	Lac uint16
-	// Cell ID. If unknown, set to: UINT32_MAX
-	Cid uint32
 }
 
 func (*MessageCellularStatus) GetId() uint32 {
@@ -16150,6 +16356,26 @@ type MessageIsbdLinkStatus struct {
 
 func (*MessageIsbdLinkStatus) GetId() uint32 {
 	return 335
+}
+
+// Configure cellular modems. This message is re-emitted as an acknowledgement by the modem. The message may also be explicitly requested using MAV_CMD_REQUEST_MESSAGE.
+type MessageCellularConfig struct {
+	// Enable / disable PIN on the SIM card. 0: Unchange setttings 1: PIN disabled, 2: PIN enabled.
+	EnablePin uint8
+	// PIN sent to the simcard. Blank when PIN is disabled. Empty when message is sent back as a response.
+	Pin string `mavlen:"32"`
+	// Name of the cellular APN. Blank to leave it unchanged when setting. Current APN when sent back as a response.
+	Apn string `mavlen:"32"`
+	// Required PUK code in case the user failed to authenticate 3 times with the PIN.
+	Puk string `mavlen:"32"`
+	// Configure whether roaming is allowed, 0: settings not changed, 1: roaming disabled, 2: roaming enabled.
+	Roaming uint8
+	// Message acceptance response (sent back to GS).
+	Response CELLULAR_CONFIG_RESPONSE `mavenum:"uint8"`
+}
+
+func (*MessageCellularConfig) GetId() uint32 {
+	return 336
 }
 
 // RPM sensor data message.

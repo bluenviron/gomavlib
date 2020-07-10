@@ -178,6 +178,8 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessageGimbalDeviceAttitudeStatus{},
 	&MessageAutopilotStateForGimbalDevice{},
 	&MessageGimbalManagerSetTiltpan{},
+	&MessageEscInfo{},
+	&MessageEscStatus{},
 	&MessageWifiConfigAp{},
 	&MessageProtocolVersion{},
 	&MessageAisVessel{},
@@ -2096,6 +2098,162 @@ func (e *COMP_METADATA_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e COMP_METADATA_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+// Indicates the ESC connection type.
+type ESC_CONNECTION_TYPE int
+
+const (
+	// Traditional PPM ESC.
+	ESC_CONNECTION_TYPE_PPM ESC_CONNECTION_TYPE = 0
+	// Serial Bus connected ESC.
+	ESC_CONNECTION_TYPE_SERIAL ESC_CONNECTION_TYPE = 1
+	// One Shot PPM ESC.
+	ESC_CONNECTION_TYPE_ONESHOT ESC_CONNECTION_TYPE = 2
+	// I2C ESC.
+	ESC_CONNECTION_TYPE_I2C ESC_CONNECTION_TYPE = 3
+	// CAN-Bus ESC.
+	ESC_CONNECTION_TYPE_CAN ESC_CONNECTION_TYPE = 4
+	// DShot ESC.
+	ESC_CONNECTION_TYPE_DSHOT ESC_CONNECTION_TYPE = 5
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e ESC_CONNECTION_TYPE) MarshalText() ([]byte, error) {
+	switch e {
+	case ESC_CONNECTION_TYPE_PPM:
+		return []byte("ESC_CONNECTION_TYPE_PPM"), nil
+	case ESC_CONNECTION_TYPE_SERIAL:
+		return []byte("ESC_CONNECTION_TYPE_SERIAL"), nil
+	case ESC_CONNECTION_TYPE_ONESHOT:
+		return []byte("ESC_CONNECTION_TYPE_ONESHOT"), nil
+	case ESC_CONNECTION_TYPE_I2C:
+		return []byte("ESC_CONNECTION_TYPE_I2C"), nil
+	case ESC_CONNECTION_TYPE_CAN:
+		return []byte("ESC_CONNECTION_TYPE_CAN"), nil
+	case ESC_CONNECTION_TYPE_DSHOT:
+		return []byte("ESC_CONNECTION_TYPE_DSHOT"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *ESC_CONNECTION_TYPE) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "ESC_CONNECTION_TYPE_PPM":
+		*e = ESC_CONNECTION_TYPE_PPM
+		return nil
+	case "ESC_CONNECTION_TYPE_SERIAL":
+		*e = ESC_CONNECTION_TYPE_SERIAL
+		return nil
+	case "ESC_CONNECTION_TYPE_ONESHOT":
+		*e = ESC_CONNECTION_TYPE_ONESHOT
+		return nil
+	case "ESC_CONNECTION_TYPE_I2C":
+		*e = ESC_CONNECTION_TYPE_I2C
+		return nil
+	case "ESC_CONNECTION_TYPE_CAN":
+		*e = ESC_CONNECTION_TYPE_CAN
+		return nil
+	case "ESC_CONNECTION_TYPE_DSHOT":
+		*e = ESC_CONNECTION_TYPE_DSHOT
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e ESC_CONNECTION_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+// Flags to report ESC failures.
+type ESC_FAILURE_FLAGS int
+
+const (
+	// No ESC failure.
+	ESC_FAILURE_NONE ESC_FAILURE_FLAGS = 0
+	// Over current failure.
+	ESC_FAILURE_OVER_CURRENT ESC_FAILURE_FLAGS = 1
+	// Over voltage failure.
+	ESC_FAILURE_OVER_VOLTAGE ESC_FAILURE_FLAGS = 2
+	// Over temperature failure.
+	ESC_FAILURE_OVER_TEMPERATURE ESC_FAILURE_FLAGS = 4
+	// Over RPM failure.
+	ESC_FAILURE_OVER_RPM ESC_FAILURE_FLAGS = 8
+	// Inconsistent command failure i.e. out of bounds.
+	ESC_FAILURE_INCONSISTENT_CMD ESC_FAILURE_FLAGS = 16
+	// Motor stuck failure.
+	ESC_FAILURE_MOTOR_STUCK ESC_FAILURE_FLAGS = 32
+	// Generic ESC failure.
+	ESC_FAILURE_GENERIC ESC_FAILURE_FLAGS = 64
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e ESC_FAILURE_FLAGS) MarshalText() ([]byte, error) {
+	switch e {
+	case ESC_FAILURE_NONE:
+		return []byte("ESC_FAILURE_NONE"), nil
+	case ESC_FAILURE_OVER_CURRENT:
+		return []byte("ESC_FAILURE_OVER_CURRENT"), nil
+	case ESC_FAILURE_OVER_VOLTAGE:
+		return []byte("ESC_FAILURE_OVER_VOLTAGE"), nil
+	case ESC_FAILURE_OVER_TEMPERATURE:
+		return []byte("ESC_FAILURE_OVER_TEMPERATURE"), nil
+	case ESC_FAILURE_OVER_RPM:
+		return []byte("ESC_FAILURE_OVER_RPM"), nil
+	case ESC_FAILURE_INCONSISTENT_CMD:
+		return []byte("ESC_FAILURE_INCONSISTENT_CMD"), nil
+	case ESC_FAILURE_MOTOR_STUCK:
+		return []byte("ESC_FAILURE_MOTOR_STUCK"), nil
+	case ESC_FAILURE_GENERIC:
+		return []byte("ESC_FAILURE_GENERIC"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *ESC_FAILURE_FLAGS) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "ESC_FAILURE_NONE":
+		*e = ESC_FAILURE_NONE
+		return nil
+	case "ESC_FAILURE_OVER_CURRENT":
+		*e = ESC_FAILURE_OVER_CURRENT
+		return nil
+	case "ESC_FAILURE_OVER_VOLTAGE":
+		*e = ESC_FAILURE_OVER_VOLTAGE
+		return nil
+	case "ESC_FAILURE_OVER_TEMPERATURE":
+		*e = ESC_FAILURE_OVER_TEMPERATURE
+		return nil
+	case "ESC_FAILURE_OVER_RPM":
+		*e = ESC_FAILURE_OVER_RPM
+		return nil
+	case "ESC_FAILURE_INCONSISTENT_CMD":
+		*e = ESC_FAILURE_INCONSISTENT_CMD
+		return nil
+	case "ESC_FAILURE_MOTOR_STUCK":
+		*e = ESC_FAILURE_MOTOR_STUCK
+		return nil
+	case "ESC_FAILURE_GENERIC":
+		*e = ESC_FAILURE_GENERIC
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e ESC_FAILURE_FLAGS) String() string {
 	byts, err := e.MarshalText()
 	if err == nil {
 		return string(byts)
@@ -15869,6 +16027,50 @@ type MessageGimbalManagerSetTiltpan struct {
 
 func (*MessageGimbalManagerSetTiltpan) GetId() uint32 {
 	return 287
+}
+
+// ESC information for lower rate streaming. Recommended streaming rate 1Hz. See ESC_STATUS for higher-rate ESC data.
+type MessageEscInfo struct {
+	// Index of the first ESC in this message. minValue = 0, maxValue = 60, increment = 4.
+	Index uint8
+	// Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude the number.
+	TimeUsec uint64
+	// Counter of data packets received.
+	Counter uint16
+	// Total number of ESCs in all messages of this type. Message fields with an index higher than this should be ignored because they contain invalid data.
+	Count uint8
+	// Connection type protocol for all ESC.
+	ConnectionType ESC_CONNECTION_TYPE `mavenum:"uint8"`
+	// Information regarding online/offline status of each ESC.
+	Info uint8
+	// Bitmap of ESC failure flags.
+	FailureFlags [4]ESC_FAILURE_FLAGS `mavenum:"uint16"`
+	// Number of reported errors by each ESC since boot.
+	ErrorCount [4]uint32
+	// Temperature measured by each ESC. UINT8_MAX if data not supplied by ESC.
+	Temperature [4]uint8
+}
+
+func (*MessageEscInfo) GetId() uint32 {
+	return 290
+}
+
+// ESC information for higher rate streaming. Recommended streaming rate is ~10 Hz. Information that changes more slowly is sent in ESC_INFO. It should typically only be streamed on high-bandwidth links (i.e. to a companion computer).
+type MessageEscStatus struct {
+	// Index of the first ESC in this message. minValue = 0, maxValue = 60, increment = 4.
+	Index uint8
+	// Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude the number.
+	TimeUsec uint64
+	// Reported motor RPM from each ESC (negative for reverse rotation).
+	Rpm [4]int32
+	// Voltage measured from each ESC.
+	Voltage [4]float32
+	// Current measured from each ESC.
+	Current [4]float32
+}
+
+func (*MessageEscStatus) GetId() uint32 {
+	return 291
 }
 
 // Configure WiFi AP SSID, password, and mode. This message is re-emitted as an acknowledgement by the AP. The message may also be explicitly requested using MAV_CMD_REQUEST_MESSAGE

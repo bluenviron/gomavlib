@@ -1733,6 +1733,8 @@ const (
 	CELLULAR_CONFIG_RESPONSE_PIN_ERROR CELLULAR_CONFIG_RESPONSE = 2
 	// Changes rejected.
 	CELLULAR_CONFIG_RESPONSE_REJECTED CELLULAR_CONFIG_RESPONSE = 3
+	// PUK is required to unblock SIM card.
+	CELLULAR_CONFIG_BLOCKED_PUK_REQUIRED CELLULAR_CONFIG_RESPONSE = 4
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -1746,6 +1748,8 @@ func (e CELLULAR_CONFIG_RESPONSE) MarshalText() ([]byte, error) {
 		return []byte("CELLULAR_CONFIG_RESPONSE_PIN_ERROR"), nil
 	case CELLULAR_CONFIG_RESPONSE_REJECTED:
 		return []byte("CELLULAR_CONFIG_RESPONSE_REJECTED"), nil
+	case CELLULAR_CONFIG_BLOCKED_PUK_REQUIRED:
+		return []byte("CELLULAR_CONFIG_BLOCKED_PUK_REQUIRED"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -1764,6 +1768,9 @@ func (e *CELLULAR_CONFIG_RESPONSE) UnmarshalText(text []byte) error {
 		return nil
 	case "CELLULAR_CONFIG_RESPONSE_REJECTED":
 		*e = CELLULAR_CONFIG_RESPONSE_REJECTED
+		return nil
+	case "CELLULAR_CONFIG_BLOCKED_PUK_REQUIRED":
+		*e = CELLULAR_CONFIG_BLOCKED_PUK_REQUIRED
 		return nil
 	}
 	return errors.New("invalid value")
@@ -16451,15 +16458,19 @@ func (*MessageIsbdLinkStatus) GetId() uint32 {
 
 // Configure cellular modems. This message is re-emitted as an acknowledgement by the modem. The message may also be explicitly requested using MAV_CMD_REQUEST_MESSAGE.
 type MessageCellularConfig struct {
-	// Enable / disable PIN on the SIM card. 0: Unchange setttings 1: PIN disabled, 2: PIN enabled.
+	// Enable/disable LTE. 0: setting unchanged, 1: disabled, 2: enabled. Current setting when sent back as a response.
+	EnableLte uint8
+	// Enable/disable PIN on the SIM card. 0: setting unchanged, 1: disabled, 2: enabled. Current setting when sent back as a response.
 	EnablePin uint8
-	// PIN sent to the simcard. Blank when PIN is disabled. Empty when message is sent back as a response.
-	Pin string `mavlen:"32"`
-	// Name of the cellular APN. Blank to leave it unchanged when setting. Current APN when sent back as a response.
+	// PIN sent to the SIM card. Blank when PIN is disabled. Empty when message is sent back as a response.
+	Pin string `mavlen:"16"`
+	// New PIN when changing the PIN. Blank to leave it unchanged. Empty when message is sent back as a response.
+	NewPin string `mavlen:"16"`
+	// Name of the cellular APN. Blank to leave it unchanged. Current APN when sent back as a response.
 	Apn string `mavlen:"32"`
-	// Required PUK code in case the user failed to authenticate 3 times with the PIN.
-	Puk string `mavlen:"32"`
-	// Configure whether roaming is allowed, 0: settings not changed, 1: roaming disabled, 2: roaming enabled.
+	// Required PUK code in case the user failed to authenticate 3 times with the PIN. Empty when message is sent back as a response.
+	Puk string `mavlen:"16"`
+	// Enable/disable roaming. 0: setting unchanged, 1: disabled, 2: enabled. Current setting when sent back as a response.
 	Roaming uint8
 	// Message acceptance response (sent back to GS).
 	Response CELLULAR_CONFIG_RESPONSE `mavenum:"uint8"`

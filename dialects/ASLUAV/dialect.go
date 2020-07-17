@@ -7118,6 +7118,10 @@ const (
 	MAV_GENERATOR_STATUS_FLAG_START_INHIBITED MAV_GENERATOR_STATUS_FLAG = 524288
 	// Generator requires maintenance.
 	MAV_GENERATOR_STATUS_FLAG_MAINTENANCE_REQUIRED MAV_GENERATOR_STATUS_FLAG = 1048576
+	// Generator is not ready to generate yet.
+	MAV_GENERATOR_STATUS_FLAG_WARMING_UP MAV_GENERATOR_STATUS_FLAG = 2097152
+	// Generator is idle.
+	MAV_GENERATOR_STATUS_FLAG_IDLE MAV_GENERATOR_STATUS_FLAG = 4194304
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -7165,6 +7169,10 @@ func (e MAV_GENERATOR_STATUS_FLAG) MarshalText() ([]byte, error) {
 		return []byte("MAV_GENERATOR_STATUS_FLAG_START_INHIBITED"), nil
 	case MAV_GENERATOR_STATUS_FLAG_MAINTENANCE_REQUIRED:
 		return []byte("MAV_GENERATOR_STATUS_FLAG_MAINTENANCE_REQUIRED"), nil
+	case MAV_GENERATOR_STATUS_FLAG_WARMING_UP:
+		return []byte("MAV_GENERATOR_STATUS_FLAG_WARMING_UP"), nil
+	case MAV_GENERATOR_STATUS_FLAG_IDLE:
+		return []byte("MAV_GENERATOR_STATUS_FLAG_IDLE"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -7234,6 +7242,12 @@ func (e *MAV_GENERATOR_STATUS_FLAG) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_GENERATOR_STATUS_FLAG_MAINTENANCE_REQUIRED":
 		*e = MAV_GENERATOR_STATUS_FLAG_MAINTENANCE_REQUIRED
+		return nil
+	case "MAV_GENERATOR_STATUS_FLAG_WARMING_UP":
+		*e = MAV_GENERATOR_STATUS_FLAG_WARMING_UP
+		return nil
+	case "MAV_GENERATOR_STATUS_FLAG_IDLE":
+		*e = MAV_GENERATOR_STATUS_FLAG_IDLE
 		return nil
 	}
 	return errors.New("invalid value")
@@ -16781,6 +16795,10 @@ type MessageGeneratorStatus struct {
 	BatCurrentSetpoint float32
 	// The temperature of the mechanical motor, fuel cell core or generator. INT16_MAX: field not provided.
 	GeneratorTemperature int16
+	// Seconds this generator has run since it was rebooted. UINT32_MAX: field not provided.
+	Runtime uint32
+	// Seconds until this generator requires maintenance.  A negative value indicates maintenance is past-due. INT32_MAX: field not provided.
+	TimeUntilMaintenance int32
 }
 
 func (*MessageGeneratorStatus) GetId() uint32 {

@@ -23,6 +23,7 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessageAuthKey{},
 	&MessageLinkNodeStatus{},
 	&MessageSetMode{},
+	&MessageParamAckTransaction{},
 	&MessageParamRequestRead{},
 	&MessageParamRequestList{},
 	&MessageParamValue{},
@@ -190,6 +191,11 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessageParamExtValue{},
 	&MessageParamExtSet{},
 	&MessageParamExtAck{},
+	&MessageParamV3Value{},
+	&MessageParamV3Set{},
+	&MessageParamV3Ack{},
+	&MessageParamStartTransaction{},
+	&MessageParamCommitTransaction{},
 	&MessageObstacleDistance{},
 	&MessageOdometry{},
 	&MessageTrajectoryRepresentationWaypoints{},
@@ -10915,7 +10921,7 @@ func (e PARACHUTE_ACTION) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
-// Result from a PARAM_EXT_SET message.
+// Result from PARAM_EXT_SET message (or a PARAM_SET within a transaction).
 type PARAM_ACK int
 
 const (
@@ -10925,7 +10931,7 @@ const (
 	PARAM_ACK_VALUE_UNSUPPORTED PARAM_ACK = 1
 	// Parameter failed to set
 	PARAM_ACK_FAILED PARAM_ACK = 2
-	// Parameter value received but not yet validated or set. A subsequent PARAM_EXT_ACK will follow once operation is completed with the actual result. These are for parameters that may take longer to set. Instead of waiting for an ACK and potentially timing out, you will immediately receive this response to let you know it was received.
+	// Parameter value received but not yet set/accepted. A subsequent PARAM_ACK_TRANSACTION or PARAM_EXT_ACK with the final result will follow once operation is completed. This is returned immediately for parameters that take longer to set, indicating taht the the parameter was recieved and does not need to be resent.
 	PARAM_ACK_IN_PROGRESS PARAM_ACK = 3
 )
 
@@ -10965,6 +10971,106 @@ func (e *PARAM_ACK) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e PARAM_ACK) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+// Possible responses from a PARAM_START_TRANSACTION and PARAM_COMMIT_TRANSACTION messages.
+type PARAM_TRANSACTION_RESPONSE int
+
+const (
+	// Transaction accepted.
+	PARAM_TRANSACTION_RESPONSE_ACCEPTED PARAM_TRANSACTION_RESPONSE = 0
+	// Transaction failed.
+	PARAM_TRANSACTION_RESPONSE_FAILED PARAM_TRANSACTION_RESPONSE = 1
+	// Transaction unsupported.
+	PARAM_TRANSACTION_RESPONSE_UNSUPPORTED PARAM_TRANSACTION_RESPONSE = 2
+	// Transaction in progress.
+	PARAM_TRANSACTION_RESPONSE_INPROGRESS PARAM_TRANSACTION_RESPONSE = 3
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e PARAM_TRANSACTION_RESPONSE) MarshalText() ([]byte, error) {
+	switch e {
+	case PARAM_TRANSACTION_RESPONSE_ACCEPTED:
+		return []byte("PARAM_TRANSACTION_RESPONSE_ACCEPTED"), nil
+	case PARAM_TRANSACTION_RESPONSE_FAILED:
+		return []byte("PARAM_TRANSACTION_RESPONSE_FAILED"), nil
+	case PARAM_TRANSACTION_RESPONSE_UNSUPPORTED:
+		return []byte("PARAM_TRANSACTION_RESPONSE_UNSUPPORTED"), nil
+	case PARAM_TRANSACTION_RESPONSE_INPROGRESS:
+		return []byte("PARAM_TRANSACTION_RESPONSE_INPROGRESS"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *PARAM_TRANSACTION_RESPONSE) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "PARAM_TRANSACTION_RESPONSE_ACCEPTED":
+		*e = PARAM_TRANSACTION_RESPONSE_ACCEPTED
+		return nil
+	case "PARAM_TRANSACTION_RESPONSE_FAILED":
+		*e = PARAM_TRANSACTION_RESPONSE_FAILED
+		return nil
+	case "PARAM_TRANSACTION_RESPONSE_UNSUPPORTED":
+		*e = PARAM_TRANSACTION_RESPONSE_UNSUPPORTED
+		return nil
+	case "PARAM_TRANSACTION_RESPONSE_INPROGRESS":
+		*e = PARAM_TRANSACTION_RESPONSE_INPROGRESS
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e PARAM_TRANSACTION_RESPONSE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+// Possible transport layers to set and get parameters via mavlink during a parameter transaction.
+type PARAM_TRANSACTION_TRANSPORT int
+
+const (
+	// Transaction over param transport.
+	PARAM_TRANSACTION_TRANSPORT_PARAM PARAM_TRANSACTION_TRANSPORT = 0
+	// Transaction over param_ext transport.
+	PARAM_TRANSACTION_TRANSPORT_PARAM_EXT PARAM_TRANSACTION_TRANSPORT = 1
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e PARAM_TRANSACTION_TRANSPORT) MarshalText() ([]byte, error) {
+	switch e {
+	case PARAM_TRANSACTION_TRANSPORT_PARAM:
+		return []byte("PARAM_TRANSACTION_TRANSPORT_PARAM"), nil
+	case PARAM_TRANSACTION_TRANSPORT_PARAM_EXT:
+		return []byte("PARAM_TRANSACTION_TRANSPORT_PARAM_EXT"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *PARAM_TRANSACTION_TRANSPORT) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "PARAM_TRANSACTION_TRANSPORT_PARAM":
+		*e = PARAM_TRANSACTION_TRANSPORT_PARAM
+		return nil
+	case "PARAM_TRANSACTION_TRANSPORT_PARAM_EXT":
+		*e = PARAM_TRANSACTION_TRANSPORT_PARAM_EXT
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e PARAM_TRANSACTION_TRANSPORT) String() string {
 	byts, err := e.MarshalText()
 	if err == nil {
 		return string(byts)
@@ -12477,6 +12583,26 @@ func (*MessageSetMode) GetId() uint32 {
 	return 11
 }
 
+// Response from a PARAM_SET message when it is used in a transaction.
+type MessageParamAckTransaction struct {
+	// Id of system that sent PARAM_SET message.
+	TargetSystem uint8
+	// Id of system that sent PARAM_SET message.
+	TargetComponent uint8
+	// Parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
+	ParamId string `mavlen:"16"`
+	// Parameter value (new value if PARAM_ACCEPTED, current value otherwise)
+	ParamValue float32
+	// Parameter type.
+	ParamType MAV_PARAM_TYPE `mavenum:"uint8"`
+	// Result code.
+	ParamResult PARAM_ACK `mavenum:"uint8"`
+}
+
+func (*MessageParamAckTransaction) GetId() uint32 {
+	return 19
+}
+
 // Request to read the onboard parameter with the param_id string id. Onboard parameters are stored as key[const char*] -> value[float]. This allows to send a parameter to any other component (such as the GCS) without the need of previous knowledge of possible parameter names. Thus the same GCS can store different parameters for different autopilots. See also https://mavlink.io/en/services/parameter.html for a full documentation of QGroundControl and IMU code.
 type MessageParamRequestRead struct {
 	// System ID
@@ -12523,7 +12649,7 @@ func (*MessageParamValue) GetId() uint32 {
 	return 22
 }
 
-// Set a parameter value (write new value to permanent storage). IMPORTANT: The receiving component should acknowledge the new parameter value by sending a PARAM_VALUE message to all communication partners. This will also ensure that multiple GCS all have an up-to-date list of all parameters. If the sending GCS did not receive a PARAM_VALUE message within its timeout time, it should re-send the PARAM_SET message. The parameter microservice is documented at https://mavlink.io/en/services/parameter.html
+// Set a parameter value (write new value to permanent storage). Within a transaction the recieving componenent should respond with PARAM_ACK_TRANSACTION to the setter component. IMPORTANT: If sent outside a transaction the receiving component should acknowledge the new parameter value by broadcasting a PARAM_VALUE message to all communication partners (broadcasting ensures that multiple GCS all have an up-to-date list of all parameters). If the sending GCS did not receive a PARAM_VALUE or PARAM_ACK_TRANSACTION message within its timeout time, it should re-send the PARAM_SET message. The parameter microservice is documented at https://mavlink.io/en/services/parameter.html
 type MessageParamSet struct {
 	// System ID
 	TargetSystem uint8
@@ -16471,6 +16597,88 @@ type MessageParamExtAck struct {
 
 func (*MessageParamExtAck) GetId() uint32 {
 	return 324
+}
+
+// Emit the value of a parameter. The param_count and param_index fields allow the recipient to keep track of received parameters and to re-request missing parameters after a loss or timeout. Replacement for PARAM_EXT_VALUE.
+type MessageParamV3Value struct {
+	// Parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
+	ParamId string `mavlen:"16"`
+	// Parameter type.
+	ParamType MAV_PARAM_EXT_TYPE `mavenum:"uint8"`
+	// Total number of parameters
+	ParamCount uint16
+	// Index of this parameter
+	ParamIndex uint16
+	// Parameter value (zeros get trimmed)
+	ParamValue string `mavlen:"128"`
+}
+
+func (*MessageParamV3Value) GetId() uint32 {
+	return 325
+}
+
+// Set a parameter value. In order to deal with message loss (and retransmission of PARAM_EXT_SET), when setting a parameter value and the new value is the same as the current value, you will immediately get a PARAM_ACK_ACCEPTED response. If the current state is PARAM_ACK_IN_PROGRESS, you will accordingly receive a PARAM_ACK_IN_PROGRESS in response.
+type MessageParamV3Set struct {
+	// System ID
+	TargetSystem uint8
+	// Component ID
+	TargetComponent uint8
+	// Parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
+	ParamId string `mavlen:"16"`
+	// Parameter type.
+	ParamType MAV_PARAM_EXT_TYPE `mavenum:"uint8"`
+	// Parameter value (zeros get trimmed)
+	ParamValue string `mavlen:"128"`
+}
+
+func (*MessageParamV3Set) GetId() uint32 {
+	return 326
+}
+
+// Response from a PARAM_V3_SET message.
+type MessageParamV3Ack struct {
+	// Parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
+	ParamId string `mavlen:"16"`
+	// Parameter type.
+	ParamType MAV_PARAM_EXT_TYPE `mavenum:"uint8"`
+	// Result code.
+	ParamResult PARAM_ACK `mavenum:"uint8"`
+	// Parameter value (new value if PARAM_ACK_ACCEPTED, current value otherwise, zeros get trimmed)
+	ParamValue string `mavlen:"128"`
+}
+
+func (*MessageParamV3Ack) GetId() uint32 {
+	return 327
+}
+
+// Request to start a new parameter transaction. Multiple kinds of transport layers can be used to exchange parameters in the transaction (param, param_ext and mavftp). The response (ack) will contain the same message but with a response attached to it.
+type MessageParamStartTransaction struct {
+	// System ID
+	TargetSystem uint8
+	// Component ID
+	TargetComponent uint8
+	// Possible transport layers to set and get parameters via mavlink during a parameter transaction.
+	ParamTransport PARAM_TRANSACTION_TRANSPORT `mavenum:"uint8"`
+	// Message acceptance response (sent back to GS).
+	Response PARAM_TRANSACTION_RESPONSE `mavenum:"uint8"`
+}
+
+func (*MessageParamStartTransaction) GetId() uint32 {
+	return 328
+}
+
+// Request to end the current parameter transaction. This message will have effect only if a transaction was previously opened using the PARAM_START_TRANSACTION message. The response will contain the same message but with a response attached to it. The response can either be a success/failure or and in progress in case the receiving side takes some time to apply the parameters.
+type MessageParamCommitTransaction struct {
+	// System ID
+	TargetSystem uint8
+	// Component ID
+	TargetComponent uint8
+	// Message acceptance response (sent back to GS).
+	Response PARAM_TRANSACTION_RESPONSE `mavenum:"uint8"`
+}
+
+func (*MessageParamCommitTransaction) GetId() uint32 {
+	return 329
 }
 
 // Obstacle distances in front of the sensor, starting from the left in increment degrees to the right

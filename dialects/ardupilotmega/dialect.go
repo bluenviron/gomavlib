@@ -16857,8 +16857,10 @@ type MessageScaledPressure struct {
 	PressAbs float32
 	// Differential pressure 1
 	PressDiff float32
-	// Temperature
+	// Absolute pressure temperature
 	Temperature int16
+	// Differential pressure temperature (UINT16_MAX, if not available)
+	TemperaturePressDiff int16 `mavext:"true"`
 }
 
 func (*MessageScaledPressure) GetId() uint32 {
@@ -19067,8 +19069,10 @@ type MessageScaledPressure2 struct {
 	PressAbs float32
 	// Differential pressure
 	PressDiff float32
-	// Temperature measurement
+	// Absolute pressure temperature
 	Temperature int16
+	// Differential pressure temperature (UINT16_MAX, if not available)
+	TemperaturePressDiff int16 `mavext:"true"`
 }
 
 func (*MessageScaledPressure2) GetId() uint32 {
@@ -19175,8 +19179,10 @@ type MessageScaledPressure3 struct {
 	PressAbs float32
 	// Differential pressure
 	PressDiff float32
-	// Temperature measurement
+	// Absolute pressure temperature
 	Temperature int16
+	// Differential pressure temperature (UINT16_MAX, if not available)
+	TemperaturePressDiff int16 `mavext:"true"`
 }
 
 func (*MessageScaledPressure3) GetId() uint32 {

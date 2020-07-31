@@ -14913,7 +14913,7 @@ func (*MessageDistanceSensor) GetId() uint32 {
 	return 132
 }
 
-// Request for terrain data and terrain status
+// Request for terrain data and terrain status. See terrain protocol docs: https://mavlink.io/en/services/terrain.html
 type MessageTerrainRequest struct {
 	// Latitude of SW corner of first grid
 	Lat int32
@@ -14929,7 +14929,7 @@ func (*MessageTerrainRequest) GetId() uint32 {
 	return 133
 }
 
-// Terrain data sent from GCS. The lat/lon and grid_spacing must be the same as a lat/lon from a TERRAIN_REQUEST
+// Terrain data sent from GCS. The lat/lon and grid_spacing must be the same as a lat/lon from a TERRAIN_REQUEST. See terrain protocol docs: https://mavlink.io/en/services/terrain.html
 type MessageTerrainData struct {
 	// Latitude of SW corner of first grid
 	Lat int32
@@ -14959,7 +14959,7 @@ func (*MessageTerrainCheck) GetId() uint32 {
 	return 135
 }
 
-// Response from a TERRAIN_CHECK request
+// Streamed from drone to report progress of terrain map download (or response from a TERRAIN_CHECK request - deprecated). See terrain protocol docs: https://mavlink.io/en/services/terrain.html
 type MessageTerrainReport struct {
 	// Latitude
 	Lat int32

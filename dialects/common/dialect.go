@@ -15818,7 +15818,7 @@ type MessageCameraImageCaptured struct {
 	TimeBootMs uint32
 	// Timestamp (time since UNIX epoch) in UTC. 0 for unknown.
 	TimeUtc uint64
-	// Camera ID (1 for first, 2 for second, etc.)
+	// Deprecated/unused. Component IDs are used to differentiate multiple cameras.
 	CameraId uint8
 	// Latitude where image was taken
 	Lat int32

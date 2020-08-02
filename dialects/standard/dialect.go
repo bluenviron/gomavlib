@@ -10975,6 +10975,49 @@ func (e PARAM_ACK) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
+// Possible parameter transaction action during a commit.
+type PARAM_TRANSACTION_ACTION int
+
+const (
+	// Commit the current parameter transaction.
+	PARAM_TRANSACTION_ACTION_COMMIT PARAM_TRANSACTION_ACTION = 0
+	// Cancel the current parameter transaction.
+	PARAM_TRANSACTION_ACTION_CANCEL PARAM_TRANSACTION_ACTION = 1
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e PARAM_TRANSACTION_ACTION) MarshalText() ([]byte, error) {
+	switch e {
+	case PARAM_TRANSACTION_ACTION_COMMIT:
+		return []byte("PARAM_TRANSACTION_ACTION_COMMIT"), nil
+	case PARAM_TRANSACTION_ACTION_CANCEL:
+		return []byte("PARAM_TRANSACTION_ACTION_CANCEL"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *PARAM_TRANSACTION_ACTION) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "PARAM_TRANSACTION_ACTION_COMMIT":
+		*e = PARAM_TRANSACTION_ACTION_COMMIT
+		return nil
+	case "PARAM_TRANSACTION_ACTION_CANCEL":
+		*e = PARAM_TRANSACTION_ACTION_CANCEL
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e PARAM_TRANSACTION_ACTION) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Possible responses from a PARAM_START_TRANSACTION and PARAM_COMMIT_TRANSACTION messages.
 type PARAM_TRANSACTION_RESPONSE int
 
@@ -16505,6 +16548,8 @@ type MessageParamCommitTransaction struct {
 	TargetSystem uint8
 	// Component ID
 	TargetComponent uint8
+	// Commit or cancel an ongoing transaction.
+	ParamAction PARAM_TRANSACTION_ACTION `mavenum:"uint8"`
 	// Message acceptance response (sent back to GS).
 	Response PARAM_TRANSACTION_RESPONSE `mavenum:"uint8"`
 }

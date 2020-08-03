@@ -171,6 +171,7 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessageLoggingAck{},
 	&MessageVideoStreamInformation{},
 	&MessageVideoStreamStatus{},
+	&MessageCameraFovStatus{},
 	&MessageGimbalManagerInformation{},
 	&MessageGimbalManagerStatus{},
 	&MessageGimbalManagerSetAttitude{},
@@ -15871,7 +15872,7 @@ type MessageCameraImageCaptured struct {
 	Alt int32
 	// Altitude above ground
 	RelativeAlt int32
-	// Quaternion of camera orientation (w, x, y, z order, zero-rotation is 0, 0, 0, 0)
+	// Quaternion of camera orientation (w, x, y, z order, zero-rotation is 1, 0, 0, 0)
 	Q [4]float32
 	// Zero based index of this image (i.e. a new image will have index CAMERA_CAPTURE_STATUS.image count -1)
 	ImageIndex int32
@@ -16027,6 +16028,34 @@ type MessageVideoStreamStatus struct {
 
 func (*MessageVideoStreamStatus) GetId() uint32 {
 	return 270
+}
+
+// Information about the field of view of a camera. Can be requested with a MAV_CMD_REQUEST_MESSAGE command.
+type MessageCameraFovStatus struct {
+	// Timestamp (time since system boot).
+	TimeBootMs uint32
+	// Latitude of camera (INT32_MAX if unknown).
+	LatCamera int32
+	// Longitude of camera (INT32_MAX if unknown).
+	LonCamera int32
+	// Altitude (MSL) of camera (INT32_MAX if unknown).
+	AltCamera int32
+	// Latitude of center of image (INT32_MAX if unknown, INT32_MIN if at infinity, not intersecting with horizon).
+	LatImage int32
+	// Longitude of center of image (INT32_MAX if unknown, INT32_MIN if at infinity, not intersecting with horizon).
+	LonImage int32
+	// Altitude (MSL) of center of image (INT32_MAX if unknown, INT32_MIN if at infinity, not intersecting with horizon).
+	AltImage int32
+	// Quaternion of camera orientation (w, x, y, z order, zero-rotation is 1, 0, 0, 0)
+	Q [4]float32
+	// Horizontal field of view (NaN if unknown).
+	Hfov float32
+	// Vertical field of view (NaN if unknown).
+	Vfov float32
+}
+
+func (*MessageCameraFovStatus) GetId() uint32 {
+	return 271
 }
 
 // Information about a high level gimbal manager. This message should be requested by a ground station using MAV_CMD_REQUEST_MESSAGE.

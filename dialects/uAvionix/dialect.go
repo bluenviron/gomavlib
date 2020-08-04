@@ -219,6 +219,7 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessagePlayTuneV2{},
 	&MessageSupportedTunes{},
 	&MessageWheelDistance{},
+	&MessageWinchStatus{},
 	&MessageOpenDroneIdBasicId{},
 	&MessageOpenDroneIdLocation{},
 	&MessageOpenDroneIdAuthentication{},
@@ -10701,6 +10702,63 @@ func (e MAV_VTOL_STATE) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
+// Winch status flags used in WINCH_STATUS
+type MAV_WINCH_STATUS_FLAG int
+
+const (
+	// Winch is healthy
+	MAV_WINCH_STATUS_HEALTHY MAV_WINCH_STATUS_FLAG = 1
+	// Winch thread is fully retracted
+	MAV_WINCH_STATUS_FULLY_RETRACTED MAV_WINCH_STATUS_FLAG = 2
+	// Winch motor is moving
+	MAV_WINCH_STATUS_MOVING MAV_WINCH_STATUS_FLAG = 4
+	// Winch clutch is engaged allowing motor to move freely
+	MAV_WINCH_STATUS_CLUTCH_ENGAGED MAV_WINCH_STATUS_FLAG = 8
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e MAV_WINCH_STATUS_FLAG) MarshalText() ([]byte, error) {
+	switch e {
+	case MAV_WINCH_STATUS_HEALTHY:
+		return []byte("MAV_WINCH_STATUS_HEALTHY"), nil
+	case MAV_WINCH_STATUS_FULLY_RETRACTED:
+		return []byte("MAV_WINCH_STATUS_FULLY_RETRACTED"), nil
+	case MAV_WINCH_STATUS_MOVING:
+		return []byte("MAV_WINCH_STATUS_MOVING"), nil
+	case MAV_WINCH_STATUS_CLUTCH_ENGAGED:
+		return []byte("MAV_WINCH_STATUS_CLUTCH_ENGAGED"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *MAV_WINCH_STATUS_FLAG) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "MAV_WINCH_STATUS_HEALTHY":
+		*e = MAV_WINCH_STATUS_HEALTHY
+		return nil
+	case "MAV_WINCH_STATUS_FULLY_RETRACTED":
+		*e = MAV_WINCH_STATUS_FULLY_RETRACTED
+		return nil
+	case "MAV_WINCH_STATUS_MOVING":
+		*e = MAV_WINCH_STATUS_MOVING
+		return nil
+	case "MAV_WINCH_STATUS_CLUTCH_ENGAGED":
+		*e = MAV_WINCH_STATUS_CLUTCH_ENGAGED
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_WINCH_STATUS_FLAG) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 //
 type MOTOR_TEST_ORDER int
 
@@ -17716,6 +17774,30 @@ type MessageWheelDistance struct {
 
 func (*MessageWheelDistance) GetId() uint32 {
 	return 9000
+}
+
+// Winch status.
+type MessageWinchStatus struct {
+	// Timestamp (synced to UNIX time or since system boot).
+	TimeUsec uint64
+	// Length of line released. NaN if unknown
+	LineLength float32
+	// Speed line is being released or retracted. Positive values if being released, negative values if being retracted, NaN if unknown
+	Speed float32
+	// Tension on the line. NaN if unknown
+	Tension float32
+	// Voltage of the battery supplying the winch. NaN if unknown
+	Voltage float32
+	// Current draw from the winch. NaN if unknown
+	Current float32
+	// Temperature of the motor. INT16_MAX if unknown
+	Temperature int16
+	// Status flags
+	Status MAV_WINCH_STATUS_FLAG `mavenum:"uint32"`
+}
+
+func (*MessageWinchStatus) GetId() uint32 {
+	return 9005
 }
 
 // Data for filling the OpenDroneID Basic ID message. This and the below messages are primarily meant for feeding data to/from an OpenDroneID implementation. E.g. https://github.com/opendroneid/opendroneid-core-c. These messages are compatible with the ASTM Remote ID standard at https://www.astm.org/Standards/F3411.htm and the ASD-STAN Direct Remote ID standard. The usage of these messages is documented at https://mavlink.io/en/services/opendroneid.html.

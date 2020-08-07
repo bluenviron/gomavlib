@@ -172,6 +172,8 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessageVideoStreamInformation{},
 	&MessageVideoStreamStatus{},
 	&MessageCameraFovStatus{},
+	&MessageCameraTrackingImageStatus{},
+	&MessageCameraTrackingGeoStatus{},
 	&MessageGimbalManagerInformation{},
 	&MessageGimbalManagerStatus{},
 	&MessageGimbalManagerSetAttitude{},
@@ -192,9 +194,9 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessageParamExtValue{},
 	&MessageParamExtSet{},
 	&MessageParamExtAck{},
-	&MessageParamV3Value{},
-	&MessageParamV3Set{},
-	&MessageParamV3Ack{},
+	&MessageParamExtValueTrimmed{},
+	&MessageParamExtSetTrimmed{},
+	&MessageParamExtAckTrimmed{},
 	&MessageParamStartTransaction{},
 	&MessageParamCommitTransaction{},
 	&MessageObstacleDistance{},
@@ -1760,6 +1762,12 @@ const (
 	CAMERA_CAP_FLAGS_HAS_BASIC_FOCUS CAMERA_CAP_FLAGS = 128
 	// Camera has video streaming capabilities (request VIDEO_STREAM_INFORMATION with MAV_CMD_REQUEST_MESSAGE for video streaming info)
 	CAMERA_CAP_FLAGS_HAS_VIDEO_STREAM CAMERA_CAP_FLAGS = 256
+	// Camera supports tracking of a point on the camera view.
+	CAMERA_CAP_FLAGS_HAS_TRACKING_POINT CAMERA_CAP_FLAGS = 512
+	// Camera supports tracking of a selection rectangle on the camera view.
+	CAMERA_CAP_FLAGS_HAS_TRACKING_RECTANGLE CAMERA_CAP_FLAGS = 1024
+	// Camera supports tracking geo status (CAMERA_TRACKING_GEO_STATUS).
+	CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS CAMERA_CAP_FLAGS = 2048
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -1783,6 +1791,12 @@ func (e CAMERA_CAP_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("CAMERA_CAP_FLAGS_HAS_BASIC_FOCUS"), nil
 	case CAMERA_CAP_FLAGS_HAS_VIDEO_STREAM:
 		return []byte("CAMERA_CAP_FLAGS_HAS_VIDEO_STREAM"), nil
+	case CAMERA_CAP_FLAGS_HAS_TRACKING_POINT:
+		return []byte("CAMERA_CAP_FLAGS_HAS_TRACKING_POINT"), nil
+	case CAMERA_CAP_FLAGS_HAS_TRACKING_RECTANGLE:
+		return []byte("CAMERA_CAP_FLAGS_HAS_TRACKING_RECTANGLE"), nil
+	case CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS:
+		return []byte("CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -1816,6 +1830,15 @@ func (e *CAMERA_CAP_FLAGS) UnmarshalText(text []byte) error {
 		return nil
 	case "CAMERA_CAP_FLAGS_HAS_VIDEO_STREAM":
 		*e = CAMERA_CAP_FLAGS_HAS_VIDEO_STREAM
+		return nil
+	case "CAMERA_CAP_FLAGS_HAS_TRACKING_POINT":
+		*e = CAMERA_CAP_FLAGS_HAS_TRACKING_POINT
+		return nil
+	case "CAMERA_CAP_FLAGS_HAS_TRACKING_RECTANGLE":
+		*e = CAMERA_CAP_FLAGS_HAS_TRACKING_RECTANGLE
+		return nil
+	case "CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS":
+		*e = CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS
 		return nil
 	}
 	return errors.New("invalid value")
@@ -1873,6 +1896,163 @@ func (e *CAMERA_MODE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e CAMERA_MODE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+// Camera tracking modes
+type CAMERA_TRACKING_MODE int
+
+const (
+	// Not tracking
+	CAMERA_TRACKING_NONE CAMERA_TRACKING_MODE = 0
+	// Target is a point
+	CAMERA_TRACKING_POINT CAMERA_TRACKING_MODE = 1
+	// Target is a rectangle
+	CAMERA_TRACKING_RECTANGLE CAMERA_TRACKING_MODE = 2
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e CAMERA_TRACKING_MODE) MarshalText() ([]byte, error) {
+	switch e {
+	case CAMERA_TRACKING_NONE:
+		return []byte("CAMERA_TRACKING_NONE"), nil
+	case CAMERA_TRACKING_POINT:
+		return []byte("CAMERA_TRACKING_POINT"), nil
+	case CAMERA_TRACKING_RECTANGLE:
+		return []byte("CAMERA_TRACKING_RECTANGLE"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *CAMERA_TRACKING_MODE) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "CAMERA_TRACKING_NONE":
+		*e = CAMERA_TRACKING_NONE
+		return nil
+	case "CAMERA_TRACKING_POINT":
+		*e = CAMERA_TRACKING_POINT
+		return nil
+	case "CAMERA_TRACKING_RECTANGLE":
+		*e = CAMERA_TRACKING_RECTANGLE
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e CAMERA_TRACKING_MODE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+// Camera tracking status flags
+type CAMERA_TRACKING_STATUS_FLAGS int
+
+const (
+	// Camera is not tracking
+	CAMERA_TRACKING_STATUS_FLAGS_IDLE CAMERA_TRACKING_STATUS_FLAGS = 0
+	// Camera is tracking
+	CAMERA_TRACKING_STATUS_FLAGS_ACTIVE CAMERA_TRACKING_STATUS_FLAGS = 1
+	// Camera tracking in error state
+	CAMERA_TRACKING_STATUS_FLAGS_ERROR CAMERA_TRACKING_STATUS_FLAGS = 2
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e CAMERA_TRACKING_STATUS_FLAGS) MarshalText() ([]byte, error) {
+	switch e {
+	case CAMERA_TRACKING_STATUS_FLAGS_IDLE:
+		return []byte("CAMERA_TRACKING_STATUS_FLAGS_IDLE"), nil
+	case CAMERA_TRACKING_STATUS_FLAGS_ACTIVE:
+		return []byte("CAMERA_TRACKING_STATUS_FLAGS_ACTIVE"), nil
+	case CAMERA_TRACKING_STATUS_FLAGS_ERROR:
+		return []byte("CAMERA_TRACKING_STATUS_FLAGS_ERROR"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *CAMERA_TRACKING_STATUS_FLAGS) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "CAMERA_TRACKING_STATUS_FLAGS_IDLE":
+		*e = CAMERA_TRACKING_STATUS_FLAGS_IDLE
+		return nil
+	case "CAMERA_TRACKING_STATUS_FLAGS_ACTIVE":
+		*e = CAMERA_TRACKING_STATUS_FLAGS_ACTIVE
+		return nil
+	case "CAMERA_TRACKING_STATUS_FLAGS_ERROR":
+		*e = CAMERA_TRACKING_STATUS_FLAGS_ERROR
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e CAMERA_TRACKING_STATUS_FLAGS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+// Camera tracking target data (shows where tracked target is within image)
+type CAMERA_TRACKING_TARGET_DATA int
+
+const (
+	// No target data
+	CAMERA_TRACKING_TARGET_NONE CAMERA_TRACKING_TARGET_DATA = 0
+	// Target data embedded in image data (proprietary)
+	CAMERA_TRACKING_TARGET_EMBEDDED CAMERA_TRACKING_TARGET_DATA = 1
+	// Target data rendered in image
+	CAMERA_TRACKING_TARGET_RENDERED CAMERA_TRACKING_TARGET_DATA = 2
+	// Target data within status message (Point or Rectangle)
+	CAMERA_TRACKING_TARGET_IN_STATUS CAMERA_TRACKING_TARGET_DATA = 4
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e CAMERA_TRACKING_TARGET_DATA) MarshalText() ([]byte, error) {
+	switch e {
+	case CAMERA_TRACKING_TARGET_NONE:
+		return []byte("CAMERA_TRACKING_TARGET_NONE"), nil
+	case CAMERA_TRACKING_TARGET_EMBEDDED:
+		return []byte("CAMERA_TRACKING_TARGET_EMBEDDED"), nil
+	case CAMERA_TRACKING_TARGET_RENDERED:
+		return []byte("CAMERA_TRACKING_TARGET_RENDERED"), nil
+	case CAMERA_TRACKING_TARGET_IN_STATUS:
+		return []byte("CAMERA_TRACKING_TARGET_IN_STATUS"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *CAMERA_TRACKING_TARGET_DATA) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "CAMERA_TRACKING_TARGET_NONE":
+		*e = CAMERA_TRACKING_TARGET_NONE
+		return nil
+	case "CAMERA_TRACKING_TARGET_EMBEDDED":
+		*e = CAMERA_TRACKING_TARGET_EMBEDDED
+		return nil
+	case "CAMERA_TRACKING_TARGET_RENDERED":
+		*e = CAMERA_TRACKING_TARGET_RENDERED
+		return nil
+	case "CAMERA_TRACKING_TARGET_IN_STATUS":
+		*e = CAMERA_TRACKING_TARGET_IN_STATUS
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e CAMERA_TRACKING_TARGET_DATA) String() string {
 	byts, err := e.MarshalText()
 	if err == nil {
 		return string(byts)
@@ -3345,10 +3525,6 @@ const (
 	GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_LOCAL GIMBAL_MANAGER_CAP_FLAGS = 65536
 	// Gimbal manager supports to point to a global latitude, longitude, altitude position.
 	GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL GIMBAL_MANAGER_CAP_FLAGS = 131072
-	// Gimbal manager supports tracking of a point on the camera.
-	GIMBAL_MANAGER_CAP_FLAGS_HAS_TRACKING_POINT GIMBAL_MANAGER_CAP_FLAGS = 262144
-	// Gimbal manager supports tracking of a point on the camera.
-	GIMBAL_MANAGER_CAP_FLAGS_HAS_TRACKING_RECTANGLE GIMBAL_MANAGER_CAP_FLAGS = 524288
 	// Gimbal manager supports pitching and yawing at an angular velocity scaled by focal length (the more zoomed in, the slower the movement).
 	GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_FOCAL_LENGTH_SCALE GIMBAL_MANAGER_CAP_FLAGS = 1048576
 	// Gimbal manager supports nudging when pointing to a location or tracking.
@@ -3388,10 +3564,6 @@ func (e GIMBAL_MANAGER_CAP_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_LOCAL"), nil
 	case GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL:
 		return []byte("GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL"), nil
-	case GIMBAL_MANAGER_CAP_FLAGS_HAS_TRACKING_POINT:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_HAS_TRACKING_POINT"), nil
-	case GIMBAL_MANAGER_CAP_FLAGS_HAS_TRACKING_RECTANGLE:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_HAS_TRACKING_RECTANGLE"), nil
 	case GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_FOCAL_LENGTH_SCALE:
 		return []byte("GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_FOCAL_LENGTH_SCALE"), nil
 	case GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_NUDGING:
@@ -3446,12 +3618,6 @@ func (e *GIMBAL_MANAGER_CAP_FLAGS) UnmarshalText(text []byte) error {
 		return nil
 	case "GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL":
 		*e = GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL
-		return nil
-	case "GIMBAL_MANAGER_CAP_FLAGS_HAS_TRACKING_POINT":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_HAS_TRACKING_POINT
-		return nil
-	case "GIMBAL_MANAGER_CAP_FLAGS_HAS_TRACKING_RECTANGLE":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_HAS_TRACKING_RECTANGLE
 		return nil
 	case "GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_FOCAL_LENGTH_SCALE":
 		*e = GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_FOCAL_LENGTH_SCALE
@@ -4658,10 +4824,6 @@ const (
 	MAV_CMD_DO_JUMP_TAG MAV_CMD = 601
 	// High level setpoint to be sent to a gimbal manager to set a gimbal attitude. It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. Note: a gimbal is never to react to this command but only the gimbal manager.
 	MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN MAV_CMD = 1000
-	// If the gimbal manager supports visual tracking (GIMBAL_MANAGER_CAP_FLAGS_HAS_TRACKING_POINT is set), this command allows to initiate the tracking. Such a tracking gimbal manager would usually be an integrated camera/gimbal, or alternatively a companion computer connected to a camera.
-	MAV_CMD_DO_GIMBAL_MANAGER_TRACK_POINT MAV_CMD = 1001
-	// If the gimbal supports visual tracking (GIMBAL_MANAGER_CAP_FLAGS_HAS_TRACKING_RECTANGLE is set), this command allows to initiate the tracking. Such a tracking gimbal manager would usually be an integrated camera/gimbal, or alternatively a companion computer connected to a camera.
-	MAV_CMD_DO_GIMBAL_MANAGER_TRACK_RECTANGLE MAV_CMD = 1002
 	// Start image capture sequence. Sends CAMERA_IMAGE_CAPTURED after each capture. Use NaN for reserved values.
 	MAV_CMD_IMAGE_START_CAPTURE MAV_CMD = 2000
 	// Stop image capture sequence Use NaN for reserved values.
@@ -4670,6 +4832,12 @@ const (
 	MAV_CMD_REQUEST_CAMERA_IMAGE_CAPTURE MAV_CMD = 2002
 	// Enable or disable on-board camera triggering system.
 	MAV_CMD_DO_TRIGGER_CONTROL MAV_CMD = 2003
+	// If the camera supports point visual tracking (CAMERA_CAP_FLAGS_HAS_TRACKING_POINT is set), this command allows to initiate the tracking.
+	MAV_CMD_CAMERA_TRACK_POINT MAV_CMD = 2004
+	// If the camera supports rectangle visual tracking (CAMERA_CAP_FLAGS_HAS_TRACKING_RECTANGLE is set), this command allows to initiate the tracking.
+	MAV_CMD_CAMERA_TRACK_RECTANGLE MAV_CMD = 2005
+	// Stops ongoing tracking.
+	MAV_CMD_CAMERA_STOP_TRACKING MAV_CMD = 2010
 	// Starts video capture (recording).
 	MAV_CMD_VIDEO_START_CAPTURE MAV_CMD = 2500
 	// Stop the current video capture (recording).
@@ -4963,10 +5131,6 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_DO_JUMP_TAG"), nil
 	case MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN:
 		return []byte("MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN"), nil
-	case MAV_CMD_DO_GIMBAL_MANAGER_TRACK_POINT:
-		return []byte("MAV_CMD_DO_GIMBAL_MANAGER_TRACK_POINT"), nil
-	case MAV_CMD_DO_GIMBAL_MANAGER_TRACK_RECTANGLE:
-		return []byte("MAV_CMD_DO_GIMBAL_MANAGER_TRACK_RECTANGLE"), nil
 	case MAV_CMD_IMAGE_START_CAPTURE:
 		return []byte("MAV_CMD_IMAGE_START_CAPTURE"), nil
 	case MAV_CMD_IMAGE_STOP_CAPTURE:
@@ -4975,6 +5139,12 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_REQUEST_CAMERA_IMAGE_CAPTURE"), nil
 	case MAV_CMD_DO_TRIGGER_CONTROL:
 		return []byte("MAV_CMD_DO_TRIGGER_CONTROL"), nil
+	case MAV_CMD_CAMERA_TRACK_POINT:
+		return []byte("MAV_CMD_CAMERA_TRACK_POINT"), nil
+	case MAV_CMD_CAMERA_TRACK_RECTANGLE:
+		return []byte("MAV_CMD_CAMERA_TRACK_RECTANGLE"), nil
+	case MAV_CMD_CAMERA_STOP_TRACKING:
+		return []byte("MAV_CMD_CAMERA_STOP_TRACKING"), nil
 	case MAV_CMD_VIDEO_START_CAPTURE:
 		return []byte("MAV_CMD_VIDEO_START_CAPTURE"), nil
 	case MAV_CMD_VIDEO_STOP_CAPTURE:
@@ -5371,12 +5541,6 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 	case "MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN":
 		*e = MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN
 		return nil
-	case "MAV_CMD_DO_GIMBAL_MANAGER_TRACK_POINT":
-		*e = MAV_CMD_DO_GIMBAL_MANAGER_TRACK_POINT
-		return nil
-	case "MAV_CMD_DO_GIMBAL_MANAGER_TRACK_RECTANGLE":
-		*e = MAV_CMD_DO_GIMBAL_MANAGER_TRACK_RECTANGLE
-		return nil
 	case "MAV_CMD_IMAGE_START_CAPTURE":
 		*e = MAV_CMD_IMAGE_START_CAPTURE
 		return nil
@@ -5388,6 +5552,15 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_DO_TRIGGER_CONTROL":
 		*e = MAV_CMD_DO_TRIGGER_CONTROL
+		return nil
+	case "MAV_CMD_CAMERA_TRACK_POINT":
+		*e = MAV_CMD_CAMERA_TRACK_POINT
+		return nil
+	case "MAV_CMD_CAMERA_TRACK_RECTANGLE":
+		*e = MAV_CMD_CAMERA_TRACK_RECTANGLE
+		return nil
+	case "MAV_CMD_CAMERA_STOP_TRACKING":
+		*e = MAV_CMD_CAMERA_STOP_TRACKING
 		return nil
 	case "MAV_CMD_VIDEO_START_CAPTURE":
 		*e = MAV_CMD_VIDEO_START_CAPTURE
@@ -6018,6 +6191,8 @@ const (
 	MAV_COMP_ID_GIMBAL6 MAV_COMPONENT = 175
 	// Component that can generate/supply a mission flight plan (e.g. GCS or developer API).
 	MAV_COMP_ID_MISSIONPLANNER MAV_COMPONENT = 190
+	// Component that lives on the onboard computer (companion computer) and has some generic functionalities, such as settings system parameters and monitoring the status of some processes that don't directly speak mavlink and so on.
+	MAV_COMP_ID_ONBOARD_COMPUTER MAV_COMPONENT = 191
 	// Component that finds an optimal path between points based on a certain constraint (e.g. minimum snap, shortest path, cost, etc.).
 	MAV_COMP_ID_PATHPLANNER MAV_COMPONENT = 195
 	// Component that plans a collision free path between two points.
@@ -6275,6 +6450,8 @@ func (e MAV_COMPONENT) MarshalText() ([]byte, error) {
 		return []byte("MAV_COMP_ID_GIMBAL6"), nil
 	case MAV_COMP_ID_MISSIONPLANNER:
 		return []byte("MAV_COMP_ID_MISSIONPLANNER"), nil
+	case MAV_COMP_ID_ONBOARD_COMPUTER:
+		return []byte("MAV_COMP_ID_ONBOARD_COMPUTER"), nil
 	case MAV_COMP_ID_PATHPLANNER:
 		return []byte("MAV_COMP_ID_PATHPLANNER"), nil
 	case MAV_COMP_ID_OBSTACLE_AVOIDANCE:
@@ -6643,6 +6820,9 @@ func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_COMP_ID_MISSIONPLANNER":
 		*e = MAV_COMP_ID_MISSIONPLANNER
+		return nil
+	case "MAV_COMP_ID_ONBOARD_COMPUTER":
+		*e = MAV_COMP_ID_ONBOARD_COMPUTER
 		return nil
 	case "MAV_COMP_ID_PATHPLANNER":
 		*e = MAV_COMP_ID_PATHPLANNER
@@ -16352,6 +16532,68 @@ func (*MessageCameraFovStatus) GetId() uint32 {
 	return 271
 }
 
+// Camera tracking status, sent while in active tracking. Use MAV_CMD_SET_MESSAGE_INTERVAL to define message interval.
+type MessageCameraTrackingImageStatus struct {
+	// Current tracking status
+	TrackingStatus CAMERA_TRACKING_STATUS_FLAGS `mavenum:"uint8"`
+	// Current tracking mode
+	TrackingMode CAMERA_TRACKING_MODE `mavenum:"uint8"`
+	// Defines location of target data
+	TargetData CAMERA_TRACKING_TARGET_DATA `mavenum:"uint8"`
+	// Current tracked point x value if CAMERA_TRACKING_POINT (normalized 0..1, 0 is left, 1 is right), NAN if unknown
+	PointX float32
+	// Current tracked point y value if CAMERA_TRACKING_POINT (normalized 0..1, 0 is top, 1 is bottom), NAN if unknown
+	PointY float32
+	// Current tracked radius if CAMERA_TRACKING_POINT (normalized 0..1, 0 is image left, 1 is image right), NAN if unknown
+	Radius float32
+	// Current tracked rectangle top x value if CAMERA_TRACKING_RECTANGLE (normalized 0..1, 0 is left, 1 is right), NAN if unknown
+	RecTopX float32
+	// Current tracked rectangle top y value if CAMERA_TRACKING_RECTANGLE (normalized 0..1, 0 is top, 1 is bottom), NAN if unknown
+	RecTopY float32
+	// Current tracked rectangle bottom x value if CAMERA_TRACKING_RECTANGLE (normalized 0..1, 0 is left, 1 is right), NAN if unknown
+	RecBottomX float32
+	// Current tracked rectangle bottom y value if CAMERA_TRACKING_RECTANGLE (normalized 0..1, 0 is top, 1 is bottom), NAN if unknown
+	RecBottomY float32
+}
+
+func (*MessageCameraTrackingImageStatus) GetId() uint32 {
+	return 275
+}
+
+// Camera tracking status, sent while in active tracking. Use MAV_CMD_SET_MESSAGE_INTERVAL to define message interval.
+type MessageCameraTrackingGeoStatus struct {
+	// Current tracking status
+	TrackingStatus CAMERA_TRACKING_STATUS_FLAGS `mavenum:"uint8"`
+	// Latitude of tracked object
+	Lat int32
+	// Longitude of tracked object
+	Lon int32
+	// Altitude of tracked object(AMSL, WGS84)
+	Alt float32
+	// Horizontal accuracy. NAN if unknown
+	HAcc float32
+	// Vertical accuracy. NAN if unknown
+	VAcc float32
+	// North velocity of tracked object. NAN if unknown
+	VelN float32
+	// East velocity of tracked object. NAN if unknown
+	VelE float32
+	// Down velocity of tracked object. NAN if unknown
+	VelD float32
+	// Velocity accuracy. NAN if unknown
+	VelAcc float32
+	// Distance between camera and tracked object. NAN if unknown
+	Dist float32
+	// Heading in radians, in NED. NAN if unknown
+	Hdg float32
+	// Accuracy of heading, in NED. NAN if unknown
+	HdgAcc float32
+}
+
+func (*MessageCameraTrackingGeoStatus) GetId() uint32 {
+	return 276
+}
+
 // Information about a high level gimbal manager. This message should be requested by a ground station using MAV_CMD_REQUEST_MESSAGE.
 type MessageGimbalManagerInformation struct {
 	// Timestamp (time since system boot).
@@ -16716,7 +16958,7 @@ func (*MessageUavcanNodeInfo) GetId() uint32 {
 	return 311
 }
 
-// Request to read the value of a parameter with the either the param_id string id or param_index.
+// Request to read the value of a parameter with either the param_id string id or param_index. PARAM_EXT_VALUE or PARAM_EXT_VALUE_TRIMMED should be emitted in response (see field: trimmed).
 type MessageParamExtRequestRead struct {
 	// System ID
 	TargetSystem uint8
@@ -16726,18 +16968,22 @@ type MessageParamExtRequestRead struct {
 	ParamId string `mavlen:"16"`
 	// Parameter index. Set to -1 to use the Parameter ID field as identifier (else param_id will be ignored)
 	ParamIndex int16
+	// Request _TRIMMED variants of PARAM_EXT_ messages. Set to 1 if _TRIMMED message variants are supported, and 0 otherwise. This signals the recipient that _TRIMMED messages are supported by the sender (and should be used if supported by the recipient).
+	Trimmed uint8 `mavext:"true"`
 }
 
 func (*MessageParamExtRequestRead) GetId() uint32 {
 	return 320
 }
 
-// Request all parameters of this component. After this request, all parameters are emitted.
+// Request all parameters of this component. All parameters should be emitted in response (as PARAM_EXT_VALUE or PARAM_EXT_VALUE_TRIMMED messages - see field: trimmed).
 type MessageParamExtRequestList struct {
 	// System ID
 	TargetSystem uint8
 	// Component ID
 	TargetComponent uint8
+	// Request _TRIMMED variants of PARAM_EXT_ messages. Set to 1 if _TRIMMED message variants are supported, and 0 otherwise. This signals the recipient that _TRIMMED messages are supported by the sender (and should be used if supported by the recipient).
+	Trimmed uint8 `mavext:"true"`
 }
 
 func (*MessageParamExtRequestList) GetId() uint32 {
@@ -16796,8 +17042,8 @@ func (*MessageParamExtAck) GetId() uint32 {
 	return 324
 }
 
-// Emit the value of a parameter. The param_count and param_index fields allow the recipient to keep track of received parameters and to re-request missing parameters after a loss or timeout. Replacement for PARAM_EXT_VALUE.
-type MessageParamV3Value struct {
+// Emit the value of a parameter. The inclusion of param_count and param_index in the message allows the recipient to keep track of received parameters and allows them to re-request missing parameters after a loss or timeout. Replacement for PARAM_EXT_VALUE.
+type MessageParamExtValueTrimmed struct {
 	// Parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
 	ParamId string `mavlen:"16"`
 	// Parameter type.
@@ -16810,12 +17056,12 @@ type MessageParamV3Value struct {
 	ParamValue string `mavlen:"128"`
 }
 
-func (*MessageParamV3Value) GetId() uint32 {
+func (*MessageParamExtValueTrimmed) GetId() uint32 {
 	return 325
 }
 
-// Set a parameter value. In order to deal with message loss (and retransmission of PARAM_EXT_SET), when setting a parameter value and the new value is the same as the current value, you will immediately get a PARAM_ACK_ACCEPTED response. If the current state is PARAM_ACK_IN_PROGRESS, you will accordingly receive a PARAM_ACK_IN_PROGRESS in response.
-type MessageParamV3Set struct {
+// Set a parameter value. In order to deal with message loss (and retransmission of PARAM_EXT_SET_TRIMMED), when setting a parameter value and the new value is the same as the current value, you will immediately get a PARAM_ACK_ACCEPTED response. If the current state is PARAM_ACK_IN_PROGRESS, you will accordingly receive a PARAM_ACK_IN_PROGRESS in response. If there is no response to this message, and it is unknown whether the _TRIMMED messages are supported (because no PARAM_EXT_REQUEST_READ or PARAM_EXT_REQUEST_LIST has been performed yet), then fall back to PARAM_EXT_SET.
+type MessageParamExtSetTrimmed struct {
 	// System ID
 	TargetSystem uint8
 	// Component ID
@@ -16828,12 +17074,12 @@ type MessageParamV3Set struct {
 	ParamValue string `mavlen:"128"`
 }
 
-func (*MessageParamV3Set) GetId() uint32 {
+func (*MessageParamExtSetTrimmed) GetId() uint32 {
 	return 326
 }
 
-// Response from a PARAM_V3_SET message.
-type MessageParamV3Ack struct {
+// Response from a PARAM_EXT_SET_TRIMMED message.
+type MessageParamExtAckTrimmed struct {
 	// Parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
 	ParamId string `mavlen:"16"`
 	// Parameter type.
@@ -16844,7 +17090,7 @@ type MessageParamV3Ack struct {
 	ParamValue string `mavlen:"128"`
 }
 
-func (*MessageParamV3Ack) GetId() uint32 {
+func (*MessageParamExtAckTrimmed) GetId() uint32 {
 	return 327
 }
 
@@ -16856,6 +17102,8 @@ type MessageParamStartTransaction struct {
 	TargetComponent uint8
 	// Possible transport layers to set and get parameters via mavlink during a parameter transaction.
 	ParamTransport PARAM_TRANSACTION_TRANSPORT `mavenum:"uint8"`
+	// Identifier for a specific transaction.
+	TransactionId uint16
 	// Message acceptance response (sent back to GS).
 	Response PARAM_TRANSACTION_RESPONSE `mavenum:"uint8"`
 }
@@ -16872,6 +17120,8 @@ type MessageParamCommitTransaction struct {
 	TargetComponent uint8
 	// Commit or cancel an ongoing transaction.
 	ParamAction PARAM_TRANSACTION_ACTION `mavenum:"uint8"`
+	// Identifier for a specific transaction.
+	TransactionId uint16
 	// Message acceptance response (sent back to GS).
 	Response PARAM_TRANSACTION_RESPONSE `mavenum:"uint8"`
 }

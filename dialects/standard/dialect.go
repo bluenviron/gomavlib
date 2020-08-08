@@ -3157,6 +3157,8 @@ const (
 	GIMBAL_DEVICE_ERROR_FLAGS_SOFTWARE_ERROR GIMBAL_DEVICE_ERROR_FLAGS = 64
 	// There is an error with the gimbal's communication.
 	GIMBAL_DEVICE_ERROR_FLAGS_COMMS_ERROR GIMBAL_DEVICE_ERROR_FLAGS = 128
+	// Gimbal is currently calibrating.
+	GIMBAL_DEVICE_ERROR_FLAGS_CALIBRATION_RUNNING GIMBAL_DEVICE_ERROR_FLAGS = 256
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -3178,6 +3180,8 @@ func (e GIMBAL_DEVICE_ERROR_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("GIMBAL_DEVICE_ERROR_FLAGS_SOFTWARE_ERROR"), nil
 	case GIMBAL_DEVICE_ERROR_FLAGS_COMMS_ERROR:
 		return []byte("GIMBAL_DEVICE_ERROR_FLAGS_COMMS_ERROR"), nil
+	case GIMBAL_DEVICE_ERROR_FLAGS_CALIBRATION_RUNNING:
+		return []byte("GIMBAL_DEVICE_ERROR_FLAGS_CALIBRATION_RUNNING"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -3208,6 +3212,9 @@ func (e *GIMBAL_DEVICE_ERROR_FLAGS) UnmarshalText(text []byte) error {
 		return nil
 	case "GIMBAL_DEVICE_ERROR_FLAGS_COMMS_ERROR":
 		*e = GIMBAL_DEVICE_ERROR_FLAGS_COMMS_ERROR
+		return nil
+	case "GIMBAL_DEVICE_ERROR_FLAGS_CALIBRATION_RUNNING":
+		*e = GIMBAL_DEVICE_ERROR_FLAGS_CALIBRATION_RUNNING
 		return nil
 	}
 	return errors.New("invalid value")

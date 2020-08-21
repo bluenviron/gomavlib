@@ -14618,6 +14618,8 @@ type MessageHilGps struct {
 	SatellitesVisible uint8
 	// GPS ID (zero indexed). Used for multiple GPS inputs
 	Id uint8 `mavext:"true"`
+	// Yaw of vehicle relative to Earth's North, zero means not available, use 36000 for north
+	Yaw uint16 `mavext:"true"`
 }
 
 func (*MessageHilGps) GetId() uint32 {

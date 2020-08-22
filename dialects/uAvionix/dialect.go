@@ -197,8 +197,6 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessageParamExtValueTrimmed{},
 	&MessageParamExtSetTrimmed{},
 	&MessageParamExtAckTrimmed{},
-	&MessageParamStartTransaction{},
-	&MessageParamCommitTransaction{},
 	&MessageObstacleDistance{},
 	&MessageOdometry{},
 	&MessageTrajectoryRepresentationWaypoints{},
@@ -4625,6 +4623,8 @@ const (
 	MAV_CMD_JUMP_TAG MAV_CMD = 600
 	// Jump to the matching tag in the mission list. Repeat this action for the specified number of times. A mission should contain a single matching tag for each jump. If this is not the case then a jump to a missing tag should complete the mission, and a jump where there are multiple matching tags should always select the one with the lowest mission sequence number.
 	MAV_CMD_DO_JUMP_TAG MAV_CMD = 601
+	// Request to start or end a parameter transaction. Multiple kinds of transport layers can be used to exchange parameters in the transaction (param, param_ext and mavftp). The command response can either be a success/failure or an in progress in case the receiving side takes some time to apply the parameters.
+	MAV_CMD_PARAM_TRANSACTION MAV_CMD = 900
 	// High level setpoint to be sent to a gimbal manager to set a gimbal attitude. It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. Note: a gimbal is never to react to this command but only the gimbal manager.
 	MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN MAV_CMD = 1000
 	// Start image capture sequence. Sends CAMERA_IMAGE_CAPTURED after each capture. Use NaN for reserved values.
@@ -4926,6 +4926,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_JUMP_TAG"), nil
 	case MAV_CMD_DO_JUMP_TAG:
 		return []byte("MAV_CMD_DO_JUMP_TAG"), nil
+	case MAV_CMD_PARAM_TRANSACTION:
+		return []byte("MAV_CMD_PARAM_TRANSACTION"), nil
 	case MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN:
 		return []byte("MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN"), nil
 	case MAV_CMD_IMAGE_START_CAPTURE:
@@ -5328,6 +5330,9 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_DO_JUMP_TAG":
 		*e = MAV_CMD_DO_JUMP_TAG
+		return nil
+	case "MAV_CMD_PARAM_TRANSACTION":
+		*e = MAV_CMD_PARAM_TRANSACTION
 		return nil
 	case "MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN":
 		*e = MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN
@@ -11224,19 +11229,23 @@ func (e PARAM_ACK) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
-// Possible parameter transaction action during a commit.
+// Possible parameter transaction actions.
 type PARAM_TRANSACTION_ACTION int
 
 const (
 	// Commit the current parameter transaction.
-	PARAM_TRANSACTION_ACTION_COMMIT PARAM_TRANSACTION_ACTION = 0
+	PARAM_TRANSACTION_ACTION_START PARAM_TRANSACTION_ACTION = 0
+	// Commit the current parameter transaction.
+	PARAM_TRANSACTION_ACTION_COMMIT PARAM_TRANSACTION_ACTION = 1
 	// Cancel the current parameter transaction.
-	PARAM_TRANSACTION_ACTION_CANCEL PARAM_TRANSACTION_ACTION = 1
+	PARAM_TRANSACTION_ACTION_CANCEL PARAM_TRANSACTION_ACTION = 2
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e PARAM_TRANSACTION_ACTION) MarshalText() ([]byte, error) {
 	switch e {
+	case PARAM_TRANSACTION_ACTION_START:
+		return []byte("PARAM_TRANSACTION_ACTION_START"), nil
 	case PARAM_TRANSACTION_ACTION_COMMIT:
 		return []byte("PARAM_TRANSACTION_ACTION_COMMIT"), nil
 	case PARAM_TRANSACTION_ACTION_CANCEL:
@@ -11248,6 +11257,9 @@ func (e PARAM_TRANSACTION_ACTION) MarshalText() ([]byte, error) {
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *PARAM_TRANSACTION_ACTION) UnmarshalText(text []byte) error {
 	switch string(text) {
+	case "PARAM_TRANSACTION_ACTION_START":
+		*e = PARAM_TRANSACTION_ACTION_START
+		return nil
 	case "PARAM_TRANSACTION_ACTION_COMMIT":
 		*e = PARAM_TRANSACTION_ACTION_COMMIT
 		return nil
@@ -11260,63 +11272,6 @@ func (e *PARAM_TRANSACTION_ACTION) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e PARAM_TRANSACTION_ACTION) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
-	}
-	return strconv.FormatInt(int64(e), 10)
-}
-
-// Possible responses from a PARAM_START_TRANSACTION and PARAM_COMMIT_TRANSACTION messages.
-type PARAM_TRANSACTION_RESPONSE int
-
-const (
-	// Transaction accepted.
-	PARAM_TRANSACTION_RESPONSE_ACCEPTED PARAM_TRANSACTION_RESPONSE = 0
-	// Transaction failed.
-	PARAM_TRANSACTION_RESPONSE_FAILED PARAM_TRANSACTION_RESPONSE = 1
-	// Transaction unsupported.
-	PARAM_TRANSACTION_RESPONSE_UNSUPPORTED PARAM_TRANSACTION_RESPONSE = 2
-	// Transaction in progress.
-	PARAM_TRANSACTION_RESPONSE_INPROGRESS PARAM_TRANSACTION_RESPONSE = 3
-)
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e PARAM_TRANSACTION_RESPONSE) MarshalText() ([]byte, error) {
-	switch e {
-	case PARAM_TRANSACTION_RESPONSE_ACCEPTED:
-		return []byte("PARAM_TRANSACTION_RESPONSE_ACCEPTED"), nil
-	case PARAM_TRANSACTION_RESPONSE_FAILED:
-		return []byte("PARAM_TRANSACTION_RESPONSE_FAILED"), nil
-	case PARAM_TRANSACTION_RESPONSE_UNSUPPORTED:
-		return []byte("PARAM_TRANSACTION_RESPONSE_UNSUPPORTED"), nil
-	case PARAM_TRANSACTION_RESPONSE_INPROGRESS:
-		return []byte("PARAM_TRANSACTION_RESPONSE_INPROGRESS"), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *PARAM_TRANSACTION_RESPONSE) UnmarshalText(text []byte) error {
-	switch string(text) {
-	case "PARAM_TRANSACTION_RESPONSE_ACCEPTED":
-		*e = PARAM_TRANSACTION_RESPONSE_ACCEPTED
-		return nil
-	case "PARAM_TRANSACTION_RESPONSE_FAILED":
-		*e = PARAM_TRANSACTION_RESPONSE_FAILED
-		return nil
-	case "PARAM_TRANSACTION_RESPONSE_UNSUPPORTED":
-		*e = PARAM_TRANSACTION_RESPONSE_UNSUPPORTED
-		return nil
-	case "PARAM_TRANSACTION_RESPONSE_INPROGRESS":
-		*e = PARAM_TRANSACTION_RESPONSE_INPROGRESS
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e PARAM_TRANSACTION_RESPONSE) String() string {
 	byts, err := e.MarshalText()
 	if err == nil {
 		return string(byts)
@@ -17465,42 +17420,6 @@ type MessageParamExtAckTrimmed struct {
 
 func (*MessageParamExtAckTrimmed) GetId() uint32 {
 	return 327
-}
-
-// Request to start a new parameter transaction. Multiple kinds of transport layers can be used to exchange parameters in the transaction (param, param_ext and mavftp). The response (ack) will contain the same message but with a response attached to it.
-type MessageParamStartTransaction struct {
-	// System ID
-	TargetSystem uint8
-	// Component ID
-	TargetComponent uint8
-	// Possible transport layers to set and get parameters via mavlink during a parameter transaction.
-	ParamTransport PARAM_TRANSACTION_TRANSPORT `mavenum:"uint8"`
-	// Identifier for a specific transaction.
-	TransactionId uint16
-	// Message acceptance response (sent back to GS).
-	Response PARAM_TRANSACTION_RESPONSE `mavenum:"uint8"`
-}
-
-func (*MessageParamStartTransaction) GetId() uint32 {
-	return 328
-}
-
-// Request to end the current parameter transaction. This message will have effect only if a transaction was previously opened using the PARAM_START_TRANSACTION message. The response will contain the same message but with a response attached to it. The response can either be a success/failure or and in progress in case the receiving side takes some time to apply the parameters.
-type MessageParamCommitTransaction struct {
-	// System ID
-	TargetSystem uint8
-	// Component ID
-	TargetComponent uint8
-	// Commit or cancel an ongoing transaction.
-	ParamAction PARAM_TRANSACTION_ACTION `mavenum:"uint8"`
-	// Identifier for a specific transaction.
-	TransactionId uint16
-	// Message acceptance response (sent back to GS).
-	Response PARAM_TRANSACTION_RESPONSE `mavenum:"uint8"`
-}
-
-func (*MessageParamCommitTransaction) GetId() uint32 {
-	return 329
 }
 
 // Obstacle distances in front of the sensor, starting from the left in increment degrees to the right

@@ -7166,6 +7166,8 @@ const (
 	MAV_CMD_DO_MOTOR_TEST MAV_CMD = 209
 	// Change to/from inverted flight.
 	MAV_CMD_DO_INVERTED_FLIGHT MAV_CMD = 210
+	// Mission command to operate a gripper.
+	MAV_CMD_DO_GRIPPER MAV_CMD = 211
 	// Sets a desired vehicle turn angle and speed change.
 	MAV_CMD_NAV_SET_YAW_SPEED MAV_CMD = 213
 	// Mission command to set camera trigger interval for this flight. If triggering is enabled, the camera is triggered each time this interval expires. This command can also be used to set the shutter integration time for the camera.
@@ -7310,6 +7312,8 @@ const (
 	MAV_CMD_PAYLOAD_PREPARE_DEPLOY MAV_CMD = 30001
 	// Control the payload deployment.
 	MAV_CMD_PAYLOAD_CONTROL_DEPLOY MAV_CMD = 30002
+	// Command to operate winch.
+	MAV_CMD_DO_WINCH MAV_CMD = 42600
 	// User defined waypoint item. Ground Station will show the Vehicle as flying through this item.
 	MAV_CMD_WAYPOINT_USER_1 MAV_CMD = 31000
 	// User defined waypoint item. Ground Station will show the Vehicle as flying through this item.
@@ -7340,8 +7344,6 @@ const (
 	MAV_CMD_USER_4 MAV_CMD = 31013
 	// User defined command. Ground Station will not show the Vehicle as flying through this item. Example: MAV_CMD_DO_SET_PARAMETER item.
 	MAV_CMD_USER_5 MAV_CMD = 31014
-	// Mission command to operate EPM gripper.
-	MAV_CMD_DO_GRIPPER MAV_CMD = 211
 	// Enable/disable autotune.
 	MAV_CMD_DO_AUTOTUNE_ENABLE MAV_CMD = 212
 	// Set the distance to be repeated on mission resume
@@ -7382,8 +7384,6 @@ const (
 	MAV_CMD_GIMBAL_REQUEST_AXIS_CALIBRATION MAV_CMD = 42503
 	// Erases gimbal application and parameters.
 	MAV_CMD_GIMBAL_FULL_RESET MAV_CMD = 42505
-	// Command to operate winch.
-	MAV_CMD_DO_WINCH MAV_CMD = 42600
 	// Update the bootloader
 	MAV_CMD_FLASH_BOOTLOADER MAV_CMD = 42650
 	// Reset battery capacity for batteries that accumulate consumed battery via integration.
@@ -7521,6 +7521,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_DO_MOTOR_TEST"), nil
 	case MAV_CMD_DO_INVERTED_FLIGHT:
 		return []byte("MAV_CMD_DO_INVERTED_FLIGHT"), nil
+	case MAV_CMD_DO_GRIPPER:
+		return []byte("MAV_CMD_DO_GRIPPER"), nil
 	case MAV_CMD_NAV_SET_YAW_SPEED:
 		return []byte("MAV_CMD_NAV_SET_YAW_SPEED"), nil
 	case MAV_CMD_DO_SET_CAM_TRIGG_INTERVAL:
@@ -7665,6 +7667,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_PAYLOAD_PREPARE_DEPLOY"), nil
 	case MAV_CMD_PAYLOAD_CONTROL_DEPLOY:
 		return []byte("MAV_CMD_PAYLOAD_CONTROL_DEPLOY"), nil
+	case MAV_CMD_DO_WINCH:
+		return []byte("MAV_CMD_DO_WINCH"), nil
 	case MAV_CMD_WAYPOINT_USER_1:
 		return []byte("MAV_CMD_WAYPOINT_USER_1"), nil
 	case MAV_CMD_WAYPOINT_USER_2:
@@ -7695,8 +7699,6 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_USER_4"), nil
 	case MAV_CMD_USER_5:
 		return []byte("MAV_CMD_USER_5"), nil
-	case MAV_CMD_DO_GRIPPER:
-		return []byte("MAV_CMD_DO_GRIPPER"), nil
 	case MAV_CMD_DO_AUTOTUNE_ENABLE:
 		return []byte("MAV_CMD_DO_AUTOTUNE_ENABLE"), nil
 	case MAV_CMD_DO_SET_RESUME_REPEAT_DIST:
@@ -7737,8 +7739,6 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_GIMBAL_REQUEST_AXIS_CALIBRATION"), nil
 	case MAV_CMD_GIMBAL_FULL_RESET:
 		return []byte("MAV_CMD_GIMBAL_FULL_RESET"), nil
-	case MAV_CMD_DO_WINCH:
-		return []byte("MAV_CMD_DO_WINCH"), nil
 	case MAV_CMD_FLASH_BOOTLOADER:
 		return []byte("MAV_CMD_FLASH_BOOTLOADER"), nil
 	case MAV_CMD_BATTERY_RESET:
@@ -7939,6 +7939,9 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_DO_INVERTED_FLIGHT":
 		*e = MAV_CMD_DO_INVERTED_FLIGHT
+		return nil
+	case "MAV_CMD_DO_GRIPPER":
+		*e = MAV_CMD_DO_GRIPPER
 		return nil
 	case "MAV_CMD_NAV_SET_YAW_SPEED":
 		*e = MAV_CMD_NAV_SET_YAW_SPEED
@@ -8156,6 +8159,9 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 	case "MAV_CMD_PAYLOAD_CONTROL_DEPLOY":
 		*e = MAV_CMD_PAYLOAD_CONTROL_DEPLOY
 		return nil
+	case "MAV_CMD_DO_WINCH":
+		*e = MAV_CMD_DO_WINCH
+		return nil
 	case "MAV_CMD_WAYPOINT_USER_1":
 		*e = MAV_CMD_WAYPOINT_USER_1
 		return nil
@@ -8200,9 +8206,6 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_USER_5":
 		*e = MAV_CMD_USER_5
-		return nil
-	case "MAV_CMD_DO_GRIPPER":
-		*e = MAV_CMD_DO_GRIPPER
 		return nil
 	case "MAV_CMD_DO_AUTOTUNE_ENABLE":
 		*e = MAV_CMD_DO_AUTOTUNE_ENABLE
@@ -8263,9 +8266,6 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_GIMBAL_FULL_RESET":
 		*e = MAV_CMD_GIMBAL_FULL_RESET
-		return nil
-	case "MAV_CMD_DO_WINCH":
-		*e = MAV_CMD_DO_WINCH
 		return nil
 	case "MAV_CMD_FLASH_BOOTLOADER":
 		*e = MAV_CMD_FLASH_BOOTLOADER
@@ -16657,9 +16657,9 @@ type WINCH_ACTIONS int
 const (
 	// Relax winch.
 	WINCH_RELAXED WINCH_ACTIONS = 0
-	// Winch unwinds or winds specified length of cable optionally using specified rate.
+	// Wind or unwind specified length of cable, optionally using specified rate.
 	WINCH_RELATIVE_LENGTH_CONTROL WINCH_ACTIONS = 1
-	// Winch unwinds or winds cable at specified rate in meters/seconds.
+	// Wind or unwind cable at specified rate.
 	WINCH_RATE_CONTROL WINCH_ACTIONS = 2
 )
 

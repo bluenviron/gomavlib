@@ -3735,6 +3735,49 @@ func (e GPS_INPUT_IGNORE_FLAGS) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
+// Gripper actions.
+type GRIPPER_ACTIONS int
+
+const (
+	// Gripper release cargo.
+	GRIPPER_ACTION_RELEASE GRIPPER_ACTIONS = 0
+	// Gripper grab onto cargo.
+	GRIPPER_ACTION_GRAB GRIPPER_ACTIONS = 1
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e GRIPPER_ACTIONS) MarshalText() ([]byte, error) {
+	switch e {
+	case GRIPPER_ACTION_RELEASE:
+		return []byte("GRIPPER_ACTION_RELEASE"), nil
+	case GRIPPER_ACTION_GRAB:
+		return []byte("GRIPPER_ACTION_GRAB"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *GRIPPER_ACTIONS) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "GRIPPER_ACTION_RELEASE":
+		*e = GRIPPER_ACTION_RELEASE
+		return nil
+	case "GRIPPER_ACTION_GRAB":
+		*e = GRIPPER_ACTION_GRAB
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e GRIPPER_ACTIONS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Flags to report failure cases over the high latency telemtry.
 type HL_FAILURE_FLAG int
 
@@ -4571,6 +4614,8 @@ const (
 	MAV_CMD_DO_MOTOR_TEST MAV_CMD = 209
 	// Change to/from inverted flight.
 	MAV_CMD_DO_INVERTED_FLIGHT MAV_CMD = 210
+	// Mission command to operate a gripper.
+	MAV_CMD_DO_GRIPPER MAV_CMD = 211
 	// Sets a desired vehicle turn angle and speed change.
 	MAV_CMD_NAV_SET_YAW_SPEED MAV_CMD = 213
 	// Mission command to set camera trigger interval for this flight. If triggering is enabled, the camera is triggered each time this interval expires. This command can also be used to set the shutter integration time for the camera.
@@ -4715,6 +4760,8 @@ const (
 	MAV_CMD_PAYLOAD_PREPARE_DEPLOY MAV_CMD = 30001
 	// Control the payload deployment.
 	MAV_CMD_PAYLOAD_CONTROL_DEPLOY MAV_CMD = 30002
+	// Command to operate winch.
+	MAV_CMD_DO_WINCH MAV_CMD = 42600
 	// User defined waypoint item. Ground Station will show the Vehicle as flying through this item.
 	MAV_CMD_WAYPOINT_USER_1 MAV_CMD = 31000
 	// User defined waypoint item. Ground Station will show the Vehicle as flying through this item.
@@ -4876,6 +4923,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_DO_MOTOR_TEST"), nil
 	case MAV_CMD_DO_INVERTED_FLIGHT:
 		return []byte("MAV_CMD_DO_INVERTED_FLIGHT"), nil
+	case MAV_CMD_DO_GRIPPER:
+		return []byte("MAV_CMD_DO_GRIPPER"), nil
 	case MAV_CMD_NAV_SET_YAW_SPEED:
 		return []byte("MAV_CMD_NAV_SET_YAW_SPEED"), nil
 	case MAV_CMD_DO_SET_CAM_TRIGG_INTERVAL:
@@ -5020,6 +5069,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_PAYLOAD_PREPARE_DEPLOY"), nil
 	case MAV_CMD_PAYLOAD_CONTROL_DEPLOY:
 		return []byte("MAV_CMD_PAYLOAD_CONTROL_DEPLOY"), nil
+	case MAV_CMD_DO_WINCH:
+		return []byte("MAV_CMD_DO_WINCH"), nil
 	case MAV_CMD_WAYPOINT_USER_1:
 		return []byte("MAV_CMD_WAYPOINT_USER_1"), nil
 	case MAV_CMD_WAYPOINT_USER_2:
@@ -5245,6 +5296,9 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 	case "MAV_CMD_DO_INVERTED_FLIGHT":
 		*e = MAV_CMD_DO_INVERTED_FLIGHT
 		return nil
+	case "MAV_CMD_DO_GRIPPER":
+		*e = MAV_CMD_DO_GRIPPER
+		return nil
 	case "MAV_CMD_NAV_SET_YAW_SPEED":
 		*e = MAV_CMD_NAV_SET_YAW_SPEED
 		return nil
@@ -5460,6 +5514,9 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_PAYLOAD_CONTROL_DEPLOY":
 		*e = MAV_CMD_PAYLOAD_CONTROL_DEPLOY
+		return nil
+	case "MAV_CMD_DO_WINCH":
+		*e = MAV_CMD_DO_WINCH
 		return nil
 	case "MAV_CMD_WAYPOINT_USER_1":
 		*e = MAV_CMD_WAYPOINT_USER_1
@@ -12590,6 +12647,56 @@ func (e *WIFI_CONFIG_AP_RESPONSE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e WIFI_CONFIG_AP_RESPONSE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+// Winch actions.
+type WINCH_ACTIONS int
+
+const (
+	// Relax winch.
+	WINCH_RELAXED WINCH_ACTIONS = 0
+	// Wind or unwind specified length of cable, optionally using specified rate.
+	WINCH_RELATIVE_LENGTH_CONTROL WINCH_ACTIONS = 1
+	// Wind or unwind cable at specified rate.
+	WINCH_RATE_CONTROL WINCH_ACTIONS = 2
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e WINCH_ACTIONS) MarshalText() ([]byte, error) {
+	switch e {
+	case WINCH_RELAXED:
+		return []byte("WINCH_RELAXED"), nil
+	case WINCH_RELATIVE_LENGTH_CONTROL:
+		return []byte("WINCH_RELATIVE_LENGTH_CONTROL"), nil
+	case WINCH_RATE_CONTROL:
+		return []byte("WINCH_RATE_CONTROL"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *WINCH_ACTIONS) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "WINCH_RELAXED":
+		*e = WINCH_RELAXED
+		return nil
+	case "WINCH_RELATIVE_LENGTH_CONTROL":
+		*e = WINCH_RELATIVE_LENGTH_CONTROL
+		return nil
+	case "WINCH_RATE_CONTROL":
+		*e = WINCH_RATE_CONTROL
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e WINCH_ACTIONS) String() string {
 	byts, err := e.MarshalText()
 	if err == nil {
 		return string(byts)

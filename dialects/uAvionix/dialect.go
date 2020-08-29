@@ -2267,6 +2267,8 @@ const (
 	COMP_METADATA_TYPE_VERSION COMP_METADATA_TYPE = 0
 	// Parameter meta data.
 	COMP_METADATA_TYPE_PARAMETER COMP_METADATA_TYPE = 1
+	// Meta data which specifies the commands the vehicle supports. (WIP)
+	COMP_METADATA_TYPE_COMMANDS COMP_METADATA_TYPE = 2
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -2276,6 +2278,8 @@ func (e COMP_METADATA_TYPE) MarshalText() ([]byte, error) {
 		return []byte("COMP_METADATA_TYPE_VERSION"), nil
 	case COMP_METADATA_TYPE_PARAMETER:
 		return []byte("COMP_METADATA_TYPE_PARAMETER"), nil
+	case COMP_METADATA_TYPE_COMMANDS:
+		return []byte("COMP_METADATA_TYPE_COMMANDS"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -2288,6 +2292,9 @@ func (e *COMP_METADATA_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	case "COMP_METADATA_TYPE_PARAMETER":
 		*e = COMP_METADATA_TYPE_PARAMETER
+		return nil
+	case "COMP_METADATA_TYPE_COMMANDS":
+		*e = COMP_METADATA_TYPE_COMMANDS
 		return nil
 	}
 	return errors.New("invalid value")

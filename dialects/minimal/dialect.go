@@ -28,7 +28,7 @@ const (
 	MAV_AUTOPILOT_RESERVED MAV_AUTOPILOT = 1
 	// SLUGS autopilot, http://slugsuav.soe.ucsc.edu
 	MAV_AUTOPILOT_SLUGS MAV_AUTOPILOT = 2
-	// ArduPilot - Plane/Copter/Rover/Sub/Tracker, http://ardupilot.org
+	// ArduPilot - Plane/Copter/Rover/Sub/Tracker, https://ardupilot.org
 	MAV_AUTOPILOT_ARDUPILOTMEGA MAV_AUTOPILOT = 3
 	// OpenPilot, http://openpilot.org
 	MAV_AUTOPILOT_OPENPILOT MAV_AUTOPILOT = 4
@@ -193,7 +193,7 @@ type MAV_CMD int
 const (
 	// Request the target system(s) emit a single instance of a specified message (i.e. a "one-shot" version of MAV_CMD_SET_MESSAGE_INTERVAL).
 	MAV_CMD_REQUEST_MESSAGE MAV_CMD = 512
-	// Request MAVLink protocol version compatibility
+	// Request MAVLink protocol version compatibility. All receivers should ACK the command and then emit their capabilities in an PROTOCOL_VERSION message
 	MAV_CMD_REQUEST_PROTOCOL_VERSION MAV_CMD = 519
 )
 
@@ -234,7 +234,7 @@ func (e MAV_CMD) String() string {
 type MAV_COMPONENT int
 
 const (
-	// Used to broadcast messages to all components of the receiving system. Components should attempt to process messages with this component ID and forward to components on any other interfaces.
+	// Target id (target_component) used to broadcast messages to all components of the receiving system. Components should attempt to process messages with this component ID and forward to components on any other interfaces. Note: This is not a valid *source* component id for a message.
 	MAV_COMP_ID_ALL MAV_COMPONENT = 0
 	// System flight controller component ("autopilot"). Only one autopilot is expected in a particular system.
 	MAV_COMP_ID_AUTOPILOT1 MAV_COMPONENT = 1
@@ -324,8 +324,8 @@ const (
 	MAV_COMP_ID_USER42 MAV_COMPONENT = 66
 	// Id for a component on privately managed MAVLink network. Can be used for any purpose but may not be published by components outside of the private network.
 	MAV_COMP_ID_USER43 MAV_COMPONENT = 67
-	// Id for a component on privately managed MAVLink network. Can be used for any purpose but may not be published by components outside of the private network.
-	MAV_COMP_ID_USER44 MAV_COMPONENT = 68
+	// Telemetry radio (e.g. SiK radio, or other component that emits RADIO_STATUS messages).
+	MAV_COMP_ID_TELEMETRY_RADIO MAV_COMPONENT = 68
 	// Id for a component on privately managed MAVLink network. Can be used for any purpose but may not be published by components outside of the private network.
 	MAV_COMP_ID_USER45 MAV_COMPONENT = 69
 	// Id for a component on privately managed MAVLink network. Can be used for any purpose but may not be published by components outside of the private network.
@@ -428,7 +428,7 @@ const (
 	MAV_COMP_ID_SERVO13 MAV_COMPONENT = 152
 	// Servo #14.
 	MAV_COMP_ID_SERVO14 MAV_COMPONENT = 153
-	// Gimbal component.
+	// Gimbal #1.
 	MAV_COMP_ID_GIMBAL MAV_COMPONENT = 154
 	// Logging component.
 	MAV_COMP_ID_LOG MAV_COMPONENT = 155
@@ -442,8 +442,20 @@ const (
 	MAV_COMP_ID_QX1_GIMBAL MAV_COMPONENT = 159
 	// FLARM collision alert component.
 	MAV_COMP_ID_FLARM MAV_COMPONENT = 160
+	// Gimbal #2.
+	MAV_COMP_ID_GIMBAL2 MAV_COMPONENT = 171
+	// Gimbal #3.
+	MAV_COMP_ID_GIMBAL3 MAV_COMPONENT = 172
+	// Gimbal #4
+	MAV_COMP_ID_GIMBAL4 MAV_COMPONENT = 173
+	// Gimbal #5.
+	MAV_COMP_ID_GIMBAL5 MAV_COMPONENT = 174
+	// Gimbal #6.
+	MAV_COMP_ID_GIMBAL6 MAV_COMPONENT = 175
 	// Component that can generate/supply a mission flight plan (e.g. GCS or developer API).
 	MAV_COMP_ID_MISSIONPLANNER MAV_COMPONENT = 190
+	// Component that lives on the onboard computer (companion computer) and has some generic functionalities, such as settings system parameters and monitoring the status of some processes that don't directly speak mavlink and so on.
+	MAV_COMP_ID_ONBOARD_COMPUTER MAV_COMPONENT = 191
 	// Component that finds an optimal path between points based on a certain constraint (e.g. minimum snap, shortest path, cost, etc.).
 	MAV_COMP_ID_PATHPLANNER MAV_COMPONENT = 195
 	// Component that plans a collision free path between two points.
@@ -462,10 +474,18 @@ const (
 	MAV_COMP_ID_GPS MAV_COMPONENT = 220
 	// GPS #2.
 	MAV_COMP_ID_GPS2 MAV_COMPONENT = 221
+	// Open Drone ID transmitter/receiver (Bluetooth/WiFi/Internet).
+	MAV_COMP_ID_ODID_TXRX_1 MAV_COMPONENT = 236
+	// Open Drone ID transmitter/receiver (Bluetooth/WiFi/Internet).
+	MAV_COMP_ID_ODID_TXRX_2 MAV_COMPONENT = 237
+	// Open Drone ID transmitter/receiver (Bluetooth/WiFi/Internet).
+	MAV_COMP_ID_ODID_TXRX_3 MAV_COMPONENT = 238
 	// Component to bridge MAVLink to UDP (i.e. from a UART).
 	MAV_COMP_ID_UDP_BRIDGE MAV_COMPONENT = 240
 	// Component to bridge to UART (i.e. from UDP).
 	MAV_COMP_ID_UART_BRIDGE MAV_COMPONENT = 241
+	// Component handling TUNNEL messages (e.g. vendor specific GUI of a component).
+	MAV_COMP_ID_TUNNEL_NODE MAV_COMPONENT = 242
 	// Component for handling system messages (e.g. to ARM, takeoff, etc.).
 	MAV_COMP_ID_SYSTEM_CONTROL MAV_COMPONENT = 250
 )
@@ -563,8 +583,8 @@ func (e MAV_COMPONENT) MarshalText() ([]byte, error) {
 		return []byte("MAV_COMP_ID_USER42"), nil
 	case MAV_COMP_ID_USER43:
 		return []byte("MAV_COMP_ID_USER43"), nil
-	case MAV_COMP_ID_USER44:
-		return []byte("MAV_COMP_ID_USER44"), nil
+	case MAV_COMP_ID_TELEMETRY_RADIO:
+		return []byte("MAV_COMP_ID_TELEMETRY_RADIO"), nil
 	case MAV_COMP_ID_USER45:
 		return []byte("MAV_COMP_ID_USER45"), nil
 	case MAV_COMP_ID_USER46:
@@ -681,8 +701,20 @@ func (e MAV_COMPONENT) MarshalText() ([]byte, error) {
 		return []byte("MAV_COMP_ID_QX1_GIMBAL"), nil
 	case MAV_COMP_ID_FLARM:
 		return []byte("MAV_COMP_ID_FLARM"), nil
+	case MAV_COMP_ID_GIMBAL2:
+		return []byte("MAV_COMP_ID_GIMBAL2"), nil
+	case MAV_COMP_ID_GIMBAL3:
+		return []byte("MAV_COMP_ID_GIMBAL3"), nil
+	case MAV_COMP_ID_GIMBAL4:
+		return []byte("MAV_COMP_ID_GIMBAL4"), nil
+	case MAV_COMP_ID_GIMBAL5:
+		return []byte("MAV_COMP_ID_GIMBAL5"), nil
+	case MAV_COMP_ID_GIMBAL6:
+		return []byte("MAV_COMP_ID_GIMBAL6"), nil
 	case MAV_COMP_ID_MISSIONPLANNER:
 		return []byte("MAV_COMP_ID_MISSIONPLANNER"), nil
+	case MAV_COMP_ID_ONBOARD_COMPUTER:
+		return []byte("MAV_COMP_ID_ONBOARD_COMPUTER"), nil
 	case MAV_COMP_ID_PATHPLANNER:
 		return []byte("MAV_COMP_ID_PATHPLANNER"), nil
 	case MAV_COMP_ID_OBSTACLE_AVOIDANCE:
@@ -701,10 +733,18 @@ func (e MAV_COMPONENT) MarshalText() ([]byte, error) {
 		return []byte("MAV_COMP_ID_GPS"), nil
 	case MAV_COMP_ID_GPS2:
 		return []byte("MAV_COMP_ID_GPS2"), nil
+	case MAV_COMP_ID_ODID_TXRX_1:
+		return []byte("MAV_COMP_ID_ODID_TXRX_1"), nil
+	case MAV_COMP_ID_ODID_TXRX_2:
+		return []byte("MAV_COMP_ID_ODID_TXRX_2"), nil
+	case MAV_COMP_ID_ODID_TXRX_3:
+		return []byte("MAV_COMP_ID_ODID_TXRX_3"), nil
 	case MAV_COMP_ID_UDP_BRIDGE:
 		return []byte("MAV_COMP_ID_UDP_BRIDGE"), nil
 	case MAV_COMP_ID_UART_BRIDGE:
 		return []byte("MAV_COMP_ID_UART_BRIDGE"), nil
+	case MAV_COMP_ID_TUNNEL_NODE:
+		return []byte("MAV_COMP_ID_TUNNEL_NODE"), nil
 	case MAV_COMP_ID_SYSTEM_CONTROL:
 		return []byte("MAV_COMP_ID_SYSTEM_CONTROL"), nil
 	}
@@ -849,8 +889,8 @@ func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
 	case "MAV_COMP_ID_USER43":
 		*e = MAV_COMP_ID_USER43
 		return nil
-	case "MAV_COMP_ID_USER44":
-		*e = MAV_COMP_ID_USER44
+	case "MAV_COMP_ID_TELEMETRY_RADIO":
+		*e = MAV_COMP_ID_TELEMETRY_RADIO
 		return nil
 	case "MAV_COMP_ID_USER45":
 		*e = MAV_COMP_ID_USER45
@@ -1026,8 +1066,26 @@ func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
 	case "MAV_COMP_ID_FLARM":
 		*e = MAV_COMP_ID_FLARM
 		return nil
+	case "MAV_COMP_ID_GIMBAL2":
+		*e = MAV_COMP_ID_GIMBAL2
+		return nil
+	case "MAV_COMP_ID_GIMBAL3":
+		*e = MAV_COMP_ID_GIMBAL3
+		return nil
+	case "MAV_COMP_ID_GIMBAL4":
+		*e = MAV_COMP_ID_GIMBAL4
+		return nil
+	case "MAV_COMP_ID_GIMBAL5":
+		*e = MAV_COMP_ID_GIMBAL5
+		return nil
+	case "MAV_COMP_ID_GIMBAL6":
+		*e = MAV_COMP_ID_GIMBAL6
+		return nil
 	case "MAV_COMP_ID_MISSIONPLANNER":
 		*e = MAV_COMP_ID_MISSIONPLANNER
+		return nil
+	case "MAV_COMP_ID_ONBOARD_COMPUTER":
+		*e = MAV_COMP_ID_ONBOARD_COMPUTER
 		return nil
 	case "MAV_COMP_ID_PATHPLANNER":
 		*e = MAV_COMP_ID_PATHPLANNER
@@ -1056,11 +1114,23 @@ func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
 	case "MAV_COMP_ID_GPS2":
 		*e = MAV_COMP_ID_GPS2
 		return nil
+	case "MAV_COMP_ID_ODID_TXRX_1":
+		*e = MAV_COMP_ID_ODID_TXRX_1
+		return nil
+	case "MAV_COMP_ID_ODID_TXRX_2":
+		*e = MAV_COMP_ID_ODID_TXRX_2
+		return nil
+	case "MAV_COMP_ID_ODID_TXRX_3":
+		*e = MAV_COMP_ID_ODID_TXRX_3
+		return nil
 	case "MAV_COMP_ID_UDP_BRIDGE":
 		*e = MAV_COMP_ID_UDP_BRIDGE
 		return nil
 	case "MAV_COMP_ID_UART_BRIDGE":
 		*e = MAV_COMP_ID_UART_BRIDGE
+		return nil
+	case "MAV_COMP_ID_TUNNEL_NODE":
+		*e = MAV_COMP_ID_TUNNEL_NODE
 		return nil
 	case "MAV_COMP_ID_SYSTEM_CONTROL":
 		*e = MAV_COMP_ID_SYSTEM_CONTROL
@@ -1412,6 +1482,8 @@ const (
 	MAV_TYPE_FLARM MAV_TYPE = 32
 	// Servo
 	MAV_TYPE_SERVO MAV_TYPE = 33
+	// Open Drone ID. See https://mavlink.io/en/services/opendroneid.html.
+	MAV_TYPE_ODID MAV_TYPE = 34
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -1485,6 +1557,8 @@ func (e MAV_TYPE) MarshalText() ([]byte, error) {
 		return []byte("MAV_TYPE_FLARM"), nil
 	case MAV_TYPE_SERVO:
 		return []byte("MAV_TYPE_SERVO"), nil
+	case MAV_TYPE_ODID:
+		return []byte("MAV_TYPE_ODID"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -1594,6 +1668,9 @@ func (e *MAV_TYPE) UnmarshalText(text []byte) error {
 	case "MAV_TYPE_SERVO":
 		*e = MAV_TYPE_SERVO
 		return nil
+	case "MAV_TYPE_ODID":
+		*e = MAV_TYPE_ODID
+		return nil
 	}
 	return errors.New("invalid value")
 }
@@ -1611,9 +1688,9 @@ func (e MAV_TYPE) String() string {
 
 // The heartbeat message shows that a system or component is present and responding. The type and autopilot fields (along with the message component id), allow the receiving system to treat further messages from this system appropriately (e.g. by laying out the user interface based on the autopilot). This microservice is documented at https://mavlink.io/en/services/heartbeat.html
 type MessageHeartbeat struct {
-	// Type of the system (quadrotor, helicopter, etc.). Components use the same type as their associated system.
+	// Vehicle or component type. For a flight controller component the vehicle type (quadrotor, helicopter, etc.). For other components the component type (e.g. camera, gimbal, etc.). This should be used in preference to component id for identifying the component type.
 	Type MAV_TYPE `mavenum:"uint8"`
-	// Autopilot type / class.
+	// Autopilot type / class. Use MAV_AUTOPILOT_INVALID for components that are not flight controllers.
 	Autopilot MAV_AUTOPILOT `mavenum:"uint8"`
 	// System mode bitmap.
 	BaseMode MAV_MODE_FLAG `mavenum:"uint8"`
@@ -1629,7 +1706,7 @@ func (*MessageHeartbeat) GetId() uint32 {
 	return 0
 }
 
-// Version and capability of protocol version. This message is the response to REQUEST_PROTOCOL_VERSION and is used as part of the handshaking to establish which MAVLink version should be used on the network. Every node should respond to REQUEST_PROTOCOL_VERSION to enable the handshaking. Library implementers should consider adding this into the default decoding state machine to allow the protocol core to respond directly.
+// Version and capability of protocol version. This message can be requested with MAV_CMD_REQUEST_MESSAGE and is used as part of the handshaking to establish which MAVLink version should be used on the network. Every node should respond to a request for PROTOCOL_VERSION to enable the handshaking. Library implementers should consider adding this into the default decoding state machine to allow the protocol core to respond directly.
 type MessageProtocolVersion struct {
 	// Currently active MAVLink version number * 100: v1.0 is 100, v2.0 is 200, etc.
 	Version uint16

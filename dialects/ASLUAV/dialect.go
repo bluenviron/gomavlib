@@ -13,8 +13,10 @@ var Dialect = dialect
 
 // dialect is not exposed directly such that it is not displayed in godoc.
 var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
-	// common.xml
+	// minimal.xml
 	&MessageHeartbeat{},
+	&MessageProtocolVersion{},
+	// common.xml
 	&MessageSysStatus{},
 	&MessageSystemTime{},
 	&MessagePing{},
@@ -185,7 +187,6 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessageEscInfo{},
 	&MessageEscStatus{},
 	&MessageWifiConfigAp{},
-	&MessageProtocolVersion{},
 	&MessageAisVessel{},
 	&MessageUavcanNodeStatus{},
 	&MessageUavcanNodeInfo{},
@@ -4588,10 +4589,14 @@ func (e MAV_BATTERY_TYPE) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
-// Commands to be executed by the MAV. They can be executed on user request, or as part of a mission script. If the action is used in a mission, the parameter mapping to the waypoint/mission message is as follows: Param 1, Param 2, Param 3, Param 4, X: Param 5, Y:Param 6, Z:Param 7. This command list is similar what ARINC 424 is for commercial aircraft: A data format how to interpret waypoint/mission data. NaN and INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current yaw or latitude rather than a specific value). See https://mavlink.io/en/guide/xml_schema.html#MAV_CMD for information about the structure of the MAV_CMD entries
+// Commands to be executed by the MAV. They can be executed on user request, or as part of a mission script. If the action is used in a mission, the parameter mapping to the waypoint/mission message is as follows: Param 1, Param 2, Param 3, Param 4, X: Param 5, Y:Param 6, Z:Param 7. This command list is similar what ARINC 424 is for commercial aircraft: A data format how to interpret waypoint/mission data. See https://mavlink.io/en/guide/xml_schema.html#MAV_CMD for information about the structure of the MAV_CMD entries
 type MAV_CMD int
 
 const (
+	// Request the target system(s) emit a single instance of a specified message (i.e. a "one-shot" version of MAV_CMD_SET_MESSAGE_INTERVAL).
+	MAV_CMD_REQUEST_MESSAGE MAV_CMD = 512
+	// Request MAVLink protocol version compatibility. All receivers should ACK the command and then emit their capabilities in an PROTOCOL_VERSION message
+	MAV_CMD_REQUEST_PROTOCOL_VERSION MAV_CMD = 519
 	// Navigate to waypoint.
 	MAV_CMD_NAV_WAYPOINT MAV_CMD = 16
 	// Loiter around this waypoint an unlimited amount of time
@@ -4764,10 +4769,6 @@ const (
 	MAV_CMD_GET_MESSAGE_INTERVAL MAV_CMD = 510
 	// Set the interval between messages for a particular MAVLink message ID. This interface replaces REQUEST_DATA_STREAM.
 	MAV_CMD_SET_MESSAGE_INTERVAL MAV_CMD = 511
-	// Request the target system(s) emit a single instance of a specified message (i.e. a "one-shot" version of MAV_CMD_SET_MESSAGE_INTERVAL).
-	MAV_CMD_REQUEST_MESSAGE MAV_CMD = 512
-	// Request MAVLink protocol version compatibility. All receivers should ACK the command and then emit their capabilities in an PROTOCOL_VERSION message
-	MAV_CMD_REQUEST_PROTOCOL_VERSION MAV_CMD = 519
 	// Request autopilot capabilities. The receiver should ACK the command and then emit its capabilities in an AUTOPILOT_VERSION message
 	MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES MAV_CMD = 520
 	// Request camera information (CAMERA_INFORMATION).
@@ -4903,6 +4904,10 @@ const (
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_CMD) MarshalText() ([]byte, error) {
 	switch e {
+	case MAV_CMD_REQUEST_MESSAGE:
+		return []byte("MAV_CMD_REQUEST_MESSAGE"), nil
+	case MAV_CMD_REQUEST_PROTOCOL_VERSION:
+		return []byte("MAV_CMD_REQUEST_PROTOCOL_VERSION"), nil
 	case MAV_CMD_NAV_WAYPOINT:
 		return []byte("MAV_CMD_NAV_WAYPOINT"), nil
 	case MAV_CMD_NAV_LOITER_UNLIM:
@@ -5075,10 +5080,6 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_GET_MESSAGE_INTERVAL"), nil
 	case MAV_CMD_SET_MESSAGE_INTERVAL:
 		return []byte("MAV_CMD_SET_MESSAGE_INTERVAL"), nil
-	case MAV_CMD_REQUEST_MESSAGE:
-		return []byte("MAV_CMD_REQUEST_MESSAGE"), nil
-	case MAV_CMD_REQUEST_PROTOCOL_VERSION:
-		return []byte("MAV_CMD_REQUEST_PROTOCOL_VERSION"), nil
 	case MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES:
 		return []byte("MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES"), nil
 	case MAV_CMD_REQUEST_CAMERA_INFORMATION:
@@ -5216,6 +5217,12 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_CMD) UnmarshalText(text []byte) error {
 	switch string(text) {
+	case "MAV_CMD_REQUEST_MESSAGE":
+		*e = MAV_CMD_REQUEST_MESSAGE
+		return nil
+	case "MAV_CMD_REQUEST_PROTOCOL_VERSION":
+		*e = MAV_CMD_REQUEST_PROTOCOL_VERSION
+		return nil
 	case "MAV_CMD_NAV_WAYPOINT":
 		*e = MAV_CMD_NAV_WAYPOINT
 		return nil
@@ -5473,12 +5480,6 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_SET_MESSAGE_INTERVAL":
 		*e = MAV_CMD_SET_MESSAGE_INTERVAL
-		return nil
-	case "MAV_CMD_REQUEST_MESSAGE":
-		*e = MAV_CMD_REQUEST_MESSAGE
-		return nil
-	case "MAV_CMD_REQUEST_PROTOCOL_VERSION":
-		*e = MAV_CMD_REQUEST_PROTOCOL_VERSION
 		return nil
 	case "MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES":
 		*e = MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES
@@ -12735,7 +12736,7 @@ func (e WINCH_ACTIONS) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
-// common.xml
+// minimal.xml
 
 // The heartbeat message shows that a system or component is present and responding. The type and autopilot fields (along with the message component id), allow the receiving system to treat further messages from this system appropriately (e.g. by laying out the user interface based on the autopilot). This microservice is documented at https://mavlink.io/en/services/heartbeat.html
 type MessageHeartbeat struct {
@@ -12756,6 +12757,26 @@ type MessageHeartbeat struct {
 func (*MessageHeartbeat) GetId() uint32 {
 	return 0
 }
+
+// Version and capability of protocol version. This message can be requested with MAV_CMD_REQUEST_MESSAGE and is used as part of the handshaking to establish which MAVLink version should be used on the network. Every node should respond to a request for PROTOCOL_VERSION to enable the handshaking. Library implementers should consider adding this into the default decoding state machine to allow the protocol core to respond directly.
+type MessageProtocolVersion struct {
+	// Currently active MAVLink version number * 100: v1.0 is 100, v2.0 is 200, etc.
+	Version uint16
+	// Minimum MAVLink version supported
+	MinVersion uint16
+	// Maximum MAVLink version supported (set to the same value as version by default)
+	MaxVersion uint16
+	// The first 8 bytes (not characters printed in hex!) of the git hash.
+	SpecVersionHash [8]uint8
+	// The first 8 bytes (not characters printed in hex!) of the git hash.
+	LibraryVersionHash [8]uint8
+}
+
+func (*MessageProtocolVersion) GetId() uint32 {
+	return 300
+}
+
+// common.xml
 
 // The general system state. If the system is following the MAVLink standard, the system state is mainly defined by three orthogonal states/modes: The system mode, which is either LOCKED (motors shut down and locked), MANUAL (system under RC control), GUIDED (system with autonomous position control, position setpoint controlled manually) or AUTO (system guided by path/waypoint planner). The NAV_MODE defined the current flight state: LIFTOFF (often an open-loop maneuver), LANDING, WAYPOINTS or VECTOR. This represents the internal navigation state machine. The system status shows whether the system is currently active or not and if an emergency occurred. During the CRITICAL and EMERGENCY states the MAV is still considered to be active, but should start emergency procedures autonomously. After a failure occurred it should first move from active to critical to allow manual intervention and then move to emergency after a certain timeout.
 type MessageSysStatus struct {
@@ -16829,24 +16850,6 @@ type MessageWifiConfigAp struct {
 
 func (*MessageWifiConfigAp) GetId() uint32 {
 	return 299
-}
-
-// Version and capability of protocol version. This message can be requested with MAV_CMD_REQUEST_MESSAGE and is used as part of the handshaking to establish which MAVLink version should be used on the network. Every node should respond to a request for PROTOCOL_VERSION to enable the handshaking. Library implementers should consider adding this into the default decoding state machine to allow the protocol core to respond directly.
-type MessageProtocolVersion struct {
-	// Currently active MAVLink version number * 100: v1.0 is 100, v2.0 is 200, etc.
-	Version uint16
-	// Minimum MAVLink version supported
-	MinVersion uint16
-	// Maximum MAVLink version supported (set to the same value as version by default)
-	MaxVersion uint16
-	// The first 8 bytes (not characters printed in hex!) of the git hash.
-	SpecVersionHash [8]uint8
-	// The first 8 bytes (not characters printed in hex!) of the git hash.
-	LibraryVersionHash [8]uint8
-}
-
-func (*MessageProtocolVersion) GetId() uint32 {
-	return 300
 }
 
 // The location and information of an AIS vessel

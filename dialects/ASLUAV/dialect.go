@@ -14696,6 +14696,8 @@ type MessageHilSensor struct {
 	Temperature float32
 	// Bitmap for fields that have updated since last message, bit 0 = xacc, bit 12: temperature, bit 31: full reset of attitude/position/velocities/etc was performed in sim.
 	FieldsUpdated uint32
+	// Sensor ID (zero indexed). Used for multiple sensor inputs
+	Id uint8 `mavext:"true"`
 }
 
 func (*MessageHilSensor) GetId() uint32 {

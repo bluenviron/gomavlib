@@ -1,5 +1,5 @@
 
-BASE_IMAGE = amd64/golang:1.13-alpine3.10
+BASE_IMAGE = amd64/golang:1.14-alpine3.12
 
 .PHONY: $(shell ls)
 
@@ -31,7 +31,7 @@ format:
 
 define DOCKERFILE_TEST
 FROM $(BASE_IMAGE)
-RUN apk add --no-cache git make
+RUN apk add --no-cache git make gcc musl-dev
 WORKDIR /s
 COPY go.mod go.sum ./
 RUN go mod download
@@ -44,8 +44,7 @@ test:
 	docker run --rm -it temp make test-nodocker
 
 test-nodocker:
-	$(eval export CGO_ENABLED = 0)
-	go test -v ./...
+	go test -race -v ./...
 	go build -o /dev/null ./commands/...
 	$(foreach f,$(shell ls examples/*),go build -o /dev/null $(f)$(NL))
 

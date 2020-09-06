@@ -7320,6 +7320,8 @@ const (
 	MAV_CMD_PAYLOAD_PREPARE_DEPLOY MAV_CMD = 30001
 	// Control the payload deployment.
 	MAV_CMD_PAYLOAD_CONTROL_DEPLOY MAV_CMD = 30002
+	// Magnetometer calibration based on provided known yaw. This allows for fast calibration using WMM field tables in the vehicle, given only the known yaw of the vehicle. If Latitude and longitude are both zero then use the current vehicle location.
+	MAV_CMD_FIXED_MAG_CAL_YAW MAV_CMD = 42006
 	// Command to operate winch.
 	MAV_CMD_DO_WINCH MAV_CMD = 42600
 	// User defined waypoint item. Ground Station will show the Vehicle as flying through this item.
@@ -7370,8 +7372,6 @@ const (
 	MAV_CMD_FIXED_MAG_CAL MAV_CMD = 42004
 	// Magnetometer calibration based on fixed expected field values in milliGauss.
 	MAV_CMD_FIXED_MAG_CAL_FIELD MAV_CMD = 42005
-	// Magnetometer calibration based on provided known yaw. This allows for fast calibration using WMM field tables in the vehicle, given only the known yaw of the vehicle. If Latitude and longitude are both zero then use the current vehicle location.
-	MAV_CMD_FIXED_MAG_CAL_YAW MAV_CMD = 42006
 	// Initiate a magnetometer calibration.
 	MAV_CMD_DO_START_MAG_CAL MAV_CMD = 42424
 	// Initiate a magnetometer calibration.
@@ -7675,6 +7675,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_PAYLOAD_PREPARE_DEPLOY"), nil
 	case MAV_CMD_PAYLOAD_CONTROL_DEPLOY:
 		return []byte("MAV_CMD_PAYLOAD_CONTROL_DEPLOY"), nil
+	case MAV_CMD_FIXED_MAG_CAL_YAW:
+		return []byte("MAV_CMD_FIXED_MAG_CAL_YAW"), nil
 	case MAV_CMD_DO_WINCH:
 		return []byte("MAV_CMD_DO_WINCH"), nil
 	case MAV_CMD_WAYPOINT_USER_1:
@@ -7725,8 +7727,6 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_FIXED_MAG_CAL"), nil
 	case MAV_CMD_FIXED_MAG_CAL_FIELD:
 		return []byte("MAV_CMD_FIXED_MAG_CAL_FIELD"), nil
-	case MAV_CMD_FIXED_MAG_CAL_YAW:
-		return []byte("MAV_CMD_FIXED_MAG_CAL_YAW"), nil
 	case MAV_CMD_DO_START_MAG_CAL:
 		return []byte("MAV_CMD_DO_START_MAG_CAL"), nil
 	case MAV_CMD_DO_ACCEPT_MAG_CAL:
@@ -8167,6 +8167,9 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 	case "MAV_CMD_PAYLOAD_CONTROL_DEPLOY":
 		*e = MAV_CMD_PAYLOAD_CONTROL_DEPLOY
 		return nil
+	case "MAV_CMD_FIXED_MAG_CAL_YAW":
+		*e = MAV_CMD_FIXED_MAG_CAL_YAW
+		return nil
 	case "MAV_CMD_DO_WINCH":
 		*e = MAV_CMD_DO_WINCH
 		return nil
@@ -8241,9 +8244,6 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_FIXED_MAG_CAL_FIELD":
 		*e = MAV_CMD_FIXED_MAG_CAL_FIELD
-		return nil
-	case "MAV_CMD_FIXED_MAG_CAL_YAW":
-		*e = MAV_CMD_FIXED_MAG_CAL_YAW
 		return nil
 	case "MAV_CMD_DO_START_MAG_CAL":
 		*e = MAV_CMD_DO_START_MAG_CAL

@@ -138,6 +138,7 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessageAutopilotVersion{},
 	&MessageLandingTarget{},
 	&MessageFenceStatus{},
+	&MessageMagCalReport{},
 	&MessageEstimatorStatus{},
 	&MessageWindCov{},
 	&MessageGpsInput{},
@@ -4058,6 +4059,91 @@ func (e *LANDING_TARGET_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e LANDING_TARGET_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+//
+type MAG_CAL_STATUS int
+
+const (
+	//
+	MAG_CAL_NOT_STARTED MAG_CAL_STATUS = 0
+	//
+	MAG_CAL_WAITING_TO_START MAG_CAL_STATUS = 1
+	//
+	MAG_CAL_RUNNING_STEP_ONE MAG_CAL_STATUS = 2
+	//
+	MAG_CAL_RUNNING_STEP_TWO MAG_CAL_STATUS = 3
+	//
+	MAG_CAL_SUCCESS MAG_CAL_STATUS = 4
+	//
+	MAG_CAL_FAILED MAG_CAL_STATUS = 5
+	//
+	MAG_CAL_BAD_ORIENTATION MAG_CAL_STATUS = 6
+	//
+	MAG_CAL_BAD_RADIUS MAG_CAL_STATUS = 7
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e MAG_CAL_STATUS) MarshalText() ([]byte, error) {
+	switch e {
+	case MAG_CAL_NOT_STARTED:
+		return []byte("MAG_CAL_NOT_STARTED"), nil
+	case MAG_CAL_WAITING_TO_START:
+		return []byte("MAG_CAL_WAITING_TO_START"), nil
+	case MAG_CAL_RUNNING_STEP_ONE:
+		return []byte("MAG_CAL_RUNNING_STEP_ONE"), nil
+	case MAG_CAL_RUNNING_STEP_TWO:
+		return []byte("MAG_CAL_RUNNING_STEP_TWO"), nil
+	case MAG_CAL_SUCCESS:
+		return []byte("MAG_CAL_SUCCESS"), nil
+	case MAG_CAL_FAILED:
+		return []byte("MAG_CAL_FAILED"), nil
+	case MAG_CAL_BAD_ORIENTATION:
+		return []byte("MAG_CAL_BAD_ORIENTATION"), nil
+	case MAG_CAL_BAD_RADIUS:
+		return []byte("MAG_CAL_BAD_RADIUS"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *MAG_CAL_STATUS) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "MAG_CAL_NOT_STARTED":
+		*e = MAG_CAL_NOT_STARTED
+		return nil
+	case "MAG_CAL_WAITING_TO_START":
+		*e = MAG_CAL_WAITING_TO_START
+		return nil
+	case "MAG_CAL_RUNNING_STEP_ONE":
+		*e = MAG_CAL_RUNNING_STEP_ONE
+		return nil
+	case "MAG_CAL_RUNNING_STEP_TWO":
+		*e = MAG_CAL_RUNNING_STEP_TWO
+		return nil
+	case "MAG_CAL_SUCCESS":
+		*e = MAG_CAL_SUCCESS
+		return nil
+	case "MAG_CAL_FAILED":
+		*e = MAG_CAL_FAILED
+		return nil
+	case "MAG_CAL_BAD_ORIENTATION":
+		*e = MAG_CAL_BAD_ORIENTATION
+		return nil
+	case "MAG_CAL_BAD_RADIUS":
+		*e = MAG_CAL_BAD_RADIUS
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAG_CAL_STATUS) String() string {
 	byts, err := e.MarshalText()
 	if err == nil {
 		return string(byts)
@@ -15687,6 +15773,50 @@ type MessageFenceStatus struct {
 
 func (*MessageFenceStatus) GetId() uint32 {
 	return 162
+}
+
+// Reports results of completed compass calibration. Sent until MAG_CAL_ACK received.
+type MessageMagCalReport struct {
+	// Compass being calibrated.
+	CompassId uint8
+	// Bitmask of compasses being calibrated.
+	CalMask uint8
+	// Calibration Status.
+	CalStatus MAG_CAL_STATUS `mavenum:"uint8"`
+	// 0=requires a MAV_CMD_DO_ACCEPT_MAG_CAL, 1=saved to parameters.
+	Autosaved uint8
+	// RMS milligauss residuals.
+	Fitness float32
+	// X offset.
+	OfsX float32
+	// Y offset.
+	OfsY float32
+	// Z offset.
+	OfsZ float32
+	// X diagonal (matrix 11).
+	DiagX float32
+	// Y diagonal (matrix 22).
+	DiagY float32
+	// Z diagonal (matrix 33).
+	DiagZ float32
+	// X off-diagonal (matrix 12 and 21).
+	OffdiagX float32
+	// Y off-diagonal (matrix 13 and 31).
+	OffdiagY float32
+	// Z off-diagonal (matrix 32 and 23).
+	OffdiagZ float32
+	// Confidence in orientation (higher is better).
+	OrientationConfidence float32 `mavext:"true"`
+	// orientation before calibration.
+	OldOrientation MAV_SENSOR_ORIENTATION `mavenum:"uint8" mavext:"true"`
+	// orientation after calibration.
+	NewOrientation MAV_SENSOR_ORIENTATION `mavenum:"uint8" mavext:"true"`
+	// field radius correction factor
+	ScaleFactor float32 `mavext:"true"`
+}
+
+func (*MessageMagCalReport) GetId() uint32 {
+	return 192
 }
 
 // Estimator status message including flags, innovation test ratios and estimated accuracies. The flags message is an integer bitmask containing information on which EKF outputs are valid. See the ESTIMATOR_STATUS_FLAGS enum definition for further information. The innovation test ratios show the magnitude of the sensor innovation divided by the innovation check threshold. Under normal operation the innovation test ratios should be below 0.5 with occasional values up to 1.0. Values greater than 1.0 should be rare under normal operation and indicate that a measurement has been rejected by the filter. The user should be notified if an innovation test ratio greater than 1.0 is recorded. Notifications for values in the range between 0.5 and 1.0 should be optional and controllable by the user.

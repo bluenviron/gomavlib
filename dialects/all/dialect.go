@@ -138,6 +138,7 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessageAutopilotVersion{},
 	&MessageLandingTarget{},
 	&MessageFenceStatus{},
+	&MessageMagCalReport{},
 	&MessageEstimatorStatus{},
 	&MessageWindCov{},
 	&MessageGpsInput{},
@@ -272,7 +273,6 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessageRemoteLogBlockStatus{},
 	&MessageLedControl{},
 	&MessageMagCalProgress{},
-	&MessageMagCalReport{},
 	&MessageEkfStatusReport{},
 	&MessagePidTuning{},
 	&MessageDeepstall{},
@@ -19832,6 +19832,50 @@ func (*MessageFenceStatus) GetId() uint32 {
 	return 162
 }
 
+// Reports results of completed compass calibration. Sent until MAG_CAL_ACK received.
+type MessageMagCalReport struct {
+	// Compass being calibrated.
+	CompassId uint8
+	// Bitmask of compasses being calibrated.
+	CalMask uint8
+	// Calibration Status.
+	CalStatus MAG_CAL_STATUS `mavenum:"uint8"`
+	// 0=requires a MAV_CMD_DO_ACCEPT_MAG_CAL, 1=saved to parameters.
+	Autosaved uint8
+	// RMS milligauss residuals.
+	Fitness float32
+	// X offset.
+	OfsX float32
+	// Y offset.
+	OfsY float32
+	// Z offset.
+	OfsZ float32
+	// X diagonal (matrix 11).
+	DiagX float32
+	// Y diagonal (matrix 22).
+	DiagY float32
+	// Z diagonal (matrix 33).
+	DiagZ float32
+	// X off-diagonal (matrix 12 and 21).
+	OffdiagX float32
+	// Y off-diagonal (matrix 13 and 31).
+	OffdiagY float32
+	// Z off-diagonal (matrix 32 and 23).
+	OffdiagZ float32
+	// Confidence in orientation (higher is better).
+	OrientationConfidence float32 `mavext:"true"`
+	// orientation before calibration.
+	OldOrientation MAV_SENSOR_ORIENTATION `mavenum:"uint8" mavext:"true"`
+	// orientation after calibration.
+	NewOrientation MAV_SENSOR_ORIENTATION `mavenum:"uint8" mavext:"true"`
+	// field radius correction factor
+	ScaleFactor float32 `mavext:"true"`
+}
+
+func (*MessageMagCalReport) GetId() uint32 {
+	return 192
+}
+
 // Estimator status message including flags, innovation test ratios and estimated accuracies. The flags message is an integer bitmask containing information on which EKF outputs are valid. See the ESTIMATOR_STATUS_FLAGS enum definition for further information. The innovation test ratios show the magnitude of the sensor innovation divided by the innovation check threshold. Under normal operation the innovation test ratios should be below 0.5 with occasional values up to 1.0. Values greater than 1.0 should be rare under normal operation and indicate that a measurement has been rejected by the filter. The user should be notified if an innovation test ratio greater than 1.0 is recorded. Notifications for values in the range between 0.5 and 1.0 should be optional and controllable by the user.
 type MessageEstimatorStatus struct {
 	// Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.
@@ -22826,50 +22870,6 @@ type MessageMagCalProgress struct {
 
 func (*MessageMagCalProgress) GetId() uint32 {
 	return 191
-}
-
-// Reports results of completed compass calibration. Sent until MAG_CAL_ACK received.
-type MessageMagCalReport struct {
-	// Compass being calibrated.
-	CompassId uint8
-	// Bitmask of compasses being calibrated.
-	CalMask uint8
-	// Calibration Status.
-	CalStatus MAG_CAL_STATUS `mavenum:"uint8"`
-	// 0=requires a MAV_CMD_DO_ACCEPT_MAG_CAL, 1=saved to parameters.
-	Autosaved uint8
-	// RMS milligauss residuals.
-	Fitness float32
-	// X offset.
-	OfsX float32
-	// Y offset.
-	OfsY float32
-	// Z offset.
-	OfsZ float32
-	// X diagonal (matrix 11).
-	DiagX float32
-	// Y diagonal (matrix 22).
-	DiagY float32
-	// Z diagonal (matrix 33).
-	DiagZ float32
-	// X off-diagonal (matrix 12 and 21).
-	OffdiagX float32
-	// Y off-diagonal (matrix 13 and 31).
-	OffdiagY float32
-	// Z off-diagonal (matrix 32 and 23).
-	OffdiagZ float32
-	// Confidence in orientation (higher is better).
-	OrientationConfidence float32 `mavext:"true"`
-	// orientation before calibration.
-	OldOrientation MAV_SENSOR_ORIENTATION `mavenum:"uint8" mavext:"true"`
-	// orientation after calibration.
-	NewOrientation MAV_SENSOR_ORIENTATION `mavenum:"uint8" mavext:"true"`
-	// field radius correction factor
-	ScaleFactor float32 `mavext:"true"`
-}
-
-func (*MessageMagCalReport) GetId() uint32 {
-	return 192
 }
 
 // EKF Status message including flags and variances.

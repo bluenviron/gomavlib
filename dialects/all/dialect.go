@@ -139,6 +139,7 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessageLandingTarget{},
 	&MessageFenceStatus{},
 	&MessageMagCalReport{},
+	&MessageEfiStatus{},
 	&MessageEstimatorStatus{},
 	&MessageWindCov{},
 	&MessageGpsInput{},
@@ -284,7 +285,6 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessageGoproGetResponse{},
 	&MessageGoproSetRequest{},
 	&MessageGoproSetResponse{},
-	&MessageEfiStatus{},
 	&MessageRpm{},
 	&MessageDeviceOpRead{},
 	&MessageDeviceOpReadReply{},
@@ -19876,6 +19876,42 @@ func (*MessageMagCalReport) GetId() uint32 {
 	return 192
 }
 
+// EFI Status Output
+type MessageEfiStatus struct {
+	// EFI Health status
+	Health uint8
+	// ECU Index
+	EcuIndex float32
+	// RPM
+	Rpm float32
+	// Fuel Consumed (grams)
+	FuelConsumed float32
+	// Fuel Flow Rate (g/min)
+	FuelFlow float32
+	// Engine Load (%)
+	EngineLoad float32
+	// Throttle Position (%)
+	ThrottlePosition float32
+	// Spark Dwell Time (ms)
+	SparkDwellTime float32
+	// Barometric Pressure (kPa)
+	BarometricPressure float32
+	// Intake Manifold Pressure (kPa)(
+	IntakeManifoldPressure float32
+	// Intake Manifold Temperature (degC)
+	IntakeManifoldTemperature float32
+	// cylinder_head_temperature (degC)
+	CylinderHeadTemperature float32
+	// Ignition timing for cylinder i (Crank Angle degrees)
+	IgnitionTiming float32
+	// Injection time for injector i (ms)
+	InjectionTime float32
+}
+
+func (*MessageEfiStatus) GetId() uint32 {
+	return 225
+}
+
 // Estimator status message including flags, innovation test ratios and estimated accuracies. The flags message is an integer bitmask containing information on which EKF outputs are valid. See the ESTIMATOR_STATUS_FLAGS enum definition for further information. The innovation test ratios show the magnitude of the sensor innovation divided by the innovation check threshold. Under normal operation the innovation test ratios should be below 0.5 with occasional values up to 1.0. Values greater than 1.0 should be rare under normal operation and indicate that a measurement has been rejected by the filter. The user should be notified if an innovation test ratio greater than 1.0 is recorded. Notifications for values in the range between 0.5 and 1.0 should be optional and controllable by the user.
 type MessageEstimatorStatus struct {
 	// Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.
@@ -23080,48 +23116,6 @@ type MessageGoproSetResponse struct {
 
 func (*MessageGoproSetResponse) GetId() uint32 {
 	return 219
-}
-
-// EFI status output
-type MessageEfiStatus struct {
-	// EFI health status
-	Health uint8
-	// ECU index
-	EcuIndex float32
-	// RPM
-	Rpm float32
-	// Fuel consumed
-	FuelConsumed float32
-	// Fuel flow rate
-	FuelFlow float32
-	// Engine load
-	EngineLoad float32
-	// Throttle position
-	ThrottlePosition float32
-	// Spark dwell time
-	SparkDwellTime float32
-	// Barometric pressure
-	BarometricPressure float32
-	// Intake manifold pressure(
-	IntakeManifoldPressure float32
-	// Intake manifold temperature
-	IntakeManifoldTemperature float32
-	// Cylinder head temperature
-	CylinderHeadTemperature float32
-	// Ignition timing (Crank angle degrees)
-	IgnitionTiming float32
-	// Injection time
-	InjectionTime float32
-	// Exhaust gas temperature
-	ExhaustGasTemperature float32
-	// Output throttle
-	ThrottleOut float32
-	// Pressure/temperature compensation
-	PtCompensation float32
-}
-
-func (*MessageEfiStatus) GetId() uint32 {
-	return 225
 }
 
 // RPM sensor output.

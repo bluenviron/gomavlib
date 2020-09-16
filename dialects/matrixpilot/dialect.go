@@ -4735,7 +4735,7 @@ const (
 	MAV_CMD_PREFLIGHT_CALIBRATION MAV_CMD = 241
 	// Set sensor offsets. This command will be only accepted if in pre-flight mode.
 	MAV_CMD_PREFLIGHT_SET_SENSOR_OFFSETS MAV_CMD = 242
-	// Trigger UAVCAN config. This command will be only accepted if in pre-flight mode.
+	// Trigger UAVCAN configuration (actuator ID assignment and direction mapping). Note that this maps to the legacy UAVCAN v0 function UAVCAN_ENUMERATE, which is intended to be executed just once during initial vehicle configuration (it is not a normal pre-flight command and has been poorly named).
 	MAV_CMD_PREFLIGHT_UAVCAN MAV_CMD = 243
 	// Request storage of different parameter values and logs. This command will be only accepted if in pre-flight mode.
 	MAV_CMD_PREFLIGHT_STORAGE MAV_CMD = 245

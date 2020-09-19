@@ -1,46 +1,5 @@
 package gomavlib
 
-type eventIn interface {
-	isEventIn()
-}
-
-type eventInChannelNew struct {
-	ch *Channel
-}
-
-func (*eventInChannelNew) isEventIn() {}
-
-type eventInChannelClosed struct {
-	ch *Channel
-}
-
-func (*eventInChannelClosed) isEventIn() {}
-
-type eventInWriteTo struct {
-	ch   *Channel
-	what interface{}
-}
-
-func (*eventInWriteTo) isEventIn() {}
-
-type eventInWriteAll struct {
-	what interface{}
-}
-
-func (*eventInWriteAll) isEventIn() {}
-
-type eventInWriteExcept struct {
-	except *Channel
-	what   interface{}
-}
-
-func (*eventInWriteExcept) isEventIn() {}
-
-type eventInClose struct {
-}
-
-func (*eventInClose) isEventIn() {}
-
 // Event is the interface implemented by all events received through node.Events().
 type Event interface {
 	isEventOut()

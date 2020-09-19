@@ -49,7 +49,7 @@ import (
 )
 
 const (
-	// constant for ip-based endpoints
+	// constants for ip-based endpoints
 	_NET_BUFFER_SIZE      = 512 // frames cannot go beyond len(header) + 255 + len(check) + len(sig)
 	_NET_CONNECT_TIMEOUT  = 10 * time.Second
 	_NET_RECONNECT_PERIOD = 2 * time.Second
@@ -73,6 +73,16 @@ func (wg *goroutinePool) Start(what goroutinePoolRunnable) {
 
 func (wg *goroutinePool) Wait() {
 	(*sync.WaitGroup)(wg).Wait()
+}
+
+type writeToReq struct {
+	ch   *Channel
+	what interface{}
+}
+
+type writeExceptReq struct {
+	except *Channel
+	what   interface{}
 }
 
 // NodeConf allows to configure a Node.
@@ -128,8 +138,13 @@ type Node struct {
 	nodeHeartbeat     *nodeHeartbeat
 	nodeStreamRequest *nodeStreamRequest
 
-	eventsOut chan Event
-	eventsIn  chan eventIn
+	eventsOut    chan Event
+	channelNew   chan *Channel
+	channelClose chan *Channel
+	writeTo      chan writeToReq
+	writeAll     chan interface{}
+	writeExcept  chan writeExceptReq
+	terminate    chan struct{}
 }
 
 // NewNode allocates a Node. See NodeConf for the options.
@@ -170,8 +185,13 @@ func NewNode(conf NodeConf) (*Node, error) {
 		channels:         make(map[*Channel]struct{}),
 		// these can be unbuffered as long as eventsIn's goroutine
 		// does not write to eventsOut
-		eventsOut: make(chan Event),
-		eventsIn:  make(chan eventIn),
+		eventsOut:    make(chan Event),
+		channelNew:   make(chan *Channel),
+		channelClose: make(chan *Channel),
+		writeTo:      make(chan writeToReq),
+		writeAll:     make(chan interface{}),
+		writeExcept:  make(chan writeExceptReq),
+		terminate:    make(chan struct{}),
 	}
 
 	closeExisting := func() {
@@ -242,42 +262,52 @@ func NewNode(conf NodeConf) (*Node, error) {
 
 func (n *Node) run() {
 outer:
-	for rawEvt := range n.eventsIn {
-		switch evt := rawEvt.(type) {
-		case *eventInChannelNew:
-			n.channels[evt.ch] = struct{}{}
-			n.pool.Start(evt.ch)
+	for {
+		select {
+		case ch := <-n.channelNew:
+			n.channels[ch] = struct{}{}
+			n.pool.Start(ch)
 
-		case *eventInChannelClosed:
-			delete(n.channels, evt.ch)
-			evt.ch.close()
+		case ch := <-n.channelClose:
+			delete(n.channels, ch)
+			ch.close()
 
-		case *eventInWriteTo:
-			if _, ok := n.channels[evt.ch]; ok == false {
+		case req := <-n.writeTo:
+			if _, ok := n.channels[req.ch]; ok == false {
 				return
 			}
-			evt.ch.writeChan <- evt.what
+			req.ch.writeChan <- req.what
 
-		case *eventInWriteAll:
+		case what := <-n.writeAll:
 			for ch := range n.channels {
-				ch.writeChan <- evt.what
+				ch.writeChan <- what
 			}
 
-		case *eventInWriteExcept:
+		case req := <-n.writeExcept:
 			for ch := range n.channels {
-				if ch != evt.except {
-					ch.writeChan <- evt.what
+				if ch != req.except {
+					ch.writeChan <- req.what
 				}
 			}
 
-		case *eventInClose:
+		case <-n.terminate:
 			break outer
 		}
 	}
 
-	// consume events up to close()
 	go func() {
-		for range n.eventsIn {
+		for {
+			select {
+			case _, ok := <-n.channelNew:
+				if !ok {
+					return
+				}
+
+			case <-n.channelClose:
+			case <-n.writeTo:
+			case <-n.writeAll:
+			case <-n.writeExcept:
+			}
 		}
 	}()
 
@@ -300,16 +330,15 @@ outer:
 
 // Close halts node operations and waits for all routines to return.
 func (n *Node) Close() {
-	// consume events up to close()
-	// in case user is not calling Events()
+	// consume events, in case user is not calling Events()
 	go func() {
 		for range n.eventsOut {
 		}
 	}()
 
-	n.eventsIn <- &eventInClose{}
+	close(n.terminate)
 	n.pool.Wait()
-	close(n.eventsIn)
+
 	close(n.eventsOut)
 }
 
@@ -326,36 +355,36 @@ func (n *Node) Events() chan Event {
 
 // WriteMessageTo writes a message to given channel.
 func (n *Node) WriteMessageTo(channel *Channel, message Message) {
-	n.eventsIn <- &eventInWriteTo{channel, message}
+	n.writeTo <- writeToReq{channel, message}
 }
 
 // WriteMessageAll writes a message to all channels.
 func (n *Node) WriteMessageAll(message Message) {
-	n.eventsIn <- &eventInWriteAll{message}
+	n.writeAll <- message
 }
 
 // WriteMessageExcept writes a message to all channels except specified channel.
 func (n *Node) WriteMessageExcept(exceptChannel *Channel, message Message) {
-	n.eventsIn <- &eventInWriteExcept{exceptChannel, message}
+	n.writeExcept <- writeExceptReq{exceptChannel, message}
 }
 
 // WriteFrameTo writes a frame to given channel.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
 func (n *Node) WriteFrameTo(channel *Channel, frame Frame) {
-	n.eventsIn <- &eventInWriteTo{channel, frame}
+	n.writeTo <- writeToReq{channel, frame}
 }
 
 // WriteFrameAll writes a frame to all channels.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
 func (n *Node) WriteFrameAll(frame Frame) {
-	n.eventsIn <- &eventInWriteAll{frame}
+	n.writeAll <- frame
 }
 
 // WriteFrameExcept writes a frame to all channels except specified channel.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
 func (n *Node) WriteFrameExcept(exceptChannel *Channel, frame Frame) {
-	n.eventsIn <- &eventInWriteExcept{exceptChannel, frame}
+	n.writeExcept <- writeExceptReq{exceptChannel, frame}
 }

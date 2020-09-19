@@ -67,7 +67,7 @@ func (ch *Channel) run() {
 	go func() {
 		defer close(readerDone)
 		defer func() { ch.n.eventsOut <- &EventChannelClose{ch} }()
-		defer func() { ch.n.eventsIn <- &eventInChannelClosed{ch} }()
+		defer func() { ch.n.channelClose <- ch }()
 
 		ch.n.eventsOut <- &EventChannelOpen{ch}
 

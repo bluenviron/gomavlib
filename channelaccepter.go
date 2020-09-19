@@ -35,6 +35,6 @@ func (ca *channelAccepter) run() {
 			panic(fmt.Errorf("newChannel unexpected error: %s", err))
 		}
 
-		ca.n.eventsIn <- &eventInChannelNew{ch}
+		ca.n.channelNew <- ch
 	}
 }

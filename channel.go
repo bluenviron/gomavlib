@@ -11,10 +11,11 @@ type Channel struct {
 	// the endpoint which the channel belongs to
 	Endpoint Endpoint
 
-	label      string
-	rwc        io.ReadWriteCloser
-	n          *Node
-	parser     *Parser
+	label  string
+	rwc    io.ReadWriteCloser
+	n      *Node
+	parser *Parser
+
 	writeChan  chan interface{}
 	allWritten chan struct{}
 }

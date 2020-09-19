@@ -6,7 +6,8 @@ import (
 )
 
 type nodeHeartbeat struct {
-	n         *Node
+	n *Node
+
 	terminate chan struct{}
 }
 

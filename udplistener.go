@@ -39,10 +39,11 @@ type udpListenerConn struct {
 	listener      *udpListener
 	index         udpListenerConnIndex
 	addr          *net.UDPAddr
-	readChan      chan []byte
 	closed        bool
 	readDeadline  time.Time
 	writeDeadline time.Time
+
+	readChan chan []byte
 }
 
 func newUdpListenerConn(listener *udpListener, index udpListenerConnIndex, addr *net.UDPAddr) *udpListenerConn {

@@ -54,11 +54,12 @@ func (conf EndpointUdpClient) init() (Endpoint, error) {
 
 type endpointClient struct {
 	conf        endpointClientConf
-	terminate   chan struct{}
-	readChan    chan []byte
-	readDone    chan struct{}
 	writerMutex sync.Mutex
 	writer      io.Writer
+
+	terminate chan struct{}
+	readChan  chan []byte
+	readDone  chan struct{}
 }
 
 func initEndpointClient(conf endpointClientConf) (Endpoint, error) {

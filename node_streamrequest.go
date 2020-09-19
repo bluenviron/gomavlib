@@ -18,9 +18,10 @@ type streamNode struct {
 
 type nodeStreamRequest struct {
 	n                 *Node
-	terminate         chan struct{}
 	lastRequestsMutex sync.Mutex
 	lastRequests      map[streamNode]time.Time
+
+	terminate chan struct{}
 }
 
 func newNodeStreamRequest(n *Node) *nodeStreamRequest {

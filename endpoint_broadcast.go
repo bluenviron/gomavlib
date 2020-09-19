@@ -45,7 +45,8 @@ type endpointUdpBroadcast struct {
 	conf          EndpointUdpBroadcast
 	packetConn    net.PacketConn
 	broadcastAddr net.Addr
-	terminate     chan struct{}
+
+	terminate chan struct{}
 }
 
 func (conf EndpointUdpBroadcast) init() (Endpoint, error) {

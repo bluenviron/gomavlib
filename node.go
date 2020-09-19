@@ -122,13 +122,14 @@ type NodeConf struct {
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
 type Node struct {
 	conf              NodeConf
-	eventsOut         chan Event
-	eventsIn          chan eventIn
 	pool              goroutinePool
 	channelAccepters  map[*channelAccepter]struct{}
 	channels          map[*Channel]struct{}
 	nodeHeartbeat     *nodeHeartbeat
 	nodeStreamRequest *nodeStreamRequest
+
+	eventsOut chan Event
+	eventsIn  chan eventIn
 }
 
 // NewNode allocates a Node. See NodeConf for the options.
@@ -164,13 +165,13 @@ func NewNode(conf NodeConf) (*Node, error) {
 	}
 
 	n := &Node{
-		conf: conf,
-		// these can be unbuffered as long as eventsIn's goroutine
-		// does not write to eventsOut
-		eventsOut:        make(chan Event),
-		eventsIn:         make(chan eventIn),
+		conf:             conf,
 		channelAccepters: make(map[*channelAccepter]struct{}),
 		channels:         make(map[*Channel]struct{}),
+		// these can be unbuffered as long as eventsIn's goroutine
+		// does not write to eventsOut
+		eventsOut: make(chan Event),
+		eventsIn:  make(chan eventIn),
 	}
 
 	closeExisting := func() {

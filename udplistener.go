@@ -43,7 +43,7 @@ type udpListenerConn struct {
 	readDeadline  time.Time
 	writeDeadline time.Time
 
-	readChan chan []byte
+	read chan []byte
 }
 
 func newUdpListenerConn(listener *udpListener, index udpListenerConnIndex, addr *net.UDPAddr) *udpListenerConn {
@@ -51,7 +51,7 @@ func newUdpListenerConn(listener *udpListener, index udpListenerConnIndex, addr 
 		listener: listener,
 		index:    index,
 		addr:     addr,
-		readChan: make(chan []byte),
+		read:     make(chan []byte),
 	}
 }
 
@@ -76,7 +76,7 @@ func (c *udpListenerConn) Close() error {
 	delete(c.listener.conns, c.index)
 
 	// release anyone waiting on Read()
-	close(c.readChan)
+	close(c.read)
 
 	// close socket when both listener and connections are closed
 	if c.listener.closed == true && len(c.listener.conns) == 0 {
@@ -98,10 +98,10 @@ func (c *udpListenerConn) Read(byt []byte) (int, error) {
 		select {
 		case <-readTimer.C:
 			return 0, udpErrorTimeout
-		case buf, ok = <-c.readChan:
+		case buf, ok = <-c.read:
 		}
 	} else {
-		buf, ok = <-c.readChan
+		buf, ok = <-c.read
 	}
 
 	if ok == false {
@@ -146,11 +146,12 @@ func (c *udpListenerConn) SetWriteDeadline(t time.Time) error {
 type udpListener struct {
 	packetConn net.PacketConn
 	conns      map[udpListenerConnIndex]*udpListenerConn
-	acceptChan chan net.Conn
-	readDone   chan struct{}
 	readMutex  sync.Mutex
 	writeMutex sync.Mutex
 	closed     bool
+
+	acceptc  chan net.Conn
+	readDone chan struct{}
 }
 
 func newUdpListener(network, address string) (net.Listener, error) {
@@ -162,7 +163,7 @@ func newUdpListener(network, address string) (net.Listener, error) {
 	l := &udpListener{
 		packetConn: packetConn,
 		conns:      make(map[udpListenerConnIndex]*udpListenerConn),
-		acceptChan: make(chan net.Conn),
+		acceptc:    make(chan net.Conn),
 		readDone:   make(chan struct{}),
 	}
 
@@ -182,7 +183,7 @@ func (l *udpListener) Close() error {
 	l.closed = true
 
 	// release anyone waiting on Accept()
-	close(l.acceptChan)
+	close(l.acceptc)
 
 	// close socket when both listener and connections are closed
 	if len(l.conns) == 0 {
@@ -226,11 +227,11 @@ func (l *udpListener) reader() {
 				if preExisting == false {
 					conn = newUdpListenerConn(l, connIndex, uaddr)
 					l.conns[connIndex] = conn
-					l.acceptChan <- conn
+					l.acceptc <- conn
 				}
 
 				// route buffer to connection
-				conn.readChan <- buf[:n]
+				conn.read <- buf[:n]
 
 				// wait copy since buffer is shared
 				<-l.readDone
@@ -240,7 +241,7 @@ func (l *udpListener) reader() {
 }
 
 func (l *udpListener) Accept() (net.Conn, error) {
-	conn, ok := <-l.acceptChan
+	conn, ok := <-l.acceptc
 	if ok == false {
 		return nil, udpErrorTerminated
 	}

@@ -111,7 +111,7 @@ func (t *endpointClient) do() {
 		close(t.readChan)
 	}()
 
-	buf := make([]byte, _NET_BUFFER_SIZE)
+	buf := make([]byte, netBufferSize)
 
 	for {
 		// solve address and connect
@@ -129,7 +129,7 @@ func (t *endpointClient) do() {
 				network = "tcp4"
 			}
 			var err error
-			rawConn, err = net.DialTimeout(network, t.conf.getAddress(), _NET_CONNECT_TIMEOUT)
+			rawConn, err = net.DialTimeout(network, t.conf.getAddress(), netConnectTimeout)
 			if err != nil {
 				rawConn = nil // ensure rawConn is nil in case of error
 			}
@@ -143,7 +143,7 @@ func (t *endpointClient) do() {
 
 		// wait some seconds before reconnecting
 		if rawConn == nil {
-			timer := time.NewTimer(_NET_RECONNECT_PERIOD)
+			timer := time.NewTimer(netReconnectPeriod)
 			select {
 			case <-timer.C:
 				continue

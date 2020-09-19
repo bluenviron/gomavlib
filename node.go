@@ -253,7 +253,7 @@ outer:
 
 		case ch := <-n.channelClose:
 			delete(n.channels, ch)
-			ch.close()
+			close(ch.terminate)
 
 		case req := <-n.writeTo:
 			if _, ok := n.channels[req.ch]; ok == false {
@@ -307,7 +307,7 @@ outer:
 	}
 
 	for ch := range n.channels {
-		ch.close()
+		close(ch.terminate)
 		<-ch.done
 	}
 }

@@ -16,9 +16,9 @@ type Channel struct {
 	n      *Node
 	parser *Parser
 
-	writec     chan interface{}
-	allWritten chan struct{}
-	done       chan struct{}
+	writec    chan interface{}
+	terminate chan struct{}
+	done      chan struct{}
 }
 
 func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Channel, error) {
@@ -38,14 +38,14 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Cha
 	}
 
 	return &Channel{
-		Endpoint:   e,
-		label:      label,
-		rwc:        rwc,
-		n:          n,
-		parser:     parser,
-		writec:     make(chan interface{}),
-		allWritten: make(chan struct{}),
-		done:       make(chan struct{}),
+		Endpoint:  e,
+		label:     label,
+		rwc:       rwc,
+		n:         n,
+		parser:    parser,
+		writec:    make(chan interface{}),
+		terminate: make(chan struct{}),
+		done:      make(chan struct{}),
 	}, nil
 }
 
@@ -54,25 +54,15 @@ func (ch *Channel) String() string {
 	return ch.label
 }
 
-func (ch *Channel) close() {
-	// wait until all frame have been written
-	close(ch.writec)
-	<-ch.allWritten
-
-	// close reader/writer after ensuring all frames have been written
-	ch.rwc.Close()
-}
-
 func (ch *Channel) run() {
 	defer close(ch.done)
 
-	// reader
 	readerDone := make(chan struct{})
 	go func() {
 		defer close(readerDone)
-		defer func() { ch.n.eventsOut <- &EventChannelClose{ch} }()
-		defer func() { ch.n.channelClose <- ch }()
 
+		// wait client here, in order to allow the writer goroutine to start
+		// and allow clients to write messages before starting listening to events
 		ch.n.eventsOut <- &EventChannelOpen{ch}
 
 		for {
@@ -96,11 +86,9 @@ func (ch *Channel) run() {
 		}
 	}()
 
-	// writer
 	writerDone := make(chan struct{})
 	go func() {
 		defer close(writerDone)
-		defer func() { ch.allWritten <- struct{}{} }()
 
 		for what := range ch.writec {
 			switch wh := what.(type) {
@@ -113,6 +101,25 @@ func (ch *Channel) run() {
 		}
 	}()
 
-	<-readerDone
-	<-writerDone
+	select {
+	case <-readerDone:
+		ch.n.eventsOut <- &EventChannelClose{ch}
+
+		ch.n.channelClose <- ch
+		<-ch.terminate
+
+		close(ch.writec)
+		<-writerDone
+
+		ch.rwc.Close()
+
+	case <-ch.terminate:
+		ch.n.eventsOut <- &EventChannelClose{ch}
+
+		close(ch.writec)
+		<-writerDone
+
+		ch.rwc.Close()
+		<-readerDone
+	}
 }

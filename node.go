@@ -44,7 +44,6 @@ package gomavlib
 
 import (
 	"fmt"
-	"sync"
 	"time"
 )
 
@@ -56,24 +55,6 @@ const (
 	netReadTimeout     = 60 * time.Second
 	netWriteTimeout    = 10 * time.Second
 )
-
-type goroutinePool sync.WaitGroup
-
-type goroutinePoolRunnable interface {
-	run()
-}
-
-func (wg *goroutinePool) Start(what goroutinePoolRunnable) {
-	(*sync.WaitGroup)(wg).Add(1)
-	go func() {
-		defer (*sync.WaitGroup)(wg).Done()
-		what.run()
-	}()
-}
-
-func (wg *goroutinePool) Wait() {
-	(*sync.WaitGroup)(wg).Wait()
-}
 
 type writeToReq struct {
 	ch   *Channel
@@ -132,7 +113,6 @@ type NodeConf struct {
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
 type Node struct {
 	conf              NodeConf
-	pool              goroutinePool
 	channelAccepters  map[*channelAccepter]struct{}
 	channels          map[*Channel]struct{}
 	nodeHeartbeat     *nodeHeartbeat
@@ -145,6 +125,7 @@ type Node struct {
 	writeAll     chan interface{}
 	writeExcept  chan writeExceptReq
 	terminate    chan struct{}
+	done         chan struct{}
 }
 
 // NewNode allocates a Node. See NodeConf for the options.
@@ -192,6 +173,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 		writeAll:     make(chan interface{}),
 		writeExcept:  make(chan writeExceptReq),
 		terminate:    make(chan struct{}),
+		done:         make(chan struct{}),
 	}
 
 	closeExisting := func() {
@@ -235,38 +217,39 @@ func NewNode(conf NodeConf) (*Node, error) {
 		}
 	}
 
-	// modules
 	n.nodeHeartbeat = newNodeHeartbeat(n)
 	n.nodeStreamRequest = newNodeStreamRequest(n)
 
 	if n.nodeHeartbeat != nil {
-		n.pool.Start(n.nodeHeartbeat)
+		go n.nodeHeartbeat.run()
 	}
 
 	if n.nodeStreamRequest != nil {
-		n.pool.Start(n.nodeStreamRequest)
+		go n.nodeStreamRequest.run()
 	}
 
 	for ch := range n.channels {
-		n.pool.Start(ch)
+		go ch.run()
 	}
 
 	for ca := range n.channelAccepters {
-		n.pool.Start(ca)
+		go ca.run()
 	}
 
-	n.pool.Start(n)
+	go n.run()
 
 	return n, nil
 }
 
 func (n *Node) run() {
+	defer close(n.done)
+
 outer:
 	for {
 		select {
 		case ch := <-n.channelNew:
 			n.channels[ch] = struct{}{}
-			n.pool.Start(ch)
+			go ch.run()
 
 		case ch := <-n.channelClose:
 			delete(n.channels, ch)
@@ -276,17 +259,17 @@ outer:
 			if _, ok := n.channels[req.ch]; ok == false {
 				return
 			}
-			req.ch.writeChan <- req.what
+			req.ch.writec <- req.what
 
 		case what := <-n.writeAll:
 			for ch := range n.channels {
-				ch.writeChan <- what
+				ch.writec <- what
 			}
 
 		case req := <-n.writeExcept:
 			for ch := range n.channels {
 				if ch != req.except {
-					ch.writeChan <- req.what
+					ch.writec <- req.what
 				}
 			}
 
@@ -325,6 +308,7 @@ outer:
 
 	for ch := range n.channels {
 		ch.close()
+		<-ch.done
 	}
 }
 
@@ -337,7 +321,7 @@ func (n *Node) Close() {
 	}()
 
 	close(n.terminate)
-	n.pool.Wait()
+	<-n.done
 
 	close(n.eventsOut)
 }

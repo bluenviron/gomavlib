@@ -9,6 +9,7 @@ type nodeHeartbeat struct {
 	n *Node
 
 	terminate chan struct{}
+	done      chan struct{}
 }
 
 func newNodeHeartbeat(n *Node) *nodeHeartbeat {
@@ -31,6 +32,7 @@ func newNodeHeartbeat(n *Node) *nodeHeartbeat {
 	h := &nodeHeartbeat{
 		n:         n,
 		terminate: make(chan struct{}),
+		done:      make(chan struct{}),
 	}
 
 	return h
@@ -38,9 +40,12 @@ func newNodeHeartbeat(n *Node) *nodeHeartbeat {
 
 func (h *nodeHeartbeat) close() {
 	close(h.terminate)
+	<-h.done
 }
 
 func (h *nodeHeartbeat) run() {
+	defer close(h.done)
+
 	// take version from dialect if possible
 	mavlinkVersion := uint64(3)
 	if h.n.conf.Dialect != nil {

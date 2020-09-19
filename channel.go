@@ -16,8 +16,9 @@ type Channel struct {
 	n      *Node
 	parser *Parser
 
-	writeChan  chan interface{}
+	writec     chan interface{}
 	allWritten chan struct{}
+	done       chan struct{}
 }
 
 func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Channel, error) {
@@ -42,8 +43,9 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Cha
 		rwc:        rwc,
 		n:          n,
 		parser:     parser,
-		writeChan:  make(chan interface{}),
+		writec:     make(chan interface{}),
 		allWritten: make(chan struct{}),
+		done:       make(chan struct{}),
 	}, nil
 }
 
@@ -54,7 +56,7 @@ func (ch *Channel) String() string {
 
 func (ch *Channel) close() {
 	// wait until all frame have been written
-	close(ch.writeChan)
+	close(ch.writec)
 	<-ch.allWritten
 
 	// close reader/writer after ensuring all frames have been written
@@ -62,6 +64,8 @@ func (ch *Channel) close() {
 }
 
 func (ch *Channel) run() {
+	defer close(ch.done)
+
 	// reader
 	readerDone := make(chan struct{})
 	go func() {
@@ -98,7 +102,7 @@ func (ch *Channel) run() {
 		defer close(writerDone)
 		defer func() { ch.allWritten <- struct{}{} }()
 
-		for what := range ch.writeChan {
+		for what := range ch.writec {
 			switch wh := what.(type) {
 			case Message:
 				ch.parser.WriteMessage(wh)

@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	_STREAM_REQUEST_PERIOD = 30 * time.Second
+	streamRequestPeriod = 30 * time.Second
 )
 
 type streamNode struct {
@@ -22,6 +22,7 @@ type nodeStreamRequest struct {
 	lastRequests      map[streamNode]time.Time
 
 	terminate chan struct{}
+	done      chan struct{}
 }
 
 func newNodeStreamRequest(n *Node) *nodeStreamRequest {
@@ -49,8 +50,9 @@ func newNodeStreamRequest(n *Node) *nodeStreamRequest {
 
 	sr := &nodeStreamRequest{
 		n:            n,
-		terminate:    make(chan struct{}),
 		lastRequests: make(map[streamNode]time.Time),
+		terminate:    make(chan struct{}),
+		done:         make(chan struct{}),
 	}
 
 	return sr
@@ -58,9 +60,12 @@ func newNodeStreamRequest(n *Node) *nodeStreamRequest {
 
 func (sr *nodeStreamRequest) close() {
 	close(sr.terminate)
+	<-sr.done
 }
 
 func (sr *nodeStreamRequest) run() {
+	defer close(sr.done)
+
 	ticker := time.NewTicker(30 * time.Second)
 	defer ticker.Stop()
 
@@ -73,7 +78,7 @@ func (sr *nodeStreamRequest) run() {
 				defer sr.lastRequestsMutex.Unlock()
 
 				for rnode, t := range sr.lastRequests {
-					if now.Sub(t) >= _STREAM_REQUEST_PERIOD {
+					if now.Sub(t) >= streamRequestPeriod {
 						delete(sr.lastRequests, rnode)
 					}
 				}
@@ -111,7 +116,7 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 			request = true
 
 		} else {
-			if now.Sub(sr.lastRequests[rnode]) >= _STREAM_REQUEST_PERIOD {
+			if now.Sub(sr.lastRequests[rnode]) >= streamRequestPeriod {
 				request = true
 				sr.lastRequests[rnode] = now
 			}

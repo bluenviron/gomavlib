@@ -10785,6 +10785,8 @@ const (
 	MAV_TYPE_SERVO MAV_TYPE = 33
 	// Open Drone ID. See https://mavlink.io/en/services/opendroneid.html.
 	MAV_TYPE_ODID MAV_TYPE = 34
+	// Decarotor
+	MAV_TYPE_DECAROTOR MAV_TYPE = 35
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -10860,6 +10862,8 @@ func (e MAV_TYPE) MarshalText() ([]byte, error) {
 		return []byte("MAV_TYPE_SERVO"), nil
 	case MAV_TYPE_ODID:
 		return []byte("MAV_TYPE_ODID"), nil
+	case MAV_TYPE_DECAROTOR:
+		return []byte("MAV_TYPE_DECAROTOR"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -10971,6 +10975,9 @@ func (e *MAV_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_TYPE_ODID":
 		*e = MAV_TYPE_ODID
+		return nil
+	case "MAV_TYPE_DECAROTOR":
+		*e = MAV_TYPE_DECAROTOR
 		return nil
 	}
 	return errors.New("invalid value")

@@ -16785,13 +16785,13 @@ func (*MessageGimbalDeviceAttitudeStatus) GetId() uint32 {
 
 // Low level message containing autopilot state relevant for a gimbal device. This message is to be sent from the gimbal manager to the gimbal device component. The data of this message server for the gimbal's estimator corrections in particular horizon compensation, as well as the autopilot's control intention e.g. feed forward angular control in z-axis.
 type MessageAutopilotStateForGimbalDevice struct {
-	// Timestamp (time since system boot).
-	TimeBootUs uint64
 	// System ID
 	TargetSystem uint8
 	// Component ID
 	TargetComponent uint8
-	// Quaternion components of autopilot attitude: w, x, y, z (1 0 0 0 is the null-rotation, Hamiltonian convention).
+	// Timestamp (time since system boot).
+	TimeBootUs uint64
+	// Quaternion components of autopilot attitude: w, x, y, z (1 0 0 0 is the null-rotation, Hamilton convention).
 	Q [4]float32
 	// Estimated delay of the attitude data.
 	QEstimatedDelayUs uint32

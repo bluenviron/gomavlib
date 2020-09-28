@@ -193,8 +193,6 @@ type MAV_CMD int
 const (
 	// Request the target system(s) emit a single instance of a specified message (i.e. a "one-shot" version of MAV_CMD_SET_MESSAGE_INTERVAL).
 	MAV_CMD_REQUEST_MESSAGE MAV_CMD = 512
-	// Request MAVLink protocol version compatibility. All receivers should ACK the command and then emit their capabilities in an PROTOCOL_VERSION message
-	MAV_CMD_REQUEST_PROTOCOL_VERSION MAV_CMD = 519
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -202,8 +200,6 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 	switch e {
 	case MAV_CMD_REQUEST_MESSAGE:
 		return []byte("MAV_CMD_REQUEST_MESSAGE"), nil
-	case MAV_CMD_REQUEST_PROTOCOL_VERSION:
-		return []byte("MAV_CMD_REQUEST_PROTOCOL_VERSION"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -213,9 +209,6 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 	switch string(text) {
 	case "MAV_CMD_REQUEST_MESSAGE":
 		*e = MAV_CMD_REQUEST_MESSAGE
-		return nil
-	case "MAV_CMD_REQUEST_PROTOCOL_VERSION":
-		*e = MAV_CMD_REQUEST_PROTOCOL_VERSION
 		return nil
 	}
 	return errors.New("invalid value")

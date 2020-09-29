@@ -212,7 +212,6 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessageDebugFloatArray{},
 	&MessageOrbitExecutionStatus{},
 	&MessageSmartBatteryInfo{},
-	&MessageSmartBatteryStatus{},
 	&MessageGeneratorStatus{},
 	&MessageActuatorOutputStatus{},
 	&MessageTimeEstimateToTarget{},
@@ -4382,9 +4381,9 @@ const (
 	MAV_BATTERY_CHARGE_STATE_CRITICAL MAV_BATTERY_CHARGE_STATE = 3
 	// Battery state is too low for ordinary abort sequence. Perform fastest possible emergency stop to prevent damage.
 	MAV_BATTERY_CHARGE_STATE_EMERGENCY MAV_BATTERY_CHARGE_STATE = 4
-	// Battery failed, damage unavoidable.
+	// Battery failed, damage unavoidable. Possible causes (faults) are listed in MAV_BATTERY_FAULT.
 	MAV_BATTERY_CHARGE_STATE_FAILED MAV_BATTERY_CHARGE_STATE = 5
-	// Battery is diagnosed to be defective or an error occurred, usage is discouraged / prohibited.
+	// Battery is diagnosed to be defective or an error occurred, usage is discouraged / prohibited. Possible causes (faults) are listed in MAV_BATTERY_FAULT.
 	MAV_BATTERY_CHARGE_STATE_UNHEALTHY MAV_BATTERY_CHARGE_STATE = 6
 	// Battery is charging.
 	MAV_BATTERY_CHARGE_STATE_CHARGING MAV_BATTERY_CHARGE_STATE = 7
@@ -4453,6 +4452,84 @@ func (e MAV_BATTERY_CHARGE_STATE) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
+// Smart battery supply status/fault flags (bitmask) for health indication. The battery must also report either MAV_BATTERY_CHARGE_STATE_FAILED or MAV_BATTERY_CHARGE_STATE_UNHEALTHY if any of these are set.
+type MAV_BATTERY_FAULT int
+
+const (
+	// Battery has deep discharged.
+	MAV_BATTERY_FAULT_DEEP_DISCHARGE MAV_BATTERY_FAULT = 1
+	// Voltage spikes.
+	MAV_BATTERY_FAULT_SPIKES MAV_BATTERY_FAULT = 2
+	// One or more cells have failed. Battery should also report MAV_BATTERY_CHARGE_STATE_FAILE (and should not be used).
+	MAV_BATTERY_FAULT_CELL_FAIL MAV_BATTERY_FAULT = 4
+	// Over-current fault.
+	MAV_BATTERY_FAULT_OVER_CURRENT MAV_BATTERY_FAULT = 8
+	// Over-temperature fault.
+	MAV_BATTERY_FAULT_OVER_TEMPERATURE MAV_BATTERY_FAULT = 16
+	// Under-temperature fault.
+	MAV_BATTERY_FAULT_UNDER_TEMPERATURE MAV_BATTERY_FAULT = 32
+	// Vehicle voltage is not compatible with this battery (batteries on same power rail should have similar voltage).
+	MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE MAV_BATTERY_FAULT = 64
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e MAV_BATTERY_FAULT) MarshalText() ([]byte, error) {
+	switch e {
+	case MAV_BATTERY_FAULT_DEEP_DISCHARGE:
+		return []byte("MAV_BATTERY_FAULT_DEEP_DISCHARGE"), nil
+	case MAV_BATTERY_FAULT_SPIKES:
+		return []byte("MAV_BATTERY_FAULT_SPIKES"), nil
+	case MAV_BATTERY_FAULT_CELL_FAIL:
+		return []byte("MAV_BATTERY_FAULT_CELL_FAIL"), nil
+	case MAV_BATTERY_FAULT_OVER_CURRENT:
+		return []byte("MAV_BATTERY_FAULT_OVER_CURRENT"), nil
+	case MAV_BATTERY_FAULT_OVER_TEMPERATURE:
+		return []byte("MAV_BATTERY_FAULT_OVER_TEMPERATURE"), nil
+	case MAV_BATTERY_FAULT_UNDER_TEMPERATURE:
+		return []byte("MAV_BATTERY_FAULT_UNDER_TEMPERATURE"), nil
+	case MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE:
+		return []byte("MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *MAV_BATTERY_FAULT) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "MAV_BATTERY_FAULT_DEEP_DISCHARGE":
+		*e = MAV_BATTERY_FAULT_DEEP_DISCHARGE
+		return nil
+	case "MAV_BATTERY_FAULT_SPIKES":
+		*e = MAV_BATTERY_FAULT_SPIKES
+		return nil
+	case "MAV_BATTERY_FAULT_CELL_FAIL":
+		*e = MAV_BATTERY_FAULT_CELL_FAIL
+		return nil
+	case "MAV_BATTERY_FAULT_OVER_CURRENT":
+		*e = MAV_BATTERY_FAULT_OVER_CURRENT
+		return nil
+	case "MAV_BATTERY_FAULT_OVER_TEMPERATURE":
+		*e = MAV_BATTERY_FAULT_OVER_TEMPERATURE
+		return nil
+	case "MAV_BATTERY_FAULT_UNDER_TEMPERATURE":
+		*e = MAV_BATTERY_FAULT_UNDER_TEMPERATURE
+		return nil
+	case "MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE":
+		*e = MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_BATTERY_FAULT) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Enumeration of battery functions
 type MAV_BATTERY_FUNCTION int
 
@@ -4510,6 +4587,56 @@ func (e *MAV_BATTERY_FUNCTION) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_BATTERY_FUNCTION) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+// Battery mode. Note, the normal operation mode (i.e. when flying) should be reported as MAV_BATTERY_MODE_UNKNOWN to allow message trimming in normal flight.
+type MAV_BATTERY_MODE int
+
+const (
+	// Battery mode not supported/unknown battery mode/normal operation.
+	MAV_BATTERY_MODE_UNKNOWN MAV_BATTERY_MODE = 0
+	// Battery is auto discharging (towards storage level).
+	MAV_BATTERY_MODE_AUTO_DISCHARGING MAV_BATTERY_MODE = 1
+	// Battery in hot-swap mode (current limited to prevent spikes that might damage sensitive electrical circuits).
+	MAV_BATTERY_MODE_HOT_SWAP MAV_BATTERY_MODE = 2
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e MAV_BATTERY_MODE) MarshalText() ([]byte, error) {
+	switch e {
+	case MAV_BATTERY_MODE_UNKNOWN:
+		return []byte("MAV_BATTERY_MODE_UNKNOWN"), nil
+	case MAV_BATTERY_MODE_AUTO_DISCHARGING:
+		return []byte("MAV_BATTERY_MODE_AUTO_DISCHARGING"), nil
+	case MAV_BATTERY_MODE_HOT_SWAP:
+		return []byte("MAV_BATTERY_MODE_HOT_SWAP"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *MAV_BATTERY_MODE) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "MAV_BATTERY_MODE_UNKNOWN":
+		*e = MAV_BATTERY_MODE_UNKNOWN
+		return nil
+	case "MAV_BATTERY_MODE_AUTO_DISCHARGING":
+		*e = MAV_BATTERY_MODE_AUTO_DISCHARGING
+		return nil
+	case "MAV_BATTERY_MODE_HOT_SWAP":
+		*e = MAV_BATTERY_MODE_HOT_SWAP
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_BATTERY_MODE) String() string {
 	byts, err := e.MarshalText()
 	if err == nil {
 		return string(byts)
@@ -10316,77 +10443,6 @@ func (e MAV_SEVERITY) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
-// Smart battery supply status/fault flags (bitmask) for health indication.
-type MAV_SMART_BATTERY_FAULT int
-
-const (
-	// Battery has deep discharged.
-	MAV_SMART_BATTERY_FAULT_DEEP_DISCHARGE MAV_SMART_BATTERY_FAULT = 1
-	// Voltage spikes.
-	MAV_SMART_BATTERY_FAULT_SPIKES MAV_SMART_BATTERY_FAULT = 2
-	// Single cell has failed.
-	MAV_SMART_BATTERY_FAULT_SINGLE_CELL_FAIL MAV_SMART_BATTERY_FAULT = 4
-	// Over-current fault.
-	MAV_SMART_BATTERY_FAULT_OVER_CURRENT MAV_SMART_BATTERY_FAULT = 8
-	// Over-temperature fault.
-	MAV_SMART_BATTERY_FAULT_OVER_TEMPERATURE MAV_SMART_BATTERY_FAULT = 16
-	// Under-temperature fault.
-	MAV_SMART_BATTERY_FAULT_UNDER_TEMPERATURE MAV_SMART_BATTERY_FAULT = 32
-)
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e MAV_SMART_BATTERY_FAULT) MarshalText() ([]byte, error) {
-	switch e {
-	case MAV_SMART_BATTERY_FAULT_DEEP_DISCHARGE:
-		return []byte("MAV_SMART_BATTERY_FAULT_DEEP_DISCHARGE"), nil
-	case MAV_SMART_BATTERY_FAULT_SPIKES:
-		return []byte("MAV_SMART_BATTERY_FAULT_SPIKES"), nil
-	case MAV_SMART_BATTERY_FAULT_SINGLE_CELL_FAIL:
-		return []byte("MAV_SMART_BATTERY_FAULT_SINGLE_CELL_FAIL"), nil
-	case MAV_SMART_BATTERY_FAULT_OVER_CURRENT:
-		return []byte("MAV_SMART_BATTERY_FAULT_OVER_CURRENT"), nil
-	case MAV_SMART_BATTERY_FAULT_OVER_TEMPERATURE:
-		return []byte("MAV_SMART_BATTERY_FAULT_OVER_TEMPERATURE"), nil
-	case MAV_SMART_BATTERY_FAULT_UNDER_TEMPERATURE:
-		return []byte("MAV_SMART_BATTERY_FAULT_UNDER_TEMPERATURE"), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *MAV_SMART_BATTERY_FAULT) UnmarshalText(text []byte) error {
-	switch string(text) {
-	case "MAV_SMART_BATTERY_FAULT_DEEP_DISCHARGE":
-		*e = MAV_SMART_BATTERY_FAULT_DEEP_DISCHARGE
-		return nil
-	case "MAV_SMART_BATTERY_FAULT_SPIKES":
-		*e = MAV_SMART_BATTERY_FAULT_SPIKES
-		return nil
-	case "MAV_SMART_BATTERY_FAULT_SINGLE_CELL_FAIL":
-		*e = MAV_SMART_BATTERY_FAULT_SINGLE_CELL_FAIL
-		return nil
-	case "MAV_SMART_BATTERY_FAULT_OVER_CURRENT":
-		*e = MAV_SMART_BATTERY_FAULT_OVER_CURRENT
-		return nil
-	case "MAV_SMART_BATTERY_FAULT_OVER_TEMPERATURE":
-		*e = MAV_SMART_BATTERY_FAULT_OVER_TEMPERATURE
-		return nil
-	case "MAV_SMART_BATTERY_FAULT_UNDER_TEMPERATURE":
-		*e = MAV_SMART_BATTERY_FAULT_UNDER_TEMPERATURE
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e MAV_SMART_BATTERY_FAULT) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
-	}
-	return strconv.FormatInt(int64(e), 10)
-}
-
 //
 type MAV_STATE int
 
@@ -15641,7 +15697,7 @@ func (*MessageControlSystemState) GetId() uint32 {
 	return 146
 }
 
-// Battery information. Updates GCS with flight controller battery status. Use SMART_BATTERY_* messages instead for smart batteries.
+// Battery information. Updates GCS with flight controller battery status. Smart batteries also use this message, but may additionally send SMART_BATTERY_INFO.
 type MessageBatteryStatus struct {
 	// Battery ID
 	Id uint8
@@ -15667,6 +15723,10 @@ type MessageBatteryStatus struct {
 	ChargeState MAV_BATTERY_CHARGE_STATE `mavenum:"uint8" mavext:"true"`
 	// Battery voltages for cells 11 to 14. Cells above the valid cell count for this battery should have a value of 0, where zero indicates not supported (note, this is different than for the voltages field and allows empty byte truncation). If the measured value is 0 then 1 should be sent instead.
 	VoltagesExt [4]uint16 `mavext:"true"`
+	// Battery mode. Default (0) is that battery mode reporting is not supported or battery is in normal-use mode.
+	Mode MAV_BATTERY_MODE `mavenum:"uint8" mavext:"true"`
+	// Fault/health indications. These should be set when charge_state is MAV_BATTERY_CHARGE_STATE_FAILED or MAV_BATTERY_CHARGE_STATE_UNHEALTHY (if not, fault reporting is not supported).
+	FaultBitmask MAV_BATTERY_FAULT `mavenum:"uint32" mavext:"true"`
 }
 
 func (*MessageBatteryStatus) GetId() uint32 {
@@ -17523,10 +17583,14 @@ func (*MessageOrbitExecutionStatus) GetId() uint32 {
 	return 360
 }
 
-// Smart Battery information (static/infrequent update). Use for updates from: smart battery to flight stack, flight stack to GCS. Use instead of BATTERY_STATUS for smart batteries.
+// Smart Battery information (static/infrequent update). Use for updates from: smart battery to flight stack, flight stack to GCS. Use BATTERY_STATUS for smart battery frequent updates.
 type MessageSmartBatteryInfo struct {
 	// Battery ID
 	Id uint8
+	// Function of the battery
+	BatteryFunction MAV_BATTERY_FUNCTION `mavenum:"uint8"`
+	// Type (chemistry) of the battery
+	Type MAV_BATTERY_TYPE `mavenum:"uint8"`
 	// Capacity when full according to manufacturer, -1: field not provided.
 	CapacityFullSpecification int32
 	// Capacity when full (accounting for battery degradation), -1: field not provided.
@@ -17549,30 +17613,6 @@ type MessageSmartBatteryInfo struct {
 
 func (*MessageSmartBatteryInfo) GetId() uint32 {
 	return 370
-}
-
-// Smart Battery information (dynamic). Use for updates from: smart battery to flight stack, flight stack to GCS. Use instead of BATTERY_STATUS for smart batteries.
-type MessageSmartBatteryStatus struct {
-	// Battery ID
-	Id uint16
-	// Remaining battery energy. Values: [0-100], -1: field not provided.
-	CapacityRemaining int16
-	// Battery current (through all cells/loads). Positive if discharging, negative if charging. UINT16_MAX: field not provided.
-	Current int16
-	// Battery temperature. -1: field not provided.
-	Temperature int16
-	// Fault/health indications.
-	FaultBitmask MAV_SMART_BATTERY_FAULT `mavenum:"int32"`
-	// Estimated remaining battery time. -1: field not provided.
-	TimeRemaining int32
-	// The cell number of the first index in the 'voltages' array field. Using this field allows you to specify cell voltages for batteries with more than 16 cells.
-	CellOffset uint16
-	// Individual cell voltages. Batteries with more 16 cells can use the cell_offset field to specify the cell offset for the array specified in the current message . Index values above the valid cell count for this battery should have the UINT16_MAX value.
-	Voltages [16]uint16
-}
-
-func (*MessageSmartBatteryStatus) GetId() uint32 {
-	return 371
 }
 
 // Telemetry of power generation system. Alternator or mechanical generator.

@@ -1,4 +1,4 @@
-package gomavlib
+package udplistener
 
 import (
 	"net"
@@ -13,7 +13,7 @@ func TestUdpListener(t *testing.T) {
 	testBuf1 := []byte("testing testing 1 2 3")
 	testBuf2 := []byte("second part")
 
-	l, err := newUdpListener("udp4", "127.0.0.1:18456")
+	l, err := New("udp4", "127.0.0.1:18456")
 	require.NoError(t, err)
 
 	var wg sync.WaitGroup
@@ -68,7 +68,7 @@ func TestUdpListener(t *testing.T) {
 }
 
 func TestUdpListenerDeadline(t *testing.T) {
-	l, err := newUdpListener("udp4", "127.0.0.1:18456")
+	l, err := New("udp4", "127.0.0.1:18456")
 	require.NoError(t, err)
 
 	var wg sync.WaitGroup
@@ -116,7 +116,7 @@ func TestUdpListenerDeadline(t *testing.T) {
 }
 
 func TestUdpListenerDoubleClose(t *testing.T) {
-	l, err := newUdpListener("udp4", "127.0.0.1:18456")
+	l, err := New("udp4", "127.0.0.1:18456")
 	require.NoError(t, err)
 	l.Close()
 	l.Close()

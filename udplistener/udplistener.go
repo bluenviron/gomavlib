@@ -1,13 +1,11 @@
-package gomavlib
+// udplistener provides a UDP-based Listener.
+package udplistener
 
 import (
 	"net"
 	"sync"
 	"time"
 )
-
-// this file provides a net.Listener for udp servers, such that they can be
-// handled like tcp ones.
 
 // implements net.Error
 type udpNetError struct {
@@ -36,7 +34,7 @@ type udpListenerConnIndex struct {
 }
 
 type udpListenerConn struct {
-	listener      *udpListener
+	listener      *UDPListener
 	index         udpListenerConnIndex
 	addr          *net.UDPAddr
 	closed        bool
@@ -46,7 +44,7 @@ type udpListenerConn struct {
 	read chan []byte
 }
 
-func newUdpListenerConn(listener *udpListener, index udpListenerConnIndex, addr *net.UDPAddr) *udpListenerConn {
+func newConn(listener *UDPListener, index udpListenerConnIndex, addr *net.UDPAddr) *udpListenerConn {
 	return &udpListenerConn{
 		listener: listener,
 		index:    index,
@@ -143,7 +141,8 @@ func (c *udpListenerConn) SetWriteDeadline(t time.Time) error {
 	return nil
 }
 
-type udpListener struct {
+// UDPListener is a UDP listener.
+type UDPListener struct {
 	packetConn net.PacketConn
 	conns      map[udpListenerConnIndex]*udpListenerConn
 	readMutex  sync.Mutex
@@ -154,13 +153,14 @@ type udpListener struct {
 	readDone chan struct{}
 }
 
-func newUdpListener(network, address string) (net.Listener, error) {
+// New allocates a UDPListener.
+func New(network, address string) (net.Listener, error) {
 	packetConn, err := net.ListenPacket(network, address)
 	if err != nil {
 		return nil, err
 	}
 
-	l := &udpListener{
+	l := &UDPListener{
 		packetConn: packetConn,
 		conns:      make(map[udpListenerConnIndex]*udpListenerConn),
 		acceptc:    make(chan net.Conn),
@@ -172,7 +172,7 @@ func newUdpListener(network, address string) (net.Listener, error) {
 	return l, nil
 }
 
-func (l *udpListener) Close() error {
+func (l *UDPListener) Close() error {
 	l.readMutex.Lock()
 	defer l.readMutex.Unlock()
 
@@ -193,11 +193,11 @@ func (l *udpListener) Close() error {
 	return nil
 }
 
-func (l *udpListener) Addr() net.Addr {
+func (l *UDPListener) Addr() net.Addr {
 	return l.packetConn.LocalAddr()
 }
 
-func (l *udpListener) reader() {
+func (l *UDPListener) reader() {
 	buf := make([]byte, 2048) // MTU is ~1500
 
 	for {
@@ -225,7 +225,7 @@ func (l *udpListener) reader() {
 
 			} else {
 				if !preExisting {
-					conn = newUdpListenerConn(l, connIndex, uaddr)
+					conn = newConn(l, connIndex, uaddr)
 					l.conns[connIndex] = conn
 					l.acceptc <- conn
 				}
@@ -240,7 +240,7 @@ func (l *udpListener) reader() {
 	}
 }
 
-func (l *udpListener) Accept() (net.Conn, error) {
+func (l *UDPListener) Accept() (net.Conn, error) {
 	conn, ok := <-l.acceptc
 	if !ok {
 		return nil, udpErrorTerminated

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io"
 	"net"
+
+	"github.com/aler9/gomavlib/udplistener"
 )
 
 type endpointServerConf interface {
@@ -66,7 +68,7 @@ func initEndpointServer(conf endpointServerConf) (Endpoint, error) {
 
 	var listener net.Listener
 	if conf.isUdp() == true {
-		listener, err = newUdpListener("udp4", conf.getAddress())
+		listener, err = udplistener.New("udp4", conf.getAddress())
 	} else {
 		listener, err = net.Listen("tcp4", conf.getAddress())
 	}

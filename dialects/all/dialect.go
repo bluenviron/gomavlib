@@ -295,6 +295,10 @@ var dialect = gomavlib.MustDialect(3, []gomavlib.Message{
 	&MessageEscTelemetry_1To_4{},
 	&MessageEscTelemetry_5To_8{},
 	&MessageEscTelemetry_9To_12{},
+	&MessageOsdParamConfig{},
+	&MessageOsdParamConfigReply{},
+	&MessageOsdParamShowConfig{},
+	&MessageOsdParamShowConfigReply{},
 	// standard.xml
 	// ualberta.xml
 	&MessageNavFilterBias{},
@@ -2648,6 +2652,16 @@ const (
 	COPTER_MODE_GUIDED_NOGPS COPTER_MODE = 20
 	//
 	COPTER_MODE_SMART_RTL COPTER_MODE = 21
+	//
+	COPTER_MODE_FLOWHOLD COPTER_MODE = 22
+	//
+	COPTER_MODE_FOLLOW COPTER_MODE = 23
+	//
+	COPTER_MODE_ZIGZAG COPTER_MODE = 24
+	//
+	COPTER_MODE_SYSTEMID COPTER_MODE = 25
+	//
+	COPTER_MODE_AUTOROTATE COPTER_MODE = 26
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -2691,6 +2705,16 @@ func (e COPTER_MODE) MarshalText() ([]byte, error) {
 		return []byte("COPTER_MODE_GUIDED_NOGPS"), nil
 	case COPTER_MODE_SMART_RTL:
 		return []byte("COPTER_MODE_SMART_RTL"), nil
+	case COPTER_MODE_FLOWHOLD:
+		return []byte("COPTER_MODE_FLOWHOLD"), nil
+	case COPTER_MODE_FOLLOW:
+		return []byte("COPTER_MODE_FOLLOW"), nil
+	case COPTER_MODE_ZIGZAG:
+		return []byte("COPTER_MODE_ZIGZAG"), nil
+	case COPTER_MODE_SYSTEMID:
+		return []byte("COPTER_MODE_SYSTEMID"), nil
+	case COPTER_MODE_AUTOROTATE:
+		return []byte("COPTER_MODE_AUTOROTATE"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -2754,6 +2778,21 @@ func (e *COPTER_MODE) UnmarshalText(text []byte) error {
 		return nil
 	case "COPTER_MODE_SMART_RTL":
 		*e = COPTER_MODE_SMART_RTL
+		return nil
+	case "COPTER_MODE_FLOWHOLD":
+		*e = COPTER_MODE_FLOWHOLD
+		return nil
+	case "COPTER_MODE_FOLLOW":
+		*e = COPTER_MODE_FOLLOW
+		return nil
+	case "COPTER_MODE_ZIGZAG":
+		*e = COPTER_MODE_ZIGZAG
+		return nil
+	case "COPTER_MODE_SYSTEMID":
+		*e = COPTER_MODE_SYSTEMID
+		return nil
+	case "COPTER_MODE_AUTOROTATE":
+		*e = COPTER_MODE_AUTOROTATE
 		return nil
 	}
 	return errors.New("invalid value")
@@ -5966,6 +6005,49 @@ func (e GRIPPER_ACTIONS) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
+//
+type HEADING_TYPE int
+
+const (
+	//
+	HEADING_TYPE_COURSE_OVER_GROUND HEADING_TYPE = 0
+	//
+	HEADING_TYPE_HEADING HEADING_TYPE = 1
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e HEADING_TYPE) MarshalText() ([]byte, error) {
+	switch e {
+	case HEADING_TYPE_COURSE_OVER_GROUND:
+		return []byte("HEADING_TYPE_COURSE_OVER_GROUND"), nil
+	case HEADING_TYPE_HEADING:
+		return []byte("HEADING_TYPE_HEADING"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *HEADING_TYPE) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "HEADING_TYPE_COURSE_OVER_GROUND":
+		*e = HEADING_TYPE_COURSE_OVER_GROUND
+		return nil
+	case "HEADING_TYPE_HEADING":
+		*e = HEADING_TYPE_HEADING
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e HEADING_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Flags to report failure cases over the high latency telemtry.
 type HL_FAILURE_FLAG int
 
@@ -7357,10 +7439,10 @@ const (
 	MAV_CMD_GET_MESSAGE_INTERVAL MAV_CMD = 510
 	// Set the interval between messages for a particular MAVLink message ID. This interface replaces REQUEST_DATA_STREAM.
 	MAV_CMD_SET_MESSAGE_INTERVAL MAV_CMD = 511
-	// Request autopilot capabilities. The receiver should ACK the command and then emit its capabilities in an AUTOPILOT_VERSION message
-	MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES MAV_CMD = 520
 	// Request MAVLink protocol version compatibility. All receivers should ACK the command and then emit their capabilities in an PROTOCOL_VERSION message
 	MAV_CMD_REQUEST_PROTOCOL_VERSION MAV_CMD = 519
+	// Request autopilot capabilities. The receiver should ACK the command and then emit its capabilities in an AUTOPILOT_VERSION message
+	MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES MAV_CMD = 520
 	// Request camera information (CAMERA_INFORMATION).
 	MAV_CMD_REQUEST_CAMERA_INFORMATION MAV_CMD = 521
 	// Request camera settings (CAMERA_SETTINGS).
@@ -7503,11 +7585,11 @@ const (
 	MAV_CMD_SOLO_BTN_PAUSE_CLICK MAV_CMD = 42003
 	// Magnetometer calibration based on fixed position        in earth field given by inclination, declination and intensity.
 	MAV_CMD_FIXED_MAG_CAL MAV_CMD = 42004
-	// Magnetometer calibration based on fixed expected field values in milliGauss.
+	// Magnetometer calibration based on fixed expected field values.
 	MAV_CMD_FIXED_MAG_CAL_FIELD MAV_CMD = 42005
 	// Initiate a magnetometer calibration.
 	MAV_CMD_DO_START_MAG_CAL MAV_CMD = 42424
-	// Initiate a magnetometer calibration.
+	// Accept a magnetometer calibration.
 	MAV_CMD_DO_ACCEPT_MAG_CAL MAV_CMD = 42425
 	// Cancel a running magnetometer calibration.
 	MAV_CMD_DO_CANCEL_MAG_CAL MAV_CMD = 42426
@@ -7533,6 +7615,12 @@ const (
 	MAV_CMD_DEBUG_TRAP MAV_CMD = 42700
 	// Control onboard scripting.
 	MAV_CMD_SCRIPTING MAV_CMD = 42701
+	// Change flight speed at a given rate. This slews the vehicle at a controllable rate between it's previous speed and the new one. (affects GUIDED only. Outside GUIDED, aircraft ignores these commands. Designed for onboard companion-computer command-and-control, not normally operator/GCS control.)
+	MAV_CMD_GUIDED_CHANGE_SPEED MAV_CMD = 43000
+	// Change target altitude at a given rate. This slews the vehicle at a controllable rate between it's previous altitude and the new one. (affects GUIDED only. Outside GUIDED, aircraft ignores these commands. Designed for onboard companion-computer command-and-control, not normally operator/GCS control.)
+	MAV_CMD_GUIDED_CHANGE_ALTITUDE MAV_CMD = 43001
+	// Change to target heading at a given rate, overriding previous heading/s. This slews the vehicle at a controllable rate between it's previous heading and the new one. (affects GUIDED only. Exiting GUIDED returns aircraft to normal behaviour defined elsewhere. Designed for onboard companion-computer command-and-control, not normally operator/GCS control.)
+	MAV_CMD_GUIDED_CHANGE_HEADING MAV_CMD = 43002
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -7712,10 +7800,10 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_GET_MESSAGE_INTERVAL"), nil
 	case MAV_CMD_SET_MESSAGE_INTERVAL:
 		return []byte("MAV_CMD_SET_MESSAGE_INTERVAL"), nil
-	case MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES:
-		return []byte("MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES"), nil
 	case MAV_CMD_REQUEST_PROTOCOL_VERSION:
 		return []byte("MAV_CMD_REQUEST_PROTOCOL_VERSION"), nil
+	case MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES:
+		return []byte("MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES"), nil
 	case MAV_CMD_REQUEST_CAMERA_INFORMATION:
 		return []byte("MAV_CMD_REQUEST_CAMERA_INFORMATION"), nil
 	case MAV_CMD_REQUEST_CAMERA_SETTINGS:
@@ -7888,6 +7976,12 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_DEBUG_TRAP"), nil
 	case MAV_CMD_SCRIPTING:
 		return []byte("MAV_CMD_SCRIPTING"), nil
+	case MAV_CMD_GUIDED_CHANGE_SPEED:
+		return []byte("MAV_CMD_GUIDED_CHANGE_SPEED"), nil
+	case MAV_CMD_GUIDED_CHANGE_ALTITUDE:
+		return []byte("MAV_CMD_GUIDED_CHANGE_ALTITUDE"), nil
+	case MAV_CMD_GUIDED_CHANGE_HEADING:
+		return []byte("MAV_CMD_GUIDED_CHANGE_HEADING"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -8156,11 +8250,11 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 	case "MAV_CMD_SET_MESSAGE_INTERVAL":
 		*e = MAV_CMD_SET_MESSAGE_INTERVAL
 		return nil
-	case "MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES":
-		*e = MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES
-		return nil
 	case "MAV_CMD_REQUEST_PROTOCOL_VERSION":
 		*e = MAV_CMD_REQUEST_PROTOCOL_VERSION
+		return nil
+	case "MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES":
+		*e = MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES
 		return nil
 	case "MAV_CMD_REQUEST_CAMERA_INFORMATION":
 		*e = MAV_CMD_REQUEST_CAMERA_INFORMATION
@@ -8419,6 +8513,15 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_SCRIPTING":
 		*e = MAV_CMD_SCRIPTING
+		return nil
+	case "MAV_CMD_GUIDED_CHANGE_SPEED":
+		*e = MAV_CMD_GUIDED_CHANGE_SPEED
+		return nil
+	case "MAV_CMD_GUIDED_CHANGE_ALTITUDE":
+		*e = MAV_CMD_GUIDED_CHANGE_ALTITUDE
+		return nil
+	case "MAV_CMD_GUIDED_CHANGE_HEADING":
+		*e = MAV_CMD_GUIDED_CHANGE_HEADING
 		return nil
 	}
 	return errors.New("invalid value")
@@ -14164,6 +14267,155 @@ func (e ORBIT_YAW_BEHAVIOUR) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
+// The error type for the OSD parameter editor.
+type OSD_PARAM_CONFIG_ERROR int
+
+const (
+	//
+	OSD_PARAM_SUCCESS OSD_PARAM_CONFIG_ERROR = 0
+	//
+	OSD_PARAM_INVALID_SCREEN OSD_PARAM_CONFIG_ERROR = 1
+	//
+	OSD_PARAM_INVALID_PARAMETER_INDEX OSD_PARAM_CONFIG_ERROR = 2
+	//
+	OSD_PARAM_INVALID_PARAMETER OSD_PARAM_CONFIG_ERROR = 3
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e OSD_PARAM_CONFIG_ERROR) MarshalText() ([]byte, error) {
+	switch e {
+	case OSD_PARAM_SUCCESS:
+		return []byte("OSD_PARAM_SUCCESS"), nil
+	case OSD_PARAM_INVALID_SCREEN:
+		return []byte("OSD_PARAM_INVALID_SCREEN"), nil
+	case OSD_PARAM_INVALID_PARAMETER_INDEX:
+		return []byte("OSD_PARAM_INVALID_PARAMETER_INDEX"), nil
+	case OSD_PARAM_INVALID_PARAMETER:
+		return []byte("OSD_PARAM_INVALID_PARAMETER"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *OSD_PARAM_CONFIG_ERROR) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "OSD_PARAM_SUCCESS":
+		*e = OSD_PARAM_SUCCESS
+		return nil
+	case "OSD_PARAM_INVALID_SCREEN":
+		*e = OSD_PARAM_INVALID_SCREEN
+		return nil
+	case "OSD_PARAM_INVALID_PARAMETER_INDEX":
+		*e = OSD_PARAM_INVALID_PARAMETER_INDEX
+		return nil
+	case "OSD_PARAM_INVALID_PARAMETER":
+		*e = OSD_PARAM_INVALID_PARAMETER
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e OSD_PARAM_CONFIG_ERROR) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+// The type of parameter for the OSD parameter editor.
+type OSD_PARAM_CONFIG_TYPE int
+
+const (
+	//
+	OSD_PARAM_NONE OSD_PARAM_CONFIG_TYPE = 0
+	//
+	OSD_PARAM_SERIAL_PROTOCOL OSD_PARAM_CONFIG_TYPE = 1
+	//
+	OSD_PARAM_SERVO_FUNCTION OSD_PARAM_CONFIG_TYPE = 2
+	//
+	OSD_PARAM_AUX_FUNCTION OSD_PARAM_CONFIG_TYPE = 3
+	//
+	OSD_PARAM_FLIGHT_MODE OSD_PARAM_CONFIG_TYPE = 4
+	//
+	OSD_PARAM_FAILSAFE_ACTION OSD_PARAM_CONFIG_TYPE = 5
+	//
+	OSD_PARAM_FAILSAFE_ACTION_1 OSD_PARAM_CONFIG_TYPE = 6
+	//
+	OSD_PARAM_FAILSAFE_ACTION_2 OSD_PARAM_CONFIG_TYPE = 7
+	//
+	OSD_PARAM_NUM_TYPES OSD_PARAM_CONFIG_TYPE = 8
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e OSD_PARAM_CONFIG_TYPE) MarshalText() ([]byte, error) {
+	switch e {
+	case OSD_PARAM_NONE:
+		return []byte("OSD_PARAM_NONE"), nil
+	case OSD_PARAM_SERIAL_PROTOCOL:
+		return []byte("OSD_PARAM_SERIAL_PROTOCOL"), nil
+	case OSD_PARAM_SERVO_FUNCTION:
+		return []byte("OSD_PARAM_SERVO_FUNCTION"), nil
+	case OSD_PARAM_AUX_FUNCTION:
+		return []byte("OSD_PARAM_AUX_FUNCTION"), nil
+	case OSD_PARAM_FLIGHT_MODE:
+		return []byte("OSD_PARAM_FLIGHT_MODE"), nil
+	case OSD_PARAM_FAILSAFE_ACTION:
+		return []byte("OSD_PARAM_FAILSAFE_ACTION"), nil
+	case OSD_PARAM_FAILSAFE_ACTION_1:
+		return []byte("OSD_PARAM_FAILSAFE_ACTION_1"), nil
+	case OSD_PARAM_FAILSAFE_ACTION_2:
+		return []byte("OSD_PARAM_FAILSAFE_ACTION_2"), nil
+	case OSD_PARAM_NUM_TYPES:
+		return []byte("OSD_PARAM_NUM_TYPES"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *OSD_PARAM_CONFIG_TYPE) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "OSD_PARAM_NONE":
+		*e = OSD_PARAM_NONE
+		return nil
+	case "OSD_PARAM_SERIAL_PROTOCOL":
+		*e = OSD_PARAM_SERIAL_PROTOCOL
+		return nil
+	case "OSD_PARAM_SERVO_FUNCTION":
+		*e = OSD_PARAM_SERVO_FUNCTION
+		return nil
+	case "OSD_PARAM_AUX_FUNCTION":
+		*e = OSD_PARAM_AUX_FUNCTION
+		return nil
+	case "OSD_PARAM_FLIGHT_MODE":
+		*e = OSD_PARAM_FLIGHT_MODE
+		return nil
+	case "OSD_PARAM_FAILSAFE_ACTION":
+		*e = OSD_PARAM_FAILSAFE_ACTION
+		return nil
+	case "OSD_PARAM_FAILSAFE_ACTION_1":
+		*e = OSD_PARAM_FAILSAFE_ACTION_1
+		return nil
+	case "OSD_PARAM_FAILSAFE_ACTION_2":
+		*e = OSD_PARAM_FAILSAFE_ACTION_2
+		return nil
+	case "OSD_PARAM_NUM_TYPES":
+		*e = OSD_PARAM_NUM_TYPES
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e OSD_PARAM_CONFIG_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Parachute actions. Trigger release and enable/disable auto-release.
 type PARACHUTE_ACTION int
 
@@ -14483,6 +14735,8 @@ const (
 	PLANE_MODE_QRTL PLANE_MODE = 21
 	//
 	PLANE_MODE_QAUTOTUNE PLANE_MODE = 22
+	//
+	PLANE_MODE_QACRO PLANE_MODE = 23
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -14532,6 +14786,8 @@ func (e PLANE_MODE) MarshalText() ([]byte, error) {
 		return []byte("PLANE_MODE_QRTL"), nil
 	case PLANE_MODE_QAUTOTUNE:
 		return []byte("PLANE_MODE_QAUTOTUNE"), nil
+	case PLANE_MODE_QACRO:
+		return []byte("PLANE_MODE_QACRO"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -14604,6 +14860,9 @@ func (e *PLANE_MODE) UnmarshalText(text []byte) error {
 		return nil
 	case "PLANE_MODE_QAUTOTUNE":
 		*e = PLANE_MODE_QAUTOTUNE
+		return nil
+	case "PLANE_MODE_QACRO":
+		*e = PLANE_MODE_QACRO
 		return nil
 	}
 	return errors.New("invalid value")
@@ -14882,6 +15141,10 @@ const (
 	//
 	ROVER_MODE_LOITER ROVER_MODE = 5
 	//
+	ROVER_MODE_FOLLOW ROVER_MODE = 6
+	//
+	ROVER_MODE_SIMPLE ROVER_MODE = 7
+	//
 	ROVER_MODE_AUTO ROVER_MODE = 10
 	//
 	ROVER_MODE_RTL ROVER_MODE = 11
@@ -14906,6 +15169,10 @@ func (e ROVER_MODE) MarshalText() ([]byte, error) {
 		return []byte("ROVER_MODE_HOLD"), nil
 	case ROVER_MODE_LOITER:
 		return []byte("ROVER_MODE_LOITER"), nil
+	case ROVER_MODE_FOLLOW:
+		return []byte("ROVER_MODE_FOLLOW"), nil
+	case ROVER_MODE_SIMPLE:
+		return []byte("ROVER_MODE_SIMPLE"), nil
 	case ROVER_MODE_AUTO:
 		return []byte("ROVER_MODE_AUTO"), nil
 	case ROVER_MODE_RTL:
@@ -14937,6 +15204,12 @@ func (e *ROVER_MODE) UnmarshalText(text []byte) error {
 		return nil
 	case "ROVER_MODE_LOITER":
 		*e = ROVER_MODE_LOITER
+		return nil
+	case "ROVER_MODE_FOLLOW":
+		*e = ROVER_MODE_FOLLOW
+		return nil
+	case "ROVER_MODE_SIMPLE":
+		*e = ROVER_MODE_SIMPLE
 		return nil
 	case "ROVER_MODE_AUTO":
 		*e = ROVER_MODE_AUTO
@@ -15300,6 +15573,49 @@ func (e *SET_FOCUS_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e SET_FOCUS_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+//
+type SPEED_TYPE int
+
+const (
+	//
+	SPEED_TYPE_AIRSPEED SPEED_TYPE = 0
+	//
+	SPEED_TYPE_GROUNDSPEED SPEED_TYPE = 1
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e SPEED_TYPE) MarshalText() ([]byte, error) {
+	switch e {
+	case SPEED_TYPE_AIRSPEED:
+		return []byte("SPEED_TYPE_AIRSPEED"), nil
+	case SPEED_TYPE_GROUNDSPEED:
+		return []byte("SPEED_TYPE_GROUNDSPEED"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *SPEED_TYPE) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "SPEED_TYPE_AIRSPEED":
+		*e = SPEED_TYPE_AIRSPEED
+		return nil
+	case "SPEED_TYPE_GROUNDSPEED":
+		*e = SPEED_TYPE_GROUNDSPEED
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e SPEED_TYPE) String() string {
 	byts, err := e.MarshalText()
 	if err == nil {
 		return string(byts)
@@ -17371,7 +17687,7 @@ type MessageScaledPressure struct {
 	PressDiff float32
 	// Absolute pressure temperature
 	Temperature int16
-	// Differential pressure temperature (UINT16_MAX, if not available)
+	// Differential pressure temperature (0, if not available). Report values of 0 (or 1) as 1 cdegC.
 	TemperaturePressDiff int16 `mavext:"true"`
 }
 
@@ -19587,7 +19903,7 @@ type MessageScaledPressure2 struct {
 	PressDiff float32
 	// Absolute pressure temperature
 	Temperature int16
-	// Differential pressure temperature (UINT16_MAX, if not available)
+	// Differential pressure temperature (0, if not available). Report values of 0 (or 1) as 1 cdegC.
 	TemperaturePressDiff int16 `mavext:"true"`
 }
 
@@ -19697,7 +20013,7 @@ type MessageScaledPressure3 struct {
 	PressDiff float32
 	// Absolute pressure temperature
 	Temperature int16
-	// Differential pressure temperature (UINT16_MAX, if not available)
+	// Differential pressure temperature (0, if not available). Report values of 0 (or 1) as 1 cdegC.
 	TemperaturePressDiff int16 `mavext:"true"`
 }
 
@@ -19943,36 +20259,42 @@ func (*MessageMagCalReport) GetId() uint32 {
 	return 192
 }
 
-// EFI Status Output
+// EFI status output
 type MessageEfiStatus struct {
-	// EFI Health status
+	// EFI health status
 	Health uint8
-	// ECU Index
+	// ECU index
 	EcuIndex float32
 	// RPM
 	Rpm float32
-	// Fuel Consumed (grams)
+	// Fuel consumed
 	FuelConsumed float32
-	// Fuel Flow Rate (g/min)
+	// Fuel flow rate
 	FuelFlow float32
-	// Engine Load (%)
+	// Engine load
 	EngineLoad float32
-	// Throttle Position (%)
+	// Throttle position
 	ThrottlePosition float32
-	// Spark Dwell Time (ms)
+	// Spark dwell time
 	SparkDwellTime float32
-	// Barometric Pressure (kPa)
+	// Barometric pressure
 	BarometricPressure float32
-	// Intake Manifold Pressure (kPa)(
+	// Intake manifold pressure(
 	IntakeManifoldPressure float32
-	// Intake Manifold Temperature (degC)
+	// Intake manifold temperature
 	IntakeManifoldTemperature float32
-	// cylinder_head_temperature (degC)
+	// Cylinder head temperature
 	CylinderHeadTemperature float32
-	// Ignition timing for cylinder i (Crank Angle degrees)
+	// Ignition timing (Crank angle degrees)
 	IgnitionTiming float32
-	// Injection time for injector i (ms)
+	// Injection time
 	InjectionTime float32
+	// Exhaust gas temperature
+	ExhaustGasTemperature float32
+	// Output throttle
+	ThrottleOut float32
+	// Pressure/temperature compensation
+	PtCompensation float32
 }
 
 func (*MessageEfiStatus) GetId() uint32 {
@@ -23197,6 +23519,8 @@ type MessageDeviceOpRead struct {
 	Regstart uint8
 	// Count of registers to read.
 	Count uint8
+	// Bank number.
+	Bank uint8 `mavext:"true"`
 }
 
 func (*MessageDeviceOpRead) GetId() uint32 {
@@ -23215,6 +23539,8 @@ type MessageDeviceOpReadReply struct {
 	Count uint8
 	// Reply data.
 	Data [128]uint8
+	// Bank number.
+	Bank uint8 `mavext:"true"`
 }
 
 func (*MessageDeviceOpReadReply) GetId() uint32 {
@@ -23243,6 +23569,8 @@ type MessageDeviceOpWrite struct {
 	Count uint8
 	// Write data.
 	Data [128]uint8
+	// Bank number.
+	Bank uint8 `mavext:"true"`
 }
 
 func (*MessageDeviceOpWrite) GetId() uint32 {
@@ -23385,6 +23713,86 @@ type MessageEscTelemetry_9To_12 struct {
 
 func (*MessageEscTelemetry_9To_12) GetId() uint32 {
 	return 11032
+}
+
+// Configure an OSD parameter slot.
+type MessageOsdParamConfig struct {
+	// System ID.
+	TargetSystem uint8
+	// Component ID.
+	TargetComponent uint8
+	// Request ID - copied to reply.
+	RequestId uint32
+	// OSD parameter screen index.
+	OsdScreen uint8
+	// OSD parameter display index.
+	OsdIndex uint8
+	// Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
+	ParamId string `mavlen:"16"`
+	// Config type.
+	ConfigType OSD_PARAM_CONFIG_TYPE `mavenum:"uint8"`
+	// OSD parameter minimum value.
+	MinValue float32
+	// OSD parameter maximum value.
+	MaxValue float32
+	// OSD parameter increment.
+	Increment float32
+}
+
+func (*MessageOsdParamConfig) GetId() uint32 {
+	return 11033
+}
+
+// Configure OSD parameter reply.
+type MessageOsdParamConfigReply struct {
+	// Request ID - copied from request.
+	RequestId uint32
+	// Config error type.
+	Result OSD_PARAM_CONFIG_ERROR `mavenum:"uint8"`
+}
+
+func (*MessageOsdParamConfigReply) GetId() uint32 {
+	return 11034
+}
+
+// Read a configured an OSD parameter slot.
+type MessageOsdParamShowConfig struct {
+	// System ID.
+	TargetSystem uint8
+	// Component ID.
+	TargetComponent uint8
+	// Request ID - copied to reply.
+	RequestId uint32
+	// OSD parameter screen index.
+	OsdScreen uint8
+	// OSD parameter display index.
+	OsdIndex uint8
+}
+
+func (*MessageOsdParamShowConfig) GetId() uint32 {
+	return 11035
+}
+
+// Read configured OSD parameter reply.
+type MessageOsdParamShowConfigReply struct {
+	// Request ID - copied from request.
+	RequestId uint32
+	// Config error type.
+	Result OSD_PARAM_CONFIG_ERROR `mavenum:"uint8"`
+	// Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
+	ParamId string `mavlen:"16"`
+	// Config type.
+	ConfigType OSD_PARAM_CONFIG_TYPE `mavenum:"uint8"`
+	// OSD parameter minimum value.
+	MinValue float32
+	// OSD parameter maximum value.
+	MaxValue float32
+	// OSD parameter increment.
+	Increment float32
+}
+
+func (*MessageOsdParamShowConfigReply) GetId() uint32 {
+	return 11036
 }
 
 // standard.xml

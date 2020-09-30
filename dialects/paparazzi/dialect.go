@@ -4864,10 +4864,10 @@ const (
 	MAV_CMD_GET_MESSAGE_INTERVAL MAV_CMD = 510
 	// Set the interval between messages for a particular MAVLink message ID. This interface replaces REQUEST_DATA_STREAM.
 	MAV_CMD_SET_MESSAGE_INTERVAL MAV_CMD = 511
-	// Request autopilot capabilities. The receiver should ACK the command and then emit its capabilities in an AUTOPILOT_VERSION message
-	MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES MAV_CMD = 520
 	// Request MAVLink protocol version compatibility. All receivers should ACK the command and then emit their capabilities in an PROTOCOL_VERSION message
 	MAV_CMD_REQUEST_PROTOCOL_VERSION MAV_CMD = 519
+	// Request autopilot capabilities. The receiver should ACK the command and then emit its capabilities in an AUTOPILOT_VERSION message
+	MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES MAV_CMD = 520
 	// Request camera information (CAMERA_INFORMATION).
 	MAV_CMD_REQUEST_CAMERA_INFORMATION MAV_CMD = 521
 	// Request camera settings (CAMERA_SETTINGS).
@@ -5173,10 +5173,10 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_GET_MESSAGE_INTERVAL"), nil
 	case MAV_CMD_SET_MESSAGE_INTERVAL:
 		return []byte("MAV_CMD_SET_MESSAGE_INTERVAL"), nil
-	case MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES:
-		return []byte("MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES"), nil
 	case MAV_CMD_REQUEST_PROTOCOL_VERSION:
 		return []byte("MAV_CMD_REQUEST_PROTOCOL_VERSION"), nil
+	case MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES:
+		return []byte("MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES"), nil
 	case MAV_CMD_REQUEST_CAMERA_INFORMATION:
 		return []byte("MAV_CMD_REQUEST_CAMERA_INFORMATION"), nil
 	case MAV_CMD_REQUEST_CAMERA_SETTINGS:
@@ -5571,11 +5571,11 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 	case "MAV_CMD_SET_MESSAGE_INTERVAL":
 		*e = MAV_CMD_SET_MESSAGE_INTERVAL
 		return nil
-	case "MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES":
-		*e = MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES
-		return nil
 	case "MAV_CMD_REQUEST_PROTOCOL_VERSION":
 		*e = MAV_CMD_REQUEST_PROTOCOL_VERSION
+		return nil
+	case "MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES":
+		*e = MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES
 		return nil
 	case "MAV_CMD_REQUEST_CAMERA_INFORMATION":
 		*e = MAV_CMD_REQUEST_CAMERA_INFORMATION
@@ -13184,7 +13184,7 @@ type MessageScaledPressure struct {
 	PressDiff float32
 	// Absolute pressure temperature
 	Temperature int16
-	// Differential pressure temperature (UINT16_MAX, if not available)
+	// Differential pressure temperature (0, if not available). Report values of 0 (or 1) as 1 cdegC.
 	TemperaturePressDiff int16 `mavext:"true"`
 }
 
@@ -15400,7 +15400,7 @@ type MessageScaledPressure2 struct {
 	PressDiff float32
 	// Absolute pressure temperature
 	Temperature int16
-	// Differential pressure temperature (UINT16_MAX, if not available)
+	// Differential pressure temperature (0, if not available). Report values of 0 (or 1) as 1 cdegC.
 	TemperaturePressDiff int16 `mavext:"true"`
 }
 
@@ -15510,7 +15510,7 @@ type MessageScaledPressure3 struct {
 	PressDiff float32
 	// Absolute pressure temperature
 	Temperature int16
-	// Differential pressure temperature (UINT16_MAX, if not available)
+	// Differential pressure temperature (0, if not available). Report values of 0 (or 1) as 1 cdegC.
 	TemperaturePressDiff int16 `mavext:"true"`
 }
 
@@ -15756,36 +15756,42 @@ func (*MessageMagCalReport) GetId() uint32 {
 	return 192
 }
 
-// EFI Status Output
+// EFI status output
 type MessageEfiStatus struct {
-	// EFI Health status
+	// EFI health status
 	Health uint8
-	// ECU Index
+	// ECU index
 	EcuIndex float32
 	// RPM
 	Rpm float32
-	// Fuel Consumed (grams)
+	// Fuel consumed
 	FuelConsumed float32
-	// Fuel Flow Rate (g/min)
+	// Fuel flow rate
 	FuelFlow float32
-	// Engine Load (%)
+	// Engine load
 	EngineLoad float32
-	// Throttle Position (%)
+	// Throttle position
 	ThrottlePosition float32
-	// Spark Dwell Time (ms)
+	// Spark dwell time
 	SparkDwellTime float32
-	// Barometric Pressure (kPa)
+	// Barometric pressure
 	BarometricPressure float32
-	// Intake Manifold Pressure (kPa)(
+	// Intake manifold pressure(
 	IntakeManifoldPressure float32
-	// Intake Manifold Temperature (degC)
+	// Intake manifold temperature
 	IntakeManifoldTemperature float32
-	// cylinder_head_temperature (degC)
+	// Cylinder head temperature
 	CylinderHeadTemperature float32
-	// Ignition timing for cylinder i (Crank Angle degrees)
+	// Ignition timing (Crank angle degrees)
 	IgnitionTiming float32
-	// Injection time for injector i (ms)
+	// Injection time
 	InjectionTime float32
+	// Exhaust gas temperature
+	ExhaustGasTemperature float32
+	// Output throttle
+	ThrottleOut float32
+	// Pressure/temperature compensation
+	PtCompensation float32
 }
 
 func (*MessageEfiStatus) GetId() uint32 {

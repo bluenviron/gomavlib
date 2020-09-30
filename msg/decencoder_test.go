@@ -1,4 +1,4 @@
-package gomavlib
+package msg
 
 import (
 	"bytes"
@@ -41,11 +41,11 @@ var casesCRC = []struct {
 	},
 }
 
-func TestDialectCRC(t *testing.T) {
+func TestDecEncoderCRC(t *testing.T) {
 	for _, c := range casesCRC {
-		mp, err := newDialectMessage(c.msg)
+		mp, err := NewDecEncoder(c.msg)
 		require.NoError(t, err)
-		require.Equal(t, c.crc, mp.crcExtra)
+		require.Equal(t, c.crc, mp.CRCExtra)
 	}
 }
 
@@ -209,24 +209,24 @@ var casesMsgs = []struct {
 	},
 }
 
-func TestDialectDecode(t *testing.T) {
+func TestDecEncoderDecode(t *testing.T) {
 	for _, c := range casesMsgs {
 		t.Run(c.name, func(t *testing.T) {
-			mp, err := newDialectMessage(c.parsed)
+			mp, err := NewDecEncoder(c.parsed)
 			require.NoError(t, err)
-			msg, err := mp.decode(c.raw, c.isV2)
+			msg, err := mp.Decode(c.raw, c.isV2)
 			require.NoError(t, err)
 			require.Equal(t, c.parsed, msg)
 		})
 	}
 }
 
-func TestDialectEncode(t *testing.T) {
+func TestDecEncoderEncode(t *testing.T) {
 	for _, c := range casesMsgs {
 		t.Run(c.name, func(t *testing.T) {
-			mp, err := newDialectMessage(c.parsed)
+			mp, err := NewDecEncoder(c.parsed)
 			require.NoError(t, err)
-			byt, err := mp.encode(c.parsed, c.isV2)
+			byt, err := mp.Encode(c.parsed, c.isV2)
 			require.NoError(t, err)
 			require.Equal(t, c.raw, byt)
 		})

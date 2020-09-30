@@ -1,7 +1,9 @@
-package gomavlib
+// msg contains the Message definition and utilities to encode and
+// decode messages.
+package msg
 
-// Message is the interface that all Mavlink messages must implements.
-// Furthermore, message structs must be labeled MessageNameOfMessage.
+// Message is the interface that must be implemented by all Mavlink messages.
+// Furthermore, any message must be labeled "MessageNameOfMessage".
 type Message interface {
 	GetId() uint32
 }

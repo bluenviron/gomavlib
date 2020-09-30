@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/aler9/gomavlib/x25"
+	"github.com/aler9/gomavlib/msg"
 )
 
 // 1st January 2015 GMT
@@ -119,7 +120,7 @@ func NewParser(conf ParserConf) (*Parser, error) {
 }
 
 func (p *Parser) checksum(f Frame) uint16 {
-	msg := f.GetMessage().(*MessageRaw)
+	msg := f.GetMessage().(*msg.MessageRaw)
 	h := x25.New()
 
 	// the checksum covers the whole message, excluding magic byte, checksum and signature
@@ -145,13 +146,13 @@ func (p *Parser) checksum(f Frame) uint16 {
 	}
 
 	// CRC_EXTRA byte is added at the end of the data
-	h.Write([]byte{p.conf.Dialect.messages[msg.GetId()].crcExtra})
+	h.Write([]byte{p.conf.Dialect.messageDEs[msg.GetId()].CRCExtra})
 
 	return h.Sum16()
 }
 
 func (p *Parser) signature(ff *FrameV2, key *Key) *Signature {
-	msg := ff.GetMessage().(*MessageRaw)
+	msg := ff.GetMessage().(*msg.MessageRaw)
 	h := sha256.New()
 
 	// secret key
@@ -213,7 +214,7 @@ func (p *Parser) Read() (Frame, error) {
 				return nil, err
 			}
 		}
-		ff.Message = &MessageRaw{
+		ff.Message = &msg.MessageRaw{
 			Id:      uint32(msgId),
 			Content: msgContent,
 		}
@@ -258,7 +259,7 @@ func (p *Parser) Read() (Frame, error) {
 				return nil, err
 			}
 		}
-		ff.Message = &MessageRaw{
+		ff.Message = &msg.MessageRaw{
 			Id:      msgId,
 			Content: msgContent,
 		}
@@ -312,14 +313,14 @@ func (p *Parser) Read() (Frame, error) {
 
 	// decode message if in dialect and validate checksum
 	if p.conf.Dialect != nil {
-		if mp, ok := p.conf.Dialect.messages[f.GetMessage().GetId()]; ok {
+		if mp, ok := p.conf.Dialect.messageDEs[f.GetMessage().GetId()]; ok {
 			if sum := p.checksum(f); sum != f.GetChecksum() {
 				return nil, newParserError("wrong checksum (expected %.4x, got %.4x, id=%d)",
 					sum, f.GetChecksum(), f.GetMessage().GetId())
 			}
 
 			_, isFrameV2 := f.(*FrameV2)
-			msg, err := mp.decode(f.GetMessage().(*MessageRaw).Content, isFrameV2)
+			msg, err := mp.Decode(f.GetMessage().(*msg.MessageRaw).Content, isFrameV2)
 			if err != nil {
 				return nil, newParserError(err.Error())
 			}
@@ -338,7 +339,7 @@ func (p *Parser) Read() (Frame, error) {
 
 // WriteMessage writes a Message into the writer.
 // It must not be called by multiple routines in parallel.
-func (p *Parser) WriteMessage(message Message) error {
+func (p *Parser) WriteMessage(message msg.Message) error {
 	var f Frame
 	if p.conf.OutVersion == V1 {
 		f = &FrameV1{Message: message}
@@ -381,23 +382,23 @@ func (p *Parser) writeFrameAndFill(frame Frame) error {
 	}
 
 	// encode message if it is not already encoded
-	if _, ok := safeFrame.GetMessage().(*MessageRaw); !ok {
+	if _, ok := safeFrame.GetMessage().(*msg.MessageRaw); !ok {
 		if p.conf.Dialect == nil {
 			return fmt.Errorf("message cannot be encoded since dialect is nil")
 		}
 
-		mp, ok := p.conf.Dialect.messages[safeFrame.GetMessage().GetId()]
+		mp, ok := p.conf.Dialect.messageDEs[safeFrame.GetMessage().GetId()]
 		if ok == false {
 			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
 		}
 
 		_, isFrameV2 := safeFrame.(*FrameV2)
-		byt, err := mp.encode(safeFrame.GetMessage(), isFrameV2)
+		byt, err := mp.Encode(safeFrame.GetMessage(), isFrameV2)
 		if err != nil {
 			return err
 		}
 
-		msgRaw := &MessageRaw{safeFrame.GetMessage().GetId(), byt}
+		msgRaw := &msg.MessageRaw{safeFrame.GetMessage().GetId(), byt}
 		switch ff := safeFrame.(type) {
 		case *FrameV1:
 			ff.Message = msgRaw
@@ -435,29 +436,29 @@ func (p *Parser) WriteFrame(frame Frame) error {
 	}
 
 	// encode message if it is not already encoded
-	msg := frame.GetMessage()
-	if _, ok := msg.(*MessageRaw); !ok {
+	m := frame.GetMessage()
+	if _, ok := m.(*msg.MessageRaw); !ok {
 		if p.conf.Dialect == nil {
 			return fmt.Errorf("message cannot be encoded since dialect is nil")
 		}
 
-		mp, ok := p.conf.Dialect.messages[msg.GetId()]
+		mp, ok := p.conf.Dialect.messageDEs[m.GetId()]
 		if ok == false {
 			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
 		}
 
 		_, isFrameV2 := frame.(*FrameV2)
-		byt, err := mp.encode(msg, isFrameV2)
+		byt, err := mp.Encode(m, isFrameV2)
 		if err != nil {
 			return err
 		}
 
 		// do not touch ff.Message
 		// in such way that the frame can be encoded by other parsers in parallel
-		msg = &MessageRaw{msg.GetId(), byt}
+		m = &msg.MessageRaw{m.GetId(), byt}
 	}
 
-	msgContent := msg.(*MessageRaw).Content
+	msgContent := m.(*msg.MessageRaw).Content
 	msgLen := len(msgContent)
 
 	switch ff := frame.(type) {

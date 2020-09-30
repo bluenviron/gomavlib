@@ -1,5 +1,9 @@
 package gomavlib
 
+import (
+	"github.com/aler9/gomavlib/msg"
+)
+
 // Event is the interface implemented by all events received through node.Events().
 type Event interface {
 	isEventOut()
@@ -41,7 +45,7 @@ func (res *EventFrame) ComponentId() byte {
 }
 
 // Message returns the message inside the frame.
-func (res *EventFrame) Message() Message {
+func (res *EventFrame) Message() msg.Message {
 	return res.Frame.GetMessage()
 }
 

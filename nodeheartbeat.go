@@ -3,6 +3,8 @@ package gomavlib
 import (
 	"reflect"
 	"time"
+
+	"github.com/aler9/gomavlib/msg"
 )
 
 type nodeHeartbeat struct {
@@ -24,8 +26,8 @@ func newNodeHeartbeat(n *Node) *nodeHeartbeat {
 	}
 
 	// heartbeat message must exist in dialect and correspond to standard
-	mp, ok := n.conf.Dialect.messages[0]
-	if ok == false || mp.crcExtra != 50 {
+	mp, ok := n.conf.Dialect.messageDEs[0]
+	if ok == false || mp.CRCExtra != 50 {
 		return nil
 	}
 
@@ -58,14 +60,14 @@ func (h *nodeHeartbeat) run() {
 	for {
 		select {
 		case <-ticker.C:
-			msg := reflect.New(h.n.conf.Dialect.messages[0].elemType)
-			msg.Elem().FieldByName("Type").SetInt(int64(h.n.conf.HeartbeatSystemType))
-			msg.Elem().FieldByName("Autopilot").SetInt(int64(h.n.conf.HeartbeatAutopilotType))
-			msg.Elem().FieldByName("BaseMode").SetInt(0)
-			msg.Elem().FieldByName("CustomMode").SetUint(0)
-			msg.Elem().FieldByName("SystemStatus").SetInt(4) // MAV_STATE_ACTIVE
-			msg.Elem().FieldByName("MavlinkVersion").SetUint(mavlinkVersion)
-			h.n.WriteMessageAll(msg.Interface().(Message))
+			m := reflect.New(h.n.conf.Dialect.messageDEs[0].ElemType)
+			m.Elem().FieldByName("Type").SetInt(int64(h.n.conf.HeartbeatSystemType))
+			m.Elem().FieldByName("Autopilot").SetInt(int64(h.n.conf.HeartbeatAutopilotType))
+			m.Elem().FieldByName("BaseMode").SetInt(0)
+			m.Elem().FieldByName("CustomMode").SetUint(0)
+			m.Elem().FieldByName("SystemStatus").SetInt(4) // MAV_STATE_ACTIVE
+			m.Elem().FieldByName("MavlinkVersion").SetUint(mavlinkVersion)
+			h.n.WriteMessageAll(m.Interface().(msg.Message))
 
 		case <-h.terminate:
 			return

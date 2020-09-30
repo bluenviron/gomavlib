@@ -2,6 +2,8 @@ package gomavlib
 
 import (
 	"io"
+
+	"github.com/aler9/gomavlib/msg"
 )
 
 // Channel is a communication channel created by an endpoint. For instance, a
@@ -92,7 +94,7 @@ func (ch *Channel) run() {
 
 		for what := range ch.writec {
 			switch wh := what.(type) {
-			case Message:
+			case msg.Message:
 				ch.parser.WriteMessage(wh)
 
 			case Frame:

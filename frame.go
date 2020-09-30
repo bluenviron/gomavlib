@@ -1,5 +1,9 @@
 package gomavlib
 
+import (
+	"github.com/aler9/gomavlib/msg"
+)
+
 const (
 	v1MagicByte = 0xfe
 	v2MagicByte = 0xfd
@@ -15,7 +19,7 @@ type Frame interface {
 	// the component id of the author of the frame.
 	GetComponentId() byte
 	// the message encapsuled in the frame.
-	GetMessage() Message
+	GetMessage() msg.Message
 	// the frame checksum.
 	GetChecksum() uint16
 	// generate a clone of the frame
@@ -27,7 +31,7 @@ type FrameV1 struct {
 	SequenceId  byte
 	SystemId    byte
 	ComponentId byte
-	Message     Message
+	Message     msg.Message
 	Checksum    uint16
 }
 
@@ -58,7 +62,7 @@ func (f *FrameV1) GetComponentId() byte {
 }
 
 // GetMessage is part of the Frame interface.
-func (f *FrameV1) GetMessage() Message {
+func (f *FrameV1) GetMessage() msg.Message {
 	return f.Message
 }
 
@@ -74,7 +78,7 @@ type FrameV2 struct {
 	SequenceId          byte
 	SystemId            byte
 	ComponentId         byte
-	Message             Message
+	Message             msg.Message
 	Checksum            uint16
 	SignatureLinkId     byte
 	SignatureTimestamp  uint64
@@ -113,7 +117,7 @@ func (f *FrameV2) GetComponentId() byte {
 }
 
 // GetMessage is part of the Frame interface.
-func (f *FrameV2) GetMessage() Message {
+func (f *FrameV2) GetMessage() msg.Message {
 	return f.Message
 }
 

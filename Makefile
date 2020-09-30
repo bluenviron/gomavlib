@@ -81,15 +81,13 @@ export TEST_TEMPLATE
 dialects-nodocker:
 	$(eval export CGO_ENABLED = 0)
 
-	rm -rf dialects/*
+	rm -rf dialects/*/
 
 	$(eval COMMIT = $(shell curl -s -L https://api.github.com/repos/mavlink/mavlink/commits/master \
 	| grep -o '"sha": ".\+"' | sed 's/"sha": "\(.\+\)"/\1/' | head -n1))
 
 	$(eval DIALECTS = $(shell curl -s -L https://api.github.com/repos/mavlink/mavlink/contents/message_definitions/v1.0?ref=$(COMMIT) \
 	| grep -o '"name": ".\+\.xml"' | sed 's/"name": "\(.\+\)\.xml"/\1/' | grep -v test))
-
-	echo "package dialects" > dialects/dialects.go
 
 	$(foreach D,$(DIALECTS), \
 	mkdir -p dialects/$(D) \

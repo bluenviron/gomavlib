@@ -8,6 +8,8 @@ import (
 
 	"bou.ke/monkey"
 	"github.com/stretchr/testify/require"
+
+	"github.com/aler9/gomavlib/msg"
 )
 
 var casesParser = []struct {
@@ -25,7 +27,7 @@ var casesParser = []struct {
 			SequenceId:  0x01,
 			SystemId:    0x02,
 			ComponentId: 0x03,
-			Message: &MessageRaw{
+			Message: &msg.MessageRaw{
 				Id:      4,
 				Content: nil,
 			},
@@ -41,7 +43,7 @@ var casesParser = []struct {
 			SequenceId:  0x27,
 			SystemId:    0x01,
 			ComponentId: 0x02,
-			Message: &MessageRaw{
+			Message: &msg.MessageRaw{
 				8,
 				[]byte("\x10\x10\x10\x10\x10"),
 			},
@@ -75,7 +77,7 @@ var casesParser = []struct {
 			SequenceId:          3,
 			SystemId:            4,
 			ComponentId:         5,
-			Message: &MessageRaw{
+			Message: &msg.MessageRaw{
 				4,
 				nil,
 			},
@@ -93,7 +95,7 @@ var casesParser = []struct {
 			SequenceId:          0x8F,
 			SystemId:            0x01,
 			ComponentId:         0x02,
-			Message: &MessageRaw{
+			Message: &msg.MessageRaw{
 				0x0607,
 				[]byte("\x10\x10\x10\x10\x10"),
 			},

@@ -45,6 +45,8 @@ package gomavlib
 import (
 	"fmt"
 	"time"
+
+	"github.com/aler9/gomavlib/msg"
 )
 
 const (
@@ -338,17 +340,17 @@ func (n *Node) Events() chan Event {
 }
 
 // WriteMessageTo writes a message to given channel.
-func (n *Node) WriteMessageTo(channel *Channel, message Message) {
+func (n *Node) WriteMessageTo(channel *Channel, message msg.Message) {
 	n.writeTo <- writeToReq{channel, message}
 }
 
 // WriteMessageAll writes a message to all channels.
-func (n *Node) WriteMessageAll(message Message) {
+func (n *Node) WriteMessageAll(message msg.Message) {
 	n.writeAll <- message
 }
 
 // WriteMessageExcept writes a message to all channels except specified channel.
-func (n *Node) WriteMessageExcept(exceptChannel *Channel, message Message) {
+func (n *Node) WriteMessageExcept(exceptChannel *Channel, message msg.Message) {
 	n.writeExcept <- writeExceptReq{exceptChannel, message}
 }
 

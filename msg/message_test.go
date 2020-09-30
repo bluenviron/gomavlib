@@ -1,15 +1,4 @@
-package gomavlib
-
-// this file contains a test dialect used in other tests.
-// it's better not to import real dialects, but to use a separate one
-
-var testDialect = MustDialect(3, []Message{
-	&MessageTest5{},
-	&MessageTest6{},
-	&MessageTest8{},
-	&MessageHeartbeat{},
-	&MessageOpticalFlow{},
-})
+package msg
 
 type MAV_TYPE int
 type MAV_AUTOPILOT int

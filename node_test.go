@@ -9,7 +9,26 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/require"
+
+	"github.com/aler9/gomavlib/msg"
 )
+
+var testDialect = MustDialect(3, []msg.Message{
+	&MessageTest5{},
+	&MessageTest6{},
+	&MessageTest8{},
+	&MessageHeartbeat{},
+	&MessageOpticalFlow{},
+})
+
+type MessageHeartbeat struct {
+	Type           MAV_TYPE      `mavenum:"uint8"`
+	Autopilot      MAV_AUTOPILOT `mavenum:"uint8"`
+	BaseMode       MAV_MODE_FLAG `mavenum:"uint8"`
+	CustomMode     uint32
+	SystemStatus   MAV_STATE `mavenum:"uint8"`
+	MavlinkVersion uint8
+}
 
 func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 	var testMsg1 = &MessageHeartbeat{

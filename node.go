@@ -47,6 +47,7 @@ import (
 	"time"
 
 	"github.com/aler9/gomavlib/dialect"
+	"github.com/aler9/gomavlib/frame"
 	"github.com/aler9/gomavlib/msg"
 )
 
@@ -358,20 +359,20 @@ func (n *Node) WriteMessageExcept(exceptChannel *Channel, message msg.Message) {
 // WriteFrameTo writes a frame to given channel.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
-func (n *Node) WriteFrameTo(channel *Channel, frame Frame) {
+func (n *Node) WriteFrameTo(channel *Channel, frame frame.Frame) {
 	n.writeTo <- writeToReq{channel, frame}
 }
 
 // WriteFrameAll writes a frame to all channels.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
-func (n *Node) WriteFrameAll(frame Frame) {
+func (n *Node) WriteFrameAll(frame frame.Frame) {
 	n.writeAll <- frame
 }
 
 // WriteFrameExcept writes a frame to all channels except specified channel.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
-func (n *Node) WriteFrameExcept(exceptChannel *Channel, frame Frame) {
+func (n *Node) WriteFrameExcept(exceptChannel *Channel, frame frame.Frame) {
 	n.writeExcept <- writeExceptReq{exceptChannel, frame}
 }

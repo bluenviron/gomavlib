@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/aler9/gomavlib/dialect"
+	"github.com/aler9/gomavlib/frame"
 	"github.com/aler9/gomavlib/msg"
 )
 
@@ -17,14 +18,14 @@ var casesParser = []struct {
 	name    string
 	dialect *dialect.Dialect
 	key     *Key
-	frame   Frame
+	frame   frame.Frame
 	raw     []byte
 }{
 	{
 		"v1 frame with nil content",
 		nil,
 		nil,
-		&FrameV1{
+		&frame.V1Frame{
 			SequenceId:  0x01,
 			SystemId:    0x02,
 			ComponentId: 0x03,
@@ -40,7 +41,7 @@ var casesParser = []struct {
 		"v1 frame with encoded message",
 		nil,
 		nil,
-		&FrameV1{
+		&frame.V1Frame{
 			SequenceId:  0x27,
 			SystemId:    0x01,
 			ComponentId: 0x02,
@@ -56,7 +57,7 @@ var casesParser = []struct {
 		"v1 frame with decoded message",
 		testDialect,
 		nil,
-		&FrameV1{
+		&frame.V1Frame{
 			SequenceId:  0x27,
 			SystemId:    0x01,
 			ComponentId: 0x02,
@@ -72,7 +73,7 @@ var casesParser = []struct {
 		"v2 frame with nil content",
 		testDialect,
 		nil,
-		&FrameV2{
+		&frame.V2Frame{
 			IncompatibilityFlag: 0,
 			CompatibilityFlag:   0,
 			SequenceId:          3,
@@ -90,7 +91,7 @@ var casesParser = []struct {
 		"v2 frame with encoded message",
 		nil,
 		nil,
-		&FrameV2{
+		&frame.V2Frame{
 			IncompatibilityFlag: 0x00,
 			CompatibilityFlag:   0x00,
 			SequenceId:          0x8F,
@@ -108,7 +109,7 @@ var casesParser = []struct {
 		"v2 frame with decoded message",
 		testDialect,
 		nil,
-		&FrameV2{
+		&frame.V2Frame{
 			IncompatibilityFlag: 0x00,
 			CompatibilityFlag:   0x00,
 			SequenceId:          0x8F,
@@ -126,7 +127,7 @@ var casesParser = []struct {
 		"v2 frame with decoded message, signed",
 		testDialect,
 		NewKey(bytes.Repeat([]byte("\x4F"), 32)),
-		&FrameV2{
+		&frame.V2Frame{
 			IncompatibilityFlag: 0x01,
 			CompatibilityFlag:   0x00,
 			SequenceId:          0x00,
@@ -143,7 +144,7 @@ var casesParser = []struct {
 			Checksum:           0xd1d9,
 			SignatureLinkId:    1,
 			SignatureTimestamp: 2,
-			Signature:          &Signature{0x0e, 0x47, 0x04, 0x0c, 0xef, 0x9b},
+			Signature:          &frame.V2Signature{0x0e, 0x47, 0x04, 0x0c, 0xef, 0x9b},
 		},
 		[]byte("\xFD\x09\x01\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x01\x02\x03\x05\x03\xd9\xd1\x01\x02\x00\x00\x00\x00\x00\x0e\x47\x04\x0c\xef\x9b"),
 	},
@@ -151,7 +152,7 @@ var casesParser = []struct {
 		"v2 frame with decoded message, signed",
 		testDialect,
 		NewKey(bytes.Repeat([]byte("\x4F"), 32)),
-		&FrameV2{
+		&frame.V2Frame{
 			IncompatibilityFlag: 0x01,
 			CompatibilityFlag:   0x00,
 			SequenceId:          0x00,
@@ -171,7 +172,7 @@ var casesParser = []struct {
 			Checksum:           0xfb77,
 			SignatureLinkId:    3,
 			SignatureTimestamp: 4,
-			Signature:          &Signature{0xa8, 0x88, 0x9, 0x39, 0xb2, 0x60},
+			Signature:          &frame.V2Signature{0xa8, 0x88, 0x9, 0x39, 0xb2, 0x60},
 		},
 		[]byte("\xFD\x22\x01\x00\x00\x00\x00\x64\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\xa0\x40\x00\x00\xc0\x40\x00\x00\x00\x41\x03\x00\x04\x00\x02\x07\x00\x00\x00\x00\x00\x00\x80\x3f\x77\xfb\x03\x04\x00\x00\x00\x00\x00\xa8\x88\x09\x39\xb2\x60"),
 	},
@@ -285,8 +286,8 @@ func TestParserEncodeNilMsg(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	frame := &FrameV1{Message: nil}
-	err = parser.WriteFrame(frame)
+	f := &frame.V1Frame{Message: nil}
+	err = parser.WriteFrame(f)
 	require.Error(t, err)
 }
 
@@ -303,7 +304,7 @@ func TestParserWriteFrameIsConst(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	frame := &FrameV2{
+	f := &frame.V2Frame{
 		Message: &MessageHeartbeat{
 			Type:           1,
 			Autopilot:      2,
@@ -313,9 +314,9 @@ func TestParserWriteFrameIsConst(t *testing.T) {
 			MavlinkVersion: 3,
 		},
 	}
-	original := frame.Clone()
+	original := f.Clone()
 
-	err = parser.WriteFrame(frame)
+	err = parser.WriteFrame(f)
 	require.NoError(t, err)
-	require.Equal(t, frame, original)
+	require.Equal(t, f, original)
 }

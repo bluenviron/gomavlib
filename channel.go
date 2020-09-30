@@ -3,6 +3,7 @@ package gomavlib
 import (
 	"io"
 
+	"github.com/aler9/gomavlib/frame"
 	"github.com/aler9/gomavlib/msg"
 )
 
@@ -97,7 +98,7 @@ func (ch *Channel) run() {
 			case msg.Message:
 				ch.parser.WriteMessage(wh)
 
-			case Frame:
+			case frame.Frame:
 				ch.parser.WriteFrame(wh)
 			}
 		}

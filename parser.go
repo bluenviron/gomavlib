@@ -9,21 +9,59 @@ import (
 	"time"
 
 	"github.com/aler9/gomavlib/dialect"
+	"github.com/aler9/gomavlib/frame"
 	"github.com/aler9/gomavlib/msg"
 	"github.com/aler9/gomavlib/x25"
 )
 
+func uint24Decode(in []byte) uint32 {
+	return uint32(in[2])<<16 | uint32(in[1])<<8 | uint32(in[0])
+}
+
+func uint24Encode(buf []byte, in uint32) []byte {
+	buf[0] = byte(in)
+	buf[1] = byte(in >> 8)
+	buf[2] = byte(in >> 16)
+	return buf[:3]
+}
+
+func uint48Decode(in []byte) uint64 {
+	return uint64(in[5])<<40 | uint64(in[4])<<32 | uint64(in[3])<<24 |
+		uint64(in[2])<<16 | uint64(in[1])<<8 | uint64(in[0])
+}
+
+func uint48Encode(buf []byte, in uint64) []byte {
+	buf[0] = byte(in)
+	buf[1] = byte(in >> 8)
+	buf[2] = byte(in >> 16)
+	buf[3] = byte(in >> 24)
+	buf[4] = byte(in >> 32)
+	buf[5] = byte(in >> 40)
+	return buf[:6]
+}
+
+// Key is a key able to sign and validate V2 frames.
+type Key [32]byte
+
+// NewKey allocates a Key.
+func NewKey(in []byte) *Key {
+	key := new(Key)
+	copy(key[:], in)
+	return key
+}
+
 // 1st January 2015 GMT
 var signatureReferenceDate = time.Date(2015, 01, 01, 0, 0, 0, 0, time.UTC)
 
-// Version is the Mavlink version of a frame
+// Version is a Mavlink version.
 type Version int
 
 const (
-	// V2 is a Mavlink 2.0 frame
-	V2 Version = 2
-	// V1 is a Mavlink 1.0 frame
+	// V1 is Mavlink 1.0
 	V1 Version = 1
+
+	// V2 is Mavlink 2.0
+	V2 Version = 2
 )
 
 // String implements fmt.Stringer and returns the version label.
@@ -131,13 +169,13 @@ func NewParser(conf ParserConf) (*Parser, error) {
 	}, nil
 }
 
-func (p *Parser) checksum(f Frame) uint16 {
+func (p *Parser) checksum(f frame.Frame) uint16 {
 	msg := f.GetMessage().(*msg.MessageRaw)
 	h := x25.New()
 
 	// the checksum covers the whole message, excluding magic byte, checksum and signature
 	switch ff := f.(type) {
-	case *FrameV1:
+	case *frame.V1Frame:
 		h.Write([]byte{byte(len(msg.Content))})
 		h.Write([]byte{ff.SequenceId})
 		h.Write([]byte{ff.SystemId})
@@ -145,7 +183,7 @@ func (p *Parser) checksum(f Frame) uint16 {
 		h.Write([]byte{byte(msg.Id)})
 		h.Write(msg.Content)
 
-	case *FrameV2:
+	case *frame.V2Frame:
 		buf := make([]byte, 3)
 		h.Write([]byte{byte(len(msg.Content))})
 		h.Write([]byte{ff.IncompatibilityFlag})
@@ -163,7 +201,7 @@ func (p *Parser) checksum(f Frame) uint16 {
 	return h.Sum16()
 }
 
-func (p *Parser) signature(ff *FrameV2, key *Key) *Signature {
+func (p *Parser) signature(ff *frame.V2Frame, key *Key) *frame.V2Signature {
 	msg := ff.GetMessage().(*msg.MessageRaw)
 	h := sha256.New()
 
@@ -172,7 +210,7 @@ func (p *Parser) signature(ff *FrameV2, key *Key) *Signature {
 
 	// the signature covers the whole message, excluding the signature itself
 	buf := make([]byte, 6)
-	h.Write([]byte{v2MagicByte})
+	h.Write([]byte{frame.V2MagicByte})
 	h.Write([]byte{byte(len(msg.Content))})
 	h.Write([]byte{ff.IncompatibilityFlag})
 	h.Write([]byte{ff.CompatibilityFlag})
@@ -186,123 +224,41 @@ func (p *Parser) signature(ff *FrameV2, key *Key) *Signature {
 	h.Write([]byte{ff.SignatureLinkId})
 	h.Write(uint48Encode(buf, ff.SignatureTimestamp))
 
-	sig := new(Signature)
+	sig := new(frame.V2Signature)
 	copy(sig[:], h.Sum(nil)[:6])
 	return sig
 }
 
 // Read reads a Frame from the reader. It must not be called
 // by multiple routines in parallel.
-func (p *Parser) Read() (Frame, error) {
+func (p *Parser) Read() (frame.Frame, error) {
 	magicByte, err := p.readBuffer.ReadByte()
 	if err != nil {
 		return nil, err
 	}
 
-	var f Frame
-	switch magicByte {
-	case v1MagicByte:
-		ff := &FrameV1{}
-		f = ff
+	f, err := func() (frame.Frame, error) {
+		switch magicByte {
+		case frame.V1MagicByte:
+			return &frame.V1Frame{}, nil
 
-		// header
-		buf, err := p.readBuffer.Peek(5)
-		if err != nil {
-			return nil, err
-		}
-		p.readBuffer.Discard(5)
-		msgLen := buf[0]
-		ff.SequenceId = buf[1]
-		ff.SystemId = buf[2]
-		ff.ComponentId = buf[3]
-		msgId := buf[4]
-
-		// message
-		var msgContent []byte
-		if msgLen > 0 {
-			msgContent = make([]byte, msgLen)
-			_, err = io.ReadFull(p.readBuffer, msgContent)
-			if err != nil {
-				return nil, err
-			}
-		}
-		ff.Message = &msg.MessageRaw{
-			Id:      uint32(msgId),
-			Content: msgContent,
+		case frame.V2MagicByte:
+			return &frame.V2Frame{}, nil
 		}
 
-		// checksum
-		buf, err = p.readBuffer.Peek(2)
-		if err != nil {
-			return nil, err
-		}
-		p.readBuffer.Discard(2)
-		ff.Checksum = binary.LittleEndian.Uint16(buf)
+		return nil, newParserError("invalid magic byte: %x", magicByte)
+	}()
+	if err != nil {
+		return nil, err
+	}
 
-	case v2MagicByte:
-		ff := &FrameV2{}
-		f = ff
-
-		// header
-		buf, err := p.readBuffer.Peek(9)
-		if err != nil {
-			return nil, err
-		}
-		p.readBuffer.Discard(9)
-		msgLen := buf[0]
-		ff.IncompatibilityFlag = buf[1]
-		ff.CompatibilityFlag = buf[2]
-		ff.SequenceId = buf[3]
-		ff.SystemId = buf[4]
-		ff.ComponentId = buf[5]
-		msgId := uint24Decode(buf[6:])
-
-		// discard frame if incompatibility flag is not understood, as in recommendations
-		if ff.IncompatibilityFlag != 0 && ff.IncompatibilityFlag != flagSigned {
-			return nil, newParserError("unknown incompatibility flag (%d)", ff.IncompatibilityFlag)
-		}
-
-		// message
-		var msgContent []byte
-		if msgLen > 0 {
-			msgContent = make([]byte, msgLen)
-			_, err = io.ReadFull(p.readBuffer, msgContent)
-			if err != nil {
-				return nil, err
-			}
-		}
-		ff.Message = &msg.MessageRaw{
-			Id:      msgId,
-			Content: msgContent,
-		}
-
-		// checksum
-		buf, err = p.readBuffer.Peek(2)
-		if err != nil {
-			return nil, err
-		}
-		p.readBuffer.Discard(2)
-		ff.Checksum = binary.LittleEndian.Uint16(buf)
-
-		// signature
-		if ff.IsSigned() {
-			buf, err := p.readBuffer.Peek(13)
-			if err != nil {
-				return nil, err
-			}
-			p.readBuffer.Discard(13)
-			ff.SignatureLinkId = buf[0]
-			ff.SignatureTimestamp = uint48Decode(buf[1:])
-			ff.Signature = new(Signature)
-			copy(ff.Signature[:], buf[7:])
-		}
-
-	default:
-		return nil, newParserError("unrecognized magic byte: %x", magicByte)
+	err = f.Decode(p.readBuffer)
+	if err != nil {
+		return nil, newParserError(err.Error())
 	}
 
 	if p.conf.InKey != nil {
-		ff, ok := f.(*FrameV2)
+		ff, ok := f.(*frame.V2Frame)
 		if !ok {
 			return nil, newParserError("signature required but packet is not v2")
 		}
@@ -331,16 +287,16 @@ func (p *Parser) Read() (Frame, error) {
 					sum, f.GetChecksum(), f.GetMessage().GetId())
 			}
 
-			_, isFrameV2 := f.(*FrameV2)
-			msg, err := mp.Decode(f.GetMessage().(*msg.MessageRaw).Content, isFrameV2)
+			_, isV2 := f.(*frame.V2Frame)
+			msg, err := mp.Decode(f.GetMessage().(*msg.MessageRaw).Content, isV2)
 			if err != nil {
 				return nil, newParserError(err.Error())
 			}
 
 			switch ff := f.(type) {
-			case *FrameV1:
+			case *frame.V1Frame:
 				ff.Message = msg
-			case *FrameV2:
+			case *frame.V2Frame:
 				ff.Message = msg
 			}
 		}
@@ -352,31 +308,31 @@ func (p *Parser) Read() (Frame, error) {
 // WriteMessage writes a Message into the writer.
 // It must not be called by multiple routines in parallel.
 func (p *Parser) WriteMessage(message msg.Message) error {
-	var f Frame
+	var f frame.Frame
 	if p.conf.OutVersion == V1 {
-		f = &FrameV1{Message: message}
+		f = &frame.V1Frame{Message: message}
 	} else {
-		f = &FrameV2{Message: message}
+		f = &frame.V2Frame{Message: message}
 	}
 	return p.writeFrameAndFill(f)
 }
 
-func (p *Parser) writeFrameAndFill(frame Frame) error {
-	if frame.GetMessage() == nil {
+func (p *Parser) writeFrameAndFill(f frame.Frame) error {
+	if f.GetMessage() == nil {
 		return fmt.Errorf("message is nil")
 	}
 
 	// do not touch the original frame, but work with a separate object
 	// in such way that the frame can be encoded by other parsers in parallel
-	safeFrame := frame.Clone()
+	safeFrame := f.Clone()
 
 	// fill SequenceId, SystemId, ComponentId
 	switch ff := safeFrame.(type) {
-	case *FrameV1:
+	case *frame.V1Frame:
 		ff.SequenceId = p.curWriteSequenceId
 		ff.SystemId = p.conf.OutSystemId
 		ff.ComponentId = p.conf.OutComponentId
-	case *FrameV2:
+	case *frame.V2Frame:
 		ff.SequenceId = p.curWriteSequenceId
 		ff.SystemId = p.conf.OutSystemId
 		ff.ComponentId = p.conf.OutComponentId
@@ -384,12 +340,12 @@ func (p *Parser) writeFrameAndFill(frame Frame) error {
 	p.curWriteSequenceId++
 
 	// fill CompatibilityFlag, IncompatibilityFlag if v2
-	if ff, ok := safeFrame.(*FrameV2); ok {
+	if ff, ok := safeFrame.(*frame.V2Frame); ok {
 		ff.CompatibilityFlag = 0
 		ff.IncompatibilityFlag = 0
 
 		if p.conf.OutKey != nil {
-			ff.IncompatibilityFlag |= flagSigned
+			ff.IncompatibilityFlag |= frame.V2FlagSigned
 		}
 	}
 
@@ -404,31 +360,31 @@ func (p *Parser) writeFrameAndFill(frame Frame) error {
 			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
 		}
 
-		_, isFrameV2 := safeFrame.(*FrameV2)
-		byt, err := mp.Encode(safeFrame.GetMessage(), isFrameV2)
+		_, isV2 := safeFrame.(*frame.V2Frame)
+		byt, err := mp.Encode(safeFrame.GetMessage(), isV2)
 		if err != nil {
 			return err
 		}
 
 		msgRaw := &msg.MessageRaw{safeFrame.GetMessage().GetId(), byt}
 		switch ff := safeFrame.(type) {
-		case *FrameV1:
+		case *frame.V1Frame:
 			ff.Message = msgRaw
-		case *FrameV2:
+		case *frame.V2Frame:
 			ff.Message = msgRaw
 		}
 
 		// fill checksum
 		switch ff := safeFrame.(type) {
-		case *FrameV1:
+		case *frame.V1Frame:
 			ff.Checksum = p.checksum(ff)
-		case *FrameV2:
+		case *frame.V2Frame:
 			ff.Checksum = p.checksum(ff)
 		}
 	}
 
 	// fill SignatureLinkId, SignatureTimestamp, Signature if v2
-	if ff, ok := safeFrame.(*FrameV2); ok && p.conf.OutKey != nil {
+	if ff, ok := safeFrame.(*frame.V2Frame); ok && p.conf.OutKey != nil {
 		ff.SignatureLinkId = p.conf.OutSignatureLinkId
 		// Timestamp in 10 microsecond units since 1st January 2015 GMT time
 		ff.SignatureTimestamp = uint64(time.Since(signatureReferenceDate)) / 10000
@@ -442,13 +398,13 @@ func (p *Parser) writeFrameAndFill(frame Frame) error {
 // It must not be called by multiple routines in parallel.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
-func (p *Parser) WriteFrame(frame Frame) error {
-	if frame.GetMessage() == nil {
+func (p *Parser) WriteFrame(f frame.Frame) error {
+	m := f.GetMessage()
+	if m == nil {
 		return fmt.Errorf("message is nil")
 	}
 
 	// encode message if it is not already encoded
-	m := frame.GetMessage()
 	if _, ok := m.(*msg.MessageRaw); !ok {
 		if p.conf.Dialect == nil {
 			return fmt.Errorf("message cannot be encoded since dialect is nil")
@@ -459,80 +415,24 @@ func (p *Parser) WriteFrame(frame Frame) error {
 			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
 		}
 
-		_, isFrameV2 := frame.(*FrameV2)
-		byt, err := mp.Encode(m, isFrameV2)
+		_, isV2 := f.(*frame.V2Frame)
+		byt, err := mp.Encode(m, isV2)
 		if err != nil {
 			return err
 		}
 
-		// do not touch ff.Message
+		// do not touch frame.Message
 		// in such way that the frame can be encoded by other parsers in parallel
 		m = &msg.MessageRaw{m.GetId(), byt}
 	}
 
-	msgContent := m.(*msg.MessageRaw).Content
-	msgLen := len(msgContent)
-
-	switch ff := frame.(type) {
-	case *FrameV1:
-		if ff.Message.GetId() > 0xFF {
-			return fmt.Errorf("cannot send a message with an id > 0xFF and a V1 frame")
-		}
-
-		bufferLen := 6 + msgLen + 2
-		p.writeBuffer = p.writeBuffer[:bufferLen]
-
-		// header
-		p.writeBuffer[0] = v1MagicByte
-		p.writeBuffer[1] = byte(msgLen)
-		p.writeBuffer[2] = ff.SequenceId
-		p.writeBuffer[3] = ff.SystemId
-		p.writeBuffer[4] = ff.ComponentId
-		p.writeBuffer[5] = byte(ff.Message.GetId())
-
-		// message
-		if msgLen > 0 {
-			copy(p.writeBuffer[6:], msgContent)
-		}
-
-		// checksum
-		binary.LittleEndian.PutUint16(p.writeBuffer[6+msgLen:], ff.Checksum)
-
-	case *FrameV2:
-		bufferLen := 10 + msgLen + 2
-		if ff.IsSigned() {
-			bufferLen += 13
-		}
-		p.writeBuffer = p.writeBuffer[:bufferLen]
-
-		// header
-		p.writeBuffer[0] = v2MagicByte
-		p.writeBuffer[1] = byte(msgLen)
-		p.writeBuffer[2] = ff.IncompatibilityFlag
-		p.writeBuffer[3] = ff.CompatibilityFlag
-		p.writeBuffer[4] = ff.SequenceId
-		p.writeBuffer[5] = ff.SystemId
-		p.writeBuffer[6] = ff.ComponentId
-		uint24Encode(p.writeBuffer[7:], ff.Message.GetId())
-
-		// message
-		if msgLen > 0 {
-			copy(p.writeBuffer[10:], msgContent)
-		}
-
-		// checksum
-		binary.LittleEndian.PutUint16(p.writeBuffer[10+msgLen:], ff.Checksum)
-
-		// signature
-		if ff.IsSigned() {
-			p.writeBuffer[12+msgLen] = ff.SignatureLinkId
-			uint48Encode(p.writeBuffer[13+msgLen:], ff.SignatureTimestamp)
-			copy(p.writeBuffer[19+msgLen:], ff.Signature[:])
-		}
+	buf, err := f.Encode(p.writeBuffer, m.(*msg.MessageRaw).Content)
+	if err != nil {
+		return err
 	}
 
 	// do not check n, since io.Writer is not allowed to return n < len(buf)
 	// without throwing an error
-	_, err := p.conf.Writer.Write(p.writeBuffer)
+	_, err = p.conf.Writer.Write(buf)
 	return err
 }

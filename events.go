@@ -1,6 +1,7 @@
 package gomavlib
 
 import (
+	"github.com/aler9/gomavlib/frame"
 	"github.com/aler9/gomavlib/msg"
 )
 
@@ -26,7 +27,7 @@ func (*EventChannelClose) isEventOut() {}
 // EventFrame is the event fired when a frame is received.
 type EventFrame struct {
 	// the frame
-	Frame Frame
+	Frame frame.Frame
 
 	// the channel from which the frame was received
 	Channel *Channel

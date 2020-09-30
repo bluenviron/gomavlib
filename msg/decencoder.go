@@ -263,10 +263,10 @@ func (mde *DecEncoder) CRCExtra() byte {
 }
 
 // Decode decodes a Message.
-func (mde *DecEncoder) Decode(buf []byte, isFrameV2 bool) (Message, error) {
+func (mde *DecEncoder) Decode(buf []byte, isV2 bool) (Message, error) {
 	msg := reflect.New(mde.elemType)
 
-	if isFrameV2 == true {
+	if isV2 == true {
 		// in V2 buffer length can be > message or < message
 		// in this latter case it must be filled with zeros to support empty-byte de-truncation
 		// and extension fields
@@ -284,7 +284,7 @@ func (mde *DecEncoder) Decode(buf []byte, isFrameV2 bool) (Message, error) {
 	// decode field by field
 	for _, f := range mde.fields {
 		// skip extensions in V1 frames
-		if !isFrameV2 && f.isExtension == true {
+		if !isV2 && f.isExtension == true {
 			continue
 		}
 
@@ -308,10 +308,10 @@ func (mde *DecEncoder) Decode(buf []byte, isFrameV2 bool) (Message, error) {
 }
 
 // Encode encodes a message.
-func (mde *DecEncoder) Encode(msg Message, isFrameV2 bool) ([]byte, error) {
+func (mde *DecEncoder) Encode(msg Message, isV2 bool) ([]byte, error) {
 	var buf []byte
 
-	if isFrameV2 == true {
+	if isV2 == true {
 		buf = make([]byte, mde.sizeExtended)
 	} else {
 		buf = make([]byte, mde.sizeNormal)
@@ -322,7 +322,7 @@ func (mde *DecEncoder) Encode(msg Message, isFrameV2 bool) ([]byte, error) {
 	// encode field by field
 	for _, f := range mde.fields {
 		// skip extensions in V1 frames
-		if !isFrameV2 && f.isExtension == true {
+		if !isV2 && f.isExtension == true {
 			continue
 		}
 
@@ -347,7 +347,7 @@ func (mde *DecEncoder) Encode(msg Message, isFrameV2 bool) ([]byte, error) {
 	// empty-byte truncation
 	// even with truncation, message length must be at least 1 byte
 	// https://github.com/mavlink/c_library_v2/blob/master/mavlink_helpers.h#L103
-	if isFrameV2 == true {
+	if isV2 == true {
 		end := len(buf)
 		for end > 1 && buf[end-1] == 0x00 {
 			end--

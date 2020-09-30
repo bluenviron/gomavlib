@@ -180,7 +180,7 @@ var casesCRC = []struct {
 	},
 }
 
-func TestDecEncoderCRC(t *testing.T) {
+func TestCRC(t *testing.T) {
 	for _, c := range casesCRC {
 		mp, err := NewDecEncoder(c.msg)
 		require.NoError(t, err)
@@ -348,7 +348,7 @@ var casesMsgs = []struct {
 	},
 }
 
-func TestDecEncoderDecode(t *testing.T) {
+func TestDecode(t *testing.T) {
 	for _, c := range casesMsgs {
 		t.Run(c.name, func(t *testing.T) {
 			mp, err := NewDecEncoder(c.parsed)
@@ -360,7 +360,7 @@ func TestDecEncoderDecode(t *testing.T) {
 	}
 }
 
-func TestDecEncoderEncode(t *testing.T) {
+func TestEncode(t *testing.T) {
 	for _, c := range casesMsgs {
 		t.Run(c.name, func(t *testing.T) {
 			mp, err := NewDecEncoder(c.parsed)

@@ -37,7 +37,7 @@ func main() {
 			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
 		},
 		Dialect:     dialect,
-		OutVersion:  gomavlib.V2, // change to V1 if you're unable to write to the target
+		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target
 		OutSystemId: 10,
 	})
 	if err != nil {

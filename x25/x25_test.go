@@ -1,4 +1,4 @@
-package gomavlib
+package x25
 
 import (
 	"testing"
@@ -21,7 +21,7 @@ func TestX25(t *testing.T) {
 	}
 
 	for i, in := range ins {
-		h := NewX25()
+		h := New()
 		h.Write(in)
 		out := h.Sum16()
 		require.Equal(t, outs[i], out)

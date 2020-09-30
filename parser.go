@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"time"
+
+	"github.com/aler9/gomavlib/x25"
 )
 
 // 1st January 2015 GMT
@@ -118,7 +120,7 @@ func NewParser(conf ParserConf) (*Parser, error) {
 
 func (p *Parser) checksum(f Frame) uint16 {
 	msg := f.GetMessage().(*MessageRaw)
-	h := NewX25()
+	h := x25.New()
 
 	// the checksum covers the whole message, excluding magic byte, checksum and signature
 	switch ff := f.(type) {

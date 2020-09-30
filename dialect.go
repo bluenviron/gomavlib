@@ -10,6 +10,8 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/aler9/gomavlib/x25"
 )
 
 type dialectFieldType int
@@ -264,7 +266,7 @@ func newDialectMessage(msg Message) (*dialectMessage, error) {
 	// generate CRC extra
 	// https://mavlink.io/en/guide/serialization.html#crc_extra
 	mp.crcExtra = func() byte {
-		h := NewX25()
+		h := x25.New()
 		h.Write([]byte(msgName + " "))
 
 		for _, f := range mp.fields {

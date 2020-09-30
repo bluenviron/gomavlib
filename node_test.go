@@ -10,16 +10,41 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"github.com/aler9/gomavlib/dialect"
 	"github.com/aler9/gomavlib/msg"
 )
 
-var testDialect = MustDialect(3, []msg.Message{
-	&MessageTest5{},
-	&MessageTest6{},
-	&MessageTest8{},
-	&MessageHeartbeat{},
-	&MessageOpticalFlow{},
-})
+type MAV_TYPE int
+type MAV_AUTOPILOT int
+type MAV_MODE_FLAG int
+type MAV_STATE int
+
+type MessageTest5 struct {
+	TestByte byte
+	TestUint uint32
+}
+
+func (m *MessageTest5) GetId() uint32 {
+	return 5
+}
+
+type MessageTest6 struct {
+	TestByte byte
+	TestUint uint32
+}
+
+func (m *MessageTest6) GetId() uint32 {
+	return 0x0607
+}
+
+type MessageTest8 struct {
+	TestByte byte
+	TestUint uint32
+}
+
+func (m *MessageTest8) GetId() uint32 {
+	return 8
+}
 
 type MessageHeartbeat struct {
 	Type           MAV_TYPE      `mavenum:"uint8"`
@@ -29,6 +54,47 @@ type MessageHeartbeat struct {
 	SystemStatus   MAV_STATE `mavenum:"uint8"`
 	MavlinkVersion uint8
 }
+
+func (*MessageHeartbeat) GetId() uint32 {
+	return 0
+}
+
+type MessageOpticalFlow struct {
+	TimeUsec       uint64
+	SensorId       uint8
+	FlowX          int16
+	FlowY          int16
+	FlowCompMX     float32
+	FlowCompMY     float32
+	Quality        uint8
+	GroundDistance float32
+	FlowRateX      float32 `mavext:"true"`
+	FlowRateY      float32 `mavext:"true"`
+}
+
+func (*MessageOpticalFlow) GetId() uint32 {
+	return 100
+}
+
+type MessageRequestDataStream struct {
+	TargetSystem    uint8
+	TargetComponent uint8
+	ReqStreamId     uint8
+	ReqMessageRate  uint16
+	StartStop       uint8
+}
+
+func (*MessageRequestDataStream) GetId() uint32 {
+	return 66
+}
+
+var testDialect = &dialect.Dialect{3, []msg.Message{
+	&MessageTest5{},
+	&MessageTest6{},
+	&MessageTest8{},
+	&MessageHeartbeat{},
+	&MessageOpticalFlow{},
+}}
 
 func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 	var testMsg1 = &MessageHeartbeat{
@@ -65,7 +131,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 	}
 
 	node1, err := NewNode(NodeConf{
-		Dialect:          MustDialect(3, []Message{&MessageHeartbeat{}}),
+		Dialect:          &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
 		OutVersion:       V2,
 		OutSystemId:      10,
 		Endpoints:        []EndpointConf{t1},
@@ -74,7 +140,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect:          MustDialect(3, []Message{&MessageHeartbeat{}}),
+		Dialect:          &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
 		OutVersion:       V2,
 		OutSystemId:      11,
 		Endpoints:        []EndpointConf{t2},
@@ -97,7 +163,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 			case *EventFrame:
 				switch step {
 				case 0:
-					if reflect.DeepEqual(e.Message(), testMsg1) == false ||
+					if !reflect.DeepEqual(e.Message(), testMsg1) ||
 						e.SystemId() != 11 ||
 						e.ComponentId() != 1 {
 						t.Fatal("received wrong message")
@@ -107,7 +173,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 					step++
 
 				case 1:
-					if reflect.DeepEqual(e.Message(), testMsg3) == false ||
+					if !reflect.DeepEqual(e.Message(), testMsg3) ||
 						e.SystemId() != 11 ||
 						e.ComponentId() != 1 {
 						t.Fatal("received wrong message")
@@ -136,7 +202,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 			case *EventFrame:
 				switch step {
 				case 0:
-					if reflect.DeepEqual(e.Message(), testMsg2) == false ||
+					if !reflect.DeepEqual(e.Message(), testMsg2) ||
 						e.SystemId() != 10 ||
 						e.ComponentId() != 1 {
 						t.Fatal("received wrong message")
@@ -146,7 +212,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 					step++
 
 				case 1:
-					if reflect.DeepEqual(e.Message(), testMsg4) == false ||
+					if !reflect.DeepEqual(e.Message(), testMsg4) ||
 						e.SystemId() != 10 ||
 						e.ComponentId() != 1 {
 						t.Fatal("received wrong message")
@@ -186,7 +252,7 @@ func (ch testLoopback) Close() error {
 
 func (ch testLoopback) Read(buf []byte) (int, error) {
 	ret, ok := <-ch
-	if ok == false {
+	if !ok {
 		return 0, errorTerminated
 	}
 	n := copy(buf, ret)
@@ -212,7 +278,7 @@ func TestNodeCustomCustom(t *testing.T) {
 
 func TestNodeError(t *testing.T) {
 	_, err := NewNode(NodeConf{
-		Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
 		OutVersion:  V2,
 		OutSystemId: 11,
 		Endpoints: []EndpointConf{
@@ -226,7 +292,7 @@ func TestNodeError(t *testing.T) {
 
 func TestNodeCloseInLoop(t *testing.T) {
 	node1, err := NewNode(NodeConf{
-		Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
 		OutVersion:  V2,
 		OutSystemId: 11,
 		Endpoints: []EndpointConf{
@@ -237,7 +303,7 @@ func TestNodeCloseInLoop(t *testing.T) {
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
 		OutVersion:  V2,
 		OutSystemId: 11,
 		Endpoints: []EndpointConf{
@@ -272,7 +338,7 @@ func TestNodeCloseInLoop(t *testing.T) {
 
 func TestNodeWriteMultipleInLoop(t *testing.T) {
 	node1, err := NewNode(NodeConf{
-		Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
 		OutVersion:  V2,
 		OutSystemId: 11,
 		Endpoints: []EndpointConf{
@@ -283,7 +349,7 @@ func TestNodeWriteMultipleInLoop(t *testing.T) {
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
 		OutVersion:  V2,
 		OutSystemId: 11,
 		Endpoints: []EndpointConf{
@@ -340,7 +406,7 @@ func TestNodeSignature(t *testing.T) {
 	}
 
 	node1, err := NewNode(NodeConf{
-		Dialect: MustDialect(3, []Message{&MessageHeartbeat{}}),
+		Dialect: &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
 		Endpoints: []EndpointConf{
 			EndpointUdpServer{"127.0.0.1:5600"},
 		},
@@ -353,7 +419,7 @@ func TestNodeSignature(t *testing.T) {
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect: MustDialect(3, []Message{&MessageHeartbeat{}}),
+		Dialect: &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
 		Endpoints: []EndpointConf{
 			EndpointUdpClient{"127.0.0.1:5600"},
 		},
@@ -374,7 +440,7 @@ func TestNodeSignature(t *testing.T) {
 		defer node1.Close()
 
 		_, ok := <-node1.Events()
-		if ok == false {
+		if !ok {
 			return
 		}
 	}()
@@ -388,7 +454,7 @@ func TestNodeSignature(t *testing.T) {
 		node2.WriteMessageAll(testMsg)
 
 		_, ok := <-node2.Events()
-		if ok == false {
+		if !ok {
 			return
 		}
 
@@ -411,7 +477,7 @@ func TestNodeRouting(t *testing.T) {
 	}
 
 	node1, err := NewNode(NodeConf{
-		Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
 		OutVersion:  V2,
 		OutSystemId: 10,
 		Endpoints: []EndpointConf{
@@ -422,7 +488,7 @@ func TestNodeRouting(t *testing.T) {
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
 		OutVersion:  V2,
 		OutSystemId: 11,
 		Endpoints: []EndpointConf{
@@ -434,7 +500,7 @@ func TestNodeRouting(t *testing.T) {
 	require.NoError(t, err)
 
 	node3, err := NewNode(NodeConf{
-		Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
 		OutVersion:  V2,
 		OutSystemId: 12,
 		Endpoints: []EndpointConf{
@@ -495,7 +561,7 @@ func TestNodeHeartbeat(t *testing.T) {
 
 	func() {
 		node1, err := NewNode(NodeConf{
-			Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+			Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
 			OutVersion:  V2,
 			OutSystemId: 10,
 			Endpoints: []EndpointConf{
@@ -507,7 +573,7 @@ func TestNodeHeartbeat(t *testing.T) {
 		defer node1.Close()
 
 		node2, err := NewNode(NodeConf{
-			Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+			Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
 			OutVersion:  V2,
 			OutSystemId: 11,
 			Endpoints: []EndpointConf{
@@ -537,10 +603,10 @@ func TestNodeStreamRequest(t *testing.T) {
 
 	func() {
 		node1, err := NewNode(NodeConf{
-			Dialect: MustDialect(3, []Message{
+			Dialect: &dialect.Dialect{3, []msg.Message{
 				&MessageHeartbeat{},
 				&MessageRequestDataStream{},
-			}),
+			}},
 			OutVersion:  V2,
 			OutSystemId: 10,
 			Endpoints: []EndpointConf{
@@ -553,10 +619,10 @@ func TestNodeStreamRequest(t *testing.T) {
 		defer node1.Close()
 
 		node2, err := NewNode(NodeConf{
-			Dialect: MustDialect(3, []Message{
+			Dialect: &dialect.Dialect{3, []msg.Message{
 				&MessageHeartbeat{},
 				&MessageRequestDataStream{},
-			}),
+			}},
 			OutVersion:  V2,
 			OutSystemId: 10,
 			Endpoints: []EndpointConf{

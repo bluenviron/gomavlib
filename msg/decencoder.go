@@ -1,15 +1,15 @@
 package msg
 
 import (
-	"reflect"
-	"regexp"
-	"strings"
-	"fmt"
-	"strconv"
-	"sort"
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"math"
+	"reflect"
+	"regexp"
+	"sort"
+	"strconv"
+	"strings"
 
 	"github.com/aler9/gomavlib/x25"
 )
@@ -93,35 +93,31 @@ type decEncoderField struct {
 	isExtension bool
 }
 
-// DecEncoder is an object able to decode and encode a specific message.
+// DecEncoder is an object that allows to decode and encode a Message.
 type DecEncoder struct {
 	fields       []*decEncoderField
 	sizeNormal   byte
 	sizeExtended byte
-
-	// ElemType contains the type of the message struct.
-	ElemType     reflect.Type
-
-	// CRCExtra is the message CRC extra.
-	CRCExtra     byte
+	elemType     reflect.Type
+	crcExtra     byte
 }
 
 // NewDecEncoder allocates a DecEncoder.
 func NewDecEncoder(msg Message) (*DecEncoder, error) {
-	mp := &DecEncoder{}
-	mp.ElemType = reflect.TypeOf(msg).Elem()
+	mde := &DecEncoder{}
+	mde.elemType = reflect.TypeOf(msg).Elem()
 
-	mp.fields = make([]*decEncoderField, mp.ElemType.NumField())
+	mde.fields = make([]*decEncoderField, mde.elemType.NumField())
 
 	// get name
-	if strings.HasPrefix(mp.ElemType.Name(), "Message") == false {
+	if !strings.HasPrefix(mde.elemType.Name(), "Message") {
 		return nil, fmt.Errorf("message struct name must begin with 'Message'")
 	}
-	msgName := msgGoToDef(mp.ElemType.Name()[len("Message"):])
+	msgName := msgGoToDef(mde.elemType.Name()[len("Message"):])
 
 	// collect message fields
-	for i := 0; i < mp.ElemType.NumField(); i++ {
-		field := mp.ElemType.Field(i)
+	for i := 0; i < mde.elemType.NumField(); i++ {
+		field := mde.elemType.Field(i)
 		arrayLength := byte(0)
 		goType := field.Type
 
@@ -202,7 +198,7 @@ func NewDecEncoder(msg Message) (*DecEncoder, error) {
 			size = fieldTypeSizes[dialectType]
 		}
 
-		mp.fields[i] = &decEncoderField{
+		mde.fields[i] = &decEncoderField{
 			isEnum: isEnum,
 			ftype:  dialectType,
 			name: func() string {
@@ -216,32 +212,32 @@ func NewDecEncoder(msg Message) (*DecEncoder, error) {
 			isExtension: isExtension,
 		}
 
-		mp.sizeExtended += size
-		if isExtension == false {
-			mp.sizeNormal += size
+		mde.sizeExtended += size
+		if !isExtension {
+			mde.sizeNormal += size
 		}
 	}
 
 	// reorder fields as described in
 	// https://mavlink.io/en/guide/serialization.html#field_reordering
-	sort.Slice(mp.fields, func(i, j int) bool {
+	sort.Slice(mde.fields, func(i, j int) bool {
 		// sort by weight if not extension
-		if mp.fields[i].isExtension == false && mp.fields[j].isExtension == false {
-			if w1, w2 := fieldTypeSizes[mp.fields[i].ftype], fieldTypeSizes[mp.fields[j].ftype]; w1 != w2 {
+		if !mde.fields[i].isExtension && !mde.fields[j].isExtension {
+			if w1, w2 := fieldTypeSizes[mde.fields[i].ftype], fieldTypeSizes[mde.fields[j].ftype]; w1 != w2 {
 				return w1 > w2
 			}
 		}
 		// sort by original index
-		return mp.fields[i].index < mp.fields[j].index
+		return mde.fields[i].index < mde.fields[j].index
 	})
 
 	// generate CRC extra
 	// https://mavlink.io/en/guide/serialization.html#crc_extra
-	mp.CRCExtra = func() byte {
+	mde.crcExtra = func() byte {
 		h := x25.New()
 		h.Write([]byte(msgName + " "))
 
-		for _, f := range mp.fields {
+		for _, f := range mde.fields {
 			// skip extensions
 			if f.isExtension == true {
 				continue
@@ -258,32 +254,37 @@ func NewDecEncoder(msg Message) (*DecEncoder, error) {
 		return byte((sum & 0xFF) ^ (sum >> 8))
 	}()
 
-	return mp, nil
+	return mde, nil
+}
+
+// CRCExtra returns the message CRC extra.
+func (mde *DecEncoder) CRCExtra() byte {
+	return mde.crcExtra
 }
 
 // Decode decodes a Message.
-func (mp *DecEncoder) Decode(buf []byte, isFrameV2 bool) (Message, error) {
-	msg := reflect.New(mp.ElemType)
+func (mde *DecEncoder) Decode(buf []byte, isFrameV2 bool) (Message, error) {
+	msg := reflect.New(mde.elemType)
 
 	if isFrameV2 == true {
 		// in V2 buffer length can be > message or < message
 		// in this latter case it must be filled with zeros to support empty-byte de-truncation
 		// and extension fields
-		if len(buf) < int(mp.sizeExtended) {
-			buf = append(buf, bytes.Repeat([]byte{0x00}, int(mp.sizeExtended)-len(buf))...)
+		if len(buf) < int(mde.sizeExtended) {
+			buf = append(buf, bytes.Repeat([]byte{0x00}, int(mde.sizeExtended)-len(buf))...)
 		}
 
 	} else {
 		// in V1 buffer must fit message perfectly
-		if len(buf) != int(mp.sizeNormal) {
-			return nil, fmt.Errorf("unexpected size (%d vs %d)", len(buf), mp.sizeNormal)
+		if len(buf) != int(mde.sizeNormal) {
+			return nil, fmt.Errorf("unexpected size (%d vs %d)", len(buf), mde.sizeNormal)
 		}
 	}
 
 	// decode field by field
-	for _, f := range mp.fields {
+	for _, f := range mde.fields {
 		// skip extensions in V1 frames
-		if isFrameV2 == false && f.isExtension == true {
+		if !isFrameV2 && f.isExtension == true {
 			continue
 		}
 
@@ -307,21 +308,21 @@ func (mp *DecEncoder) Decode(buf []byte, isFrameV2 bool) (Message, error) {
 }
 
 // Encode encodes a message.
-func (mp *DecEncoder) Encode(msg Message, isFrameV2 bool) ([]byte, error) {
+func (mde *DecEncoder) Encode(msg Message, isFrameV2 bool) ([]byte, error) {
 	var buf []byte
 
 	if isFrameV2 == true {
-		buf = make([]byte, mp.sizeExtended)
+		buf = make([]byte, mde.sizeExtended)
 	} else {
-		buf = make([]byte, mp.sizeNormal)
+		buf = make([]byte, mde.sizeNormal)
 	}
 
 	start := buf
 
 	// encode field by field
-	for _, f := range mp.fields {
+	for _, f := range mde.fields {
 		// skip extensions in V1 frames
-		if isFrameV2 == false && f.isExtension == true {
+		if !isFrameV2 && f.isExtension == true {
 			continue
 		}
 

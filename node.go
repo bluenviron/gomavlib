@@ -46,6 +46,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/aler9/gomavlib/dialect"
 	"github.com/aler9/gomavlib/msg"
 )
 
@@ -76,7 +77,7 @@ type NodeConf struct {
 
 	// (optional) the dialect which contains the messages that will be encoded and decoded.
 	// If not provided, messages are decoded in the MessageRaw struct.
-	Dialect *Dialect
+	Dialect *dialect.Dialect
 
 	// (optional) the secret key used to validate incoming frames.
 	// Non signed frames are discarded, as well as frames with a version < 2.0.
@@ -258,7 +259,7 @@ outer:
 			close(ch.terminate)
 
 		case req := <-n.writeTo:
-			if _, ok := n.channels[req.ch]; ok == false {
+			if _, ok := n.channels[req.ch]; !ok {
 				return
 			}
 			req.ch.writec <- req.what

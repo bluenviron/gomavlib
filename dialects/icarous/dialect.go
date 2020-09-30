@@ -5,19 +5,19 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/aler9/gomavlib"
+	"github.com/aler9/gomavlib/dialect"
 	"github.com/aler9/gomavlib/msg"
 )
 
 // Dialect contains the dialect object that can be passed to the library.
-var Dialect = dialect
+var Dialect = dial
 
 // dialect is not exposed directly such that it is not displayed in godoc.
-var dialect = gomavlib.MustDialect(0, []msg.Message{
+var dial = &dialect.Dialect{0, []msg.Message{
 	// icarous.xml
 	&MessageIcarousHeartbeat{},
 	&MessageIcarousKinematicBands{},
-})
+}}
 
 //
 type ICAROUS_FMS_STATE int

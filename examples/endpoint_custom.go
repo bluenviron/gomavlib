@@ -29,7 +29,7 @@ func (c *CustomEndpoint) Close() error {
 
 func (c *CustomEndpoint) Read(buf []byte) (int, error) {
 	read, ok := <-c.readChan
-	if ok == false {
+	if !ok {
 		return 0, fmt.Errorf("all right")
 	}
 

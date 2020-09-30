@@ -5,15 +5,15 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/aler9/gomavlib"
+	"github.com/aler9/gomavlib/dialect"
 	"github.com/aler9/gomavlib/msg"
 )
 
 // Dialect contains the dialect object that can be passed to the library.
-var Dialect = dialect
+var Dialect = dial
 
 // dialect is not exposed directly such that it is not displayed in godoc.
-var dialect = gomavlib.MustDialect(3, []msg.Message{
+var dial = &dialect.Dialect{3, []msg.Message{
 	// minimal.xml
 	&MessageHeartbeat{},
 	&MessageProtocolVersion{},
@@ -300,7 +300,7 @@ var dialect = gomavlib.MustDialect(3, []msg.Message{
 	&MessageOsdParamConfigReply{},
 	&MessageOsdParamShowConfig{},
 	&MessageOsdParamShowConfigReply{},
-})
+}}
 
 //
 type ACCELCAL_VEHICLE_POS int

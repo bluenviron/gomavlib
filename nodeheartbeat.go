@@ -8,7 +8,8 @@ import (
 )
 
 type nodeHeartbeat struct {
-	n *Node
+	n            *Node
+	msgHeartbeat msg.Message
 
 	terminate chan struct{}
 	done      chan struct{}
@@ -16,7 +17,7 @@ type nodeHeartbeat struct {
 
 func newNodeHeartbeat(n *Node) *nodeHeartbeat {
 	// module is disabled
-	if n.conf.HeartbeatDisable == true {
+	if n.conf.HeartbeatDisable {
 		return nil
 	}
 
@@ -26,15 +27,27 @@ func newNodeHeartbeat(n *Node) *nodeHeartbeat {
 	}
 
 	// heartbeat message must exist in dialect and correspond to standard
-	mp, ok := n.conf.Dialect.messageDEs[0]
-	if ok == false || mp.CRCExtra != 50 {
+	msgHeartbeat := func() msg.Message {
+		for _, m := range n.conf.Dialect.Messages {
+			if m.GetId() == 0 {
+				return m
+			}
+		}
+		return nil
+	}()
+	if msgHeartbeat == nil {
+		return nil
+	}
+	mde, err := msg.NewDecEncoder(msgHeartbeat)
+	if err != nil || mde.CRCExtra() != 50 {
 		return nil
 	}
 
 	h := &nodeHeartbeat{
-		n:         n,
-		terminate: make(chan struct{}),
-		done:      make(chan struct{}),
+		n:            n,
+		msgHeartbeat: msgHeartbeat,
+		terminate:    make(chan struct{}),
+		done:         make(chan struct{}),
 	}
 
 	return h
@@ -48,25 +61,19 @@ func (h *nodeHeartbeat) close() {
 func (h *nodeHeartbeat) run() {
 	defer close(h.done)
 
-	// take version from dialect if possible
-	mavlinkVersion := uint64(3)
-	if h.n.conf.Dialect != nil {
-		mavlinkVersion = uint64(h.n.conf.Dialect.version)
-	}
-
 	ticker := time.NewTicker(h.n.conf.HeartbeatPeriod)
 	defer ticker.Stop()
 
 	for {
 		select {
 		case <-ticker.C:
-			m := reflect.New(h.n.conf.Dialect.messageDEs[0].ElemType)
+			m := reflect.New(reflect.TypeOf(h.msgHeartbeat).Elem())
 			m.Elem().FieldByName("Type").SetInt(int64(h.n.conf.HeartbeatSystemType))
 			m.Elem().FieldByName("Autopilot").SetInt(int64(h.n.conf.HeartbeatAutopilotType))
 			m.Elem().FieldByName("BaseMode").SetInt(0)
 			m.Elem().FieldByName("CustomMode").SetUint(0)
 			m.Elem().FieldByName("SystemStatus").SetInt(4) // MAV_STATE_ACTIVE
-			m.Elem().FieldByName("MavlinkVersion").SetUint(mavlinkVersion)
+			m.Elem().FieldByName("MavlinkVersion").SetUint(uint64(h.n.conf.Dialect.Version))
 			h.n.WriteMessageAll(m.Interface().(msg.Message))
 
 		case <-h.terminate:

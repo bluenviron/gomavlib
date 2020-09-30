@@ -6,6 +6,8 @@ import (
 	"fmt"
 
 	"github.com/aler9/gomavlib"
+	"github.com/aler9/gomavlib/dialect"
+	"github.com/aler9/gomavlib/msg"
 )
 
 // this is a custom message.
@@ -22,12 +24,9 @@ func (*MessageCustom) GetId() uint32 {
 
 func main() {
 	// create a custom dialect from messages
-	dialect, err := gomavlib.NewDialect(3, []gomavlib.Message{
+	dialect := &dialect.Dialect{3, []msg.Message{
 		&MessageCustom{},
-	})
-	if err != nil {
-		panic(err)
-	}
+	}}
 
 	// create a node which
 	// - communicates with a serial port

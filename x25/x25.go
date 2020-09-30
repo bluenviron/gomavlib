@@ -1,13 +1,12 @@
 // x25 implements the X25 hash.
 package x25
 
-// X25 is a X25 hasher.
+// X25 is the hash used to compute Frame checksums.
 type X25 struct {
 	crc uint16
 }
 
-// New allocates a X25 hasher.
-// X25 is the hash used to compute Frame checksums.
+// New allocates a X25.
 func New() *X25 {
 	x := &X25{}
 	x.Reset()

@@ -104,7 +104,7 @@ func (c *udpListenerConn) Read(byt []byte) (int, error) {
 		buf, ok = <-c.read
 	}
 
-	if ok == false {
+	if !ok {
 		return 0, udpErrorTerminated
 	}
 
@@ -220,11 +220,11 @@ func (l *udpListener) reader() {
 
 			conn, preExisting := l.conns[connIndex]
 
-			if preExisting == false && l.closed == true {
+			if !preExisting && l.closed == true {
 				// listener is closed, ignore new connection
 
 			} else {
-				if preExisting == false {
+				if !preExisting {
 					conn = newUdpListenerConn(l, connIndex, uaddr)
 					l.conns[connIndex] = conn
 					l.acceptc <- conn
@@ -242,7 +242,7 @@ func (l *udpListener) reader() {
 
 func (l *udpListener) Accept() (net.Conn, error) {
 	conn, ok := <-l.acceptc
-	if ok == false {
+	if !ok {
 		return nil, udpErrorTerminated
 	}
 	return conn, nil

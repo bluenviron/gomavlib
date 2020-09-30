@@ -195,7 +195,7 @@ func (t *endpointClient) do() {
 
 func (t *endpointClient) Read(buf []byte) (int, error) {
 	src, ok := <-t.readChan
-	if ok == false {
+	if !ok {
 		return 0, errorTerminated
 	}
 	n := copy(buf, src)

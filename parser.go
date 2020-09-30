@@ -8,8 +8,9 @@ import (
 	"io"
 	"time"
 
-	"github.com/aler9/gomavlib/x25"
+	"github.com/aler9/gomavlib/dialect"
 	"github.com/aler9/gomavlib/msg"
+	"github.com/aler9/gomavlib/x25"
 )
 
 // 1st January 2015 GMT
@@ -57,7 +58,7 @@ type ParserConf struct {
 
 	// (optional) the dialect which contains the messages that will be encoded and decoded.
 	// If not provided, messages are decoded in the MessageRaw struct.
-	Dialect *Dialect
+	Dialect *dialect.Dialect
 
 	// (optional) the secret key used to validate incoming frames.
 	// Non-signed frames are discarded. This feature requires v2 frames.
@@ -82,6 +83,7 @@ type ParserConf struct {
 // Parser is a low-level Mavlink encoder and decoder that works with a Reader and a Writer.
 type Parser struct {
 	conf                 ParserConf
+	dialectDE            *dialect.DecEncoder
 	readBuffer           *bufio.Reader
 	writeBuffer          []byte
 	curWriteSequenceId   byte
@@ -111,12 +113,22 @@ func NewParser(conf ParserConf) (*Parser, error) {
 		return nil, fmt.Errorf("OutKey requires V2 frames")
 	}
 
-	p := &Parser{
+	dialectDE, err := func() (*dialect.DecEncoder, error) {
+		if conf.Dialect == nil {
+			return nil, nil
+		}
+		return dialect.NewDecEncoder(conf.Dialect)
+	}()
+	if err != nil {
+		return nil, err
+	}
+
+	return &Parser{
 		conf:        conf,
+		dialectDE:   dialectDE,
 		readBuffer:  bufio.NewReaderSize(conf.Reader, netBufferSize),
 		writeBuffer: make([]byte, 0, netBufferSize),
-	}
-	return p, nil
+	}, nil
 }
 
 func (p *Parser) checksum(f Frame) uint16 {
@@ -146,7 +158,7 @@ func (p *Parser) checksum(f Frame) uint16 {
 	}
 
 	// CRC_EXTRA byte is added at the end of the data
-	h.Write([]byte{p.conf.Dialect.messageDEs[msg.GetId()].CRCExtra})
+	h.Write([]byte{p.dialectDE.MessageDEs[msg.GetId()].CRCExtra()})
 
 	return h.Sum16()
 }
@@ -291,7 +303,7 @@ func (p *Parser) Read() (Frame, error) {
 
 	if p.conf.InKey != nil {
 		ff, ok := f.(*FrameV2)
-		if ok == false {
+		if !ok {
 			return nil, newParserError("signature required but packet is not v2")
 		}
 
@@ -313,7 +325,7 @@ func (p *Parser) Read() (Frame, error) {
 
 	// decode message if in dialect and validate checksum
 	if p.conf.Dialect != nil {
-		if mp, ok := p.conf.Dialect.messageDEs[f.GetMessage().GetId()]; ok {
+		if mp, ok := p.dialectDE.MessageDEs[f.GetMessage().GetId()]; ok {
 			if sum := p.checksum(f); sum != f.GetChecksum() {
 				return nil, newParserError("wrong checksum (expected %.4x, got %.4x, id=%d)",
 					sum, f.GetChecksum(), f.GetMessage().GetId())
@@ -387,8 +399,8 @@ func (p *Parser) writeFrameAndFill(frame Frame) error {
 			return fmt.Errorf("message cannot be encoded since dialect is nil")
 		}
 
-		mp, ok := p.conf.Dialect.messageDEs[safeFrame.GetMessage().GetId()]
-		if ok == false {
+		mp, ok := p.dialectDE.MessageDEs[safeFrame.GetMessage().GetId()]
+		if !ok {
 			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
 		}
 
@@ -442,8 +454,8 @@ func (p *Parser) WriteFrame(frame Frame) error {
 			return fmt.Errorf("message cannot be encoded since dialect is nil")
 		}
 
-		mp, ok := p.conf.Dialect.messageDEs[m.GetId()]
-		if ok == false {
+		mp, ok := p.dialectDE.MessageDEs[m.GetId()]
+		if !ok {
 			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
 		}
 

@@ -19,9 +19,11 @@ type streamNode struct {
 }
 
 type nodeStreamRequest struct {
-	n                 *Node
-	lastRequestsMutex sync.Mutex
-	lastRequests      map[streamNode]time.Time
+	n                    *Node
+	msgHeartbeat         msg.Message
+	msgRequestDataStream msg.Message
+	lastRequestsMutex    sync.Mutex
+	lastRequests         map[streamNode]time.Time
 
 	terminate chan struct{}
 	done      chan struct{}
@@ -29,7 +31,7 @@ type nodeStreamRequest struct {
 
 func newNodeStreamRequest(n *Node) *nodeStreamRequest {
 	// module is disabled
-	if n.conf.StreamRequestEnable == false {
+	if !n.conf.StreamRequestEnable {
 		return nil
 	}
 
@@ -39,22 +41,46 @@ func newNodeStreamRequest(n *Node) *nodeStreamRequest {
 	}
 
 	// heartbeat message must exist in dialect and correspond to standard
-	mp, ok := n.conf.Dialect.messageDEs[0]
-	if ok == false || mp.CRCExtra != 50 {
+	msgHeartbeat := func() msg.Message {
+		for _, m := range n.conf.Dialect.Messages {
+			if m.GetId() == 0 {
+				return m
+			}
+		}
+		return nil
+	}()
+	if msgHeartbeat == nil {
+		return nil
+	}
+	mde, err := msg.NewDecEncoder(msgHeartbeat)
+	if err != nil || mde.CRCExtra() != 50 {
 		return nil
 	}
 
 	// request data stream message must exist in dialect and correspond to standard
-	mp, ok = n.conf.Dialect.messageDEs[66]
-	if ok == false || mp.CRCExtra != 148 {
+	msgRequestDataStream := func() msg.Message {
+		for _, m := range n.conf.Dialect.Messages {
+			if m.GetId() == 66 {
+				return m
+			}
+		}
+		return nil
+	}()
+	if msgRequestDataStream == nil {
+		return nil
+	}
+	mde, err = msg.NewDecEncoder(msgRequestDataStream)
+	if err != nil || mde.CRCExtra() != 148 {
 		return nil
 	}
 
 	sr := &nodeStreamRequest{
-		n:            n,
-		lastRequests: make(map[streamNode]time.Time),
-		terminate:    make(chan struct{}),
-		done:         make(chan struct{}),
+		n:                    n,
+		msgHeartbeat:         msgHeartbeat,
+		msgRequestDataStream: msgRequestDataStream,
+		lastRequests:         make(map[streamNode]time.Time),
+		terminate:            make(chan struct{}),
+		done:                 make(chan struct{}),
 	}
 
 	return sr
@@ -138,7 +164,7 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 		}
 
 		for _, stream := range streams {
-			m := reflect.New(sr.n.conf.Dialect.messageDEs[66].ElemType)
+			m := reflect.New(reflect.TypeOf(sr.msgRequestDataStream).Elem())
 			m.Elem().FieldByName("TargetSystem").SetUint(uint64(evt.SystemId()))
 			m.Elem().FieldByName("TargetComponent").SetUint(uint64(evt.ComponentId()))
 			m.Elem().FieldByName("ReqStreamId").SetUint(uint64(stream))

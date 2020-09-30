@@ -9,12 +9,13 @@ import (
 	"bou.ke/monkey"
 	"github.com/stretchr/testify/require"
 
+	"github.com/aler9/gomavlib/dialect"
 	"github.com/aler9/gomavlib/msg"
 )
 
 var casesParser = []struct {
 	name    string
-	dialect *Dialect
+	dialect *dialect.Dialect
 	key     *Key
 	frame   Frame
 	raw     []byte
@@ -218,7 +219,7 @@ var casesParserWriteMessage = []struct {
 	name string
 	ver  Version
 	key  *Key
-	msg  Message
+	msg  msg.Message
 	raw  []byte
 }{
 	{
@@ -295,7 +296,7 @@ func TestParserWriteFrameIsConst(t *testing.T) {
 	parser, err := NewParser(ParserConf{
 		Reader:      bytes.NewReader(nil),
 		Writer:      bytes.NewBuffer(nil),
-		Dialect:     MustDialect(3, []Message{&MessageHeartbeat{}}),
+		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
 		OutVersion:  V2,
 		OutSystemId: 1,
 		OutKey:      NewKey(bytes.Repeat([]byte("\x7C"), 32)),

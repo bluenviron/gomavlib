@@ -94,22 +94,22 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/aler9/gomavlib"
 	"github.com/aler9/gomavlib/msg"
+	"github.com/aler9/gomavlib/dialect"
 )
 
 // Dialect contains the dialect object that can be passed to the library.
-var Dialect = dialect
+var Dialect = dial
 
 // dialect is not exposed directly such that it is not displayed in godoc.
-var dialect = gomavlib.MustDialect({{.Version}}, []msg.Message{
+var dial = &dialect.Dialect{ {{.Version}}, []msg.Message{
 {{- range .Defs }}
     // {{ .Name }}
 {{- range .Messages }}
     &Message{{ .Name }}{},
 {{- end }}
 {{- end }}
-})
+} }
 
 {{ range .Enums }}
 // {{ .Description }}

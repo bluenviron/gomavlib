@@ -23,7 +23,7 @@ This library powers the [**mavp2p**](https://github.com/aler9/mavp2p) router.
     * custom reader/writer
   * automatic heartbeat emission
   * automatic stream requests to Ardupilot devices (disabled by default)
-* Provides a low-level API (`Parser`) with ability to decode/encode frames from/to a generic reader/writer
+* Provides a low-level API (`Transceiver`) with ability to decode/encode frames from/to a generic reader/writer
 * UDP connections are tracked and removed when inactive
 * Supports both domain names and IPs
 * Examples provided for every feature, comprehensive test suite, continuous integration
@@ -54,7 +54,7 @@ import (
 * [events](examples/events.go)
 * [router](examples/router.go)
 * [stream_requests](examples/stream_requests.go)
-* [parser](examples/parser.go)
+* [transceiver](examples/transceiver.go)
 
 ## Dialect generation
 

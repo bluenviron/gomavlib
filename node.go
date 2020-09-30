@@ -52,8 +52,7 @@ import (
 )
 
 const (
-	// constants for ip-based endpoints
-	netBufferSize      = 512 // frames cannot go beyond len(header) + 255 + len(check) + len(sig)
+	bufferSize         = 512 // frames cannot go beyond len(header) + 255 + len(check) + len(sig)
 	netConnectTimeout  = 10 * time.Second
 	netReconnectPeriod = 2 * time.Second
 	netReadTimeout     = 60 * time.Second
@@ -82,7 +81,7 @@ type NodeConf struct {
 
 	// (optional) the secret key used to validate incoming frames.
 	// Non signed frames are discarded, as well as frames with a version < 2.0.
-	InKey *Key
+	InKey *frame.V2Key
 
 	// Mavlink version used to encode messages. See Version
 	// for the available options.
@@ -94,7 +93,7 @@ type NodeConf struct {
 	OutComponentId byte
 	// (optional) the secret key used to sign outgoing frames.
 	// This feature requires a version >= 2.0.
-	OutKey *Key
+	OutKey *frame.V2Key
 
 	// (optional) disables the periodic sending of heartbeats to open channels.
 	HeartbeatDisable bool
@@ -117,6 +116,7 @@ type NodeConf struct {
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
 type Node struct {
 	conf              NodeConf
+	dialectDE         *dialect.DecEncoder
 	channelAccepters  map[*channelAccepter]struct{}
 	channels          map[*Channel]struct{}
 	nodeHeartbeat     *nodeHeartbeat
@@ -150,7 +150,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 		conf.StreamRequestFrequency = 4
 	}
 
-	// check Parser configuration here, since Parser is created dynamically
+	// check Transceiver configuration here, since Transceiver is created dynamically
 	if conf.OutVersion == 0 {
 		return nil, fmt.Errorf("OutVersion not provided")
 	}
@@ -164,8 +164,19 @@ func NewNode(conf NodeConf) (*Node, error) {
 		return nil, fmt.Errorf("OutKey requires V2 frames")
 	}
 
+	dialectDE, err := func() (*dialect.DecEncoder, error) {
+		if conf.Dialect == nil {
+			return nil, nil
+		}
+		return dialect.NewDecEncoder(conf.Dialect)
+	}()
+	if err != nil {
+		return nil, err
+	}
+
 	n := &Node{
 		conf:             conf,
+		dialectDE:        dialectDE,
 		channelAccepters: make(map[*channelAccepter]struct{}),
 		channels:         make(map[*Channel]struct{}),
 		// these can be unbuffered as long as eventsIn's goroutine

@@ -111,7 +111,7 @@ func (t *endpointClient) do() {
 		close(t.readChan)
 	}()
 
-	buf := make([]byte, netBufferSize)
+	buf := make([]byte, bufferSize)
 
 	for {
 		// solve address and connect

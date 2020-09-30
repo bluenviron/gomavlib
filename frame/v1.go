@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/aler9/gomavlib/msg"
+	"github.com/aler9/gomavlib/x25"
 )
 
 const (
@@ -119,4 +120,21 @@ func (f *V1Frame) Encode(buf []byte, msgEncoded []byte) ([]byte, error) {
 	binary.LittleEndian.PutUint16(buf[6+msgLen:], f.Checksum)
 
 	return buf, nil
+}
+
+// GenChecksum implements the Frame interface.
+func (f *V1Frame) GenChecksum(crcExtra byte) uint16 {
+	msg := f.GetMessage().(*msg.MessageRaw)
+	h := x25.New()
+
+	h.Write([]byte{byte(len(msg.Content))})
+	h.Write([]byte{f.SequenceId})
+	h.Write([]byte{f.SystemId})
+	h.Write([]byte{f.ComponentId})
+	h.Write([]byte{byte(msg.Id)})
+	h.Write(msg.Content)
+
+	h.Write([]byte{crcExtra})
+
+	return h.Sum16()
 }

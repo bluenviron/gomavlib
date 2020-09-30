@@ -6,22 +6,29 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/aler9/gomavlib"
+	"github.com/aler9/gomavlib/dialect"
 	"github.com/aler9/gomavlib/dialects/ardupilotmega"
+	"github.com/aler9/gomavlib/transceiver"
 )
+
+// if NewNode() is not flexible enough, the library provides a low-level Mavlink
+// frame parser, that can be allocated with transceiver.New().
 
 func main() {
 	inBuf := bytes.NewBuffer(
 		[]byte("\xfd\t\x01\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x01\x02\x03\x05\x03\xd9\xd1\x01\x02\x00\x00\x00\x00\x00\x0eG\x04\x0c\xef\x9b"))
 	outBuf := bytes.NewBuffer(nil)
 
-	// if NewNode() is not flexible enough, the library provides a low-level Mavlink
-	// frame parser, that can be allocated with NewParser().
-	parser, err := gomavlib.NewParser(gomavlib.ParserConf{
+	dialectDE, err := dialect.NewDecEncoder(ardupilotmega.Dialect)
+	if err != nil {
+		panic(err)
+	}
+
+	parser, err := transceiver.New(transceiver.TransceiverConf{
 		Reader:      inBuf,
 		Writer:      outBuf,
-		Dialect:     ardupilotmega.Dialect,
-		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target
+		DialectDE:   dialectDE,
+		OutVersion:  transceiver.V2, // change to V1 if you're unable to communicate with the target
 		OutSystemId: 10,
 	})
 	if err != nil {

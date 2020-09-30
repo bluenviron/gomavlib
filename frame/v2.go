@@ -2,11 +2,13 @@ package frame
 
 import (
 	"bufio"
+	"crypto/sha256"
 	"encoding/binary"
 	"fmt"
 	"io"
 
 	"github.com/aler9/gomavlib/msg"
+	"github.com/aler9/gomavlib/x25"
 )
 
 func uint24Decode(in []byte) uint32 {
@@ -39,6 +41,16 @@ const (
 	V2MagicByte  = 0xFD
 	V2FlagSigned = 0x01
 )
+
+// V2Key is a key able to sign and validate V2 frames.
+type V2Key [32]byte
+
+// NewV2Key allocates a V2Key.
+func NewV2Key(in []byte) *V2Key {
+	key := new(V2Key)
+	copy(key[:], in)
+	return key
+}
 
 // V2Signature is a V2 frame signature.
 type V2Signature [6]byte
@@ -192,4 +204,53 @@ func (f *V2Frame) Encode(buf []byte, msgEncoded []byte) ([]byte, error) {
 	}
 
 	return buf, nil
+}
+
+// GenChecksum implements the Frame interface.
+func (f *V2Frame) GenChecksum(crcExtra byte) uint16 {
+	msg := f.GetMessage().(*msg.MessageRaw)
+	h := x25.New()
+
+	buf := make([]byte, 3)
+	h.Write([]byte{byte(len(msg.Content))})
+	h.Write([]byte{f.IncompatibilityFlag})
+	h.Write([]byte{f.CompatibilityFlag})
+	h.Write([]byte{f.SequenceId})
+	h.Write([]byte{f.SystemId})
+	h.Write([]byte{f.ComponentId})
+	h.Write(uint24Encode(buf, msg.Id))
+	h.Write(msg.Content)
+
+	h.Write([]byte{crcExtra})
+
+	return h.Sum16()
+}
+
+// GenSignature generates a signature with the given key.
+func (f *V2Frame) GenSignature(key *V2Key) *V2Signature {
+	msg := f.GetMessage().(*msg.MessageRaw)
+	h := sha256.New()
+
+	// secret key
+	h.Write(key[:])
+
+	// the signature covers the whole message, excluding the signature itself
+	buf := make([]byte, 6)
+	h.Write([]byte{V2MagicByte})
+	h.Write([]byte{byte(len(msg.Content))})
+	h.Write([]byte{f.IncompatibilityFlag})
+	h.Write([]byte{f.CompatibilityFlag})
+	h.Write([]byte{f.SequenceId})
+	h.Write([]byte{f.SystemId})
+	h.Write([]byte{f.ComponentId})
+	h.Write(uint24Encode(buf, f.Message.GetId()))
+	h.Write(msg.Content)
+	binary.LittleEndian.PutUint16(buf, f.Checksum)
+	h.Write(buf[:2])
+	h.Write([]byte{f.SignatureLinkId})
+	h.Write(uint48Encode(buf, f.SignatureTimestamp))
+
+	sig := new(V2Signature)
+	copy(sig[:], h.Sum(nil)[:6])
+	return sig
 }

@@ -7,11 +7,12 @@ import (
 
 	"github.com/aler9/gomavlib"
 	"github.com/aler9/gomavlib/dialects/ardupilotmega"
+	"github.com/aler9/gomavlib/frame"
 )
 
 func main() {
 	// initialize a 6-bytes key. A key can have up to 32 bytes.
-	key := gomavlib.NewKey([]byte("abcdef"))
+	key := frame.NewV2Key([]byte("abcdef"))
 
 	// create a node which
 	// - communicates with a serial port.

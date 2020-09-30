@@ -5,6 +5,7 @@ import (
 
 	"github.com/aler9/gomavlib/frame"
 	"github.com/aler9/gomavlib/msg"
+	"github.com/aler9/gomavlib/transceiver"
 )
 
 // Channel is a communication channel created by an endpoint. For instance, a
@@ -14,10 +15,10 @@ type Channel struct {
 	// the endpoint which the channel belongs to
 	Endpoint Endpoint
 
-	label  string
-	rwc    io.ReadWriteCloser
-	n      *Node
-	parser *Parser
+	label       string
+	rwc         io.ReadWriteCloser
+	n           *Node
+	transceiver *transceiver.Transceiver
 
 	writec    chan interface{}
 	terminate chan struct{}
@@ -25,13 +26,18 @@ type Channel struct {
 }
 
 func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Channel, error) {
-	parser, err := NewParser(ParserConf{
-		Reader:             rwc,
-		Writer:             rwc,
-		Dialect:            n.conf.Dialect,
-		InKey:              n.conf.InKey,
-		OutSystemId:        n.conf.OutSystemId,
-		OutVersion:         n.conf.OutVersion,
+	transceiver, err := transceiver.New(transceiver.TransceiverConf{
+		Reader:      rwc,
+		Writer:      rwc,
+		DialectDE:   n.dialectDE,
+		InKey:       n.conf.InKey,
+		OutSystemId: n.conf.OutSystemId,
+		OutVersion: func() transceiver.Version {
+			if n.conf.OutVersion == V2 {
+				return transceiver.V2
+			}
+			return transceiver.V1
+		}(),
 		OutComponentId:     n.conf.OutComponentId,
 		OutSignatureLinkId: randomByte(),
 		OutKey:             n.conf.OutKey,
@@ -41,14 +47,14 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Cha
 	}
 
 	return &Channel{
-		Endpoint:  e,
-		label:     label,
-		rwc:       rwc,
-		n:         n,
-		parser:    parser,
-		writec:    make(chan interface{}),
-		terminate: make(chan struct{}),
-		done:      make(chan struct{}),
+		Endpoint:    e,
+		label:       label,
+		rwc:         rwc,
+		n:           n,
+		transceiver: transceiver,
+		writec:      make(chan interface{}),
+		terminate:   make(chan struct{}),
+		done:        make(chan struct{}),
 	}, nil
 }
 
@@ -69,10 +75,10 @@ func (ch *Channel) run() {
 		ch.n.eventsOut <- &EventChannelOpen{ch}
 
 		for {
-			frame, err := ch.parser.Read()
+			frame, err := ch.transceiver.Read()
 			if err != nil {
 				// continue in case of parse errors
-				if _, ok := err.(*ParserError); ok {
+				if _, ok := err.(*transceiver.TransceiverError); ok {
 					ch.n.eventsOut <- &EventParseError{err, ch}
 					continue
 				}
@@ -96,10 +102,10 @@ func (ch *Channel) run() {
 		for what := range ch.writec {
 			switch wh := what.(type) {
 			case msg.Message:
-				ch.parser.WriteMessage(wh)
+				ch.transceiver.WriteMessage(wh)
 
 			case frame.Frame:
-				ch.parser.WriteFrame(wh)
+				ch.transceiver.WriteFrame(wh)
 			}
 		}
 	}()

@@ -30,4 +30,7 @@ type Frame interface {
 
 	// encode the frame
 	Encode(buf []byte, msgEncoded []byte) ([]byte, error)
+
+	// generate the checksum
+	GenChecksum(crcExtra byte) uint16
 }

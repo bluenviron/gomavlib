@@ -5,7 +5,7 @@ import (
 	"github.com/aler9/gomavlib/msg"
 )
 
-// Event is the interface implemented by all events received through node.Events().
+// Event is the interface implemented by all events received with node.Events().
 type Event interface {
 	isEventOut()
 }

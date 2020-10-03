@@ -32,7 +32,7 @@ func ipByBroadcastIp(target net.IP) net.IP {
 	return nil
 }
 
-// EndpointUdpBroadcast sets up a endpoint that works through UDP broadcast packets.
+// EndpointUdpBroadcast sets up a endpoint that works with UDP broadcast packets.
 type EndpointUdpBroadcast struct {
 	// the broadcast address to which sending outgoing frames, example: 192.168.5.255:5600
 	BroadcastAddress string

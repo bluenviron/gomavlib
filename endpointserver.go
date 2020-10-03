@@ -13,7 +13,7 @@ type endpointServerConf interface {
 	getAddress() string
 }
 
-// EndpointTcpServer sets up a endpoint that works through a TCP server.
+// EndpointTcpServer sets up a endpoint that works with a TCP server.
 // TCP is fit for routing frames through the internet, but is not the most
 // appropriate way for transferring frames from a UAV to a GCS, since it does
 // not allow frame losses.
@@ -30,7 +30,7 @@ func (conf EndpointTcpServer) getAddress() string {
 	return conf.Address
 }
 
-// EndpointUdpServer sets up a endpoint that works through an UDP server.
+// EndpointUdpServer sets up a endpoint that works with an UDP server.
 // This is the most appropriate way for transferring frames from a UAV to a GCS
 // if they are connected to the same network.
 type EndpointUdpServer struct {

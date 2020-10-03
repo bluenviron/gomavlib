@@ -13,7 +13,7 @@ type endpointClientConf interface {
 	getAddress() string
 }
 
-// EndpointTcpClient sets up a endpoint that works through a TCP client.
+// EndpointTcpClient sets up a endpoint that works with a TCP client.
 // TCP is fit for routing frames through the internet, but is not the most
 // appropriate way for transferring frames from a UAV to a GCS, since it does
 // not allow frame losses.
@@ -34,7 +34,7 @@ func (conf EndpointTcpClient) init() (Endpoint, error) {
 	return initEndpointClient(conf)
 }
 
-// EndpointUdpClient sets up a endpoint that works through a UDP client.
+// EndpointUdpClient sets up a endpoint that works with a UDP client.
 type EndpointUdpClient struct {
 	// domain name or IP of the server to connect to, example: 1.2.3.4:5600
 	Address string

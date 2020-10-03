@@ -1,4 +1,4 @@
-// frame contains Frame, V1Frame and V2Frame and utilities to encode and
+// Package frame contains Frame, V1Frame and V2Frame and utilities to encode and
 // decode them.
 package frame
 

@@ -1,4 +1,4 @@
-// transceiver implements a Mavlink transceiver.
+// Package transceiver implements a Mavlink transceiver.
 package transceiver
 
 import (

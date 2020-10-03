@@ -1,4 +1,4 @@
-// udplistener provides a UDP-based Listener.
+// Package udplistener provides a UDP-based Listener.
 package udplistener
 
 import (
@@ -53,15 +53,18 @@ func newConn(listener *UDPListener, index udpListenerConnIndex, addr *net.UDPAdd
 	}
 }
 
+// LocalAddr implements the net.Conn interface.
 func (c *udpListenerConn) LocalAddr() net.Addr {
 	// not implemented
 	return nil
 }
 
+// RemoteAddr implements the net.Conn interface.
 func (c *udpListenerConn) RemoteAddr() net.Addr {
 	return c.addr
 }
 
+// Close implements the net.Conn interface.
 func (c *udpListenerConn) Close() error {
 	c.listener.readMutex.Lock()
 	defer c.listener.readMutex.Unlock()
@@ -84,7 +87,8 @@ func (c *udpListenerConn) Close() error {
 	return nil
 }
 
-// read synchronously, such that buffer can be freed after reading
+// Read implements the net.Conn interface.
+// This happens synchronously, such that buffer can be freed after reading
 func (c *udpListenerConn) Read(byt []byte) (int, error) {
 	var buf []byte
 	var ok bool
@@ -111,7 +115,8 @@ func (c *udpListenerConn) Read(byt []byte) (int, error) {
 	return len(buf), nil
 }
 
-// write synchronously, such that buffer can be freed after writing
+// Write implements the net.Conn interface.
+// This happens synchronously, such that buffer can be freed after writing
 func (c *udpListenerConn) Write(byt []byte) (int, error) {
 	c.listener.writeMutex.Lock()
 	defer c.listener.writeMutex.Unlock()
@@ -126,16 +131,19 @@ func (c *udpListenerConn) Write(byt []byte) (int, error) {
 	return c.listener.packetConn.WriteTo(byt, c.addr)
 }
 
+// SetDeadline implements the net.Conn interface.
 func (c *udpListenerConn) SetDeadline(time.Time) error {
 	// not implemented
 	return nil
 }
 
+// SetReadDeadline implements the net.Conn interface.
 func (c *udpListenerConn) SetReadDeadline(t time.Time) error {
 	c.readDeadline = t
 	return nil
 }
 
+// SetWriteDeadline implements the net.Conn interface.
 func (c *udpListenerConn) SetWriteDeadline(t time.Time) error {
 	c.writeDeadline = t
 	return nil
@@ -172,6 +180,7 @@ func New(network, address string) (net.Listener, error) {
 	return l, nil
 }
 
+// Close implements the net.Listener interface.
 func (l *UDPListener) Close() error {
 	l.readMutex.Lock()
 	defer l.readMutex.Unlock()
@@ -193,6 +202,7 @@ func (l *UDPListener) Close() error {
 	return nil
 }
 
+// Addr implements the net.Listener interface.
 func (l *UDPListener) Addr() net.Addr {
 	return l.packetConn.LocalAddr()
 }
@@ -240,6 +250,7 @@ func (l *UDPListener) reader() {
 	}
 }
 
+// Accept implements the net.Listener interface.
 func (l *UDPListener) Accept() (net.Conn, error) {
 	conn, ok := <-l.acceptc
 	if !ok {

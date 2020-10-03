@@ -1,4 +1,4 @@
-// x25 implements the X25 hash.
+// Package x25 implements the X25 hash.
 package x25
 
 // X25 is the hash used to compute Frame checksums.

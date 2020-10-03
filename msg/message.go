@@ -1,4 +1,4 @@
-// msg contains the Message definition and utilities to encode and
+// Package msg contains the Message definition and utilities to encode and
 // decode messages.
 package msg
 

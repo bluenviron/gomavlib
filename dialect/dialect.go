@@ -1,4 +1,4 @@
-// msg contains the Dialect definition and utilities to encode and
+// Package dialect contains the Dialect definition and utilities to encode and
 // decode dialects.
 package dialect
 
@@ -6,6 +6,7 @@ import (
 	"github.com/aler9/gomavlib/msg"
 )
 
+// Dialect is a Mavlink dialect.
 type Dialect struct {
 	// Version is the dialect version.
 	Version int

@@ -11,6 +11,14 @@ import (
 	"github.com/aler9/gomavlib/x25"
 )
 
+const (
+	// V2MagicByte is the magic byte of a V2 frame.
+	V2MagicByte = 0xFD
+
+	// V2FlagSigned is the flag of a V2 frame that indicates that the frame is signed.
+	V2FlagSigned = 0x01
+)
+
 func uint24Decode(in []byte) uint32 {
 	return uint32(in[2])<<16 | uint32(in[1])<<8 | uint32(in[0])
 }
@@ -37,11 +45,6 @@ func uint48Encode(buf []byte, in uint64) []byte {
 	return buf[:6]
 }
 
-const (
-	V2MagicByte  = 0xFD
-	V2FlagSigned = 0x01
-)
-
 // V2Key is a key able to sign and validate V2 frames.
 type V2Key [32]byte
 
@@ -55,7 +58,7 @@ func NewV2Key(in []byte) *V2Key {
 // V2Signature is a V2 frame signature.
 type V2Signature [6]byte
 
-// V2Frame is a V2 frame.
+// V2Frame is a Mavlink V2 frame.
 type V2Frame struct {
 	IncompatibilityFlag byte
 	CompatibilityFlag   byte

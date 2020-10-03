@@ -11,10 +11,11 @@ import (
 )
 
 const (
+	// V1MagicByte is the magic byte of a V1 frame.
 	V1MagicByte = 0xFE
 )
 
-// V1Frame is a V1 frame.
+// V1Frame is a Mavlink V1 frame.
 type V1Frame struct {
 	SequenceId  byte
 	SystemId    byte

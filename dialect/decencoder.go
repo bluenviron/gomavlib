@@ -18,10 +18,15 @@ func NewDecEncoder(d *Dialect) (*DecEncoder, error) {
 	}
 
 	for _, m := range d.Messages {
+		if _, ok := dde.MessageDEs[m.GetId()]; ok {
+			return nil, fmt.Errorf("duplicate message with id %d", m.GetId())
+		}
+
 		de, err := msg.NewDecEncoder(m)
 		if err != nil {
 			return nil, fmt.Errorf("message %T: %s", m, err)
 		}
+
 		dde.MessageDEs[m.GetId()] = de
 	}
 

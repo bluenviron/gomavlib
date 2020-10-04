@@ -1,4 +1,4 @@
-package paparazzi
+package pythonarraytest
 
 import (
 	"testing"

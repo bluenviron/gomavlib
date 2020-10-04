@@ -1,4 +1,4 @@
-package paparazzi
+package uavionix
 
 import (
 	"testing"

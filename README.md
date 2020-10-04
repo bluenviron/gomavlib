@@ -39,29 +39,29 @@ import (
 
 ## Examples
 
-* [endpoint_serial](examples/endpoint_serial.go)
-* [endpoint_udp_server](examples/endpoint_udp_server.go)
-* [endpoint_udp_client](examples/endpoint_udp_client.go)
-* [endpoint_udp_broadcast](examples/endpoint_udp_broadcast.go)
-* [endpoint_tcp_server](examples/endpoint_tcp_server.go)
-* [endpoint_tcp_client](examples/endpoint_tcp_client.go)
-* [endpoint_custom](examples/endpoint_custom.go)
-* [message_read](examples/message_read.go)
-* [message_write](examples/message_write.go)
+* [endpoint-serial](examples/endpoint-serial.go)
+* [endpoint-udp-server](examples/endpoint-udp-server.go)
+* [endpoint-udp-client](examples/endpoint-udp-client.go)
+* [endpoint-udp-broadcast](examples/endpoint-udp-broadcast.go)
+* [endpoint-tcp-server](examples/endpoint-tcp-server.go)
+* [endpoint-tcp-client](examples/endpoint-tcp-client.go)
+* [endpoint-custom](examples/endpoint-custom.go)
+* [message-read](examples/message-read.go)
+* [message-write](examples/message-write.go)
 * [signature](examples/signature.go)
-* [dialect_no](examples/dialect_no.go)
-* [dialect_custom](examples/dialect_custom.go)
+* [dialect-no](examples/dialect-no.go)
+* [dialect-custom](examples/dialect-custom.go)
 * [events](examples/events.go)
 * [router](examples/router.go)
-* [stream_requests](examples/stream_requests.go)
+* [stream-requests](examples/stream-requests.go)
 * [transceiver](examples/transceiver.go)
 
 ## Dialect generation
 
 Standard dialects are provided in the `dialects/` folder, but it's also possible to use custom dialects, that can be converted into Go files by running:
 ```
-go get github.com/aler9/gomavlib/commands/dialgen
-dialgen my_dialect.xml > dialect.go
+go get github.com/aler9/gomavlib/commands/dialect-import
+dialect-import my_dialect.xml > dialect.go
 ```
 
 ## Documentation

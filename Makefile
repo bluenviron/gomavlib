@@ -63,6 +63,7 @@ dialects:
 	make dialects-nodocker
 
 dialects-nodocker:
+	$(eval export CGO_ENABLED = 0)
 	go run ./commands/dialects-gen
 	find ./dialects -type f -name '*.go' | xargs gofmt -l -w -s
 

@@ -187,6 +187,7 @@ var dial = &dialect.Dialect{3, []msg.Message{
 	&MessageGimbalDeviceAttitudeStatus{},
 	&MessageAutopilotStateForGimbalDevice{},
 	&MessageGimbalManagerSetTiltpan{},
+	&MessageGimbalManagerSetManualControl{},
 	&MessageEscInfo{},
 	&MessageEscStatus{},
 	&MessageWifiConfigAp{},
@@ -3348,12 +3349,6 @@ const (
 	GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_LOCAL GIMBAL_MANAGER_CAP_FLAGS = 65536
 	// Gimbal manager supports to point to a global latitude, longitude, altitude position.
 	GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL GIMBAL_MANAGER_CAP_FLAGS = 131072
-	// Gimbal manager supports pitching and yawing at an angular velocity scaled by focal length (the more zoomed in, the slower the movement).
-	GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_FOCAL_LENGTH_SCALE GIMBAL_MANAGER_CAP_FLAGS = 1048576
-	// Gimbal manager supports nudging when pointing to a location or tracking.
-	GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_NUDGING GIMBAL_MANAGER_CAP_FLAGS = 2097152
-	// Gimbal manager supports overriding when pointing to a location or tracking.
-	GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_OVERRIDE GIMBAL_MANAGER_CAP_FLAGS = 4194304
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -3387,12 +3382,6 @@ func (e GIMBAL_MANAGER_CAP_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_LOCAL"), nil
 	case GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL:
 		return []byte("GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL"), nil
-	case GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_FOCAL_LENGTH_SCALE:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_FOCAL_LENGTH_SCALE"), nil
-	case GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_NUDGING:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_NUDGING"), nil
-	case GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_OVERRIDE:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_OVERRIDE"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -3442,15 +3431,6 @@ func (e *GIMBAL_MANAGER_CAP_FLAGS) UnmarshalText(text []byte) error {
 	case "GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL":
 		*e = GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL
 		return nil
-	case "GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_FOCAL_LENGTH_SCALE":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_FOCAL_LENGTH_SCALE
-		return nil
-	case "GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_NUDGING":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_NUDGING
-		return nil
-	case "GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_OVERRIDE":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_OVERRIDE
-		return nil
 	}
 	return errors.New("invalid value")
 }
@@ -3478,14 +3458,8 @@ const (
 	GIMBAL_MANAGER_FLAGS_PITCH_LOCK GIMBAL_MANAGER_FLAGS = 8
 	// Based on GIMBAL_DEVICE_FLAGS_YAW_LOCK
 	GIMBAL_MANAGER_FLAGS_YAW_LOCK GIMBAL_MANAGER_FLAGS = 16
-	// Scale angular velocity relative to focal length. This means the gimbal moves slower if it is zoomed in.
-	GIMBAL_MANAGER_FLAGS_ANGULAR_VELOCITY_RELATIVE_TO_FOCAL_LENGTH GIMBAL_MANAGER_FLAGS = 1048576
-	// Interpret attitude control on top of pointing to a location or tracking. If this flag is set, the quaternion is relative to the existing tracking angle.
-	GIMBAL_MANAGER_FLAGS_NUDGE GIMBAL_MANAGER_FLAGS = 2097152
-	// Completely override pointing to a location or tracking. If this flag is set, the quaternion is (as usual) according to GIMBAL_MANAGER_FLAGS_YAW_LOCK.
-	GIMBAL_MANAGER_FLAGS_OVERRIDE GIMBAL_MANAGER_FLAGS = 4194304
 	// This flag can be set to give up control previously set using MAV_CMD_DO_GIMBAL_MANAGER_ATTITUDE. This flag must not be combined with other flags.
-	GIMBAL_MANAGER_FLAGS_NONE GIMBAL_MANAGER_FLAGS = 8388608
+	GIMBAL_MANAGER_FLAGS_NONE GIMBAL_MANAGER_FLAGS = 1048576
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -3501,12 +3475,6 @@ func (e GIMBAL_MANAGER_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("GIMBAL_MANAGER_FLAGS_PITCH_LOCK"), nil
 	case GIMBAL_MANAGER_FLAGS_YAW_LOCK:
 		return []byte("GIMBAL_MANAGER_FLAGS_YAW_LOCK"), nil
-	case GIMBAL_MANAGER_FLAGS_ANGULAR_VELOCITY_RELATIVE_TO_FOCAL_LENGTH:
-		return []byte("GIMBAL_MANAGER_FLAGS_ANGULAR_VELOCITY_RELATIVE_TO_FOCAL_LENGTH"), nil
-	case GIMBAL_MANAGER_FLAGS_NUDGE:
-		return []byte("GIMBAL_MANAGER_FLAGS_NUDGE"), nil
-	case GIMBAL_MANAGER_FLAGS_OVERRIDE:
-		return []byte("GIMBAL_MANAGER_FLAGS_OVERRIDE"), nil
 	case GIMBAL_MANAGER_FLAGS_NONE:
 		return []byte("GIMBAL_MANAGER_FLAGS_NONE"), nil
 	}
@@ -3530,15 +3498,6 @@ func (e *GIMBAL_MANAGER_FLAGS) UnmarshalText(text []byte) error {
 		return nil
 	case "GIMBAL_MANAGER_FLAGS_YAW_LOCK":
 		*e = GIMBAL_MANAGER_FLAGS_YAW_LOCK
-		return nil
-	case "GIMBAL_MANAGER_FLAGS_ANGULAR_VELOCITY_RELATIVE_TO_FOCAL_LENGTH":
-		*e = GIMBAL_MANAGER_FLAGS_ANGULAR_VELOCITY_RELATIVE_TO_FOCAL_LENGTH
-		return nil
-	case "GIMBAL_MANAGER_FLAGS_NUDGE":
-		*e = GIMBAL_MANAGER_FLAGS_NUDGE
-		return nil
-	case "GIMBAL_MANAGER_FLAGS_OVERRIDE":
-		*e = GIMBAL_MANAGER_FLAGS_OVERRIDE
 		return nil
 	case "GIMBAL_MANAGER_FLAGS_NONE":
 		*e = GIMBAL_MANAGER_FLAGS_NONE
@@ -5014,6 +4973,8 @@ const (
 	MAV_CMD_PARAM_TRANSACTION MAV_CMD = 900
 	// High level setpoint to be sent to a gimbal manager to set a gimbal attitude. It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. Note: a gimbal is never to react to this command but only the gimbal manager.
 	MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN MAV_CMD = 1000
+	// Gimbal configuration to set which sysid/compid is in primary and secondary control.
+	MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE MAV_CMD = 1001
 	// Start image capture sequence. Sends CAMERA_IMAGE_CAPTURED after each capture. Use NaN for reserved values.
 	MAV_CMD_IMAGE_START_CAPTURE MAV_CMD = 2000
 	// Stop image capture sequence Use NaN for reserved values.
@@ -5327,6 +5288,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_PARAM_TRANSACTION"), nil
 	case MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN:
 		return []byte("MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN"), nil
+	case MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE:
+		return []byte("MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE"), nil
 	case MAV_CMD_IMAGE_START_CAPTURE:
 		return []byte("MAV_CMD_IMAGE_START_CAPTURE"), nil
 	case MAV_CMD_IMAGE_STOP_CAPTURE:
@@ -5744,6 +5707,9 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN":
 		*e = MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN
+		return nil
+	case "MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE":
+		*e = MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE
 		return nil
 	case "MAV_CMD_IMAGE_START_CAPTURE":
 		*e = MAV_CMD_IMAGE_START_CAPTURE
@@ -17042,6 +17008,14 @@ type MessageGimbalManagerStatus struct {
 	Flags GIMBAL_MANAGER_FLAGS `mavenum:"uint32"`
 	// Gimbal device ID that this gimbal manager is responsible for.
 	GimbalDeviceId uint8
+	// System ID of MAVLink component with primary control, 0 for none.
+	PrimaryControlSysid uint8
+	// Component ID of MAVLink component with primary control, 0 for none.
+	PrimaryControlCompid uint8
+	// System ID of MAVLink component with secondary control, 0 for none.
+	SecondaryControlSysid uint8
+	// Component ID of MAVLink component with secondary control, 0 for none.
+	SecondaryControlCompid uint8
 }
 
 // GetId implements the msg.Message interface.
@@ -17057,7 +17031,7 @@ type MessageGimbalManagerSetAttitude struct {
 	TargetComponent uint8
 	// High level gimbal manager flags to use.
 	Flags GIMBAL_MANAGER_FLAGS `mavenum:"uint32"`
-	// Component ID of gimbal device to address (or 1-6 for non-MAVLink gimbal), 0 for all gimbal device components. (Send command multiple times for more than one but not all gimbals.)
+	// Component ID of gimbal device to address (or 1-6 for non-MAVLink gimbal), 0 for all gimbal device components. Send command multiple times for more than one gimbal (but not all gimbals).
 	GimbalDeviceId uint8
 	// Quaternion components, w, x, y, z (1 0 0 0 is the null-rotation, the frame is depends on whether the flag GIMBAL_MANAGER_FLAGS_YAW_LOCK is set)
 	Q [4]float32
@@ -17074,7 +17048,7 @@ func (*MessageGimbalManagerSetAttitude) GetId() uint32 {
 	return 282
 }
 
-// Information about a low level gimbal. This message should be requested by the gimbal manager or a ground station using MAV_CMD_REQUEST_MESSAGE.
+// Information about a low level gimbal. This message should be requested by the gimbal manager or a ground station using MAV_CMD_REQUEST_MESSAGE. The maximum angles and rates are the limits by hardware. However, the limits by software used are likely different/smaller and dependent on mode/settings/etc..
 type MessageGimbalDeviceInformation struct {
 	// Timestamp (time since system boot).
 	TimeBootMs uint32
@@ -17094,17 +17068,17 @@ type MessageGimbalDeviceInformation struct {
 	CapFlags GIMBAL_DEVICE_CAP_FLAGS `mavenum:"uint16"`
 	// Bitmap for use for gimbal-specific capability flags.
 	CustomCapFlags uint16
-	// Maximum tilt/pitch angle (positive: up, negative: down).
+	// Maximum hardware tilt/pitch angle (positive: up, negative: down)
 	TiltMax float32
-	// Minimum tilt/pitch angle (positive: up, negative: down).
+	// Minimum hardware tilt/pitch angle (positive: up, negative: down)
 	TiltMin float32
-	// Maximum tilt/pitch angular rate (positive: up, negative: down).
+	// Maximum hardware tilt/pitch angular rate (positive: up, negative: down)
 	TiltRateMax float32
-	// Maximum pan/yaw angle (positive: to the right, negative: to the left).
+	// Maximum hardware pan/yaw angle (positive: to the right, negative: to the left)
 	PanMax float32
-	// Minimum pan/yaw angle (positive: to the right, negative: to the left).
+	// Minimum hardware pan/yaw angle (positive: to the right, negative: to the left)
 	PanMin float32
-	// Minimum pan/yaw angular rate (positive: to the right, negative: to the left).
+	// Maximum hardware pan/yaw angular rate (positive: to the right, negative: to the left)
 	PanRateMax float32
 }
 
@@ -17165,13 +17139,13 @@ func (*MessageGimbalDeviceAttitudeStatus) GetId() uint32 {
 
 // Low level message containing autopilot state relevant for a gimbal device. This message is to be sent from the gimbal manager to the gimbal device component. The data of this message server for the gimbal's estimator corrections in particular horizon compensation, as well as the autopilot's control intention e.g. feed forward angular control in z-axis.
 type MessageAutopilotStateForGimbalDevice struct {
+	// Timestamp (time since system boot).
+	TimeBootUs uint64
 	// System ID
 	TargetSystem uint8
 	// Component ID
 	TargetComponent uint8
-	// Timestamp (time since system boot).
-	TimeBootUs uint64
-	// Quaternion components of autopilot attitude: w, x, y, z (1 0 0 0 is the null-rotation, Hamilton convention).
+	// Quaternion components of autopilot attitude: w, x, y, z (1 0 0 0 is the null-rotation, Hamiltonian convention).
 	Q [4]float32
 	// Estimated delay of the attitude data.
 	QEstimatedDelayUs uint32
@@ -17204,7 +17178,7 @@ type MessageGimbalManagerSetTiltpan struct {
 	TargetComponent uint8
 	// High level gimbal manager flags to use.
 	Flags GIMBAL_MANAGER_FLAGS `mavenum:"uint32"`
-	// Component ID of gimbal device to address (or 1-6 for non-MAVLink gimbal), 0 for all gimbal device components. (Send command multiple times for more than one but not all gimbals.)
+	// Component ID of gimbal device to address (or 1-6 for non-MAVLink gimbal), 0 for all gimbal device components. Send command multiple times for more than one gimbal (but not all gimbals).
 	GimbalDeviceId uint8
 	// Tilt/pitch angle (positive: up, negative: down, NaN to be ignored).
 	Tilt float32
@@ -17219,6 +17193,31 @@ type MessageGimbalManagerSetTiltpan struct {
 // GetId implements the msg.Message interface.
 func (*MessageGimbalManagerSetTiltpan) GetId() uint32 {
 	return 287
+}
+
+// High level message to control a gimbal manually. The angles or angular rates are unitless; the actual rates will depend on internal gimbal manager settings/configuration (e.g. set by parameters). This message is to be sent to the gimbal manager (e.g. from a ground station). Angles and rates can be set to NaN according to use case.
+type MessageGimbalManagerSetManualControl struct {
+	// System ID
+	TargetSystem uint8
+	// Component ID
+	TargetComponent uint8
+	// High level gimbal manager flags.
+	Flags GIMBAL_MANAGER_FLAGS `mavenum:"uint32"`
+	// Component ID of gimbal device to address (or 1-6 for non-MAVLink gimbal), 0 for all gimbal device components. Send command multiple times for more than one gimbal (but not all gimbals).
+	GimbalDeviceId uint8
+	// Tilt/pitch angle unitless (-1..1, positive: up, negative: down, NaN to be ignored).
+	Tilt float32
+	// Pan/yaw angle unitless (-1..1, positive: to the right, negative: to the left, NaN to be ignored).
+	Pan float32
+	// Tilt/pitch angular rate unitless (-1..1, positive: up, negative: down, NaN to be ignored).
+	TiltRate float32
+	// Pan/yaw angular rate unitless (-1..1, positive: to the right, negative: to the left, NaN to be ignored).
+	PanRate float32
+}
+
+// GetId implements the msg.Message interface.
+func (*MessageGimbalManagerSetManualControl) GetId() uint32 {
+	return 288
 }
 
 // ESC information for lower rate streaming. Recommended streaming rate 1Hz. See ESC_STATUS for higher-rate ESC data.

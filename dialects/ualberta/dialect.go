@@ -14295,13 +14295,13 @@ type MessageCommandAck struct {
 	Command MAV_CMD `mavenum:"uint16"`
 	// Result of command.
 	Result MAV_RESULT `mavenum:"uint8"`
-	// WIP: Also used as result_param1, it can be set with a enum containing the errors reasons of why the command was denied or the progress percentage or 255 if unknown the progress when result is MAV_RESULT_IN_PROGRESS.
+	// Also used as result_param1, it can be set with an enum containing the errors reasons of why the command was denied, or the progress percentage when result is MAV_RESULT_IN_PROGRESS (255 if the progress is unknown).
 	Progress uint8 `mavext:"true"`
-	// WIP: Additional parameter of the result, example: which parameter of MAV_CMD_NAV_WAYPOINT caused it to be denied.
+	// Additional parameter of the result, example: which parameter of MAV_CMD_NAV_WAYPOINT caused it to be denied.
 	ResultParam2 int32 `mavext:"true"`
-	// WIP: System which requested the command to be executed
+	// System ID of the target recipient. This is the ID of the system that sent the command for which this COMMAND_ACK is an acknowledgement.
 	TargetSystem uint8 `mavext:"true"`
-	// WIP: Component which requested the command to be executed
+	// Component ID of the target recipient. This is the ID of the system that sent the command for which this COMMAND_ACK is an acknowledgement.
 	TargetComponent uint8 `mavext:"true"`
 }
 

@@ -186,7 +186,7 @@ var dial = &dialect.Dialect{3, []msg.Message{
 	&MessageGimbalDeviceSetAttitude{},
 	&MessageGimbalDeviceAttitudeStatus{},
 	&MessageAutopilotStateForGimbalDevice{},
-	&MessageGimbalManagerSetTiltpan{},
+	&MessageGimbalManagerSetPitchyaw{},
 	&MessageGimbalManagerSetManualControl{},
 	&MessageEscInfo{},
 	&MessageEscStatus{},
@@ -4858,7 +4858,7 @@ const (
 	// Request to start or end a parameter transaction. Multiple kinds of transport layers can be used to exchange parameters in the transaction (param, param_ext and mavftp). The command response can either be a success/failure or an in progress in case the receiving side takes some time to apply the parameters.
 	MAV_CMD_PARAM_TRANSACTION MAV_CMD = 900
 	// High level setpoint to be sent to a gimbal manager to set a gimbal attitude. It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. Note: a gimbal is never to react to this command but only the gimbal manager.
-	MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN MAV_CMD = 1000
+	MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW MAV_CMD = 1000
 	// Gimbal configuration to set which sysid/compid is in primary and secondary control.
 	MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE MAV_CMD = 1001
 	// Start image capture sequence. Sends CAMERA_IMAGE_CAPTURED after each capture. Use NaN for reserved values.
@@ -5168,8 +5168,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_DO_JUMP_TAG"), nil
 	case MAV_CMD_PARAM_TRANSACTION:
 		return []byte("MAV_CMD_PARAM_TRANSACTION"), nil
-	case MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN:
-		return []byte("MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN"), nil
+	case MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW:
+		return []byte("MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW"), nil
 	case MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE:
 		return []byte("MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE"), nil
 	case MAV_CMD_IMAGE_START_CAPTURE:
@@ -5583,8 +5583,8 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 	case "MAV_CMD_PARAM_TRANSACTION":
 		*e = MAV_CMD_PARAM_TRANSACTION
 		return nil
-	case "MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN":
-		*e = MAV_CMD_DO_GIMBAL_MANAGER_TILTPAN
+	case "MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW":
+		*e = MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW
 		return nil
 	case "MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE":
 		*e = MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE
@@ -16853,18 +16853,18 @@ type MessageGimbalManagerInformation struct {
 	CapFlags GIMBAL_MANAGER_CAP_FLAGS `mavenum:"uint32"`
 	// Gimbal device ID that this gimbal manager is responsible for.
 	GimbalDeviceId uint8
-	// Maximum tilt/pitch angle (positive: up, negative: down)
-	TiltMax float32
-	// Minimum tilt/pitch angle (positive: up, negative: down)
-	TiltMin float32
-	// Maximum tilt/pitch angular rate (positive: up, negative: down)
-	TiltRateMax float32
-	// Maximum pan/yaw angle (positive: to the right, negative: to the left)
-	PanMax float32
-	// Minimum pan/yaw angle (positive: to the right, negative: to the left)
-	PanMin float32
-	// Minimum pan/yaw angular rate (positive: to the right, negative: to the left)
-	PanRateMax float32
+	// Minimum hardware roll angle (positive: rolling to the right, negative: rolling to the left)
+	RollMin float32
+	// Maximum hardware roll angle (positive: rolling to the right, negative: rolling to the left)
+	RollMax float32
+	// Minimum pitch angle (positive: up, negative: down)
+	PitchMin float32
+	// Maximum pitch angle (positive: up, negative: down)
+	PitchMax float32
+	// Minimum yaw angle (positive: to the right, negative: to the left)
+	YawMin float32
+	// Maximum yaw angle (positive: to the right, negative: to the left)
+	YawMax float32
 }
 
 // GetId implements the msg.Message interface.
@@ -16907,11 +16907,11 @@ type MessageGimbalManagerSetAttitude struct {
 	GimbalDeviceId uint8
 	// Quaternion components, w, x, y, z (1 0 0 0 is the null-rotation, the frame is depends on whether the flag GIMBAL_MANAGER_FLAGS_YAW_LOCK is set)
 	Q [4]float32
-	// X component of angular velocity, positive is banking to the right, NaN to be ignored.
+	// X component of angular velocity, positive is rolling to the right, NaN to be ignored.
 	AngularVelocityX float32
-	// Y component of angular velocity, positive is tilting up, NaN to be ignored.
+	// Y component of angular velocity, positive is pitching up, NaN to be ignored.
 	AngularVelocityY float32
-	// Z component of angular velocity, positive is panning to the right, NaN to be ignored.
+	// Z component of angular velocity, positive is yawing to the right, NaN to be ignored.
 	AngularVelocityZ float32
 }
 
@@ -16940,18 +16940,18 @@ type MessageGimbalDeviceInformation struct {
 	CapFlags GIMBAL_DEVICE_CAP_FLAGS `mavenum:"uint16"`
 	// Bitmap for use for gimbal-specific capability flags.
 	CustomCapFlags uint16
-	// Maximum hardware tilt/pitch angle (positive: up, negative: down)
-	TiltMax float32
-	// Minimum hardware tilt/pitch angle (positive: up, negative: down)
-	TiltMin float32
-	// Maximum hardware tilt/pitch angular rate (positive: up, negative: down)
-	TiltRateMax float32
-	// Maximum hardware pan/yaw angle (positive: to the right, negative: to the left)
-	PanMax float32
-	// Minimum hardware pan/yaw angle (positive: to the right, negative: to the left)
-	PanMin float32
-	// Maximum hardware pan/yaw angular rate (positive: to the right, negative: to the left)
-	PanRateMax float32
+	// Minimum hardware roll angle (positive: rolling to the right, negative: rolling to the left)
+	RollMin float32
+	// Maximum hardware roll angle (positive: rolling to the right, negative: rolling to the left)
+	RollMax float32
+	// Minimum hardware pitch angle (positive: up, negative: down)
+	PitchMin float32
+	// Maximum hardware pitch angle (positive: up, negative: down)
+	PitchMax float32
+	// Minimum hardware yaw angle (positive: to the right, negative: to the left)
+	YawMin float32
+	// Maximum hardware yaw angle (positive: to the right, negative: to the left)
+	YawMax float32
 }
 
 // GetId implements the msg.Message interface.
@@ -16969,11 +16969,11 @@ type MessageGimbalDeviceSetAttitude struct {
 	Flags GIMBAL_DEVICE_FLAGS `mavenum:"uint16"`
 	// Quaternion components, w, x, y, z (1 0 0 0 is the null-rotation, the frame is depends on whether the flag GIMBAL_DEVICE_FLAGS_YAW_LOCK is set, set all fields to NaN if only angular velocity should be used)
 	Q [4]float32
-	// X component of angular velocity, positive is banking to the right, NaN to be ignored.
+	// X component of angular velocity, positive is rolling to the right, NaN to be ignored.
 	AngularVelocityX float32
-	// Y component of angular velocity, positive is tilting up, NaN to be ignored.
+	// Y component of angular velocity, positive is pitching up, NaN to be ignored.
 	AngularVelocityY float32
-	// Z component of angular velocity, positive is panning to the right, NaN to be ignored.
+	// Z component of angular velocity, positive is yawing to the right, NaN to be ignored.
 	AngularVelocityZ float32
 }
 
@@ -16982,7 +16982,7 @@ func (*MessageGimbalDeviceSetAttitude) GetId() uint32 {
 	return 284
 }
 
-// Message reporting the status of a gimbal device. This message should be broadcasted by a gimbal device component. The angles encoded in the quaternion are in the global frame (roll: positive is tilt to the right, pitch: positive is tilting up, yaw is turn to the right). This message should be broadcast at a low regular rate (e.g. 10Hz).
+// Message reporting the status of a gimbal device. This message should be broadcasted by a gimbal device component. The angles encoded in the quaternion are in the global frame (roll: positive is rolling to the right, pitch: positive is pitching up, yaw is turn to the right). This message should be broadcast at a low regular rate (e.g. 10Hz).
 type MessageGimbalDeviceAttitudeStatus struct {
 	// System ID
 	TargetSystem uint8
@@ -17042,8 +17042,8 @@ func (*MessageAutopilotStateForGimbalDevice) GetId() uint32 {
 	return 286
 }
 
-// High level message to control a gimbal's tilt and pan angles. This message is to be sent to the gimbal manager (e.g. from a ground station). Angles and rates can be set to NaN according to use case.
-type MessageGimbalManagerSetTiltpan struct {
+// High level message to control a gimbal's pitch and yaw angles. This message is to be sent to the gimbal manager (e.g. from a ground station). Angles and rates can be set to NaN according to use case.
+type MessageGimbalManagerSetPitchyaw struct {
 	// System ID
 	TargetSystem uint8
 	// Component ID
@@ -17052,18 +17052,18 @@ type MessageGimbalManagerSetTiltpan struct {
 	Flags GIMBAL_MANAGER_FLAGS `mavenum:"uint32"`
 	// Component ID of gimbal device to address (or 1-6 for non-MAVLink gimbal), 0 for all gimbal device components. Send command multiple times for more than one gimbal (but not all gimbals).
 	GimbalDeviceId uint8
-	// Tilt/pitch angle (positive: up, negative: down, NaN to be ignored).
-	Tilt float32
-	// Pan/yaw angle (positive: to the right, negative: to the left, NaN to be ignored).
-	Pan float32
-	// Tilt/pitch angular rate (positive: up, negative: down, NaN to be ignored).
-	TiltRate float32
-	// Pan/yaw angular rate (positive: to the right, negative: to the left, NaN to be ignored).
-	PanRate float32
+	// Pitch angle (positive: up, negative: down, NaN to be ignored).
+	Pitch float32
+	// Yaw angle (positive: to the right, negative: to the left, NaN to be ignored).
+	Yaw float32
+	// Pitch angular rate (positive: up, negative: down, NaN to be ignored).
+	PitchRate float32
+	// Yaw angular rate (positive: to the right, negative: to the left, NaN to be ignored).
+	YawRate float32
 }
 
 // GetId implements the msg.Message interface.
-func (*MessageGimbalManagerSetTiltpan) GetId() uint32 {
+func (*MessageGimbalManagerSetPitchyaw) GetId() uint32 {
 	return 287
 }
 
@@ -17077,14 +17077,14 @@ type MessageGimbalManagerSetManualControl struct {
 	Flags GIMBAL_MANAGER_FLAGS `mavenum:"uint32"`
 	// Component ID of gimbal device to address (or 1-6 for non-MAVLink gimbal), 0 for all gimbal device components. Send command multiple times for more than one gimbal (but not all gimbals).
 	GimbalDeviceId uint8
-	// Tilt/pitch angle unitless (-1..1, positive: up, negative: down, NaN to be ignored).
-	Tilt float32
-	// Pan/yaw angle unitless (-1..1, positive: to the right, negative: to the left, NaN to be ignored).
-	Pan float32
-	// Tilt/pitch angular rate unitless (-1..1, positive: up, negative: down, NaN to be ignored).
-	TiltRate float32
-	// Pan/yaw angular rate unitless (-1..1, positive: to the right, negative: to the left, NaN to be ignored).
-	PanRate float32
+	// Pitch angle unitless (-1..1, positive: up, negative: down, NaN to be ignored).
+	Pitch float32
+	// Yaw angle unitless (-1..1, positive: to the right, negative: to the left, NaN to be ignored).
+	Yaw float32
+	// Pitch angular rate unitless (-1..1, positive: up, negative: down, NaN to be ignored).
+	PitchRate float32
+	// Yaw angular rate unitless (-1..1, positive: to the right, negative: to the left, NaN to be ignored).
+	YawRate float32
 }
 
 // GetId implements the msg.Message interface.

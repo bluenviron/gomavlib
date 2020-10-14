@@ -3442,7 +3442,7 @@ const (
 	GIMBAL_MANAGER_FLAGS_PITCH_LOCK GIMBAL_MANAGER_FLAGS = 8
 	// Based on GIMBAL_DEVICE_FLAGS_YAW_LOCK
 	GIMBAL_MANAGER_FLAGS_YAW_LOCK GIMBAL_MANAGER_FLAGS = 16
-	// This flag can be set to give up control previously set using MAV_CMD_DO_GIMBAL_MANAGER_ATTITUDE. This flag must not be combined with other flags.
+	// This flag can be set to give up control previously set using MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW. This flag must not be combined with other flags.
 	GIMBAL_MANAGER_FLAGS_NONE GIMBAL_MANAGER_FLAGS = 1048576
 )
 

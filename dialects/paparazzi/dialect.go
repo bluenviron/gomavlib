@@ -14066,7 +14066,7 @@ type MessageCommandInt struct {
 	Command MAV_CMD `mavenum:"uint16"`
 	// false:0, true:1
 	Current uint8
-	// autocontinue to next wp
+	// Not used (set 0).
 	Autocontinue uint8
 	// PARAM1, see MAV_CMD enum
 	Param1 float32

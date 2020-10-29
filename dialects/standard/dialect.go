@@ -12069,6 +12069,98 @@ func (e STORAGE_STATUS) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
+// Flags to indicate the type of storage.
+type STORAGE_TYPE int
+
+const (
+	// Storage type is not known.
+	STORAGE_TYPE_UNKNOWN STORAGE_TYPE = 0
+	// Storage type is USB device.
+	STORAGE_TYPE_USB_STICK STORAGE_TYPE = 1
+	// Storage type is SD card.
+	STORAGE_TYPE_SD STORAGE_TYPE = 2
+	// Storage type is microSD card.
+	STORAGE_TYPE_MICROSD STORAGE_TYPE = 3
+	// Storage type is CFast.
+	STORAGE_TYPE_CF STORAGE_TYPE = 4
+	// Storage type is CFexpress.
+	STORAGE_TYPE_CFE STORAGE_TYPE = 5
+	// Storage type is XQD.
+	STORAGE_TYPE_XQD STORAGE_TYPE = 6
+	// Storage type is HD mass storage type.
+	STORAGE_TYPE_HD STORAGE_TYPE = 7
+	// Storage type is other, not listed type.
+	STORAGE_TYPE_OTHER STORAGE_TYPE = 254
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e STORAGE_TYPE) MarshalText() ([]byte, error) {
+	switch e {
+	case STORAGE_TYPE_UNKNOWN:
+		return []byte("STORAGE_TYPE_UNKNOWN"), nil
+	case STORAGE_TYPE_USB_STICK:
+		return []byte("STORAGE_TYPE_USB_STICK"), nil
+	case STORAGE_TYPE_SD:
+		return []byte("STORAGE_TYPE_SD"), nil
+	case STORAGE_TYPE_MICROSD:
+		return []byte("STORAGE_TYPE_MICROSD"), nil
+	case STORAGE_TYPE_CF:
+		return []byte("STORAGE_TYPE_CF"), nil
+	case STORAGE_TYPE_CFE:
+		return []byte("STORAGE_TYPE_CFE"), nil
+	case STORAGE_TYPE_XQD:
+		return []byte("STORAGE_TYPE_XQD"), nil
+	case STORAGE_TYPE_HD:
+		return []byte("STORAGE_TYPE_HD"), nil
+	case STORAGE_TYPE_OTHER:
+		return []byte("STORAGE_TYPE_OTHER"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *STORAGE_TYPE) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "STORAGE_TYPE_UNKNOWN":
+		*e = STORAGE_TYPE_UNKNOWN
+		return nil
+	case "STORAGE_TYPE_USB_STICK":
+		*e = STORAGE_TYPE_USB_STICK
+		return nil
+	case "STORAGE_TYPE_SD":
+		*e = STORAGE_TYPE_SD
+		return nil
+	case "STORAGE_TYPE_MICROSD":
+		*e = STORAGE_TYPE_MICROSD
+		return nil
+	case "STORAGE_TYPE_CF":
+		*e = STORAGE_TYPE_CF
+		return nil
+	case "STORAGE_TYPE_CFE":
+		*e = STORAGE_TYPE_CFE
+		return nil
+	case "STORAGE_TYPE_XQD":
+		*e = STORAGE_TYPE_XQD
+		return nil
+	case "STORAGE_TYPE_HD":
+		*e = STORAGE_TYPE_HD
+		return nil
+	case "STORAGE_TYPE_OTHER":
+		*e = STORAGE_TYPE_OTHER
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e STORAGE_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Tune formats (used for vehicle buzzer/tone generation).
 type TUNE_FORMAT int
 
@@ -16532,6 +16624,10 @@ type MessageStorageInformation struct {
 	ReadSpeed float32
 	// Write speed.
 	WriteSpeed float32
+	// Type of storage
+	Type STORAGE_TYPE `mavenum:"uint8" mavext:"true"`
+	// Textual storage name to be used in UI (microSD 1, Internal Memory, etc.) This is a NULL terminated string. If it is exactly 32 characters long, add a terminating NULL. If this string is empty, the generic type is shown to the user.
+	Name string `mavext:"true" mavlen:"32"`
 }
 
 // GetId implements the msg.Message interface.

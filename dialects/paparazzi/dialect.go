@@ -3448,8 +3448,6 @@ const (
 	GIMBAL_MANAGER_FLAGS_PITCH_LOCK GIMBAL_MANAGER_FLAGS = 8
 	// Based on GIMBAL_DEVICE_FLAGS_YAW_LOCK
 	GIMBAL_MANAGER_FLAGS_YAW_LOCK GIMBAL_MANAGER_FLAGS = 16
-	// This flag can be set to give up control previously set using MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW. This flag must not be combined with other flags.
-	GIMBAL_MANAGER_FLAGS_NONE GIMBAL_MANAGER_FLAGS = 1048576
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -3465,8 +3463,6 @@ func (e GIMBAL_MANAGER_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("GIMBAL_MANAGER_FLAGS_PITCH_LOCK"), nil
 	case GIMBAL_MANAGER_FLAGS_YAW_LOCK:
 		return []byte("GIMBAL_MANAGER_FLAGS_YAW_LOCK"), nil
-	case GIMBAL_MANAGER_FLAGS_NONE:
-		return []byte("GIMBAL_MANAGER_FLAGS_NONE"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -3488,9 +3484,6 @@ func (e *GIMBAL_MANAGER_FLAGS) UnmarshalText(text []byte) error {
 		return nil
 	case "GIMBAL_MANAGER_FLAGS_YAW_LOCK":
 		*e = GIMBAL_MANAGER_FLAGS_YAW_LOCK
-		return nil
-	case "GIMBAL_MANAGER_FLAGS_NONE":
-		*e = GIMBAL_MANAGER_FLAGS_NONE
 		return nil
 	}
 	return errors.New("invalid value")

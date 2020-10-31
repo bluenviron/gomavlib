@@ -143,13 +143,21 @@ func (t *endpointClient) do() {
 
 		// wait some seconds before reconnecting
 		if rawConn == nil {
-			timer := time.NewTimer(netReconnectPeriod)
-			select {
-			case <-timer.C:
-				continue
-			case <-t.terminate:
+			ok := func() bool {
+				timer := time.NewTimer(netReconnectPeriod)
+				defer timer.Stop()
+
+				select {
+				case <-timer.C:
+					return true
+				case <-t.terminate:
+					return false
+				}
+			}()
+			if !ok {
 				return
 			}
+			continue
 		}
 
 		conn := &netTimedConn{rawConn}

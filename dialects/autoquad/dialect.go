@@ -14379,7 +14379,7 @@ type MessageCommandInt struct {
 	Frame MAV_FRAME `mavenum:"uint8"`
 	// The scheduled action for the mission item.
 	Command MAV_CMD `mavenum:"uint16"`
-	// false:0, true:1
+	// Not used.
 	Current uint8
 	// Not used (set 0).
 	Autocontinue uint8

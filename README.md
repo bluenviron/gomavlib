@@ -77,6 +77,9 @@ make test
 
 ## Links
 
+Related projects
+* https://github.com/aler9/mavp2p
+
 Protocol documentation
 * main website https://mavlink.io/en/
 * packet format https://mavlink.io/en/guide/serialization.html
@@ -95,3 +98,6 @@ Other non-Go libraries
 * [C#] https://github.com/asvol/mavlink.net
 * [Rust] https://github.com/3drobotics/rust-mavlink
 * [JS] https://github.com/omcaree/node-mavlink
+
+Conventions
+* https://github.com/golang-standards/project-layout

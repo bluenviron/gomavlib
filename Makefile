@@ -45,7 +45,7 @@ test:
 
 test-nodocker:
 	go test -race -v ./...
-	go build -o /dev/null ./commands/...
+	go build -o /dev/null ./cmd/...
 	$(foreach f,$(shell ls examples/*),go build -o /dev/null $(f)$(NL))
 
 define DOCKERFILE_GEN_DIALECTS
@@ -64,7 +64,7 @@ dialects:
 
 dialects-nodocker:
 	$(eval export CGO_ENABLED = 0)
-	go run ./commands/dialects-gen
+	go run ./cmd/dialects-gen
 	find ./dialects -type f -name '*.go' | xargs gofmt -l -w -s
 
 run-example:

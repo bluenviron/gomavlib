@@ -60,7 +60,7 @@ import (
 
 Standard dialects are provided in the `dialects/` folder, but it's also possible to use custom dialects, that can be converted into Go files by running:
 ```
-go get github.com/aler9/gomavlib/commands/dialect-import
+go get github.com/aler9/gomavlib/cmd/dialect-import
 dialect-import my_dialect.xml > dialect.go
 ```
 

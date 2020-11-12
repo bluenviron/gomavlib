@@ -7340,6 +7340,8 @@ const (
 	MAV_CMD_DO_INVERTED_FLIGHT MAV_CMD = 210
 	// Mission command to operate a gripper.
 	MAV_CMD_DO_GRIPPER MAV_CMD = 211
+	// Enable/disable autotune.
+	MAV_CMD_DO_AUTOTUNE_ENABLE MAV_CMD = 212
 	// Sets a desired vehicle turn angle and speed change.
 	MAV_CMD_NAV_SET_YAW_SPEED MAV_CMD = 213
 	// Mission command to set camera trigger interval for this flight. If triggering is enabled, the camera is triggered each time this interval expires. This command can also be used to set the shutter integration time for the camera.
@@ -7518,8 +7520,6 @@ const (
 	MAV_CMD_USER_4 MAV_CMD = 31013
 	// User defined command. Ground Station will not show the Vehicle as flying through this item. Example: MAV_CMD_DO_SET_PARAMETER item.
 	MAV_CMD_USER_5 MAV_CMD = 31014
-	// Enable/disable autotune.
-	MAV_CMD_DO_AUTOTUNE_ENABLE MAV_CMD = 212
 	// Set the distance to be repeated on mission resume
 	MAV_CMD_DO_SET_RESUME_REPEAT_DIST MAV_CMD = 215
 	// Mission command to wait for an altitude or downwards vertical speed. This is meant for high altitude balloon launches, allowing the aircraft to be idle until either an altitude is reached or a negative vertical speed is reached (indicating early balloon burst). The wiggle time is how often to wiggle the control surfaces to prevent them seizing up.
@@ -7703,6 +7703,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_DO_INVERTED_FLIGHT"), nil
 	case MAV_CMD_DO_GRIPPER:
 		return []byte("MAV_CMD_DO_GRIPPER"), nil
+	case MAV_CMD_DO_AUTOTUNE_ENABLE:
+		return []byte("MAV_CMD_DO_AUTOTUNE_ENABLE"), nil
 	case MAV_CMD_NAV_SET_YAW_SPEED:
 		return []byte("MAV_CMD_NAV_SET_YAW_SPEED"), nil
 	case MAV_CMD_DO_SET_CAM_TRIGG_INTERVAL:
@@ -7881,8 +7883,6 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_USER_4"), nil
 	case MAV_CMD_USER_5:
 		return []byte("MAV_CMD_USER_5"), nil
-	case MAV_CMD_DO_AUTOTUNE_ENABLE:
-		return []byte("MAV_CMD_DO_AUTOTUNE_ENABLE"), nil
 	case MAV_CMD_DO_SET_RESUME_REPEAT_DIST:
 		return []byte("MAV_CMD_DO_SET_RESUME_REPEAT_DIST"), nil
 	case MAV_CMD_NAV_ALTITUDE_WAIT:
@@ -8131,6 +8131,9 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_DO_GRIPPER":
 		*e = MAV_CMD_DO_GRIPPER
+		return nil
+	case "MAV_CMD_DO_AUTOTUNE_ENABLE":
+		*e = MAV_CMD_DO_AUTOTUNE_ENABLE
 		return nil
 	case "MAV_CMD_NAV_SET_YAW_SPEED":
 		*e = MAV_CMD_NAV_SET_YAW_SPEED
@@ -8398,9 +8401,6 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_USER_5":
 		*e = MAV_CMD_USER_5
-		return nil
-	case "MAV_CMD_DO_AUTOTUNE_ENABLE":
-		*e = MAV_CMD_DO_AUTOTUNE_ENABLE
 		return nil
 	case "MAV_CMD_DO_SET_RESUME_REPEAT_DIST":
 		*e = MAV_CMD_DO_SET_RESUME_REPEAT_DIST

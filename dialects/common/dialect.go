@@ -4765,6 +4765,8 @@ const (
 	MAV_CMD_DO_INVERTED_FLIGHT MAV_CMD = 210
 	// Mission command to operate a gripper.
 	MAV_CMD_DO_GRIPPER MAV_CMD = 211
+	// Enable/disable autotune.
+	MAV_CMD_DO_AUTOTUNE_ENABLE MAV_CMD = 212
 	// Sets a desired vehicle turn angle and speed change.
 	MAV_CMD_NAV_SET_YAW_SPEED MAV_CMD = 213
 	// Mission command to set camera trigger interval for this flight. If triggering is enabled, the camera is triggered each time this interval expires. This command can also be used to set the shutter integration time for the camera.
@@ -5076,6 +5078,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_DO_INVERTED_FLIGHT"), nil
 	case MAV_CMD_DO_GRIPPER:
 		return []byte("MAV_CMD_DO_GRIPPER"), nil
+	case MAV_CMD_DO_AUTOTUNE_ENABLE:
+		return []byte("MAV_CMD_DO_AUTOTUNE_ENABLE"), nil
 	case MAV_CMD_NAV_SET_YAW_SPEED:
 		return []byte("MAV_CMD_NAV_SET_YAW_SPEED"), nil
 	case MAV_CMD_DO_SET_CAM_TRIGG_INTERVAL:
@@ -5452,6 +5456,9 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_DO_GRIPPER":
 		*e = MAV_CMD_DO_GRIPPER
+		return nil
+	case "MAV_CMD_DO_AUTOTUNE_ENABLE":
+		*e = MAV_CMD_DO_AUTOTUNE_ENABLE
 		return nil
 	case "MAV_CMD_NAV_SET_YAW_SPEED":
 		*e = MAV_CMD_NAV_SET_YAW_SPEED

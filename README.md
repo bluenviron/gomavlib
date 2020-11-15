@@ -31,6 +31,7 @@ This library powers the [**mavp2p**](https://github.com/aler9/mavp2p) router.
 ## Installation
 
 Go &ge; 1.13 is required, and modules must be enabled (there must be a `go.mod` file in your project folder, that can be created with the command `go mod init main`). To install the library, it is enough to write its name in the import section of the source files that will use it. Go will take care of downloading the needed files:
+
 ```go
 import (
     "github.com/aler9/gomavlib"
@@ -59,6 +60,7 @@ import (
 ## Dialect generation
 
 Standard dialects are provided in the `dialects/` folder, but it's also possible to use custom dialects, that can be converted into Go files by running:
+
 ```
 go get github.com/aler9/gomavlib/cmd/dialect-import
 dialect-import my_dialect.xml > dialect.go
@@ -71,6 +73,7 @@ https://pkg.go.dev/github.com/aler9/gomavlib
 ## Testing
 
 If you want to hack the library and test the results, unit tests can be launched with:
+
 ```
 make test
 ```
@@ -78,20 +81,24 @@ make test
 ## Links
 
 Related projects
+
 * https://github.com/aler9/mavp2p
 
 Protocol documentation
+
 * main website https://mavlink.io/en/
 * packet format https://mavlink.io/en/guide/serialization.html
 * common dialect https://github.com/mavlink/mavlink/blob/master/message_definitions/v1.0/common.xml
 
 Other Go libraries
+
 * https://github.com/hybridgroup/gobot/tree/master/platforms/mavlink
 * https://github.com/liamstask/go-mavlink
 * https://github.com/ungerik/go-mavlink
 * https://github.com/SpaceLeap/go-mavlink
 
 Other non-Go libraries
+
 * [C] https://github.com/mavlink/c_library_v2
 * [Python] https://github.com/ArduPilot/pymavlink
 * [Java] https://github.com/DrTon/jMAVlib
@@ -100,4 +107,5 @@ Other non-Go libraries
 * [JS] https://github.com/omcaree/node-mavlink
 
 Conventions
+
 * https://github.com/golang-standards/project-layout

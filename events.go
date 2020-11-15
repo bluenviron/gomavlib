@@ -1,8 +1,8 @@
 package gomavlib
 
 import (
-	"github.com/aler9/gomavlib/frame"
-	"github.com/aler9/gomavlib/msg"
+	"github.com/aler9/gomavlib/pkg/frame"
+	"github.com/aler9/gomavlib/pkg/msg"
 )
 
 // Event is the interface implemented by all events received with node.Events().

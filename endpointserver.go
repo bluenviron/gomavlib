@@ -5,7 +5,7 @@ import (
 	"io"
 	"net"
 
-	"github.com/aler9/gomavlib/udplistener"
+	"github.com/aler9/gomavlib/pkg/udplistener"
 )
 
 type endpointServerConf interface {

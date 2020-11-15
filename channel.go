@@ -3,9 +3,9 @@ package gomavlib
 import (
 	"io"
 
-	"github.com/aler9/gomavlib/frame"
-	"github.com/aler9/gomavlib/msg"
-	"github.com/aler9/gomavlib/transceiver"
+	"github.com/aler9/gomavlib/pkg/frame"
+	"github.com/aler9/gomavlib/pkg/msg"
+	"github.com/aler9/gomavlib/pkg/transceiver"
 )
 
 // Channel is a communication channel created by an endpoint. For instance, a

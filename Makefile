@@ -65,7 +65,7 @@ dialects:
 dialects-nodocker:
 	$(eval export CGO_ENABLED = 0)
 	go run ./cmd/dialects-gen
-	find ./dialects -type f -name '*.go' | xargs gofmt -l -w -s
+	find ./pkg/dialects -type f -name '*.go' | xargs gofmt -l -w -s
 
 run-example:
 	docker run --rm -it \

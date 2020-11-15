@@ -10,9 +10,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/aler9/gomavlib/dialect"
-	"github.com/aler9/gomavlib/frame"
-	"github.com/aler9/gomavlib/msg"
+	"github.com/aler9/gomavlib/pkg/dialect"
+	"github.com/aler9/gomavlib/pkg/frame"
+	"github.com/aler9/gomavlib/pkg/msg"
 )
 
 type MAV_TYPE int

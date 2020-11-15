@@ -6,8 +6,8 @@ import (
 	"fmt"
 
 	"github.com/aler9/gomavlib"
-	"github.com/aler9/gomavlib/dialect"
-	"github.com/aler9/gomavlib/msg"
+	"github.com/aler9/gomavlib/pkg/dialect"
+	"github.com/aler9/gomavlib/pkg/msg"
 )
 
 // this is a custom message.

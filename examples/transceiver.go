@@ -6,9 +6,9 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/aler9/gomavlib/dialect"
-	"github.com/aler9/gomavlib/dialects/ardupilotmega"
-	"github.com/aler9/gomavlib/transceiver"
+	"github.com/aler9/gomavlib/pkg/dialect"
+	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
+	"github.com/aler9/gomavlib/pkg/transceiver"
 )
 
 // if NewNode() is not flexible enough, the library provides a low-level Mavlink

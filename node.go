@@ -15,7 +15,7 @@ Basic example (more are available at https://github.com/aler9/gomavlib/tree/mast
   import (
   	"fmt"
   	"github.com/aler9/gomavlib"
-  	"github.com/aler9/gomavlib/dialects/ardupilotmega"
+  	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
   )
 
   func main() {
@@ -46,9 +46,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/aler9/gomavlib/dialect"
-	"github.com/aler9/gomavlib/frame"
-	"github.com/aler9/gomavlib/msg"
+	"github.com/aler9/gomavlib/pkg/dialect"
+	"github.com/aler9/gomavlib/pkg/frame"
+	"github.com/aler9/gomavlib/pkg/msg"
 )
 
 const (

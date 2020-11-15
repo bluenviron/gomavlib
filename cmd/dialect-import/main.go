@@ -98,8 +98,8 @@ import (
 	"strconv"
 {{- end }}
 
-	"github.com/aler9/gomavlib/msg"
-	"github.com/aler9/gomavlib/dialect"
+	"github.com/aler9/gomavlib/pkg/msg"
+	"github.com/aler9/gomavlib/pkg/dialect"
 )
 
 // Dialect contains the dialect object that can be passed to the library.

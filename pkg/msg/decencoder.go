@@ -277,7 +277,7 @@ func (mde *DecEncoder) Decode(buf []byte, isV2 bool) (Message, error) {
 	} else {
 		// in V1 buffer must fit message perfectly
 		if len(buf) != int(mde.sizeNormal) {
-			return nil, fmt.Errorf("unexpected size (%d vs %d)", len(buf), mde.sizeNormal)
+			return nil, fmt.Errorf("wrong size: expected %d, got %d", mde.sizeNormal, len(buf))
 		}
 	}
 
@@ -392,9 +392,9 @@ func valueDecode(target reflect.Value, buf []byte, f *decEncoderField) int {
 
 	switch tt := target.Addr().Interface().(type) {
 	case *string:
-		// find nil character or string end
+		// find string end or NULL character
 		end := 0
-		for buf[end] != 0 && end < int(f.arrayLength) {
+		for end < int(f.arrayLength) && buf[end] != 0 {
 			end++
 		}
 		*tt = string(buf[:end])

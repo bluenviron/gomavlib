@@ -11,6 +11,7 @@ import (
 type endpointServerConf interface {
 	isUdp() bool
 	getAddress() string
+	init() (Endpoint, error)
 }
 
 // EndpointTcpServer sets up a endpoint that works with a TCP server.
@@ -86,7 +87,7 @@ func initEndpointServer(conf endpointServerConf) (Endpoint, error) {
 
 func (t *endpointServer) isEndpoint() {}
 
-func (t *endpointServer) Conf() interface{} {
+func (t *endpointServer) Conf() EndpointConf {
 	return t.conf
 }
 

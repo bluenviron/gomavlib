@@ -26,7 +26,7 @@ func (conf EndpointCustom) init() (Endpoint, error) {
 
 func (t *endpointCustom) isEndpoint() {}
 
-func (t *endpointCustom) Conf() interface{} {
+func (t *endpointCustom) Conf() EndpointConf {
 	return t.conf
 }
 

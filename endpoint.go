@@ -12,7 +12,7 @@ type EndpointConf interface {
 // Endpoint is an endpoint, which can create Channels.
 type Endpoint interface {
 	// Conf returns the configuration used to initialize the endpoint
-	Conf() interface{}
+	Conf() EndpointConf
 
 	isEndpoint()
 }

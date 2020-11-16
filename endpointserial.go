@@ -48,7 +48,7 @@ func (conf EndpointSerial) init() (Endpoint, error) {
 
 func (t *endpointSerial) isEndpoint() {}
 
-func (t *endpointSerial) Conf() interface{} {
+func (t *endpointSerial) Conf() EndpointConf {
 	return t.conf
 }
 

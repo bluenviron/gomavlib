@@ -95,7 +95,7 @@ func (conf EndpointUdpBroadcast) init() (Endpoint, error) {
 
 func (t *endpointUdpBroadcast) isEndpoint() {}
 
-func (t *endpointUdpBroadcast) Conf() interface{} {
+func (t *endpointUdpBroadcast) Conf() EndpointConf {
 	return t.conf
 }
 

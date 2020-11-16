@@ -31,7 +31,7 @@ func (conf EndpointSerial) init() (Endpoint, error) {
 	name := matches[1]
 	baud, _ := strconv.Atoi(matches[2])
 
-	port, err := serial.OpenPort(&serial.Config{
+	rwc, err := serial.OpenPort(&serial.Config{
 		Name: name,
 		Baud: baud,
 	})
@@ -41,7 +41,7 @@ func (conf EndpointSerial) init() (Endpoint, error) {
 
 	t := &endpointSerial{
 		conf:            conf,
-		ReadWriteCloser: port,
+		ReadWriteCloser: rwc,
 	}
 	return t, nil
 }

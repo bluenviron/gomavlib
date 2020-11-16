@@ -118,16 +118,17 @@ func (t *endpointClient) do() {
 		// in UDP, the only possible error is a DNS failure
 		// in TCP, the handshake must be completed
 		var rawConn net.Conn
-		dialDone := make(chan struct{})
+		dialDone := make(chan struct{}, 1)
 		go func() {
 			defer close(dialDone)
 
-			var network string
-			if t.conf.isUdp() == true {
-				network = "udp4"
-			} else {
-				network = "tcp4"
-			}
+			network := func() string {
+				if t.conf.isUdp() == true {
+					return "udp4"
+				}
+				return "tcp4"
+			}()
+
 			var err error
 			rawConn, err = net.DialTimeout(network, t.conf.getAddress(), netConnectTimeout)
 			if err != nil {
@@ -167,17 +168,16 @@ func (t *endpointClient) do() {
 			t.writer = conn
 		}()
 
-		var n int
-		var err error
 		cycleDone := make(chan struct{})
 		go func() {
 			defer close(cycleDone)
 
 			for {
-				n, err = conn.Read(buf)
+				n, err := conn.Read(buf)
 				if err != nil {
 					return
 				}
+
 				t.readChan <- buf[:n]
 				<-t.readDone
 			}

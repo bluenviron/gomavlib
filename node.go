@@ -274,17 +274,17 @@ outer:
 			if _, ok := n.channels[req.ch]; !ok {
 				return
 			}
-			req.ch.writec <- req.what
+			req.ch.write <- req.what
 
 		case what := <-n.writeAll:
 			for ch := range n.channels {
-				ch.writec <- what
+				ch.write <- what
 			}
 
 		case req := <-n.writeExcept:
 			for ch := range n.channels {
 				if ch != req.except {
-					ch.writec <- req.what
+					ch.write <- req.what
 				}
 			}
 

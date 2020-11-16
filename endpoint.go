@@ -9,7 +9,7 @@ type EndpointConf interface {
 	init() (Endpoint, error)
 }
 
-// Endpoint is an endpoint, which contains zero or more channels.
+// Endpoint is an endpoint, which can create Channels.
 type Endpoint interface {
 	// Conf returns the configuration used to initialize the endpoint
 	Conf() interface{}

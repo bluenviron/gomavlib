@@ -8,9 +8,10 @@ import (
 	"github.com/aler9/gomavlib/pkg/transceiver"
 )
 
-// Channel is a communication channel created by an endpoint. For instance, a
-// TCP client endpoint creates a single channel, while a TCP server endpoint
-// creates a channel for each incoming connection.
+// Channel is a communication channel created by an Endpoint.
+// An Endpoint can create channels.
+// For instance, a TCP client endpoint creates a single channel, while a TCP
+// server endpoint creates a channel for each incoming connection.
 type Channel struct {
 	// the endpoint which the channel belongs to
 	Endpoint Endpoint
@@ -20,7 +21,7 @@ type Channel struct {
 	n           *Node
 	transceiver *transceiver.Transceiver
 
-	writec    chan interface{}
+	write     chan interface{}
 	terminate chan struct{}
 	done      chan struct{}
 }
@@ -52,7 +53,7 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Cha
 		rwc:         rwc,
 		n:           n,
 		transceiver: transceiver,
-		writec:      make(chan interface{}),
+		write:       make(chan interface{}),
 		terminate:   make(chan struct{}),
 		done:        make(chan struct{}),
 	}, nil
@@ -99,7 +100,7 @@ func (ch *Channel) run() {
 	go func() {
 		defer close(writerDone)
 
-		for what := range ch.writec {
+		for what := range ch.write {
 			switch wh := what.(type) {
 			case msg.Message:
 				ch.transceiver.WriteMessage(wh)
@@ -117,7 +118,7 @@ func (ch *Channel) run() {
 		ch.n.channelClose <- ch
 		<-ch.terminate
 
-		close(ch.writec)
+		close(ch.write)
 		<-writerDone
 
 		ch.rwc.Close()
@@ -125,7 +126,7 @@ func (ch *Channel) run() {
 	case <-ch.terminate:
 		ch.n.eventsOut <- &EventChannelClose{ch}
 
-		close(ch.writec)
+		close(ch.write)
 		<-writerDone
 
 		ch.rwc.Close()

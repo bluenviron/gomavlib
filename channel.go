@@ -13,9 +13,7 @@ import (
 // For instance, a TCP client endpoint creates a single channel, while a TCP
 // server endpoint creates a channel for each incoming connection.
 type Channel struct {
-	// the endpoint which the channel belongs to
-	Endpoint Endpoint
-
+	e           Endpoint
 	label       string
 	rwc         io.ReadWriteCloser
 	n           *Node
@@ -48,7 +46,7 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Cha
 	}
 
 	return &Channel{
-		Endpoint:    e,
+		e:           e,
 		label:       label,
 		rwc:         rwc,
 		n:           n,
@@ -145,4 +143,9 @@ func (ch *Channel) run() {
 // String implements fmt.Stringer.
 func (ch *Channel) String() string {
 	return ch.label
+}
+
+// Endpoint returns the channel Endpoint.
+func (ch *Channel) Endpoint() Endpoint {
+	return ch.e
 }

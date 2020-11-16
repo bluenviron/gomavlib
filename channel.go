@@ -20,10 +20,10 @@ type Channel struct {
 	rwc         io.ReadWriteCloser
 	n           *Node
 	transceiver *transceiver.Transceiver
+	running     bool
 
 	write     chan interface{}
 	terminate chan struct{}
-	done      chan struct{}
 }
 
 func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Channel, error) {
@@ -55,17 +55,25 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Cha
 		transceiver: transceiver,
 		write:       make(chan interface{}),
 		terminate:   make(chan struct{}),
-		done:        make(chan struct{}),
 	}, nil
 }
 
-// String implements fmt.Stringer and returns the channel label.
-func (ch *Channel) String() string {
-	return ch.label
+func (ch *Channel) close() {
+	if ch.running {
+		close(ch.terminate)
+	} else {
+		ch.rwc.Close()
+	}
+}
+
+func (ch *Channel) start() {
+	ch.running = true
+	ch.n.channelsWg.Add(1)
+	go ch.run()
 }
 
 func (ch *Channel) run() {
-	defer close(ch.done)
+	defer ch.n.channelsWg.Done()
 
 	readerDone := make(chan struct{})
 	go func() {
@@ -132,4 +140,9 @@ func (ch *Channel) run() {
 		ch.rwc.Close()
 		<-readerDone
 	}
+}
+
+// String implements fmt.Stringer.
+func (ch *Channel) String() string {
+	return ch.label
 }

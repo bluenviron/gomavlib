@@ -7,25 +7,26 @@ import (
 type channelAccepter struct {
 	n   *Node
 	eca endpointChannelAccepter
-
-	done chan struct{}
 }
 
 func newChannelAccepter(n *Node, eca endpointChannelAccepter) (*channelAccepter, error) {
 	return &channelAccepter{
-		n:    n,
-		eca:  eca,
-		done: make(chan struct{}),
+		n:   n,
+		eca: eca,
 	}, nil
 }
 
 func (ca *channelAccepter) close() {
 	ca.eca.Close()
-	<-ca.done
 }
 
-func (ca *channelAccepter) run() {
-	defer close(ca.done)
+func (ca *channelAccepter) start() {
+	ca.n.channelAcceptersWg.Add(1)
+	go ca.run1()
+}
+
+func (ca *channelAccepter) run1() {
+	defer ca.n.channelAcceptersWg.Done()
 
 	for {
 		label, rwc, err := ca.eca.Accept()

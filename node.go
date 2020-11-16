@@ -44,6 +44,7 @@ package gomavlib
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/aler9/gomavlib/pkg/dialect"
@@ -115,12 +116,14 @@ type NodeConf struct {
 
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
 type Node struct {
-	conf              NodeConf
-	dialectDE         *dialect.DecEncoder
-	channelAccepters  map[*channelAccepter]struct{}
-	channels          map[*Channel]struct{}
-	nodeHeartbeat     *nodeHeartbeat
-	nodeStreamRequest *nodeStreamRequest
+	conf               NodeConf
+	dialectDE          *dialect.DecEncoder
+	channelAccepters   map[*channelAccepter]struct{}
+	channelAcceptersWg sync.WaitGroup
+	channels           map[*Channel]struct{}
+	channelsWg         sync.WaitGroup
+	nodeHeartbeat      *nodeHeartbeat
+	nodeStreamRequest  *nodeStreamRequest
 
 	eventsOut    chan Event
 	channelNew   chan *Channel
@@ -192,11 +195,11 @@ func NewNode(conf NodeConf) (*Node, error) {
 	}
 
 	closeExisting := func() {
-		for ca := range n.channels {
-			ca.rwc.Close()
+		for ch := range n.channels {
+			ch.close()
 		}
 		for ca := range n.channelAccepters {
-			ca.eca.Close()
+			ca.close()
 		}
 	}
 
@@ -244,11 +247,11 @@ func NewNode(conf NodeConf) (*Node, error) {
 	}
 
 	for ch := range n.channels {
-		go ch.run()
+		ch.start()
 	}
 
 	for ca := range n.channelAccepters {
-		go ca.run()
+		ca.start()
 	}
 
 	go n.run()
@@ -264,11 +267,11 @@ outer:
 		select {
 		case ch := <-n.channelNew:
 			n.channels[ch] = struct{}{}
-			go ch.run()
+			ch.start()
 
 		case ch := <-n.channelClose:
 			delete(n.channels, ch)
-			close(ch.terminate)
+			ch.close()
 
 		case req := <-n.writeTo:
 			if _, ok := n.channels[req.ch]; !ok {
@@ -320,16 +323,16 @@ outer:
 	for ca := range n.channelAccepters {
 		ca.close()
 	}
+	n.channelAcceptersWg.Wait()
 
 	for ch := range n.channels {
-		close(ch.terminate)
-		<-ch.done
+		ch.close()
 	}
+	n.channelsWg.Wait()
 }
 
 // Close halts node operations and waits for all routines to return.
 func (n *Node) Close() {
-	// consume events, in case user is not calling Events()
 	go func() {
 		for range n.eventsOut {
 		}

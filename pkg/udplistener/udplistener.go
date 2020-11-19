@@ -7,6 +7,9 @@ import (
 	"time"
 )
 
+// MTU is ~1500
+const bufferSize = 2048
+
 // implements net.Error
 type udpNetError struct {
 	str       string
@@ -25,17 +28,17 @@ func (udpNetError) Temporary() bool {
 	return false
 }
 
-var udpErrorTimeout net.Error = udpNetError{"timeout", true}
-var udpErrorTerminated net.Error = udpNetError{"terminated", false}
+var errTimeout net.Error = udpNetError{"timeout", true}
+var errTerminated net.Error = udpNetError{"terminated", false}
 
-type udpListenerConnIndex struct {
+type connIndex struct {
 	IP   [4]byte
 	Port int
 }
 
-type udpListenerConn struct {
-	listener      *UDPListener
-	index         udpListenerConnIndex
+type conn struct {
+	listener      *Listener
+	index         connIndex
 	addr          *net.UDPAddr
 	closed        bool
 	readDeadline  time.Time
@@ -44,8 +47,8 @@ type udpListenerConn struct {
 	read chan []byte
 }
 
-func newConn(listener *UDPListener, index udpListenerConnIndex, addr *net.UDPAddr) *udpListenerConn {
-	return &udpListenerConn{
+func newConn(listener *Listener, index connIndex, addr *net.UDPAddr) *conn {
+	return &conn{
 		listener: listener,
 		index:    index,
 		addr:     addr,
@@ -54,18 +57,18 @@ func newConn(listener *UDPListener, index udpListenerConnIndex, addr *net.UDPAdd
 }
 
 // LocalAddr implements the net.Conn interface.
-func (c *udpListenerConn) LocalAddr() net.Addr {
+func (c *conn) LocalAddr() net.Addr {
 	// not implemented
 	return nil
 }
 
 // RemoteAddr implements the net.Conn interface.
-func (c *udpListenerConn) RemoteAddr() net.Addr {
+func (c *conn) RemoteAddr() net.Addr {
 	return c.addr
 }
 
 // Close implements the net.Conn interface.
-func (c *udpListenerConn) Close() error {
+func (c *conn) Close() error {
 	c.listener.readMutex.Lock()
 	defer c.listener.readMutex.Unlock()
 
@@ -81,15 +84,14 @@ func (c *udpListenerConn) Close() error {
 
 	// close socket when both listener and connections are closed
 	if c.listener.closed == true && len(c.listener.conns) == 0 {
-		c.listener.packetConn.Close()
+		c.listener.pc.Close()
 	}
 
 	return nil
 }
 
 // Read implements the net.Conn interface.
-// This happens synchronously, such that buffer can be freed after reading
-func (c *udpListenerConn) Read(byt []byte) (int, error) {
+func (c *conn) Read(byt []byte) (int, error) {
 	var buf []byte
 	var ok bool
 
@@ -99,7 +101,7 @@ func (c *udpListenerConn) Read(byt []byte) (int, error) {
 
 		select {
 		case <-readTimer.C:
-			return 0, udpErrorTimeout
+			return 0, errTimeout
 		case buf, ok = <-c.read:
 		}
 	} else {
@@ -107,7 +109,7 @@ func (c *udpListenerConn) Read(byt []byte) (int, error) {
 	}
 
 	if !ok {
-		return 0, udpErrorTerminated
+		return 0, errTerminated
 	}
 
 	copy(byt, buf)
@@ -116,62 +118,61 @@ func (c *udpListenerConn) Read(byt []byte) (int, error) {
 }
 
 // Write implements the net.Conn interface.
-// This happens synchronously, such that buffer can be freed after writing
-func (c *udpListenerConn) Write(byt []byte) (int, error) {
+func (c *conn) Write(byt []byte) (int, error) {
 	c.listener.writeMutex.Lock()
 	defer c.listener.writeMutex.Unlock()
 
 	if !c.writeDeadline.IsZero() {
-		err := c.listener.packetConn.SetWriteDeadline(c.writeDeadline)
+		err := c.listener.pc.SetWriteDeadline(c.writeDeadline)
 		if err != nil {
 			return 0, err
 		}
 	}
 
-	return c.listener.packetConn.WriteTo(byt, c.addr)
+	return c.listener.pc.WriteTo(byt, c.addr)
 }
 
 // SetDeadline implements the net.Conn interface.
-func (c *udpListenerConn) SetDeadline(time.Time) error {
+func (c *conn) SetDeadline(time.Time) error {
 	// not implemented
 	return nil
 }
 
 // SetReadDeadline implements the net.Conn interface.
-func (c *udpListenerConn) SetReadDeadline(t time.Time) error {
+func (c *conn) SetReadDeadline(t time.Time) error {
 	c.readDeadline = t
 	return nil
 }
 
 // SetWriteDeadline implements the net.Conn interface.
-func (c *udpListenerConn) SetWriteDeadline(t time.Time) error {
+func (c *conn) SetWriteDeadline(t time.Time) error {
 	c.writeDeadline = t
 	return nil
 }
 
-// UDPListener is a UDP listener.
-type UDPListener struct {
-	packetConn net.PacketConn
-	conns      map[udpListenerConnIndex]*udpListenerConn
+// Listener is a UDP listener.
+type Listener struct {
+	pc net.PacketConn
+	conns      map[connIndex]*conn
 	readMutex  sync.Mutex
 	writeMutex sync.Mutex
 	closed     bool
 
-	acceptc  chan net.Conn
+	accept  chan net.Conn
 	readDone chan struct{}
 }
 
-// New allocates a UDPListener.
+// New allocates a Listener.
 func New(network, address string) (net.Listener, error) {
-	packetConn, err := net.ListenPacket(network, address)
+	pc, err := net.ListenPacket(network, address)
 	if err != nil {
 		return nil, err
 	}
 
-	l := &UDPListener{
-		packetConn: packetConn,
-		conns:      make(map[udpListenerConnIndex]*udpListenerConn),
-		acceptc:    make(chan net.Conn),
+	l := &Listener{
+		pc: pc,
+		conns:      make(map[connIndex]*conn),
+		accept:    make(chan net.Conn),
 		readDone:   make(chan struct{}),
 	}
 
@@ -181,7 +182,7 @@ func New(network, address string) (net.Listener, error) {
 }
 
 // Close implements the net.Listener interface.
-func (l *UDPListener) Close() error {
+func (l *Listener) Close() error {
 	l.readMutex.Lock()
 	defer l.readMutex.Unlock()
 
@@ -192,35 +193,35 @@ func (l *UDPListener) Close() error {
 	l.closed = true
 
 	// release anyone waiting on Accept()
-	close(l.acceptc)
+	close(l.accept)
 
 	// close socket when both listener and connections are closed
 	if len(l.conns) == 0 {
-		l.packetConn.Close()
+		l.pc.Close()
 	}
 
 	return nil
 }
 
 // Addr implements the net.Listener interface.
-func (l *UDPListener) Addr() net.Addr {
-	return l.packetConn.LocalAddr()
+func (l *Listener) Addr() net.Addr {
+	return l.pc.LocalAddr()
 }
 
-func (l *UDPListener) reader() {
-	buf := make([]byte, 2048) // MTU is ~1500
+func (l *Listener) reader() {
+	buf := make([]byte, bufferSize)
 
 	for {
 		// read WITHOUT deadline. Long periods without packets are normal since
 		// we're not directly connected to someone.
-		n, addr, err := l.packetConn.ReadFrom(buf)
+		n, addr, err := l.pc.ReadFrom(buf)
 		if err != nil {
 			break
 		}
 
 		// use ip and port as connection index
 		uaddr := addr.(*net.UDPAddr)
-		connIndex := udpListenerConnIndex{}
+		connIndex := connIndex{}
 		connIndex.Port = uaddr.Port
 		copy(connIndex.IP[:], uaddr.IP)
 
@@ -237,7 +238,7 @@ func (l *UDPListener) reader() {
 				if !preExisting {
 					conn = newConn(l, connIndex, uaddr)
 					l.conns[connIndex] = conn
-					l.acceptc <- conn
+					l.accept <- conn
 				}
 
 				// route buffer to connection
@@ -251,10 +252,10 @@ func (l *UDPListener) reader() {
 }
 
 // Accept implements the net.Listener interface.
-func (l *UDPListener) Accept() (net.Conn, error) {
-	conn, ok := <-l.acceptc
+func (l *Listener) Accept() (net.Conn, error) {
+	conn, ok := <-l.accept
 	if !ok {
-		return nil, udpErrorTerminated
+		return nil, errTerminated
 	}
 	return conn, nil
 }

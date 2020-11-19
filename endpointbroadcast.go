@@ -10,22 +10,34 @@ import (
 
 // ipByBroadcastIp returns the ip of an interface associated with given broadcast ip
 func ipByBroadcastIp(target net.IP) net.IP {
-	if intfs, err := net.Interfaces(); err == nil {
-		for _, intf := range intfs {
-			if addrs, err := intf.Addrs(); err == nil {
-				for _, addr := range addrs {
-					if ipn, ok := addr.(*net.IPNet); ok {
-						if ip := ipn.IP.To4(); ip != nil {
-							broadcastIp := net.IP(make([]byte, 4))
-							for i := range ip {
-								broadcastIp[i] = ip[i] | ^ipn.Mask[i]
-							}
-							if reflect.DeepEqual(broadcastIp, target) == true {
-								return ip
-							}
-						}
-					}
-				}
+	intfs, err := net.Interfaces()
+	if err != nil {
+		return nil
+	}
+
+	for _, intf := range intfs {
+		addrs, err := intf.Addrs()
+		if err != nil {
+			continue
+		}
+
+		for _, addr := range addrs {
+			ipn, ok := addr.(*net.IPNet)
+			if !ok {
+				continue
+			}
+
+			ip := ipn.IP.To4()
+			if ip == nil {
+				continue
+			}
+
+			broadcastIp := net.IP(make([]byte, 4))
+			for i := range ip {
+				broadcastIp[i] = ip[i] | ^ipn.Mask[i]
+			}
+			if reflect.DeepEqual(broadcastIp, target) == true {
+				return ip
 			}
 		}
 	}
@@ -43,7 +55,7 @@ type EndpointUdpBroadcast struct {
 
 type endpointUdpBroadcast struct {
 	conf          EndpointUdpBroadcast
-	packetConn    net.PacketConn
+	pc            net.PacketConn
 	broadcastAddr net.Addr
 
 	terminate chan struct{}
@@ -77,7 +89,7 @@ func (conf EndpointUdpBroadcast) init() (Endpoint, error) {
 		}
 	}
 
-	packetConn, err := net.ListenPacket("udp4", conf.LocalAddress)
+	pc, err := net.ListenPacket("udp4", conf.LocalAddress)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +98,7 @@ func (conf EndpointUdpBroadcast) init() (Endpoint, error) {
 
 	t := &endpointUdpBroadcast{
 		conf:          conf,
-		packetConn:    packetConn,
+		pc:            pc,
 		broadcastAddr: &net.UDPAddr{IP: broadcastIp, Port: iport},
 		terminate:     make(chan struct{}),
 	}
@@ -105,14 +117,14 @@ func (t *endpointUdpBroadcast) Label() string {
 
 func (t *endpointUdpBroadcast) Close() error {
 	close(t.terminate)
-	t.packetConn.Close()
+	t.pc.Close()
 	return nil
 }
 
 func (t *endpointUdpBroadcast) Read(buf []byte) (int, error) {
 	// read WITHOUT deadline. Long periods without packets are normal since
 	// we're not directly connected to someone.
-	n, _, err := t.packetConn.ReadFrom(buf)
+	n, _, err := t.pc.ReadFrom(buf)
 
 	// wait termination, do not report errors
 	if err != nil {
@@ -124,9 +136,9 @@ func (t *endpointUdpBroadcast) Read(buf []byte) (int, error) {
 }
 
 func (t *endpointUdpBroadcast) Write(buf []byte) (int, error) {
-	err := t.packetConn.SetWriteDeadline(time.Now().Add(netWriteTimeout))
+	err := t.pc.SetWriteDeadline(time.Now().Add(netWriteTimeout))
 	if err != nil {
 		return 0, err
 	}
-	return t.packetConn.WriteTo(buf, t.broadcastAddr)
+	return t.pc.WriteTo(buf, t.broadcastAddr)
 }

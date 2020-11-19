@@ -1,4 +1,4 @@
-// Package frame contains Frame, V1Frame and V2Frame and utilities to encode and
+// Package frame contains frames and utilities to encode and
 // decode them.
 package frame
 
@@ -26,11 +26,11 @@ type Frame interface {
 	Clone() Frame
 
 	// decode the frame
-	Decode(buf *bufio.Reader) error
+	Decode(*bufio.Reader) error
 
 	// encode the frame
-	Encode(buf []byte, msgEncoded []byte) ([]byte, error)
+	Encode([]byte, []byte) ([]byte, error)
 
 	// generate the checksum
-	GenChecksum(crcExtra byte) uint16
+	GenChecksum(byte) uint16
 }

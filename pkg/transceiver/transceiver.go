@@ -104,8 +104,8 @@ func New(conf TransceiverConf) (*Transceiver, error) {
 	}, nil
 }
 
-// Read reads a Frame from the reader. It must not be called
-// by multiple routines in parallel.
+// Read reads a Frame from the reader.
+// It must not be called by multiple routines in parallel.
 func (p *Transceiver) Read() (frame.Frame, error) {
 	magicByte, err := p.readBuffer.ReadByte()
 	if err != nil {
@@ -182,24 +182,24 @@ func (p *Transceiver) Read() (frame.Frame, error) {
 
 // WriteMessage writes a Message into the writer.
 // It must not be called by multiple routines in parallel.
-func (p *Transceiver) WriteMessage(message msg.Message) error {
-	var f frame.Frame
+func (p *Transceiver) WriteMessage(m msg.Message) error {
+	var fr frame.Frame
 	if p.conf.OutVersion == V1 {
-		f = &frame.V1Frame{Message: message}
+		fr = &frame.V1Frame{Message: m}
 	} else {
-		f = &frame.V2Frame{Message: message}
+		fr = &frame.V2Frame{Message: m}
 	}
-	return p.writeFrameAndFill(f)
+	return p.writeFrameAndFill(fr)
 }
 
-func (p *Transceiver) writeFrameAndFill(f frame.Frame) error {
-	if f.GetMessage() == nil {
+func (p *Transceiver) writeFrameAndFill(fr frame.Frame) error {
+	if fr.GetMessage() == nil {
 		return fmt.Errorf("message is nil")
 	}
 
 	// do not touch the original frame, but work with a separate object
 	// in such way that the frame can be encoded by other parsers in parallel
-	safeFrame := f.Clone()
+	safeFrame := fr.Clone()
 
 	// fill SequenceId, SystemId, ComponentId
 	switch ff := safeFrame.(type) {
@@ -273,8 +273,8 @@ func (p *Transceiver) writeFrameAndFill(f frame.Frame) error {
 // It must not be called by multiple routines in parallel.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
-func (p *Transceiver) WriteFrame(f frame.Frame) error {
-	m := f.GetMessage()
+func (p *Transceiver) WriteFrame(fr frame.Frame) error {
+	m := fr.GetMessage()
 	if m == nil {
 		return fmt.Errorf("message is nil")
 	}
@@ -290,7 +290,7 @@ func (p *Transceiver) WriteFrame(f frame.Frame) error {
 			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
 		}
 
-		_, isV2 := f.(*frame.V2Frame)
+		_, isV2 := fr.(*frame.V2Frame)
 		byt, err := mp.Encode(m, isV2)
 		if err != nil {
 			return err
@@ -301,7 +301,7 @@ func (p *Transceiver) WriteFrame(f frame.Frame) error {
 		m = &msg.MessageRaw{m.GetId(), byt}
 	}
 
-	buf, err := f.Encode(p.writeBuffer, m.(*msg.MessageRaw).Content)
+	buf, err := fr.Encode(p.writeBuffer, m.(*msg.MessageRaw).Content)
 	if err != nil {
 		return err
 	}

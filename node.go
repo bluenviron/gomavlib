@@ -356,37 +356,37 @@ func (n *Node) Events() chan Event {
 }
 
 // WriteMessageTo writes a message to given channel.
-func (n *Node) WriteMessageTo(channel *Channel, message msg.Message) {
-	n.writeTo <- writeToReq{channel, message}
+func (n *Node) WriteMessageTo(channel *Channel, m msg.Message) {
+	n.writeTo <- writeToReq{channel, m}
 }
 
 // WriteMessageAll writes a message to all channels.
-func (n *Node) WriteMessageAll(message msg.Message) {
-	n.writeAll <- message
+func (n *Node) WriteMessageAll(m msg.Message) {
+	n.writeAll <- m
 }
 
 // WriteMessageExcept writes a message to all channels except specified channel.
-func (n *Node) WriteMessageExcept(exceptChannel *Channel, message msg.Message) {
-	n.writeExcept <- writeExceptReq{exceptChannel, message}
+func (n *Node) WriteMessageExcept(exceptChannel *Channel, m msg.Message) {
+	n.writeExcept <- writeExceptReq{exceptChannel, m}
 }
 
 // WriteFrameTo writes a frame to given channel.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
-func (n *Node) WriteFrameTo(channel *Channel, frame frame.Frame) {
-	n.writeTo <- writeToReq{channel, frame}
+func (n *Node) WriteFrameTo(channel *Channel, fr frame.Frame) {
+	n.writeTo <- writeToReq{channel, fr}
 }
 
 // WriteFrameAll writes a frame to all channels.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
-func (n *Node) WriteFrameAll(frame frame.Frame) {
-	n.writeAll <- frame
+func (n *Node) WriteFrameAll(fr frame.Frame) {
+	n.writeAll <- fr
 }
 
 // WriteFrameExcept writes a frame to all channels except specified channel.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
-func (n *Node) WriteFrameExcept(exceptChannel *Channel, frame frame.Frame) {
-	n.writeExcept <- writeExceptReq{exceptChannel, frame}
+func (n *Node) WriteFrameExcept(exceptChannel *Channel, fr frame.Frame) {
+	n.writeExcept <- writeExceptReq{exceptChannel, fr}
 }

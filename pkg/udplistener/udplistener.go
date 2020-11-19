@@ -152,13 +152,13 @@ func (c *conn) SetWriteDeadline(t time.Time) error {
 
 // Listener is a UDP listener.
 type Listener struct {
-	pc net.PacketConn
+	pc         net.PacketConn
 	conns      map[connIndex]*conn
 	readMutex  sync.Mutex
 	writeMutex sync.Mutex
 	closed     bool
 
-	accept  chan net.Conn
+	accept   chan net.Conn
 	readDone chan struct{}
 }
 
@@ -170,10 +170,10 @@ func New(network, address string) (net.Listener, error) {
 	}
 
 	l := &Listener{
-		pc: pc,
-		conns:      make(map[connIndex]*conn),
-		accept:    make(chan net.Conn),
-		readDone:   make(chan struct{}),
+		pc:       pc,
+		conns:    make(map[connIndex]*conn),
+		accept:   make(chan net.Conn),
+		readDone: make(chan struct{}),
 	}
 
 	go l.reader()

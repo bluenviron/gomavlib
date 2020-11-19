@@ -6,6 +6,8 @@ import (
 	"net"
 	"sync"
 	"time"
+
+	"github.com/aler9/gomavlib/pkg/multibuffer"
 )
 
 type endpointClientConf interface {
@@ -59,8 +61,7 @@ type endpointClient struct {
 	writer      io.Writer
 
 	terminate chan struct{}
-	readChan  chan []byte
-	readDone  chan struct{}
+	read      chan []byte
 }
 
 func initEndpointClient(conf endpointClientConf) (Endpoint, error) {
@@ -72,8 +73,7 @@ func initEndpointClient(conf endpointClientConf) (Endpoint, error) {
 	t := &endpointClient{
 		conf:      conf,
 		terminate: make(chan struct{}),
-		readChan:  make(chan []byte),
-		readDone:  make(chan struct{}),
+		read:      make(chan []byte),
 	}
 
 	// work in a separate routine
@@ -103,16 +103,7 @@ func (t *endpointClient) Close() error {
 }
 
 func (t *endpointClient) do() {
-	defer func() {
-		// consume readChan in case user is not calling Read()
-		go func() {
-			for range t.readChan {
-			}
-		}()
-		close(t.readChan)
-	}()
-
-	buf := make([]byte, bufferSize)
+	mb := multibuffer.New(2, bufferSize)
 
 	for {
 		// solve address and connect
@@ -140,12 +131,17 @@ func (t *endpointClient) do() {
 		select {
 		case <-dialDone:
 		case <-t.terminate:
+			go func() {
+				for range t.read {
+				}
+			}()
+			close(t.read)
 			return
 		}
 
-		// wait some seconds before reconnecting
 		if rawConn == nil {
 			ok := func() bool {
+				// wait some seconds before reconnecting
 				timer := time.NewTimer(netReconnectPeriod)
 				defer timer.Stop()
 
@@ -153,6 +149,11 @@ func (t *endpointClient) do() {
 				case <-timer.C:
 					return true
 				case <-t.terminate:
+					go func() {
+						for range t.read {
+						}
+					}()
+					close(t.read)
 					return false
 				}
 			}()
@@ -169,26 +170,31 @@ func (t *endpointClient) do() {
 			t.writer = conn
 		}()
 
-		cycleDone := make(chan struct{})
+		readerDone := make(chan struct{})
 		go func() {
-			defer close(cycleDone)
+			defer close(readerDone)
 
 			for {
+				buf := mb.Next()
 				n, err := conn.Read(buf)
 				if err != nil {
 					return
 				}
 
-				t.readChan <- buf[:n]
-				<-t.readDone
+				t.read <- buf[:n]
 			}
 		}()
 
 		select {
-		case <-cycleDone:
+		case <-readerDone:
 		case <-t.terminate:
+			go func() {
+				for range t.read {
+				}
+			}()
 			conn.Close()
-			<-cycleDone
+			<-readerDone
+			close(t.read)
 			return
 		}
 
@@ -203,12 +209,11 @@ func (t *endpointClient) do() {
 }
 
 func (t *endpointClient) Read(buf []byte) (int, error) {
-	src, ok := <-t.readChan
+	src, ok := <-t.read
 	if !ok {
 		return 0, errorTerminated
 	}
 	n := copy(buf, src)
-	t.readDone <- struct{}{}
 	return n, nil
 }
 

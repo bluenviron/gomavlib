@@ -4825,6 +4825,8 @@ const (
 	MAV_CMD_DO_UPGRADE MAV_CMD = 247
 	// Override current mission with command to pause mission, pause mission and move to position, continue/resume mission. When param 1 indicates that the mission is paused (MAV_GOTO_DO_HOLD), param 2 defines whether it holds in place or moves to another position.
 	MAV_CMD_OVERRIDE_GOTO MAV_CMD = 252
+	// Mission command to set a Camera Auto Mount Pivoting Oblique Survey (Replaces CAM_TRIGG_DIST for this purpose). The camera is triggered each time this distance is exceeded, then the mount moves to the next position. Params 4~6 set-up the angle limits and number of positions for oblique survey, where mount-enabled vehicles automatically roll the camera between shots to emulate an oblique camera setup (providing an increased HFOV). This command can also be used to set the shutter integration time for the camera.
+	MAV_CMD_OBLIQUE_SURVEY MAV_CMD = 260
 	// start running a mission
 	MAV_CMD_MISSION_START MAV_CMD = 300
 	// Arms / Disarms a component
@@ -5140,6 +5142,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_DO_UPGRADE"), nil
 	case MAV_CMD_OVERRIDE_GOTO:
 		return []byte("MAV_CMD_OVERRIDE_GOTO"), nil
+	case MAV_CMD_OBLIQUE_SURVEY:
+		return []byte("MAV_CMD_OBLIQUE_SURVEY"), nil
 	case MAV_CMD_MISSION_START:
 		return []byte("MAV_CMD_MISSION_START"), nil
 	case MAV_CMD_COMPONENT_ARM_DISARM:
@@ -5536,6 +5540,9 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_OVERRIDE_GOTO":
 		*e = MAV_CMD_OVERRIDE_GOTO
+		return nil
+	case "MAV_CMD_OBLIQUE_SURVEY":
+		*e = MAV_CMD_OBLIQUE_SURVEY
 		return nil
 	case "MAV_CMD_MISSION_START":
 		*e = MAV_CMD_MISSION_START

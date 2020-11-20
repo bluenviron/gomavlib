@@ -60,6 +60,7 @@ type endpointClient struct {
 	writerMutex sync.Mutex
 	writer      io.Writer
 
+	// in
 	terminate chan struct{}
 	read      chan []byte
 }

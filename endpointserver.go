@@ -48,8 +48,10 @@ func (conf EndpointUdpServer) getAddress() string {
 }
 
 type endpointServer struct {
-	conf      endpointServerConf
-	listener  net.Listener
+	conf     endpointServerConf
+	listener net.Listener
+
+	// in
 	terminate chan struct{}
 }
 

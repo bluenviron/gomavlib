@@ -11,8 +11,11 @@ type nodeHeartbeat struct {
 	n            *Node
 	msgHeartbeat msg.Message
 
+	// in
 	terminate chan struct{}
-	done      chan struct{}
+
+	// out
+	done chan struct{}
 }
 
 func newNodeHeartbeat(n *Node) *nodeHeartbeat {

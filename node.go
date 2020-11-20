@@ -125,14 +125,17 @@ type Node struct {
 	nodeHeartbeat      *nodeHeartbeat
 	nodeStreamRequest  *nodeStreamRequest
 
-	eventsOut    chan Event
+	// in
 	channelNew   chan *Channel
 	channelClose chan *Channel
 	writeTo      chan writeToReq
 	writeAll     chan interface{}
 	writeExcept  chan writeExceptReq
 	terminate    chan struct{}
-	done         chan struct{}
+
+	// out
+	events chan Event
+	done   chan struct{}
 }
 
 // NewNode allocates a Node. See NodeConf for the options.
@@ -182,16 +185,14 @@ func NewNode(conf NodeConf) (*Node, error) {
 		dialectDE:        dialectDE,
 		channelAccepters: make(map[*channelAccepter]struct{}),
 		channels:         make(map[*Channel]struct{}),
-		// these can be unbuffered as long as eventsIn's goroutine
-		// does not write to eventsOut
-		eventsOut:    make(chan Event),
-		channelNew:   make(chan *Channel),
-		channelClose: make(chan *Channel),
-		writeTo:      make(chan writeToReq),
-		writeAll:     make(chan interface{}),
-		writeExcept:  make(chan writeExceptReq),
-		terminate:    make(chan struct{}),
-		done:         make(chan struct{}),
+		channelNew:       make(chan *Channel),
+		channelClose:     make(chan *Channel),
+		writeTo:          make(chan writeToReq),
+		writeAll:         make(chan interface{}),
+		writeExcept:      make(chan writeExceptReq),
+		terminate:        make(chan struct{}),
+		events:           make(chan Event),
+		done:             make(chan struct{}),
 	}
 
 	closeExisting := func() {
@@ -334,14 +335,14 @@ outer:
 // Close halts node operations and waits for all routines to return.
 func (n *Node) Close() {
 	go func() {
-		for range n.eventsOut {
+		for range n.events {
 		}
 	}()
 
 	close(n.terminate)
 	<-n.done
 
-	close(n.eventsOut)
+	close(n.events)
 }
 
 // Events returns a channel from which receiving events. Possible events are:
@@ -352,7 +353,7 @@ func (n *Node) Close() {
 //   *EventStreamRequested
 // See individual events for meaning and content.
 func (n *Node) Events() chan Event {
-	return n.eventsOut
+	return n.events
 }
 
 // WriteMessageTo writes a message to given channel.

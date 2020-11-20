@@ -25,8 +25,11 @@ type nodeStreamRequest struct {
 	lastRequestsMutex    sync.Mutex
 	lastRequests         map[streamNode]time.Time
 
+	// in
 	terminate chan struct{}
-	done      chan struct{}
+
+	// out
+	done chan struct{}
 }
 
 func newNodeStreamRequest(n *Node) *nodeStreamRequest {
@@ -173,7 +176,7 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 			sr.n.WriteMessageTo(evt.Channel, m.Interface().(msg.Message))
 		}
 
-		sr.n.eventsOut <- &EventStreamRequested{
+		sr.n.events <- &EventStreamRequested{
 			Channel:     evt.Channel,
 			SystemId:    evt.SystemId(),
 			ComponentId: evt.ComponentId(),

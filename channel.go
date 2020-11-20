@@ -20,6 +20,7 @@ type Channel struct {
 	transceiver *transceiver.Transceiver
 	running     bool
 
+	// in
 	write     chan interface{}
 	terminate chan struct{}
 }
@@ -79,14 +80,14 @@ func (ch *Channel) run() {
 
 		// wait client here, in order to allow the writer goroutine to start
 		// and allow clients to write messages before starting listening to events
-		ch.n.eventsOut <- &EventChannelOpen{ch}
+		ch.n.events <- &EventChannelOpen{ch}
 
 		for {
 			frame, err := ch.transceiver.Read()
 			if err != nil {
 				// continue in case of parse errors
 				if _, ok := err.(*transceiver.TransceiverError); ok {
-					ch.n.eventsOut <- &EventParseError{err, ch}
+					ch.n.events <- &EventParseError{err, ch}
 					continue
 				}
 				return
@@ -98,7 +99,7 @@ func (ch *Channel) run() {
 				ch.n.nodeStreamRequest.onEventFrame(evt)
 			}
 
-			ch.n.eventsOut <- evt
+			ch.n.events <- evt
 		}
 	}()
 
@@ -119,7 +120,7 @@ func (ch *Channel) run() {
 
 	select {
 	case <-readerDone:
-		ch.n.eventsOut <- &EventChannelClose{ch}
+		ch.n.events <- &EventChannelClose{ch}
 
 		ch.n.channelClose <- ch
 		<-ch.terminate
@@ -130,7 +131,7 @@ func (ch *Channel) run() {
 		ch.rwc.Close()
 
 	case <-ch.terminate:
-		ch.n.eventsOut <- &EventChannelClose{ch}
+		ch.n.events <- &EventChannelClose{ch}
 
 		close(ch.write)
 		<-writerDone

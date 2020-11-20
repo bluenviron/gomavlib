@@ -44,6 +44,7 @@ type conn struct {
 	readDeadline  time.Time
 	writeDeadline time.Time
 
+	// in
 	read chan []byte
 }
 

@@ -1534,6 +1534,70 @@ func (e AIS_TYPE) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
+// Bitmap to indicate which dimensions should be ignored by the vehicle: a value of 0b00000000 indicates that none of the setpoint dimensions should be ignored.
+type ATTITUDE_TARGET_TYPEMASK int
+
+const (
+	// Ignore body roll rate
+	ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE ATTITUDE_TARGET_TYPEMASK = 1
+	// Ignore body pitch rate
+	ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE ATTITUDE_TARGET_TYPEMASK = 2
+	// Ignore body yaw rate
+	ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE ATTITUDE_TARGET_TYPEMASK = 4
+	// Ignore throttle
+	ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE ATTITUDE_TARGET_TYPEMASK = 64
+	// Ignore attitude
+	ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE ATTITUDE_TARGET_TYPEMASK = 128
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e ATTITUDE_TARGET_TYPEMASK) MarshalText() ([]byte, error) {
+	switch e {
+	case ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE:
+		return []byte("ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE"), nil
+	case ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE:
+		return []byte("ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE"), nil
+	case ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE:
+		return []byte("ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE"), nil
+	case ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE:
+		return []byte("ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE"), nil
+	case ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE:
+		return []byte("ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *ATTITUDE_TARGET_TYPEMASK) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE":
+		*e = ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE
+		return nil
+	case "ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE":
+		*e = ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE
+		return nil
+	case "ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE":
+		*e = ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE
+		return nil
+	case "ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE":
+		*e = ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE
+		return nil
+	case "ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE":
+		*e = ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e ATTITUDE_TARGET_TYPEMASK) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Camera capability flags (Bitmap)
 type CAMERA_CAP_FLAGS int
 
@@ -14280,8 +14344,8 @@ type MessageSetAttitudeTarget struct {
 	TargetSystem uint8
 	// Component ID
 	TargetComponent uint8
-	// Mappings: If any of these bits are set, the corresponding input should be ignored: bit 1: body roll rate, bit 2: body pitch rate, bit 3: body yaw rate. bit 4-bit 6: reserved, bit 7: throttle, bit 8: attitude
-	TypeMask uint8
+	// Bitmap to indicate which dimensions should be ignored by the vehicle.
+	TypeMask ATTITUDE_TARGET_TYPEMASK `mavenum:"uint8"`
 	// Attitude quaternion (w, x, y, z order, zero-rotation is 1, 0, 0, 0)
 	Q [4]float32
 	// Body roll rate
@@ -14303,8 +14367,8 @@ func (*MessageSetAttitudeTarget) GetId() uint32 {
 type MessageAttitudeTarget struct {
 	// Timestamp (time since system boot).
 	TimeBootMs uint32
-	// Mappings: If any of these bits are set, the corresponding input should be ignored: bit 1: body roll rate, bit 2: body pitch rate, bit 3: body yaw rate. bit 4-bit 7: reserved, bit 8: attitude
-	TypeMask uint8
+	// Bitmap to indicate which dimensions should be ignored by the vehicle.
+	TypeMask ATTITUDE_TARGET_TYPEMASK `mavenum:"uint8"`
 	// Attitude quaternion (w, x, y, z order, zero-rotation is 1, 0, 0, 0)
 	Q [4]float32
 	// Body roll rate

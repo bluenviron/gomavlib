@@ -1,7 +1,7 @@
 
 # gomavlib
 
-[![Build Status](https://travis-ci.com/aler9/gomavlib.svg?branch=master)](https://travis-ci.com/aler9/gomavlib)
+[![Test](https://github.com/aler9/gomavlib/workflows/test/badge.svg)](https://github.com/aler9/gomavlib/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/aler9/gomavlib)](https://goreportcard.com/report/github.com/aler9/gomavlib)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/aler9/gomavlib)](https://pkg.go.dev/github.com/aler9/gomavlib)
 

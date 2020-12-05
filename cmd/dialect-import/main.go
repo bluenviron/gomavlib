@@ -17,77 +17,11 @@ import (
 )
 
 var reMsgName = regexp.MustCompile("^[A-Z0-9_]+$")
-var reTypeIsArray = regexp.MustCompile("^(.+?)\\[([0-9]+)\\]$")
-
-var dialectTypeToGo = map[string]string{
-	"double":   "float64",
-	"uint64_t": "uint64",
-	"int64_t":  "int64",
-	"float":    "float32",
-	"uint32_t": "uint32",
-	"int32_t":  "int32",
-	"uint16_t": "uint16",
-	"int16_t":  "int16",
-	"uint8_t":  "uint8",
-	"int8_t":   "int8",
-	"char":     "string",
-}
-
-func dialectFieldGoToDef(in string) string {
-	re := regexp.MustCompile("([A-Z])")
-	in = re.ReplaceAllString(in, "_${1}")
-	return strings.ToLower(in[1:])
-}
-
-func dialectFieldDefToGo(in string) string {
-	return dialectMsgDefToGo(in)
-}
-
-func dialectMsgDefToGo(in string) string {
-	re := regexp.MustCompile("_[a-z]")
-	in = strings.ToLower(in)
-	in = re.ReplaceAllStringFunc(in, func(match string) string {
-		return strings.ToUpper(match[1:2])
-	})
-	return strings.ToUpper(in[:1]) + in[1:]
-}
-
-func filterDesc(in string) string {
-	return strings.Replace(in, "\n", "", -1)
-}
-
-type outEnumValue struct {
-	Value       string
-	Name        string
-	Description string
-}
-
-type outEnum struct {
-	Name        string
-	Description string
-	Values      []*outEnumValue
-}
-
-type outField struct {
-	Description string
-	Line        string
-}
-
-type outMessage struct {
-	Name        string
-	Description string
-	Id          int
-	Fields      []*outField
-}
-
-type outDefinition struct {
-	Name     string
-	Enums    []*outEnum
-	Messages []*outMessage
-}
+var reTypeIsArray = regexp.MustCompile(`^(.+?)\[([0-9]+)\]$`)
 
 var tplDialect = template.Must(template.New("").Parse(
-	`{{- if .Comment -}}
+	`//nolint:golint,misspell,govet
+{{- if .Comment -}}
 // {{ .Comment }}
 {{- end }}
 package {{ .PkgName }}
@@ -173,13 +107,80 @@ type Message{{ .Name }} struct {
 {{- end }}
 }
 
-// GetId implements the msg.Message interface.
-func (*Message{{ .Name }}) GetId() uint32 {
-    return {{ .Id }}
+// GetID implements the msg.Message interface.
+func (*Message{{ .Name }}) GetID() uint32 {
+    return {{ .ID }}
 }
 {{ end }}
 {{- end }}
 `))
+
+var dialectTypeToGo = map[string]string{
+	"double":   "float64",
+	"uint64_t": "uint64",
+	"int64_t":  "int64",
+	"float":    "float32",
+	"uint32_t": "uint32",
+	"int32_t":  "int32",
+	"uint16_t": "uint16",
+	"int16_t":  "int16",
+	"uint8_t":  "uint8",
+	"int8_t":   "int8",
+	"char":     "string",
+}
+
+func dialectFieldGoToDef(in string) string {
+	re := regexp.MustCompile("([A-Z])")
+	in = re.ReplaceAllString(in, "_${1}")
+	return strings.ToLower(in[1:])
+}
+
+func dialectFieldDefToGo(in string) string {
+	return dialectMsgDefToGo(in)
+}
+
+func dialectMsgDefToGo(in string) string {
+	re := regexp.MustCompile("_[a-z]")
+	in = strings.ToLower(in)
+	in = re.ReplaceAllStringFunc(in, func(match string) string {
+		return strings.ToUpper(match[1:2])
+	})
+	return strings.ToUpper(in[:1]) + in[1:]
+}
+
+func filterDesc(in string) string {
+	return strings.Replace(in, "\n", "", -1)
+}
+
+type outEnumValue struct {
+	Value       string
+	Name        string
+	Description string
+}
+
+type outEnum struct {
+	Name        string
+	Description string
+	Values      []*outEnumValue
+}
+
+type outField struct {
+	Description string
+	Line        string
+}
+
+type outMessage struct {
+	Name        string
+	Description string
+	ID          int
+	Fields      []*outField
+}
+
+type outDefinition struct {
+	Name     string
+	Enums    []*outEnum
+	Messages []*outMessage
+}
 
 func definitionProcess(version *string, defsProcessed map[string]struct{}, isRemote bool, defAddr string) ([]*outDefinition, error) {
 	// skip already processed
@@ -215,7 +216,7 @@ func definitionProcess(version *string, defsProcessed map[string]struct{}, isRem
 	// includes
 	for _, inc := range def.Includes {
 		// prepend url to remote address
-		if isRemote == true {
+		if isRemote {
 			inc = addrPath + inc
 		}
 		subDefs, err := definitionProcess(version, defsProcessed, isRemote, inc)
@@ -259,7 +260,7 @@ func definitionProcess(version *string, defsProcessed map[string]struct{}, isRem
 }
 
 func definitionGet(isRemote bool, defAddr string) ([]byte, error) {
-	if isRemote == true {
+	if isRemote {
 		byt, err := download(defAddr)
 		if err != nil {
 			return nil, fmt.Errorf("unable to download: %s", err)
@@ -300,7 +301,7 @@ func messageProcess(msg *definitionMessage) (*outMessage, error) {
 	outMsg := &outMessage{
 		Name:        dialectMsgDefToGo(msg.Name),
 		Description: filterDesc(msg.Description),
-		Id:          msg.Id,
+		ID:          msg.ID,
 	}
 
 	for _, f := range msg.Fields {
@@ -350,7 +351,7 @@ func fieldProcess(field *dialectField) (*outField, error) {
 	}
 
 	// extension
-	if field.Extension == true {
+	if field.Extension {
 		tags["mavext"] = "true"
 	}
 
@@ -419,9 +420,7 @@ func run() error {
 			}
 			enum := enums[defEnum.Name]
 
-			for _, v := range defEnum.Values {
-				enum.Values = append(enum.Values, v)
-			}
+			enum.Values = append(enum.Values, defEnum.Values...)
 		}
 	}
 

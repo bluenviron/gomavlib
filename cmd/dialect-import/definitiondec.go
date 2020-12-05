@@ -26,7 +26,7 @@ type dialectField struct {
 }
 
 type definitionMessage struct {
-	Id          int
+	ID          int
 	Name        string
 	Description string
 	Fields      []*dialectField
@@ -40,7 +40,7 @@ func (m *definitionMessage) UnmarshalXML(d *xml.Decoder, start xml.StartElement)
 		switch a.Name.Local {
 		case "id":
 			v, _ := strconv.Atoi(a.Value)
-			m.Id = v
+			m.ID = v
 		case "name":
 			m.Name = a.Value
 		}

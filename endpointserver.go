@@ -9,41 +9,41 @@ import (
 )
 
 type endpointServerConf interface {
-	isUdp() bool
+	isUDP() bool
 	getAddress() string
 	init() (Endpoint, error)
 }
 
-// EndpointTcpServer sets up a endpoint that works with a TCP server.
+// EndpointTCPServer sets up a endpoint that works with a TCP server.
 // TCP is fit for routing frames through the internet, but is not the most
 // appropriate way for transferring frames from a UAV to a GCS, since it does
 // not allow frame losses.
-type EndpointTcpServer struct {
+type EndpointTCPServer struct {
 	// listen address, example: 0.0.0.0:5600
 	Address string
 }
 
-func (EndpointTcpServer) isUdp() bool {
+func (EndpointTCPServer) isUDP() bool {
 	return false
 }
 
-func (conf EndpointTcpServer) getAddress() string {
+func (conf EndpointTCPServer) getAddress() string {
 	return conf.Address
 }
 
-// EndpointUdpServer sets up a endpoint that works with an UDP server.
+// EndpointUDPServer sets up a endpoint that works with an UDP server.
 // This is the most appropriate way for transferring frames from a UAV to a GCS
 // if they are connected to the same network.
-type EndpointUdpServer struct {
+type EndpointUDPServer struct {
 	// listen address, example: 0.0.0.0:5600
 	Address string
 }
 
-func (EndpointUdpServer) isUdp() bool {
+func (EndpointUDPServer) isUDP() bool {
 	return true
 }
 
-func (conf EndpointUdpServer) getAddress() string {
+func (conf EndpointUDPServer) getAddress() string {
 	return conf.Address
 }
 
@@ -55,11 +55,11 @@ type endpointServer struct {
 	terminate chan struct{}
 }
 
-func (conf EndpointTcpServer) init() (Endpoint, error) {
+func (conf EndpointTCPServer) init() (Endpoint, error) {
 	return initEndpointServer(conf)
 }
 
-func (conf EndpointUdpServer) init() (Endpoint, error) {
+func (conf EndpointUDPServer) init() (Endpoint, error) {
 	return initEndpointServer(conf)
 }
 
@@ -70,7 +70,7 @@ func initEndpointServer(conf endpointServerConf) (Endpoint, error) {
 	}
 
 	var listener net.Listener
-	if conf.isUdp() == true {
+	if conf.isUDP() {
 		listener, err = udplistener.New("udp4", conf.getAddress())
 	} else {
 		listener, err = net.Listen("tcp4", conf.getAddress())
@@ -109,7 +109,7 @@ func (t *endpointServer) Accept() (string, io.ReadWriteCloser, error) {
 	}
 
 	label := fmt.Sprintf("%s:%s", func() string {
-		if t.conf.isUdp() {
+		if t.conf.isUDP() {
 			return "udp"
 		}
 		return "tcp"

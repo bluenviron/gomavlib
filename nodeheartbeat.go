@@ -32,7 +32,7 @@ func newNodeHeartbeat(n *Node) *nodeHeartbeat {
 	// heartbeat message must exist in dialect and correspond to standard
 	msgHeartbeat := func() msg.Message {
 		for _, m := range n.conf.Dialect.Messages {
-			if m.GetId() == 0 {
+			if m.GetID() == 0 {
 				return m
 			}
 		}

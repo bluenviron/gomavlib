@@ -11,47 +11,47 @@ import (
 )
 
 type endpointClientConf interface {
-	isUdp() bool
+	isUDP() bool
 	getAddress() string
 	init() (Endpoint, error)
 }
 
-// EndpointTcpClient sets up a endpoint that works with a TCP client.
+// EndpointTCPClient sets up a endpoint that works with a TCP client.
 // TCP is fit for routing frames through the internet, but is not the most
 // appropriate way for transferring frames from a UAV to a GCS, since it does
 // not allow frame losses.
-type EndpointTcpClient struct {
+type EndpointTCPClient struct {
 	// domain name or IP of the server to connect to, example: 1.2.3.4:5600
 	Address string
 }
 
-func (EndpointTcpClient) isUdp() bool {
+func (EndpointTCPClient) isUDP() bool {
 	return false
 }
 
-func (conf EndpointTcpClient) getAddress() string {
+func (conf EndpointTCPClient) getAddress() string {
 	return conf.Address
 }
 
-func (conf EndpointTcpClient) init() (Endpoint, error) {
+func (conf EndpointTCPClient) init() (Endpoint, error) {
 	return initEndpointClient(conf)
 }
 
-// EndpointUdpClient sets up a endpoint that works with a UDP client.
-type EndpointUdpClient struct {
+// EndpointUDPClient sets up a endpoint that works with a UDP client.
+type EndpointUDPClient struct {
 	// domain name or IP of the server to connect to, example: 1.2.3.4:5600
 	Address string
 }
 
-func (EndpointUdpClient) isUdp() bool {
+func (EndpointUDPClient) isUDP() bool {
 	return true
 }
 
-func (conf EndpointUdpClient) getAddress() string {
+func (conf EndpointUDPClient) getAddress() string {
 	return conf.Address
 }
 
-func (conf EndpointUdpClient) init() (Endpoint, error) {
+func (conf EndpointUDPClient) init() (Endpoint, error) {
 	return initEndpointClient(conf)
 }
 
@@ -91,7 +91,7 @@ func (t *endpointClient) Conf() EndpointConf {
 
 func (t *endpointClient) Label() string {
 	return fmt.Sprintf("%s:%s", func() string {
-		if t.conf.isUdp() {
+		if t.conf.isUDP() {
 			return "udp"
 		}
 		return "tcp"
@@ -116,7 +116,7 @@ func (t *endpointClient) do() {
 			defer close(dialDone)
 
 			network := func() string {
-				if t.conf.isUdp() == true {
+				if t.conf.isUDP() {
 					return "udp4"
 				}
 				return "tcp4"

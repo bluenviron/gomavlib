@@ -21,7 +21,7 @@ func main() {
 		},
 		Dialect:             ardupilotmega.Dialect,
 		OutVersion:          gomavlib.V1, // Ardupilot uses V1
-		OutSystemId:         10,
+		OutSystemID:         10,
 		StreamRequestEnable: true,
 	})
 	if err != nil {
@@ -32,7 +32,7 @@ func main() {
 	// print every message we receive
 	for evt := range node.Events() {
 		if frm, ok := evt.(*gomavlib.EventFrame); ok {
-			fmt.Printf("received: id=%d, %+v\n", frm.Message().GetId(), frm.Message())
+			fmt.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())
 		}
 	}
 }

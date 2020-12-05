@@ -1,3 +1,4 @@
+//nolint:golint
 package common
 
 import (

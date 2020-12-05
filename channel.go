@@ -26,20 +26,20 @@ type Channel struct {
 }
 
 func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Channel, error) {
-	transceiver, err := transceiver.New(transceiver.TransceiverConf{
+	transceiver, err := transceiver.New(transceiver.Conf{
 		Reader:      rwc,
 		Writer:      rwc,
 		DialectDE:   n.dialectDE,
 		InKey:       n.conf.InKey,
-		OutSystemId: n.conf.OutSystemId,
+		OutSystemID: n.conf.OutSystemID,
 		OutVersion: func() transceiver.Version {
 			if n.conf.OutVersion == V2 {
 				return transceiver.V2
 			}
 			return transceiver.V1
 		}(),
-		OutComponentId:     n.conf.OutComponentId,
-		OutSignatureLinkId: randomByte(),
+		OutComponentID:     n.conf.OutComponentID,
+		OutSignatureLinkID: randomByte(),
 		OutKey:             n.conf.OutKey,
 	})
 	if err != nil {
@@ -86,7 +86,7 @@ func (ch *Channel) run() {
 			frame, err := ch.transceiver.Read()
 			if err != nil {
 				// continue in case of parse errors
-				if _, ok := err.(*transceiver.TransceiverError); ok {
+				if _, ok := err.(*transceiver.Error); ok {
 					ch.n.events <- &EventParseError{err, ch}
 					continue
 				}

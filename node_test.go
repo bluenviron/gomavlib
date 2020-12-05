@@ -2,6 +2,7 @@ package gomavlib
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"reflect"
 	"sync"
@@ -15,10 +16,10 @@ import (
 	"github.com/aler9/gomavlib/pkg/msg"
 )
 
-type MAV_TYPE int
-type MAV_AUTOPILOT int
-type MAV_MODE_FLAG int
-type MAV_STATE int
+type MAV_TYPE int      //nolint:golint
+type MAV_AUTOPILOT int //nolint:golint
+type MAV_MODE_FLAG int //nolint:golint
+type MAV_STATE int     //nolint:golint
 
 type MessageHeartbeat struct {
 	Type           MAV_TYPE      `mavenum:"uint8"`
@@ -29,19 +30,19 @@ type MessageHeartbeat struct {
 	MavlinkVersion uint8
 }
 
-func (*MessageHeartbeat) GetId() uint32 {
+func (*MessageHeartbeat) GetID() uint32 {
 	return 0
 }
 
 type MessageRequestDataStream struct {
 	TargetSystem    uint8
 	TargetComponent uint8
-	ReqStreamId     uint8
+	ReqStreamId     uint8 //nolint:golint
 	ReqMessageRate  uint16
 	StartStop       uint8
 }
 
-func (*MessageRequestDataStream) GetId() uint32 {
+func (*MessageRequestDataStream) GetID() uint32 {
 	return 66
 }
 
@@ -80,26 +81,27 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 	}
 
 	node1, err := NewNode(NodeConf{
-		Dialect:          &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
+		Dialect:          &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:       V2,
-		OutSystemId:      10,
+		OutSystemID:      10,
 		Endpoints:        []EndpointConf{t1},
 		HeartbeatDisable: true,
 	})
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect:          &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
+		Dialect:          &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:       V2,
-		OutSystemId:      11,
+		OutSystemID:      11, //nolint:golint
 		Endpoints:        []EndpointConf{t2},
 		HeartbeatDisable: true,
 	})
 	require.NoError(t, err)
 
-	success := false
 	var wg sync.WaitGroup
 	wg.Add(2)
+	var err1 error
+	var err2 error
 
 	go func() {
 		defer wg.Done()
@@ -113,9 +115,9 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 				switch step {
 				case 0:
 					if !reflect.DeepEqual(e.Message(), testMsg1) ||
-						e.SystemId() != 11 ||
-						e.ComponentId() != 1 {
-						t.Fatal("received wrong message")
+						e.SystemID() != 11 ||
+						e.ComponentID() != 1 {
+						err1 = fmt.Errorf("received wrong message")
 						return
 					}
 					node1.WriteMessageAll(testMsg2)
@@ -123,9 +125,9 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 
 				case 1:
 					if !reflect.DeepEqual(e.Message(), testMsg3) ||
-						e.SystemId() != 11 ||
-						e.ComponentId() != 1 {
-						t.Fatal("received wrong message")
+						e.SystemID() != 11 ||
+						e.ComponentID() != 1 {
+						err1 = fmt.Errorf("received wrong message")
 						return
 					}
 					node1.WriteMessageAll(testMsg4)
@@ -152,9 +154,9 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 				switch step {
 				case 0:
 					if !reflect.DeepEqual(e.Message(), testMsg2) ||
-						e.SystemId() != 10 ||
-						e.ComponentId() != 1 {
-						t.Fatal("received wrong message")
+						e.SystemID() != 10 ||
+						e.ComponentID() != 1 {
+						err2 = fmt.Errorf("received wrong message")
 						return
 					}
 					node2.WriteMessageAll(testMsg3)
@@ -162,12 +164,11 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 
 				case 1:
 					if !reflect.DeepEqual(e.Message(), testMsg4) ||
-						e.SystemId() != 10 ||
-						e.ComponentId() != 1 {
-						t.Fatal("received wrong message")
+						e.SystemID() != 10 ||
+						e.ComponentID() != 1 {
+						err2 = fmt.Errorf("received wrong message")
 						return
 					}
-					success = true
 					return
 				}
 			}
@@ -175,21 +176,21 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 	}()
 
 	wg.Wait()
-
-	require.Equal(t, true, success)
+	require.NoError(t, err1)
+	require.NoError(t, err2)
 }
 
 func TestNodeTcpServerClient(t *testing.T) {
-	doTest(t, EndpointTcpServer{"127.0.0.1:5601"}, EndpointTcpClient{"127.0.0.1:5601"})
+	doTest(t, EndpointTCPServer{"127.0.0.1:5601"}, EndpointTCPClient{"127.0.0.1:5601"})
 }
 
 func TestNodeUdpServerClient(t *testing.T) {
-	doTest(t, EndpointUdpServer{"127.0.0.1:5601"}, EndpointUdpClient{"127.0.0.1:5601"})
+	doTest(t, EndpointUDPServer{"127.0.0.1:5601"}, EndpointUDPClient{"127.0.0.1:5601"})
 }
 
 func TestNodeUdpBroadcastBroadcast(t *testing.T) {
-	doTest(t, EndpointUdpBroadcast{"127.255.255.255:5602", ":5601"},
-		EndpointUdpBroadcast{"127.255.255.255:5601", ":5602"})
+	doTest(t, EndpointUDPBroadcast{"127.255.255.255:5602", ":5601"},
+		EndpointUDPBroadcast{"127.255.255.255:5601", ":5602"})
 }
 
 type testLoopback chan []byte
@@ -227,12 +228,12 @@ func TestNodeCustomCustom(t *testing.T) {
 
 func TestNodeError(t *testing.T) {
 	_, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
+		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:  V2,
-		OutSystemId: 11,
+		OutSystemID: 11,
 		Endpoints: []EndpointConf{
-			EndpointUdpServer{"127.0.0.1:5600"},
-			EndpointUdpServer{"127.0.0.1:5600"},
+			EndpointUDPServer{"127.0.0.1:5600"},
+			EndpointUDPServer{"127.0.0.1:5600"},
 		},
 		HeartbeatDisable: true,
 	})
@@ -241,22 +242,22 @@ func TestNodeError(t *testing.T) {
 
 func TestNodeCloseInLoop(t *testing.T) {
 	node1, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
+		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:  V2,
-		OutSystemId: 11,
+		OutSystemID: 11,
 		Endpoints: []EndpointConf{
-			EndpointUdpServer{"127.0.0.1:5600"},
+			EndpointUDPServer{"127.0.0.1:5600"},
 		},
 		HeartbeatDisable: true,
 	})
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
+		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:  V2,
-		OutSystemId: 11,
+		OutSystemID: 11,
 		Endpoints: []EndpointConf{
-			EndpointUdpClient{"127.0.0.1:5600"},
+			EndpointUDPClient{"127.0.0.1:5600"},
 		},
 		HeartbeatDisable: true,
 	})
@@ -287,22 +288,22 @@ func TestNodeCloseInLoop(t *testing.T) {
 
 func TestNodeWriteMultipleInLoop(t *testing.T) {
 	node1, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
+		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:  V2,
-		OutSystemId: 11,
+		OutSystemID: 11,
 		Endpoints: []EndpointConf{
-			EndpointUdpServer{"127.0.0.1:5600"},
+			EndpointUDPServer{"127.0.0.1:5600"},
 		},
 		HeartbeatDisable: true,
 	})
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
+		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:  V2,
-		OutSystemId: 11,
+		OutSystemID: 11,
 		Endpoints: []EndpointConf{
-			EndpointUdpClient{"127.0.0.1:5600"},
+			EndpointUDPClient{"127.0.0.1:5600"},
 		},
 		HeartbeatDisable: true,
 	})
@@ -355,43 +356,38 @@ func TestNodeSignature(t *testing.T) {
 	}
 
 	node1, err := NewNode(NodeConf{
-		Dialect: &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
+		Dialect: &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
 		Endpoints: []EndpointConf{
-			EndpointUdpServer{"127.0.0.1:5600"},
+			EndpointUDPServer{"127.0.0.1:5600"},
 		},
 		HeartbeatDisable: true,
 		InKey:            key2,
 		OutVersion:       V2,
-		OutSystemId:      10,
+		OutSystemID:      10,
 		OutKey:           key1,
 	})
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect: &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
+		Dialect: &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
 		Endpoints: []EndpointConf{
-			EndpointUdpClient{"127.0.0.1:5600"},
+			EndpointUDPClient{"127.0.0.1:5600"},
 		},
 		HeartbeatDisable: true,
 		InKey:            key1,
 		OutVersion:       V2,
-		OutSystemId:      11,
+		OutSystemID:      11,
 		OutKey:           key2,
 	})
 	require.NoError(t, err)
 
-	success := false
 	var wg sync.WaitGroup
 	wg.Add(2)
 
 	go func() {
 		defer wg.Done()
 		defer node1.Close()
-
-		_, ok := <-node1.Events()
-		if !ok {
-			return
-		}
+		<-node1.Events()
 	}()
 
 	go func() {
@@ -402,17 +398,10 @@ func TestNodeSignature(t *testing.T) {
 
 		node2.WriteMessageAll(testMsg)
 
-		_, ok := <-node2.Events()
-		if !ok {
-			return
-		}
-
-		success = true
+		<-node2.Events()
 	}()
 
 	wg.Wait()
-
-	require.Equal(t, true, success)
 }
 
 func TestNodeRouting(t *testing.T) {
@@ -426,34 +415,34 @@ func TestNodeRouting(t *testing.T) {
 	}
 
 	node1, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
+		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:  V2,
-		OutSystemId: 10,
+		OutSystemID: 10,
 		Endpoints: []EndpointConf{
-			EndpointUdpClient{"127.0.0.1:5600"},
+			EndpointUDPClient{"127.0.0.1:5600"},
 		},
 		HeartbeatDisable: true,
 	})
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
+		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:  V2,
-		OutSystemId: 11,
+		OutSystemID: 11,
 		Endpoints: []EndpointConf{
-			EndpointUdpServer{"127.0.0.1:5600"},
-			EndpointUdpClient{"127.0.0.1:5601"},
+			EndpointUDPServer{"127.0.0.1:5600"},
+			EndpointUDPClient{"127.0.0.1:5601"},
 		},
 		HeartbeatDisable: true,
 	})
 	require.NoError(t, err)
 
 	node3, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
+		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:  V2,
-		OutSystemId: 12,
+		OutSystemID: 12,
 		Endpoints: []EndpointConf{
-			EndpointUdpServer{"127.0.0.1:5601"},
+			EndpointUDPServer{"127.0.0.1:5601"},
 		},
 		HeartbeatDisable: true,
 	})
@@ -464,9 +453,9 @@ func TestNodeRouting(t *testing.T) {
 
 	node1.WriteMessageAll(testMsg)
 
-	success := false
 	var wg sync.WaitGroup
 	wg.Add(2)
+	var err2 error
 
 	go func() {
 		defer wg.Done()
@@ -487,11 +476,11 @@ func TestNodeRouting(t *testing.T) {
 			switch e := evt.(type) {
 			case *EventFrame:
 				if _, ok := e.Message().(*MessageHeartbeat); !ok ||
-					e.SystemId() != 10 ||
-					e.ComponentId() != 1 {
-					t.Fatal("wrong message received")
+					e.SystemID() != 10 ||
+					e.ComponentID() != 1 {
+					err2 = fmt.Errorf("wrong message received")
+					return
 				}
-				success = true
 				return
 			}
 		}
@@ -502,19 +491,17 @@ func TestNodeRouting(t *testing.T) {
 	node2.Close()
 	node3.Close()
 
-	require.Equal(t, true, success)
+	require.NoError(t, err2)
 }
 
 func TestNodeHeartbeat(t *testing.T) {
-	success := false
-
 	func() {
 		node1, err := NewNode(NodeConf{
-			Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
+			Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
 			OutVersion:  V2,
-			OutSystemId: 10,
+			OutSystemID: 10,
 			Endpoints: []EndpointConf{
-				EndpointUdpServer{"127.0.0.1:5600"},
+				EndpointUDPServer{"127.0.0.1:5600"},
 			},
 			HeartbeatDisable: true,
 		})
@@ -522,11 +509,11 @@ func TestNodeHeartbeat(t *testing.T) {
 		defer node1.Close()
 
 		node2, err := NewNode(NodeConf{
-			Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}},
+			Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
 			OutVersion:  V2,
-			OutSystemId: 11,
+			OutSystemID: 11,
 			Endpoints: []EndpointConf{
-				EndpointUdpClient{"127.0.0.1:5600"},
+				EndpointUDPClient{"127.0.0.1:5600"},
 			},
 			HeartbeatDisable: false,
 			HeartbeatPeriod:  500 * time.Millisecond,
@@ -537,29 +524,24 @@ func TestNodeHeartbeat(t *testing.T) {
 		for evt := range node1.Events() {
 			if ee, ok := evt.(*EventFrame); ok {
 				if _, ok = ee.Message().(*MessageHeartbeat); ok {
-					success = true
-					break
+					return
 				}
 			}
 		}
 	}()
-
-	require.Equal(t, true, success)
 }
 
 func TestNodeStreamRequest(t *testing.T) {
-	success := false
-
 	func() {
 		node1, err := NewNode(NodeConf{
-			Dialect: &dialect.Dialect{3, []msg.Message{
+			Dialect: &dialect.Dialect{3, []msg.Message{ //nolint:govet
 				&MessageHeartbeat{},
 				&MessageRequestDataStream{},
 			}},
 			OutVersion:  V2,
-			OutSystemId: 10,
+			OutSystemID: 10,
 			Endpoints: []EndpointConf{
-				EndpointUdpServer{"127.0.0.1:5600"},
+				EndpointUDPServer{"127.0.0.1:5600"},
 			},
 			HeartbeatDisable:    true,
 			StreamRequestEnable: true,
@@ -568,14 +550,14 @@ func TestNodeStreamRequest(t *testing.T) {
 		defer node1.Close()
 
 		node2, err := NewNode(NodeConf{
-			Dialect: &dialect.Dialect{3, []msg.Message{
+			Dialect: &dialect.Dialect{3, []msg.Message{ //nolint:govet
 				&MessageHeartbeat{},
 				&MessageRequestDataStream{},
 			}},
 			OutVersion:  V2,
-			OutSystemId: 10,
+			OutSystemID: 10,
 			Endpoints: []EndpointConf{
-				EndpointUdpClient{"127.0.0.1:5600"},
+				EndpointUDPClient{"127.0.0.1:5600"},
 			},
 			HeartbeatDisable:       false,
 			HeartbeatPeriod:        500 * time.Millisecond,
@@ -592,12 +574,9 @@ func TestNodeStreamRequest(t *testing.T) {
 		for evt := range node2.Events() {
 			if ee, ok := evt.(*EventFrame); ok {
 				if _, ok = ee.Message().(*MessageRequestDataStream); ok {
-					success = true
-					break
+					return
 				}
 			}
 		}
 	}()
-
-	require.Equal(t, true, success)
 }

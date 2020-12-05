@@ -53,5 +53,5 @@ func (t *endpointSerial) Conf() EndpointConf {
 }
 
 func (t *endpointSerial) Label() string {
-	return fmt.Sprintf("serial")
+	return "serial"
 }

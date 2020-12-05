@@ -14,17 +14,17 @@ import (
 	"github.com/aler9/gomavlib/pkg/msg"
 )
 
-type MAV_TYPE int
-type MAV_AUTOPILOT int
-type MAV_MODE_FLAG int
-type MAV_STATE int
+type MAV_TYPE int      //nolint:golint
+type MAV_AUTOPILOT int //nolint:golint
+type MAV_MODE_FLAG int //nolint:golint
+type MAV_STATE int     //nolint:golint
 
 type MessageTest5 struct {
 	TestByte byte
 	TestUint uint32
 }
 
-func (m *MessageTest5) GetId() uint32 {
+func (m *MessageTest5) GetID() uint32 {
 	return 5
 }
 
@@ -33,7 +33,7 @@ type MessageTest6 struct {
 	TestUint uint32
 }
 
-func (m *MessageTest6) GetId() uint32 {
+func (m *MessageTest6) GetID() uint32 {
 	return 0x0607
 }
 
@@ -42,7 +42,7 @@ type MessageTest8 struct {
 	TestUint uint32
 }
 
-func (m *MessageTest8) GetId() uint32 {
+func (m *MessageTest8) GetID() uint32 {
 	return 8
 }
 
@@ -55,13 +55,13 @@ type MessageHeartbeat struct {
 	MavlinkVersion uint8
 }
 
-func (*MessageHeartbeat) GetId() uint32 {
+func (*MessageHeartbeat) GetID() uint32 {
 	return 0
 }
 
 type MessageOpticalFlow struct {
 	TimeUsec       uint64
-	SensorId       uint8
+	SensorId       uint8 //nolint:golint
 	FlowX          int16
 	FlowY          int16
 	FlowCompMX     float32
@@ -72,12 +72,12 @@ type MessageOpticalFlow struct {
 	FlowRateY      float32 `mavext:"true"`
 }
 
-func (*MessageOpticalFlow) GetId() uint32 {
+func (*MessageOpticalFlow) GetID() uint32 {
 	return 100
 }
 
 var testDialectDE = func() *dialect.DecEncoder {
-	d := &dialect.Dialect{3, []msg.Message{
+	d := &dialect.Dialect{3, []msg.Message{ //nolint:govet
 		&MessageTest5{},
 		&MessageTest6{},
 		&MessageTest8{},
@@ -103,11 +103,11 @@ var casesTransceiver = []struct {
 		nil,
 		nil,
 		&frame.V1Frame{
-			SequenceId:  0x01,
-			SystemId:    0x02,
-			ComponentId: 0x03,
+			SequenceID:  0x01,
+			SystemID:    0x02,
+			ComponentID: 0x03,
 			Message: &msg.MessageRaw{
-				Id:      4,
+				ID:      4,
 				Content: nil,
 			},
 			Checksum: 0x0807,
@@ -119,10 +119,10 @@ var casesTransceiver = []struct {
 		nil,
 		nil,
 		&frame.V1Frame{
-			SequenceId:  0x27,
-			SystemId:    0x01,
-			ComponentId: 0x02,
-			Message: &msg.MessageRaw{
+			SequenceID:  0x27,
+			SystemID:    0x01,
+			ComponentID: 0x02,
+			Message: &msg.MessageRaw{ //nolint:govet
 				8,
 				[]byte("\x10\x10\x10\x10\x10"),
 			},
@@ -135,9 +135,9 @@ var casesTransceiver = []struct {
 		testDialectDE,
 		nil,
 		&frame.V1Frame{
-			SequenceId:  0x27,
-			SystemId:    0x01,
-			ComponentId: 0x02,
+			SequenceID:  0x27,
+			SystemID:    0x01,
+			ComponentID: 0x02,
 			Message: &MessageTest5{
 				'\x10',
 				binary.LittleEndian.Uint32([]byte("\x10\x10\x10\x10")),
@@ -153,10 +153,10 @@ var casesTransceiver = []struct {
 		&frame.V2Frame{
 			IncompatibilityFlag: 0,
 			CompatibilityFlag:   0,
-			SequenceId:          3,
-			SystemId:            4,
-			ComponentId:         5,
-			Message: &msg.MessageRaw{
+			SequenceID:          3,
+			SystemID:            4,
+			ComponentID:         5,
+			Message: &msg.MessageRaw{ //nolint:govet
 				4,
 				nil,
 			},
@@ -171,10 +171,10 @@ var casesTransceiver = []struct {
 		&frame.V2Frame{
 			IncompatibilityFlag: 0x00,
 			CompatibilityFlag:   0x00,
-			SequenceId:          0x8F,
-			SystemId:            0x01,
-			ComponentId:         0x02,
-			Message: &msg.MessageRaw{
+			SequenceID:          0x8F,
+			SystemID:            0x01,
+			ComponentID:         0x02,
+			Message: &msg.MessageRaw{ //nolint:govet
 				0x0607,
 				[]byte("\x10\x10\x10\x10\x10"),
 			},
@@ -189,9 +189,9 @@ var casesTransceiver = []struct {
 		&frame.V2Frame{
 			IncompatibilityFlag: 0x00,
 			CompatibilityFlag:   0x00,
-			SequenceId:          0x8F,
-			SystemId:            0x01,
-			ComponentId:         0x02,
+			SequenceID:          0x8F,
+			SystemID:            0x01,
+			ComponentID:         0x02,
 			Message: &MessageTest6{
 				'\x10',
 				binary.LittleEndian.Uint32([]byte("\x10\x10\x10\x10")),
@@ -207,9 +207,9 @@ var casesTransceiver = []struct {
 		&frame.V2Frame{
 			IncompatibilityFlag: 0x01,
 			CompatibilityFlag:   0x00,
-			SequenceId:          0x00,
-			SystemId:            0x00,
-			ComponentId:         0x00,
+			SequenceID:          0x00,
+			SystemID:            0x00,
+			ComponentID:         0x00,
 			Message: &MessageHeartbeat{
 				Type:           1,
 				Autopilot:      2,
@@ -219,7 +219,7 @@ var casesTransceiver = []struct {
 				MavlinkVersion: 3,
 			},
 			Checksum:           0xd1d9,
-			SignatureLinkId:    1,
+			SignatureLinkID:    1,
 			SignatureTimestamp: 2,
 			Signature:          &frame.V2Signature{0x0e, 0x47, 0x04, 0x0c, 0xef, 0x9b},
 		},
@@ -232,9 +232,9 @@ var casesTransceiver = []struct {
 		&frame.V2Frame{
 			IncompatibilityFlag: 0x01,
 			CompatibilityFlag:   0x00,
-			SequenceId:          0x00,
-			SystemId:            0x00,
-			ComponentId:         0x00,
+			SequenceID:          0x00,
+			SystemID:            0x00,
+			ComponentID:         0x00,
 			Message: &MessageOpticalFlow{
 				TimeUsec:       1,
 				SensorId:       2,
@@ -247,7 +247,7 @@ var casesTransceiver = []struct {
 				FlowRateY:      1,
 			},
 			Checksum:           0xfb77,
-			SignatureLinkId:    3,
+			SignatureLinkID:    3,
 			SignatureTimestamp: 4,
 			Signature:          &frame.V2Signature{0xa8, 0x88, 0x9, 0x39, 0xb2, 0x60},
 		},
@@ -258,12 +258,12 @@ var casesTransceiver = []struct {
 func TestTransceiverDecode(t *testing.T) {
 	for _, c := range casesTransceiver {
 		t.Run(c.name, func(t *testing.T) {
-			transceiver, err := New(TransceiverConf{
+			transceiver, err := New(Conf{
 				Reader:      bytes.NewReader(c.raw),
 				Writer:      bytes.NewBuffer(nil),
 				DialectDE:   c.dialectDE,
 				OutVersion:  V2,
-				OutSystemId: 1,
+				OutSystemID: 1,
 				InKey:       c.key,
 			})
 			require.NoError(t, err)
@@ -278,11 +278,11 @@ func TestTransceiverEncode(t *testing.T) {
 	for _, c := range casesTransceiver {
 		t.Run(c.name, func(t *testing.T) {
 			buf := bytes.NewBuffer(nil)
-			transceiver, err := New(TransceiverConf{
+			transceiver, err := New(Conf{
 				Reader:      bytes.NewBuffer(nil),
 				Writer:      buf,
 				OutVersion:  V2,
-				OutSystemId: 1,
+				OutSystemID: 1,
 				DialectDE:   c.dialectDE,
 			})
 			require.NoError(t, err)
@@ -335,12 +335,12 @@ func TestTransceiverWriteMessage(t *testing.T) {
 	for _, c := range casesTransceiverWriteMessage {
 		t.Run(c.name, func(t *testing.T) {
 			buf := bytes.NewBuffer(nil)
-			transceiver, err := New(TransceiverConf{
+			transceiver, err := New(Conf{
 				Reader:      bytes.NewBuffer(nil),
 				Writer:      buf,
 				DialectDE:   testDialectDE,
 				OutVersion:  c.ver,
-				OutSystemId: 1,
+				OutSystemID: 1,
 				OutKey:      c.key,
 			})
 			require.NoError(t, err)
@@ -354,12 +354,12 @@ func TestTransceiverWriteMessage(t *testing.T) {
 }
 
 func TestTransceiverEncodeNilMsg(t *testing.T) {
-	transceiver, err := New(TransceiverConf{
+	transceiver, err := New(Conf{
 		Reader:      bytes.NewReader(nil),
 		Writer:      bytes.NewBuffer(nil),
 		DialectDE:   nil,
 		OutVersion:  V2,
-		OutSystemId: 1,
+		OutSystemID: 1,
 	})
 	require.NoError(t, err)
 
@@ -371,15 +371,15 @@ func TestTransceiverEncodeNilMsg(t *testing.T) {
 // ensure that the Frame is left untouched by WriteFrame()
 // and therefore the function can be called by multiple routines in parallel
 func TestTransceiverWriteFrameIsConst(t *testing.T) {
-	dialectDE, err := dialect.NewDecEncoder(&dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}})
+	dialectDE, err := dialect.NewDecEncoder(&dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}) //nolint:govet
 	require.NoError(t, err)
 
-	transceiver, err := New(TransceiverConf{
+	transceiver, err := New(Conf{
 		Reader:      bytes.NewReader(nil),
 		Writer:      bytes.NewBuffer(nil),
 		DialectDE:   dialectDE,
 		OutVersion:  V2,
-		OutSystemId: 1,
+		OutSystemID: 1,
 		OutKey:      frame.NewV2Key(bytes.Repeat([]byte("\x7C"), 32)),
 	})
 	require.NoError(t, err)

@@ -73,7 +73,7 @@ func (c *conn) Close() error {
 	c.listener.readMutex.Lock()
 	defer c.listener.readMutex.Unlock()
 
-	if c.closed == true {
+	if c.closed {
 		return nil
 	}
 
@@ -84,7 +84,7 @@ func (c *conn) Close() error {
 	close(c.read)
 
 	// close socket when both listener and connections are closed
-	if c.listener.closed == true && len(c.listener.conns) == 0 {
+	if c.listener.closed && len(c.listener.conns) == 0 {
 		c.listener.pc.Close()
 	}
 
@@ -97,7 +97,7 @@ func (c *conn) Read(byt []byte) (int, error) {
 	var ok bool
 
 	if !c.readDeadline.IsZero() {
-		readTimer := time.NewTimer(c.readDeadline.Sub(time.Now()))
+		readTimer := time.NewTimer(time.Until(c.readDeadline))
 		defer readTimer.Stop()
 
 		select {
@@ -187,7 +187,7 @@ func (l *Listener) Close() error {
 	l.readMutex.Lock()
 	defer l.readMutex.Unlock()
 
-	if l.closed == true {
+	if l.closed {
 		return nil
 	}
 
@@ -232,7 +232,7 @@ func (l *Listener) reader() {
 
 			conn, preExisting := l.conns[connIndex]
 
-			if !preExisting && l.closed == true {
+			if !preExisting && l.closed {
 				// listener is closed, ignore new connection
 
 			} else {

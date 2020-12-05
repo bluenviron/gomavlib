@@ -11,10 +11,10 @@ import (
 // Frame is the interface implemented by frames of every supported version.
 type Frame interface {
 	// the system id of the author of the frame.
-	GetSystemId() byte
+	GetSystemID() byte
 
 	// the component id of the author of the frame.
-	GetComponentId() byte
+	GetComponentID() byte
 
 	// the message encapsuled in the frame.
 	GetMessage() msg.Message

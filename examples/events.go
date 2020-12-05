@@ -20,7 +20,7 @@ func main() {
 		},
 		Dialect:     ardupilotmega.Dialect,
 		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target
-		OutSystemId: 10,
+		OutSystemID: 10,
 	})
 	if err != nil {
 		panic(err)

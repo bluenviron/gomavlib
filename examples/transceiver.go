@@ -24,12 +24,12 @@ func main() {
 		panic(err)
 	}
 
-	parser, err := transceiver.New(transceiver.TransceiverConf{
+	parser, err := transceiver.New(transceiver.Conf{
 		Reader:      inBuf,
 		Writer:      outBuf,
 		DialectDE:   dialectDE,
 		OutVersion:  transceiver.V2, // change to V1 if you're unable to communicate with the target
-		OutSystemId: 10,
+		OutSystemID: 10,
 	})
 	if err != nil {
 		panic(err)

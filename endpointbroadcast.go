@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-// ipByBroadcastIp returns the ip of an interface associated with given broadcast ip
-func ipByBroadcastIp(target net.IP) net.IP {
+// ipByBroadcastIP returns the ip of an interface associated with given broadcast ip
+func ipByBroadcastIP(target net.IP) net.IP {
 	intfs, err := net.Interfaces()
 	if err != nil {
 		return nil
@@ -32,11 +32,11 @@ func ipByBroadcastIp(target net.IP) net.IP {
 				continue
 			}
 
-			broadcastIp := net.IP(make([]byte, 4))
+			broadcastIP := net.IP(make([]byte, 4))
 			for i := range ip {
-				broadcastIp[i] = ip[i] | ^ipn.Mask[i]
+				broadcastIP[i] = ip[i] | ^ipn.Mask[i]
 			}
-			if reflect.DeepEqual(broadcastIp, target) == true {
+			if reflect.DeepEqual(broadcastIP, target) {
 				return ip
 			}
 		}
@@ -44,8 +44,8 @@ func ipByBroadcastIp(target net.IP) net.IP {
 	return nil
 }
 
-// EndpointUdpBroadcast sets up a endpoint that works with UDP broadcast packets.
-type EndpointUdpBroadcast struct {
+// EndpointUDPBroadcast sets up a endpoint that works with UDP broadcast packets.
+type EndpointUDPBroadcast struct {
 	// the broadcast address to which sending outgoing frames, example: 192.168.5.255:5600
 	BroadcastAddress string
 	// (optional) the listening address. if empty, it will be computed
@@ -53,34 +53,34 @@ type EndpointUdpBroadcast struct {
 	LocalAddress string
 }
 
-type endpointUdpBroadcast struct {
-	conf          EndpointUdpBroadcast
+type endpointUDPBroadcast struct {
+	conf          EndpointUDPBroadcast
 	pc            net.PacketConn
 	broadcastAddr net.Addr
 
 	terminate chan struct{}
 }
 
-func (conf EndpointUdpBroadcast) init() (Endpoint, error) {
+func (conf EndpointUDPBroadcast) init() (Endpoint, error) {
 	ipString, port, err := net.SplitHostPort(conf.BroadcastAddress)
 	if err != nil {
 		return nil, fmt.Errorf("invalid broadcast address")
 	}
-	broadcastIp := net.ParseIP(ipString)
-	if broadcastIp == nil {
+	broadcastIP := net.ParseIP(ipString)
+	if broadcastIP == nil {
 		return nil, fmt.Errorf("invalid IP")
 	}
-	broadcastIp = broadcastIp.To4()
-	if broadcastIp == nil {
+	broadcastIP = broadcastIP.To4()
+	if broadcastIP == nil {
 		return nil, fmt.Errorf("invalid IP")
 	}
 
 	if conf.LocalAddress == "" {
-		localIp := ipByBroadcastIp(broadcastIp)
-		if localIp == nil {
+		localIP := ipByBroadcastIP(broadcastIP)
+		if localIP == nil {
 			return nil, fmt.Errorf("cannot find local address associated with given broadcast address")
 		}
-		conf.LocalAddress = fmt.Sprintf("%s:%s", localIp, port)
+		conf.LocalAddress = fmt.Sprintf("%s:%s", localIP, port)
 
 	} else {
 		_, _, err = net.SplitHostPort(conf.LocalAddress)
@@ -96,32 +96,32 @@ func (conf EndpointUdpBroadcast) init() (Endpoint, error) {
 
 	iport, _ := strconv.Atoi(port)
 
-	t := &endpointUdpBroadcast{
+	t := &endpointUDPBroadcast{
 		conf:          conf,
 		pc:            pc,
-		broadcastAddr: &net.UDPAddr{IP: broadcastIp, Port: iport},
+		broadcastAddr: &net.UDPAddr{IP: broadcastIP, Port: iport},
 		terminate:     make(chan struct{}),
 	}
 	return t, nil
 }
 
-func (t *endpointUdpBroadcast) isEndpoint() {}
+func (t *endpointUDPBroadcast) isEndpoint() {}
 
-func (t *endpointUdpBroadcast) Conf() EndpointConf {
+func (t *endpointUDPBroadcast) Conf() EndpointConf {
 	return t.conf
 }
 
-func (t *endpointUdpBroadcast) Label() string {
+func (t *endpointUDPBroadcast) Label() string {
 	return fmt.Sprintf("udp:%s", t.broadcastAddr)
 }
 
-func (t *endpointUdpBroadcast) Close() error {
+func (t *endpointUDPBroadcast) Close() error {
 	close(t.terminate)
 	t.pc.Close()
 	return nil
 }
 
-func (t *endpointUdpBroadcast) Read(buf []byte) (int, error) {
+func (t *endpointUDPBroadcast) Read(buf []byte) (int, error) {
 	// read WITHOUT deadline. Long periods without packets are normal since
 	// we're not directly connected to someone.
 	n, _, err := t.pc.ReadFrom(buf)
@@ -135,7 +135,7 @@ func (t *endpointUdpBroadcast) Read(buf []byte) (int, error) {
 	return n, nil
 }
 
-func (t *endpointUdpBroadcast) Write(buf []byte) (int, error) {
+func (t *endpointUDPBroadcast) Write(buf []byte) (int, error) {
 	err := t.pc.SetWriteDeadline(time.Now().Add(netWriteTimeout))
 	if err != nil {
 		return 0, err

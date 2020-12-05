@@ -19,23 +19,23 @@ const (
 // 1st January 2015 GMT
 var signatureReferenceDate = time.Date(2015, 01, 01, 0, 0, 0, 0, time.UTC)
 
-// TransceiverError is the error returned in case of non-fatal parsing errors.
-type TransceiverError struct {
+// Error is the error returned in case of non-fatal parsing errors.
+type Error struct {
 	str string
 }
 
-func (e *TransceiverError) Error() string {
+func (e *Error) Error() string {
 	return e.str
 }
 
-func newTransceiverError(format string, args ...interface{}) *TransceiverError {
-	return &TransceiverError{
+func newError(format string, args ...interface{}) *Error {
+	return &Error{
 		str: fmt.Sprintf(format, args...),
 	}
 }
 
-// TransceiverConf configures a Transceiver.
-type TransceiverConf struct {
+// Conf configures a Transceiver.
+type Conf struct {
 	// the reader from which frames will be read.
 	Reader io.Reader
 	// the writer to which frames will be written.
@@ -54,12 +54,12 @@ type TransceiverConf struct {
 	OutVersion Version
 	// the system id, added to every outgoing frame and used to identify this
 	// node in the network.
-	OutSystemId byte
+	OutSystemID byte
 	// (optional) the component id, added to every outgoing frame, defaults to 1.
-	OutComponentId byte
+	OutComponentID byte
 	// (optional) the value to insert into the signature link id.
 	// This feature requires v2 frames.
-	OutSignatureLinkId byte
+	OutSignatureLinkID byte
 	// (optional) the secret key used to sign outgoing frames.
 	// This feature requires v2 frames.
 	OutKey *frame.V2Key
@@ -67,16 +67,16 @@ type TransceiverConf struct {
 
 // Transceiver is a low-level Mavlink encoder and decoder that works with a Reader and a Writer.
 type Transceiver struct {
-	conf                 TransceiverConf
+	conf                 Conf
 	readBuffer           *bufio.Reader
 	writeBuffer          []byte
-	curWriteSequenceId   byte
+	curWriteSequenceID   byte
 	curReadSignatureTime uint64
 }
 
 // New allocates a Transceiver, a low level frame encoder and decoder.
-// See TransceiverConf for the options.
-func New(conf TransceiverConf) (*Transceiver, error) {
+// See Conf for the options.
+func New(conf Conf) (*Transceiver, error) {
 	if conf.Reader == nil {
 		return nil, fmt.Errorf("Reader not provided")
 	}
@@ -87,11 +87,11 @@ func New(conf TransceiverConf) (*Transceiver, error) {
 	if conf.OutVersion == 0 {
 		return nil, fmt.Errorf("OutVersion not provided")
 	}
-	if conf.OutSystemId < 1 {
-		return nil, fmt.Errorf("SystemId must be >= 1")
+	if conf.OutSystemID < 1 {
+		return nil, fmt.Errorf("SystemID must be >= 1")
 	}
-	if conf.OutComponentId < 1 {
-		conf.OutComponentId = 1
+	if conf.OutComponentID < 1 {
+		conf.OutComponentID = 1
 	}
 	if conf.OutKey != nil && conf.OutVersion != V2 {
 		return nil, fmt.Errorf("OutKey requires V2 frames")
@@ -121,7 +121,7 @@ func (p *Transceiver) Read() (frame.Frame, error) {
 			return &frame.V2Frame{}, nil
 		}
 
-		return nil, newTransceiverError("invalid magic byte: %x", magicByte)
+		return nil, newError("invalid magic byte: %x", magicByte)
 	}()
 	if err != nil {
 		return nil, err
@@ -129,24 +129,24 @@ func (p *Transceiver) Read() (frame.Frame, error) {
 
 	err = f.Decode(p.readBuffer)
 	if err != nil {
-		return nil, newTransceiverError(err.Error())
+		return nil, newError(err.Error())
 	}
 
 	if p.conf.InKey != nil {
 		ff, ok := f.(*frame.V2Frame)
 		if !ok {
-			return nil, newTransceiverError("signature required but packet is not v2")
+			return nil, newError("signature required but packet is not v2")
 		}
 
 		if sig := ff.GenSignature(p.conf.InKey); *sig != *ff.Signature {
-			return nil, newTransceiverError("wrong signature")
+			return nil, newError("wrong signature")
 		}
 
 		// in UDP, packet order is not guaranteed. Therefore, we accept frames
 		// with a timestamp within 10 seconds with respect to the previous frame.
 		if p.curReadSignatureTime > 0 &&
 			ff.SignatureTimestamp < (p.curReadSignatureTime-(10*100000)) {
-			return nil, newTransceiverError("signature timestamp is too old")
+			return nil, newError("signature timestamp is too old")
 		}
 
 		if ff.SignatureTimestamp > p.curReadSignatureTime {
@@ -156,16 +156,16 @@ func (p *Transceiver) Read() (frame.Frame, error) {
 
 	// decode message if in dialect and validate checksum
 	if p.conf.DialectDE != nil {
-		if mp, ok := p.conf.DialectDE.MessageDEs[f.GetMessage().GetId()]; ok {
-			if sum := f.GenChecksum(p.conf.DialectDE.MessageDEs[f.GetMessage().GetId()].CRCExtra()); sum != f.GetChecksum() {
-				return nil, newTransceiverError("wrong checksum (expected %.4x, got %.4x, id=%d)",
-					sum, f.GetChecksum(), f.GetMessage().GetId())
+		if mp, ok := p.conf.DialectDE.MessageDEs[f.GetMessage().GetID()]; ok {
+			if sum := f.GenChecksum(p.conf.DialectDE.MessageDEs[f.GetMessage().GetID()].CRCExtra()); sum != f.GetChecksum() {
+				return nil, newError("wrong checksum (expected %.4x, got %.4x, id=%d)",
+					sum, f.GetChecksum(), f.GetMessage().GetID())
 			}
 
 			_, isV2 := f.(*frame.V2Frame)
 			msg, err := mp.Decode(f.GetMessage().(*msg.MessageRaw).Content, isV2)
 			if err != nil {
-				return nil, newTransceiverError(err.Error())
+				return nil, newError(err.Error())
 			}
 
 			switch ff := f.(type) {
@@ -201,18 +201,18 @@ func (p *Transceiver) writeFrameAndFill(fr frame.Frame) error {
 	// in such way that the frame can be encoded by other parsers in parallel
 	safeFrame := fr.Clone()
 
-	// fill SequenceId, SystemId, ComponentId
+	// fill SequenceID, SystemID, ComponentID
 	switch ff := safeFrame.(type) {
 	case *frame.V1Frame:
-		ff.SequenceId = p.curWriteSequenceId
-		ff.SystemId = p.conf.OutSystemId
-		ff.ComponentId = p.conf.OutComponentId
+		ff.SequenceID = p.curWriteSequenceID
+		ff.SystemID = p.conf.OutSystemID
+		ff.ComponentID = p.conf.OutComponentID
 	case *frame.V2Frame:
-		ff.SequenceId = p.curWriteSequenceId
-		ff.SystemId = p.conf.OutSystemId
-		ff.ComponentId = p.conf.OutComponentId
+		ff.SequenceID = p.curWriteSequenceID
+		ff.SystemID = p.conf.OutSystemID
+		ff.ComponentID = p.conf.OutComponentID
 	}
-	p.curWriteSequenceId++
+	p.curWriteSequenceID++
 
 	// fill CompatibilityFlag, IncompatibilityFlag if v2
 	if ff, ok := safeFrame.(*frame.V2Frame); ok {
@@ -230,7 +230,7 @@ func (p *Transceiver) writeFrameAndFill(fr frame.Frame) error {
 			return fmt.Errorf("message cannot be encoded since dialect is nil")
 		}
 
-		mp, ok := p.conf.DialectDE.MessageDEs[safeFrame.GetMessage().GetId()]
+		mp, ok := p.conf.DialectDE.MessageDEs[safeFrame.GetMessage().GetID()]
 		if !ok {
 			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
 		}
@@ -241,7 +241,7 @@ func (p *Transceiver) writeFrameAndFill(fr frame.Frame) error {
 			return err
 		}
 
-		msgRaw := &msg.MessageRaw{safeFrame.GetMessage().GetId(), byt}
+		msgRaw := &msg.MessageRaw{safeFrame.GetMessage().GetID(), byt} //nolint:govet
 		switch ff := safeFrame.(type) {
 		case *frame.V1Frame:
 			ff.Message = msgRaw
@@ -252,15 +252,15 @@ func (p *Transceiver) writeFrameAndFill(fr frame.Frame) error {
 		// fill checksum
 		switch ff := safeFrame.(type) {
 		case *frame.V1Frame:
-			ff.Checksum = ff.GenChecksum(p.conf.DialectDE.MessageDEs[ff.GetMessage().GetId()].CRCExtra())
+			ff.Checksum = ff.GenChecksum(p.conf.DialectDE.MessageDEs[ff.GetMessage().GetID()].CRCExtra())
 		case *frame.V2Frame:
-			ff.Checksum = ff.GenChecksum(p.conf.DialectDE.MessageDEs[ff.GetMessage().GetId()].CRCExtra())
+			ff.Checksum = ff.GenChecksum(p.conf.DialectDE.MessageDEs[ff.GetMessage().GetID()].CRCExtra())
 		}
 	}
 
-	// fill SignatureLinkId, SignatureTimestamp, Signature if v2
+	// fill SignatureLinkID, SignatureTimestamp, Signature if v2
 	if ff, ok := safeFrame.(*frame.V2Frame); ok && p.conf.OutKey != nil {
-		ff.SignatureLinkId = p.conf.OutSignatureLinkId
+		ff.SignatureLinkID = p.conf.OutSignatureLinkID
 		// Timestamp in 10 microsecond units since 1st January 2015 GMT time
 		ff.SignatureTimestamp = uint64(time.Since(signatureReferenceDate)) / 10000
 		ff.Signature = ff.GenSignature(p.conf.OutKey)
@@ -285,7 +285,7 @@ func (p *Transceiver) WriteFrame(fr frame.Frame) error {
 			return fmt.Errorf("message cannot be encoded since dialect is nil")
 		}
 
-		mp, ok := p.conf.DialectDE.MessageDEs[m.GetId()]
+		mp, ok := p.conf.DialectDE.MessageDEs[m.GetID()]
 		if !ok {
 			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
 		}
@@ -298,7 +298,7 @@ func (p *Transceiver) WriteFrame(fr frame.Frame) error {
 
 		// do not touch frame.Message
 		// in such way that the frame can be encoded by other parsers in parallel
-		m = &msg.MessageRaw{m.GetId(), byt}
+		m = &msg.MessageRaw{m.GetID(), byt} //nolint:govet
 	}
 
 	buf, err := fr.Encode(p.writeBuffer, m.(*msg.MessageRaw).Content)

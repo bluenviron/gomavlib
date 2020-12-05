@@ -25,7 +25,7 @@ Basic example (more are available at https://github.com/aler9/gomavlib/tree/mast
 		},
   		Dialect:     ardupilotmega.Dialect,
 		OutVersion:  gomavlib.V2,
-  		OutSystemId: 10,
+  		OutSystemID: 10,
   	})
   	if err != nil {
   		panic(err)
@@ -34,7 +34,7 @@ Basic example (more are available at https://github.com/aler9/gomavlib/tree/mast
 
   	for evt := range node.Events() {
   		if frm,ok := evt.(*gomavlib.EventFrame); ok {
-  			fmt.Printf("received: id=%d, %+v\n", frm.Message().GetId(), frm.Message())
+  			fmt.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())
   		}
   	}
   }
@@ -89,9 +89,9 @@ type NodeConf struct {
 	OutVersion Version
 	// the system id, added to every outgoing frame and used to identify this
 	// node in the network.
-	OutSystemId byte
+	OutSystemID byte
 	// (optional) the component id, added to every outgoing frame, defaults to 1.
-	OutComponentId byte
+	OutComponentID byte
 	// (optional) the secret key used to sign outgoing frames.
 	// This feature requires a version >= 2.0.
 	OutKey *frame.V2Key
@@ -160,11 +160,11 @@ func NewNode(conf NodeConf) (*Node, error) {
 	if conf.OutVersion == 0 {
 		return nil, fmt.Errorf("OutVersion not provided")
 	}
-	if conf.OutSystemId < 1 {
-		return nil, fmt.Errorf("SystemId must be >= 1")
+	if conf.OutSystemID < 1 {
+		return nil, fmt.Errorf("SystemID must be >= 1")
 	}
-	if conf.OutComponentId < 1 {
-		conf.OutComponentId = 1
+	if conf.OutComponentID < 1 {
+		conf.OutComponentID = 1
 	}
 	if conf.OutKey != nil && conf.OutVersion != V2 {
 		return nil, fmt.Errorf("OutKey requires V2 frames")

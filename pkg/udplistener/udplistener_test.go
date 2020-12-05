@@ -73,6 +73,8 @@ func TestUdpListenerDeadline(t *testing.T) {
 
 	var wg sync.WaitGroup
 	wg.Add(2)
+	var err1 error
+	var err2 error
 
 	go func() {
 		defer wg.Done()
@@ -91,13 +93,15 @@ func TestUdpListenerDeadline(t *testing.T) {
 			if err != nil {
 				// accept first Read()
 				if i == 0 {
-					t.Fatal(err)
+					err1 = err
+					return
 				}
 				// second Read() must fail with Timeout
 				if ne, ok := err.(net.Error); ok && ne.Timeout() {
 					return
 				}
-				t.Fatal(err)
+				err1 = err
+				return
 			}
 		}
 	}()
@@ -113,6 +117,8 @@ func TestUdpListenerDeadline(t *testing.T) {
 	}()
 
 	wg.Wait()
+	require.NoError(t, err1)
+	require.NoError(t, err2)
 }
 
 func TestUdpListenerDoubleClose(t *testing.T) {

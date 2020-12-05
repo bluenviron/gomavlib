@@ -62,12 +62,12 @@ type V2Signature [6]byte
 type V2Frame struct {
 	IncompatibilityFlag byte
 	CompatibilityFlag   byte
-	SequenceId          byte
-	SystemId            byte
-	ComponentId         byte
+	SequenceID          byte
+	SystemID            byte
+	ComponentID         byte
 	Message             msg.Message
 	Checksum            uint16
-	SignatureLinkId     byte
+	SignatureLinkID     byte
 	SignatureTimestamp  uint64
 	Signature           *V2Signature
 }
@@ -77,25 +77,25 @@ func (f *V2Frame) Clone() Frame {
 	return &V2Frame{
 		IncompatibilityFlag: f.IncompatibilityFlag,
 		CompatibilityFlag:   f.CompatibilityFlag,
-		SequenceId:          f.SequenceId,
-		SystemId:            f.SystemId,
-		ComponentId:         f.ComponentId,
+		SequenceID:          f.SequenceID,
+		SystemID:            f.SystemID,
+		ComponentID:         f.ComponentID,
 		Message:             f.Message,
 		Checksum:            f.Checksum,
-		SignatureLinkId:     f.SignatureLinkId,
+		SignatureLinkID:     f.SignatureLinkID,
 		SignatureTimestamp:  f.SignatureTimestamp,
 		Signature:           f.Signature,
 	}
 }
 
-// GetSystemId implements the Frame interface.
-func (f *V2Frame) GetSystemId() byte {
-	return f.SystemId
+// GetSystemID implements the Frame interface.
+func (f *V2Frame) GetSystemID() byte {
+	return f.SystemID
 }
 
-// GetComponentId implements the Frame interface.
-func (f *V2Frame) GetComponentId() byte {
-	return f.ComponentId
+// GetComponentID implements the Frame interface.
+func (f *V2Frame) GetComponentID() byte {
+	return f.ComponentID
 }
 
 // GetMessage implements the Frame interface.
@@ -124,10 +124,10 @@ func (f *V2Frame) Decode(br *bufio.Reader) error {
 	msgLen := buf[0]
 	f.IncompatibilityFlag = buf[1]
 	f.CompatibilityFlag = buf[2]
-	f.SequenceId = buf[3]
-	f.SystemId = buf[4]
-	f.ComponentId = buf[5]
-	msgId := uint24Decode(buf[6:])
+	f.SequenceID = buf[3]
+	f.SystemID = buf[4]
+	f.ComponentID = buf[5]
+	msgID := uint24Decode(buf[6:])
 
 	// discard frame if incompatibility flag is not understood, as in recommendations
 	if f.IncompatibilityFlag != 0 && f.IncompatibilityFlag != V2FlagSigned {
@@ -144,7 +144,7 @@ func (f *V2Frame) Decode(br *bufio.Reader) error {
 		}
 	}
 	f.Message = &msg.MessageRaw{
-		Id:      msgId,
+		ID:      msgID,
 		Content: msgEncoded,
 	}
 
@@ -163,7 +163,7 @@ func (f *V2Frame) Decode(br *bufio.Reader) error {
 			return err
 		}
 		br.Discard(13)
-		f.SignatureLinkId = buf[0]
+		f.SignatureLinkID = buf[0]
 		f.SignatureTimestamp = uint48Decode(buf[1:])
 		f.Signature = new(V2Signature)
 		copy(f.Signature[:], buf[7:])
@@ -186,10 +186,10 @@ func (f *V2Frame) Encode(buf []byte, msgEncoded []byte) ([]byte, error) {
 	buf[1] = byte(msgLen)
 	buf[2] = f.IncompatibilityFlag
 	buf[3] = f.CompatibilityFlag
-	buf[4] = f.SequenceId
-	buf[5] = f.SystemId
-	buf[6] = f.ComponentId
-	uint24Encode(buf[7:], f.Message.GetId())
+	buf[4] = f.SequenceID
+	buf[5] = f.SystemID
+	buf[6] = f.ComponentID
+	uint24Encode(buf[7:], f.Message.GetID())
 
 	// message
 	if msgLen > 0 {
@@ -201,7 +201,7 @@ func (f *V2Frame) Encode(buf []byte, msgEncoded []byte) ([]byte, error) {
 
 	// signature
 	if f.IsSigned() {
-		buf[12+msgLen] = f.SignatureLinkId
+		buf[12+msgLen] = f.SignatureLinkID
 		uint48Encode(buf[13+msgLen:], f.SignatureTimestamp)
 		copy(buf[19+msgLen:], f.Signature[:])
 	}
@@ -218,10 +218,10 @@ func (f *V2Frame) GenChecksum(crcExtra byte) uint16 {
 	h.Write([]byte{byte(len(msg.Content))})
 	h.Write([]byte{f.IncompatibilityFlag})
 	h.Write([]byte{f.CompatibilityFlag})
-	h.Write([]byte{f.SequenceId})
-	h.Write([]byte{f.SystemId})
-	h.Write([]byte{f.ComponentId})
-	h.Write(uint24Encode(buf, msg.Id))
+	h.Write([]byte{f.SequenceID})
+	h.Write([]byte{f.SystemID})
+	h.Write([]byte{f.ComponentID})
+	h.Write(uint24Encode(buf, msg.ID))
 	h.Write(msg.Content)
 
 	h.Write([]byte{crcExtra})
@@ -243,14 +243,14 @@ func (f *V2Frame) GenSignature(key *V2Key) *V2Signature {
 	h.Write([]byte{byte(len(msg.Content))})
 	h.Write([]byte{f.IncompatibilityFlag})
 	h.Write([]byte{f.CompatibilityFlag})
-	h.Write([]byte{f.SequenceId})
-	h.Write([]byte{f.SystemId})
-	h.Write([]byte{f.ComponentId})
-	h.Write(uint24Encode(buf, f.Message.GetId()))
+	h.Write([]byte{f.SequenceID})
+	h.Write([]byte{f.SystemID})
+	h.Write([]byte{f.ComponentID})
+	h.Write(uint24Encode(buf, f.Message.GetID()))
 	h.Write(msg.Content)
 	binary.LittleEndian.PutUint16(buf, f.Checksum)
 	h.Write(buf[:2])
-	h.Write([]byte{f.SignatureLinkId})
+	h.Write([]byte{f.SignatureLinkID})
 	h.Write(uint48Encode(buf, f.SignatureTimestamp))
 
 	sig := new(V2Signature)

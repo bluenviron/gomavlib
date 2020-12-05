@@ -12,7 +12,8 @@ import (
 )
 
 var tplTest = template.Must(template.New("").Parse(
-	`package {{ .PkgName }}
+	`//nolint:golint
+package {{ .PkgName }}
 
 import (
     "testing"
@@ -36,7 +37,7 @@ func shellCommand(cmdstr string) error {
 	return cmd.Run()
 }
 
-func downloadJson(addr string, data interface{}) error {
+func downloadJSON(addr string, data interface{}) error {
 	req, err := http.NewRequest("GET", addr, nil)
 	if err != nil {
 		return err
@@ -95,7 +96,7 @@ func run() error {
 	var res struct {
 		Sha string `json:"sha"`
 	}
-	err = downloadJson("https://api.github.com/repos/mavlink/mavlink/commits/master", &res)
+	err = downloadJSON("https://api.github.com/repos/mavlink/mavlink/commits/master", &res)
 	if err != nil {
 		return err
 	}
@@ -103,7 +104,7 @@ func run() error {
 	var files []struct {
 		Name string `json:"name"`
 	}
-	err = downloadJson("https://api.github.com/repos/mavlink/mavlink/contents/message_definitions/v1.0?ref="+res.Sha, &files)
+	err = downloadJSON("https://api.github.com/repos/mavlink/mavlink/contents/message_definitions/v1.0?ref="+res.Sha, &files)
 	if err != nil {
 		return err
 	}

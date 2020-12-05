@@ -7,12 +7,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type MAV_TYPE int
-type MAV_AUTOPILOT int
-type MAV_MODE_FLAG int
-type MAV_STATE int
-type MAV_SYS_STATUS_SENSOR int
-type MAV_CMD int
+type MAV_TYPE int              //nolint:golint
+type MAV_AUTOPILOT int         //nolint:golint
+type MAV_MODE_FLAG int         //nolint:golint
+type MAV_STATE int             //nolint:golint
+type MAV_SYS_STATUS_SENSOR int //nolint:golint
+type MAV_CMD int               //nolint:golint
 
 type MessageHeartbeat struct {
 	Type           MAV_TYPE      `mavenum:"uint8"`
@@ -23,20 +23,8 @@ type MessageHeartbeat struct {
 	MavlinkVersion uint8
 }
 
-func (*MessageHeartbeat) GetId() uint32 {
+func (*MessageHeartbeat) GetID() uint32 {
 	return 0
-}
-
-type MessageRequestDataStream struct {
-	TargetSystem    uint8
-	TargetComponent uint8
-	ReqStreamId     uint8
-	ReqMessageRate  uint16
-	StartStop       uint8
-}
-
-func (*MessageRequestDataStream) GetId() uint32 {
-	return 66
 }
 
 type MessageSysStatus struct {
@@ -55,7 +43,7 @@ type MessageSysStatus struct {
 	ErrorsCount4                 uint16
 }
 
-func (m *MessageSysStatus) GetId() uint32 {
+func (m *MessageSysStatus) GetID() uint32 {
 	return 1
 }
 
@@ -66,7 +54,7 @@ type MessageChangeOperatorControl struct {
 	Passkey        string `mavlen:"25"`
 }
 
-func (m *MessageChangeOperatorControl) GetId() uint32 {
+func (m *MessageChangeOperatorControl) GetID() uint32 {
 	return 5
 }
 
@@ -79,13 +67,13 @@ type MessageAttitudeQuaternionCov struct {
 	Covariance [9]float32
 }
 
-func (m *MessageAttitudeQuaternionCov) GetId() uint32 {
+func (m *MessageAttitudeQuaternionCov) GetID() uint32 {
 	return 61
 }
 
 type MessageOpticalFlow struct {
 	TimeUsec       uint64
-	SensorId       uint8
+	SensorId       uint8 //nolint:golint
 	FlowX          int16
 	FlowY          int16
 	FlowCompMX     float32
@@ -96,7 +84,7 @@ type MessageOpticalFlow struct {
 	FlowRateY      float32 `mavext:"true"`
 }
 
-func (*MessageOpticalFlow) GetId() uint32 {
+func (*MessageOpticalFlow) GetID() uint32 {
 	return 100
 }
 
@@ -107,7 +95,7 @@ type MessagePlayTune struct {
 	Tune2           string `mavext:"true" mavlen:"200"`
 }
 
-func (*MessagePlayTune) GetId() uint32 {
+func (*MessagePlayTune) GetID() uint32 {
 	return 258
 }
 
@@ -121,7 +109,7 @@ type MessageAhrs struct {
 	ErrorYaw    float32
 }
 
-func (*MessageAhrs) GetId() uint32 {
+func (*MessageAhrs) GetID() uint32 {
 	return 163
 }
 
@@ -142,7 +130,7 @@ type MessageTrajectoryRepresentationWaypoints struct {
 	Command     [5]MAV_CMD `mavenum:"uint16"`
 }
 
-func (*MessageTrajectoryRepresentationWaypoints) GetId() uint32 {
+func (*MessageTrajectoryRepresentationWaypoints) GetID() uint32 {
 	return 332
 }
 

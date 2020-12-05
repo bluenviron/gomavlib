@@ -35,14 +35,14 @@ type EventFrame struct {
 
 func (*EventFrame) isEventOut() {}
 
-// SystemId returns the frame system id.
-func (res *EventFrame) SystemId() byte {
-	return res.Frame.GetSystemId()
+// SystemID returns the frame system id.
+func (res *EventFrame) SystemID() byte {
+	return res.Frame.GetSystemID()
 }
 
-// ComponentId returns the frame component id.
-func (res *EventFrame) ComponentId() byte {
-	return res.Frame.GetComponentId()
+// ComponentID returns the frame component id.
+func (res *EventFrame) ComponentID() byte {
+	return res.Frame.GetComponentID()
 }
 
 // Message returns the message inside the frame.
@@ -66,9 +66,9 @@ type EventStreamRequested struct {
 	// the channel to which the stream request is addressed
 	Channel *Channel
 	// the system id to which the stream requests is addressed
-	SystemId byte
+	SystemID byte
 	// the component id to which the stream requests is addressed
-	ComponentId byte
+	ComponentID byte
 }
 
 func (*EventStreamRequested) isEventOut() {}

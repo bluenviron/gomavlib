@@ -14,8 +14,8 @@ const (
 
 type streamNode struct {
 	Channel     *Channel
-	SystemId    byte
-	ComponentId byte
+	SystemID    byte
+	ComponentID byte
 }
 
 type nodeStreamRequest struct {
@@ -46,7 +46,7 @@ func newNodeStreamRequest(n *Node) *nodeStreamRequest {
 	// heartbeat message must exist in dialect and correspond to standard
 	msgHeartbeat := func() msg.Message {
 		for _, m := range n.conf.Dialect.Messages {
-			if m.GetId() == 0 {
+			if m.GetID() == 0 {
 				return m
 			}
 		}
@@ -63,7 +63,7 @@ func newNodeStreamRequest(n *Node) *nodeStreamRequest {
 	// request data stream message must exist in dialect and correspond to standard
 	msgRequestDataStream := func() msg.Message {
 		for _, m := range n.conf.Dialect.Messages {
-			if m.GetId() == 66 {
+			if m.GetID() == 66 {
 				return m
 			}
 		}
@@ -123,15 +123,15 @@ func (sr *nodeStreamRequest) run() {
 
 func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 	// message must be heartbeat and sender must be an ardupilot device
-	if evt.Message().GetId() != 0 ||
+	if evt.Message().GetID() != 0 ||
 		reflect.ValueOf(evt.Message()).Elem().FieldByName("Autopilot").Int() != 3 {
 		return
 	}
 
 	rnode := streamNode{
 		Channel:     evt.Channel,
-		SystemId:    evt.SystemId(),
-		ComponentId: evt.ComponentId(),
+		SystemID:    evt.SystemID(),
+		ComponentID: evt.ComponentID(),
 	}
 
 	// request streams if sender is new or a request has not been sent in some time
@@ -154,7 +154,7 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 		}
 	}()
 
-	if request == true {
+	if request {
 		// https://github.com/mavlink/qgroundcontrol/blob/08f400355a8f3acf1dd8ed91f7f1c757323ac182/src/FirmwarePlugin/APM/APMFirmwarePlugin.cc#L626
 		streams := []int{
 			1,  //common.MAV_DATA_STREAM_RAW_SENSORS,
@@ -168,8 +168,8 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 
 		for _, stream := range streams {
 			m := reflect.New(reflect.TypeOf(sr.msgRequestDataStream).Elem())
-			m.Elem().FieldByName("TargetSystem").SetUint(uint64(evt.SystemId()))
-			m.Elem().FieldByName("TargetComponent").SetUint(uint64(evt.ComponentId()))
+			m.Elem().FieldByName("TargetSystem").SetUint(uint64(evt.SystemID()))
+			m.Elem().FieldByName("TargetComponent").SetUint(uint64(evt.ComponentID()))
 			m.Elem().FieldByName("ReqStreamId").SetUint(uint64(stream))
 			m.Elem().FieldByName("ReqMessageRate").SetUint(uint64(sr.n.conf.StreamRequestFrequency))
 			m.Elem().FieldByName("StartStop").SetUint(uint64(1))
@@ -178,8 +178,8 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 
 		sr.n.events <- &EventStreamRequested{
 			Channel:     evt.Channel,
-			SystemId:    evt.SystemId(),
-			ComponentId: evt.ComponentId(),
+			SystemID:    evt.SystemID(),
+			ComponentID: evt.ComponentID(),
 		}
 	}
 }

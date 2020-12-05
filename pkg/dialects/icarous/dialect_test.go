@@ -1,3 +1,4 @@
+//nolint:golint
 package icarous
 
 import (

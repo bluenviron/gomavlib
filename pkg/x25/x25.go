@@ -13,18 +13,25 @@ func New() *X25 {
 	return x
 }
 
+// Reset resets the Hash to its initial state.
 func (x *X25) Reset() {
 	x.crc = 0xFFFF
 }
 
+// Size returns the number of bytes Sum will return.
 func (x *X25) Size() int {
 	return 2
 }
 
+// BlockSize returns the hash's underlying block size.
+// The Write method must be able to accept any amount
+// of data, but it may operate more efficiently if all writes
+// are a multiple of the block size.
 func (x *X25) BlockSize() int {
 	return 1
 }
 
+// Write adds more data to the running hash.
 func (x *X25) Write(p []byte) (int, error) {
 	for _, b := range p {
 		tmp := uint16(b) ^ (x.crc & 0xFF)
@@ -35,10 +42,12 @@ func (x *X25) Write(p []byte) (int, error) {
 	return len(p), nil
 }
 
+// Sum16 returns the curren thash.
 func (x *X25) Sum16() uint16 {
 	return x.crc
 }
 
+// Sum appends the current hash to b and returns the resulting slice.
 func (x *X25) Sum(b []byte) []byte {
 	return append(b, byte(x.crc), byte(x.crc>>8))
 }

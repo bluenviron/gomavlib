@@ -188,42 +188,6 @@ func (e MAV_AUTOPILOT) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
-// Commands to be executed by the MAV. They can be executed on user request, or as part of a mission script. If the action is used in a mission, the parameter mapping to the waypoint/mission message is as follows: Param 1, Param 2, Param 3, Param 4, X: Param 5, Y:Param 6, Z:Param 7. This command list is similar what ARINC 424 is for commercial aircraft: A data format how to interpret waypoint/mission data. See https://mavlink.io/en/guide/xml_schema.html#MAV_CMD for information about the structure of the MAV_CMD entries
-type MAV_CMD int
-
-const (
-	// Request the target system(s) emit a single instance of a specified message (i.e. a "one-shot" version of MAV_CMD_SET_MESSAGE_INTERVAL).
-	MAV_CMD_REQUEST_MESSAGE MAV_CMD = 512
-)
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e MAV_CMD) MarshalText() ([]byte, error) {
-	switch e {
-	case MAV_CMD_REQUEST_MESSAGE:
-		return []byte("MAV_CMD_REQUEST_MESSAGE"), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *MAV_CMD) UnmarshalText(text []byte) error {
-	switch string(text) {
-	case "MAV_CMD_REQUEST_MESSAGE":
-		*e = MAV_CMD_REQUEST_MESSAGE
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e MAV_CMD) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
-	}
-	return strconv.FormatInt(int64(e), 10)
-}
-
 // Component ids (values) for the different types and instances of onboard hardware/software that might make up a MAVLink system (autopilot, cameras, servos, GPS systems, avoidance systems etc.).      Components must use the appropriate ID in their source address when sending messages. Components can also use IDs to determine if they are the intended recipient of an incoming message. The MAV_COMP_ID_ALL value is used to indicate messages that must be processed by all components.      When creating new entries, components that can have multiple instances (e.g. cameras, servos etc.) should be allocated sequential values. An appropriate number of values should be left free after these components to allow the number of instances to be expanded.
 type MAV_COMPONENT int
 

@@ -4706,12 +4706,10 @@ func (e MAV_BATTERY_TYPE) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
-// Commands to be executed by the MAV. They can be executed on user request, or as part of a mission script. If the action is used in a mission, the parameter mapping to the waypoint/mission message is as follows: Param 1, Param 2, Param 3, Param 4, X: Param 5, Y:Param 6, Z:Param 7. This command list is similar what ARINC 424 is for commercial aircraft: A data format how to interpret waypoint/mission data. See https://mavlink.io/en/guide/xml_schema.html#MAV_CMD for information about the structure of the MAV_CMD entries
+// Commands to be executed by the MAV. They can be executed on user request, or as part of a mission script. If the action is used in a mission, the parameter mapping to the waypoint/mission message is as follows: Param 1, Param 2, Param 3, Param 4, X: Param 5, Y:Param 6, Z:Param 7. This command list is similar what ARINC 424 is for commercial aircraft: A data format how to interpret waypoint/mission data. NaN and INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current yaw or latitude rather than a specific value). See https://mavlink.io/en/guide/xml_schema.html#MAV_CMD for information about the structure of the MAV_CMD entries
 type MAV_CMD int
 
 const (
-	// Request the target system(s) emit a single instance of a specified message (i.e. a "one-shot" version of MAV_CMD_SET_MESSAGE_INTERVAL).
-	MAV_CMD_REQUEST_MESSAGE MAV_CMD = 512
 	// Navigate to waypoint.
 	MAV_CMD_NAV_WAYPOINT MAV_CMD = 16
 	// Loiter around this waypoint an unlimited amount of time
@@ -4888,6 +4886,8 @@ const (
 	MAV_CMD_GET_MESSAGE_INTERVAL MAV_CMD = 510
 	// Set the interval between messages for a particular MAVLink message ID. This interface replaces REQUEST_DATA_STREAM.
 	MAV_CMD_SET_MESSAGE_INTERVAL MAV_CMD = 511
+	// Request the target system(s) emit a single instance of a specified message (i.e. a "one-shot" version of MAV_CMD_SET_MESSAGE_INTERVAL).
+	MAV_CMD_REQUEST_MESSAGE MAV_CMD = 512
 	// Request MAVLink protocol version compatibility. All receivers should ACK the command and then emit their capabilities in an PROTOCOL_VERSION message
 	MAV_CMD_REQUEST_PROTOCOL_VERSION MAV_CMD = 519
 	// Request autopilot capabilities. The receiver should ACK the command and then emit its capabilities in an AUTOPILOT_VERSION message
@@ -5025,8 +5025,6 @@ const (
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_CMD) MarshalText() ([]byte, error) {
 	switch e {
-	case MAV_CMD_REQUEST_MESSAGE:
-		return []byte("MAV_CMD_REQUEST_MESSAGE"), nil
 	case MAV_CMD_NAV_WAYPOINT:
 		return []byte("MAV_CMD_NAV_WAYPOINT"), nil
 	case MAV_CMD_NAV_LOITER_UNLIM:
@@ -5203,6 +5201,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_GET_MESSAGE_INTERVAL"), nil
 	case MAV_CMD_SET_MESSAGE_INTERVAL:
 		return []byte("MAV_CMD_SET_MESSAGE_INTERVAL"), nil
+	case MAV_CMD_REQUEST_MESSAGE:
+		return []byte("MAV_CMD_REQUEST_MESSAGE"), nil
 	case MAV_CMD_REQUEST_PROTOCOL_VERSION:
 		return []byte("MAV_CMD_REQUEST_PROTOCOL_VERSION"), nil
 	case MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES:
@@ -5342,9 +5342,6 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_CMD) UnmarshalText(text []byte) error {
 	switch string(text) {
-	case "MAV_CMD_REQUEST_MESSAGE":
-		*e = MAV_CMD_REQUEST_MESSAGE
-		return nil
 	case "MAV_CMD_NAV_WAYPOINT":
 		*e = MAV_CMD_NAV_WAYPOINT
 		return nil
@@ -5608,6 +5605,9 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_SET_MESSAGE_INTERVAL":
 		*e = MAV_CMD_SET_MESSAGE_INTERVAL
+		return nil
+	case "MAV_CMD_REQUEST_MESSAGE":
+		*e = MAV_CMD_REQUEST_MESSAGE
 		return nil
 	case "MAV_CMD_REQUEST_PROTOCOL_VERSION":
 		*e = MAV_CMD_REQUEST_PROTOCOL_VERSION
@@ -17870,8 +17870,8 @@ type MessageSmartBatteryInfo struct {
 	CapacityFull int32
 	// Charge/discharge cycle count. -1: field not provided.
 	CycleCount uint16
-	// Serial number. -1: field not provided.
-	SerialNumber int32
+	// Serial number in ASCII characters, 0 terminated. All 0: field not provided.
+	SerialNumber string `mavlen:"16"`
 	// Static device name. Encode as manufacturer and product names separated using an underscore.
 	DeviceName string `mavlen:"50"`
 	// Battery weight. 0: field not provided.

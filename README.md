@@ -11,7 +11,7 @@ Mavlink is a lightweight and transport-independent protocol that is mostly used 
 
 This library powers the [**mavp2p**](https://github.com/aler9/mavp2p) router.
 
-## Features
+Features:
 
 * Decodes and encodes Mavlink v2.0 and v1.0. Supports checksums, empty-byte truncation (v2.0), signatures (v2.0), message extensions (v2.0)
 * Dialects are optional, the library can work with standard dialects (ready-to-use standard dialects are provided in directory `dialects/`), custom dialects or no dialects at all. In case of custom dialects, a dialect generator is available in order to convert XML definitions into their Go representation.
@@ -27,6 +27,15 @@ This library powers the [**mavp2p**](https://github.com/aler9/mavp2p) router.
 * UDP connections are tracked and removed when inactive
 * Supports both domain names and IPs
 * Examples provided for every feature, comprehensive test suite, continuous integration
+
+## Table of contents
+
+* [Installation](#installation)
+* [Examples](#examples)
+* [API Documentation](#api-documentation)
+* [Dialect generation](#dialect-generation)
+* [Testing](#testing)
+* [Links](#links)
 
 ## Installation
 
@@ -57,6 +66,10 @@ import (
 * [stream-requests](examples/stream-requests.go)
 * [transceiver](examples/transceiver.go)
 
+## API Documentation
+
+https://pkg.go.dev/github.com/aler9/gomavlib
+
 ## Dialect generation
 
 Standard dialects are provided in the `pkg/dialects/` folder, but it's also possible to use custom dialects, that can be converted into Go files by running:
@@ -65,10 +78,6 @@ Standard dialects are provided in the `pkg/dialects/` folder, but it's also poss
 go get github.com/aler9/gomavlib/cmd/dialect-import
 dialect-import my_dialect.xml > dialect.go
 ```
-
-## Documentation
-
-https://pkg.go.dev/github.com/aler9/gomavlib
 
 ## Testing
 

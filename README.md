@@ -28,7 +28,6 @@ Features:
 ## Table of contents
 
 * [Installation](#installation)
-* [Examples](#examples)
 * [API Documentation](#api-documentation)
 * [Dialect generation](#dialect-generation)
 * [Testing](#testing)
@@ -36,32 +35,38 @@ Features:
 
 ## Installation
 
-Go &ge; 1.13 is required, and modules must be enabled (there must be a `go.mod` file in your project folder, that can be created with the command `go mod init main`). To install the library, it is enough to write its name in the import section of the source files that will use it. Go will take care of downloading the needed files:
+1. Install Go &ge; 1.13.
 
-```go
-import (
-    "github.com/aler9/gomavlib"
-)
-```
+2. Create an empty folder, open a terminal in it and initialize the Go modules system:
 
-## Examples
+   ```
+   go mod init main
+   ```
 
-* [endpoint-serial](examples/endpoint-serial.go)
-* [endpoint-udp-server](examples/endpoint-udp-server.go)
-* [endpoint-udp-client](examples/endpoint-udp-client.go)
-* [endpoint-udp-broadcast](examples/endpoint-udp-broadcast.go)
-* [endpoint-tcp-server](examples/endpoint-tcp-server.go)
-* [endpoint-tcp-client](examples/endpoint-tcp-client.go)
-* [endpoint-custom](examples/endpoint-custom.go)
-* [message-read](examples/message-read.go)
-* [message-write](examples/message-write.go)
-* [signature](examples/signature.go)
-* [dialect-no](examples/dialect-no.go)
-* [dialect-custom](examples/dialect-custom.go)
-* [events](examples/events.go)
-* [router](examples/router.go)
-* [stream-requests](examples/stream-requests.go)
-* [transceiver](examples/transceiver.go)
+3. Download one of the example files and place it in the folder:
+
+  * [endpoint-serial](examples/endpoint-serial.go)
+  * [endpoint-udp-server](examples/endpoint-udp-server.go)
+  * [endpoint-udp-client](examples/endpoint-udp-client.go)
+  * [endpoint-udp-broadcast](examples/endpoint-udp-broadcast.go)
+  * [endpoint-tcp-server](examples/endpoint-tcp-server.go)
+  * [endpoint-tcp-client](examples/endpoint-tcp-client.go)
+  * [endpoint-custom](examples/endpoint-custom.go)
+  * [message-read](examples/message-read.go)
+  * [message-write](examples/message-write.go)
+  * [signature](examples/signature.go)
+  * [dialect-no](examples/dialect-no.go)
+  * [dialect-custom](examples/dialect-custom.go)
+  * [events](examples/events.go)
+  * [router](examples/router.go)
+  * [stream-requests](examples/stream-requests.go)
+  * [transceiver](examples/transceiver.go)
+
+4. Compile and run
+
+   ```
+   go run name-of-the-go-file.go
+   ```
 
 ## API Documentation
 

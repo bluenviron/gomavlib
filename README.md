@@ -5,7 +5,7 @@
 [![Lint](https://github.com/aler9/gomavlib/workflows/lint/badge.svg)](https://github.com/aler9/gomavlib/actions)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/aler9/gomavlib)](https://pkg.go.dev/github.com/aler9/gomavlib)
 
-gomavlib is a library that implements the Mavlink protocol (2.0 and 1.0) in the Go programming language. It can power UGVs, UAVs, ground stations, monitoring systems or routers, connected in a Mavlink network.
+gomavlib is a library that implements the Mavlink protocol (2.0 and 1.0) in the Go programming language. It can power UGVs, UAVs, ground stations, monitoring systems or routers, connected to other Mavlink-capable devices through a serial port, UDP, TCP or a custom transport.
 
 Mavlink is a lightweight and transport-independent protocol that is mostly used to communicate with unmanned ground vehicles (UGV) and unmanned aerial vehicles (UAV, drones, quadcopters, multirotors). It is supported by the most popular open-source flight controllers (Ardupilot and PX4).
 
@@ -13,19 +13,16 @@ This library powers the [**mavp2p**](https://github.com/aler9/mavp2p) router.
 
 Features:
 
-* Decodes and encodes Mavlink v2.0 and v1.0. Supports checksums, empty-byte truncation (v2.0), signatures (v2.0), message extensions (v2.0)
+* Decode and encode Mavlink v2.0 and v1.0. Supports checksums, empty-byte truncation (v2.0), signatures (v2.0), message extensions (v2.0).
 * Dialects are optional, the library can work with standard dialects (ready-to-use standard dialects are provided in directory `dialects/`), custom dialects or no dialects at all. In case of custom dialects, a dialect generator is available in order to convert XML definitions into their Go representation.
-* Provides a high-level API (`Node`) with:
-  * ability to communicate with multiple endpoints in parallel:
-    * serial
-    * UDP (server, client or broadcast mode)
-    * TCP (server or client mode)
-    * custom reader/writer
-  * automatic heartbeat emission
-  * automatic stream requests to Ardupilot devices (disabled by default)
-* Provides a low-level API (`Transceiver`) with ability to decode/encode frames from/to a generic reader/writer
-* UDP connections are tracked and removed when inactive
-* Supports both domain names and IPs
+* Create nodes able to communicate with multiple endpoints in parallel and with multiple transports:
+  * serial
+  * UDP (server, client or broadcast mode)
+  * TCP (server or client mode)
+  * custom reader/writer
+* Emit heartbeats automatically
+* Send automatic stream requests to Ardupilot devices (disabled by default)
+* Support both domain names and IPs
 * Examples provided for every feature, comprehensive test suite, continuous integration
 
 ## Table of contents

@@ -11,7 +11,7 @@ import (
 )
 
 // this is a custom message.
-// It must be prefixed with "Message" and implement the gomavlib.Message interface.
+// It must be prefixed with "Message" and implement the msg.Message interface.
 type MessageCustom struct {
 	Param1 uint8
 	Param2 uint8

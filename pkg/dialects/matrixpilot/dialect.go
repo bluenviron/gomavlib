@@ -16,6 +16,7 @@ var Dialect = dial
 var dial = &dialect.Dialect{3, []msg.Message{
 	// minimal.xml
 	&MessageHeartbeat{},
+	&MessageProtocolVersion{},
 	// common.xml
 	&MessageSysStatus{},
 	&MessageSystemTime{},

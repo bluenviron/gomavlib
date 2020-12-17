@@ -1,0 +1,29 @@
+name: dialects
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  dialects:
+    name: dialects
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-go@v2
+      with:
+        go-version: "1.15"
+
+    - run: make dialects-nodocker
+
+    - run: |
+        test -z "$(git status --porcelain)" ||
+        ( git add . \
+        && REV=$(curl -sL https://api.github.com/repos/mavlink/mavlink/branches/master | jq -r '.commit.sha') \
+        && git config user.name gomavlib-bot \
+        && git config user.email bot@gomavlib \
+        && git commit -m "(automatic) update dialects to rev https://github.com/mavlink/mavlink/tree/${REV}" \
+        && git push )

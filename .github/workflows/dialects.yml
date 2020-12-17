@@ -1,8 +1,8 @@
 name: dialects
 
 on:
-  push:
-    branches: [ master ]
+  schedule:
+  - cron: '4 5 * * *'
 
 jobs:
   dialects:

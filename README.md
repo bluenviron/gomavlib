@@ -71,7 +71,7 @@ Features:
 
 ## API Documentation
 
-https://pkg.go.dev/github.com/aler9/gomavlib
+https://pkg.go.dev/github.com/aler9/gomavlib#pkg-index
 
 ## Dialect generation
 

@@ -8266,6 +8266,8 @@ const (
 	MAV_MOUNT_MODE_GPS_POINT MAV_MOUNT_MODE = 4
 	// Gimbal tracks system with specified system ID
 	MAV_MOUNT_MODE_SYSID_TARGET MAV_MOUNT_MODE = 5
+	// Gimbal tracks home location
+	MAV_MOUNT_MODE_HOME_LOCATION MAV_MOUNT_MODE = 6
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -8283,6 +8285,8 @@ func (e MAV_MOUNT_MODE) MarshalText() ([]byte, error) {
 		return []byte("MAV_MOUNT_MODE_GPS_POINT"), nil
 	case MAV_MOUNT_MODE_SYSID_TARGET:
 		return []byte("MAV_MOUNT_MODE_SYSID_TARGET"), nil
+	case MAV_MOUNT_MODE_HOME_LOCATION:
+		return []byte("MAV_MOUNT_MODE_HOME_LOCATION"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -8307,6 +8311,9 @@ func (e *MAV_MOUNT_MODE) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_MOUNT_MODE_SYSID_TARGET":
 		*e = MAV_MOUNT_MODE_SYSID_TARGET
+		return nil
+	case "MAV_MOUNT_MODE_HOME_LOCATION":
+		*e = MAV_MOUNT_MODE_HOME_LOCATION
 		return nil
 	}
 	return errors.New("invalid value")

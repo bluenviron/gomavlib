@@ -13170,7 +13170,7 @@ func (*MessageParamValue) GetID() uint32 {
 	return 22
 }
 
-// Set a parameter value (write new value to permanent storage). Within a transaction the recieving componenent should respond with PARAM_ACK_TRANSACTION to the setter component. IMPORTANT: If sent outside a transaction the receiving component should acknowledge the new parameter value by broadcasting a PARAM_VALUE message to all communication partners (broadcasting ensures that multiple GCS all have an up-to-date list of all parameters). If the sending GCS did not receive a PARAM_VALUE or PARAM_ACK_TRANSACTION message within its timeout time, it should re-send the PARAM_SET message. The parameter microservice is documented at https://mavlink.io/en/services/parameter.html
+// Set a parameter value (write new value to permanent storage).        The receiving component should acknowledge the new parameter value by broadcasting a PARAM_VALUE message (broadcasting ensures that multiple GCS all have an up-to-date list of all parameters). If the sending GCS did not receive a PARAM_VALUE within its timeout time, it should re-send the PARAM_SET message. The parameter microservice is documented at https://mavlink.io/en/services/parameter.html.        PARAM_SET may also be called within the context of a transaction (started with MAV_CMD_PARAM_TRANSACTION). Within a transaction the receiving component should respond with PARAM_ACK_TRANSACTION to the setter component (instead of broadcasting PARAM_VALUE), and PARAM_SET should be re-sent if this is ACK not received.
 type MessageParamSet struct {
 	// System ID
 	TargetSystem uint8
@@ -14118,47 +14118,47 @@ func (*MessageManualControl) GetID() uint32 {
 	return 69
 }
 
-// The RAW values of the RC channels sent to the MAV to override info received from the RC radio. A value of UINT16_MAX means no change to that channel. A value of 0 means control of that channel should be released back to the RC radio. The standard PPM modulation is as follows: 1000 microseconds: 0%, 2000 microseconds: 100%. Individual receivers/transmitters might violate this specification.
+// The RAW values of the RC channels sent to the MAV to override info received from the RC radio. The standard PPM modulation is as follows: 1000 microseconds: 0%, 2000 microseconds: 100%. Individual receivers/transmitters might violate this specification.  Note carefully the semantic differences between the first 8 channels and the subsequent channels
 type MessageRcChannelsOverride struct {
 	// System ID
 	TargetSystem uint8
 	// Component ID
 	TargetComponent uint8
-	// RC channel 1 value. A value of UINT16_MAX means to ignore this field.
+	// RC channel 1 value. A value of UINT16_MAX means to ignore this field. A value of 0 means to release this channel back to the RC radio.
 	Chan1Raw uint16
-	// RC channel 2 value. A value of UINT16_MAX means to ignore this field.
+	// RC channel 2 value. A value of UINT16_MAX means to ignore this field. A value of 0 means to release this channel back to the RC radio.
 	Chan2Raw uint16
-	// RC channel 3 value. A value of UINT16_MAX means to ignore this field.
+	// RC channel 3 value. A value of UINT16_MAX means to ignore this field. A value of 0 means to release this channel back to the RC radio.
 	Chan3Raw uint16
-	// RC channel 4 value. A value of UINT16_MAX means to ignore this field.
+	// RC channel 4 value. A value of UINT16_MAX means to ignore this field. A value of 0 means to release this channel back to the RC radio.
 	Chan4Raw uint16
-	// RC channel 5 value. A value of UINT16_MAX means to ignore this field.
+	// RC channel 5 value. A value of UINT16_MAX means to ignore this field. A value of 0 means to release this channel back to the RC radio.
 	Chan5Raw uint16
-	// RC channel 6 value. A value of UINT16_MAX means to ignore this field.
+	// RC channel 6 value. A value of UINT16_MAX means to ignore this field. A value of 0 means to release this channel back to the RC radio.
 	Chan6Raw uint16
-	// RC channel 7 value. A value of UINT16_MAX means to ignore this field.
+	// RC channel 7 value. A value of UINT16_MAX means to ignore this field. A value of 0 means to release this channel back to the RC radio.
 	Chan7Raw uint16
-	// RC channel 8 value. A value of UINT16_MAX means to ignore this field.
+	// RC channel 8 value. A value of UINT16_MAX means to ignore this field. A value of 0 means to release this channel back to the RC radio.
 	Chan8Raw uint16
-	// RC channel 9 value. A value of 0 or UINT16_MAX means to ignore this field.
+	// RC channel 9 value. A value of 0 or UINT16_MAX means to ignore this field. A value of UINT16_MAX-1 means to release this channel back to the RC radio.
 	Chan9Raw uint16 `mavext:"true"`
-	// RC channel 10 value. A value of 0 or UINT16_MAX means to ignore this field.
+	// RC channel 10 value. A value of 0 or UINT16_MAX means to ignore this field. A value of UINT16_MAX-1 means to release this channel back to the RC radio.
 	Chan10Raw uint16 `mavext:"true"`
-	// RC channel 11 value. A value of 0 or UINT16_MAX means to ignore this field.
+	// RC channel 11 value. A value of 0 or UINT16_MAX means to ignore this field. A value of UINT16_MAX-1 means to release this channel back to the RC radio.
 	Chan11Raw uint16 `mavext:"true"`
-	// RC channel 12 value. A value of 0 or UINT16_MAX means to ignore this field.
+	// RC channel 12 value. A value of 0 or UINT16_MAX means to ignore this field. A value of UINT16_MAX-1 means to release this channel back to the RC radio.
 	Chan12Raw uint16 `mavext:"true"`
-	// RC channel 13 value. A value of 0 or UINT16_MAX means to ignore this field.
+	// RC channel 13 value. A value of 0 or UINT16_MAX means to ignore this field. A value of UINT16_MAX-1 means to release this channel back to the RC radio.
 	Chan13Raw uint16 `mavext:"true"`
-	// RC channel 14 value. A value of 0 or UINT16_MAX means to ignore this field.
+	// RC channel 14 value. A value of 0 or UINT16_MAX means to ignore this field. A value of UINT16_MAX-1 means to release this channel back to the RC radio.
 	Chan14Raw uint16 `mavext:"true"`
-	// RC channel 15 value. A value of 0 or UINT16_MAX means to ignore this field.
+	// RC channel 15 value. A value of 0 or UINT16_MAX means to ignore this field. A value of UINT16_MAX-1 means to release this channel back to the RC radio.
 	Chan15Raw uint16 `mavext:"true"`
-	// RC channel 16 value. A value of 0 or UINT16_MAX means to ignore this field.
+	// RC channel 16 value. A value of 0 or UINT16_MAX means to ignore this field. A value of UINT16_MAX-1 means to release this channel back to the RC radio.
 	Chan16Raw uint16 `mavext:"true"`
-	// RC channel 17 value. A value of 0 or UINT16_MAX means to ignore this field.
+	// RC channel 17 value. A value of 0 or UINT16_MAX means to ignore this field. A value of UINT16_MAX-1 means to release this channel back to the RC radio.
 	Chan17Raw uint16 `mavext:"true"`
-	// RC channel 18 value. A value of 0 or UINT16_MAX means to ignore this field.
+	// RC channel 18 val1ue. A value of 0 or UINT16_MAX means to ignore this field. A value of UINT16_MAX-1 means to release this channel back to the RC radio.
 	Chan18Raw uint16 `mavext:"true"`
 }
 
@@ -18327,7 +18327,7 @@ type MessageArrayTest_0 struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageArrayTest_0) GetID() uint32 {
-	return 150
+	return 17150
 }
 
 // Array test #1.
@@ -18338,7 +18338,7 @@ type MessageArrayTest_1 struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageArrayTest_1) GetID() uint32 {
-	return 151
+	return 17151
 }
 
 // Array test #3.
@@ -18351,7 +18351,7 @@ type MessageArrayTest_3 struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageArrayTest_3) GetID() uint32 {
-	return 153
+	return 17153
 }
 
 // Array test #4.
@@ -18364,7 +18364,7 @@ type MessageArrayTest_4 struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageArrayTest_4) GetID() uint32 {
-	return 154
+	return 17154
 }
 
 // Array test #5.
@@ -18377,7 +18377,7 @@ type MessageArrayTest_5 struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageArrayTest_5) GetID() uint32 {
-	return 155
+	return 17155
 }
 
 // Array test #6.
@@ -18410,7 +18410,7 @@ type MessageArrayTest_6 struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageArrayTest_6) GetID() uint32 {
-	return 156
+	return 17156
 }
 
 // Array test #7.
@@ -18437,7 +18437,7 @@ type MessageArrayTest_7 struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageArrayTest_7) GetID() uint32 {
-	return 157
+	return 17157
 }
 
 // Array test #8.
@@ -18452,5 +18452,5 @@ type MessageArrayTest_8 struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageArrayTest_8) GetID() uint32 {
-	return 158
+	return 17158
 }

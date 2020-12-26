@@ -67,5 +67,5 @@ type MessageTestTypes struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageTestTypes) GetID() uint32 {
-	return 0
+	return 17000
 }

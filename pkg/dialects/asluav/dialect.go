@@ -199,9 +199,6 @@ var dial = &dialect.Dialect{3, []msg.Message{
 	&MessageParamExtValue{},
 	&MessageParamExtSet{},
 	&MessageParamExtAck{},
-	&MessageParamExtValueTrimmed{},
-	&MessageParamExtSetTrimmed{},
-	&MessageParamExtAckTrimmed{},
 	&MessageObstacleDistance{},
 	&MessageOdometry{},
 	&MessageTrajectoryRepresentationWaypoints{},
@@ -10183,8 +10180,6 @@ const (
 	MAV_SENSOR_ROTATION_PITCH_315 MAV_SENSOR_ORIENTATION = 39
 	// Roll: 90, Pitch: 315
 	MAV_SENSOR_ROTATION_ROLL_90_PITCH_315 MAV_SENSOR_ORIENTATION = 40
-	// Roll: 270, Yaw: 180
-	MAV_SENSOR_ROTATION_ROLL_270_YAW_180 MAV_SENSOR_ORIENTATION = 41
 	// Custom orientation
 	MAV_SENSOR_ROTATION_CUSTOM MAV_SENSOR_ORIENTATION = 100
 )
@@ -10274,8 +10269,6 @@ func (e MAV_SENSOR_ORIENTATION) MarshalText() ([]byte, error) {
 		return []byte("MAV_SENSOR_ROTATION_PITCH_315"), nil
 	case MAV_SENSOR_ROTATION_ROLL_90_PITCH_315:
 		return []byte("MAV_SENSOR_ROTATION_ROLL_90_PITCH_315"), nil
-	case MAV_SENSOR_ROTATION_ROLL_270_YAW_180:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_270_YAW_180"), nil
 	case MAV_SENSOR_ROTATION_CUSTOM:
 		return []byte("MAV_SENSOR_ROTATION_CUSTOM"), nil
 	}
@@ -10407,9 +10400,6 @@ func (e *MAV_SENSOR_ORIENTATION) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_SENSOR_ROTATION_ROLL_90_PITCH_315":
 		*e = MAV_SENSOR_ROTATION_ROLL_90_PITCH_315
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_270_YAW_180":
-		*e = MAV_SENSOR_ROTATION_ROLL_270_YAW_180
 		return nil
 	case "MAV_SENSOR_ROTATION_CUSTOM":
 		*e = MAV_SENSOR_ROTATION_CUSTOM
@@ -15732,7 +15722,7 @@ func (*MessageTerrainData) GetID() uint32 {
 	return 134
 }
 
-// Request that the vehicle report terrain height at the given location. Used by GCS to check if vehicle has all terrain data needed for a mission.
+// Request that the vehicle report terrain height at the given location (expected response is a TERRAIN_REPORT). Used by GCS to check if vehicle has all terrain data needed for a mission.
 type MessageTerrainCheck struct {
 	// Latitude
 	Lat int32
@@ -15745,7 +15735,7 @@ func (*MessageTerrainCheck) GetID() uint32 {
 	return 135
 }
 
-// Streamed from drone to report progress of terrain map download (or response from a TERRAIN_CHECK request - deprecated). See terrain protocol docs: https://mavlink.io/en/services/terrain.html
+// Streamed from drone to report progress of terrain map download (initiated by TERRAIN_REQUEST), or sent as a response to a TERRAIN_CHECK request. See terrain protocol docs: https://mavlink.io/en/services/terrain.html
 type MessageTerrainReport struct {
 	// Latitude
 	Lat int32
@@ -17548,7 +17538,7 @@ func (*MessageUavcanNodeInfo) GetID() uint32 {
 	return 311
 }
 
-// Request to read the value of a parameter with either the param_id string id or param_index. PARAM_EXT_VALUE or PARAM_EXT_VALUE_TRIMMED should be emitted in response (see field: trimmed).
+// Request to read the value of a parameter with either the param_id string id or param_index. PARAM_EXT_VALUE should be emitted in response.
 type MessageParamExtRequestRead struct {
 	// System ID
 	TargetSystem uint8
@@ -17558,8 +17548,6 @@ type MessageParamExtRequestRead struct {
 	ParamId string `mavlen:"16"`
 	// Parameter index. Set to -1 to use the Parameter ID field as identifier (else param_id will be ignored)
 	ParamIndex int16
-	// Request _TRIMMED variants of PARAM_EXT_ messages. Set to 1 if _TRIMMED message variants are supported, and 0 otherwise. This signals the recipient that _TRIMMED messages are supported by the sender (and should be used if supported by the recipient).
-	Trimmed uint8 `mavext:"true"`
 }
 
 // GetID implements the msg.Message interface.
@@ -17567,14 +17555,12 @@ func (*MessageParamExtRequestRead) GetID() uint32 {
 	return 320
 }
 
-// Request all parameters of this component. All parameters should be emitted in response (as PARAM_EXT_VALUE or PARAM_EXT_VALUE_TRIMMED messages - see field: trimmed).
+// Request all parameters of this component. All parameters should be emitted in response as PARAM_EXT_VALUE.
 type MessageParamExtRequestList struct {
 	// System ID
 	TargetSystem uint8
 	// Component ID
 	TargetComponent uint8
-	// Request _TRIMMED variants of PARAM_EXT_ messages. Set to 1 if _TRIMMED message variants are supported, and 0 otherwise. This signals the recipient that _TRIMMED messages are supported by the sender (and should be used if supported by the recipient).
-	Trimmed uint8 `mavext:"true"`
 }
 
 // GetID implements the msg.Message interface.
@@ -17635,61 +17621,6 @@ type MessageParamExtAck struct {
 // GetID implements the msg.Message interface.
 func (*MessageParamExtAck) GetID() uint32 {
 	return 324
-}
-
-// Emit the value of a parameter. The inclusion of param_count and param_index in the message allows the recipient to keep track of received parameters and allows them to re-request missing parameters after a loss or timeout. Replacement for PARAM_EXT_VALUE.
-type MessageParamExtValueTrimmed struct {
-	// Total number of parameters
-	ParamCount uint16
-	// Index of this parameter
-	ParamIndex uint16
-	// Parameter type.
-	ParamType MAV_PARAM_EXT_TYPE `mavenum:"uint8"`
-	// Parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
-	ParamId string `mavlen:"16"`
-	// Parameter value (zeros get trimmed)
-	ParamValue string `mavlen:"128"`
-}
-
-// GetID implements the msg.Message interface.
-func (*MessageParamExtValueTrimmed) GetID() uint32 {
-	return 325
-}
-
-// Set a parameter value. In order to deal with message loss (and retransmission of PARAM_EXT_SET_TRIMMED), when setting a parameter value and the new value is the same as the current value, you will immediately get a PARAM_ACK_ACCEPTED response. If the current state is PARAM_ACK_IN_PROGRESS, you will accordingly receive a PARAM_ACK_IN_PROGRESS in response. If there is no response to this message, and it is unknown whether the _TRIMMED messages are supported (because no PARAM_EXT_REQUEST_READ or PARAM_EXT_REQUEST_LIST has been performed yet), then fall back to PARAM_EXT_SET.
-type MessageParamExtSetTrimmed struct {
-	// System ID
-	TargetSystem uint8
-	// Component ID
-	TargetComponent uint8
-	// Parameter type.
-	ParamType MAV_PARAM_EXT_TYPE `mavenum:"uint8"`
-	// Parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
-	ParamId string `mavlen:"16"`
-	// Parameter value (zeros get trimmed)
-	ParamValue string `mavlen:"128"`
-}
-
-// GetID implements the msg.Message interface.
-func (*MessageParamExtSetTrimmed) GetID() uint32 {
-	return 326
-}
-
-// Response from a PARAM_EXT_SET_TRIMMED message.
-type MessageParamExtAckTrimmed struct {
-	// Result code.
-	ParamResult PARAM_ACK `mavenum:"uint8"`
-	// Parameter type.
-	ParamType MAV_PARAM_EXT_TYPE `mavenum:"uint8"`
-	// Parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
-	ParamId string `mavlen:"16"`
-	// Parameter value (new value if PARAM_ACK_ACCEPTED, current value otherwise, zeros get trimmed)
-	ParamValue string `mavlen:"128"`
-}
-
-// GetID implements the msg.Message interface.
-func (*MessageParamExtAckTrimmed) GetID() uint32 {
-	return 327
 }
 
 // Obstacle distances in front of the sensor, starting from the left in increment degrees to the right

@@ -17803,7 +17803,7 @@ type MessageSmartBatteryInfo struct {
 	CapacityFullSpecification int32
 	// Capacity when full (accounting for battery degradation), -1: field not provided.
 	CapacityFull int32
-	// Charge/discharge cycle count. -1: field not provided.
+	// Charge/discharge cycle count. UINT16_MAX: field not provided.
 	CycleCount uint16
 	// Serial number in ASCII characters, 0 terminated. All 0: field not provided.
 	SerialNumber string `mavlen:"16"`

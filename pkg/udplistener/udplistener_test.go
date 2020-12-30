@@ -113,7 +113,8 @@ func TestUdpListenerDeadline(t *testing.T) {
 		require.NoError(t, err)
 		defer conn.Close()
 
-		conn.Write([]byte("a"))
+		_, err = conn.Write([]byte("a"))
+		require.NoError(t, err)
 	}()
 
 	wg.Wait()

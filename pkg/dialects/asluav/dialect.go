@@ -244,6 +244,8 @@ var dial = &dialect.Dialect{3, []msg.Message{
 	&MessageSensorpodStatus{},
 	&MessageSensPowerBoard{},
 	&MessageGsmLinkStatus{},
+	&MessageSatcomLinkStatus{},
+	&MessageSensorAirflowAngles{},
 }}
 
 // Enumeration of the ADSB altimeter types
@@ -18843,4 +18845,48 @@ type MessageGsmLinkStatus struct {
 // GetID implements the msg.Message interface.
 func (*MessageGsmLinkStatus) GetID() uint32 {
 	return 213
+}
+
+// Status of the SatCom link
+type MessageSatcomLinkStatus struct {
+	// Timestamp
+	Timestamp uint64
+	// Timestamp of the last successful sbd session
+	LastHeartbeat uint64
+	// Number of failed sessions
+	FailedSessions uint16
+	// Number of successful sessions
+	SuccessfulSessions uint16
+	// Signal quality
+	SignalQuality uint8
+	// Ring call pending
+	RingPending uint8
+	// Transmission session pending
+	TxSessionPending uint8
+	// Receiving session pending
+	RxSessionPending uint8
+}
+
+// GetID implements the msg.Message interface.
+func (*MessageSatcomLinkStatus) GetID() uint32 {
+	return 214
+}
+
+// Calibrated airflow angle measurements
+type MessageSensorAirflowAngles struct {
+	// Timestamp
+	Timestamp uint64
+	// Angle of attack
+	Angleofattack float32
+	// Angle of attack measurement valid
+	AngleofattackValid uint8
+	// Sideslip angle
+	Sideslip float32
+	// Sideslip angle measurement valid
+	SideslipValid uint8
+}
+
+// GetID implements the msg.Message interface.
+func (*MessageSensorAirflowAngles) GetID() uint32 {
+	return 215
 }

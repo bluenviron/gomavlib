@@ -115,6 +115,11 @@ func run() error {
 		}
 		name := f.Name[:len(f.Name)-len(".xml")]
 
+		// the "all" dialect is too buggy
+		if name == "all" {
+			continue
+		}
+
 		err = processDialect(res.Sha, name)
 		if err != nil {
 			return err

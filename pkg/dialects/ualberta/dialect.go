@@ -1767,22 +1767,22 @@ type CAMERA_TRACKING_MODE int
 
 const (
 	// Not tracking
-	CAMERA_TRACKING_NONE CAMERA_TRACKING_MODE = 0
+	CAMERA_TRACKING_MODE_NONE CAMERA_TRACKING_MODE = 0
 	// Target is a point
-	CAMERA_TRACKING_POINT CAMERA_TRACKING_MODE = 1
+	CAMERA_TRACKING_MODE_POINT CAMERA_TRACKING_MODE = 1
 	// Target is a rectangle
-	CAMERA_TRACKING_RECTANGLE CAMERA_TRACKING_MODE = 2
+	CAMERA_TRACKING_MODE_RECTANGLE CAMERA_TRACKING_MODE = 2
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAMERA_TRACKING_MODE) MarshalText() ([]byte, error) {
 	switch e {
-	case CAMERA_TRACKING_NONE:
-		return []byte("CAMERA_TRACKING_NONE"), nil
-	case CAMERA_TRACKING_POINT:
-		return []byte("CAMERA_TRACKING_POINT"), nil
-	case CAMERA_TRACKING_RECTANGLE:
-		return []byte("CAMERA_TRACKING_RECTANGLE"), nil
+	case CAMERA_TRACKING_MODE_NONE:
+		return []byte("CAMERA_TRACKING_MODE_NONE"), nil
+	case CAMERA_TRACKING_MODE_POINT:
+		return []byte("CAMERA_TRACKING_MODE_POINT"), nil
+	case CAMERA_TRACKING_MODE_RECTANGLE:
+		return []byte("CAMERA_TRACKING_MODE_RECTANGLE"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -1790,14 +1790,14 @@ func (e CAMERA_TRACKING_MODE) MarshalText() ([]byte, error) {
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CAMERA_TRACKING_MODE) UnmarshalText(text []byte) error {
 	switch string(text) {
-	case "CAMERA_TRACKING_NONE":
-		*e = CAMERA_TRACKING_NONE
+	case "CAMERA_TRACKING_MODE_NONE":
+		*e = CAMERA_TRACKING_MODE_NONE
 		return nil
-	case "CAMERA_TRACKING_POINT":
-		*e = CAMERA_TRACKING_POINT
+	case "CAMERA_TRACKING_MODE_POINT":
+		*e = CAMERA_TRACKING_MODE_POINT
 		return nil
-	case "CAMERA_TRACKING_RECTANGLE":
-		*e = CAMERA_TRACKING_RECTANGLE
+	case "CAMERA_TRACKING_MODE_RECTANGLE":
+		*e = CAMERA_TRACKING_MODE_RECTANGLE
 		return nil
 	}
 	return errors.New("invalid value")
@@ -15236,9 +15236,9 @@ type MessageHilGps struct {
 	Lon int32
 	// Altitude (MSL). Positive for up.
 	Alt int32
-	// GPS HDOP horizontal dilution of position. If unknown, set to: 65535
+	// GPS HDOP horizontal dilution of position (unitless). If unknown, set to: UINT16_MAX
 	Eph uint16
-	// GPS VDOP vertical dilution of position. If unknown, set to: 65535
+	// GPS VDOP vertical dilution of position (unitless). If unknown, set to: UINT16_MAX
 	Epv uint16
 	// GPS ground speed. If unknown, set to: 65535
 	Vel uint16
@@ -15495,9 +15495,9 @@ type MessageGps2Raw struct {
 	Lon int32
 	// Altitude (MSL). Positive for up.
 	Alt int32
-	// GPS HDOP horizontal dilution of position. If unknown, set to: UINT16_MAX
+	// GPS HDOP horizontal dilution of position (unitless). If unknown, set to: UINT16_MAX
 	Eph uint16
-	// GPS VDOP vertical dilution of position. If unknown, set to: UINT16_MAX
+	// GPS VDOP vertical dilution of position (unitless). If unknown, set to: UINT16_MAX
 	Epv uint16
 	// GPS ground speed. If unknown, set to: UINT16_MAX
 	Vel uint16
@@ -16295,9 +16295,9 @@ type MessageGpsInput struct {
 	Lon int32
 	// Altitude (MSL). Positive for up.
 	Alt float32
-	// GPS HDOP horizontal dilution of position
+	// GPS HDOP horizontal dilution of position (unitless). If unknown, set to: UINT16_MAX
 	Hdop float32
-	// GPS VDOP vertical dilution of position
+	// GPS VDOP vertical dilution of position (unitless). If unknown, set to: UINT16_MAX
 	Vdop float32
 	// GPS velocity in north direction in earth-fixed NED frame
 	Vn float32
@@ -17119,19 +17119,19 @@ type MessageCameraTrackingImageStatus struct {
 	TrackingMode CAMERA_TRACKING_MODE `mavenum:"uint8"`
 	// Defines location of target data
 	TargetData CAMERA_TRACKING_TARGET_DATA `mavenum:"uint8"`
-	// Current tracked point x value if CAMERA_TRACKING_POINT (normalized 0..1, 0 is left, 1 is right), NAN if unknown
+	// Current tracked point x value if CAMERA_TRACKING_MODE_POINT (normalized 0..1, 0 is left, 1 is right), NAN if unknown
 	PointX float32
-	// Current tracked point y value if CAMERA_TRACKING_POINT (normalized 0..1, 0 is top, 1 is bottom), NAN if unknown
+	// Current tracked point y value if CAMERA_TRACKING_MODE_POINT (normalized 0..1, 0 is top, 1 is bottom), NAN if unknown
 	PointY float32
-	// Current tracked radius if CAMERA_TRACKING_POINT (normalized 0..1, 0 is image left, 1 is image right), NAN if unknown
+	// Current tracked radius if CAMERA_TRACKING_MODE_POINT (normalized 0..1, 0 is image left, 1 is image right), NAN if unknown
 	Radius float32
-	// Current tracked rectangle top x value if CAMERA_TRACKING_RECTANGLE (normalized 0..1, 0 is left, 1 is right), NAN if unknown
+	// Current tracked rectangle top x value if CAMERA_TRACKING_MODE_RECTANGLE (normalized 0..1, 0 is left, 1 is right), NAN if unknown
 	RecTopX float32
-	// Current tracked rectangle top y value if CAMERA_TRACKING_RECTANGLE (normalized 0..1, 0 is top, 1 is bottom), NAN if unknown
+	// Current tracked rectangle top y value if CAMERA_TRACKING_MODE_RECTANGLE (normalized 0..1, 0 is top, 1 is bottom), NAN if unknown
 	RecTopY float32
-	// Current tracked rectangle bottom x value if CAMERA_TRACKING_RECTANGLE (normalized 0..1, 0 is left, 1 is right), NAN if unknown
+	// Current tracked rectangle bottom x value if CAMERA_TRACKING_MODE_RECTANGLE (normalized 0..1, 0 is left, 1 is right), NAN if unknown
 	RecBottomX float32
-	// Current tracked rectangle bottom y value if CAMERA_TRACKING_RECTANGLE (normalized 0..1, 0 is top, 1 is bottom), NAN if unknown
+	// Current tracked rectangle bottom y value if CAMERA_TRACKING_MODE_RECTANGLE (normalized 0..1, 0 is top, 1 is bottom), NAN if unknown
 	RecBottomY float32
 }
 

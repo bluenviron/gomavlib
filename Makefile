@@ -48,10 +48,10 @@ test-examples:
 	go build -o /dev/null ./examples/...
 
 test-pkg:
-	go test -race -v ./pkg/...
+	go test -v -race -coverprofile=coverage-pkg.txt ./pkg/...
 
 test-root:
-	go test -race -v .
+	go test -v -race -coverprofile=coverage-root.txt .
 
 test-nodocker: test-cmd test-examples test-pkg test-root
 

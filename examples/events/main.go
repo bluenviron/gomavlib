@@ -1,5 +1,3 @@
-// +build ignore
-
 package main
 
 import (
@@ -27,23 +25,20 @@ func main() {
 	}
 	defer node.Close()
 
+	// gomavlib provides different kinds of event
 	for evt := range node.Events() {
-		if frm, ok := evt.(*gomavlib.EventFrame); ok {
-			fmt.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())
+		switch ee := evt.(type) {
+		case *gomavlib.EventFrame:
+			fmt.Printf("frame received: %v\n", ee)
 
-			// if message is a parameter read request addressed to this node
-			if msg, ok := frm.Message().(*ardupilotmega.MessageParamRequestRead); ok &&
-				msg.TargetSystem == 10 &&
-				msg.TargetComponent == 1 &&
-				msg.ParamId == "test_parameter" {
+		case *gomavlib.EventParseError:
+			fmt.Printf("parse error: %v\n", ee)
 
-				// reply to sender (and no one else) and provide the requested parameter
-				node.WriteMessageTo(frm.Channel, &ardupilotmega.MessageParamValue{
-					ParamId:    "test_parameter",
-					ParamValue: 123456,
-					ParamType:  ardupilotmega.MAV_PARAM_TYPE_UINT32,
-				})
-			}
+		case *gomavlib.EventChannelOpen:
+			fmt.Printf("channel opened: %v\n", ee)
+
+		case *gomavlib.EventChannelClose:
+			fmt.Printf("channel closed: %v\n", ee)
 		}
 	}
 }

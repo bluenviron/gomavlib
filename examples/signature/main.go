@@ -1,5 +1,3 @@
-// +build ignore
-
 package main
 
 import (
@@ -7,20 +5,28 @@ import (
 
 	"github.com/aler9/gomavlib"
 	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
+	"github.com/aler9/gomavlib/pkg/frame"
 )
 
 func main() {
+	// initialize a 6-bytes key. A key can have up to 32 bytes.
+	key := frame.NewV2Key([]byte("abcdef"))
+
 	// create a node which
-	// - communicates with an UDP endpoint in server mode.
+	// - communicates with a serial port.
 	// - understands ardupilotmega dialect
 	// - writes messages with given system id
+	// - validates incoming messages via InKey
+	// - sign outgoing messages via OutKey
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
-			gomavlib.EndpointUDPServer{":5600"},
+			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
 		},
 		Dialect:     ardupilotmega.Dialect,
-		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target
+		OutVersion:  gomavlib.V2, // V2 is mandatory for signatures
 		OutSystemID: 10,
+		InKey:       key,
+		OutKey:      key,
 	})
 	if err != nil {
 		panic(err)

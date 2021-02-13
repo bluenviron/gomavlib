@@ -1,5 +1,3 @@
-// +build ignore
-
 package main
 
 import (
@@ -11,12 +9,12 @@ import (
 
 func main() {
 	// create a node which
-	// - communicates with an UDP endpoint in client mode
+	// - communicates with an UDP endpoint in server mode.
 	// - understands ardupilotmega dialect
 	// - writes messages with given system id
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
-			gomavlib.EndpointUDPClient{"1.2.3.4:5600"},
+			gomavlib.EndpointUDPServer{":5600"},
 		},
 		Dialect:     ardupilotmega.Dialect,
 		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target

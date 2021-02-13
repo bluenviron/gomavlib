@@ -1,23 +1,40 @@
-// +build ignore
-
 package main
 
 import (
 	"fmt"
 
 	"github.com/aler9/gomavlib"
+	"github.com/aler9/gomavlib/pkg/dialect"
+	"github.com/aler9/gomavlib/pkg/msg"
 )
 
+// this is a custom message.
+// It must be prefixed with "Message" and implement the msg.Message interface.
+type MessageCustom struct {
+	Param1 uint8
+	Param2 uint8
+	Param3 uint32
+}
+
+func (*MessageCustom) GetID() uint32 {
+	return 304
+}
+
 func main() {
+	// create a custom dialect from messages
+	dialect := &dialect.Dialect{3, []msg.Message{
+		&MessageCustom{},
+	}}
+
 	// create a node which
 	// - communicates with a serial port
-	// - does not use dialects
+	// - understands our custom dialect
 	// - writes messages with given system id
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
 		},
-		Dialect:     nil,
+		Dialect:     dialect,
 		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target
 		OutSystemID: 10,
 	})

@@ -41,14 +41,23 @@ COPY . ./
 endef
 export DOCKERFILE_TEST
 
+test-cmd:
+	go build -o /dev/null ./cmd/...
+
+test-examples:
+	go build -o /dev/null ./examples/...
+
+test-pkg:
+	go test -race -v ./pkg/...
+
+test-root:
+	go test -race -v .
+
+test-nodocker: test-cmd test-examples test-pkg test-root
+
 test:
 	echo "$$DOCKERFILE_TEST" | docker build . -f - -t temp
 	docker run --rm -it temp make test-nodocker
-
-test-nodocker:
-	go test -race -v ./...
-	go build -o /dev/null ./cmd/...
-	$(foreach f,$(shell ls examples/*),go build -o /dev/null $(f)$(NL))
 
 lint:
 	docker run --rm -v $(PWD):/app -w /app \

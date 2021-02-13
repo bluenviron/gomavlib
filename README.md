@@ -46,22 +46,22 @@ Features:
 
 3. Download one of the example files and place it in the folder:
 
-  * [endpoint-serial](examples/endpoint-serial.go)
-  * [endpoint-udp-server](examples/endpoint-udp-server.go)
-  * [endpoint-udp-client](examples/endpoint-udp-client.go)
-  * [endpoint-udp-broadcast](examples/endpoint-udp-broadcast.go)
-  * [endpoint-tcp-server](examples/endpoint-tcp-server.go)
-  * [endpoint-tcp-client](examples/endpoint-tcp-client.go)
-  * [endpoint-custom](examples/endpoint-custom.go)
-  * [message-read](examples/message-read.go)
-  * [message-write](examples/message-write.go)
-  * [signature](examples/signature.go)
-  * [dialect-no](examples/dialect-no.go)
-  * [dialect-custom](examples/dialect-custom.go)
-  * [events](examples/events.go)
-  * [router](examples/router.go)
-  * [stream-requests](examples/stream-requests.go)
-  * [transceiver](examples/transceiver.go)
+  * [endpoint-serial](examples/endpoint-serial/main.go)
+  * [endpoint-udp-server](examples/endpoint-udp-server/main.go)
+  * [endpoint-udp-client](examples/endpoint-udp-client/main.go)
+  * [endpoint-udp-broadcast](examples/endpoint-udp-broadcast/main.go)
+  * [endpoint-tcp-server](examples/endpoint-tcp-server/main.go)
+  * [endpoint-tcp-client](examples/endpoint-tcp-client/main.go)
+  * [endpoint-custom](examples/endpoint-custom/main.go)
+  * [message-read](examples/message-read/main.go)
+  * [message-write](examples/message-write/main.go)
+  * [signature](examples/signature/main.go)
+  * [dialect-no](examples/dialect-no/main.go)
+  * [dialect-custom](examples/dialect-custom/main.go)
+  * [events](examples/events/main.go)
+  * [router](examples/router/main.go)
+  * [stream-requests](examples/stream-requests/main.go)
+  * [transceiver](examples/transceiver/main.go)
 
 4. Compile and run
 

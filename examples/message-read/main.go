@@ -1,5 +1,3 @@
-// +build ignore
-
 package main
 
 import (
@@ -27,20 +25,21 @@ func main() {
 	}
 	defer node.Close()
 
-	// gomavlib provides different kinds of event
+	// print selected messages
 	for evt := range node.Events() {
-		switch ee := evt.(type) {
-		case *gomavlib.EventFrame:
-			fmt.Printf("frame received: %v\n", ee)
+		if frm, ok := evt.(*gomavlib.EventFrame); ok {
 
-		case *gomavlib.EventParseError:
-			fmt.Printf("parse error: %v\n", ee)
+			switch msg := frm.Message().(type) {
+			// if frm.Message() is a *ardupilotmega.MessageHeartbeat, access its fields
+			case *ardupilotmega.MessageHeartbeat:
+				fmt.Printf("received heartbeat (type %d)\n", msg.Type)
 
-		case *gomavlib.EventChannelOpen:
-			fmt.Printf("channel opened: %v\n", ee)
-
-		case *gomavlib.EventChannelClose:
-			fmt.Printf("channel closed: %v\n", ee)
+			// if frm.Message() is a *ardupilotmega.MessageServoOutputRaw, access its fields
+			case *ardupilotmega.MessageServoOutputRaw:
+				fmt.Printf("received servo output with values: %d %d %d %d %d %d %d %d\n",
+					msg.Servo1Raw, msg.Servo2Raw, msg.Servo3Raw, msg.Servo4Raw,
+					msg.Servo5Raw, msg.Servo6Raw, msg.Servo7Raw, msg.Servo8Raw)
+			}
 		}
 	}
 }

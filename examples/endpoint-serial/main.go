@@ -1,5 +1,3 @@
-// +build ignore
-
 package main
 
 import (
@@ -14,15 +12,13 @@ func main() {
 	// - communicates with a serial port
 	// - understands ardupilotmega dialect
 	// - writes messages with given system id
-	// - automatically requests streams to ardupilot devices
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
 		},
-		Dialect:             ardupilotmega.Dialect,
-		OutVersion:          gomavlib.V1, // Ardupilot uses V1
-		OutSystemID:         10,
-		StreamRequestEnable: true,
+		Dialect:     ardupilotmega.Dialect,
+		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target
+		OutSystemID: 10,
 	})
 	if err != nil {
 		panic(err)

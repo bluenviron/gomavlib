@@ -1,5 +1,3 @@
-// +build ignore
-
 package main
 
 import (
@@ -27,20 +25,22 @@ func main() {
 	}
 	defer node.Close()
 
-	// print selected messages
 	for evt := range node.Events() {
 		if frm, ok := evt.(*gomavlib.EventFrame); ok {
+			fmt.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())
 
-			switch msg := frm.Message().(type) {
-			// if frm.Message() is a *ardupilotmega.MessageHeartbeat, access its fields
-			case *ardupilotmega.MessageHeartbeat:
-				fmt.Printf("received heartbeat (type %d)\n", msg.Type)
+			// if message is a parameter read request addressed to this node
+			if msg, ok := frm.Message().(*ardupilotmega.MessageParamRequestRead); ok &&
+				msg.TargetSystem == 10 &&
+				msg.TargetComponent == 1 &&
+				msg.ParamId == "test_parameter" {
 
-			// if frm.Message() is a *ardupilotmega.MessageServoOutputRaw, access its fields
-			case *ardupilotmega.MessageServoOutputRaw:
-				fmt.Printf("received servo output with values: %d %d %d %d %d %d %d %d\n",
-					msg.Servo1Raw, msg.Servo2Raw, msg.Servo3Raw, msg.Servo4Raw,
-					msg.Servo5Raw, msg.Servo6Raw, msg.Servo7Raw, msg.Servo8Raw)
+				// reply to sender (and no one else) and provide the requested parameter
+				node.WriteMessageTo(frm.Channel, &ardupilotmega.MessageParamValue{
+					ParamId:    "test_parameter",
+					ParamValue: 123456,
+					ParamType:  ardupilotmega.MAV_PARAM_TYPE_UINT32,
+				})
 			}
 		}
 	}

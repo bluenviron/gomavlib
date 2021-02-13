@@ -298,6 +298,7 @@ var dial = &dialect.Dialect{3, []msg.Message{
 	&MessageOsdParamConfigReply{},
 	&MessageOsdParamShowConfig{},
 	&MessageOsdParamShowConfigReply{},
+	&MessageObstacleDistance_3d{},
 }}
 
 //
@@ -14759,6 +14760,8 @@ const (
 	PLANE_MODE_QAUTOTUNE PLANE_MODE = 22
 	//
 	PLANE_MODE_QACRO PLANE_MODE = 23
+	//
+	PLANE_MODE_THERMAL PLANE_MODE = 24
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -14810,6 +14813,8 @@ func (e PLANE_MODE) MarshalText() ([]byte, error) {
 		return []byte("PLANE_MODE_QAUTOTUNE"), nil
 	case PLANE_MODE_QACRO:
 		return []byte("PLANE_MODE_QACRO"), nil
+	case PLANE_MODE_THERMAL:
+		return []byte("PLANE_MODE_THERMAL"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -14885,6 +14890,9 @@ func (e *PLANE_MODE) UnmarshalText(text []byte) error {
 		return nil
 	case "PLANE_MODE_QACRO":
 		*e = PLANE_MODE_QACRO
+		return nil
+	case "PLANE_MODE_THERMAL":
+		*e = PLANE_MODE_THERMAL
 		return nil
 	}
 	return errors.New("invalid value")
@@ -18464,7 +18472,7 @@ type MessageRcChannelsOverride struct {
 	Chan16Raw uint16 `mavext:"true"`
 	// RC channel 17 value. A value of 0 or UINT16_MAX means to ignore this field. A value of UINT16_MAX-1 means to release this channel back to the RC radio.
 	Chan17Raw uint16 `mavext:"true"`
-	// RC channel 18 val1ue. A value of 0 or UINT16_MAX means to ignore this field. A value of UINT16_MAX-1 means to release this channel back to the RC radio.
+	// RC channel 18 value. A value of 0 or UINT16_MAX means to ignore this field. A value of UINT16_MAX-1 means to release this channel back to the RC radio.
 	Chan18Raw uint16 `mavext:"true"`
 }
 
@@ -24003,4 +24011,31 @@ type MessageOsdParamShowConfigReply struct {
 // GetID implements the msg.Message interface.
 func (*MessageOsdParamShowConfigReply) GetID() uint32 {
 	return 11036
+}
+
+// Obstacle located as a 3D vector.
+type MessageObstacleDistance_3d struct {
+	// Timestamp (time since system boot).
+	TimeBootMs uint32
+	// Class id of the distance sensor type.
+	SensorType MAV_DISTANCE_SENSOR `mavenum:"uint8"`
+	// Coordinate frame of reference.
+	Frame MAV_FRAME `mavenum:"uint8"`
+	//  Unique ID given to each obstacle so that its movement can be tracked. Use UINT16_MAX if object ID is unknown or cannot be determined.
+	ObstacleId uint16
+	//  X position of the obstacle.
+	X float32
+	//  Y position of the obstacle.
+	Y float32
+	//  Z position of the obstacle.
+	Z float32
+	// Minimum distance the sensor can measure.
+	MinDistance float32
+	// Maximum distance the sensor can measure.
+	MaxDistance float32
+}
+
+// GetID implements the msg.Message interface.
+func (*MessageObstacleDistance_3d) GetID() uint32 {
+	return 11037
 }

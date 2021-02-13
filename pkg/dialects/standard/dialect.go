@@ -14140,7 +14140,7 @@ type MessageRcChannelsOverride struct {
 	Chan16Raw uint16 `mavext:"true"`
 	// RC channel 17 value. A value of 0 or UINT16_MAX means to ignore this field. A value of UINT16_MAX-1 means to release this channel back to the RC radio.
 	Chan17Raw uint16 `mavext:"true"`
-	// RC channel 18 val1ue. A value of 0 or UINT16_MAX means to ignore this field. A value of UINT16_MAX-1 means to release this channel back to the RC radio.
+	// RC channel 18 value. A value of 0 or UINT16_MAX means to ignore this field. A value of UINT16_MAX-1 means to release this channel back to the RC radio.
 	Chan18Raw uint16 `mavext:"true"`
 }
 

@@ -10530,6 +10530,8 @@ const (
 	MAV_SYS_STATUS_PREARM_CHECK MAV_SYS_STATUS_SENSOR = 268435456
 	// 0x20000000 Avoidance/collision prevention
 	MAV_SYS_STATUS_OBSTACLE_AVOIDANCE MAV_SYS_STATUS_SENSOR = 536870912
+	// 0x40000000 porpulsion (actuator, esc, motor or propellor)
+	MAV_SYS_STATUS_SENSOR_PORPULSION MAV_SYS_STATUS_SENSOR = 1073741824
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -10595,6 +10597,8 @@ func (e MAV_SYS_STATUS_SENSOR) MarshalText() ([]byte, error) {
 		return []byte("MAV_SYS_STATUS_PREARM_CHECK"), nil
 	case MAV_SYS_STATUS_OBSTACLE_AVOIDANCE:
 		return []byte("MAV_SYS_STATUS_OBSTACLE_AVOIDANCE"), nil
+	case MAV_SYS_STATUS_SENSOR_PORPULSION:
+		return []byte("MAV_SYS_STATUS_SENSOR_PORPULSION"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -10691,6 +10695,9 @@ func (e *MAV_SYS_STATUS_SENSOR) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_SYS_STATUS_OBSTACLE_AVOIDANCE":
 		*e = MAV_SYS_STATUS_OBSTACLE_AVOIDANCE
+		return nil
+	case "MAV_SYS_STATUS_SENSOR_PORPULSION":
+		*e = MAV_SYS_STATUS_SENSOR_PORPULSION
 		return nil
 	}
 	return errors.New("invalid value")

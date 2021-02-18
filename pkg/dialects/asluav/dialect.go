@@ -5081,7 +5081,7 @@ const (
 	MAV_CMD_SET_GUIDED_SUBMODE_CIRCLE MAV_CMD = 4001
 	// Delay mission state machine until gate has been reached.
 	MAV_CMD_CONDITION_GATE MAV_CMD = 4501
-	// Fence return point. There can only be one fence return point.
+	// Fence return point (there can only be one such point in a geofence definition). If rally points are supported they should be used instead.
 	MAV_CMD_NAV_FENCE_RETURN_POINT MAV_CMD = 5000
 	// Fence vertex for an inclusion polygon (the polygon must not be self-intersecting). The vehicle must stay within this area. Minimum of 3 vertices required.
 	MAV_CMD_NAV_FENCE_POLYGON_VERTEX_INCLUSION MAV_CMD = 5001

@@ -7376,8 +7376,6 @@ const (
 	MAV_CMD_DO_SET_ROI_NONE MAV_CMD = 197
 	// Mount tracks system with specified system ID. Determination of target vehicle position may be done with GLOBAL_POSITION_INT or any other means. This command can be sent to a gimbal manager but not to a gimbal device. A gimbal device is not to react to this message.
 	MAV_CMD_DO_SET_ROI_SYSID MAV_CMD = 198
-	// Control attached liquid sprayer
-	MAV_CMD_DO_SPRAYER MAV_CMD = 199
 	// Control onboard camera system.
 	MAV_CMD_DO_CONTROL_VIDEO MAV_CMD = 200
 	// Sets the region of interest (ROI) for a sensor set or the vehicle itself. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras.
@@ -7588,6 +7586,8 @@ const (
 	MAV_CMD_USER_5 MAV_CMD = 31014
 	// Set the distance to be repeated on mission resume
 	MAV_CMD_DO_SET_RESUME_REPEAT_DIST MAV_CMD = 215
+	// Control attached liquid sprayer
+	MAV_CMD_DO_SPRAYER MAV_CMD = 216
 	// Mission command to wait for an altitude or downwards vertical speed. This is meant for high altitude balloon launches, allowing the aircraft to be idle until either an altitude is reached or a negative vertical speed is reached (indicating early balloon burst). The wiggle time is how often to wiggle the control surfaces to prevent them seizing up.
 	MAV_CMD_NAV_ALTITUDE_WAIT MAV_CMD = 83
 	// A system wide power-off event has been initiated.
@@ -7743,8 +7743,6 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_DO_SET_ROI_NONE"), nil
 	case MAV_CMD_DO_SET_ROI_SYSID:
 		return []byte("MAV_CMD_DO_SET_ROI_SYSID"), nil
-	case MAV_CMD_DO_SPRAYER:
-		return []byte("MAV_CMD_DO_SPRAYER"), nil
 	case MAV_CMD_DO_CONTROL_VIDEO:
 		return []byte("MAV_CMD_DO_CONTROL_VIDEO"), nil
 	case MAV_CMD_DO_SET_ROI:
@@ -7955,6 +7953,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_USER_5"), nil
 	case MAV_CMD_DO_SET_RESUME_REPEAT_DIST:
 		return []byte("MAV_CMD_DO_SET_RESUME_REPEAT_DIST"), nil
+	case MAV_CMD_DO_SPRAYER:
+		return []byte("MAV_CMD_DO_SPRAYER"), nil
 	case MAV_CMD_NAV_ALTITUDE_WAIT:
 		return []byte("MAV_CMD_NAV_ALTITUDE_WAIT"), nil
 	case MAV_CMD_POWER_OFF_INITIATED:
@@ -8162,9 +8162,6 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_DO_SET_ROI_SYSID":
 		*e = MAV_CMD_DO_SET_ROI_SYSID
-		return nil
-	case "MAV_CMD_DO_SPRAYER":
-		*e = MAV_CMD_DO_SPRAYER
 		return nil
 	case "MAV_CMD_DO_CONTROL_VIDEO":
 		*e = MAV_CMD_DO_CONTROL_VIDEO
@@ -8480,6 +8477,9 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_DO_SET_RESUME_REPEAT_DIST":
 		*e = MAV_CMD_DO_SET_RESUME_REPEAT_DIST
+		return nil
+	case "MAV_CMD_DO_SPRAYER":
+		*e = MAV_CMD_DO_SPRAYER
 		return nil
 	case "MAV_CMD_NAV_ALTITUDE_WAIT":
 		*e = MAV_CMD_NAV_ALTITUDE_WAIT

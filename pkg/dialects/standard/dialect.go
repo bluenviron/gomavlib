@@ -4801,8 +4801,6 @@ const (
 	MAV_CMD_DO_SET_ROI_NONE MAV_CMD = 197
 	// Mount tracks system with specified system ID. Determination of target vehicle position may be done with GLOBAL_POSITION_INT or any other means. This command can be sent to a gimbal manager but not to a gimbal device. A gimbal device is not to react to this message.
 	MAV_CMD_DO_SET_ROI_SYSID MAV_CMD = 198
-	// Control attached liquid sprayer
-	MAV_CMD_DO_SPRAYER MAV_CMD = 199
 	// Control onboard camera system.
 	MAV_CMD_DO_CONTROL_VIDEO MAV_CMD = 200
 	// Sets the region of interest (ROI) for a sensor set or the vehicle itself. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras.
@@ -5118,8 +5116,6 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_DO_SET_ROI_NONE"), nil
 	case MAV_CMD_DO_SET_ROI_SYSID:
 		return []byte("MAV_CMD_DO_SET_ROI_SYSID"), nil
-	case MAV_CMD_DO_SPRAYER:
-		return []byte("MAV_CMD_DO_SPRAYER"), nil
 	case MAV_CMD_DO_CONTROL_VIDEO:
 		return []byte("MAV_CMD_DO_CONTROL_VIDEO"), nil
 	case MAV_CMD_DO_SET_ROI:
@@ -5487,9 +5483,6 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_DO_SET_ROI_SYSID":
 		*e = MAV_CMD_DO_SET_ROI_SYSID
-		return nil
-	case "MAV_CMD_DO_SPRAYER":
-		*e = MAV_CMD_DO_SPRAYER
 		return nil
 	case "MAV_CMD_DO_CONTROL_VIDEO":
 		*e = MAV_CMD_DO_CONTROL_VIDEO

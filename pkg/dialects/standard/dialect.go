@@ -6294,6 +6294,10 @@ const (
 	MAV_COMP_ID_GIMBAL5 MAV_COMPONENT = 174
 	// Gimbal #6.
 	MAV_COMP_ID_GIMBAL6 MAV_COMPONENT = 175
+	// Battery #1.
+	MAV_COMP_ID_BATTERY MAV_COMPONENT = 180
+	// Battery #2.
+	MAV_COMP_ID_BATTERY2 MAV_COMPONENT = 181
 	// Component that can generate/supply a mission flight plan (e.g. GCS or developer API).
 	MAV_COMP_ID_MISSIONPLANNER MAV_COMPONENT = 190
 	// Component that lives on the onboard computer (companion computer) and has some generic functionalities, such as settings system parameters and monitoring the status of some processes that don't directly speak mavlink and so on.
@@ -6553,6 +6557,10 @@ func (e MAV_COMPONENT) MarshalText() ([]byte, error) {
 		return []byte("MAV_COMP_ID_GIMBAL5"), nil
 	case MAV_COMP_ID_GIMBAL6:
 		return []byte("MAV_COMP_ID_GIMBAL6"), nil
+	case MAV_COMP_ID_BATTERY:
+		return []byte("MAV_COMP_ID_BATTERY"), nil
+	case MAV_COMP_ID_BATTERY2:
+		return []byte("MAV_COMP_ID_BATTERY2"), nil
 	case MAV_COMP_ID_MISSIONPLANNER:
 		return []byte("MAV_COMP_ID_MISSIONPLANNER"), nil
 	case MAV_COMP_ID_ONBOARD_COMPUTER:
@@ -6922,6 +6930,12 @@ func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_COMP_ID_GIMBAL6":
 		*e = MAV_COMP_ID_GIMBAL6
+		return nil
+	case "MAV_COMP_ID_BATTERY":
+		*e = MAV_COMP_ID_BATTERY
+		return nil
+	case "MAV_COMP_ID_BATTERY2":
+		*e = MAV_COMP_ID_BATTERY2
 		return nil
 	case "MAV_COMP_ID_MISSIONPLANNER":
 		*e = MAV_COMP_ID_MISSIONPLANNER
@@ -10886,6 +10900,8 @@ const (
 	MAV_TYPE_ODID MAV_TYPE = 34
 	// Decarotor
 	MAV_TYPE_DECAROTOR MAV_TYPE = 35
+	// Battery
+	MAV_TYPE_BATTERY MAV_TYPE = 36
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -10963,6 +10979,8 @@ func (e MAV_TYPE) MarshalText() ([]byte, error) {
 		return []byte("MAV_TYPE_ODID"), nil
 	case MAV_TYPE_DECAROTOR:
 		return []byte("MAV_TYPE_DECAROTOR"), nil
+	case MAV_TYPE_BATTERY:
+		return []byte("MAV_TYPE_BATTERY"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -11077,6 +11095,9 @@ func (e *MAV_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_TYPE_DECAROTOR":
 		*e = MAV_TYPE_DECAROTOR
+		return nil
+	case "MAV_TYPE_BATTERY":
+		*e = MAV_TYPE_BATTERY
 		return nil
 	}
 	return errors.New("invalid value")

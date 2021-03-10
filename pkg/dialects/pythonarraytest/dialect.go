@@ -13219,9 +13219,9 @@ type MessageGpsRawInt struct {
 	Lon int32
 	// Altitude (MSL). Positive for up. Note that virtually all GPS modules provide the MSL altitude in addition to the WGS84 altitude.
 	Alt int32
-	// GPS HDOP horizontal dilution of position (unitless). If unknown, set to: UINT16_MAX
+	// GPS HDOP horizontal dilution of position (unitless * 100). If unknown, set to: UINT16_MAX
 	Eph uint16
-	// GPS VDOP vertical dilution of position (unitless). If unknown, set to: UINT16_MAX
+	// GPS VDOP vertical dilution of position (unitless * 100). If unknown, set to: UINT16_MAX
 	Epv uint16
 	// GPS ground speed. If unknown, set to: UINT16_MAX
 	Vel uint16
@@ -15098,9 +15098,9 @@ type MessageHilGps struct {
 	Lon int32
 	// Altitude (MSL). Positive for up.
 	Alt int32
-	// GPS HDOP horizontal dilution of position (unitless). If unknown, set to: UINT16_MAX
+	// GPS HDOP horizontal dilution of position (unitless * 100). If unknown, set to: UINT16_MAX
 	Eph uint16
-	// GPS VDOP vertical dilution of position (unitless). If unknown, set to: UINT16_MAX
+	// GPS VDOP vertical dilution of position (unitless * 100). If unknown, set to: UINT16_MAX
 	Epv uint16
 	// GPS ground speed. If unknown, set to: 65535
 	Vel uint16
@@ -15357,9 +15357,9 @@ type MessageGps2Raw struct {
 	Lon int32
 	// Altitude (MSL). Positive for up.
 	Alt int32
-	// GPS HDOP horizontal dilution of position (unitless). If unknown, set to: UINT16_MAX
+	// GPS HDOP horizontal dilution of position (unitless * 100). If unknown, set to: UINT16_MAX
 	Eph uint16
-	// GPS VDOP vertical dilution of position (unitless). If unknown, set to: UINT16_MAX
+	// GPS VDOP vertical dilution of position (unitless * 100). If unknown, set to: UINT16_MAX
 	Epv uint16
 	// GPS ground speed. If unknown, set to: UINT16_MAX
 	Vel uint16

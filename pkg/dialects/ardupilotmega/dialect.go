@@ -17550,9 +17550,9 @@ type MessageGpsRawInt struct {
 	Lon int32
 	// Altitude (MSL). Positive for up. Note that virtually all GPS modules provide the MSL altitude in addition to the WGS84 altitude.
 	Alt int32
-	// GPS HDOP horizontal dilution of position (unitless). If unknown, set to: UINT16_MAX
+	// GPS HDOP horizontal dilution of position (unitless * 100). If unknown, set to: UINT16_MAX
 	Eph uint16
-	// GPS VDOP vertical dilution of position (unitless). If unknown, set to: UINT16_MAX
+	// GPS VDOP vertical dilution of position (unitless * 100). If unknown, set to: UINT16_MAX
 	Epv uint16
 	// GPS ground speed. If unknown, set to: UINT16_MAX
 	Vel uint16
@@ -19429,9 +19429,9 @@ type MessageHilGps struct {
 	Lon int32
 	// Altitude (MSL). Positive for up.
 	Alt int32
-	// GPS HDOP horizontal dilution of position (unitless). If unknown, set to: UINT16_MAX
+	// GPS HDOP horizontal dilution of position (unitless * 100). If unknown, set to: UINT16_MAX
 	Eph uint16
-	// GPS VDOP vertical dilution of position (unitless). If unknown, set to: UINT16_MAX
+	// GPS VDOP vertical dilution of position (unitless * 100). If unknown, set to: UINT16_MAX
 	Epv uint16
 	// GPS ground speed. If unknown, set to: 65535
 	Vel uint16
@@ -19688,9 +19688,9 @@ type MessageGps2Raw struct {
 	Lon int32
 	// Altitude (MSL). Positive for up.
 	Alt int32
-	// GPS HDOP horizontal dilution of position (unitless). If unknown, set to: UINT16_MAX
+	// GPS HDOP horizontal dilution of position (unitless * 100). If unknown, set to: UINT16_MAX
 	Eph uint16
-	// GPS VDOP vertical dilution of position (unitless). If unknown, set to: UINT16_MAX
+	// GPS VDOP vertical dilution of position (unitless * 100). If unknown, set to: UINT16_MAX
 	Epv uint16
 	// GPS ground speed. If unknown, set to: UINT16_MAX
 	Vel uint16
@@ -23873,9 +23873,9 @@ type MessageVisionPositionDelta struct {
 	TimeUsec uint64
 	// Time since the last reported camera frame.
 	TimeDeltaUsec uint64
-	// Defines a rotation vector in body frame that rotates the vehicle from the previous to the current orientation.
+	// Defines a rotation vector [roll, pitch, yaw] to the current MAV_FRAME_BODY_FRD from the previous MAV_FRAME_BODY_FRD.
 	AngleDelta [3]float32
-	// Change in position from previous to current frame rotated into body frame (0=forward, 1=right, 2=down).
+	// Change in position to the current MAV_FRAME_BODY_FRD from the previous FRAME_BODY_FRD rotated to the current MAV_FRAME_BODY_FRD.
 	PositionDelta [3]float32
 	// Normalised confidence value from 0 to 100.
 	Confidence float32

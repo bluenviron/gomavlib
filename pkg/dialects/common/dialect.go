@@ -4456,6 +4456,10 @@ const (
 	MAV_BATTERY_FAULT_UNDER_TEMPERATURE MAV_BATTERY_FAULT = 32
 	// Vehicle voltage is not compatible with this battery (batteries on same power rail should have similar voltage).
 	MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE MAV_BATTERY_FAULT = 64
+	// Battery firmware is not compatible with current autopilot firmware.
+	MAV_BATTERY_FAULT_INCOMPATIBLE_FIRMWARE MAV_BATTERY_FAULT = 128
+	// Battery is not compatible due to cell configuration (e.g. 5s1p when vehicle requires 6s).
+	BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION MAV_BATTERY_FAULT = 256
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -4475,6 +4479,10 @@ func (e MAV_BATTERY_FAULT) MarshalText() ([]byte, error) {
 		return []byte("MAV_BATTERY_FAULT_UNDER_TEMPERATURE"), nil
 	case MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE:
 		return []byte("MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE"), nil
+	case MAV_BATTERY_FAULT_INCOMPATIBLE_FIRMWARE:
+		return []byte("MAV_BATTERY_FAULT_INCOMPATIBLE_FIRMWARE"), nil
+	case BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION:
+		return []byte("BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -4502,6 +4510,12 @@ func (e *MAV_BATTERY_FAULT) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE":
 		*e = MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE
+		return nil
+	case "MAV_BATTERY_FAULT_INCOMPATIBLE_FIRMWARE":
+		*e = MAV_BATTERY_FAULT_INCOMPATIBLE_FIRMWARE
+		return nil
+	case "BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION":
+		*e = BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION
 		return nil
 	}
 	return errors.New("invalid value")

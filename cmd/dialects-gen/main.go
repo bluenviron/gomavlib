@@ -115,8 +115,8 @@ func run() error {
 		}
 		name := f.Name[:len(f.Name)-len(".xml")]
 
-		// the "all" dialect is too buggy
-		if name == "all" {
+		// exclude dialects which define the version twice
+		if name == "all" || name == "development" {
 			continue
 		}
 

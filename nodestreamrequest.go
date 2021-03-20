@@ -146,24 +146,22 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 			sr.lastRequests[rnode] = time.Now()
 			request = true
 
-		} else {
-			if now.Sub(sr.lastRequests[rnode]) >= streamRequestPeriod {
-				request = true
-				sr.lastRequests[rnode] = now
-			}
+		} else if now.Sub(sr.lastRequests[rnode]) >= streamRequestPeriod {
+			request = true
+			sr.lastRequests[rnode] = now
 		}
 	}()
 
 	if request {
 		// https://github.com/mavlink/qgroundcontrol/blob/08f400355a8f3acf1dd8ed91f7f1c757323ac182/src/FirmwarePlugin/APM/APMFirmwarePlugin.cc#L626
 		streams := []int{
-			1,  //common.MAV_DATA_STREAM_RAW_SENSORS,
-			2,  //common.MAV_DATA_STREAM_EXTENDED_STATUS,
-			3,  //common.MAV_DATA_STREAM_RC_CHANNELS,
-			6,  //common.MAV_DATA_STREAM_POSITION,
-			10, //common.MAV_DATA_STREAM_EXTRA1,
-			11, //common.MAV_DATA_STREAM_EXTRA2,
-			12, //common.MAV_DATA_STREAM_EXTRA3,
+			1,  // common.MAV_DATA_STREAM_RAW_SENSORS,
+			2,  // common.MAV_DATA_STREAM_EXTENDED_STATUS,
+			3,  // common.MAV_DATA_STREAM_RC_CHANNELS,
+			6,  // common.MAV_DATA_STREAM_POSITION,
+			10, // common.MAV_DATA_STREAM_EXTRA1,
+			11, // common.MAV_DATA_STREAM_EXTRA2,
+			12, // common.MAV_DATA_STREAM_EXTRA3,
 		}
 
 		for _, stream := range streams {

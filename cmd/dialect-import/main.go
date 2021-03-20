@@ -63,7 +63,7 @@ const (
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e {{ .Name }}) MarshalText() ([]byte, error) {
-	switch e {
+	switch e { //nolint:gocritic
 {{- range .Values }}
 	case {{ .Name }}:
 		return []byte("{{ .Name }}"), nil
@@ -74,7 +74,7 @@ func (e {{ .Name }}) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *{{ .Name }}) UnmarshalText(text []byte) error {
-	switch string(text) {
+	switch string(text) { //nolint:gocritic
 {{- range .Values }}
 	case "{{ .Name }}":
 		*e = {{ .Name }}
@@ -149,7 +149,7 @@ func dialectMsgDefToGo(in string) string {
 }
 
 func filterDesc(in string) string {
-	return strings.Replace(in, "\n", "", -1)
+	return strings.ReplaceAll(in, "\n", "")
 }
 
 type outEnumValue struct {

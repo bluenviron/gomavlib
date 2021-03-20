@@ -39,7 +39,7 @@ const (
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ICAROUS_FMS_STATE) MarshalText() ([]byte, error) {
-	switch e {
+	switch e { //nolint:gocritic
 	case ICAROUS_FMS_STATE_IDLE:
 		return []byte("ICAROUS_FMS_STATE_IDLE"), nil
 	case ICAROUS_FMS_STATE_TAKEOFF:
@@ -58,7 +58,7 @@ func (e ICAROUS_FMS_STATE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ICAROUS_FMS_STATE) UnmarshalText(text []byte) error {
-	switch string(text) {
+	switch string(text) { //nolint:gocritic
 	case "ICAROUS_FMS_STATE_IDLE":
 		*e = ICAROUS_FMS_STATE_IDLE
 		return nil
@@ -104,7 +104,7 @@ const (
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ICAROUS_TRACK_BAND_TYPES) MarshalText() ([]byte, error) {
-	switch e {
+	switch e { //nolint:gocritic
 	case ICAROUS_TRACK_BAND_TYPE_NONE:
 		return []byte("ICAROUS_TRACK_BAND_TYPE_NONE"), nil
 	case ICAROUS_TRACK_BAND_TYPE_NEAR:
@@ -117,7 +117,7 @@ func (e ICAROUS_TRACK_BAND_TYPES) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ICAROUS_TRACK_BAND_TYPES) UnmarshalText(text []byte) error {
-	switch string(text) {
+	switch string(text) { //nolint:gocritic
 	case "ICAROUS_TRACK_BAND_TYPE_NONE":
 		*e = ICAROUS_TRACK_BAND_TYPE_NONE
 		return nil

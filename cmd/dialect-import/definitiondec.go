@@ -52,8 +52,8 @@ func (m *definitionMessage) UnmarshalXML(d *xml.Decoder, start xml.StartElement)
 		if t == nil {
 			break
 		}
-		switch se := t.(type) {
-		case xml.StartElement:
+
+		if se, ok := t.(xml.StartElement); ok {
 			switch se.Name.Local {
 			case "description":
 				err := d.DecodeElement(&m.Description, &se)

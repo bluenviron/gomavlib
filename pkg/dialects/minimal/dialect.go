@@ -67,7 +67,7 @@ const (
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_AUTOPILOT) MarshalText() ([]byte, error) {
-	switch e {
+	switch e { //nolint:gocritic
 	case MAV_AUTOPILOT_GENERIC:
 		return []byte("MAV_AUTOPILOT_GENERIC"), nil
 	case MAV_AUTOPILOT_RESERVED:
@@ -114,7 +114,7 @@ func (e MAV_AUTOPILOT) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_AUTOPILOT) UnmarshalText(text []byte) error {
-	switch string(text) {
+	switch string(text) { //nolint:gocritic
 	case "MAV_AUTOPILOT_GENERIC":
 		*e = MAV_AUTOPILOT_GENERIC
 		return nil
@@ -454,7 +454,7 @@ const (
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_COMPONENT) MarshalText() ([]byte, error) {
-	switch e {
+	switch e { //nolint:gocritic
 	case MAV_COMP_ID_ALL:
 		return []byte("MAV_COMP_ID_ALL"), nil
 	case MAV_COMP_ID_AUTOPILOT1:
@@ -719,7 +719,7 @@ func (e MAV_COMPONENT) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
-	switch string(text) {
+	switch string(text) { //nolint:gocritic
 	case "MAV_COMP_ID_ALL":
 		*e = MAV_COMP_ID_ALL
 		return nil
@@ -1144,7 +1144,7 @@ const (
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MODE_FLAG) MarshalText() ([]byte, error) {
-	switch e {
+	switch e { //nolint:gocritic
 	case MAV_MODE_FLAG_SAFETY_ARMED:
 		return []byte("MAV_MODE_FLAG_SAFETY_ARMED"), nil
 	case MAV_MODE_FLAG_MANUAL_INPUT_ENABLED:
@@ -1167,7 +1167,7 @@ func (e MAV_MODE_FLAG) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_MODE_FLAG) UnmarshalText(text []byte) error {
-	switch string(text) {
+	switch string(text) { //nolint:gocritic
 	case "MAV_MODE_FLAG_SAFETY_ARMED":
 		*e = MAV_MODE_FLAG_SAFETY_ARMED
 		return nil
@@ -1229,7 +1229,7 @@ const (
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MODE_FLAG_DECODE_POSITION) MarshalText() ([]byte, error) {
-	switch e {
+	switch e { //nolint:gocritic
 	case MAV_MODE_FLAG_DECODE_POSITION_SAFETY:
 		return []byte("MAV_MODE_FLAG_DECODE_POSITION_SAFETY"), nil
 	case MAV_MODE_FLAG_DECODE_POSITION_MANUAL:
@@ -1252,7 +1252,7 @@ func (e MAV_MODE_FLAG_DECODE_POSITION) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_MODE_FLAG_DECODE_POSITION) UnmarshalText(text []byte) error {
-	switch string(text) {
+	switch string(text) { //nolint:gocritic
 	case "MAV_MODE_FLAG_DECODE_POSITION_SAFETY":
 		*e = MAV_MODE_FLAG_DECODE_POSITION_SAFETY
 		return nil
@@ -1316,7 +1316,7 @@ const (
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_STATE) MarshalText() ([]byte, error) {
-	switch e {
+	switch e { //nolint:gocritic
 	case MAV_STATE_UNINIT:
 		return []byte("MAV_STATE_UNINIT"), nil
 	case MAV_STATE_BOOT:
@@ -1341,7 +1341,7 @@ func (e MAV_STATE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_STATE) UnmarshalText(text []byte) error {
-	switch string(text) {
+	switch string(text) { //nolint:gocritic
 	case "MAV_STATE_UNINIT":
 		*e = MAV_STATE_UNINIT
 		return nil
@@ -1464,7 +1464,7 @@ const (
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_TYPE) MarshalText() ([]byte, error) {
-	switch e {
+	switch e { //nolint:gocritic
 	case MAV_TYPE_GENERIC:
 		return []byte("MAV_TYPE_GENERIC"), nil
 	case MAV_TYPE_FIXED_WING:
@@ -1545,7 +1545,7 @@ func (e MAV_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) {
+	switch string(text) { //nolint:gocritic
 	case "MAV_TYPE_GENERIC":
 		*e = MAV_TYPE_GENERIC
 		return nil

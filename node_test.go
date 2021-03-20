@@ -110,8 +110,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 		step := 0
 
 		for evt := range node1.Events() {
-			switch e := evt.(type) {
-			case *EventFrame:
+			if e, ok := evt.(*EventFrame); ok {
 				switch step {
 				case 0:
 					if !reflect.DeepEqual(e.Message(), testMsg1) ||
@@ -149,8 +148,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 		step := 0
 
 		for evt := range node2.Events() {
-			switch e := evt.(type) {
-			case *EventFrame:
+			if e, ok := evt.(*EventFrame); ok {
 				switch step {
 				case 0:
 					if !reflect.DeepEqual(e.Message(), testMsg2) ||
@@ -461,8 +459,7 @@ func TestNodeRouting(t *testing.T) {
 		defer wg.Done()
 
 		for evt := range node2.Events() {
-			switch e := evt.(type) {
-			case *EventFrame:
+			if e, ok := evt.(*EventFrame); ok {
 				node2.WriteFrameExcept(e.Channel, e.Frame)
 				return
 			}
@@ -473,8 +470,7 @@ func TestNodeRouting(t *testing.T) {
 		defer wg.Done()
 
 		for evt := range node3.Events() {
-			switch e := evt.(type) {
-			case *EventFrame:
+			if e, ok := evt.(*EventFrame); ok {
 				if _, ok := e.Message().(*MessageHeartbeat); !ok ||
 					e.SystemID() != 10 ||
 					e.ComponentID() != 1 {

@@ -1550,6 +1550,8 @@ const (
 	ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE ATTITUDE_TARGET_TYPEMASK = 2
 	// Ignore body yaw rate
 	ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE ATTITUDE_TARGET_TYPEMASK = 4
+	// Use 3D body thrust setpoint instead of throttle
+	ATTITUDE_TARGET_TYPEMASK_THRUST_BODY_SET ATTITUDE_TARGET_TYPEMASK = 32
 	// Ignore throttle
 	ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE ATTITUDE_TARGET_TYPEMASK = 64
 	// Ignore attitude
@@ -1565,6 +1567,8 @@ func (e ATTITUDE_TARGET_TYPEMASK) MarshalText() ([]byte, error) {
 		return []byte("ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE"), nil
 	case ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE:
 		return []byte("ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE"), nil
+	case ATTITUDE_TARGET_TYPEMASK_THRUST_BODY_SET:
+		return []byte("ATTITUDE_TARGET_TYPEMASK_THRUST_BODY_SET"), nil
 	case ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE:
 		return []byte("ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE"), nil
 	case ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE:
@@ -1584,6 +1588,9 @@ func (e *ATTITUDE_TARGET_TYPEMASK) UnmarshalText(text []byte) error {
 		return nil
 	case "ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE":
 		*e = ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE
+		return nil
+	case "ATTITUDE_TARGET_TYPEMASK_THRUST_BODY_SET":
+		*e = ATTITUDE_TARGET_TYPEMASK_THRUST_BODY_SET
 		return nil
 	case "ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE":
 		*e = ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE
@@ -2333,23 +2340,27 @@ func (e COMPONENT_CAP_FLAGS) String() string {
 type COMP_METADATA_TYPE int
 
 const (
-	// Version information which also includes information on other optional supported COMP_METADATA_TYPE's. Must be supported. Only downloadable from vehicle.
-	COMP_METADATA_TYPE_VERSION COMP_METADATA_TYPE = 0
+	// General information which also includes information on other optional supported COMP_METADATA_TYPE's. Must be supported. Only downloadable from vehicle.
+	COMP_METADATA_TYPE_GENERAL COMP_METADATA_TYPE = 0
 	// Parameter meta data.
 	COMP_METADATA_TYPE_PARAMETER COMP_METADATA_TYPE = 1
 	// Meta data which specifies the commands the vehicle supports. (WIP)
 	COMP_METADATA_TYPE_COMMANDS COMP_METADATA_TYPE = 2
+	// Meta data which specifies potential external peripherals that do not talk MAVLink
+	COMP_METADATA_TYPE_PERIPHERALS COMP_METADATA_TYPE = 3
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e COMP_METADATA_TYPE) MarshalText() ([]byte, error) {
 	switch e { //nolint:gocritic
-	case COMP_METADATA_TYPE_VERSION:
-		return []byte("COMP_METADATA_TYPE_VERSION"), nil
+	case COMP_METADATA_TYPE_GENERAL:
+		return []byte("COMP_METADATA_TYPE_GENERAL"), nil
 	case COMP_METADATA_TYPE_PARAMETER:
 		return []byte("COMP_METADATA_TYPE_PARAMETER"), nil
 	case COMP_METADATA_TYPE_COMMANDS:
 		return []byte("COMP_METADATA_TYPE_COMMANDS"), nil
+	case COMP_METADATA_TYPE_PERIPHERALS:
+		return []byte("COMP_METADATA_TYPE_PERIPHERALS"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -2357,14 +2368,17 @@ func (e COMP_METADATA_TYPE) MarshalText() ([]byte, error) {
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *COMP_METADATA_TYPE) UnmarshalText(text []byte) error {
 	switch string(text) { //nolint:gocritic
-	case "COMP_METADATA_TYPE_VERSION":
-		*e = COMP_METADATA_TYPE_VERSION
+	case "COMP_METADATA_TYPE_GENERAL":
+		*e = COMP_METADATA_TYPE_GENERAL
 		return nil
 	case "COMP_METADATA_TYPE_PARAMETER":
 		*e = COMP_METADATA_TYPE_PARAMETER
 		return nil
 	case "COMP_METADATA_TYPE_COMMANDS":
 		*e = COMP_METADATA_TYPE_COMMANDS
+		return nil
+	case "COMP_METADATA_TYPE_PERIPHERALS":
+		*e = COMP_METADATA_TYPE_PERIPHERALS
 		return nil
 	}
 	return errors.New("invalid value")
@@ -14404,6 +14418,8 @@ type MessageSetAttitudeTarget struct {
 	BodyYawRate float32
 	// Collective thrust, normalized to 0 .. 1 (-1 .. 1 for vehicles capable of reverse trust)
 	Thrust float32
+	// 3D thrust setpoint in the body NED frame, normalized to -1 .. 1
+	ThrustBody [3]float32 `mavext:"true"`
 }
 
 // GetID implements the msg.Message interface.
@@ -18002,20 +18018,18 @@ func (*MessageOnboardComputerStatus) GetID() uint32 {
 	return 390
 }
 
-// Information about a component. For camera components instead use CAMERA_INFORMATION, and for autopilots use AUTOPILOT_VERSION. Components including GCSes should consider supporting requests of this message via MAV_CMD_REQUEST_MESSAGE.
+// Information about a component. For camera components instead use CAMERA_INFORMATION, and for autopilots additionally use AUTOPILOT_VERSION. Components including GCSes should consider supporting requests of this message via MAV_CMD_REQUEST_MESSAGE.
 type MessageComponentInformation struct {
 	// Timestamp (time since system boot).
 	TimeBootMs uint32
-	// The type of metadata being requested.
-	MetadataType COMP_METADATA_TYPE `mavenum:"uint32"`
-	// Unique uid for this metadata which a gcs can use for created cached metadata and understanding whether it's cache it up to date or whether it needs to download new data.
-	MetadataUid uint32
-	// Component definition URI. If prefix mavlinkftp:// file is downloaded from vehicle over mavlink ftp protocol. If prefix http[s]:// file is downloaded over internet. Files are json format. They can end in .gz to indicate file is in gzip format.
-	MetadataUri string `mavlen:"70"`
-	// Unique uid for the translation file associated with the metadata.
-	TranslationUid uint32
-	// The translations for strings within the metadata file. If null the either do not exist or may be included in the metadata file itself. The translations specified here supercede any which may be in the metadata file itself. The uri format is the same as component_metadata_uri . Files are in Json Translation spec format. Empty string indicates no tranlsation file.
-	TranslationUri string `mavlen:"70"`
+	// CRC32 of the TYPE_GENERAL file (can be used by a GCS for file caching).
+	GeneralMetadataFileCrc uint32
+	// Component definition URI for TYPE_GENERAL. This must be a MAVLink FTP URI and the file might be compressed with xz.
+	GeneralMetadataUri string `mavlen:"100"`
+	// CRC32 of the TYPE_PERIPHERALS file (can be used by a GCS for file caching).
+	PeripheralsMetadataFileCrc uint32
+	// (Optional) Component definition URI for TYPE_PERIPHERALS. This must be a MAVLink FTP URI and the file might be compressed with xz.
+	PeripheralsMetadataUri string `mavlen:"100"`
 }
 
 // GetID implements the msg.Message interface.

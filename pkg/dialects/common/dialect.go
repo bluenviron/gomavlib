@@ -16770,7 +16770,7 @@ type MessageCameraCaptureStatus struct {
 	VideoStatus uint8
 	// Image capture interval
 	ImageInterval float32
-	// Time since recording started
+	// Elapsed time since recording started (0: Not supported/available). A GCS should compute recording time and use non-zero values of this field to correct any discrepancy.
 	RecordingTimeMs uint32
 	// Available storage capacity.
 	AvailableCapacity float32

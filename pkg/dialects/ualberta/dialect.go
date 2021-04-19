@@ -15569,6 +15569,16 @@ type MessageGps2Raw struct {
 	DgpsAge uint32
 	// Yaw in earth frame from north. Use 0 if this GPS does not provide yaw. Use 65535 if this GPS is configured to provide yaw and is currently unable to provide it. Use 36000 for north.
 	Yaw uint16 `mavext:"true"`
+	// Altitude (above WGS84, EGM96 ellipsoid). Positive for up.
+	AltEllipsoid int32 `mavext:"true"`
+	// Position uncertainty.
+	HAcc uint32 `mavext:"true"`
+	// Altitude uncertainty.
+	VAcc uint32 `mavext:"true"`
+	// Speed uncertainty.
+	VelAcc uint32 `mavext:"true"`
+	// Heading / track uncertainty
+	HdgAcc uint32 `mavext:"true"`
 }
 
 // GetID implements the msg.Message interface.

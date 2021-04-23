@@ -5054,7 +5054,7 @@ const (
 	MAV_CMD_DO_FENCE_ENABLE MAV_CMD = 207
 	// Mission item/command to release a parachute or enable/disable auto release.
 	MAV_CMD_DO_PARACHUTE MAV_CMD = 208
-	// Mission command to perform motor test.
+	// Command to perform motor test.
 	MAV_CMD_DO_MOTOR_TEST MAV_CMD = 209
 	// Change to/from inverted flight.
 	MAV_CMD_DO_INVERTED_FLIGHT MAV_CMD = 210
@@ -11496,15 +11496,15 @@ func (e MAV_WINCH_STATUS_FLAG) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
-//
+// Sequence that motors are tested when using MAV_CMD_DO_MOTOR_TEST.
 type MOTOR_TEST_ORDER int
 
 const (
-	// default autopilot motor test method
+	// Default autopilot motor test method.
 	MOTOR_TEST_ORDER_DEFAULT MOTOR_TEST_ORDER = 0
-	// motor numbers are specified as their index in a predefined vehicle-specific sequence
+	// Motor numbers are specified as their index in a predefined vehicle-specific sequence.
 	MOTOR_TEST_ORDER_SEQUENCE MOTOR_TEST_ORDER = 1
-	// motor numbers are specified as the output as labeled on the board
+	// Motor numbers are specified as the output as labeled on the board.
 	MOTOR_TEST_ORDER_BOARD MOTOR_TEST_ORDER = 2
 )
 
@@ -11546,17 +11546,17 @@ func (e MOTOR_TEST_ORDER) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
-//
+// Defines how throttle value is represented in MAV_CMD_DO_MOTOR_TEST.
 type MOTOR_TEST_THROTTLE_TYPE int
 
 const (
-	// throttle as a percentage from 0 ~ 100
+	// Throttle as a percentage (0 ~ 100)
 	MOTOR_TEST_THROTTLE_PERCENT MOTOR_TEST_THROTTLE_TYPE = 0
-	// throttle as an absolute PWM value (normally in range of 1000~2000)
+	// Throttle as an absolute PWM value (normally in range of 1000~2000).
 	MOTOR_TEST_THROTTLE_PWM MOTOR_TEST_THROTTLE_TYPE = 1
-	// throttle pass-through from pilot's transmitter
+	// Throttle pass-through from pilot's transmitter.
 	MOTOR_TEST_THROTTLE_PILOT MOTOR_TEST_THROTTLE_TYPE = 2
-	// per-motor compass calibration test
+	// Per-motor compass calibration test.
 	MOTOR_TEST_COMPASS_CAL MOTOR_TEST_THROTTLE_TYPE = 3
 )
 

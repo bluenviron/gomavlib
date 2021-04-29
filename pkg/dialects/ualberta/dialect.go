@@ -219,6 +219,10 @@ var dial = &dialect.Dialect{3, []msg.Message{
 	&MessageComponentInformation{},
 	&MessagePlayTuneV2{},
 	&MessageSupportedTunes{},
+	&MessageEvent{},
+	&MessageCurrentEventSequence{},
+	&MessageRequestEvent{},
+	&MessageResponseEventError{},
 	&MessageWheelDistance{},
 	&MessageWinchStatus{},
 	&MessageOpenDroneIdBasicId{},
@@ -2343,6 +2347,8 @@ const (
 	COMP_METADATA_TYPE_COMMANDS COMP_METADATA_TYPE = 2
 	// Meta data which specifies potential external peripherals that do not talk MAVLink
 	COMP_METADATA_TYPE_PERIPHERALS COMP_METADATA_TYPE = 3
+	// Meta data for events interface
+	COMP_METADATA_TYPE_EVENTS COMP_METADATA_TYPE = 4
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -2356,6 +2362,8 @@ func (e COMP_METADATA_TYPE) MarshalText() ([]byte, error) {
 		return []byte("COMP_METADATA_TYPE_COMMANDS"), nil
 	case COMP_METADATA_TYPE_PERIPHERALS:
 		return []byte("COMP_METADATA_TYPE_PERIPHERALS"), nil
+	case COMP_METADATA_TYPE_EVENTS:
+		return []byte("COMP_METADATA_TYPE_EVENTS"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -2374,6 +2382,9 @@ func (e *COMP_METADATA_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	case "COMP_METADATA_TYPE_PERIPHERALS":
 		*e = COMP_METADATA_TYPE_PERIPHERALS
+		return nil
+	case "COMP_METADATA_TYPE_EVENTS":
+		*e = COMP_METADATA_TYPE_EVENTS
 		return nil
 	}
 	return errors.New("invalid value")
@@ -7333,6 +7344,78 @@ func (e *MAV_ESTIMATOR_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ESTIMATOR_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+// Flags for CURRENT_EVENT_SEQUENCE.
+type MAV_EVENT_CURRENT_SEQUENCE_FLAGS int
+
+const (
+	// A sequence reset has happened (e.g. vehicle reboot).
+	MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET MAV_EVENT_CURRENT_SEQUENCE_FLAGS = 1
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e MAV_EVENT_CURRENT_SEQUENCE_FLAGS) MarshalText() ([]byte, error) {
+	switch e { //nolint:gocritic
+	case MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET:
+		return []byte("MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *MAV_EVENT_CURRENT_SEQUENCE_FLAGS) UnmarshalText(text []byte) error {
+	switch string(text) { //nolint:gocritic
+	case "MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET":
+		*e = MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_EVENT_CURRENT_SEQUENCE_FLAGS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+// Reason for an event error response.
+type MAV_EVENT_ERROR_REASON int
+
+const (
+	// The requested event is not available (anymore).
+	MAV_EVENT_ERROR_REASON_UNAVAILABLE MAV_EVENT_ERROR_REASON = 0
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e MAV_EVENT_ERROR_REASON) MarshalText() ([]byte, error) {
+	switch e { //nolint:gocritic
+	case MAV_EVENT_ERROR_REASON_UNAVAILABLE:
+		return []byte("MAV_EVENT_ERROR_REASON_UNAVAILABLE"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *MAV_EVENT_ERROR_REASON) UnmarshalText(text []byte) error {
+	switch string(text) { //nolint:gocritic
+	case "MAV_EVENT_ERROR_REASON_UNAVAILABLE":
+		*e = MAV_EVENT_ERROR_REASON_UNAVAILABLE
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_EVENT_ERROR_REASON) String() string {
 	byts, err := e.MarshalText()
 	if err == nil {
 		return string(byts)
@@ -18264,6 +18347,78 @@ type MessageSupportedTunes struct {
 // GetID implements the msg.Message interface.
 func (*MessageSupportedTunes) GetID() uint32 {
 	return 401
+}
+
+// Event message. Each new event from a particular component gets a new sequence number. The same message might be sent multiple times if (re-)requested. Most events are broadcast, some can be specific to a target component (as receivers keep track of the sequence for missed events, all events need to be broadcast. Thus we use destination_component instead of target_component).
+type MessageEvent struct {
+	// Component ID
+	DestinationComponent uint8
+	// System ID
+	DestinationSystem uint8
+	// Event ID (as defined in the component metadata)
+	Id uint32
+	// Timestamp (time since system boot when the event happened).
+	EventTimeBootMs uint32
+	// Sequence number.
+	Sequence uint16
+	// Log levels: 4 bits MSB: internal (for logging purposes), 4 bits LSB: external. Levels: Emergency = 0, Alert = 1, Critical = 2, Error = 3, Warning = 4, Notice = 5, Info = 6, Debug = 7, Protocol = 8, Disabled = 9
+	LogLevels uint8
+	// Arguments (depend on event ID).
+	Arguments [40]uint8
+}
+
+// GetID implements the msg.Message interface.
+func (*MessageEvent) GetID() uint32 {
+	return 410
+}
+
+// Regular broadcast for the current latest event sequence number for a component. This is used to check for dropped events.
+type MessageCurrentEventSequence struct {
+	// Sequence number.
+	Sequence uint16
+	// Flag bitset.
+	Flags MAV_EVENT_CURRENT_SEQUENCE_FLAGS `mavenum:"uint8"`
+}
+
+// GetID implements the msg.Message interface.
+func (*MessageCurrentEventSequence) GetID() uint32 {
+	return 411
+}
+
+// Request one or more events to be (re-)sent. If first_sequence==last_sequence, only a single event is requested. Note that first_sequence can be larger than last_sequence (because the sequence number can wrap). Each sequence will trigger an EVENT or EVENT_ERROR response.
+type MessageRequestEvent struct {
+	// System ID
+	TargetSystem uint8
+	// Component ID
+	TargetComponent uint8
+	// First sequence number of the requested event.
+	FirstSequence uint16
+	// Last sequence number of the requested event.
+	LastSequence uint16
+}
+
+// GetID implements the msg.Message interface.
+func (*MessageRequestEvent) GetID() uint32 {
+	return 412
+}
+
+// Response to a REQUEST_EVENT in case of an error (e.g. the event is not available anymore).
+type MessageResponseEventError struct {
+	// System ID
+	TargetSystem uint8
+	// Component ID
+	TargetComponent uint8
+	// Sequence number.
+	Sequence uint16
+	// Oldest Sequence number that is still available after the sequence set in REQUEST_EVENT.
+	SequenceOldestAvailable uint16
+	// Error reason.
+	Reason MAV_EVENT_ERROR_REASON `mavenum:"uint8"`
+}
+
+// GetID implements the msg.Message interface.
+func (*MessageResponseEventError) GetID() uint32 {
+	return 413
 }
 
 // Cumulative distance traveled for each reported wheel.

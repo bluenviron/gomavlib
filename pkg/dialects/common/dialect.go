@@ -2883,26 +2883,20 @@ func (e FAILURE_UNIT) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
-// Actions following geofence breach.
+//
 type FENCE_ACTION int
 
 const (
-	// Disable fenced mode. If used in a plan this would mean the next fence is disabled.
+	// Disable fenced mode
 	FENCE_ACTION_NONE FENCE_ACTION = 0
-	// Fly to geofence MAV_CMD_NAV_FENCE_RETURN_POINT in GUIDED mode. Note: This action is only supported by ArduPlane, and may not be supported in all versions.
+	// Switched to guided mode to return point (fence point 0)
 	FENCE_ACTION_GUIDED FENCE_ACTION = 1
 	// Report fence breach, but don't take action
 	FENCE_ACTION_REPORT FENCE_ACTION = 2
-	// Fly to geofence MAV_CMD_NAV_FENCE_RETURN_POINT with manual throttle control in GUIDED mode. Note: This action is only supported by ArduPlane, and may not be supported in all versions.
+	// Switched to guided mode to return point (fence point 0) with manual throttle control
 	FENCE_ACTION_GUIDED_THR_PASS FENCE_ACTION = 3
-	// Return/RTL mode.
+	// Switch to RTL (return to launch) mode and head for the return point.
 	FENCE_ACTION_RTL FENCE_ACTION = 4
-	// Hold at current location.
-	FENCE_ACTION_HOLD FENCE_ACTION = 5
-	// Termination failsafe. Motors are shut down (some flight stacks may trigger other failsafe actions).
-	FENCE_ACTION_TERMINATE FENCE_ACTION = 6
-	// Land at current location.
-	FENCE_ACTION_LAND FENCE_ACTION = 7
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -2918,12 +2912,6 @@ func (e FENCE_ACTION) MarshalText() ([]byte, error) {
 		return []byte("FENCE_ACTION_GUIDED_THR_PASS"), nil
 	case FENCE_ACTION_RTL:
 		return []byte("FENCE_ACTION_RTL"), nil
-	case FENCE_ACTION_HOLD:
-		return []byte("FENCE_ACTION_HOLD"), nil
-	case FENCE_ACTION_TERMINATE:
-		return []byte("FENCE_ACTION_TERMINATE"), nil
-	case FENCE_ACTION_LAND:
-		return []byte("FENCE_ACTION_LAND"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -2945,15 +2933,6 @@ func (e *FENCE_ACTION) UnmarshalText(text []byte) error {
 		return nil
 	case "FENCE_ACTION_RTL":
 		*e = FENCE_ACTION_RTL
-		return nil
-	case "FENCE_ACTION_HOLD":
-		*e = FENCE_ACTION_HOLD
-		return nil
-	case "FENCE_ACTION_TERMINATE":
-		*e = FENCE_ACTION_TERMINATE
-		return nil
-	case "FENCE_ACTION_LAND":
-		*e = FENCE_ACTION_LAND
 		return nil
 	}
 	return errors.New("invalid value")

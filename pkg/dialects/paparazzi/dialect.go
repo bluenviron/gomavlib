@@ -15929,7 +15929,7 @@ type MessageFollowTarget struct {
 	Vel [3]float32
 	// linear target acceleration (0,0,0) for unknown
 	Acc [3]float32
-	// (1 0 0 0 for unknown)
+	// (0 0 0 0 for unknown)
 	AttitudeQ [4]float32
 	// (0 0 0 for unknown)
 	Rates [3]float32
@@ -17549,7 +17549,7 @@ type MessageUavcanNodeInfo struct {
 	SwVersionMajor uint8
 	// Software minor version number.
 	SwVersionMinor uint8
-	// Version control system (VCS) revision identifier (e.g. git short commit hash). Zero if unknown.
+	// Version control system (VCS) revision identifier (e.g. git short commit hash). 0 if unknown.
 	SwVcsCommit uint32
 }
 

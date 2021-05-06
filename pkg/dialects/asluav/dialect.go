@@ -2901,20 +2901,26 @@ func (e FAILURE_UNIT) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
-//
+// Actions following geofence breach.
 type FENCE_ACTION int
 
 const (
-	// Disable fenced mode
+	// Disable fenced mode. If used in a plan this would mean the next fence is disabled.
 	FENCE_ACTION_NONE FENCE_ACTION = 0
-	// Switched to guided mode to return point (fence point 0)
+	// Fly to geofence MAV_CMD_NAV_FENCE_RETURN_POINT in GUIDED mode. Note: This action is only supported by ArduPlane, and may not be supported in all versions.
 	FENCE_ACTION_GUIDED FENCE_ACTION = 1
 	// Report fence breach, but don't take action
 	FENCE_ACTION_REPORT FENCE_ACTION = 2
-	// Switched to guided mode to return point (fence point 0) with manual throttle control
+	// Fly to geofence MAV_CMD_NAV_FENCE_RETURN_POINT with manual throttle control in GUIDED mode. Note: This action is only supported by ArduPlane, and may not be supported in all versions.
 	FENCE_ACTION_GUIDED_THR_PASS FENCE_ACTION = 3
-	// Switch to RTL (return to launch) mode and head for the return point.
+	// Return/RTL mode.
 	FENCE_ACTION_RTL FENCE_ACTION = 4
+	// Hold at current location.
+	FENCE_ACTION_HOLD FENCE_ACTION = 5
+	// Termination failsafe. Motors are shut down (some flight stacks may trigger other failsafe actions).
+	FENCE_ACTION_TERMINATE FENCE_ACTION = 6
+	// Land at current location.
+	FENCE_ACTION_LAND FENCE_ACTION = 7
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -2930,6 +2936,12 @@ func (e FENCE_ACTION) MarshalText() ([]byte, error) {
 		return []byte("FENCE_ACTION_GUIDED_THR_PASS"), nil
 	case FENCE_ACTION_RTL:
 		return []byte("FENCE_ACTION_RTL"), nil
+	case FENCE_ACTION_HOLD:
+		return []byte("FENCE_ACTION_HOLD"), nil
+	case FENCE_ACTION_TERMINATE:
+		return []byte("FENCE_ACTION_TERMINATE"), nil
+	case FENCE_ACTION_LAND:
+		return []byte("FENCE_ACTION_LAND"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -2951,6 +2963,15 @@ func (e *FENCE_ACTION) UnmarshalText(text []byte) error {
 		return nil
 	case "FENCE_ACTION_RTL":
 		*e = FENCE_ACTION_RTL
+		return nil
+	case "FENCE_ACTION_HOLD":
+		*e = FENCE_ACTION_HOLD
+		return nil
+	case "FENCE_ACTION_TERMINATE":
+		*e = FENCE_ACTION_TERMINATE
+		return nil
+	case "FENCE_ACTION_LAND":
+		*e = FENCE_ACTION_LAND
 		return nil
 	}
 	return errors.New("invalid value")
@@ -13468,7 +13489,7 @@ type MessageGpsRawInt struct {
 	Vel uint16
 	// Course over ground (NOT heading, but direction of movement) in degrees * 100, 0.0..359.99 degrees. If unknown, set to: UINT16_MAX
 	Cog uint16
-	// Number of satellites visible. If unknown, set to 255
+	// Number of satellites visible. If unknown, set to UINT8_MAX
 	SatellitesVisible uint8
 	// Altitude (above WGS84, EGM96 ellipsoid). Positive for up.
 	AltEllipsoid int32 `mavext:"true"`
@@ -13480,7 +13501,7 @@ type MessageGpsRawInt struct {
 	VelAcc uint32 `mavext:"true"`
 	// Heading / track uncertainty
 	HdgAcc uint32 `mavext:"true"`
-	// Yaw in earth frame from north. Use 0 if this GPS does not provide yaw. Use 65535 if this GPS is configured to provide yaw and is currently unable to provide it. Use 36000 for north.
+	// Yaw in earth frame from north. Use 0 if this GPS does not provide yaw. Use UINT16_MAX if this GPS is configured to provide yaw and is currently unable to provide it. Use 36000 for north.
 	Yaw uint16 `mavext:"true"`
 }
 
@@ -13734,7 +13755,7 @@ type MessageRcChannelsScaled struct {
 	Chan7Scaled int16
 	// RC channel 8 value scaled.
 	Chan8Scaled int16
-	// Receive signal strength indicator in device-dependent units/scale. Values: [0-254], 255: invalid/unknown.
+	// Receive signal strength indicator in device-dependent units/scale. Values: [0-254], UINT8_MAX: invalid/unknown.
 	Rssi uint8
 }
 
@@ -13765,7 +13786,7 @@ type MessageRcChannelsRaw struct {
 	Chan7Raw uint16
 	// RC channel 8 value.
 	Chan8Raw uint16
-	// Receive signal strength indicator in device-dependent units/scale. Values: [0-254], 255: invalid/unknown.
+	// Receive signal strength indicator in device-dependent units/scale. Values: [0-254], UINT8_MAX: invalid/unknown.
 	Rssi uint8
 }
 
@@ -14313,7 +14334,7 @@ type MessageRcChannels struct {
 	Chan17Raw uint16
 	// RC channel 18 value.
 	Chan18Raw uint16
-	// Receive signal strength indicator in device-dependent units/scale. Values: [0-254], 255: invalid/unknown.
+	// Receive signal strength indicator in device-dependent units/scale. Values: [0-254], UINT8_MAX: invalid/unknown.
 	Rssi uint8
 }
 
@@ -14558,7 +14579,7 @@ type MessageCommandAck struct {
 	Command MAV_CMD `mavenum:"uint16"`
 	// Result of command.
 	Result MAV_RESULT `mavenum:"uint8"`
-	// WIP: Also used as result_param1, it can be set with an enum containing the errors reasons of why the command was denied, or the progress percentage when result is MAV_RESULT_IN_PROGRESS (255 if the progress is unknown).
+	// WIP: Also used as result_param1, it can be set with an enum containing the errors reasons of why the command was denied, or the progress percentage when result is MAV_RESULT_IN_PROGRESS (UINT8_MAX if the progress is unknown).
 	Progress uint8 `mavext:"true"`
 	// WIP: Additional parameter of the result, example: which parameter of MAV_CMD_NAV_WAYPOINT caused it to be denied.
 	ResultParam2 int32 `mavext:"true"`
@@ -14942,7 +14963,7 @@ type MessageHilRcInputsRaw struct {
 	Chan11Raw uint16
 	// RC channel 12 value
 	Chan12Raw uint16
-	// Receive signal strength indicator in device-dependent units/scale. Values: [0-254], 255: invalid/unknown.
+	// Receive signal strength indicator in device-dependent units/scale. Values: [0-254], UINT8_MAX: invalid/unknown.
 	Rssi uint8
 }
 
@@ -15265,15 +15286,15 @@ func (*MessageSimState) GetID() uint32 {
 
 // Status generated by radio and injected into MAVLink stream.
 type MessageRadioStatus struct {
-	// Local (message sender) recieved signal strength indication in device-dependent units/scale. Values: [0-254], 255: invalid/unknown.
+	// Local (message sender) recieved signal strength indication in device-dependent units/scale. Values: [0-254], UINT8_MAX: invalid/unknown.
 	Rssi uint8
-	// Remote (message receiver) signal strength indication in device-dependent units/scale. Values: [0-254], 255: invalid/unknown.
+	// Remote (message receiver) signal strength indication in device-dependent units/scale. Values: [0-254], UINT8_MAX: invalid/unknown.
 	Remrssi uint8
 	// Remaining free transmitter buffer space.
 	Txbuf uint8
-	// Local background noise level. These are device dependent RSSI values (scale as approx 2x dB on SiK radios). Values: [0-254], 255: invalid/unknown.
+	// Local background noise level. These are device dependent RSSI values (scale as approx 2x dB on SiK radios). Values: [0-254], UINT8_MAX: invalid/unknown.
 	Noise uint8
-	// Remote background noise level. These are device dependent RSSI values (scale as approx 2x dB on SiK radios). Values: [0-254], 255: invalid/unknown.
+	// Remote background noise level. These are device dependent RSSI values (scale as approx 2x dB on SiK radios). Values: [0-254], UINT8_MAX: invalid/unknown.
 	Remnoise uint8
 	// Count of radio packet receive errors (since boot).
 	Rxerrors uint16
@@ -15345,7 +15366,7 @@ type MessageHilGps struct {
 	Eph uint16
 	// GPS VDOP vertical dilution of position (unitless * 100). If unknown, set to: UINT16_MAX
 	Epv uint16
-	// GPS ground speed. If unknown, set to: 65535
+	// GPS ground speed. If unknown, set to: UINT16_MAX
 	Vel uint16
 	// GPS velocity in north direction in earth-fixed NED frame
 	Vn int16
@@ -15353,9 +15374,9 @@ type MessageHilGps struct {
 	Ve int16
 	// GPS velocity in down direction in earth-fixed NED frame
 	Vd int16
-	// Course over ground (NOT heading, but direction of movement), 0.0..359.99 degrees. If unknown, set to: 65535
+	// Course over ground (NOT heading, but direction of movement), 0.0..359.99 degrees. If unknown, set to: UINT16_MAX
 	Cog uint16
-	// Number of satellites visible. If unknown, set to 255
+	// Number of satellites visible. If unknown, set to UINT8_MAX
 	SatellitesVisible uint8
 	// GPS ID (zero indexed). Used for multiple GPS inputs
 	Id uint8 `mavext:"true"`
@@ -15608,13 +15629,13 @@ type MessageGps2Raw struct {
 	Vel uint16
 	// Course over ground (NOT heading, but direction of movement): 0.0..359.99 degrees. If unknown, set to: UINT16_MAX
 	Cog uint16
-	// Number of satellites visible. If unknown, set to 255
+	// Number of satellites visible. If unknown, set to UINT8_MAX
 	SatellitesVisible uint8
 	// Number of DGPS satellites
 	DgpsNumch uint8
 	// Age of DGPS info
 	DgpsAge uint32
-	// Yaw in earth frame from north. Use 0 if this GPS does not provide yaw. Use 65535 if this GPS is configured to provide yaw and is currently unable to provide it. Use 36000 for north.
+	// Yaw in earth frame from north. Use 0 if this GPS does not provide yaw. Use UINT16_MAX if this GPS is configured to provide yaw and is currently unable to provide it. Use 36000 for north.
 	Yaw uint16 `mavext:"true"`
 	// Altitude (above WGS84, EGM96 ellipsoid). Positive for up.
 	AltEllipsoid int32 `mavext:"true"`
@@ -15822,7 +15843,7 @@ type MessageDistanceSensor struct {
 	Id uint8
 	// Direction the sensor faces. downward-facing: ROTATION_PITCH_270, upward-facing: ROTATION_PITCH_90, backward-facing: ROTATION_PITCH_180, forward-facing: ROTATION_NONE, left-facing: ROTATION_YAW_90, right-facing: ROTATION_YAW_270
 	Orientation MAV_SENSOR_ORIENTATION `mavenum:"uint8"`
-	// Measurement variance. Max standard deviation is 6cm. 255 if unknown.
+	// Measurement variance. Max standard deviation is 6cm. UINT8_MAX if unknown.
 	Covariance uint8
 	// Horizontal Field of View (angle) where the distance measurement is valid and the field of view is known. Otherwise this is set to 0.
 	HorizontalFov float32 `mavext:"true"`
@@ -16486,7 +16507,7 @@ type MessageHighLatency struct {
 	Groundspeed uint8
 	// climb rate
 	ClimbRate int8
-	// Number of satellites visible. If unknown, set to 255
+	// Number of satellites visible. If unknown, set to UINT8_MAX
 	GpsNsat uint8
 	// GPS Fix type.
 	GpsFixType GPS_FIX_TYPE `mavenum:"uint8"`
@@ -17092,7 +17113,7 @@ type MessageLoggingData struct {
 	Sequence uint16
 	// data length
 	Length uint8
-	// offset into data where first message starts. This can be used for recovery, when a previous message got lost (set to 255 if no start exists).
+	// offset into data where first message starts. This can be used for recovery, when a previous message got lost (set to UINT8_MAX if no start exists).
 	FirstMessageOffset uint8
 	// logged data
 	Data [249]uint8
@@ -17113,7 +17134,7 @@ type MessageLoggingDataAcked struct {
 	Sequence uint16
 	// data length
 	Length uint8
-	// offset into data where first message starts. This can be used for recovery, when a previous message got lost (set to 255 if no start exists).
+	// offset into data where first message starts. This can be used for recovery, when a previous message got lost (set to UINT8_MAX if no start exists).
 	FirstMessageOffset uint8
 	// logged data
 	Data [249]uint8

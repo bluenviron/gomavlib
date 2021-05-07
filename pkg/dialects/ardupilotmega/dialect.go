@@ -22313,7 +22313,7 @@ type MessageSmartBatteryInfo struct {
 	CycleCount uint16
 	// Serial number in ASCII characters, 0 terminated. All 0: field not provided.
 	SerialNumber string `mavlen:"16"`
-	// Static device name. Encode as manufacturer and product names separated using an underscore.
+	// Static device name in ASCII characters, 0 terminated. All 0: field not provided. Encode as manufacturer name then product name separated using an underscore.
 	DeviceName string `mavlen:"50"`
 	// Battery weight. 0: field not provided.
 	Weight uint16
@@ -22323,6 +22323,16 @@ type MessageSmartBatteryInfo struct {
 	ChargingMinimumVoltage uint16
 	// Minimum per-cell voltage when resting. If not supplied set to UINT16_MAX value.
 	RestingMinimumVoltage uint16
+	// Maximum per-cell voltage when charged. 0: field not provided.
+	ChargingMaximumVoltage uint16 `mavext:"true"`
+	// Number of battery cells in series. 0: field not provided.
+	CellsInSeries uint8 `mavext:"true"`
+	// Maximum pack discharge current. 0: field not provided.
+	DischargeMaximumCurrent uint32 `mavext:"true"`
+	// Maximum pack discharge burst current. 0: field not provided.
+	DischargeMaximumBurstCurrent uint32 `mavext:"true"`
+	// Manufacture date (DD/MM/YYYY) in ASCII characters, 0 terminated. All 0: field not provided.
+	ManufactureDate string `mavext:"true" mavlen:"11"`
 }
 
 // GetID implements the msg.Message interface.

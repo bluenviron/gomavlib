@@ -6396,6 +6396,12 @@ const (
 	MAV_COMP_ID_MISSIONPLANNER MAV_COMPONENT = 190
 	// Component that lives on the onboard computer (companion computer) and has some generic functionalities, such as settings system parameters and monitoring the status of some processes that don't directly speak mavlink and so on.
 	MAV_COMP_ID_ONBOARD_COMPUTER MAV_COMPONENT = 191
+	// Component that lives on the onboard computer (companion computer) and has some generic functionalities, such as settings system parameters and monitoring the status of some processes that don't directly speak mavlink and so on.
+	MAV_COMP_ID_ONBOARD_COMPUTER2 MAV_COMPONENT = 192
+	// Component that lives on the onboard computer (companion computer) and has some generic functionalities, such as settings system parameters and monitoring the status of some processes that don't directly speak mavlink and so on.
+	MAV_COMP_ID_ONBOARD_COMPUTER3 MAV_COMPONENT = 193
+	// Component that lives on the onboard computer (companion computer) and has some generic functionalities, such as settings system parameters and monitoring the status of some processes that don't directly speak mavlink and so on.
+	MAV_COMP_ID_ONBOARD_COMPUTER4 MAV_COMPONENT = 194
 	// Component that finds an optimal path between points based on a certain constraint (e.g. minimum snap, shortest path, cost, etc.).
 	MAV_COMP_ID_PATHPLANNER MAV_COMPONENT = 195
 	// Component that plans a collision free path between two points.
@@ -6659,6 +6665,12 @@ func (e MAV_COMPONENT) MarshalText() ([]byte, error) {
 		return []byte("MAV_COMP_ID_MISSIONPLANNER"), nil
 	case MAV_COMP_ID_ONBOARD_COMPUTER:
 		return []byte("MAV_COMP_ID_ONBOARD_COMPUTER"), nil
+	case MAV_COMP_ID_ONBOARD_COMPUTER2:
+		return []byte("MAV_COMP_ID_ONBOARD_COMPUTER2"), nil
+	case MAV_COMP_ID_ONBOARD_COMPUTER3:
+		return []byte("MAV_COMP_ID_ONBOARD_COMPUTER3"), nil
+	case MAV_COMP_ID_ONBOARD_COMPUTER4:
+		return []byte("MAV_COMP_ID_ONBOARD_COMPUTER4"), nil
 	case MAV_COMP_ID_PATHPLANNER:
 		return []byte("MAV_COMP_ID_PATHPLANNER"), nil
 	case MAV_COMP_ID_OBSTACLE_AVOIDANCE:
@@ -7036,6 +7048,15 @@ func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_COMP_ID_ONBOARD_COMPUTER":
 		*e = MAV_COMP_ID_ONBOARD_COMPUTER
+		return nil
+	case "MAV_COMP_ID_ONBOARD_COMPUTER2":
+		*e = MAV_COMP_ID_ONBOARD_COMPUTER2
+		return nil
+	case "MAV_COMP_ID_ONBOARD_COMPUTER3":
+		*e = MAV_COMP_ID_ONBOARD_COMPUTER3
+		return nil
+	case "MAV_COMP_ID_ONBOARD_COMPUTER4":
+		*e = MAV_COMP_ID_ONBOARD_COMPUTER4
 		return nil
 	case "MAV_COMP_ID_PATHPLANNER":
 		*e = MAV_COMP_ID_PATHPLANNER
@@ -11577,6 +11598,56 @@ func (e *MOTOR_TEST_THROTTLE_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MOTOR_TEST_THROTTLE_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+//
+type NAV_VTOL_LAND_OPTIONS int
+
+const (
+	// Default autopilot landing behaviour.
+	NAV_VTOL_LAND_OPTIONS_DEFAULT NAV_VTOL_LAND_OPTIONS = 0
+	// Descend in fixed wing mode, transitioning to multicopter mode for vertical landing when close to the ground.          The fixed wing descent pattern is at the discretion of the vehicle (e.g. transition altitude, loiter direction, radius, and speed, etc.).
+	NAV_VTOL_LAND_OPTIONS_FW_DESCENT NAV_VTOL_LAND_OPTIONS = 1
+	// Land in multicopter mode on reaching the landing co-ordinates (the whole landing is by "hover descent").
+	NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT NAV_VTOL_LAND_OPTIONS = 2
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e NAV_VTOL_LAND_OPTIONS) MarshalText() ([]byte, error) {
+	switch e { //nolint:gocritic
+	case NAV_VTOL_LAND_OPTIONS_DEFAULT:
+		return []byte("NAV_VTOL_LAND_OPTIONS_DEFAULT"), nil
+	case NAV_VTOL_LAND_OPTIONS_FW_DESCENT:
+		return []byte("NAV_VTOL_LAND_OPTIONS_FW_DESCENT"), nil
+	case NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT:
+		return []byte("NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *NAV_VTOL_LAND_OPTIONS) UnmarshalText(text []byte) error {
+	switch string(text) { //nolint:gocritic
+	case "NAV_VTOL_LAND_OPTIONS_DEFAULT":
+		*e = NAV_VTOL_LAND_OPTIONS_DEFAULT
+		return nil
+	case "NAV_VTOL_LAND_OPTIONS_FW_DESCENT":
+		*e = NAV_VTOL_LAND_OPTIONS_FW_DESCENT
+		return nil
+	case "NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT":
+		*e = NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e NAV_VTOL_LAND_OPTIONS) String() string {
 	byts, err := e.MarshalText()
 	if err == nil {
 		return string(byts)

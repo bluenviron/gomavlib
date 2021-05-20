@@ -418,6 +418,12 @@ const (
 	MAV_COMP_ID_MISSIONPLANNER MAV_COMPONENT = 190
 	// Component that lives on the onboard computer (companion computer) and has some generic functionalities, such as settings system parameters and monitoring the status of some processes that don't directly speak mavlink and so on.
 	MAV_COMP_ID_ONBOARD_COMPUTER MAV_COMPONENT = 191
+	// Component that lives on the onboard computer (companion computer) and has some generic functionalities, such as settings system parameters and monitoring the status of some processes that don't directly speak mavlink and so on.
+	MAV_COMP_ID_ONBOARD_COMPUTER2 MAV_COMPONENT = 192
+	// Component that lives on the onboard computer (companion computer) and has some generic functionalities, such as settings system parameters and monitoring the status of some processes that don't directly speak mavlink and so on.
+	MAV_COMP_ID_ONBOARD_COMPUTER3 MAV_COMPONENT = 193
+	// Component that lives on the onboard computer (companion computer) and has some generic functionalities, such as settings system parameters and monitoring the status of some processes that don't directly speak mavlink and so on.
+	MAV_COMP_ID_ONBOARD_COMPUTER4 MAV_COMPONENT = 194
 	// Component that finds an optimal path between points based on a certain constraint (e.g. minimum snap, shortest path, cost, etc.).
 	MAV_COMP_ID_PATHPLANNER MAV_COMPONENT = 195
 	// Component that plans a collision free path between two points.
@@ -681,6 +687,12 @@ func (e MAV_COMPONENT) MarshalText() ([]byte, error) {
 		return []byte("MAV_COMP_ID_MISSIONPLANNER"), nil
 	case MAV_COMP_ID_ONBOARD_COMPUTER:
 		return []byte("MAV_COMP_ID_ONBOARD_COMPUTER"), nil
+	case MAV_COMP_ID_ONBOARD_COMPUTER2:
+		return []byte("MAV_COMP_ID_ONBOARD_COMPUTER2"), nil
+	case MAV_COMP_ID_ONBOARD_COMPUTER3:
+		return []byte("MAV_COMP_ID_ONBOARD_COMPUTER3"), nil
+	case MAV_COMP_ID_ONBOARD_COMPUTER4:
+		return []byte("MAV_COMP_ID_ONBOARD_COMPUTER4"), nil
 	case MAV_COMP_ID_PATHPLANNER:
 		return []byte("MAV_COMP_ID_PATHPLANNER"), nil
 	case MAV_COMP_ID_OBSTACLE_AVOIDANCE:
@@ -1058,6 +1070,15 @@ func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_COMP_ID_ONBOARD_COMPUTER":
 		*e = MAV_COMP_ID_ONBOARD_COMPUTER
+		return nil
+	case "MAV_COMP_ID_ONBOARD_COMPUTER2":
+		*e = MAV_COMP_ID_ONBOARD_COMPUTER2
+		return nil
+	case "MAV_COMP_ID_ONBOARD_COMPUTER3":
+		*e = MAV_COMP_ID_ONBOARD_COMPUTER3
+		return nil
+	case "MAV_COMP_ID_ONBOARD_COMPUTER4":
+		*e = MAV_COMP_ID_ONBOARD_COMPUTER4
 		return nil
 	case "MAV_COMP_ID_PATHPLANNER":
 		*e = MAV_COMP_ID_PATHPLANNER

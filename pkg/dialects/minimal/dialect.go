@@ -400,6 +400,8 @@ const (
 	MAV_COMP_ID_QX1_GIMBAL MAV_COMPONENT = 159
 	// FLARM collision alert component.
 	MAV_COMP_ID_FLARM MAV_COMPONENT = 160
+	// Parachute component.
+	MAV_COMP_ID_PARACHUTE MAV_COMPONENT = 161
 	// Gimbal #2.
 	MAV_COMP_ID_GIMBAL2 MAV_COMPONENT = 171
 	// Gimbal #3.
@@ -669,6 +671,8 @@ func (e MAV_COMPONENT) MarshalText() ([]byte, error) {
 		return []byte("MAV_COMP_ID_QX1_GIMBAL"), nil
 	case MAV_COMP_ID_FLARM:
 		return []byte("MAV_COMP_ID_FLARM"), nil
+	case MAV_COMP_ID_PARACHUTE:
+		return []byte("MAV_COMP_ID_PARACHUTE"), nil
 	case MAV_COMP_ID_GIMBAL2:
 		return []byte("MAV_COMP_ID_GIMBAL2"), nil
 	case MAV_COMP_ID_GIMBAL3:
@@ -1043,6 +1047,9 @@ func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_COMP_ID_FLARM":
 		*e = MAV_COMP_ID_FLARM
+		return nil
+	case "MAV_COMP_ID_PARACHUTE":
+		*e = MAV_COMP_ID_PARACHUTE
 		return nil
 	case "MAV_COMP_ID_GIMBAL2":
 		*e = MAV_COMP_ID_GIMBAL2
@@ -1481,6 +1488,8 @@ const (
 	MAV_TYPE_DECAROTOR MAV_TYPE = 35
 	// Battery
 	MAV_TYPE_BATTERY MAV_TYPE = 36
+	// Parachute
+	MAV_TYPE_PARACHUTE MAV_TYPE = 37
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -1560,6 +1569,8 @@ func (e MAV_TYPE) MarshalText() ([]byte, error) {
 		return []byte("MAV_TYPE_DECAROTOR"), nil
 	case MAV_TYPE_BATTERY:
 		return []byte("MAV_TYPE_BATTERY"), nil
+	case MAV_TYPE_PARACHUTE:
+		return []byte("MAV_TYPE_PARACHUTE"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -1677,6 +1688,9 @@ func (e *MAV_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_TYPE_BATTERY":
 		*e = MAV_TYPE_BATTERY
+		return nil
+	case "MAV_TYPE_PARACHUTE":
+		*e = MAV_TYPE_PARACHUTE
 		return nil
 	}
 	return errors.New("invalid value")

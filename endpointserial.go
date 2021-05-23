@@ -2,10 +2,11 @@ package gomavlib
 
 import (
 	"fmt"
-	"github.com/tarm/serial"
 	"io"
 	"regexp"
 	"strconv"
+
+	"github.com/tarm/serial"
 )
 
 var reSerial = regexp.MustCompile("^(.+?):([0-9]+)$")

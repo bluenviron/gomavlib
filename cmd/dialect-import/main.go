@@ -16,8 +16,10 @@ import (
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
-var reMsgName = regexp.MustCompile("^[A-Z0-9_]+$")
-var reTypeIsArray = regexp.MustCompile(`^(.+?)\[([0-9]+)\]$`)
+var (
+	reMsgName     = regexp.MustCompile("^[A-Z0-9_]+$")
+	reTypeIsArray = regexp.MustCompile(`^(.+?)\[([0-9]+)\]$`)
+)
 
 var tplDialect = template.Must(template.New("").Parse(
 	`//nolint:golint,misspell,govet

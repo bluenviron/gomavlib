@@ -28,8 +28,10 @@ func (udpNetError) Temporary() bool {
 	return false
 }
 
-var errTimeout net.Error = udpNetError{"timeout", true}
-var errTerminated net.Error = udpNetError{"terminated", false}
+var (
+	errTimeout    net.Error = udpNetError{"timeout", true}
+	errTerminated net.Error = udpNetError{"terminated", false}
+)
 
 type connIndex struct {
 	IP   [4]byte
@@ -234,7 +236,6 @@ func (l *Listener) reader() {
 
 			if !preExisting && l.closed {
 				// listener is closed, ignore new connection
-
 			} else {
 				if !preExisting {
 					conn = newConn(l, connIndex, uaddr)

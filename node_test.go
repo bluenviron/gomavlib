@@ -16,10 +16,12 @@ import (
 	"github.com/aler9/gomavlib/pkg/msg"
 )
 
-type MAV_TYPE int      //nolint:golint
-type MAV_AUTOPILOT int //nolint:golint
-type MAV_MODE_FLAG int //nolint:golint
-type MAV_STATE int     //nolint:golint
+type (
+	MAV_TYPE      int //nolint:golint
+	MAV_AUTOPILOT int //nolint:golint
+	MAV_MODE_FLAG int //nolint:golint
+	MAV_STATE     int //nolint:golint
+)
 
 type MessageHeartbeat struct {
 	Type           MAV_TYPE      `mavenum:"uint8"`
@@ -47,7 +49,7 @@ func (*MessageRequestDataStream) GetID() uint32 {
 }
 
 func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
-	var testMsg1 = &MessageHeartbeat{
+	testMsg1 := &MessageHeartbeat{
 		Type:           1,
 		Autopilot:      2,
 		BaseMode:       3,
@@ -55,7 +57,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 		SystemStatus:   4,
 		MavlinkVersion: 5,
 	}
-	var testMsg2 = &MessageHeartbeat{
+	testMsg2 := &MessageHeartbeat{
 		Type:           6,
 		Autopilot:      5,
 		BaseMode:       4,
@@ -63,7 +65,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 		SystemStatus:   2,
 		MavlinkVersion: 1,
 	}
-	var testMsg3 = &MessageHeartbeat{
+	testMsg3 := &MessageHeartbeat{
 		Type:           7,
 		Autopilot:      5,
 		BaseMode:       4,
@@ -71,7 +73,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 		SystemStatus:   2,
 		MavlinkVersion: 1,
 	}
-	var testMsg4 = &MessageHeartbeat{
+	testMsg4 := &MessageHeartbeat{
 		Type:           7,
 		Autopilot:      6,
 		BaseMode:       4,
@@ -344,7 +346,7 @@ func TestNodeSignature(t *testing.T) {
 	key1 := frame.NewV2Key(bytes.Repeat([]byte("\x4F"), 32))
 	key2 := frame.NewV2Key(bytes.Repeat([]byte("\xA8"), 32))
 
-	var testMsg = &MessageHeartbeat{
+	testMsg := &MessageHeartbeat{
 		Type:           7,
 		Autopilot:      5,
 		BaseMode:       4,
@@ -403,7 +405,7 @@ func TestNodeSignature(t *testing.T) {
 }
 
 func TestNodeRouting(t *testing.T) {
-	var testMsg = &MessageHeartbeat{
+	testMsg := &MessageHeartbeat{
 		Type:           7,
 		Autopilot:      5,
 		BaseMode:       4,

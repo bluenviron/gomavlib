@@ -24,12 +24,20 @@ $(blank)
 endef
 
 mod-tidy:
-	docker run --rm -it -v $(PWD):/s $(BASE_IMAGE) \
-	sh -c "apk add git && cd /s && go get && go mod tidy"
+	docker run --rm -it -v $(PWD):/s -w /s $(BASE_IMAGE) \
+	sh -c "apk add git && go get && go mod tidy"
+
+define DOCKERFILE_FORMAT
+FROM $(BASE_IMAGE)
+RUN apk add --no-cache git
+RUN GO111MODULE=on go get mvdan.cc/gofumpt
+endef
+export DOCKERFILE_FORMAT
 
 format:
-	docker run --rm -it -v $(PWD):/s $(BASE_IMAGE) \
-	sh -c "cd /s && find . -type f -name '*.go' | xargs gofmt -l -w -s"
+	echo "$$DOCKERFILE_FORMAT" | docker build -q . -f - -t temp
+	docker run --rm -it -v $(PWD):/s -w /s temp \
+	sh -c "find . -type f -name '*.go' | xargs gofumpt -l -w"
 
 define DOCKERFILE_TEST
 FROM $(BASE_IMAGE)
@@ -81,11 +89,12 @@ dialects:
 dialects-nodocker:
 	$(eval export CGO_ENABLED = 0)
 	go run ./cmd/dialects-gen
-	find ./pkg/dialects -type f -name '*.go' | xargs gofmt -l -w -s
+	find ./pkg/dialects -type f -name '*.go' | xargs gofumpt -l -w
 
 run-example:
 	docker run --rm -it \
 	--privileged \
 	--network=host \
-	-v $(PWD):/s $(BASE_IMAGE) \
-	sh -c "cd /s && go run examples/$(E).go"
+	-v $(PWD):/s -w /s \
+	$(BASE_IMAGE) \
+	sh -c "go run examples/$(E).go"

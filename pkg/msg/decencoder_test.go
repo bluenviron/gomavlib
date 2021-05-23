@@ -7,12 +7,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type MAV_TYPE int              //nolint:golint
-type MAV_AUTOPILOT int         //nolint:golint
-type MAV_MODE_FLAG int         //nolint:golint
-type MAV_STATE int             //nolint:golint
-type MAV_SYS_STATUS_SENSOR int //nolint:golint
-type MAV_CMD int               //nolint:golint
+type (
+	MAV_TYPE              int //nolint:golint
+	MAV_AUTOPILOT         int //nolint:golint
+	MAV_MODE_FLAG         int //nolint:golint
+	MAV_STATE             int //nolint:golint
+	MAV_SYS_STATUS_SENSOR int //nolint:golint
+	MAV_CMD               int //nolint:golint
+)
 
 type MessageHeartbeat struct {
 	Type           MAV_TYPE      `mavenum:"uint8"`

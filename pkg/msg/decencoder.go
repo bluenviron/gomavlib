@@ -273,7 +273,6 @@ func (mde *DecEncoder) Decode(buf []byte, isV2 bool) (Message, error) {
 		if len(buf) < int(mde.sizeExtended) {
 			buf = append(buf, bytes.Repeat([]byte{0x00}, int(mde.sizeExtended)-len(buf))...)
 		}
-
 	} else {
 		// in V1 buffer must fit message perfectly
 		if len(buf) != int(mde.sizeNormal) {

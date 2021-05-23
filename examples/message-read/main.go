@@ -28,7 +28,6 @@ func main() {
 	// print selected messages
 	for evt := range node.Events() {
 		if frm, ok := evt.(*gomavlib.EventFrame); ok {
-
 			switch msg := frm.Message().(type) {
 			// if frm.Message() is a *ardupilotmega.MessageHeartbeat, access its fields
 			case *ardupilotmega.MessageHeartbeat:

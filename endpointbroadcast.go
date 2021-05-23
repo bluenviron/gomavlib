@@ -125,7 +125,6 @@ func (t *endpointUDPBroadcast) Read(buf []byte) (int, error) {
 	// read WITHOUT deadline. Long periods without packets are normal since
 	// we're not directly connected to someone.
 	n, _, err := t.pc.ReadFrom(buf)
-
 	// wait termination, do not report errors
 	if err != nil {
 		<-t.terminate

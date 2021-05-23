@@ -57,7 +57,7 @@ func processDialect(commit string, name string) error {
 
 	pkgName := strings.ReplaceAll(strings.ToLower(name), "_", "")
 
-	os.Mkdir(filepath.Join("pkg", "dialects", pkgName), 0755)
+	os.Mkdir(filepath.Join("pkg", "dialects", pkgName), 0o755)
 
 	err := func() error {
 		f, err := os.Create(filepath.Join("pkg", "dialects", pkgName, "dialect_test.go"))

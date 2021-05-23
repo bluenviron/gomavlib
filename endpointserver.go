@@ -101,7 +101,6 @@ func (t *endpointServer) Close() error {
 
 func (t *endpointServer) Accept() (string, io.ReadWriteCloser, error) {
 	rawConn, err := t.listener.Accept()
-
 	// wait termination, do not report errors
 	if err != nil {
 		<-t.terminate

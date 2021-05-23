@@ -17,7 +17,7 @@ const (
 )
 
 // 1st January 2015 GMT
-var signatureReferenceDate = time.Date(2015, 01, 01, 0, 0, 0, 0, time.UTC)
+var signatureReferenceDate = time.Date(2015, 0o1, 0o1, 0, 0, 0, 0, time.UTC)
 
 // Error is the error returned in case of non-fatal parsing errors.
 type Error struct {

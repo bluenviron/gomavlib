@@ -14,10 +14,12 @@ import (
 	"github.com/aler9/gomavlib/pkg/msg"
 )
 
-type MAV_TYPE int      //nolint:golint
-type MAV_AUTOPILOT int //nolint:golint
-type MAV_MODE_FLAG int //nolint:golint
-type MAV_STATE int     //nolint:golint
+type (
+	MAV_TYPE      int //nolint:golint
+	MAV_AUTOPILOT int //nolint:golint
+	MAV_MODE_FLAG int //nolint:golint
+	MAV_STATE     int //nolint:golint
+)
 
 type MessageTest5 struct {
 	TestByte byte

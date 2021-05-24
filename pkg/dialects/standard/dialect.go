@@ -14152,7 +14152,7 @@ func (*MessageAttitudeQuaternionCov) GetID() uint32 {
 	return 61
 }
 
-// The state of the fixed wing navigation and position controller.
+// The state of the navigation and position controller.
 type MessageNavControllerOutput struct {
 	// Current desired roll
 	NavRoll float32

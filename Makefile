@@ -75,6 +75,7 @@ lint:
 define DOCKERFILE_GEN_DIALECTS
 FROM $(BASE_IMAGE)
 RUN apk add --no-cache git make
+RUN GO111MODULE=on go get mvdan.cc/gofumpt
 WORKDIR /s
 COPY go.mod go.sum ./
 RUN go mod download

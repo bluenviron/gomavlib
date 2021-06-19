@@ -7498,6 +7498,8 @@ const (
 	MAV_CMD_MISSION_START MAV_CMD = 300
 	// Arms / Disarms a component
 	MAV_CMD_COMPONENT_ARM_DISARM MAV_CMD = 400
+	// Instructs system to run pre-arm checks. This command should return MAV_RESULT_TEMPORARILY_REJECTED in the case the system is armed, otherwise MAV_RESULT_ACCEPTED. Note that the return value from executing this command does not indicate whether the vehicle is armable or not, just whether the system has successfully run/is currently running the checks.  The result of the checks is reflected in the SYS_STATUS message.
+	MAV_CMD_RUN_PREARM_CHECKS MAV_CMD = 401
 	// Turns illuminators ON/OFF. An illuminator is a light source that is used for lighting up dark areas external to the sytstem: e.g. a torch or searchlight (as opposed to a light source for illuminating the system itself, e.g. an indicator light).
 	MAV_CMD_ILLUMINATOR_ON_OFF MAV_CMD = 405
 	// Request the home position from the vehicle.
@@ -7865,6 +7867,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_MISSION_START"), nil
 	case MAV_CMD_COMPONENT_ARM_DISARM:
 		return []byte("MAV_CMD_COMPONENT_ARM_DISARM"), nil
+	case MAV_CMD_RUN_PREARM_CHECKS:
+		return []byte("MAV_CMD_RUN_PREARM_CHECKS"), nil
 	case MAV_CMD_ILLUMINATOR_ON_OFF:
 		return []byte("MAV_CMD_ILLUMINATOR_ON_OFF"), nil
 	case MAV_CMD_GET_HOME_POSITION:
@@ -8315,6 +8319,9 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_COMPONENT_ARM_DISARM":
 		*e = MAV_CMD_COMPONENT_ARM_DISARM
+		return nil
+	case "MAV_CMD_RUN_PREARM_CHECKS":
+		*e = MAV_CMD_RUN_PREARM_CHECKS
 		return nil
 	case "MAV_CMD_ILLUMINATOR_ON_OFF":
 		*e = MAV_CMD_ILLUMINATOR_ON_OFF

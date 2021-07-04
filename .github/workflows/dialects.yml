@@ -6,8 +6,6 @@ on:
 
 jobs:
   dialects:
-    name: dialects
-
     runs-on: ubuntu-20.04
 
     steps:

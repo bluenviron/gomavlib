@@ -5033,6 +5033,8 @@ const (
 	MAV_CMD_NAV_RALLY_POINT MAV_CMD = 5100
 	// Commands the vehicle to respond with a sequence of messages UAVCAN_NODE_INFO, one message per every UAVCAN node that is online. Note that some of the response messages can be lost, which the receiver can detect easily by checking whether every received UAVCAN_NODE_STATUS has a matching message UAVCAN_NODE_INFO received earlier; if not, this command should be sent again in order to request re-transmission of the node information messages.
 	MAV_CMD_UAVCAN_GET_NODE_INFO MAV_CMD = 5200
+	// Trigger the start of an ADSB-out IDENT. This should only be used when requested to do so by an Air Traffic Controller in controlled airspace. This starts the IDENT which is then typically held for 18 seconds by the hardware per the Mode A, C, and S transponder spec.
+	MAV_CMD_DO_ADSB_OUT_IDENT MAV_CMD = 10001
 	// Deploy payload on a Lat / Lon / Alt position. This includes the navigation to reach the required release position and velocity.
 	MAV_CMD_PAYLOAD_PREPARE_DEPLOY MAV_CMD = 30001
 	// Control the payload deployment.
@@ -5350,6 +5352,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_NAV_RALLY_POINT"), nil
 	case MAV_CMD_UAVCAN_GET_NODE_INFO:
 		return []byte("MAV_CMD_UAVCAN_GET_NODE_INFO"), nil
+	case MAV_CMD_DO_ADSB_OUT_IDENT:
+		return []byte("MAV_CMD_DO_ADSB_OUT_IDENT"), nil
 	case MAV_CMD_PAYLOAD_PREPARE_DEPLOY:
 		return []byte("MAV_CMD_PAYLOAD_PREPARE_DEPLOY"), nil
 	case MAV_CMD_PAYLOAD_CONTROL_DEPLOY:
@@ -5805,6 +5809,9 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_UAVCAN_GET_NODE_INFO":
 		*e = MAV_CMD_UAVCAN_GET_NODE_INFO
+		return nil
+	case "MAV_CMD_DO_ADSB_OUT_IDENT":
+		*e = MAV_CMD_DO_ADSB_OUT_IDENT
 		return nil
 	case "MAV_CMD_PAYLOAD_PREPARE_DEPLOY":
 		*e = MAV_CMD_PAYLOAD_PREPARE_DEPLOY

@@ -17864,7 +17864,7 @@ type MessageTrajectoryRepresentationWaypoints struct {
 	PosYaw [5]float32
 	// Yaw rate, set to NaN if not being used
 	VelYaw [5]float32
-	// Scheduled action for each waypoint, UINT16_MAX if not being used.
+	// MAV_CMD command id of waypoint, set to UINT16_MAX if not being used.
 	Command [5]MAV_CMD `mavenum:"uint16"`
 }
 

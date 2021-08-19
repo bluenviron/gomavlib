@@ -232,6 +232,7 @@ var dial = &dialect.Dialect{3, []msg.Message{
 	&MessageOpenDroneIdSystem{},
 	&MessageOpenDroneIdOperatorId{},
 	&MessageOpenDroneIdMessagePack{},
+	&MessageHygrometerSensor{},
 	// uAvionix.xml
 	&MessageUavionixAdsbOutCfg{},
 	&MessageUavionixAdsbOutDynamic{},
@@ -15139,13 +15140,13 @@ type MessageCommandAck struct {
 	Command MAV_CMD `mavenum:"uint16"`
 	// Result of command.
 	Result MAV_RESULT `mavenum:"uint8"`
-	// WIP: Also used as result_param1, it can be set with an enum containing the errors reasons of why the command was denied, or the progress percentage when result is MAV_RESULT_IN_PROGRESS (UINT8_MAX if the progress is unknown).
+	// Also used as result_param1, it can be set with an enum containing the errors reasons of why the command was denied, or the progress percentage when result is MAV_RESULT_IN_PROGRESS (UINT8_MAX if the progress is unknown).
 	Progress uint8 `mavext:"true"`
-	// WIP: Additional parameter of the result, example: which parameter of MAV_CMD_NAV_WAYPOINT caused it to be denied.
+	// Additional parameter of the result, example: which parameter of MAV_CMD_NAV_WAYPOINT caused it to be denied.
 	ResultParam2 int32 `mavext:"true"`
-	// WIP: System ID of the target recipient. This is the ID of the system that sent the command for which this COMMAND_ACK is an acknowledgement.
+	// System ID of the target recipient. This is the ID of the system that sent the command for which this COMMAND_ACK is an acknowledgement.
 	TargetSystem uint8 `mavext:"true"`
-	// WIP: Component ID of the target recipient. This is the ID of the system that sent the command for which this COMMAND_ACK is an acknowledgement.
+	// Component ID of the target recipient. This is the ID of the system that sent the command for which this COMMAND_ACK is an acknowledgement.
 	TargetComponent uint8 `mavext:"true"`
 }
 
@@ -19180,6 +19181,21 @@ type MessageOpenDroneIdMessagePack struct {
 // GetID implements the msg.Message interface.
 func (*MessageOpenDroneIdMessagePack) GetID() uint32 {
 	return 12915
+}
+
+// Temperature and humidity from hygrometer.
+type MessageHygrometerSensor struct {
+	// Hygrometer ID
+	Id uint8
+	// Temperature
+	Temperature int16
+	// Humidity
+	Humidity uint16
+}
+
+// GetID implements the msg.Message interface.
+func (*MessageHygrometerSensor) GetID() uint32 {
+	return 12920
 }
 
 // uAvionix.xml

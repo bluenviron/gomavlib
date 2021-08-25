@@ -17650,8 +17650,8 @@ type MessageEscInfo struct {
 	FailureFlags [4]ESC_FAILURE_FLAGS `mavenum:"uint16"`
 	// Number of reported errors by each ESC since boot.
 	ErrorCount [4]uint32
-	// Temperature measured by each ESC. UINT8_MAX if data not supplied by ESC.
-	Temperature [4]uint8
+	// Temperature of each ESC. INT16_MAX: if data not supplied by ESC.
+	Temperature [4]int16
 }
 
 // GetID implements the msg.Message interface.

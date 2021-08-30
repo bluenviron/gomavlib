@@ -1,6 +1,6 @@
 module github.com/aler9/gomavlib
 
-go 1.14
+go 1.15
 
 require (
 	bou.ke/monkey v1.0.2

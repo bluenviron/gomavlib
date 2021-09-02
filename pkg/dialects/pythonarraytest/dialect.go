@@ -59,7 +59,6 @@ var dial = &dialect.Dialect{3, []msg.Message{
 	&MessageGpsGlobalOrigin{},
 	&MessageParamMapRc{},
 	&MessageMissionRequestInt{},
-	&MessageMissionChanged{},
 	&MessageSafetySetAllowedArea{},
 	&MessageSafetyAllowedArea{},
 	&MessageAttitudeQuaternionCov{},
@@ -14085,25 +14084,6 @@ func (*MessageMissionRequestInt) GetID() uint32 {
 	return 51
 }
 
-// A broadcast message to notify any ground station or SDK if a mission, geofence or safe points have changed on the vehicle.
-type MessageMissionChanged struct {
-	// Start index for partial mission change (-1 for all items).
-	StartIndex int16
-	// End index of a partial mission change. -1 is a synonym for the last mission item (i.e. selects all items from start_index). Ignore field if start_index=-1.
-	EndIndex int16
-	// System ID of the author of the new mission.
-	OriginSysid uint8
-	// Compnent ID of the author of the new mission.
-	OriginCompid MAV_COMPONENT `mavenum:"uint8"`
-	// Mission type.
-	MissionType MAV_MISSION_TYPE `mavenum:"uint8"`
-}
-
-// GetID implements the msg.Message interface.
-func (*MessageMissionChanged) GetID() uint32 {
-	return 52
-}
-
 // Set a safety zone (volume), which is defined by two corners of a cube. This message can be used to tell the MAV which setpoints/waypoints to accept and which to reject. Safety areas are often enforced by national or competition regulations.
 type MessageSafetySetAllowedArea struct {
 	// System ID
@@ -14347,7 +14327,7 @@ func (*MessageDataStream) GetID() uint32 {
 	return 67
 }
 
-// This message provides an API for manually controlling the vehicle using standard joystick axes nomenclature, along with a joystick-like input device. Unused axes can be disabled an buttons are also transmit as boolean values of their
+// This message provides an API for manually controlling the vehicle using standard joystick axes nomenclature, along with a joystick-like input device. Unused axes can be disabled and buttons states are transmitted as individual on/off bits of a bitmask
 type MessageManualControl struct {
 	// The system to be controlled.
 	Target uint8
@@ -14359,8 +14339,16 @@ type MessageManualControl struct {
 	Z int16
 	// R-axis, normalized to the range [-1000,1000]. A value of INT16_MAX indicates that this axis is invalid. Generally corresponds to a twisting of the joystick, with counter-clockwise being 1000 and clockwise being -1000, and the yaw of a vehicle.
 	R int16
-	// A bitfield corresponding to the joystick buttons' current state, 1 for pressed, 0 for released. The lowest bit corresponds to Button 1.
+	// A bitfield corresponding to the joystick buttons' 0-15 current state, 1 for pressed, 0 for released. The lowest bit corresponds to Button 1.
 	Buttons uint16
+	// A bitfield corresponding to the joystick buttons' 16-31 current state, 1 for pressed, 0 for released. The lowest bit corresponds to Button 16.
+	Buttons2 uint16 `mavext:"true"`
+	// Set bits to 1 to indicate which of the following extension fields contain valid data: bit 0: pitch, bit 1: roll.
+	EnabledExtensions uint8 `mavext:"true"`
+	// Pitch-only-axis, normalized to the range [-1000,1000]. Generally corresponds to pitch on vehicles with additional degrees of freedom. Valid if bit 0 of enabled_extensions field is set. Set to 0 if invalid.
+	S int16 `mavext:"true"`
+	// Roll-only-axis, normalized to the range [-1000,1000]. Generally corresponds to roll on vehicles with additional degrees of freedom. Valid if bit 1 of enabled_extensions field is set. Set to 0 if invalid.
+	T int16 `mavext:"true"`
 }
 
 // GetID implements the msg.Message interface.

@@ -106,7 +106,8 @@ func run() error {
 	var files []struct {
 		Name string `json:"name"`
 	}
-	err = downloadJSON("https://api.github.com/repos/mavlink/mavlink/contents/message_definitions/v1.0?ref="+res.Sha, &files)
+	err = downloadJSON("https://api.github.com/repos/mavlink/mavlink/contents/message_definitions/v1.0?ref="+res.Sha,
+		&files)
 	if err != nil {
 		return err
 	}

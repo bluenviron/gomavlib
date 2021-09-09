@@ -22,10 +22,10 @@ var (
 )
 
 var tplDialect = template.Must(template.New("").Parse(
-	`//nolint:golint,misspell,govet
-{{- if .Comment -}}
+	`{{- if .Comment }}
 // {{ .Comment }}
 {{- end }}
+//nolint:golint,misspell,govet,lll
 package {{ .PkgName }}
 
 import (
@@ -184,7 +184,11 @@ type outDefinition struct {
 	Messages []*outMessage
 }
 
-func definitionProcess(version *string, defsProcessed map[string]struct{}, isRemote bool, defAddr string) ([]*outDefinition, error) {
+func definitionProcess(
+	version *string,
+	defsProcessed map[string]struct{},
+	isRemote bool,
+	defAddr string) ([]*outDefinition, error) {
 	// skip already processed
 	if _, ok := defsProcessed[defAddr]; ok {
 		return nil, nil

@@ -153,7 +153,8 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 	}()
 
 	if request {
-		// https://github.com/mavlink/qgroundcontrol/blob/08f400355a8f3acf1dd8ed91f7f1c757323ac182/src/FirmwarePlugin/APM/APMFirmwarePlugin.cc#L626
+		// https://github.com/mavlink/qgroundcontrol/blob/08f400355a8f3acf1dd8ed91f7f1c757323ac182/src
+		// /FirmwarePlugin/APM/APMFirmwarePlugin.cc#L626
 		streams := []int{
 			1,  // common.MAV_DATA_STREAM_RAW_SENSORS,
 			2,  // common.MAV_DATA_STREAM_EXTENDED_STATUS,

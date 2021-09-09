@@ -26,7 +26,6 @@ var dial = &dialect.Dialect{3, []msg.Message{
 	&MessageAuthKey{},
 	&MessageLinkNodeStatus{},
 	&MessageSetMode{},
-	&MessageParamAckTransaction{},
 	&MessageParamRequestRead{},
 	&MessageParamRequestList{},
 	&MessageParamValue{},
@@ -5091,8 +5090,6 @@ const (
 	MAV_CMD_JUMP_TAG MAV_CMD = 600
 	// Jump to the matching tag in the mission list. Repeat this action for the specified number of times. A mission should contain a single matching tag for each jump. If this is not the case then a jump to a missing tag should complete the mission, and a jump where there are multiple matching tags should always select the one with the lowest mission sequence number.
 	MAV_CMD_DO_JUMP_TAG MAV_CMD = 601
-	// Request to start or end a parameter transaction. Multiple kinds of transport layers can be used to exchange parameters in the transaction (param, param_ext and mavftp). The command response can either be a success/failure or an in progress in case the receiving side takes some time to apply the parameters.
-	MAV_CMD_PARAM_TRANSACTION MAV_CMD = 900
 	// High level setpoint to be sent to a gimbal manager to set a gimbal attitude. It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. Note: a gimbal is never to react to this command but only the gimbal manager.
 	MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW MAV_CMD = 1000
 	// Gimbal configuration to set which sysid/compid is in primary and secondary control.
@@ -5414,8 +5411,6 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_JUMP_TAG"), nil
 	case MAV_CMD_DO_JUMP_TAG:
 		return []byte("MAV_CMD_DO_JUMP_TAG"), nil
-	case MAV_CMD_PARAM_TRANSACTION:
-		return []byte("MAV_CMD_PARAM_TRANSACTION"), nil
 	case MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW:
 		return []byte("MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW"), nil
 	case MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE:
@@ -5842,9 +5837,6 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_DO_JUMP_TAG":
 		*e = MAV_CMD_DO_JUMP_TAG
-		return nil
-	case "MAV_CMD_PARAM_TRANSACTION":
-		*e = MAV_CMD_PARAM_TRANSACTION
 		return nil
 	case "MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW":
 		*e = MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW
@@ -11880,99 +11872,6 @@ func (e PARAM_ACK) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
-// Possible parameter transaction actions.
-type PARAM_TRANSACTION_ACTION int
-
-const (
-	// Commit the current parameter transaction.
-	PARAM_TRANSACTION_ACTION_START PARAM_TRANSACTION_ACTION = 0
-	// Commit the current parameter transaction.
-	PARAM_TRANSACTION_ACTION_COMMIT PARAM_TRANSACTION_ACTION = 1
-	// Cancel the current parameter transaction.
-	PARAM_TRANSACTION_ACTION_CANCEL PARAM_TRANSACTION_ACTION = 2
-)
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e PARAM_TRANSACTION_ACTION) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case PARAM_TRANSACTION_ACTION_START:
-		return []byte("PARAM_TRANSACTION_ACTION_START"), nil
-	case PARAM_TRANSACTION_ACTION_COMMIT:
-		return []byte("PARAM_TRANSACTION_ACTION_COMMIT"), nil
-	case PARAM_TRANSACTION_ACTION_CANCEL:
-		return []byte("PARAM_TRANSACTION_ACTION_CANCEL"), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *PARAM_TRANSACTION_ACTION) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "PARAM_TRANSACTION_ACTION_START":
-		*e = PARAM_TRANSACTION_ACTION_START
-		return nil
-	case "PARAM_TRANSACTION_ACTION_COMMIT":
-		*e = PARAM_TRANSACTION_ACTION_COMMIT
-		return nil
-	case "PARAM_TRANSACTION_ACTION_CANCEL":
-		*e = PARAM_TRANSACTION_ACTION_CANCEL
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e PARAM_TRANSACTION_ACTION) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
-	}
-	return strconv.FormatInt(int64(e), 10)
-}
-
-// Possible transport layers to set and get parameters via mavlink during a parameter transaction.
-type PARAM_TRANSACTION_TRANSPORT int
-
-const (
-	// Transaction over param transport.
-	PARAM_TRANSACTION_TRANSPORT_PARAM PARAM_TRANSACTION_TRANSPORT = 0
-	// Transaction over param_ext transport.
-	PARAM_TRANSACTION_TRANSPORT_PARAM_EXT PARAM_TRANSACTION_TRANSPORT = 1
-)
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e PARAM_TRANSACTION_TRANSPORT) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case PARAM_TRANSACTION_TRANSPORT_PARAM:
-		return []byte("PARAM_TRANSACTION_TRANSPORT_PARAM"), nil
-	case PARAM_TRANSACTION_TRANSPORT_PARAM_EXT:
-		return []byte("PARAM_TRANSACTION_TRANSPORT_PARAM_EXT"), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *PARAM_TRANSACTION_TRANSPORT) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "PARAM_TRANSACTION_TRANSPORT_PARAM":
-		*e = PARAM_TRANSACTION_TRANSPORT_PARAM
-		return nil
-	case "PARAM_TRANSACTION_TRANSPORT_PARAM_EXT":
-		*e = PARAM_TRANSACTION_TRANSPORT_PARAM_EXT
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e PARAM_TRANSACTION_TRANSPORT) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
-	}
-	return strconv.FormatInt(int64(e), 10)
-}
-
 // Bitmap to indicate which dimensions should be ignored by the vehicle: a value of 0b0000000000000000 or 0b0000001000000000 indicates that none of the setpoint dimensions should be ignored. If bit 9 is set the floats afx afy afz should be interpreted as force instead of acceleration.
 type POSITION_TARGET_TYPEMASK int
 
@@ -13477,27 +13376,6 @@ type MessageSetMode struct {
 // GetID implements the msg.Message interface.
 func (*MessageSetMode) GetID() uint32 {
 	return 11
-}
-
-// Response from a PARAM_SET message when it is used in a transaction.
-type MessageParamAckTransaction struct {
-	// Id of system that sent PARAM_SET message.
-	TargetSystem uint8
-	// Id of system that sent PARAM_SET message.
-	TargetComponent uint8
-	// Parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
-	ParamId string `mavlen:"16"`
-	// Parameter value (new value if PARAM_ACCEPTED, current value otherwise)
-	ParamValue float32
-	// Parameter type.
-	ParamType MAV_PARAM_TYPE `mavenum:"uint8"`
-	// Result code.
-	ParamResult PARAM_ACK `mavenum:"uint8"`
-}
-
-// GetID implements the msg.Message interface.
-func (*MessageParamAckTransaction) GetID() uint32 {
-	return 19
 }
 
 // Request to read the onboard parameter with the param_id string id. Onboard parameters are stored as key[const char*] -> value[float]. This allows to send a parameter to any other component (such as the GCS) without the need of previous knowledge of possible parameter names. Thus the same GCS can store different parameters for different autopilots. See also https://mavlink.io/en/services/parameter.html for a full documentation of QGroundControl and IMU code.

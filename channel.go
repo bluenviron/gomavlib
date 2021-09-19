@@ -2,11 +2,18 @@ package gomavlib
 
 import (
 	"io"
+	"math/rand"
 
 	"github.com/aler9/gomavlib/pkg/frame"
 	"github.com/aler9/gomavlib/pkg/msg"
 	"github.com/aler9/gomavlib/pkg/transceiver"
 )
+
+func randomByte() byte {
+	var buf [1]byte
+	rand.Read(buf[:])
+	return buf[0]
+}
 
 // Channel is a communication channel created by an Endpoint.
 // An Endpoint can create channels.

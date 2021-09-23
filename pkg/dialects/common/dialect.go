@@ -7226,9 +7226,9 @@ const (
 	MAV_FRAME_GLOBAL_RELATIVE_ALT MAV_FRAME = 3
 	// Local coordinate frame, Z-up (x: East, y: North, z: Up).
 	MAV_FRAME_LOCAL_ENU MAV_FRAME = 4
-	// Global (WGS84) coordinate frame (scaled) + MSL altitude. First value / x: latitude in degrees*1.0e-7, second value / y: longitude in degrees*1.0e-7, third value / z: positive altitude over mean sea level (MSL).
+	// Global (WGS84) coordinate frame (scaled) + MSL altitude. First value / x: latitude in degrees*1E7, second value / y: longitude in degrees*1E7, third value / z: positive altitude over mean sea level (MSL).
 	MAV_FRAME_GLOBAL_INT MAV_FRAME = 5
-	// Global (WGS84) coordinate frame (scaled) + altitude relative to the home position. First value / x: latitude in degrees*10e-7, second value / y: longitude in degrees*10e-7, third value / z: positive altitude with 0 being at the altitude of the home location.
+	// Global (WGS84) coordinate frame (scaled) + altitude relative to the home position. First value / x: latitude in degrees*1E7, second value / y: longitude in degrees*1E7, third value / z: positive altitude with 0 being at the altitude of the home location.
 	MAV_FRAME_GLOBAL_RELATIVE_ALT_INT MAV_FRAME = 6
 	// Offset to the current local frame. Anything expressed in this frame should be added to the current local frame position.
 	MAV_FRAME_LOCAL_OFFSET_NED MAV_FRAME = 7
@@ -7238,7 +7238,7 @@ const (
 	MAV_FRAME_BODY_OFFSET_NED MAV_FRAME = 9
 	// Global (WGS84) coordinate frame with AGL altitude (at the waypoint coordinate). First value / x: latitude in degrees, second value / y: longitude in degrees, third value / z: positive altitude in meters with 0 being at ground level in terrain model.
 	MAV_FRAME_GLOBAL_TERRAIN_ALT MAV_FRAME = 10
-	// Global (WGS84) coordinate frame (scaled) with AGL altitude (at the waypoint coordinate). First value / x: latitude in degrees*10e-7, second value / y: longitude in degrees*10e-7, third value / z: positive altitude in meters with 0 being at ground level in terrain model.
+	// Global (WGS84) coordinate frame (scaled) with AGL altitude (at the waypoint coordinate). First value / x: latitude in degrees*1E7, second value / y: longitude in degrees*1E7, third value / z: positive altitude in meters with 0 being at ground level in terrain model.
 	MAV_FRAME_GLOBAL_TERRAIN_ALT_INT MAV_FRAME = 11
 	// Body fixed frame of reference, Z-down (x: Forward, y: Right, z: Down).
 	MAV_FRAME_BODY_FRD MAV_FRAME = 12
@@ -8272,6 +8272,8 @@ const (
 	MAV_ODID_AUTH_TYPE_MESSAGE_SET_SIGNATURE MAV_ODID_AUTH_TYPE = 3
 	// Authentication is provided by Network Remote ID.
 	MAV_ODID_AUTH_TYPE_NETWORK_REMOTE_ID MAV_ODID_AUTH_TYPE = 4
+	// The exact authentication type is indicated by the first byte of authentication_data and these type values are managed by ICAO.
+	MAV_ODID_AUTH_TYPE_SPECIFIC_AUTHENTICATION MAV_ODID_AUTH_TYPE = 5
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -8287,6 +8289,8 @@ func (e MAV_ODID_AUTH_TYPE) MarshalText() ([]byte, error) {
 		return []byte("MAV_ODID_AUTH_TYPE_MESSAGE_SET_SIGNATURE"), nil
 	case MAV_ODID_AUTH_TYPE_NETWORK_REMOTE_ID:
 		return []byte("MAV_ODID_AUTH_TYPE_NETWORK_REMOTE_ID"), nil
+	case MAV_ODID_AUTH_TYPE_SPECIFIC_AUTHENTICATION:
+		return []byte("MAV_ODID_AUTH_TYPE_SPECIFIC_AUTHENTICATION"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -8308,6 +8312,9 @@ func (e *MAV_ODID_AUTH_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_ODID_AUTH_TYPE_NETWORK_REMOTE_ID":
 		*e = MAV_ODID_AUTH_TYPE_NETWORK_REMOTE_ID
+		return nil
+	case "MAV_ODID_AUTH_TYPE_SPECIFIC_AUTHENTICATION":
+		*e = MAV_ODID_AUTH_TYPE_SPECIFIC_AUTHENTICATION
 		return nil
 	}
 	return errors.New("invalid value")
@@ -8718,6 +8725,8 @@ const (
 	MAV_ODID_ID_TYPE_CAA_REGISTRATION_ID MAV_ODID_ID_TYPE = 2
 	// UTM (Unmanned Traffic Management) assigned UUID (RFC4122).
 	MAV_ODID_ID_TYPE_UTM_ASSIGNED_UUID MAV_ODID_ID_TYPE = 3
+	// A 20 byte ID for a specific flight/session. The exact ID type is indicated by the first byte of uas_id and these type values are managed by ICAO.
+	MAV_ODID_ID_TYPE_SPECIFIC_SESSION_ID MAV_ODID_ID_TYPE = 4
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -8731,6 +8740,8 @@ func (e MAV_ODID_ID_TYPE) MarshalText() ([]byte, error) {
 		return []byte("MAV_ODID_ID_TYPE_CAA_REGISTRATION_ID"), nil
 	case MAV_ODID_ID_TYPE_UTM_ASSIGNED_UUID:
 		return []byte("MAV_ODID_ID_TYPE_UTM_ASSIGNED_UUID"), nil
+	case MAV_ODID_ID_TYPE_SPECIFIC_SESSION_ID:
+		return []byte("MAV_ODID_ID_TYPE_SPECIFIC_SESSION_ID"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -8749,6 +8760,9 @@ func (e *MAV_ODID_ID_TYPE) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_ODID_ID_TYPE_UTM_ASSIGNED_UUID":
 		*e = MAV_ODID_ID_TYPE_UTM_ASSIGNED_UUID
+		return nil
+	case "MAV_ODID_ID_TYPE_SPECIFIC_SESSION_ID":
+		*e = MAV_ODID_ID_TYPE_SPECIFIC_SESSION_ID
 		return nil
 	}
 	return errors.New("invalid value")
@@ -18055,7 +18069,7 @@ type MessageOpenDroneIdLocation struct {
 	BarometerAccuracy MAV_ODID_VER_ACC `mavenum:"uint8"`
 	// The accuracy of the horizontal and vertical speed.
 	SpeedAccuracy MAV_ODID_SPEED_ACC `mavenum:"uint8"`
-	// Seconds after the full hour with reference to UTC time. Typically the GPS outputs a time-of-week value in milliseconds. First convert that to UTC and then convert for this field using ((float) (time_week_ms % (60*60*1000))) / 1000.
+	// Seconds after the full hour with reference to UTC time. Typically the GPS outputs a time-of-week value in milliseconds. First convert that to UTC and then convert for this field using ((float) (time_week_ms % (60*60*1000))) / 1000. If unknown: 0xFFFF.
 	Timestamp float32
 	// The accuracy of the timestamps.
 	TimestampAccuracy MAV_ODID_TIME_ACC `mavenum:"uint8"`
@@ -18076,11 +18090,11 @@ type MessageOpenDroneIdAuthentication struct {
 	IdOrMac [20]uint8
 	// Indicates the type of authentication.
 	AuthenticationType MAV_ODID_AUTH_TYPE `mavenum:"uint8"`
-	// Allowed range is 0 - 4.
+	// Allowed range is 0 - 15.
 	DataPage uint8
-	// This field is only present for page 0. Allowed range is 0 - 5.
-	PageCount uint8
-	// This field is only present for page 0. Total bytes of authentication_data from all data pages. Allowed range is 0 - 109 (17 + 23*4).
+	// This field is only present for page 0. Allowed range is 0 - 15. See the description of struct ODID_Auth_data at https://github.com/opendroneid/opendroneid-core-c/blob/master/libopendroneid/opendroneid.h.
+	LastPageIndex uint8
+	// This field is only present for page 0. Total bytes of authentication_data from all data pages. See the description of struct ODID_Auth_data at https://github.com/opendroneid/opendroneid-core-c/blob/master/libopendroneid/opendroneid.h.
 	Length uint8
 	// This field is only present for page 0. 32 bit Unix Timestamp in seconds since 00:00:00 01/01/2019.
 	Timestamp uint32
@@ -18140,6 +18154,8 @@ type MessageOpenDroneIdSystem struct {
 	CategoryEu MAV_ODID_CATEGORY_EU `mavenum:"uint8"`
 	// When classification_type is MAV_ODID_CLASSIFICATION_TYPE_EU, specifies the class of the UA.
 	ClassEu MAV_ODID_CLASS_EU `mavenum:"uint8"`
+	// Geodetic altitude of the operator relative to WGS84. If unknown: -1000 m.
+	OperatorAltitudeGeo float32
 }
 
 // GetID implements the msg.Message interface.
@@ -18172,12 +18188,14 @@ type MessageOpenDroneIdMessagePack struct {
 	TargetSystem uint8
 	// Component ID (0 for broadcast).
 	TargetComponent uint8
+	// Only used for drone ID data received from other UAs. See detailed description at https://mavlink.io/en/services/opendroneid.html.
+	IdOrMac [20]uint8
 	// This field must currently always be equal to 25 (bytes), since all encoded OpenDroneID messages are specificed to have this length.
 	SingleMessageSize uint8
-	// Number of encoded messages in the pack (not the number of bytes). Allowed range is 1 - 10.
+	// Number of encoded messages in the pack (not the number of bytes). Allowed range is 1 - 9.
 	MsgPackSize uint8
 	// Concatenation of encoded OpenDroneID messages. Shall be filled with nulls in the unused portion of the field.
-	Messages [250]uint8
+	Messages [225]uint8
 }
 
 // GetID implements the msg.Message interface.

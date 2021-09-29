@@ -302,6 +302,8 @@ var dial = &dialect.Dialect{3, []msg.Message{
 	&MessageOsdParamShowConfig{},
 	&MessageOsdParamShowConfigReply{},
 	&MessageObstacleDistance_3d{},
+	&MessageWaterDepth{},
+	&MessageMcuStatus{},
 }}
 
 //
@@ -2503,6 +2505,8 @@ const (
 	COPTER_MODE_SYSTEMID COPTER_MODE = 25
 	//
 	COPTER_MODE_AUTOROTATE COPTER_MODE = 26
+	//
+	COPTER_MODE_AUTO_RTL COPTER_MODE = 27
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -2556,6 +2560,8 @@ func (e COPTER_MODE) MarshalText() ([]byte, error) {
 		return []byte("COPTER_MODE_SYSTEMID"), nil
 	case COPTER_MODE_AUTOROTATE:
 		return []byte("COPTER_MODE_AUTOROTATE"), nil
+	case COPTER_MODE_AUTO_RTL:
+		return []byte("COPTER_MODE_AUTO_RTL"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -2634,6 +2640,9 @@ func (e *COPTER_MODE) UnmarshalText(text []byte) error {
 		return nil
 	case "COPTER_MODE_AUTOROTATE":
 		*e = COPTER_MODE_AUTOROTATE
+		return nil
+	case "COPTER_MODE_AUTO_RTL":
+		*e = COPTER_MODE_AUTO_RTL
 		return nil
 	}
 	return errors.New("invalid value")
@@ -7408,6 +7417,10 @@ const (
 	MAV_CMD_DO_SET_RESUME_REPEAT_DIST MAV_CMD = 215
 	// Control attached liquid sprayer
 	MAV_CMD_DO_SPRAYER MAV_CMD = 216
+	// Pass instructions onto scripting, a script should be checking for a new command
+	MAV_CMD_DO_SEND_SCRIPT_MESSAGE MAV_CMD = 217
+	// Execute auxiliary function
+	MAV_CMD_DO_AUX_FUNCTION MAV_CMD = 218
 	// Mission command to wait for an altitude or downwards vertical speed. This is meant for high altitude balloon launches, allowing the aircraft to be idle until either an altitude is reached or a negative vertical speed is reached (indicating early balloon burst). The wiggle time is how often to wiggle the control surfaces to prevent them seizing up.
 	MAV_CMD_NAV_ALTITUDE_WAIT MAV_CMD = 83
 	// A system wide power-off event has been initiated.
@@ -7422,6 +7435,8 @@ const (
 	MAV_CMD_FIXED_MAG_CAL MAV_CMD = 42004
 	// Magnetometer calibration based on fixed expected field values.
 	MAV_CMD_FIXED_MAG_CAL_FIELD MAV_CMD = 42005
+	// Set EKF sensor source set.
+	MAV_CMD_SET_EKF_SOURCE_SET MAV_CMD = 42007
 	// Initiate a magnetometer calibration.
 	MAV_CMD_DO_START_MAG_CAL MAV_CMD = 42424
 	// Accept a magnetometer calibration.
@@ -7777,6 +7792,10 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_DO_SET_RESUME_REPEAT_DIST"), nil
 	case MAV_CMD_DO_SPRAYER:
 		return []byte("MAV_CMD_DO_SPRAYER"), nil
+	case MAV_CMD_DO_SEND_SCRIPT_MESSAGE:
+		return []byte("MAV_CMD_DO_SEND_SCRIPT_MESSAGE"), nil
+	case MAV_CMD_DO_AUX_FUNCTION:
+		return []byte("MAV_CMD_DO_AUX_FUNCTION"), nil
 	case MAV_CMD_NAV_ALTITUDE_WAIT:
 		return []byte("MAV_CMD_NAV_ALTITUDE_WAIT"), nil
 	case MAV_CMD_POWER_OFF_INITIATED:
@@ -7791,6 +7810,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_FIXED_MAG_CAL"), nil
 	case MAV_CMD_FIXED_MAG_CAL_FIELD:
 		return []byte("MAV_CMD_FIXED_MAG_CAL_FIELD"), nil
+	case MAV_CMD_SET_EKF_SOURCE_SET:
+		return []byte("MAV_CMD_SET_EKF_SOURCE_SET"), nil
 	case MAV_CMD_DO_START_MAG_CAL:
 		return []byte("MAV_CMD_DO_START_MAG_CAL"), nil
 	case MAV_CMD_DO_ACCEPT_MAG_CAL:
@@ -8306,6 +8327,12 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 	case "MAV_CMD_DO_SPRAYER":
 		*e = MAV_CMD_DO_SPRAYER
 		return nil
+	case "MAV_CMD_DO_SEND_SCRIPT_MESSAGE":
+		*e = MAV_CMD_DO_SEND_SCRIPT_MESSAGE
+		return nil
+	case "MAV_CMD_DO_AUX_FUNCTION":
+		*e = MAV_CMD_DO_AUX_FUNCTION
+		return nil
 	case "MAV_CMD_NAV_ALTITUDE_WAIT":
 		*e = MAV_CMD_NAV_ALTITUDE_WAIT
 		return nil
@@ -8326,6 +8353,9 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_FIXED_MAG_CAL_FIELD":
 		*e = MAV_CMD_FIXED_MAG_CAL_FIELD
+		return nil
+	case "MAV_CMD_SET_EKF_SOURCE_SET":
+		*e = MAV_CMD_SET_EKF_SOURCE_SET
 		return nil
 	case "MAV_CMD_DO_START_MAG_CAL":
 		*e = MAV_CMD_DO_START_MAG_CAL
@@ -8476,6 +8506,56 @@ func (e *MAV_CMD_ACK) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_CMD_ACK) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+//
+type MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL int
+
+const (
+	// Switch Low.
+	MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_LOW MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL = 0
+	// Switch Middle.
+	MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_MIDDLE MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL = 1
+	// Switch High.
+	MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_HIGH MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL = 2
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL) MarshalText() ([]byte, error) {
+	switch e { //nolint:gocritic
+	case MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_LOW:
+		return []byte("MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_LOW"), nil
+	case MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_MIDDLE:
+		return []byte("MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_MIDDLE"), nil
+	case MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_HIGH:
+		return []byte("MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_HIGH"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL) UnmarshalText(text []byte) error {
+	switch string(text) { //nolint:gocritic
+	case "MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_LOW":
+		*e = MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_LOW
+		return nil
+	case "MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_MIDDLE":
+		*e = MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_MIDDLE
+		return nil
+	case "MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_HIGH":
+		*e = MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_HIGH
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL) String() string {
 	byts, err := e.MarshalText()
 	if err == nil {
 		return string(byts)
@@ -22420,7 +22500,7 @@ func (*MessageOpenDroneIdLocation) GetID() uint32 {
 	return 12901
 }
 
-// Data for filling the OpenDroneID Authentication message. The Authentication Message defines a field that can provide a means of authenticity for the identity of the UAS (Unmanned Aircraft System). The Authentication message can have two different formats. Five data pages are supported. For data page 0, the fields PageCount, Length and TimeStamp are present and AuthData is only 17 bytes. For data page 1 through 4, PageCount, Length and TimeStamp are not present and the size of AuthData is 23 bytes.
+// Data for filling the OpenDroneID Authentication message. The Authentication Message defines a field that can provide a means of authenticity for the identity of the UAS (Unmanned Aircraft System). The Authentication message can have two different formats. Five data pages are supported. For data page 0, the fields PageCount, Length and TimeStamp are present and AuthData is only 17 bytes. For data page 1 through 15, PageCount, Length and TimeStamp are not present and the size of AuthData is 23 bytes.
 type MessageOpenDroneIdAuthentication struct {
 	// System ID (0 for broadcast).
 	TargetSystem uint8
@@ -23502,6 +23582,10 @@ type MessagePidTuning struct {
 	I float32 `mavname:"I"`
 	// D component.
 	D float32 `mavname:"D"`
+	// Slew rate.
+	Srate float32 `mavext:"true" mavname:"SRate"`
+	// P/D oscillation modifier.
+	Pdmod float32 `mavext:"true" mavname:"PDmod"`
 }
 
 // GetID implements the msg.Message interface.
@@ -24032,4 +24116,54 @@ type MessageObstacleDistance_3d struct {
 // GetID implements the msg.Message interface.
 func (*MessageObstacleDistance_3d) GetID() uint32 {
 	return 11037
+}
+
+// Water depth
+type MessageWaterDepth struct {
+	// Timestamp (time since system boot)
+	TimeBootMs uint32
+	// Onboard ID of the sensor
+	Id uint8
+	// Sensor data healthy (0=unhealthy, 1=healthy)
+	Healthy uint8
+	// Latitude
+	Lat int32
+	// Longitude
+	Lng int32
+	// Altitude (MSL) of vehicle
+	Alt float32
+	// Roll angle
+	Roll float32
+	// Pitch angle
+	Pitch float32
+	// Yaw angle
+	Yaw float32
+	// Distance (uncorrected)
+	Distance float32
+	// Water temperature
+	Temperature float32
+}
+
+// GetID implements the msg.Message interface.
+func (*MessageWaterDepth) GetID() uint32 {
+	return 11038
+}
+
+// The MCU status, giving MCU temperature and voltage. The min and max voltages are to allow for detecting power supply instability.
+type MessageMcuStatus struct {
+	// MCU instance
+	Id uint8
+	// MCU Internal temperature
+	McuTemperature int16 `mavname:"MCU_temperature"`
+	// MCU voltage
+	McuVoltage uint16 `mavname:"MCU_voltage"`
+	// MCU voltage minimum
+	McuVoltageMin uint16 `mavname:"MCU_voltage_min"`
+	// MCU voltage maximum
+	McuVoltageMax uint16 `mavname:"MCU_voltage_max"`
+}
+
+// GetID implements the msg.Message interface.
+func (*MessageMcuStatus) GetID() uint32 {
+	return 11039
 }

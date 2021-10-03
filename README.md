@@ -4,6 +4,7 @@
 [![Test](https://github.com/aler9/gomavlib/workflows/test/badge.svg)](https://github.com/aler9/gomavlib/actions?query=workflow:test)
 [![Lint](https://github.com/aler9/gomavlib/workflows/lint/badge.svg)](https://github.com/aler9/gomavlib/actions?query=workflow:lint)
 [![Dialects](https://github.com/aler9/gomavlib/workflows/dialects/badge.svg)](https://github.com/aler9/gomavlib/actions?query=workflow:dialects)
+[![Go Report Card](https://goreportcard.com/badge/github.com/aler9/gomavlib)](https://goreportcard.com/report/github.com/aler9/gomavlib)
 [![CodeCov](https://codecov.io/gh/aler9/gomavlib/branch/main/graph/badge.svg)](https://codecov.io/gh/aler9/gomavlib/branch/main)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/aler9/gomavlib)](https://pkg.go.dev/github.com/aler9/gomavlib#pkg-index)
 

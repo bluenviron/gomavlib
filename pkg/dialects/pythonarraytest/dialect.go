@@ -203,6 +203,7 @@ var dial = &dialect.Dialect{3, []msg.Message{
 	&MessageOdometry{},
 	&MessageTrajectoryRepresentationWaypoints{},
 	&MessageTrajectoryRepresentationBezier{},
+	&MessageCellularStatus{},
 	&MessageIsbdLinkStatus{},
 	&MessageCellularConfig{},
 	&MessageRawRpm{},
@@ -2056,6 +2057,247 @@ func (e CELLULAR_CONFIG_RESPONSE) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
+// These flags are used to diagnose the failure state of CELLULAR_STATUS
+type CELLULAR_NETWORK_FAILED_REASON int
+
+const (
+	// No error
+	CELLULAR_NETWORK_FAILED_REASON_NONE CELLULAR_NETWORK_FAILED_REASON = 0
+	// Error state is unknown
+	CELLULAR_NETWORK_FAILED_REASON_UNKNOWN CELLULAR_NETWORK_FAILED_REASON = 1
+	// SIM is required for the modem but missing
+	CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING CELLULAR_NETWORK_FAILED_REASON = 2
+	// SIM is available, but not usuable for connection
+	CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR CELLULAR_NETWORK_FAILED_REASON = 3
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e CELLULAR_NETWORK_FAILED_REASON) MarshalText() ([]byte, error) {
+	switch e { //nolint:gocritic
+	case CELLULAR_NETWORK_FAILED_REASON_NONE:
+		return []byte("CELLULAR_NETWORK_FAILED_REASON_NONE"), nil
+	case CELLULAR_NETWORK_FAILED_REASON_UNKNOWN:
+		return []byte("CELLULAR_NETWORK_FAILED_REASON_UNKNOWN"), nil
+	case CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING:
+		return []byte("CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING"), nil
+	case CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR:
+		return []byte("CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *CELLULAR_NETWORK_FAILED_REASON) UnmarshalText(text []byte) error {
+	switch string(text) { //nolint:gocritic
+	case "CELLULAR_NETWORK_FAILED_REASON_NONE":
+		*e = CELLULAR_NETWORK_FAILED_REASON_NONE
+		return nil
+	case "CELLULAR_NETWORK_FAILED_REASON_UNKNOWN":
+		*e = CELLULAR_NETWORK_FAILED_REASON_UNKNOWN
+		return nil
+	case "CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING":
+		*e = CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING
+		return nil
+	case "CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR":
+		*e = CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e CELLULAR_NETWORK_FAILED_REASON) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+// Cellular network radio type
+type CELLULAR_NETWORK_RADIO_TYPE int
+
+const (
+	//
+	CELLULAR_NETWORK_RADIO_TYPE_NONE CELLULAR_NETWORK_RADIO_TYPE = 0
+	//
+	CELLULAR_NETWORK_RADIO_TYPE_GSM CELLULAR_NETWORK_RADIO_TYPE = 1
+	//
+	CELLULAR_NETWORK_RADIO_TYPE_CDMA CELLULAR_NETWORK_RADIO_TYPE = 2
+	//
+	CELLULAR_NETWORK_RADIO_TYPE_WCDMA CELLULAR_NETWORK_RADIO_TYPE = 3
+	//
+	CELLULAR_NETWORK_RADIO_TYPE_LTE CELLULAR_NETWORK_RADIO_TYPE = 4
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e CELLULAR_NETWORK_RADIO_TYPE) MarshalText() ([]byte, error) {
+	switch e { //nolint:gocritic
+	case CELLULAR_NETWORK_RADIO_TYPE_NONE:
+		return []byte("CELLULAR_NETWORK_RADIO_TYPE_NONE"), nil
+	case CELLULAR_NETWORK_RADIO_TYPE_GSM:
+		return []byte("CELLULAR_NETWORK_RADIO_TYPE_GSM"), nil
+	case CELLULAR_NETWORK_RADIO_TYPE_CDMA:
+		return []byte("CELLULAR_NETWORK_RADIO_TYPE_CDMA"), nil
+	case CELLULAR_NETWORK_RADIO_TYPE_WCDMA:
+		return []byte("CELLULAR_NETWORK_RADIO_TYPE_WCDMA"), nil
+	case CELLULAR_NETWORK_RADIO_TYPE_LTE:
+		return []byte("CELLULAR_NETWORK_RADIO_TYPE_LTE"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *CELLULAR_NETWORK_RADIO_TYPE) UnmarshalText(text []byte) error {
+	switch string(text) { //nolint:gocritic
+	case "CELLULAR_NETWORK_RADIO_TYPE_NONE":
+		*e = CELLULAR_NETWORK_RADIO_TYPE_NONE
+		return nil
+	case "CELLULAR_NETWORK_RADIO_TYPE_GSM":
+		*e = CELLULAR_NETWORK_RADIO_TYPE_GSM
+		return nil
+	case "CELLULAR_NETWORK_RADIO_TYPE_CDMA":
+		*e = CELLULAR_NETWORK_RADIO_TYPE_CDMA
+		return nil
+	case "CELLULAR_NETWORK_RADIO_TYPE_WCDMA":
+		*e = CELLULAR_NETWORK_RADIO_TYPE_WCDMA
+		return nil
+	case "CELLULAR_NETWORK_RADIO_TYPE_LTE":
+		*e = CELLULAR_NETWORK_RADIO_TYPE_LTE
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e CELLULAR_NETWORK_RADIO_TYPE) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+// These flags encode the cellular network status
+type CELLULAR_STATUS_FLAG int
+
+const (
+	// State unknown or not reportable.
+	CELLULAR_STATUS_FLAG_UNKNOWN CELLULAR_STATUS_FLAG = 0
+	// Modem is unusable
+	CELLULAR_STATUS_FLAG_FAILED CELLULAR_STATUS_FLAG = 1
+	// Modem is being initialized
+	CELLULAR_STATUS_FLAG_INITIALIZING CELLULAR_STATUS_FLAG = 2
+	// Modem is locked
+	CELLULAR_STATUS_FLAG_LOCKED CELLULAR_STATUS_FLAG = 3
+	// Modem is not enabled and is powered down
+	CELLULAR_STATUS_FLAG_DISABLED CELLULAR_STATUS_FLAG = 4
+	// Modem is currently transitioning to the CELLULAR_STATUS_FLAG_DISABLED state
+	CELLULAR_STATUS_FLAG_DISABLING CELLULAR_STATUS_FLAG = 5
+	// Modem is currently transitioning to the CELLULAR_STATUS_FLAG_ENABLED state
+	CELLULAR_STATUS_FLAG_ENABLING CELLULAR_STATUS_FLAG = 6
+	// Modem is enabled and powered on but not registered with a network provider and not available for data connections
+	CELLULAR_STATUS_FLAG_ENABLED CELLULAR_STATUS_FLAG = 7
+	// Modem is searching for a network provider to register
+	CELLULAR_STATUS_FLAG_SEARCHING CELLULAR_STATUS_FLAG = 8
+	// Modem is registered with a network provider, and data connections and messaging may be available for use
+	CELLULAR_STATUS_FLAG_REGISTERED CELLULAR_STATUS_FLAG = 9
+	// Modem is disconnecting and deactivating the last active packet data bearer. This state will not be entered if more than one packet data bearer is active and one of the active bearers is deactivated
+	CELLULAR_STATUS_FLAG_DISCONNECTING CELLULAR_STATUS_FLAG = 10
+	// Modem is activating and connecting the first packet data bearer. Subsequent bearer activations when another bearer is already active do not cause this state to be entered
+	CELLULAR_STATUS_FLAG_CONNECTING CELLULAR_STATUS_FLAG = 11
+	// One or more packet data bearers is active and connected
+	CELLULAR_STATUS_FLAG_CONNECTED CELLULAR_STATUS_FLAG = 12
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e CELLULAR_STATUS_FLAG) MarshalText() ([]byte, error) {
+	switch e { //nolint:gocritic
+	case CELLULAR_STATUS_FLAG_UNKNOWN:
+		return []byte("CELLULAR_STATUS_FLAG_UNKNOWN"), nil
+	case CELLULAR_STATUS_FLAG_FAILED:
+		return []byte("CELLULAR_STATUS_FLAG_FAILED"), nil
+	case CELLULAR_STATUS_FLAG_INITIALIZING:
+		return []byte("CELLULAR_STATUS_FLAG_INITIALIZING"), nil
+	case CELLULAR_STATUS_FLAG_LOCKED:
+		return []byte("CELLULAR_STATUS_FLAG_LOCKED"), nil
+	case CELLULAR_STATUS_FLAG_DISABLED:
+		return []byte("CELLULAR_STATUS_FLAG_DISABLED"), nil
+	case CELLULAR_STATUS_FLAG_DISABLING:
+		return []byte("CELLULAR_STATUS_FLAG_DISABLING"), nil
+	case CELLULAR_STATUS_FLAG_ENABLING:
+		return []byte("CELLULAR_STATUS_FLAG_ENABLING"), nil
+	case CELLULAR_STATUS_FLAG_ENABLED:
+		return []byte("CELLULAR_STATUS_FLAG_ENABLED"), nil
+	case CELLULAR_STATUS_FLAG_SEARCHING:
+		return []byte("CELLULAR_STATUS_FLAG_SEARCHING"), nil
+	case CELLULAR_STATUS_FLAG_REGISTERED:
+		return []byte("CELLULAR_STATUS_FLAG_REGISTERED"), nil
+	case CELLULAR_STATUS_FLAG_DISCONNECTING:
+		return []byte("CELLULAR_STATUS_FLAG_DISCONNECTING"), nil
+	case CELLULAR_STATUS_FLAG_CONNECTING:
+		return []byte("CELLULAR_STATUS_FLAG_CONNECTING"), nil
+	case CELLULAR_STATUS_FLAG_CONNECTED:
+		return []byte("CELLULAR_STATUS_FLAG_CONNECTED"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *CELLULAR_STATUS_FLAG) UnmarshalText(text []byte) error {
+	switch string(text) { //nolint:gocritic
+	case "CELLULAR_STATUS_FLAG_UNKNOWN":
+		*e = CELLULAR_STATUS_FLAG_UNKNOWN
+		return nil
+	case "CELLULAR_STATUS_FLAG_FAILED":
+		*e = CELLULAR_STATUS_FLAG_FAILED
+		return nil
+	case "CELLULAR_STATUS_FLAG_INITIALIZING":
+		*e = CELLULAR_STATUS_FLAG_INITIALIZING
+		return nil
+	case "CELLULAR_STATUS_FLAG_LOCKED":
+		*e = CELLULAR_STATUS_FLAG_LOCKED
+		return nil
+	case "CELLULAR_STATUS_FLAG_DISABLED":
+		*e = CELLULAR_STATUS_FLAG_DISABLED
+		return nil
+	case "CELLULAR_STATUS_FLAG_DISABLING":
+		*e = CELLULAR_STATUS_FLAG_DISABLING
+		return nil
+	case "CELLULAR_STATUS_FLAG_ENABLING":
+		*e = CELLULAR_STATUS_FLAG_ENABLING
+		return nil
+	case "CELLULAR_STATUS_FLAG_ENABLED":
+		*e = CELLULAR_STATUS_FLAG_ENABLED
+		return nil
+	case "CELLULAR_STATUS_FLAG_SEARCHING":
+		*e = CELLULAR_STATUS_FLAG_SEARCHING
+		return nil
+	case "CELLULAR_STATUS_FLAG_REGISTERED":
+		*e = CELLULAR_STATUS_FLAG_REGISTERED
+		return nil
+	case "CELLULAR_STATUS_FLAG_DISCONNECTING":
+		*e = CELLULAR_STATUS_FLAG_DISCONNECTING
+		return nil
+	case "CELLULAR_STATUS_FLAG_CONNECTING":
+		*e = CELLULAR_STATUS_FLAG_CONNECTING
+		return nil
+	case "CELLULAR_STATUS_FLAG_CONNECTED":
+		*e = CELLULAR_STATUS_FLAG_CONNECTED
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e CELLULAR_STATUS_FLAG) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Component capability flags (Bitmap)
 type COMPONENT_CAP_FLAGS int
 
@@ -3587,6 +3829,274 @@ func (e GRIPPER_ACTIONS) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
+// Flags in the HIGHRES_IMU message indicate which fields have updated since the last message
+type HIGHRES_IMU_UPDATED_FLAGS int
+
+const (
+	// None of the fields in HIGHRES_IMU have been updated
+	HIGHRES_IMU_UPDATED_NONE HIGHRES_IMU_UPDATED_FLAGS = 0
+	// The value in the xacc field has been updated
+	HIGHRES_IMU_UPDATED_XACC HIGHRES_IMU_UPDATED_FLAGS = 1
+	// The value in the yacc field has been updated
+	HIGHRES_IMU_UPDATED_YACC HIGHRES_IMU_UPDATED_FLAGS = 2
+	// The value in the zacc field has been updated since
+	HIGHRES_IMU_UPDATED_ZACC HIGHRES_IMU_UPDATED_FLAGS = 4
+	// The value in the xgyro field has been updated
+	HIGHRES_IMU_UPDATED_XGYRO HIGHRES_IMU_UPDATED_FLAGS = 8
+	// The value in the ygyro field has been updated
+	HIGHRES_IMU_UPDATED_YGYRO HIGHRES_IMU_UPDATED_FLAGS = 16
+	// The value in the zgyro field has been updated
+	HIGHRES_IMU_UPDATED_ZGYRO HIGHRES_IMU_UPDATED_FLAGS = 32
+	// The value in the xmag field has been updated
+	HIGHRES_IMU_UPDATED_XMAG HIGHRES_IMU_UPDATED_FLAGS = 64
+	// The value in the ymag field has been updated
+	HIGHRES_IMU_UPDATED_YMAG HIGHRES_IMU_UPDATED_FLAGS = 128
+	// The value in the zmag field has been updated
+	HIGHRES_IMU_UPDATED_ZMAG HIGHRES_IMU_UPDATED_FLAGS = 256
+	// The value in the abs_pressure field has been updated
+	HIGHRES_IMU_UPDATED_ABS_PRESSURE HIGHRES_IMU_UPDATED_FLAGS = 512
+	// The value in the diff_pressure field has been updated
+	HIGHRES_IMU_UPDATED_DIFF_PRESSURE HIGHRES_IMU_UPDATED_FLAGS = 1024
+	// The value in the pressure_alt field has been updated
+	HIGHRES_IMU_UPDATED_PRESSURE_ALT HIGHRES_IMU_UPDATED_FLAGS = 2048
+	// The value in the temperature field has been updated
+	HIGHRES_IMU_UPDATED_TEMPERATURE HIGHRES_IMU_UPDATED_FLAGS = 4096
+	// All fields in HIGHRES_IMU have been updated.
+	HIGHRES_IMU_UPDATED_ALL HIGHRES_IMU_UPDATED_FLAGS = 65535
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e HIGHRES_IMU_UPDATED_FLAGS) MarshalText() ([]byte, error) {
+	switch e { //nolint:gocritic
+	case HIGHRES_IMU_UPDATED_NONE:
+		return []byte("HIGHRES_IMU_UPDATED_NONE"), nil
+	case HIGHRES_IMU_UPDATED_XACC:
+		return []byte("HIGHRES_IMU_UPDATED_XACC"), nil
+	case HIGHRES_IMU_UPDATED_YACC:
+		return []byte("HIGHRES_IMU_UPDATED_YACC"), nil
+	case HIGHRES_IMU_UPDATED_ZACC:
+		return []byte("HIGHRES_IMU_UPDATED_ZACC"), nil
+	case HIGHRES_IMU_UPDATED_XGYRO:
+		return []byte("HIGHRES_IMU_UPDATED_XGYRO"), nil
+	case HIGHRES_IMU_UPDATED_YGYRO:
+		return []byte("HIGHRES_IMU_UPDATED_YGYRO"), nil
+	case HIGHRES_IMU_UPDATED_ZGYRO:
+		return []byte("HIGHRES_IMU_UPDATED_ZGYRO"), nil
+	case HIGHRES_IMU_UPDATED_XMAG:
+		return []byte("HIGHRES_IMU_UPDATED_XMAG"), nil
+	case HIGHRES_IMU_UPDATED_YMAG:
+		return []byte("HIGHRES_IMU_UPDATED_YMAG"), nil
+	case HIGHRES_IMU_UPDATED_ZMAG:
+		return []byte("HIGHRES_IMU_UPDATED_ZMAG"), nil
+	case HIGHRES_IMU_UPDATED_ABS_PRESSURE:
+		return []byte("HIGHRES_IMU_UPDATED_ABS_PRESSURE"), nil
+	case HIGHRES_IMU_UPDATED_DIFF_PRESSURE:
+		return []byte("HIGHRES_IMU_UPDATED_DIFF_PRESSURE"), nil
+	case HIGHRES_IMU_UPDATED_PRESSURE_ALT:
+		return []byte("HIGHRES_IMU_UPDATED_PRESSURE_ALT"), nil
+	case HIGHRES_IMU_UPDATED_TEMPERATURE:
+		return []byte("HIGHRES_IMU_UPDATED_TEMPERATURE"), nil
+	case HIGHRES_IMU_UPDATED_ALL:
+		return []byte("HIGHRES_IMU_UPDATED_ALL"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *HIGHRES_IMU_UPDATED_FLAGS) UnmarshalText(text []byte) error {
+	switch string(text) { //nolint:gocritic
+	case "HIGHRES_IMU_UPDATED_NONE":
+		*e = HIGHRES_IMU_UPDATED_NONE
+		return nil
+	case "HIGHRES_IMU_UPDATED_XACC":
+		*e = HIGHRES_IMU_UPDATED_XACC
+		return nil
+	case "HIGHRES_IMU_UPDATED_YACC":
+		*e = HIGHRES_IMU_UPDATED_YACC
+		return nil
+	case "HIGHRES_IMU_UPDATED_ZACC":
+		*e = HIGHRES_IMU_UPDATED_ZACC
+		return nil
+	case "HIGHRES_IMU_UPDATED_XGYRO":
+		*e = HIGHRES_IMU_UPDATED_XGYRO
+		return nil
+	case "HIGHRES_IMU_UPDATED_YGYRO":
+		*e = HIGHRES_IMU_UPDATED_YGYRO
+		return nil
+	case "HIGHRES_IMU_UPDATED_ZGYRO":
+		*e = HIGHRES_IMU_UPDATED_ZGYRO
+		return nil
+	case "HIGHRES_IMU_UPDATED_XMAG":
+		*e = HIGHRES_IMU_UPDATED_XMAG
+		return nil
+	case "HIGHRES_IMU_UPDATED_YMAG":
+		*e = HIGHRES_IMU_UPDATED_YMAG
+		return nil
+	case "HIGHRES_IMU_UPDATED_ZMAG":
+		*e = HIGHRES_IMU_UPDATED_ZMAG
+		return nil
+	case "HIGHRES_IMU_UPDATED_ABS_PRESSURE":
+		*e = HIGHRES_IMU_UPDATED_ABS_PRESSURE
+		return nil
+	case "HIGHRES_IMU_UPDATED_DIFF_PRESSURE":
+		*e = HIGHRES_IMU_UPDATED_DIFF_PRESSURE
+		return nil
+	case "HIGHRES_IMU_UPDATED_PRESSURE_ALT":
+		*e = HIGHRES_IMU_UPDATED_PRESSURE_ALT
+		return nil
+	case "HIGHRES_IMU_UPDATED_TEMPERATURE":
+		*e = HIGHRES_IMU_UPDATED_TEMPERATURE
+		return nil
+	case "HIGHRES_IMU_UPDATED_ALL":
+		*e = HIGHRES_IMU_UPDATED_ALL
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e HIGHRES_IMU_UPDATED_FLAGS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
+// Flags in the HIL_SENSOR message indicate which fields have updated since the last message
+type HIL_SENSOR_UPDATED_FLAGS int
+
+const (
+	// None of the fields in HIL_SENSOR have been updated
+	HIL_SENSOR_UPDATED_NONE HIL_SENSOR_UPDATED_FLAGS = 0
+	// The value in the xacc field has been updated
+	HIL_SENSOR_UPDATED_XACC HIL_SENSOR_UPDATED_FLAGS = 1
+	// The value in the yacc field has been updated
+	HIL_SENSOR_UPDATED_YACC HIL_SENSOR_UPDATED_FLAGS = 2
+	// The value in the zacc field has been updated
+	HIL_SENSOR_UPDATED_ZACC HIL_SENSOR_UPDATED_FLAGS = 4
+	// The value in the xgyro field has been updated
+	HIL_SENSOR_UPDATED_XGYRO HIL_SENSOR_UPDATED_FLAGS = 8
+	// The value in the ygyro field has been updated
+	HIL_SENSOR_UPDATED_YGYRO HIL_SENSOR_UPDATED_FLAGS = 16
+	// The value in the zgyro field has been updated
+	HIL_SENSOR_UPDATED_ZGYRO HIL_SENSOR_UPDATED_FLAGS = 32
+	// The value in the xmag field has been updated
+	HIL_SENSOR_UPDATED_XMAG HIL_SENSOR_UPDATED_FLAGS = 64
+	// The value in the ymag field has been updated
+	HIL_SENSOR_UPDATED_YMAG HIL_SENSOR_UPDATED_FLAGS = 128
+	// The value in the zmag field has been updated
+	HIL_SENSOR_UPDATED_ZMAG HIL_SENSOR_UPDATED_FLAGS = 256
+	// The value in the abs_pressure field has been updated
+	HIL_SENSOR_UPDATED_ABS_PRESSURE HIL_SENSOR_UPDATED_FLAGS = 512
+	// The value in the diff_pressure field has been updated
+	HIL_SENSOR_UPDATED_DIFF_PRESSURE HIL_SENSOR_UPDATED_FLAGS = 1024
+	// The value in the pressure_alt field has been updated
+	HIL_SENSOR_UPDATED_PRESSURE_ALT HIL_SENSOR_UPDATED_FLAGS = 2048
+	// The value in the temperature field has been updated
+	HIL_SENSOR_UPDATED_TEMPERATURE HIL_SENSOR_UPDATED_FLAGS = 4096
+	// Full reset of attitude/position/velocities/etc was performed in sim (Bit 31).
+	HIL_SENSOR_UPDATED_RESET HIL_SENSOR_UPDATED_FLAGS = 2147483648
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e HIL_SENSOR_UPDATED_FLAGS) MarshalText() ([]byte, error) {
+	switch e { //nolint:gocritic
+	case HIL_SENSOR_UPDATED_NONE:
+		return []byte("HIL_SENSOR_UPDATED_NONE"), nil
+	case HIL_SENSOR_UPDATED_XACC:
+		return []byte("HIL_SENSOR_UPDATED_XACC"), nil
+	case HIL_SENSOR_UPDATED_YACC:
+		return []byte("HIL_SENSOR_UPDATED_YACC"), nil
+	case HIL_SENSOR_UPDATED_ZACC:
+		return []byte("HIL_SENSOR_UPDATED_ZACC"), nil
+	case HIL_SENSOR_UPDATED_XGYRO:
+		return []byte("HIL_SENSOR_UPDATED_XGYRO"), nil
+	case HIL_SENSOR_UPDATED_YGYRO:
+		return []byte("HIL_SENSOR_UPDATED_YGYRO"), nil
+	case HIL_SENSOR_UPDATED_ZGYRO:
+		return []byte("HIL_SENSOR_UPDATED_ZGYRO"), nil
+	case HIL_SENSOR_UPDATED_XMAG:
+		return []byte("HIL_SENSOR_UPDATED_XMAG"), nil
+	case HIL_SENSOR_UPDATED_YMAG:
+		return []byte("HIL_SENSOR_UPDATED_YMAG"), nil
+	case HIL_SENSOR_UPDATED_ZMAG:
+		return []byte("HIL_SENSOR_UPDATED_ZMAG"), nil
+	case HIL_SENSOR_UPDATED_ABS_PRESSURE:
+		return []byte("HIL_SENSOR_UPDATED_ABS_PRESSURE"), nil
+	case HIL_SENSOR_UPDATED_DIFF_PRESSURE:
+		return []byte("HIL_SENSOR_UPDATED_DIFF_PRESSURE"), nil
+	case HIL_SENSOR_UPDATED_PRESSURE_ALT:
+		return []byte("HIL_SENSOR_UPDATED_PRESSURE_ALT"), nil
+	case HIL_SENSOR_UPDATED_TEMPERATURE:
+		return []byte("HIL_SENSOR_UPDATED_TEMPERATURE"), nil
+	case HIL_SENSOR_UPDATED_RESET:
+		return []byte("HIL_SENSOR_UPDATED_RESET"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *HIL_SENSOR_UPDATED_FLAGS) UnmarshalText(text []byte) error {
+	switch string(text) { //nolint:gocritic
+	case "HIL_SENSOR_UPDATED_NONE":
+		*e = HIL_SENSOR_UPDATED_NONE
+		return nil
+	case "HIL_SENSOR_UPDATED_XACC":
+		*e = HIL_SENSOR_UPDATED_XACC
+		return nil
+	case "HIL_SENSOR_UPDATED_YACC":
+		*e = HIL_SENSOR_UPDATED_YACC
+		return nil
+	case "HIL_SENSOR_UPDATED_ZACC":
+		*e = HIL_SENSOR_UPDATED_ZACC
+		return nil
+	case "HIL_SENSOR_UPDATED_XGYRO":
+		*e = HIL_SENSOR_UPDATED_XGYRO
+		return nil
+	case "HIL_SENSOR_UPDATED_YGYRO":
+		*e = HIL_SENSOR_UPDATED_YGYRO
+		return nil
+	case "HIL_SENSOR_UPDATED_ZGYRO":
+		*e = HIL_SENSOR_UPDATED_ZGYRO
+		return nil
+	case "HIL_SENSOR_UPDATED_XMAG":
+		*e = HIL_SENSOR_UPDATED_XMAG
+		return nil
+	case "HIL_SENSOR_UPDATED_YMAG":
+		*e = HIL_SENSOR_UPDATED_YMAG
+		return nil
+	case "HIL_SENSOR_UPDATED_ZMAG":
+		*e = HIL_SENSOR_UPDATED_ZMAG
+		return nil
+	case "HIL_SENSOR_UPDATED_ABS_PRESSURE":
+		*e = HIL_SENSOR_UPDATED_ABS_PRESSURE
+		return nil
+	case "HIL_SENSOR_UPDATED_DIFF_PRESSURE":
+		*e = HIL_SENSOR_UPDATED_DIFF_PRESSURE
+		return nil
+	case "HIL_SENSOR_UPDATED_PRESSURE_ALT":
+		*e = HIL_SENSOR_UPDATED_PRESSURE_ALT
+		return nil
+	case "HIL_SENSOR_UPDATED_TEMPERATURE":
+		*e = HIL_SENSOR_UPDATED_TEMPERATURE
+		return nil
+	case "HIL_SENSOR_UPDATED_RESET":
+		*e = HIL_SENSOR_UPDATED_RESET
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e HIL_SENSOR_UPDATED_FLAGS) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Flags to report failure cases over the high latency telemtry.
 type HL_FAILURE_FLAG int
 
@@ -4042,6 +4552,8 @@ const (
 	MAV_AUTOPILOT_SMARTAP MAV_AUTOPILOT = 18
 	// AirRails - http://uaventure.com
 	MAV_AUTOPILOT_AIRRAILS MAV_AUTOPILOT = 19
+	// Fusion Reflex - https://fusion.engineering
+	MAV_AUTOPILOT_REFLEX MAV_AUTOPILOT = 20
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -4087,6 +4599,8 @@ func (e MAV_AUTOPILOT) MarshalText() ([]byte, error) {
 		return []byte("MAV_AUTOPILOT_SMARTAP"), nil
 	case MAV_AUTOPILOT_AIRRAILS:
 		return []byte("MAV_AUTOPILOT_AIRRAILS"), nil
+	case MAV_AUTOPILOT_REFLEX:
+		return []byte("MAV_AUTOPILOT_REFLEX"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -4153,6 +4667,9 @@ func (e *MAV_AUTOPILOT) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_AUTOPILOT_AIRRAILS":
 		*e = MAV_AUTOPILOT_AIRRAILS
+		return nil
+	case "MAV_AUTOPILOT_REFLEX":
+		*e = MAV_AUTOPILOT_REFLEX
 		return nil
 	}
 	return errors.New("invalid value")
@@ -4680,8 +5197,6 @@ const (
 	MAV_CMD_PREFLIGHT_STORAGE MAV_CMD = 245
 	// Request the reboot or shutdown of system components.
 	MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN MAV_CMD = 246
-	// Request a target system to start an upgrade of one (or all) of its components. For example, the command might be sent to a companion computer to cause it to upgrade a connected flight controller. The system doing the upgrade will report progress using the normal command protocol sequence for a long running operation. Command protocol information: https://mavlink.io/en/services/command.html.
-	MAV_CMD_DO_UPGRADE MAV_CMD = 247
 	// Override current mission with command to pause mission, pause mission and move to position, continue/resume mission. When param 1 indicates that the mission is paused (MAV_GOTO_DO_HOLD), param 2 defines whether it holds in place or moves to another position.
 	MAV_CMD_OVERRIDE_GOTO MAV_CMD = 252
 	// Mission command to set a Camera Auto Mount Pivoting Oblique Survey (Replaces CAM_TRIGG_DIST for this purpose). The camera is triggered each time this distance is exceeded, then the mount moves to the next position. Params 4~6 set-up the angle limits and number of positions for oblique survey, where mount-enabled vehicles automatically roll the camera between shots to emulate an oblique camera setup (providing an increased HFOV). This command can also be used to set the shutter integration time for the camera.
@@ -4730,6 +5245,8 @@ const (
 	MAV_CMD_SET_CAMERA_ZOOM MAV_CMD = 531
 	// Set camera focus. Camera must respond with a CAMERA_SETTINGS message (on success).
 	MAV_CMD_SET_CAMERA_FOCUS MAV_CMD = 532
+	// Set that a particular storage is the preferred location for saving photos, videos, and/or other media (e.g. to set that an SD card is used for storing videos).          There can only be one preferred save location for each particular media type: setting a media usage flag will clear/reset that same flag if set on any other storage.          If no flag is set the system should use its default storage.          A target system can choose to always use default storage, in which case it should ACK the command with MAV_RESULT_UNSUPPORTED.          A target system can choose to not allow a particular storage to be set as preferred storage, in which case it should ACK the command with MAV_RESULT_DENIED.
+	MAV_CMD_SET_STORAGE_USAGE MAV_CMD = 533
 	// Tagged jump target. Can be jumped to with MAV_CMD_DO_JUMP_TAG.
 	MAV_CMD_JUMP_TAG MAV_CMD = 600
 	// Jump to the matching tag in the mission list. Repeat this action for the specified number of times. A mission should contain a single matching tag for each jump. If this is not the case then a jump to a missing tag should complete the mission, and a jump where there are multiple matching tags should always select the one with the lowest mission sequence number.
@@ -4997,8 +5514,6 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_PREFLIGHT_STORAGE"), nil
 	case MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN:
 		return []byte("MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN"), nil
-	case MAV_CMD_DO_UPGRADE:
-		return []byte("MAV_CMD_DO_UPGRADE"), nil
 	case MAV_CMD_OVERRIDE_GOTO:
 		return []byte("MAV_CMD_OVERRIDE_GOTO"), nil
 	case MAV_CMD_OBLIQUE_SURVEY:
@@ -5047,6 +5562,8 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 		return []byte("MAV_CMD_SET_CAMERA_ZOOM"), nil
 	case MAV_CMD_SET_CAMERA_FOCUS:
 		return []byte("MAV_CMD_SET_CAMERA_FOCUS"), nil
+	case MAV_CMD_SET_STORAGE_USAGE:
+		return []byte("MAV_CMD_SET_STORAGE_USAGE"), nil
 	case MAV_CMD_JUMP_TAG:
 		return []byte("MAV_CMD_JUMP_TAG"), nil
 	case MAV_CMD_DO_JUMP_TAG:
@@ -5393,9 +5910,6 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 	case "MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN":
 		*e = MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN
 		return nil
-	case "MAV_CMD_DO_UPGRADE":
-		*e = MAV_CMD_DO_UPGRADE
-		return nil
 	case "MAV_CMD_OVERRIDE_GOTO":
 		*e = MAV_CMD_OVERRIDE_GOTO
 		return nil
@@ -5467,6 +5981,9 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_CMD_SET_CAMERA_FOCUS":
 		*e = MAV_CMD_SET_CAMERA_FOCUS
+		return nil
+	case "MAV_CMD_SET_STORAGE_USAGE":
+		*e = MAV_CMD_SET_STORAGE_USAGE
 		return nil
 	case "MAV_CMD_JUMP_TAG":
 		*e = MAV_CMD_JUMP_TAG
@@ -12169,6 +12686,63 @@ func (e STORAGE_TYPE) String() string {
 	return strconv.FormatInt(int64(e), 10)
 }
 
+// Flags to indicate usage for a particular storage (see `STORAGE_INFORMATION.storage_usage` and `MAV_CMD_SET_STORAGE_USAGE`).
+type STORAGE_USAGE_FLAG int
+
+const (
+	// Always set to 1 (indicates `STORAGE_INFORMATION.storage_usage` is supported).
+	STORAGE_USAGE_FLAG_SET STORAGE_USAGE_FLAG = 1
+	// Storage for saving photos.
+	STORAGE_USAGE_FLAG_PHOTO STORAGE_USAGE_FLAG = 2
+	// Storage for saving videos.
+	STORAGE_USAGE_FLAG_VIDEO STORAGE_USAGE_FLAG = 4
+	// Storage for saving logs.
+	STORAGE_USAGE_FLAG_LOGS STORAGE_USAGE_FLAG = 8
+)
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (e STORAGE_USAGE_FLAG) MarshalText() ([]byte, error) {
+	switch e { //nolint:gocritic
+	case STORAGE_USAGE_FLAG_SET:
+		return []byte("STORAGE_USAGE_FLAG_SET"), nil
+	case STORAGE_USAGE_FLAG_PHOTO:
+		return []byte("STORAGE_USAGE_FLAG_PHOTO"), nil
+	case STORAGE_USAGE_FLAG_VIDEO:
+		return []byte("STORAGE_USAGE_FLAG_VIDEO"), nil
+	case STORAGE_USAGE_FLAG_LOGS:
+		return []byte("STORAGE_USAGE_FLAG_LOGS"), nil
+	}
+	return nil, errors.New("invalid value")
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (e *STORAGE_USAGE_FLAG) UnmarshalText(text []byte) error {
+	switch string(text) { //nolint:gocritic
+	case "STORAGE_USAGE_FLAG_SET":
+		*e = STORAGE_USAGE_FLAG_SET
+		return nil
+	case "STORAGE_USAGE_FLAG_PHOTO":
+		*e = STORAGE_USAGE_FLAG_PHOTO
+		return nil
+	case "STORAGE_USAGE_FLAG_VIDEO":
+		*e = STORAGE_USAGE_FLAG_VIDEO
+		return nil
+	case "STORAGE_USAGE_FLAG_LOGS":
+		*e = STORAGE_USAGE_FLAG_LOGS
+		return nil
+	}
+	return errors.New("invalid value")
+}
+
+// String implements the fmt.Stringer interface.
+func (e STORAGE_USAGE_FLAG) String() string {
+	byts, err := e.MarshalText()
+	if err == nil {
+		return string(byts)
+	}
+	return strconv.FormatInt(int64(e), 10)
+}
+
 // Tune formats (used for vehicle buzzer/tone generation).
 type TUNE_FORMAT int
 
@@ -14758,8 +15332,8 @@ type MessageHighresImu struct {
 	PressureAlt float32
 	// Temperature
 	Temperature float32
-	// Bitmap for fields that have updated since last message, bit 0 = xacc, bit 12: temperature
-	FieldsUpdated uint16
+	// Bitmap for fields that have updated since last message
+	FieldsUpdated HIGHRES_IMU_UPDATED_FLAGS `mavenum:"uint16"`
 	// Id. Ids are numbered from 0 and map to IMUs numbered from 1 (e.g. IMU1 will have a message with id=0)
 	Id uint8 `mavext:"true"`
 }
@@ -14832,8 +15406,8 @@ type MessageHilSensor struct {
 	PressureAlt float32
 	// Temperature
 	Temperature float32
-	// Bitmap for fields that have updated since last message, bit 0 = xacc, bit 12: temperature, bit 31: full reset of attitude/position/velocities/etc was performed in sim.
-	FieldsUpdated uint32
+	// Bitmap for fields that have updated since last message
+	FieldsUpdated HIL_SENSOR_UPDATED_FLAGS `mavenum:"uint32"`
 	// Sensor ID (zero indexed). Used for multiple sensor inputs
 	Id uint8 `mavext:"true"`
 }
@@ -16616,6 +17190,8 @@ type MessageStorageInformation struct {
 	Type STORAGE_TYPE `mavenum:"uint8" mavext:"true"`
 	// Textual storage name to be used in UI (microSD 1, Internal Memory, etc.) This is a NULL terminated string. If it is exactly 32 characters long, add a terminating NULL. If this string is empty, the generic type is shown to the user.
 	Name string `mavext:"true" mavlen:"32"`
+	// Flags indicating whether this instance is preferred storage for photos, videos, etc.        Note: Implementations should initially set the flags on the system-default storage id used for saving media (if possible/supported).        This setting can then be overridden using `MAV_CMD_SET_STORAGE_USAGE`.        If the media usage flags are not set, a GCS may assume storage ID 1 is the default storage for all media types.
+	StorageUsage STORAGE_USAGE_FLAG `mavenum:"uint8" mavext:"true"`
 }
 
 // GetID implements the msg.Message interface.
@@ -17535,6 +18111,29 @@ type MessageTrajectoryRepresentationBezier struct {
 // GetID implements the msg.Message interface.
 func (*MessageTrajectoryRepresentationBezier) GetID() uint32 {
 	return 333
+}
+
+// Report current used cellular network status
+type MessageCellularStatus struct {
+	// Cellular modem status
+	Status CELLULAR_STATUS_FLAG `mavenum:"uint8"`
+	// Failure reason when status in in CELLUAR_STATUS_FAILED
+	FailureReason CELLULAR_NETWORK_FAILED_REASON `mavenum:"uint8"`
+	// Cellular network radio type: gsm, cdma, lte...
+	Type CELLULAR_NETWORK_RADIO_TYPE `mavenum:"uint8"`
+	// Signal quality in percent. If unknown, set to UINT8_MAX
+	Quality uint8
+	// Mobile country code. If unknown, set to UINT16_MAX
+	Mcc uint16
+	// Mobile network code. If unknown, set to UINT16_MAX
+	Mnc uint16
+	// Location area code. If unknown, set to 0
+	Lac uint16
+}
+
+// GetID implements the msg.Message interface.
+func (*MessageCellularStatus) GetID() uint32 {
+	return 334
 }
 
 // Status of the Iridium SBD link.

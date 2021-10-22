@@ -65,6 +65,8 @@ const (
 	MAV_AUTOPILOT_SMARTAP MAV_AUTOPILOT = 18
 	// AirRails - http://uaventure.com
 	MAV_AUTOPILOT_AIRRAILS MAV_AUTOPILOT = 19
+	// Fusion Reflex - https://fusion.engineering
+	MAV_AUTOPILOT_REFLEX MAV_AUTOPILOT = 20
 )
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -110,6 +112,8 @@ func (e MAV_AUTOPILOT) MarshalText() ([]byte, error) {
 		return []byte("MAV_AUTOPILOT_SMARTAP"), nil
 	case MAV_AUTOPILOT_AIRRAILS:
 		return []byte("MAV_AUTOPILOT_AIRRAILS"), nil
+	case MAV_AUTOPILOT_REFLEX:
+		return []byte("MAV_AUTOPILOT_REFLEX"), nil
 	}
 	return nil, errors.New("invalid value")
 }
@@ -176,6 +180,9 @@ func (e *MAV_AUTOPILOT) UnmarshalText(text []byte) error {
 		return nil
 	case "MAV_AUTOPILOT_AIRRAILS":
 		*e = MAV_AUTOPILOT_AIRRAILS
+		return nil
+	case "MAV_AUTOPILOT_REFLEX":
+		*e = MAV_AUTOPILOT_REFLEX
 		return nil
 	}
 	return errors.New("invalid value")

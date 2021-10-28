@@ -15858,6 +15858,10 @@ type MessageSerialControl struct {
 	Count uint8
 	// serial data
 	Data [70]uint8
+	// System ID
+	TargetSystem uint8 `mavext:"true"`
+	// Component ID
+	TargetComponent uint8 `mavext:"true"`
 }
 
 // GetID implements the msg.Message interface.

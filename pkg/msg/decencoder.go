@@ -161,7 +161,6 @@ func NewDecEncoder(msg Message) (*DecEncoder, error) {
 			default:
 				return nil, fmt.Errorf("type '%v' cannot be used as enum", tagEnum)
 			}
-
 		} else {
 			dialectType = fieldTypeFromGo[goType.Name()]
 			if dialectType == 0 {

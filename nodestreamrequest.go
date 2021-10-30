@@ -145,7 +145,6 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 		if _, ok := sr.lastRequests[rnode]; !ok {
 			sr.lastRequests[rnode] = time.Now()
 			request = true
-
 		} else if now.Sub(sr.lastRequests[rnode]) >= streamRequestPeriod {
 			request = true
 			sr.lastRequests[rnode] = now

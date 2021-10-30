@@ -81,7 +81,6 @@ func (conf EndpointUDPBroadcast) init() (Endpoint, error) {
 			return nil, fmt.Errorf("cannot find local address associated with given broadcast address")
 		}
 		conf.LocalAddress = fmt.Sprintf("%s:%s", localIP, port)
-
 	} else {
 		_, _, err = net.SplitHostPort(conf.LocalAddress)
 		if err != nil {

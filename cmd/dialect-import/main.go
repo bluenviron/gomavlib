@@ -31,12 +31,11 @@ package {{ .PkgName }}
 
 import (
 {{- if .Enums }}
-	"errors"
-	"strconv"
+    "errors"
 {{- end }}
 
-	"github.com/aler9/gomavlib/pkg/msg"
-	"github.com/aler9/gomavlib/pkg/dialect"
+    "github.com/aler9/gomavlib/pkg/msg"
+    "github.com/aler9/gomavlib/pkg/dialect"
 )
 
 // Dialect contains the dialect object that can be passed to the library.
@@ -59,41 +58,46 @@ type {{ .Name }} int
 const (
 {{- $pn := .Name }}
 {{- range .Values }}
-	// {{ .Description }}
-	{{ .Name }} {{ $pn }} = {{ .Value }}
+    // {{ .Description }}
+    {{ .Name }} {{ $pn }} = {{ .Value }}
 {{- end }}
 )
 
+var labels_{{ .Name }} = map[{{ .Name }}]string{
+{{- range .Values }}
+    {{ .Name }}: "{{ .Name }}",
+{{- end }}
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e {{ .Name }}) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
+    if l, ok := labels_{{ .Name }}[e]; ok {
+        return []byte(l), nil
+    }
+    return nil, errors.New("invalid value")
+}
+
+var reverseLabels_{{ .Name }} = map[string]{{ .Name }}{
 {{- range .Values }}
-	case {{ .Name }}:
-		return []byte("{{ .Name }}"), nil
+    "{{ .Name }}": {{ .Name }},
 {{- end }}
-	}
-	return nil, errors.New("invalid value")
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *{{ .Name }}) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-{{- range .Values }}
-	case "{{ .Name }}":
-		*e = {{ .Name }}
+	if rl, ok := reverseLabels_{{ .Name }}[string(text)]; ok {
+		*e = rl
 		return nil
-{{- end }}
 	}
-	return errors.New("invalid value")
+    return errors.New("invalid value")
 }
 
 // String implements the fmt.Stringer interface.
 func (e {{ .Name }}) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
-	}
-	return strconv.FormatInt(int64(e), 10)
+    if l, ok := labels_{{ .Name }}[e]; ok {
+        return l
+    }
+	return "invalid value"
 }
 
 {{ end }}
@@ -105,7 +109,7 @@ func (e {{ .Name }}) String() string {
 // {{ .Description }}
 type Message{{ .Name }} struct {
 {{- range .Fields }}
-	// {{ .Description }}
+    // {{ .Description }}
     {{ .Line }}
 {{- end }}
 }

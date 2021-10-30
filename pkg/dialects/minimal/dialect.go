@@ -5,7 +5,6 @@ package minimal
 
 import (
 	"errors"
-	"strconv"
 
 	"github.com/aler9/gomavlib/pkg/dialect"
 	"github.com/aler9/gomavlib/pkg/msg"
@@ -69,120 +68,66 @@ const (
 	MAV_AUTOPILOT_REFLEX MAV_AUTOPILOT = 20
 )
 
+var labels_MAV_AUTOPILOT = map[MAV_AUTOPILOT]string{
+	MAV_AUTOPILOT_GENERIC:                                      "MAV_AUTOPILOT_GENERIC",
+	MAV_AUTOPILOT_RESERVED:                                     "MAV_AUTOPILOT_RESERVED",
+	MAV_AUTOPILOT_SLUGS:                                        "MAV_AUTOPILOT_SLUGS",
+	MAV_AUTOPILOT_ARDUPILOTMEGA:                                "MAV_AUTOPILOT_ARDUPILOTMEGA",
+	MAV_AUTOPILOT_OPENPILOT:                                    "MAV_AUTOPILOT_OPENPILOT",
+	MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY:                       "MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY",
+	MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY: "MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY",
+	MAV_AUTOPILOT_GENERIC_MISSION_FULL:                         "MAV_AUTOPILOT_GENERIC_MISSION_FULL",
+	MAV_AUTOPILOT_INVALID:                                      "MAV_AUTOPILOT_INVALID",
+	MAV_AUTOPILOT_PPZ:                                          "MAV_AUTOPILOT_PPZ",
+	MAV_AUTOPILOT_UDB:                                          "MAV_AUTOPILOT_UDB",
+	MAV_AUTOPILOT_FP:                                           "MAV_AUTOPILOT_FP",
+	MAV_AUTOPILOT_PX4:                                          "MAV_AUTOPILOT_PX4",
+	MAV_AUTOPILOT_SMACCMPILOT:                                  "MAV_AUTOPILOT_SMACCMPILOT",
+	MAV_AUTOPILOT_AUTOQUAD:                                     "MAV_AUTOPILOT_AUTOQUAD",
+	MAV_AUTOPILOT_ARMAZILA:                                     "MAV_AUTOPILOT_ARMAZILA",
+	MAV_AUTOPILOT_AEROB:                                        "MAV_AUTOPILOT_AEROB",
+	MAV_AUTOPILOT_ASLUAV:                                       "MAV_AUTOPILOT_ASLUAV",
+	MAV_AUTOPILOT_SMARTAP:                                      "MAV_AUTOPILOT_SMARTAP",
+	MAV_AUTOPILOT_AIRRAILS:                                     "MAV_AUTOPILOT_AIRRAILS",
+	MAV_AUTOPILOT_REFLEX:                                       "MAV_AUTOPILOT_REFLEX",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_AUTOPILOT) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_AUTOPILOT_GENERIC:
-		return []byte("MAV_AUTOPILOT_GENERIC"), nil
-	case MAV_AUTOPILOT_RESERVED:
-		return []byte("MAV_AUTOPILOT_RESERVED"), nil
-	case MAV_AUTOPILOT_SLUGS:
-		return []byte("MAV_AUTOPILOT_SLUGS"), nil
-	case MAV_AUTOPILOT_ARDUPILOTMEGA:
-		return []byte("MAV_AUTOPILOT_ARDUPILOTMEGA"), nil
-	case MAV_AUTOPILOT_OPENPILOT:
-		return []byte("MAV_AUTOPILOT_OPENPILOT"), nil
-	case MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY:
-		return []byte("MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY"), nil
-	case MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY:
-		return []byte("MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY"), nil
-	case MAV_AUTOPILOT_GENERIC_MISSION_FULL:
-		return []byte("MAV_AUTOPILOT_GENERIC_MISSION_FULL"), nil
-	case MAV_AUTOPILOT_INVALID:
-		return []byte("MAV_AUTOPILOT_INVALID"), nil
-	case MAV_AUTOPILOT_PPZ:
-		return []byte("MAV_AUTOPILOT_PPZ"), nil
-	case MAV_AUTOPILOT_UDB:
-		return []byte("MAV_AUTOPILOT_UDB"), nil
-	case MAV_AUTOPILOT_FP:
-		return []byte("MAV_AUTOPILOT_FP"), nil
-	case MAV_AUTOPILOT_PX4:
-		return []byte("MAV_AUTOPILOT_PX4"), nil
-	case MAV_AUTOPILOT_SMACCMPILOT:
-		return []byte("MAV_AUTOPILOT_SMACCMPILOT"), nil
-	case MAV_AUTOPILOT_AUTOQUAD:
-		return []byte("MAV_AUTOPILOT_AUTOQUAD"), nil
-	case MAV_AUTOPILOT_ARMAZILA:
-		return []byte("MAV_AUTOPILOT_ARMAZILA"), nil
-	case MAV_AUTOPILOT_AEROB:
-		return []byte("MAV_AUTOPILOT_AEROB"), nil
-	case MAV_AUTOPILOT_ASLUAV:
-		return []byte("MAV_AUTOPILOT_ASLUAV"), nil
-	case MAV_AUTOPILOT_SMARTAP:
-		return []byte("MAV_AUTOPILOT_SMARTAP"), nil
-	case MAV_AUTOPILOT_AIRRAILS:
-		return []byte("MAV_AUTOPILOT_AIRRAILS"), nil
-	case MAV_AUTOPILOT_REFLEX:
-		return []byte("MAV_AUTOPILOT_REFLEX"), nil
+	if l, ok := labels_MAV_AUTOPILOT[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_AUTOPILOT = map[string]MAV_AUTOPILOT{
+	"MAV_AUTOPILOT_GENERIC":                                      MAV_AUTOPILOT_GENERIC,
+	"MAV_AUTOPILOT_RESERVED":                                     MAV_AUTOPILOT_RESERVED,
+	"MAV_AUTOPILOT_SLUGS":                                        MAV_AUTOPILOT_SLUGS,
+	"MAV_AUTOPILOT_ARDUPILOTMEGA":                                MAV_AUTOPILOT_ARDUPILOTMEGA,
+	"MAV_AUTOPILOT_OPENPILOT":                                    MAV_AUTOPILOT_OPENPILOT,
+	"MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY":                       MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY,
+	"MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY": MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY,
+	"MAV_AUTOPILOT_GENERIC_MISSION_FULL":                         MAV_AUTOPILOT_GENERIC_MISSION_FULL,
+	"MAV_AUTOPILOT_INVALID":                                      MAV_AUTOPILOT_INVALID,
+	"MAV_AUTOPILOT_PPZ":                                          MAV_AUTOPILOT_PPZ,
+	"MAV_AUTOPILOT_UDB":                                          MAV_AUTOPILOT_UDB,
+	"MAV_AUTOPILOT_FP":                                           MAV_AUTOPILOT_FP,
+	"MAV_AUTOPILOT_PX4":                                          MAV_AUTOPILOT_PX4,
+	"MAV_AUTOPILOT_SMACCMPILOT":                                  MAV_AUTOPILOT_SMACCMPILOT,
+	"MAV_AUTOPILOT_AUTOQUAD":                                     MAV_AUTOPILOT_AUTOQUAD,
+	"MAV_AUTOPILOT_ARMAZILA":                                     MAV_AUTOPILOT_ARMAZILA,
+	"MAV_AUTOPILOT_AEROB":                                        MAV_AUTOPILOT_AEROB,
+	"MAV_AUTOPILOT_ASLUAV":                                       MAV_AUTOPILOT_ASLUAV,
+	"MAV_AUTOPILOT_SMARTAP":                                      MAV_AUTOPILOT_SMARTAP,
+	"MAV_AUTOPILOT_AIRRAILS":                                     MAV_AUTOPILOT_AIRRAILS,
+	"MAV_AUTOPILOT_REFLEX":                                       MAV_AUTOPILOT_REFLEX,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_AUTOPILOT) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_AUTOPILOT_GENERIC":
-		*e = MAV_AUTOPILOT_GENERIC
-		return nil
-	case "MAV_AUTOPILOT_RESERVED":
-		*e = MAV_AUTOPILOT_RESERVED
-		return nil
-	case "MAV_AUTOPILOT_SLUGS":
-		*e = MAV_AUTOPILOT_SLUGS
-		return nil
-	case "MAV_AUTOPILOT_ARDUPILOTMEGA":
-		*e = MAV_AUTOPILOT_ARDUPILOTMEGA
-		return nil
-	case "MAV_AUTOPILOT_OPENPILOT":
-		*e = MAV_AUTOPILOT_OPENPILOT
-		return nil
-	case "MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY":
-		*e = MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY
-		return nil
-	case "MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY":
-		*e = MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY
-		return nil
-	case "MAV_AUTOPILOT_GENERIC_MISSION_FULL":
-		*e = MAV_AUTOPILOT_GENERIC_MISSION_FULL
-		return nil
-	case "MAV_AUTOPILOT_INVALID":
-		*e = MAV_AUTOPILOT_INVALID
-		return nil
-	case "MAV_AUTOPILOT_PPZ":
-		*e = MAV_AUTOPILOT_PPZ
-		return nil
-	case "MAV_AUTOPILOT_UDB":
-		*e = MAV_AUTOPILOT_UDB
-		return nil
-	case "MAV_AUTOPILOT_FP":
-		*e = MAV_AUTOPILOT_FP
-		return nil
-	case "MAV_AUTOPILOT_PX4":
-		*e = MAV_AUTOPILOT_PX4
-		return nil
-	case "MAV_AUTOPILOT_SMACCMPILOT":
-		*e = MAV_AUTOPILOT_SMACCMPILOT
-		return nil
-	case "MAV_AUTOPILOT_AUTOQUAD":
-		*e = MAV_AUTOPILOT_AUTOQUAD
-		return nil
-	case "MAV_AUTOPILOT_ARMAZILA":
-		*e = MAV_AUTOPILOT_ARMAZILA
-		return nil
-	case "MAV_AUTOPILOT_AEROB":
-		*e = MAV_AUTOPILOT_AEROB
-		return nil
-	case "MAV_AUTOPILOT_ASLUAV":
-		*e = MAV_AUTOPILOT_ASLUAV
-		return nil
-	case "MAV_AUTOPILOT_SMARTAP":
-		*e = MAV_AUTOPILOT_SMARTAP
-		return nil
-	case "MAV_AUTOPILOT_AIRRAILS":
-		*e = MAV_AUTOPILOT_AIRRAILS
-		return nil
-	case "MAV_AUTOPILOT_REFLEX":
-		*e = MAV_AUTOPILOT_REFLEX
+	if rl, ok := reverseLabels_MAV_AUTOPILOT[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -190,11 +135,10 @@ func (e *MAV_AUTOPILOT) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_AUTOPILOT) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_AUTOPILOT[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Component ids (values) for the different types and instances of onboard hardware/software that might make up a MAVLink system (autopilot, cameras, servos, GPS systems, avoidance systems etc.).      Components must use the appropriate ID in their source address when sending messages. Components can also use IDs to determine if they are the intended recipient of an incoming message. The MAV_COMP_ID_ALL value is used to indicate messages that must be processed by all components.      When creating new entries, components that can have multiple instances (e.g. cameras, servos etc.) should be allocated sequential values. An appropriate number of values should be left free after these components to allow the number of instances to be expanded.
@@ -469,680 +413,290 @@ const (
 	MAV_COMP_ID_SYSTEM_CONTROL MAV_COMPONENT = 250
 )
 
+var labels_MAV_COMPONENT = map[MAV_COMPONENT]string{
+	MAV_COMP_ID_ALL:                      "MAV_COMP_ID_ALL",
+	MAV_COMP_ID_AUTOPILOT1:               "MAV_COMP_ID_AUTOPILOT1",
+	MAV_COMP_ID_USER1:                    "MAV_COMP_ID_USER1",
+	MAV_COMP_ID_USER2:                    "MAV_COMP_ID_USER2",
+	MAV_COMP_ID_USER3:                    "MAV_COMP_ID_USER3",
+	MAV_COMP_ID_USER4:                    "MAV_COMP_ID_USER4",
+	MAV_COMP_ID_USER5:                    "MAV_COMP_ID_USER5",
+	MAV_COMP_ID_USER6:                    "MAV_COMP_ID_USER6",
+	MAV_COMP_ID_USER7:                    "MAV_COMP_ID_USER7",
+	MAV_COMP_ID_USER8:                    "MAV_COMP_ID_USER8",
+	MAV_COMP_ID_USER9:                    "MAV_COMP_ID_USER9",
+	MAV_COMP_ID_USER10:                   "MAV_COMP_ID_USER10",
+	MAV_COMP_ID_USER11:                   "MAV_COMP_ID_USER11",
+	MAV_COMP_ID_USER12:                   "MAV_COMP_ID_USER12",
+	MAV_COMP_ID_USER13:                   "MAV_COMP_ID_USER13",
+	MAV_COMP_ID_USER14:                   "MAV_COMP_ID_USER14",
+	MAV_COMP_ID_USER15:                   "MAV_COMP_ID_USER15",
+	MAV_COMP_ID_USER16:                   "MAV_COMP_ID_USER16",
+	MAV_COMP_ID_USER17:                   "MAV_COMP_ID_USER17",
+	MAV_COMP_ID_USER18:                   "MAV_COMP_ID_USER18",
+	MAV_COMP_ID_USER19:                   "MAV_COMP_ID_USER19",
+	MAV_COMP_ID_USER20:                   "MAV_COMP_ID_USER20",
+	MAV_COMP_ID_USER21:                   "MAV_COMP_ID_USER21",
+	MAV_COMP_ID_USER22:                   "MAV_COMP_ID_USER22",
+	MAV_COMP_ID_USER23:                   "MAV_COMP_ID_USER23",
+	MAV_COMP_ID_USER24:                   "MAV_COMP_ID_USER24",
+	MAV_COMP_ID_USER25:                   "MAV_COMP_ID_USER25",
+	MAV_COMP_ID_USER26:                   "MAV_COMP_ID_USER26",
+	MAV_COMP_ID_USER27:                   "MAV_COMP_ID_USER27",
+	MAV_COMP_ID_USER28:                   "MAV_COMP_ID_USER28",
+	MAV_COMP_ID_USER29:                   "MAV_COMP_ID_USER29",
+	MAV_COMP_ID_USER30:                   "MAV_COMP_ID_USER30",
+	MAV_COMP_ID_USER31:                   "MAV_COMP_ID_USER31",
+	MAV_COMP_ID_USER32:                   "MAV_COMP_ID_USER32",
+	MAV_COMP_ID_USER33:                   "MAV_COMP_ID_USER33",
+	MAV_COMP_ID_USER34:                   "MAV_COMP_ID_USER34",
+	MAV_COMP_ID_USER35:                   "MAV_COMP_ID_USER35",
+	MAV_COMP_ID_USER36:                   "MAV_COMP_ID_USER36",
+	MAV_COMP_ID_USER37:                   "MAV_COMP_ID_USER37",
+	MAV_COMP_ID_USER38:                   "MAV_COMP_ID_USER38",
+	MAV_COMP_ID_USER39:                   "MAV_COMP_ID_USER39",
+	MAV_COMP_ID_USER40:                   "MAV_COMP_ID_USER40",
+	MAV_COMP_ID_USER41:                   "MAV_COMP_ID_USER41",
+	MAV_COMP_ID_USER42:                   "MAV_COMP_ID_USER42",
+	MAV_COMP_ID_USER43:                   "MAV_COMP_ID_USER43",
+	MAV_COMP_ID_TELEMETRY_RADIO:          "MAV_COMP_ID_TELEMETRY_RADIO",
+	MAV_COMP_ID_USER45:                   "MAV_COMP_ID_USER45",
+	MAV_COMP_ID_USER46:                   "MAV_COMP_ID_USER46",
+	MAV_COMP_ID_USER47:                   "MAV_COMP_ID_USER47",
+	MAV_COMP_ID_USER48:                   "MAV_COMP_ID_USER48",
+	MAV_COMP_ID_USER49:                   "MAV_COMP_ID_USER49",
+	MAV_COMP_ID_USER50:                   "MAV_COMP_ID_USER50",
+	MAV_COMP_ID_USER51:                   "MAV_COMP_ID_USER51",
+	MAV_COMP_ID_USER52:                   "MAV_COMP_ID_USER52",
+	MAV_COMP_ID_USER53:                   "MAV_COMP_ID_USER53",
+	MAV_COMP_ID_USER54:                   "MAV_COMP_ID_USER54",
+	MAV_COMP_ID_USER55:                   "MAV_COMP_ID_USER55",
+	MAV_COMP_ID_USER56:                   "MAV_COMP_ID_USER56",
+	MAV_COMP_ID_USER57:                   "MAV_COMP_ID_USER57",
+	MAV_COMP_ID_USER58:                   "MAV_COMP_ID_USER58",
+	MAV_COMP_ID_USER59:                   "MAV_COMP_ID_USER59",
+	MAV_COMP_ID_USER60:                   "MAV_COMP_ID_USER60",
+	MAV_COMP_ID_USER61:                   "MAV_COMP_ID_USER61",
+	MAV_COMP_ID_USER62:                   "MAV_COMP_ID_USER62",
+	MAV_COMP_ID_USER63:                   "MAV_COMP_ID_USER63",
+	MAV_COMP_ID_USER64:                   "MAV_COMP_ID_USER64",
+	MAV_COMP_ID_USER65:                   "MAV_COMP_ID_USER65",
+	MAV_COMP_ID_USER66:                   "MAV_COMP_ID_USER66",
+	MAV_COMP_ID_USER67:                   "MAV_COMP_ID_USER67",
+	MAV_COMP_ID_USER68:                   "MAV_COMP_ID_USER68",
+	MAV_COMP_ID_USER69:                   "MAV_COMP_ID_USER69",
+	MAV_COMP_ID_USER70:                   "MAV_COMP_ID_USER70",
+	MAV_COMP_ID_USER71:                   "MAV_COMP_ID_USER71",
+	MAV_COMP_ID_USER72:                   "MAV_COMP_ID_USER72",
+	MAV_COMP_ID_USER73:                   "MAV_COMP_ID_USER73",
+	MAV_COMP_ID_USER74:                   "MAV_COMP_ID_USER74",
+	MAV_COMP_ID_USER75:                   "MAV_COMP_ID_USER75",
+	MAV_COMP_ID_CAMERA:                   "MAV_COMP_ID_CAMERA",
+	MAV_COMP_ID_CAMERA2:                  "MAV_COMP_ID_CAMERA2",
+	MAV_COMP_ID_CAMERA3:                  "MAV_COMP_ID_CAMERA3",
+	MAV_COMP_ID_CAMERA4:                  "MAV_COMP_ID_CAMERA4",
+	MAV_COMP_ID_CAMERA5:                  "MAV_COMP_ID_CAMERA5",
+	MAV_COMP_ID_CAMERA6:                  "MAV_COMP_ID_CAMERA6",
+	MAV_COMP_ID_SERVO1:                   "MAV_COMP_ID_SERVO1",
+	MAV_COMP_ID_SERVO2:                   "MAV_COMP_ID_SERVO2",
+	MAV_COMP_ID_SERVO3:                   "MAV_COMP_ID_SERVO3",
+	MAV_COMP_ID_SERVO4:                   "MAV_COMP_ID_SERVO4",
+	MAV_COMP_ID_SERVO5:                   "MAV_COMP_ID_SERVO5",
+	MAV_COMP_ID_SERVO6:                   "MAV_COMP_ID_SERVO6",
+	MAV_COMP_ID_SERVO7:                   "MAV_COMP_ID_SERVO7",
+	MAV_COMP_ID_SERVO8:                   "MAV_COMP_ID_SERVO8",
+	MAV_COMP_ID_SERVO9:                   "MAV_COMP_ID_SERVO9",
+	MAV_COMP_ID_SERVO10:                  "MAV_COMP_ID_SERVO10",
+	MAV_COMP_ID_SERVO11:                  "MAV_COMP_ID_SERVO11",
+	MAV_COMP_ID_SERVO12:                  "MAV_COMP_ID_SERVO12",
+	MAV_COMP_ID_SERVO13:                  "MAV_COMP_ID_SERVO13",
+	MAV_COMP_ID_SERVO14:                  "MAV_COMP_ID_SERVO14",
+	MAV_COMP_ID_GIMBAL:                   "MAV_COMP_ID_GIMBAL",
+	MAV_COMP_ID_LOG:                      "MAV_COMP_ID_LOG",
+	MAV_COMP_ID_ADSB:                     "MAV_COMP_ID_ADSB",
+	MAV_COMP_ID_OSD:                      "MAV_COMP_ID_OSD",
+	MAV_COMP_ID_PERIPHERAL:               "MAV_COMP_ID_PERIPHERAL",
+	MAV_COMP_ID_QX1_GIMBAL:               "MAV_COMP_ID_QX1_GIMBAL",
+	MAV_COMP_ID_FLARM:                    "MAV_COMP_ID_FLARM",
+	MAV_COMP_ID_PARACHUTE:                "MAV_COMP_ID_PARACHUTE",
+	MAV_COMP_ID_GIMBAL2:                  "MAV_COMP_ID_GIMBAL2",
+	MAV_COMP_ID_GIMBAL3:                  "MAV_COMP_ID_GIMBAL3",
+	MAV_COMP_ID_GIMBAL4:                  "MAV_COMP_ID_GIMBAL4",
+	MAV_COMP_ID_GIMBAL5:                  "MAV_COMP_ID_GIMBAL5",
+	MAV_COMP_ID_GIMBAL6:                  "MAV_COMP_ID_GIMBAL6",
+	MAV_COMP_ID_BATTERY:                  "MAV_COMP_ID_BATTERY",
+	MAV_COMP_ID_BATTERY2:                 "MAV_COMP_ID_BATTERY2",
+	MAV_COMP_ID_MISSIONPLANNER:           "MAV_COMP_ID_MISSIONPLANNER",
+	MAV_COMP_ID_ONBOARD_COMPUTER:         "MAV_COMP_ID_ONBOARD_COMPUTER",
+	MAV_COMP_ID_ONBOARD_COMPUTER2:        "MAV_COMP_ID_ONBOARD_COMPUTER2",
+	MAV_COMP_ID_ONBOARD_COMPUTER3:        "MAV_COMP_ID_ONBOARD_COMPUTER3",
+	MAV_COMP_ID_ONBOARD_COMPUTER4:        "MAV_COMP_ID_ONBOARD_COMPUTER4",
+	MAV_COMP_ID_PATHPLANNER:              "MAV_COMP_ID_PATHPLANNER",
+	MAV_COMP_ID_OBSTACLE_AVOIDANCE:       "MAV_COMP_ID_OBSTACLE_AVOIDANCE",
+	MAV_COMP_ID_VISUAL_INERTIAL_ODOMETRY: "MAV_COMP_ID_VISUAL_INERTIAL_ODOMETRY",
+	MAV_COMP_ID_PAIRING_MANAGER:          "MAV_COMP_ID_PAIRING_MANAGER",
+	MAV_COMP_ID_IMU:                      "MAV_COMP_ID_IMU",
+	MAV_COMP_ID_IMU_2:                    "MAV_COMP_ID_IMU_2",
+	MAV_COMP_ID_IMU_3:                    "MAV_COMP_ID_IMU_3",
+	MAV_COMP_ID_GPS:                      "MAV_COMP_ID_GPS",
+	MAV_COMP_ID_GPS2:                     "MAV_COMP_ID_GPS2",
+	MAV_COMP_ID_ODID_TXRX_1:              "MAV_COMP_ID_ODID_TXRX_1",
+	MAV_COMP_ID_ODID_TXRX_2:              "MAV_COMP_ID_ODID_TXRX_2",
+	MAV_COMP_ID_ODID_TXRX_3:              "MAV_COMP_ID_ODID_TXRX_3",
+	MAV_COMP_ID_UDP_BRIDGE:               "MAV_COMP_ID_UDP_BRIDGE",
+	MAV_COMP_ID_UART_BRIDGE:              "MAV_COMP_ID_UART_BRIDGE",
+	MAV_COMP_ID_TUNNEL_NODE:              "MAV_COMP_ID_TUNNEL_NODE",
+	MAV_COMP_ID_SYSTEM_CONTROL:           "MAV_COMP_ID_SYSTEM_CONTROL",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_COMPONENT) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_COMP_ID_ALL:
-		return []byte("MAV_COMP_ID_ALL"), nil
-	case MAV_COMP_ID_AUTOPILOT1:
-		return []byte("MAV_COMP_ID_AUTOPILOT1"), nil
-	case MAV_COMP_ID_USER1:
-		return []byte("MAV_COMP_ID_USER1"), nil
-	case MAV_COMP_ID_USER2:
-		return []byte("MAV_COMP_ID_USER2"), nil
-	case MAV_COMP_ID_USER3:
-		return []byte("MAV_COMP_ID_USER3"), nil
-	case MAV_COMP_ID_USER4:
-		return []byte("MAV_COMP_ID_USER4"), nil
-	case MAV_COMP_ID_USER5:
-		return []byte("MAV_COMP_ID_USER5"), nil
-	case MAV_COMP_ID_USER6:
-		return []byte("MAV_COMP_ID_USER6"), nil
-	case MAV_COMP_ID_USER7:
-		return []byte("MAV_COMP_ID_USER7"), nil
-	case MAV_COMP_ID_USER8:
-		return []byte("MAV_COMP_ID_USER8"), nil
-	case MAV_COMP_ID_USER9:
-		return []byte("MAV_COMP_ID_USER9"), nil
-	case MAV_COMP_ID_USER10:
-		return []byte("MAV_COMP_ID_USER10"), nil
-	case MAV_COMP_ID_USER11:
-		return []byte("MAV_COMP_ID_USER11"), nil
-	case MAV_COMP_ID_USER12:
-		return []byte("MAV_COMP_ID_USER12"), nil
-	case MAV_COMP_ID_USER13:
-		return []byte("MAV_COMP_ID_USER13"), nil
-	case MAV_COMP_ID_USER14:
-		return []byte("MAV_COMP_ID_USER14"), nil
-	case MAV_COMP_ID_USER15:
-		return []byte("MAV_COMP_ID_USER15"), nil
-	case MAV_COMP_ID_USER16:
-		return []byte("MAV_COMP_ID_USER16"), nil
-	case MAV_COMP_ID_USER17:
-		return []byte("MAV_COMP_ID_USER17"), nil
-	case MAV_COMP_ID_USER18:
-		return []byte("MAV_COMP_ID_USER18"), nil
-	case MAV_COMP_ID_USER19:
-		return []byte("MAV_COMP_ID_USER19"), nil
-	case MAV_COMP_ID_USER20:
-		return []byte("MAV_COMP_ID_USER20"), nil
-	case MAV_COMP_ID_USER21:
-		return []byte("MAV_COMP_ID_USER21"), nil
-	case MAV_COMP_ID_USER22:
-		return []byte("MAV_COMP_ID_USER22"), nil
-	case MAV_COMP_ID_USER23:
-		return []byte("MAV_COMP_ID_USER23"), nil
-	case MAV_COMP_ID_USER24:
-		return []byte("MAV_COMP_ID_USER24"), nil
-	case MAV_COMP_ID_USER25:
-		return []byte("MAV_COMP_ID_USER25"), nil
-	case MAV_COMP_ID_USER26:
-		return []byte("MAV_COMP_ID_USER26"), nil
-	case MAV_COMP_ID_USER27:
-		return []byte("MAV_COMP_ID_USER27"), nil
-	case MAV_COMP_ID_USER28:
-		return []byte("MAV_COMP_ID_USER28"), nil
-	case MAV_COMP_ID_USER29:
-		return []byte("MAV_COMP_ID_USER29"), nil
-	case MAV_COMP_ID_USER30:
-		return []byte("MAV_COMP_ID_USER30"), nil
-	case MAV_COMP_ID_USER31:
-		return []byte("MAV_COMP_ID_USER31"), nil
-	case MAV_COMP_ID_USER32:
-		return []byte("MAV_COMP_ID_USER32"), nil
-	case MAV_COMP_ID_USER33:
-		return []byte("MAV_COMP_ID_USER33"), nil
-	case MAV_COMP_ID_USER34:
-		return []byte("MAV_COMP_ID_USER34"), nil
-	case MAV_COMP_ID_USER35:
-		return []byte("MAV_COMP_ID_USER35"), nil
-	case MAV_COMP_ID_USER36:
-		return []byte("MAV_COMP_ID_USER36"), nil
-	case MAV_COMP_ID_USER37:
-		return []byte("MAV_COMP_ID_USER37"), nil
-	case MAV_COMP_ID_USER38:
-		return []byte("MAV_COMP_ID_USER38"), nil
-	case MAV_COMP_ID_USER39:
-		return []byte("MAV_COMP_ID_USER39"), nil
-	case MAV_COMP_ID_USER40:
-		return []byte("MAV_COMP_ID_USER40"), nil
-	case MAV_COMP_ID_USER41:
-		return []byte("MAV_COMP_ID_USER41"), nil
-	case MAV_COMP_ID_USER42:
-		return []byte("MAV_COMP_ID_USER42"), nil
-	case MAV_COMP_ID_USER43:
-		return []byte("MAV_COMP_ID_USER43"), nil
-	case MAV_COMP_ID_TELEMETRY_RADIO:
-		return []byte("MAV_COMP_ID_TELEMETRY_RADIO"), nil
-	case MAV_COMP_ID_USER45:
-		return []byte("MAV_COMP_ID_USER45"), nil
-	case MAV_COMP_ID_USER46:
-		return []byte("MAV_COMP_ID_USER46"), nil
-	case MAV_COMP_ID_USER47:
-		return []byte("MAV_COMP_ID_USER47"), nil
-	case MAV_COMP_ID_USER48:
-		return []byte("MAV_COMP_ID_USER48"), nil
-	case MAV_COMP_ID_USER49:
-		return []byte("MAV_COMP_ID_USER49"), nil
-	case MAV_COMP_ID_USER50:
-		return []byte("MAV_COMP_ID_USER50"), nil
-	case MAV_COMP_ID_USER51:
-		return []byte("MAV_COMP_ID_USER51"), nil
-	case MAV_COMP_ID_USER52:
-		return []byte("MAV_COMP_ID_USER52"), nil
-	case MAV_COMP_ID_USER53:
-		return []byte("MAV_COMP_ID_USER53"), nil
-	case MAV_COMP_ID_USER54:
-		return []byte("MAV_COMP_ID_USER54"), nil
-	case MAV_COMP_ID_USER55:
-		return []byte("MAV_COMP_ID_USER55"), nil
-	case MAV_COMP_ID_USER56:
-		return []byte("MAV_COMP_ID_USER56"), nil
-	case MAV_COMP_ID_USER57:
-		return []byte("MAV_COMP_ID_USER57"), nil
-	case MAV_COMP_ID_USER58:
-		return []byte("MAV_COMP_ID_USER58"), nil
-	case MAV_COMP_ID_USER59:
-		return []byte("MAV_COMP_ID_USER59"), nil
-	case MAV_COMP_ID_USER60:
-		return []byte("MAV_COMP_ID_USER60"), nil
-	case MAV_COMP_ID_USER61:
-		return []byte("MAV_COMP_ID_USER61"), nil
-	case MAV_COMP_ID_USER62:
-		return []byte("MAV_COMP_ID_USER62"), nil
-	case MAV_COMP_ID_USER63:
-		return []byte("MAV_COMP_ID_USER63"), nil
-	case MAV_COMP_ID_USER64:
-		return []byte("MAV_COMP_ID_USER64"), nil
-	case MAV_COMP_ID_USER65:
-		return []byte("MAV_COMP_ID_USER65"), nil
-	case MAV_COMP_ID_USER66:
-		return []byte("MAV_COMP_ID_USER66"), nil
-	case MAV_COMP_ID_USER67:
-		return []byte("MAV_COMP_ID_USER67"), nil
-	case MAV_COMP_ID_USER68:
-		return []byte("MAV_COMP_ID_USER68"), nil
-	case MAV_COMP_ID_USER69:
-		return []byte("MAV_COMP_ID_USER69"), nil
-	case MAV_COMP_ID_USER70:
-		return []byte("MAV_COMP_ID_USER70"), nil
-	case MAV_COMP_ID_USER71:
-		return []byte("MAV_COMP_ID_USER71"), nil
-	case MAV_COMP_ID_USER72:
-		return []byte("MAV_COMP_ID_USER72"), nil
-	case MAV_COMP_ID_USER73:
-		return []byte("MAV_COMP_ID_USER73"), nil
-	case MAV_COMP_ID_USER74:
-		return []byte("MAV_COMP_ID_USER74"), nil
-	case MAV_COMP_ID_USER75:
-		return []byte("MAV_COMP_ID_USER75"), nil
-	case MAV_COMP_ID_CAMERA:
-		return []byte("MAV_COMP_ID_CAMERA"), nil
-	case MAV_COMP_ID_CAMERA2:
-		return []byte("MAV_COMP_ID_CAMERA2"), nil
-	case MAV_COMP_ID_CAMERA3:
-		return []byte("MAV_COMP_ID_CAMERA3"), nil
-	case MAV_COMP_ID_CAMERA4:
-		return []byte("MAV_COMP_ID_CAMERA4"), nil
-	case MAV_COMP_ID_CAMERA5:
-		return []byte("MAV_COMP_ID_CAMERA5"), nil
-	case MAV_COMP_ID_CAMERA6:
-		return []byte("MAV_COMP_ID_CAMERA6"), nil
-	case MAV_COMP_ID_SERVO1:
-		return []byte("MAV_COMP_ID_SERVO1"), nil
-	case MAV_COMP_ID_SERVO2:
-		return []byte("MAV_COMP_ID_SERVO2"), nil
-	case MAV_COMP_ID_SERVO3:
-		return []byte("MAV_COMP_ID_SERVO3"), nil
-	case MAV_COMP_ID_SERVO4:
-		return []byte("MAV_COMP_ID_SERVO4"), nil
-	case MAV_COMP_ID_SERVO5:
-		return []byte("MAV_COMP_ID_SERVO5"), nil
-	case MAV_COMP_ID_SERVO6:
-		return []byte("MAV_COMP_ID_SERVO6"), nil
-	case MAV_COMP_ID_SERVO7:
-		return []byte("MAV_COMP_ID_SERVO7"), nil
-	case MAV_COMP_ID_SERVO8:
-		return []byte("MAV_COMP_ID_SERVO8"), nil
-	case MAV_COMP_ID_SERVO9:
-		return []byte("MAV_COMP_ID_SERVO9"), nil
-	case MAV_COMP_ID_SERVO10:
-		return []byte("MAV_COMP_ID_SERVO10"), nil
-	case MAV_COMP_ID_SERVO11:
-		return []byte("MAV_COMP_ID_SERVO11"), nil
-	case MAV_COMP_ID_SERVO12:
-		return []byte("MAV_COMP_ID_SERVO12"), nil
-	case MAV_COMP_ID_SERVO13:
-		return []byte("MAV_COMP_ID_SERVO13"), nil
-	case MAV_COMP_ID_SERVO14:
-		return []byte("MAV_COMP_ID_SERVO14"), nil
-	case MAV_COMP_ID_GIMBAL:
-		return []byte("MAV_COMP_ID_GIMBAL"), nil
-	case MAV_COMP_ID_LOG:
-		return []byte("MAV_COMP_ID_LOG"), nil
-	case MAV_COMP_ID_ADSB:
-		return []byte("MAV_COMP_ID_ADSB"), nil
-	case MAV_COMP_ID_OSD:
-		return []byte("MAV_COMP_ID_OSD"), nil
-	case MAV_COMP_ID_PERIPHERAL:
-		return []byte("MAV_COMP_ID_PERIPHERAL"), nil
-	case MAV_COMP_ID_QX1_GIMBAL:
-		return []byte("MAV_COMP_ID_QX1_GIMBAL"), nil
-	case MAV_COMP_ID_FLARM:
-		return []byte("MAV_COMP_ID_FLARM"), nil
-	case MAV_COMP_ID_PARACHUTE:
-		return []byte("MAV_COMP_ID_PARACHUTE"), nil
-	case MAV_COMP_ID_GIMBAL2:
-		return []byte("MAV_COMP_ID_GIMBAL2"), nil
-	case MAV_COMP_ID_GIMBAL3:
-		return []byte("MAV_COMP_ID_GIMBAL3"), nil
-	case MAV_COMP_ID_GIMBAL4:
-		return []byte("MAV_COMP_ID_GIMBAL4"), nil
-	case MAV_COMP_ID_GIMBAL5:
-		return []byte("MAV_COMP_ID_GIMBAL5"), nil
-	case MAV_COMP_ID_GIMBAL6:
-		return []byte("MAV_COMP_ID_GIMBAL6"), nil
-	case MAV_COMP_ID_BATTERY:
-		return []byte("MAV_COMP_ID_BATTERY"), nil
-	case MAV_COMP_ID_BATTERY2:
-		return []byte("MAV_COMP_ID_BATTERY2"), nil
-	case MAV_COMP_ID_MISSIONPLANNER:
-		return []byte("MAV_COMP_ID_MISSIONPLANNER"), nil
-	case MAV_COMP_ID_ONBOARD_COMPUTER:
-		return []byte("MAV_COMP_ID_ONBOARD_COMPUTER"), nil
-	case MAV_COMP_ID_ONBOARD_COMPUTER2:
-		return []byte("MAV_COMP_ID_ONBOARD_COMPUTER2"), nil
-	case MAV_COMP_ID_ONBOARD_COMPUTER3:
-		return []byte("MAV_COMP_ID_ONBOARD_COMPUTER3"), nil
-	case MAV_COMP_ID_ONBOARD_COMPUTER4:
-		return []byte("MAV_COMP_ID_ONBOARD_COMPUTER4"), nil
-	case MAV_COMP_ID_PATHPLANNER:
-		return []byte("MAV_COMP_ID_PATHPLANNER"), nil
-	case MAV_COMP_ID_OBSTACLE_AVOIDANCE:
-		return []byte("MAV_COMP_ID_OBSTACLE_AVOIDANCE"), nil
-	case MAV_COMP_ID_VISUAL_INERTIAL_ODOMETRY:
-		return []byte("MAV_COMP_ID_VISUAL_INERTIAL_ODOMETRY"), nil
-	case MAV_COMP_ID_PAIRING_MANAGER:
-		return []byte("MAV_COMP_ID_PAIRING_MANAGER"), nil
-	case MAV_COMP_ID_IMU:
-		return []byte("MAV_COMP_ID_IMU"), nil
-	case MAV_COMP_ID_IMU_2:
-		return []byte("MAV_COMP_ID_IMU_2"), nil
-	case MAV_COMP_ID_IMU_3:
-		return []byte("MAV_COMP_ID_IMU_3"), nil
-	case MAV_COMP_ID_GPS:
-		return []byte("MAV_COMP_ID_GPS"), nil
-	case MAV_COMP_ID_GPS2:
-		return []byte("MAV_COMP_ID_GPS2"), nil
-	case MAV_COMP_ID_ODID_TXRX_1:
-		return []byte("MAV_COMP_ID_ODID_TXRX_1"), nil
-	case MAV_COMP_ID_ODID_TXRX_2:
-		return []byte("MAV_COMP_ID_ODID_TXRX_2"), nil
-	case MAV_COMP_ID_ODID_TXRX_3:
-		return []byte("MAV_COMP_ID_ODID_TXRX_3"), nil
-	case MAV_COMP_ID_UDP_BRIDGE:
-		return []byte("MAV_COMP_ID_UDP_BRIDGE"), nil
-	case MAV_COMP_ID_UART_BRIDGE:
-		return []byte("MAV_COMP_ID_UART_BRIDGE"), nil
-	case MAV_COMP_ID_TUNNEL_NODE:
-		return []byte("MAV_COMP_ID_TUNNEL_NODE"), nil
-	case MAV_COMP_ID_SYSTEM_CONTROL:
-		return []byte("MAV_COMP_ID_SYSTEM_CONTROL"), nil
+	if l, ok := labels_MAV_COMPONENT[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_COMPONENT = map[string]MAV_COMPONENT{
+	"MAV_COMP_ID_ALL":                      MAV_COMP_ID_ALL,
+	"MAV_COMP_ID_AUTOPILOT1":               MAV_COMP_ID_AUTOPILOT1,
+	"MAV_COMP_ID_USER1":                    MAV_COMP_ID_USER1,
+	"MAV_COMP_ID_USER2":                    MAV_COMP_ID_USER2,
+	"MAV_COMP_ID_USER3":                    MAV_COMP_ID_USER3,
+	"MAV_COMP_ID_USER4":                    MAV_COMP_ID_USER4,
+	"MAV_COMP_ID_USER5":                    MAV_COMP_ID_USER5,
+	"MAV_COMP_ID_USER6":                    MAV_COMP_ID_USER6,
+	"MAV_COMP_ID_USER7":                    MAV_COMP_ID_USER7,
+	"MAV_COMP_ID_USER8":                    MAV_COMP_ID_USER8,
+	"MAV_COMP_ID_USER9":                    MAV_COMP_ID_USER9,
+	"MAV_COMP_ID_USER10":                   MAV_COMP_ID_USER10,
+	"MAV_COMP_ID_USER11":                   MAV_COMP_ID_USER11,
+	"MAV_COMP_ID_USER12":                   MAV_COMP_ID_USER12,
+	"MAV_COMP_ID_USER13":                   MAV_COMP_ID_USER13,
+	"MAV_COMP_ID_USER14":                   MAV_COMP_ID_USER14,
+	"MAV_COMP_ID_USER15":                   MAV_COMP_ID_USER15,
+	"MAV_COMP_ID_USER16":                   MAV_COMP_ID_USER16,
+	"MAV_COMP_ID_USER17":                   MAV_COMP_ID_USER17,
+	"MAV_COMP_ID_USER18":                   MAV_COMP_ID_USER18,
+	"MAV_COMP_ID_USER19":                   MAV_COMP_ID_USER19,
+	"MAV_COMP_ID_USER20":                   MAV_COMP_ID_USER20,
+	"MAV_COMP_ID_USER21":                   MAV_COMP_ID_USER21,
+	"MAV_COMP_ID_USER22":                   MAV_COMP_ID_USER22,
+	"MAV_COMP_ID_USER23":                   MAV_COMP_ID_USER23,
+	"MAV_COMP_ID_USER24":                   MAV_COMP_ID_USER24,
+	"MAV_COMP_ID_USER25":                   MAV_COMP_ID_USER25,
+	"MAV_COMP_ID_USER26":                   MAV_COMP_ID_USER26,
+	"MAV_COMP_ID_USER27":                   MAV_COMP_ID_USER27,
+	"MAV_COMP_ID_USER28":                   MAV_COMP_ID_USER28,
+	"MAV_COMP_ID_USER29":                   MAV_COMP_ID_USER29,
+	"MAV_COMP_ID_USER30":                   MAV_COMP_ID_USER30,
+	"MAV_COMP_ID_USER31":                   MAV_COMP_ID_USER31,
+	"MAV_COMP_ID_USER32":                   MAV_COMP_ID_USER32,
+	"MAV_COMP_ID_USER33":                   MAV_COMP_ID_USER33,
+	"MAV_COMP_ID_USER34":                   MAV_COMP_ID_USER34,
+	"MAV_COMP_ID_USER35":                   MAV_COMP_ID_USER35,
+	"MAV_COMP_ID_USER36":                   MAV_COMP_ID_USER36,
+	"MAV_COMP_ID_USER37":                   MAV_COMP_ID_USER37,
+	"MAV_COMP_ID_USER38":                   MAV_COMP_ID_USER38,
+	"MAV_COMP_ID_USER39":                   MAV_COMP_ID_USER39,
+	"MAV_COMP_ID_USER40":                   MAV_COMP_ID_USER40,
+	"MAV_COMP_ID_USER41":                   MAV_COMP_ID_USER41,
+	"MAV_COMP_ID_USER42":                   MAV_COMP_ID_USER42,
+	"MAV_COMP_ID_USER43":                   MAV_COMP_ID_USER43,
+	"MAV_COMP_ID_TELEMETRY_RADIO":          MAV_COMP_ID_TELEMETRY_RADIO,
+	"MAV_COMP_ID_USER45":                   MAV_COMP_ID_USER45,
+	"MAV_COMP_ID_USER46":                   MAV_COMP_ID_USER46,
+	"MAV_COMP_ID_USER47":                   MAV_COMP_ID_USER47,
+	"MAV_COMP_ID_USER48":                   MAV_COMP_ID_USER48,
+	"MAV_COMP_ID_USER49":                   MAV_COMP_ID_USER49,
+	"MAV_COMP_ID_USER50":                   MAV_COMP_ID_USER50,
+	"MAV_COMP_ID_USER51":                   MAV_COMP_ID_USER51,
+	"MAV_COMP_ID_USER52":                   MAV_COMP_ID_USER52,
+	"MAV_COMP_ID_USER53":                   MAV_COMP_ID_USER53,
+	"MAV_COMP_ID_USER54":                   MAV_COMP_ID_USER54,
+	"MAV_COMP_ID_USER55":                   MAV_COMP_ID_USER55,
+	"MAV_COMP_ID_USER56":                   MAV_COMP_ID_USER56,
+	"MAV_COMP_ID_USER57":                   MAV_COMP_ID_USER57,
+	"MAV_COMP_ID_USER58":                   MAV_COMP_ID_USER58,
+	"MAV_COMP_ID_USER59":                   MAV_COMP_ID_USER59,
+	"MAV_COMP_ID_USER60":                   MAV_COMP_ID_USER60,
+	"MAV_COMP_ID_USER61":                   MAV_COMP_ID_USER61,
+	"MAV_COMP_ID_USER62":                   MAV_COMP_ID_USER62,
+	"MAV_COMP_ID_USER63":                   MAV_COMP_ID_USER63,
+	"MAV_COMP_ID_USER64":                   MAV_COMP_ID_USER64,
+	"MAV_COMP_ID_USER65":                   MAV_COMP_ID_USER65,
+	"MAV_COMP_ID_USER66":                   MAV_COMP_ID_USER66,
+	"MAV_COMP_ID_USER67":                   MAV_COMP_ID_USER67,
+	"MAV_COMP_ID_USER68":                   MAV_COMP_ID_USER68,
+	"MAV_COMP_ID_USER69":                   MAV_COMP_ID_USER69,
+	"MAV_COMP_ID_USER70":                   MAV_COMP_ID_USER70,
+	"MAV_COMP_ID_USER71":                   MAV_COMP_ID_USER71,
+	"MAV_COMP_ID_USER72":                   MAV_COMP_ID_USER72,
+	"MAV_COMP_ID_USER73":                   MAV_COMP_ID_USER73,
+	"MAV_COMP_ID_USER74":                   MAV_COMP_ID_USER74,
+	"MAV_COMP_ID_USER75":                   MAV_COMP_ID_USER75,
+	"MAV_COMP_ID_CAMERA":                   MAV_COMP_ID_CAMERA,
+	"MAV_COMP_ID_CAMERA2":                  MAV_COMP_ID_CAMERA2,
+	"MAV_COMP_ID_CAMERA3":                  MAV_COMP_ID_CAMERA3,
+	"MAV_COMP_ID_CAMERA4":                  MAV_COMP_ID_CAMERA4,
+	"MAV_COMP_ID_CAMERA5":                  MAV_COMP_ID_CAMERA5,
+	"MAV_COMP_ID_CAMERA6":                  MAV_COMP_ID_CAMERA6,
+	"MAV_COMP_ID_SERVO1":                   MAV_COMP_ID_SERVO1,
+	"MAV_COMP_ID_SERVO2":                   MAV_COMP_ID_SERVO2,
+	"MAV_COMP_ID_SERVO3":                   MAV_COMP_ID_SERVO3,
+	"MAV_COMP_ID_SERVO4":                   MAV_COMP_ID_SERVO4,
+	"MAV_COMP_ID_SERVO5":                   MAV_COMP_ID_SERVO5,
+	"MAV_COMP_ID_SERVO6":                   MAV_COMP_ID_SERVO6,
+	"MAV_COMP_ID_SERVO7":                   MAV_COMP_ID_SERVO7,
+	"MAV_COMP_ID_SERVO8":                   MAV_COMP_ID_SERVO8,
+	"MAV_COMP_ID_SERVO9":                   MAV_COMP_ID_SERVO9,
+	"MAV_COMP_ID_SERVO10":                  MAV_COMP_ID_SERVO10,
+	"MAV_COMP_ID_SERVO11":                  MAV_COMP_ID_SERVO11,
+	"MAV_COMP_ID_SERVO12":                  MAV_COMP_ID_SERVO12,
+	"MAV_COMP_ID_SERVO13":                  MAV_COMP_ID_SERVO13,
+	"MAV_COMP_ID_SERVO14":                  MAV_COMP_ID_SERVO14,
+	"MAV_COMP_ID_GIMBAL":                   MAV_COMP_ID_GIMBAL,
+	"MAV_COMP_ID_LOG":                      MAV_COMP_ID_LOG,
+	"MAV_COMP_ID_ADSB":                     MAV_COMP_ID_ADSB,
+	"MAV_COMP_ID_OSD":                      MAV_COMP_ID_OSD,
+	"MAV_COMP_ID_PERIPHERAL":               MAV_COMP_ID_PERIPHERAL,
+	"MAV_COMP_ID_QX1_GIMBAL":               MAV_COMP_ID_QX1_GIMBAL,
+	"MAV_COMP_ID_FLARM":                    MAV_COMP_ID_FLARM,
+	"MAV_COMP_ID_PARACHUTE":                MAV_COMP_ID_PARACHUTE,
+	"MAV_COMP_ID_GIMBAL2":                  MAV_COMP_ID_GIMBAL2,
+	"MAV_COMP_ID_GIMBAL3":                  MAV_COMP_ID_GIMBAL3,
+	"MAV_COMP_ID_GIMBAL4":                  MAV_COMP_ID_GIMBAL4,
+	"MAV_COMP_ID_GIMBAL5":                  MAV_COMP_ID_GIMBAL5,
+	"MAV_COMP_ID_GIMBAL6":                  MAV_COMP_ID_GIMBAL6,
+	"MAV_COMP_ID_BATTERY":                  MAV_COMP_ID_BATTERY,
+	"MAV_COMP_ID_BATTERY2":                 MAV_COMP_ID_BATTERY2,
+	"MAV_COMP_ID_MISSIONPLANNER":           MAV_COMP_ID_MISSIONPLANNER,
+	"MAV_COMP_ID_ONBOARD_COMPUTER":         MAV_COMP_ID_ONBOARD_COMPUTER,
+	"MAV_COMP_ID_ONBOARD_COMPUTER2":        MAV_COMP_ID_ONBOARD_COMPUTER2,
+	"MAV_COMP_ID_ONBOARD_COMPUTER3":        MAV_COMP_ID_ONBOARD_COMPUTER3,
+	"MAV_COMP_ID_ONBOARD_COMPUTER4":        MAV_COMP_ID_ONBOARD_COMPUTER4,
+	"MAV_COMP_ID_PATHPLANNER":              MAV_COMP_ID_PATHPLANNER,
+	"MAV_COMP_ID_OBSTACLE_AVOIDANCE":       MAV_COMP_ID_OBSTACLE_AVOIDANCE,
+	"MAV_COMP_ID_VISUAL_INERTIAL_ODOMETRY": MAV_COMP_ID_VISUAL_INERTIAL_ODOMETRY,
+	"MAV_COMP_ID_PAIRING_MANAGER":          MAV_COMP_ID_PAIRING_MANAGER,
+	"MAV_COMP_ID_IMU":                      MAV_COMP_ID_IMU,
+	"MAV_COMP_ID_IMU_2":                    MAV_COMP_ID_IMU_2,
+	"MAV_COMP_ID_IMU_3":                    MAV_COMP_ID_IMU_3,
+	"MAV_COMP_ID_GPS":                      MAV_COMP_ID_GPS,
+	"MAV_COMP_ID_GPS2":                     MAV_COMP_ID_GPS2,
+	"MAV_COMP_ID_ODID_TXRX_1":              MAV_COMP_ID_ODID_TXRX_1,
+	"MAV_COMP_ID_ODID_TXRX_2":              MAV_COMP_ID_ODID_TXRX_2,
+	"MAV_COMP_ID_ODID_TXRX_3":              MAV_COMP_ID_ODID_TXRX_3,
+	"MAV_COMP_ID_UDP_BRIDGE":               MAV_COMP_ID_UDP_BRIDGE,
+	"MAV_COMP_ID_UART_BRIDGE":              MAV_COMP_ID_UART_BRIDGE,
+	"MAV_COMP_ID_TUNNEL_NODE":              MAV_COMP_ID_TUNNEL_NODE,
+	"MAV_COMP_ID_SYSTEM_CONTROL":           MAV_COMP_ID_SYSTEM_CONTROL,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_COMP_ID_ALL":
-		*e = MAV_COMP_ID_ALL
-		return nil
-	case "MAV_COMP_ID_AUTOPILOT1":
-		*e = MAV_COMP_ID_AUTOPILOT1
-		return nil
-	case "MAV_COMP_ID_USER1":
-		*e = MAV_COMP_ID_USER1
-		return nil
-	case "MAV_COMP_ID_USER2":
-		*e = MAV_COMP_ID_USER2
-		return nil
-	case "MAV_COMP_ID_USER3":
-		*e = MAV_COMP_ID_USER3
-		return nil
-	case "MAV_COMP_ID_USER4":
-		*e = MAV_COMP_ID_USER4
-		return nil
-	case "MAV_COMP_ID_USER5":
-		*e = MAV_COMP_ID_USER5
-		return nil
-	case "MAV_COMP_ID_USER6":
-		*e = MAV_COMP_ID_USER6
-		return nil
-	case "MAV_COMP_ID_USER7":
-		*e = MAV_COMP_ID_USER7
-		return nil
-	case "MAV_COMP_ID_USER8":
-		*e = MAV_COMP_ID_USER8
-		return nil
-	case "MAV_COMP_ID_USER9":
-		*e = MAV_COMP_ID_USER9
-		return nil
-	case "MAV_COMP_ID_USER10":
-		*e = MAV_COMP_ID_USER10
-		return nil
-	case "MAV_COMP_ID_USER11":
-		*e = MAV_COMP_ID_USER11
-		return nil
-	case "MAV_COMP_ID_USER12":
-		*e = MAV_COMP_ID_USER12
-		return nil
-	case "MAV_COMP_ID_USER13":
-		*e = MAV_COMP_ID_USER13
-		return nil
-	case "MAV_COMP_ID_USER14":
-		*e = MAV_COMP_ID_USER14
-		return nil
-	case "MAV_COMP_ID_USER15":
-		*e = MAV_COMP_ID_USER15
-		return nil
-	case "MAV_COMP_ID_USER16":
-		*e = MAV_COMP_ID_USER16
-		return nil
-	case "MAV_COMP_ID_USER17":
-		*e = MAV_COMP_ID_USER17
-		return nil
-	case "MAV_COMP_ID_USER18":
-		*e = MAV_COMP_ID_USER18
-		return nil
-	case "MAV_COMP_ID_USER19":
-		*e = MAV_COMP_ID_USER19
-		return nil
-	case "MAV_COMP_ID_USER20":
-		*e = MAV_COMP_ID_USER20
-		return nil
-	case "MAV_COMP_ID_USER21":
-		*e = MAV_COMP_ID_USER21
-		return nil
-	case "MAV_COMP_ID_USER22":
-		*e = MAV_COMP_ID_USER22
-		return nil
-	case "MAV_COMP_ID_USER23":
-		*e = MAV_COMP_ID_USER23
-		return nil
-	case "MAV_COMP_ID_USER24":
-		*e = MAV_COMP_ID_USER24
-		return nil
-	case "MAV_COMP_ID_USER25":
-		*e = MAV_COMP_ID_USER25
-		return nil
-	case "MAV_COMP_ID_USER26":
-		*e = MAV_COMP_ID_USER26
-		return nil
-	case "MAV_COMP_ID_USER27":
-		*e = MAV_COMP_ID_USER27
-		return nil
-	case "MAV_COMP_ID_USER28":
-		*e = MAV_COMP_ID_USER28
-		return nil
-	case "MAV_COMP_ID_USER29":
-		*e = MAV_COMP_ID_USER29
-		return nil
-	case "MAV_COMP_ID_USER30":
-		*e = MAV_COMP_ID_USER30
-		return nil
-	case "MAV_COMP_ID_USER31":
-		*e = MAV_COMP_ID_USER31
-		return nil
-	case "MAV_COMP_ID_USER32":
-		*e = MAV_COMP_ID_USER32
-		return nil
-	case "MAV_COMP_ID_USER33":
-		*e = MAV_COMP_ID_USER33
-		return nil
-	case "MAV_COMP_ID_USER34":
-		*e = MAV_COMP_ID_USER34
-		return nil
-	case "MAV_COMP_ID_USER35":
-		*e = MAV_COMP_ID_USER35
-		return nil
-	case "MAV_COMP_ID_USER36":
-		*e = MAV_COMP_ID_USER36
-		return nil
-	case "MAV_COMP_ID_USER37":
-		*e = MAV_COMP_ID_USER37
-		return nil
-	case "MAV_COMP_ID_USER38":
-		*e = MAV_COMP_ID_USER38
-		return nil
-	case "MAV_COMP_ID_USER39":
-		*e = MAV_COMP_ID_USER39
-		return nil
-	case "MAV_COMP_ID_USER40":
-		*e = MAV_COMP_ID_USER40
-		return nil
-	case "MAV_COMP_ID_USER41":
-		*e = MAV_COMP_ID_USER41
-		return nil
-	case "MAV_COMP_ID_USER42":
-		*e = MAV_COMP_ID_USER42
-		return nil
-	case "MAV_COMP_ID_USER43":
-		*e = MAV_COMP_ID_USER43
-		return nil
-	case "MAV_COMP_ID_TELEMETRY_RADIO":
-		*e = MAV_COMP_ID_TELEMETRY_RADIO
-		return nil
-	case "MAV_COMP_ID_USER45":
-		*e = MAV_COMP_ID_USER45
-		return nil
-	case "MAV_COMP_ID_USER46":
-		*e = MAV_COMP_ID_USER46
-		return nil
-	case "MAV_COMP_ID_USER47":
-		*e = MAV_COMP_ID_USER47
-		return nil
-	case "MAV_COMP_ID_USER48":
-		*e = MAV_COMP_ID_USER48
-		return nil
-	case "MAV_COMP_ID_USER49":
-		*e = MAV_COMP_ID_USER49
-		return nil
-	case "MAV_COMP_ID_USER50":
-		*e = MAV_COMP_ID_USER50
-		return nil
-	case "MAV_COMP_ID_USER51":
-		*e = MAV_COMP_ID_USER51
-		return nil
-	case "MAV_COMP_ID_USER52":
-		*e = MAV_COMP_ID_USER52
-		return nil
-	case "MAV_COMP_ID_USER53":
-		*e = MAV_COMP_ID_USER53
-		return nil
-	case "MAV_COMP_ID_USER54":
-		*e = MAV_COMP_ID_USER54
-		return nil
-	case "MAV_COMP_ID_USER55":
-		*e = MAV_COMP_ID_USER55
-		return nil
-	case "MAV_COMP_ID_USER56":
-		*e = MAV_COMP_ID_USER56
-		return nil
-	case "MAV_COMP_ID_USER57":
-		*e = MAV_COMP_ID_USER57
-		return nil
-	case "MAV_COMP_ID_USER58":
-		*e = MAV_COMP_ID_USER58
-		return nil
-	case "MAV_COMP_ID_USER59":
-		*e = MAV_COMP_ID_USER59
-		return nil
-	case "MAV_COMP_ID_USER60":
-		*e = MAV_COMP_ID_USER60
-		return nil
-	case "MAV_COMP_ID_USER61":
-		*e = MAV_COMP_ID_USER61
-		return nil
-	case "MAV_COMP_ID_USER62":
-		*e = MAV_COMP_ID_USER62
-		return nil
-	case "MAV_COMP_ID_USER63":
-		*e = MAV_COMP_ID_USER63
-		return nil
-	case "MAV_COMP_ID_USER64":
-		*e = MAV_COMP_ID_USER64
-		return nil
-	case "MAV_COMP_ID_USER65":
-		*e = MAV_COMP_ID_USER65
-		return nil
-	case "MAV_COMP_ID_USER66":
-		*e = MAV_COMP_ID_USER66
-		return nil
-	case "MAV_COMP_ID_USER67":
-		*e = MAV_COMP_ID_USER67
-		return nil
-	case "MAV_COMP_ID_USER68":
-		*e = MAV_COMP_ID_USER68
-		return nil
-	case "MAV_COMP_ID_USER69":
-		*e = MAV_COMP_ID_USER69
-		return nil
-	case "MAV_COMP_ID_USER70":
-		*e = MAV_COMP_ID_USER70
-		return nil
-	case "MAV_COMP_ID_USER71":
-		*e = MAV_COMP_ID_USER71
-		return nil
-	case "MAV_COMP_ID_USER72":
-		*e = MAV_COMP_ID_USER72
-		return nil
-	case "MAV_COMP_ID_USER73":
-		*e = MAV_COMP_ID_USER73
-		return nil
-	case "MAV_COMP_ID_USER74":
-		*e = MAV_COMP_ID_USER74
-		return nil
-	case "MAV_COMP_ID_USER75":
-		*e = MAV_COMP_ID_USER75
-		return nil
-	case "MAV_COMP_ID_CAMERA":
-		*e = MAV_COMP_ID_CAMERA
-		return nil
-	case "MAV_COMP_ID_CAMERA2":
-		*e = MAV_COMP_ID_CAMERA2
-		return nil
-	case "MAV_COMP_ID_CAMERA3":
-		*e = MAV_COMP_ID_CAMERA3
-		return nil
-	case "MAV_COMP_ID_CAMERA4":
-		*e = MAV_COMP_ID_CAMERA4
-		return nil
-	case "MAV_COMP_ID_CAMERA5":
-		*e = MAV_COMP_ID_CAMERA5
-		return nil
-	case "MAV_COMP_ID_CAMERA6":
-		*e = MAV_COMP_ID_CAMERA6
-		return nil
-	case "MAV_COMP_ID_SERVO1":
-		*e = MAV_COMP_ID_SERVO1
-		return nil
-	case "MAV_COMP_ID_SERVO2":
-		*e = MAV_COMP_ID_SERVO2
-		return nil
-	case "MAV_COMP_ID_SERVO3":
-		*e = MAV_COMP_ID_SERVO3
-		return nil
-	case "MAV_COMP_ID_SERVO4":
-		*e = MAV_COMP_ID_SERVO4
-		return nil
-	case "MAV_COMP_ID_SERVO5":
-		*e = MAV_COMP_ID_SERVO5
-		return nil
-	case "MAV_COMP_ID_SERVO6":
-		*e = MAV_COMP_ID_SERVO6
-		return nil
-	case "MAV_COMP_ID_SERVO7":
-		*e = MAV_COMP_ID_SERVO7
-		return nil
-	case "MAV_COMP_ID_SERVO8":
-		*e = MAV_COMP_ID_SERVO8
-		return nil
-	case "MAV_COMP_ID_SERVO9":
-		*e = MAV_COMP_ID_SERVO9
-		return nil
-	case "MAV_COMP_ID_SERVO10":
-		*e = MAV_COMP_ID_SERVO10
-		return nil
-	case "MAV_COMP_ID_SERVO11":
-		*e = MAV_COMP_ID_SERVO11
-		return nil
-	case "MAV_COMP_ID_SERVO12":
-		*e = MAV_COMP_ID_SERVO12
-		return nil
-	case "MAV_COMP_ID_SERVO13":
-		*e = MAV_COMP_ID_SERVO13
-		return nil
-	case "MAV_COMP_ID_SERVO14":
-		*e = MAV_COMP_ID_SERVO14
-		return nil
-	case "MAV_COMP_ID_GIMBAL":
-		*e = MAV_COMP_ID_GIMBAL
-		return nil
-	case "MAV_COMP_ID_LOG":
-		*e = MAV_COMP_ID_LOG
-		return nil
-	case "MAV_COMP_ID_ADSB":
-		*e = MAV_COMP_ID_ADSB
-		return nil
-	case "MAV_COMP_ID_OSD":
-		*e = MAV_COMP_ID_OSD
-		return nil
-	case "MAV_COMP_ID_PERIPHERAL":
-		*e = MAV_COMP_ID_PERIPHERAL
-		return nil
-	case "MAV_COMP_ID_QX1_GIMBAL":
-		*e = MAV_COMP_ID_QX1_GIMBAL
-		return nil
-	case "MAV_COMP_ID_FLARM":
-		*e = MAV_COMP_ID_FLARM
-		return nil
-	case "MAV_COMP_ID_PARACHUTE":
-		*e = MAV_COMP_ID_PARACHUTE
-		return nil
-	case "MAV_COMP_ID_GIMBAL2":
-		*e = MAV_COMP_ID_GIMBAL2
-		return nil
-	case "MAV_COMP_ID_GIMBAL3":
-		*e = MAV_COMP_ID_GIMBAL3
-		return nil
-	case "MAV_COMP_ID_GIMBAL4":
-		*e = MAV_COMP_ID_GIMBAL4
-		return nil
-	case "MAV_COMP_ID_GIMBAL5":
-		*e = MAV_COMP_ID_GIMBAL5
-		return nil
-	case "MAV_COMP_ID_GIMBAL6":
-		*e = MAV_COMP_ID_GIMBAL6
-		return nil
-	case "MAV_COMP_ID_BATTERY":
-		*e = MAV_COMP_ID_BATTERY
-		return nil
-	case "MAV_COMP_ID_BATTERY2":
-		*e = MAV_COMP_ID_BATTERY2
-		return nil
-	case "MAV_COMP_ID_MISSIONPLANNER":
-		*e = MAV_COMP_ID_MISSIONPLANNER
-		return nil
-	case "MAV_COMP_ID_ONBOARD_COMPUTER":
-		*e = MAV_COMP_ID_ONBOARD_COMPUTER
-		return nil
-	case "MAV_COMP_ID_ONBOARD_COMPUTER2":
-		*e = MAV_COMP_ID_ONBOARD_COMPUTER2
-		return nil
-	case "MAV_COMP_ID_ONBOARD_COMPUTER3":
-		*e = MAV_COMP_ID_ONBOARD_COMPUTER3
-		return nil
-	case "MAV_COMP_ID_ONBOARD_COMPUTER4":
-		*e = MAV_COMP_ID_ONBOARD_COMPUTER4
-		return nil
-	case "MAV_COMP_ID_PATHPLANNER":
-		*e = MAV_COMP_ID_PATHPLANNER
-		return nil
-	case "MAV_COMP_ID_OBSTACLE_AVOIDANCE":
-		*e = MAV_COMP_ID_OBSTACLE_AVOIDANCE
-		return nil
-	case "MAV_COMP_ID_VISUAL_INERTIAL_ODOMETRY":
-		*e = MAV_COMP_ID_VISUAL_INERTIAL_ODOMETRY
-		return nil
-	case "MAV_COMP_ID_PAIRING_MANAGER":
-		*e = MAV_COMP_ID_PAIRING_MANAGER
-		return nil
-	case "MAV_COMP_ID_IMU":
-		*e = MAV_COMP_ID_IMU
-		return nil
-	case "MAV_COMP_ID_IMU_2":
-		*e = MAV_COMP_ID_IMU_2
-		return nil
-	case "MAV_COMP_ID_IMU_3":
-		*e = MAV_COMP_ID_IMU_3
-		return nil
-	case "MAV_COMP_ID_GPS":
-		*e = MAV_COMP_ID_GPS
-		return nil
-	case "MAV_COMP_ID_GPS2":
-		*e = MAV_COMP_ID_GPS2
-		return nil
-	case "MAV_COMP_ID_ODID_TXRX_1":
-		*e = MAV_COMP_ID_ODID_TXRX_1
-		return nil
-	case "MAV_COMP_ID_ODID_TXRX_2":
-		*e = MAV_COMP_ID_ODID_TXRX_2
-		return nil
-	case "MAV_COMP_ID_ODID_TXRX_3":
-		*e = MAV_COMP_ID_ODID_TXRX_3
-		return nil
-	case "MAV_COMP_ID_UDP_BRIDGE":
-		*e = MAV_COMP_ID_UDP_BRIDGE
-		return nil
-	case "MAV_COMP_ID_UART_BRIDGE":
-		*e = MAV_COMP_ID_UART_BRIDGE
-		return nil
-	case "MAV_COMP_ID_TUNNEL_NODE":
-		*e = MAV_COMP_ID_TUNNEL_NODE
-		return nil
-	case "MAV_COMP_ID_SYSTEM_CONTROL":
-		*e = MAV_COMP_ID_SYSTEM_CONTROL
+	if rl, ok := reverseLabels_MAV_COMPONENT[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -1150,11 +704,10 @@ func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_COMPONENT) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_COMPONENT[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // These flags encode the MAV mode.
@@ -1179,55 +732,40 @@ const (
 	MAV_MODE_FLAG_CUSTOM_MODE_ENABLED MAV_MODE_FLAG = 1
 )
 
+var labels_MAV_MODE_FLAG = map[MAV_MODE_FLAG]string{
+	MAV_MODE_FLAG_SAFETY_ARMED:         "MAV_MODE_FLAG_SAFETY_ARMED",
+	MAV_MODE_FLAG_MANUAL_INPUT_ENABLED: "MAV_MODE_FLAG_MANUAL_INPUT_ENABLED",
+	MAV_MODE_FLAG_HIL_ENABLED:          "MAV_MODE_FLAG_HIL_ENABLED",
+	MAV_MODE_FLAG_STABILIZE_ENABLED:    "MAV_MODE_FLAG_STABILIZE_ENABLED",
+	MAV_MODE_FLAG_GUIDED_ENABLED:       "MAV_MODE_FLAG_GUIDED_ENABLED",
+	MAV_MODE_FLAG_AUTO_ENABLED:         "MAV_MODE_FLAG_AUTO_ENABLED",
+	MAV_MODE_FLAG_TEST_ENABLED:         "MAV_MODE_FLAG_TEST_ENABLED",
+	MAV_MODE_FLAG_CUSTOM_MODE_ENABLED:  "MAV_MODE_FLAG_CUSTOM_MODE_ENABLED",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MODE_FLAG) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_MODE_FLAG_SAFETY_ARMED:
-		return []byte("MAV_MODE_FLAG_SAFETY_ARMED"), nil
-	case MAV_MODE_FLAG_MANUAL_INPUT_ENABLED:
-		return []byte("MAV_MODE_FLAG_MANUAL_INPUT_ENABLED"), nil
-	case MAV_MODE_FLAG_HIL_ENABLED:
-		return []byte("MAV_MODE_FLAG_HIL_ENABLED"), nil
-	case MAV_MODE_FLAG_STABILIZE_ENABLED:
-		return []byte("MAV_MODE_FLAG_STABILIZE_ENABLED"), nil
-	case MAV_MODE_FLAG_GUIDED_ENABLED:
-		return []byte("MAV_MODE_FLAG_GUIDED_ENABLED"), nil
-	case MAV_MODE_FLAG_AUTO_ENABLED:
-		return []byte("MAV_MODE_FLAG_AUTO_ENABLED"), nil
-	case MAV_MODE_FLAG_TEST_ENABLED:
-		return []byte("MAV_MODE_FLAG_TEST_ENABLED"), nil
-	case MAV_MODE_FLAG_CUSTOM_MODE_ENABLED:
-		return []byte("MAV_MODE_FLAG_CUSTOM_MODE_ENABLED"), nil
+	if l, ok := labels_MAV_MODE_FLAG[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_MODE_FLAG = map[string]MAV_MODE_FLAG{
+	"MAV_MODE_FLAG_SAFETY_ARMED":         MAV_MODE_FLAG_SAFETY_ARMED,
+	"MAV_MODE_FLAG_MANUAL_INPUT_ENABLED": MAV_MODE_FLAG_MANUAL_INPUT_ENABLED,
+	"MAV_MODE_FLAG_HIL_ENABLED":          MAV_MODE_FLAG_HIL_ENABLED,
+	"MAV_MODE_FLAG_STABILIZE_ENABLED":    MAV_MODE_FLAG_STABILIZE_ENABLED,
+	"MAV_MODE_FLAG_GUIDED_ENABLED":       MAV_MODE_FLAG_GUIDED_ENABLED,
+	"MAV_MODE_FLAG_AUTO_ENABLED":         MAV_MODE_FLAG_AUTO_ENABLED,
+	"MAV_MODE_FLAG_TEST_ENABLED":         MAV_MODE_FLAG_TEST_ENABLED,
+	"MAV_MODE_FLAG_CUSTOM_MODE_ENABLED":  MAV_MODE_FLAG_CUSTOM_MODE_ENABLED,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_MODE_FLAG) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_MODE_FLAG_SAFETY_ARMED":
-		*e = MAV_MODE_FLAG_SAFETY_ARMED
-		return nil
-	case "MAV_MODE_FLAG_MANUAL_INPUT_ENABLED":
-		*e = MAV_MODE_FLAG_MANUAL_INPUT_ENABLED
-		return nil
-	case "MAV_MODE_FLAG_HIL_ENABLED":
-		*e = MAV_MODE_FLAG_HIL_ENABLED
-		return nil
-	case "MAV_MODE_FLAG_STABILIZE_ENABLED":
-		*e = MAV_MODE_FLAG_STABILIZE_ENABLED
-		return nil
-	case "MAV_MODE_FLAG_GUIDED_ENABLED":
-		*e = MAV_MODE_FLAG_GUIDED_ENABLED
-		return nil
-	case "MAV_MODE_FLAG_AUTO_ENABLED":
-		*e = MAV_MODE_FLAG_AUTO_ENABLED
-		return nil
-	case "MAV_MODE_FLAG_TEST_ENABLED":
-		*e = MAV_MODE_FLAG_TEST_ENABLED
-		return nil
-	case "MAV_MODE_FLAG_CUSTOM_MODE_ENABLED":
-		*e = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED
+	if rl, ok := reverseLabels_MAV_MODE_FLAG[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -1235,11 +773,10 @@ func (e *MAV_MODE_FLAG) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_MODE_FLAG) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_MODE_FLAG[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // These values encode the bit positions of the decode position. These values can be used to read the value of a flag bit by combining the base_mode variable with AND with the flag position value. The result will be either 0 or 1, depending on if the flag is set or not.
@@ -1264,55 +801,40 @@ const (
 	MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE MAV_MODE_FLAG_DECODE_POSITION = 1
 )
 
+var labels_MAV_MODE_FLAG_DECODE_POSITION = map[MAV_MODE_FLAG_DECODE_POSITION]string{
+	MAV_MODE_FLAG_DECODE_POSITION_SAFETY:      "MAV_MODE_FLAG_DECODE_POSITION_SAFETY",
+	MAV_MODE_FLAG_DECODE_POSITION_MANUAL:      "MAV_MODE_FLAG_DECODE_POSITION_MANUAL",
+	MAV_MODE_FLAG_DECODE_POSITION_HIL:         "MAV_MODE_FLAG_DECODE_POSITION_HIL",
+	MAV_MODE_FLAG_DECODE_POSITION_STABILIZE:   "MAV_MODE_FLAG_DECODE_POSITION_STABILIZE",
+	MAV_MODE_FLAG_DECODE_POSITION_GUIDED:      "MAV_MODE_FLAG_DECODE_POSITION_GUIDED",
+	MAV_MODE_FLAG_DECODE_POSITION_AUTO:        "MAV_MODE_FLAG_DECODE_POSITION_AUTO",
+	MAV_MODE_FLAG_DECODE_POSITION_TEST:        "MAV_MODE_FLAG_DECODE_POSITION_TEST",
+	MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE: "MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MODE_FLAG_DECODE_POSITION) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_MODE_FLAG_DECODE_POSITION_SAFETY:
-		return []byte("MAV_MODE_FLAG_DECODE_POSITION_SAFETY"), nil
-	case MAV_MODE_FLAG_DECODE_POSITION_MANUAL:
-		return []byte("MAV_MODE_FLAG_DECODE_POSITION_MANUAL"), nil
-	case MAV_MODE_FLAG_DECODE_POSITION_HIL:
-		return []byte("MAV_MODE_FLAG_DECODE_POSITION_HIL"), nil
-	case MAV_MODE_FLAG_DECODE_POSITION_STABILIZE:
-		return []byte("MAV_MODE_FLAG_DECODE_POSITION_STABILIZE"), nil
-	case MAV_MODE_FLAG_DECODE_POSITION_GUIDED:
-		return []byte("MAV_MODE_FLAG_DECODE_POSITION_GUIDED"), nil
-	case MAV_MODE_FLAG_DECODE_POSITION_AUTO:
-		return []byte("MAV_MODE_FLAG_DECODE_POSITION_AUTO"), nil
-	case MAV_MODE_FLAG_DECODE_POSITION_TEST:
-		return []byte("MAV_MODE_FLAG_DECODE_POSITION_TEST"), nil
-	case MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE:
-		return []byte("MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE"), nil
+	if l, ok := labels_MAV_MODE_FLAG_DECODE_POSITION[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_MODE_FLAG_DECODE_POSITION = map[string]MAV_MODE_FLAG_DECODE_POSITION{
+	"MAV_MODE_FLAG_DECODE_POSITION_SAFETY":      MAV_MODE_FLAG_DECODE_POSITION_SAFETY,
+	"MAV_MODE_FLAG_DECODE_POSITION_MANUAL":      MAV_MODE_FLAG_DECODE_POSITION_MANUAL,
+	"MAV_MODE_FLAG_DECODE_POSITION_HIL":         MAV_MODE_FLAG_DECODE_POSITION_HIL,
+	"MAV_MODE_FLAG_DECODE_POSITION_STABILIZE":   MAV_MODE_FLAG_DECODE_POSITION_STABILIZE,
+	"MAV_MODE_FLAG_DECODE_POSITION_GUIDED":      MAV_MODE_FLAG_DECODE_POSITION_GUIDED,
+	"MAV_MODE_FLAG_DECODE_POSITION_AUTO":        MAV_MODE_FLAG_DECODE_POSITION_AUTO,
+	"MAV_MODE_FLAG_DECODE_POSITION_TEST":        MAV_MODE_FLAG_DECODE_POSITION_TEST,
+	"MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE": MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_MODE_FLAG_DECODE_POSITION) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_MODE_FLAG_DECODE_POSITION_SAFETY":
-		*e = MAV_MODE_FLAG_DECODE_POSITION_SAFETY
-		return nil
-	case "MAV_MODE_FLAG_DECODE_POSITION_MANUAL":
-		*e = MAV_MODE_FLAG_DECODE_POSITION_MANUAL
-		return nil
-	case "MAV_MODE_FLAG_DECODE_POSITION_HIL":
-		*e = MAV_MODE_FLAG_DECODE_POSITION_HIL
-		return nil
-	case "MAV_MODE_FLAG_DECODE_POSITION_STABILIZE":
-		*e = MAV_MODE_FLAG_DECODE_POSITION_STABILIZE
-		return nil
-	case "MAV_MODE_FLAG_DECODE_POSITION_GUIDED":
-		*e = MAV_MODE_FLAG_DECODE_POSITION_GUIDED
-		return nil
-	case "MAV_MODE_FLAG_DECODE_POSITION_AUTO":
-		*e = MAV_MODE_FLAG_DECODE_POSITION_AUTO
-		return nil
-	case "MAV_MODE_FLAG_DECODE_POSITION_TEST":
-		*e = MAV_MODE_FLAG_DECODE_POSITION_TEST
-		return nil
-	case "MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE":
-		*e = MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE
+	if rl, ok := reverseLabels_MAV_MODE_FLAG_DECODE_POSITION[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -1320,11 +842,10 @@ func (e *MAV_MODE_FLAG_DECODE_POSITION) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_MODE_FLAG_DECODE_POSITION) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_MODE_FLAG_DECODE_POSITION[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -1351,60 +872,42 @@ const (
 	MAV_STATE_FLIGHT_TERMINATION MAV_STATE = 8
 )
 
+var labels_MAV_STATE = map[MAV_STATE]string{
+	MAV_STATE_UNINIT:             "MAV_STATE_UNINIT",
+	MAV_STATE_BOOT:               "MAV_STATE_BOOT",
+	MAV_STATE_CALIBRATING:        "MAV_STATE_CALIBRATING",
+	MAV_STATE_STANDBY:            "MAV_STATE_STANDBY",
+	MAV_STATE_ACTIVE:             "MAV_STATE_ACTIVE",
+	MAV_STATE_CRITICAL:           "MAV_STATE_CRITICAL",
+	MAV_STATE_EMERGENCY:          "MAV_STATE_EMERGENCY",
+	MAV_STATE_POWEROFF:           "MAV_STATE_POWEROFF",
+	MAV_STATE_FLIGHT_TERMINATION: "MAV_STATE_FLIGHT_TERMINATION",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_STATE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_STATE_UNINIT:
-		return []byte("MAV_STATE_UNINIT"), nil
-	case MAV_STATE_BOOT:
-		return []byte("MAV_STATE_BOOT"), nil
-	case MAV_STATE_CALIBRATING:
-		return []byte("MAV_STATE_CALIBRATING"), nil
-	case MAV_STATE_STANDBY:
-		return []byte("MAV_STATE_STANDBY"), nil
-	case MAV_STATE_ACTIVE:
-		return []byte("MAV_STATE_ACTIVE"), nil
-	case MAV_STATE_CRITICAL:
-		return []byte("MAV_STATE_CRITICAL"), nil
-	case MAV_STATE_EMERGENCY:
-		return []byte("MAV_STATE_EMERGENCY"), nil
-	case MAV_STATE_POWEROFF:
-		return []byte("MAV_STATE_POWEROFF"), nil
-	case MAV_STATE_FLIGHT_TERMINATION:
-		return []byte("MAV_STATE_FLIGHT_TERMINATION"), nil
+	if l, ok := labels_MAV_STATE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_STATE = map[string]MAV_STATE{
+	"MAV_STATE_UNINIT":             MAV_STATE_UNINIT,
+	"MAV_STATE_BOOT":               MAV_STATE_BOOT,
+	"MAV_STATE_CALIBRATING":        MAV_STATE_CALIBRATING,
+	"MAV_STATE_STANDBY":            MAV_STATE_STANDBY,
+	"MAV_STATE_ACTIVE":             MAV_STATE_ACTIVE,
+	"MAV_STATE_CRITICAL":           MAV_STATE_CRITICAL,
+	"MAV_STATE_EMERGENCY":          MAV_STATE_EMERGENCY,
+	"MAV_STATE_POWEROFF":           MAV_STATE_POWEROFF,
+	"MAV_STATE_FLIGHT_TERMINATION": MAV_STATE_FLIGHT_TERMINATION,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_STATE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_STATE_UNINIT":
-		*e = MAV_STATE_UNINIT
-		return nil
-	case "MAV_STATE_BOOT":
-		*e = MAV_STATE_BOOT
-		return nil
-	case "MAV_STATE_CALIBRATING":
-		*e = MAV_STATE_CALIBRATING
-		return nil
-	case "MAV_STATE_STANDBY":
-		*e = MAV_STATE_STANDBY
-		return nil
-	case "MAV_STATE_ACTIVE":
-		*e = MAV_STATE_ACTIVE
-		return nil
-	case "MAV_STATE_CRITICAL":
-		*e = MAV_STATE_CRITICAL
-		return nil
-	case "MAV_STATE_EMERGENCY":
-		*e = MAV_STATE_EMERGENCY
-		return nil
-	case "MAV_STATE_POWEROFF":
-		*e = MAV_STATE_POWEROFF
-		return nil
-	case "MAV_STATE_FLIGHT_TERMINATION":
-		*e = MAV_STATE_FLIGHT_TERMINATION
+	if rl, ok := reverseLabels_MAV_STATE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -1412,11 +915,10 @@ func (e *MAV_STATE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_STATE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_STATE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // MAVLINK component type reported in HEARTBEAT message. Flight controllers must report the type of the vehicle on which they are mounted (e.g. MAV_TYPE_OCTOROTOR). All other components must report a value appropriate for their type (e.g. a camera must use MAV_TYPE_CAMERA).
@@ -1501,205 +1003,100 @@ const (
 	MAV_TYPE_PARACHUTE MAV_TYPE = 37
 )
 
+var labels_MAV_TYPE = map[MAV_TYPE]string{
+	MAV_TYPE_GENERIC:            "MAV_TYPE_GENERIC",
+	MAV_TYPE_FIXED_WING:         "MAV_TYPE_FIXED_WING",
+	MAV_TYPE_QUADROTOR:          "MAV_TYPE_QUADROTOR",
+	MAV_TYPE_COAXIAL:            "MAV_TYPE_COAXIAL",
+	MAV_TYPE_HELICOPTER:         "MAV_TYPE_HELICOPTER",
+	MAV_TYPE_ANTENNA_TRACKER:    "MAV_TYPE_ANTENNA_TRACKER",
+	MAV_TYPE_GCS:                "MAV_TYPE_GCS",
+	MAV_TYPE_AIRSHIP:            "MAV_TYPE_AIRSHIP",
+	MAV_TYPE_FREE_BALLOON:       "MAV_TYPE_FREE_BALLOON",
+	MAV_TYPE_ROCKET:             "MAV_TYPE_ROCKET",
+	MAV_TYPE_GROUND_ROVER:       "MAV_TYPE_GROUND_ROVER",
+	MAV_TYPE_SURFACE_BOAT:       "MAV_TYPE_SURFACE_BOAT",
+	MAV_TYPE_SUBMARINE:          "MAV_TYPE_SUBMARINE",
+	MAV_TYPE_HEXAROTOR:          "MAV_TYPE_HEXAROTOR",
+	MAV_TYPE_OCTOROTOR:          "MAV_TYPE_OCTOROTOR",
+	MAV_TYPE_TRICOPTER:          "MAV_TYPE_TRICOPTER",
+	MAV_TYPE_FLAPPING_WING:      "MAV_TYPE_FLAPPING_WING",
+	MAV_TYPE_KITE:               "MAV_TYPE_KITE",
+	MAV_TYPE_ONBOARD_CONTROLLER: "MAV_TYPE_ONBOARD_CONTROLLER",
+	MAV_TYPE_VTOL_DUOROTOR:      "MAV_TYPE_VTOL_DUOROTOR",
+	MAV_TYPE_VTOL_QUADROTOR:     "MAV_TYPE_VTOL_QUADROTOR",
+	MAV_TYPE_VTOL_TILTROTOR:     "MAV_TYPE_VTOL_TILTROTOR",
+	MAV_TYPE_VTOL_RESERVED2:     "MAV_TYPE_VTOL_RESERVED2",
+	MAV_TYPE_VTOL_RESERVED3:     "MAV_TYPE_VTOL_RESERVED3",
+	MAV_TYPE_VTOL_RESERVED4:     "MAV_TYPE_VTOL_RESERVED4",
+	MAV_TYPE_VTOL_RESERVED5:     "MAV_TYPE_VTOL_RESERVED5",
+	MAV_TYPE_GIMBAL:             "MAV_TYPE_GIMBAL",
+	MAV_TYPE_ADSB:               "MAV_TYPE_ADSB",
+	MAV_TYPE_PARAFOIL:           "MAV_TYPE_PARAFOIL",
+	MAV_TYPE_DODECAROTOR:        "MAV_TYPE_DODECAROTOR",
+	MAV_TYPE_CAMERA:             "MAV_TYPE_CAMERA",
+	MAV_TYPE_CHARGING_STATION:   "MAV_TYPE_CHARGING_STATION",
+	MAV_TYPE_FLARM:              "MAV_TYPE_FLARM",
+	MAV_TYPE_SERVO:              "MAV_TYPE_SERVO",
+	MAV_TYPE_ODID:               "MAV_TYPE_ODID",
+	MAV_TYPE_DECAROTOR:          "MAV_TYPE_DECAROTOR",
+	MAV_TYPE_BATTERY:            "MAV_TYPE_BATTERY",
+	MAV_TYPE_PARACHUTE:          "MAV_TYPE_PARACHUTE",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_TYPE_GENERIC:
-		return []byte("MAV_TYPE_GENERIC"), nil
-	case MAV_TYPE_FIXED_WING:
-		return []byte("MAV_TYPE_FIXED_WING"), nil
-	case MAV_TYPE_QUADROTOR:
-		return []byte("MAV_TYPE_QUADROTOR"), nil
-	case MAV_TYPE_COAXIAL:
-		return []byte("MAV_TYPE_COAXIAL"), nil
-	case MAV_TYPE_HELICOPTER:
-		return []byte("MAV_TYPE_HELICOPTER"), nil
-	case MAV_TYPE_ANTENNA_TRACKER:
-		return []byte("MAV_TYPE_ANTENNA_TRACKER"), nil
-	case MAV_TYPE_GCS:
-		return []byte("MAV_TYPE_GCS"), nil
-	case MAV_TYPE_AIRSHIP:
-		return []byte("MAV_TYPE_AIRSHIP"), nil
-	case MAV_TYPE_FREE_BALLOON:
-		return []byte("MAV_TYPE_FREE_BALLOON"), nil
-	case MAV_TYPE_ROCKET:
-		return []byte("MAV_TYPE_ROCKET"), nil
-	case MAV_TYPE_GROUND_ROVER:
-		return []byte("MAV_TYPE_GROUND_ROVER"), nil
-	case MAV_TYPE_SURFACE_BOAT:
-		return []byte("MAV_TYPE_SURFACE_BOAT"), nil
-	case MAV_TYPE_SUBMARINE:
-		return []byte("MAV_TYPE_SUBMARINE"), nil
-	case MAV_TYPE_HEXAROTOR:
-		return []byte("MAV_TYPE_HEXAROTOR"), nil
-	case MAV_TYPE_OCTOROTOR:
-		return []byte("MAV_TYPE_OCTOROTOR"), nil
-	case MAV_TYPE_TRICOPTER:
-		return []byte("MAV_TYPE_TRICOPTER"), nil
-	case MAV_TYPE_FLAPPING_WING:
-		return []byte("MAV_TYPE_FLAPPING_WING"), nil
-	case MAV_TYPE_KITE:
-		return []byte("MAV_TYPE_KITE"), nil
-	case MAV_TYPE_ONBOARD_CONTROLLER:
-		return []byte("MAV_TYPE_ONBOARD_CONTROLLER"), nil
-	case MAV_TYPE_VTOL_DUOROTOR:
-		return []byte("MAV_TYPE_VTOL_DUOROTOR"), nil
-	case MAV_TYPE_VTOL_QUADROTOR:
-		return []byte("MAV_TYPE_VTOL_QUADROTOR"), nil
-	case MAV_TYPE_VTOL_TILTROTOR:
-		return []byte("MAV_TYPE_VTOL_TILTROTOR"), nil
-	case MAV_TYPE_VTOL_RESERVED2:
-		return []byte("MAV_TYPE_VTOL_RESERVED2"), nil
-	case MAV_TYPE_VTOL_RESERVED3:
-		return []byte("MAV_TYPE_VTOL_RESERVED3"), nil
-	case MAV_TYPE_VTOL_RESERVED4:
-		return []byte("MAV_TYPE_VTOL_RESERVED4"), nil
-	case MAV_TYPE_VTOL_RESERVED5:
-		return []byte("MAV_TYPE_VTOL_RESERVED5"), nil
-	case MAV_TYPE_GIMBAL:
-		return []byte("MAV_TYPE_GIMBAL"), nil
-	case MAV_TYPE_ADSB:
-		return []byte("MAV_TYPE_ADSB"), nil
-	case MAV_TYPE_PARAFOIL:
-		return []byte("MAV_TYPE_PARAFOIL"), nil
-	case MAV_TYPE_DODECAROTOR:
-		return []byte("MAV_TYPE_DODECAROTOR"), nil
-	case MAV_TYPE_CAMERA:
-		return []byte("MAV_TYPE_CAMERA"), nil
-	case MAV_TYPE_CHARGING_STATION:
-		return []byte("MAV_TYPE_CHARGING_STATION"), nil
-	case MAV_TYPE_FLARM:
-		return []byte("MAV_TYPE_FLARM"), nil
-	case MAV_TYPE_SERVO:
-		return []byte("MAV_TYPE_SERVO"), nil
-	case MAV_TYPE_ODID:
-		return []byte("MAV_TYPE_ODID"), nil
-	case MAV_TYPE_DECAROTOR:
-		return []byte("MAV_TYPE_DECAROTOR"), nil
-	case MAV_TYPE_BATTERY:
-		return []byte("MAV_TYPE_BATTERY"), nil
-	case MAV_TYPE_PARACHUTE:
-		return []byte("MAV_TYPE_PARACHUTE"), nil
+	if l, ok := labels_MAV_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_TYPE = map[string]MAV_TYPE{
+	"MAV_TYPE_GENERIC":            MAV_TYPE_GENERIC,
+	"MAV_TYPE_FIXED_WING":         MAV_TYPE_FIXED_WING,
+	"MAV_TYPE_QUADROTOR":          MAV_TYPE_QUADROTOR,
+	"MAV_TYPE_COAXIAL":            MAV_TYPE_COAXIAL,
+	"MAV_TYPE_HELICOPTER":         MAV_TYPE_HELICOPTER,
+	"MAV_TYPE_ANTENNA_TRACKER":    MAV_TYPE_ANTENNA_TRACKER,
+	"MAV_TYPE_GCS":                MAV_TYPE_GCS,
+	"MAV_TYPE_AIRSHIP":            MAV_TYPE_AIRSHIP,
+	"MAV_TYPE_FREE_BALLOON":       MAV_TYPE_FREE_BALLOON,
+	"MAV_TYPE_ROCKET":             MAV_TYPE_ROCKET,
+	"MAV_TYPE_GROUND_ROVER":       MAV_TYPE_GROUND_ROVER,
+	"MAV_TYPE_SURFACE_BOAT":       MAV_TYPE_SURFACE_BOAT,
+	"MAV_TYPE_SUBMARINE":          MAV_TYPE_SUBMARINE,
+	"MAV_TYPE_HEXAROTOR":          MAV_TYPE_HEXAROTOR,
+	"MAV_TYPE_OCTOROTOR":          MAV_TYPE_OCTOROTOR,
+	"MAV_TYPE_TRICOPTER":          MAV_TYPE_TRICOPTER,
+	"MAV_TYPE_FLAPPING_WING":      MAV_TYPE_FLAPPING_WING,
+	"MAV_TYPE_KITE":               MAV_TYPE_KITE,
+	"MAV_TYPE_ONBOARD_CONTROLLER": MAV_TYPE_ONBOARD_CONTROLLER,
+	"MAV_TYPE_VTOL_DUOROTOR":      MAV_TYPE_VTOL_DUOROTOR,
+	"MAV_TYPE_VTOL_QUADROTOR":     MAV_TYPE_VTOL_QUADROTOR,
+	"MAV_TYPE_VTOL_TILTROTOR":     MAV_TYPE_VTOL_TILTROTOR,
+	"MAV_TYPE_VTOL_RESERVED2":     MAV_TYPE_VTOL_RESERVED2,
+	"MAV_TYPE_VTOL_RESERVED3":     MAV_TYPE_VTOL_RESERVED3,
+	"MAV_TYPE_VTOL_RESERVED4":     MAV_TYPE_VTOL_RESERVED4,
+	"MAV_TYPE_VTOL_RESERVED5":     MAV_TYPE_VTOL_RESERVED5,
+	"MAV_TYPE_GIMBAL":             MAV_TYPE_GIMBAL,
+	"MAV_TYPE_ADSB":               MAV_TYPE_ADSB,
+	"MAV_TYPE_PARAFOIL":           MAV_TYPE_PARAFOIL,
+	"MAV_TYPE_DODECAROTOR":        MAV_TYPE_DODECAROTOR,
+	"MAV_TYPE_CAMERA":             MAV_TYPE_CAMERA,
+	"MAV_TYPE_CHARGING_STATION":   MAV_TYPE_CHARGING_STATION,
+	"MAV_TYPE_FLARM":              MAV_TYPE_FLARM,
+	"MAV_TYPE_SERVO":              MAV_TYPE_SERVO,
+	"MAV_TYPE_ODID":               MAV_TYPE_ODID,
+	"MAV_TYPE_DECAROTOR":          MAV_TYPE_DECAROTOR,
+	"MAV_TYPE_BATTERY":            MAV_TYPE_BATTERY,
+	"MAV_TYPE_PARACHUTE":          MAV_TYPE_PARACHUTE,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_TYPE_GENERIC":
-		*e = MAV_TYPE_GENERIC
-		return nil
-	case "MAV_TYPE_FIXED_WING":
-		*e = MAV_TYPE_FIXED_WING
-		return nil
-	case "MAV_TYPE_QUADROTOR":
-		*e = MAV_TYPE_QUADROTOR
-		return nil
-	case "MAV_TYPE_COAXIAL":
-		*e = MAV_TYPE_COAXIAL
-		return nil
-	case "MAV_TYPE_HELICOPTER":
-		*e = MAV_TYPE_HELICOPTER
-		return nil
-	case "MAV_TYPE_ANTENNA_TRACKER":
-		*e = MAV_TYPE_ANTENNA_TRACKER
-		return nil
-	case "MAV_TYPE_GCS":
-		*e = MAV_TYPE_GCS
-		return nil
-	case "MAV_TYPE_AIRSHIP":
-		*e = MAV_TYPE_AIRSHIP
-		return nil
-	case "MAV_TYPE_FREE_BALLOON":
-		*e = MAV_TYPE_FREE_BALLOON
-		return nil
-	case "MAV_TYPE_ROCKET":
-		*e = MAV_TYPE_ROCKET
-		return nil
-	case "MAV_TYPE_GROUND_ROVER":
-		*e = MAV_TYPE_GROUND_ROVER
-		return nil
-	case "MAV_TYPE_SURFACE_BOAT":
-		*e = MAV_TYPE_SURFACE_BOAT
-		return nil
-	case "MAV_TYPE_SUBMARINE":
-		*e = MAV_TYPE_SUBMARINE
-		return nil
-	case "MAV_TYPE_HEXAROTOR":
-		*e = MAV_TYPE_HEXAROTOR
-		return nil
-	case "MAV_TYPE_OCTOROTOR":
-		*e = MAV_TYPE_OCTOROTOR
-		return nil
-	case "MAV_TYPE_TRICOPTER":
-		*e = MAV_TYPE_TRICOPTER
-		return nil
-	case "MAV_TYPE_FLAPPING_WING":
-		*e = MAV_TYPE_FLAPPING_WING
-		return nil
-	case "MAV_TYPE_KITE":
-		*e = MAV_TYPE_KITE
-		return nil
-	case "MAV_TYPE_ONBOARD_CONTROLLER":
-		*e = MAV_TYPE_ONBOARD_CONTROLLER
-		return nil
-	case "MAV_TYPE_VTOL_DUOROTOR":
-		*e = MAV_TYPE_VTOL_DUOROTOR
-		return nil
-	case "MAV_TYPE_VTOL_QUADROTOR":
-		*e = MAV_TYPE_VTOL_QUADROTOR
-		return nil
-	case "MAV_TYPE_VTOL_TILTROTOR":
-		*e = MAV_TYPE_VTOL_TILTROTOR
-		return nil
-	case "MAV_TYPE_VTOL_RESERVED2":
-		*e = MAV_TYPE_VTOL_RESERVED2
-		return nil
-	case "MAV_TYPE_VTOL_RESERVED3":
-		*e = MAV_TYPE_VTOL_RESERVED3
-		return nil
-	case "MAV_TYPE_VTOL_RESERVED4":
-		*e = MAV_TYPE_VTOL_RESERVED4
-		return nil
-	case "MAV_TYPE_VTOL_RESERVED5":
-		*e = MAV_TYPE_VTOL_RESERVED5
-		return nil
-	case "MAV_TYPE_GIMBAL":
-		*e = MAV_TYPE_GIMBAL
-		return nil
-	case "MAV_TYPE_ADSB":
-		*e = MAV_TYPE_ADSB
-		return nil
-	case "MAV_TYPE_PARAFOIL":
-		*e = MAV_TYPE_PARAFOIL
-		return nil
-	case "MAV_TYPE_DODECAROTOR":
-		*e = MAV_TYPE_DODECAROTOR
-		return nil
-	case "MAV_TYPE_CAMERA":
-		*e = MAV_TYPE_CAMERA
-		return nil
-	case "MAV_TYPE_CHARGING_STATION":
-		*e = MAV_TYPE_CHARGING_STATION
-		return nil
-	case "MAV_TYPE_FLARM":
-		*e = MAV_TYPE_FLARM
-		return nil
-	case "MAV_TYPE_SERVO":
-		*e = MAV_TYPE_SERVO
-		return nil
-	case "MAV_TYPE_ODID":
-		*e = MAV_TYPE_ODID
-		return nil
-	case "MAV_TYPE_DECAROTOR":
-		*e = MAV_TYPE_DECAROTOR
-		return nil
-	case "MAV_TYPE_BATTERY":
-		*e = MAV_TYPE_BATTERY
-		return nil
-	case "MAV_TYPE_PARACHUTE":
-		*e = MAV_TYPE_PARACHUTE
+	if rl, ok := reverseLabels_MAV_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -1707,11 +1104,10 @@ func (e *MAV_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // minimal.xml

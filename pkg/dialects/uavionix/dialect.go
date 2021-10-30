@@ -5,7 +5,6 @@ package uavionix
 
 import (
 	"errors"
-	"strconv"
 
 	"github.com/aler9/gomavlib/pkg/dialect"
 	"github.com/aler9/gomavlib/pkg/msg"
@@ -249,25 +248,28 @@ const (
 	ADSB_ALTITUDE_TYPE_GEOMETRIC ADSB_ALTITUDE_TYPE = 1
 )
 
+var labels_ADSB_ALTITUDE_TYPE = map[ADSB_ALTITUDE_TYPE]string{
+	ADSB_ALTITUDE_TYPE_PRESSURE_QNH: "ADSB_ALTITUDE_TYPE_PRESSURE_QNH",
+	ADSB_ALTITUDE_TYPE_GEOMETRIC:    "ADSB_ALTITUDE_TYPE_GEOMETRIC",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ADSB_ALTITUDE_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case ADSB_ALTITUDE_TYPE_PRESSURE_QNH:
-		return []byte("ADSB_ALTITUDE_TYPE_PRESSURE_QNH"), nil
-	case ADSB_ALTITUDE_TYPE_GEOMETRIC:
-		return []byte("ADSB_ALTITUDE_TYPE_GEOMETRIC"), nil
+	if l, ok := labels_ADSB_ALTITUDE_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_ADSB_ALTITUDE_TYPE = map[string]ADSB_ALTITUDE_TYPE{
+	"ADSB_ALTITUDE_TYPE_PRESSURE_QNH": ADSB_ALTITUDE_TYPE_PRESSURE_QNH,
+	"ADSB_ALTITUDE_TYPE_GEOMETRIC":    ADSB_ALTITUDE_TYPE_GEOMETRIC,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ADSB_ALTITUDE_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "ADSB_ALTITUDE_TYPE_PRESSURE_QNH":
-		*e = ADSB_ALTITUDE_TYPE_PRESSURE_QNH
-		return nil
-	case "ADSB_ALTITUDE_TYPE_GEOMETRIC":
-		*e = ADSB_ALTITUDE_TYPE_GEOMETRIC
+	if rl, ok := reverseLabels_ADSB_ALTITUDE_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -275,11 +277,10 @@ func (e *ADSB_ALTITUDE_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e ADSB_ALTITUDE_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_ADSB_ALTITUDE_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // ADSB classification for the type of vehicle emitting the transponder signal
@@ -328,115 +329,64 @@ const (
 	ADSB_EMITTER_TYPE_POINT_OBSTACLE ADSB_EMITTER_TYPE = 19
 )
 
+var labels_ADSB_EMITTER_TYPE = map[ADSB_EMITTER_TYPE]string{
+	ADSB_EMITTER_TYPE_NO_INFO:           "ADSB_EMITTER_TYPE_NO_INFO",
+	ADSB_EMITTER_TYPE_LIGHT:             "ADSB_EMITTER_TYPE_LIGHT",
+	ADSB_EMITTER_TYPE_SMALL:             "ADSB_EMITTER_TYPE_SMALL",
+	ADSB_EMITTER_TYPE_LARGE:             "ADSB_EMITTER_TYPE_LARGE",
+	ADSB_EMITTER_TYPE_HIGH_VORTEX_LARGE: "ADSB_EMITTER_TYPE_HIGH_VORTEX_LARGE",
+	ADSB_EMITTER_TYPE_HEAVY:             "ADSB_EMITTER_TYPE_HEAVY",
+	ADSB_EMITTER_TYPE_HIGHLY_MANUV:      "ADSB_EMITTER_TYPE_HIGHLY_MANUV",
+	ADSB_EMITTER_TYPE_ROTOCRAFT:         "ADSB_EMITTER_TYPE_ROTOCRAFT",
+	ADSB_EMITTER_TYPE_UNASSIGNED:        "ADSB_EMITTER_TYPE_UNASSIGNED",
+	ADSB_EMITTER_TYPE_GLIDER:            "ADSB_EMITTER_TYPE_GLIDER",
+	ADSB_EMITTER_TYPE_LIGHTER_AIR:       "ADSB_EMITTER_TYPE_LIGHTER_AIR",
+	ADSB_EMITTER_TYPE_PARACHUTE:         "ADSB_EMITTER_TYPE_PARACHUTE",
+	ADSB_EMITTER_TYPE_ULTRA_LIGHT:       "ADSB_EMITTER_TYPE_ULTRA_LIGHT",
+	ADSB_EMITTER_TYPE_UNASSIGNED2:       "ADSB_EMITTER_TYPE_UNASSIGNED2",
+	ADSB_EMITTER_TYPE_UAV:               "ADSB_EMITTER_TYPE_UAV",
+	ADSB_EMITTER_TYPE_SPACE:             "ADSB_EMITTER_TYPE_SPACE",
+	ADSB_EMITTER_TYPE_UNASSGINED3:       "ADSB_EMITTER_TYPE_UNASSGINED3",
+	ADSB_EMITTER_TYPE_EMERGENCY_SURFACE: "ADSB_EMITTER_TYPE_EMERGENCY_SURFACE",
+	ADSB_EMITTER_TYPE_SERVICE_SURFACE:   "ADSB_EMITTER_TYPE_SERVICE_SURFACE",
+	ADSB_EMITTER_TYPE_POINT_OBSTACLE:    "ADSB_EMITTER_TYPE_POINT_OBSTACLE",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ADSB_EMITTER_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case ADSB_EMITTER_TYPE_NO_INFO:
-		return []byte("ADSB_EMITTER_TYPE_NO_INFO"), nil
-	case ADSB_EMITTER_TYPE_LIGHT:
-		return []byte("ADSB_EMITTER_TYPE_LIGHT"), nil
-	case ADSB_EMITTER_TYPE_SMALL:
-		return []byte("ADSB_EMITTER_TYPE_SMALL"), nil
-	case ADSB_EMITTER_TYPE_LARGE:
-		return []byte("ADSB_EMITTER_TYPE_LARGE"), nil
-	case ADSB_EMITTER_TYPE_HIGH_VORTEX_LARGE:
-		return []byte("ADSB_EMITTER_TYPE_HIGH_VORTEX_LARGE"), nil
-	case ADSB_EMITTER_TYPE_HEAVY:
-		return []byte("ADSB_EMITTER_TYPE_HEAVY"), nil
-	case ADSB_EMITTER_TYPE_HIGHLY_MANUV:
-		return []byte("ADSB_EMITTER_TYPE_HIGHLY_MANUV"), nil
-	case ADSB_EMITTER_TYPE_ROTOCRAFT:
-		return []byte("ADSB_EMITTER_TYPE_ROTOCRAFT"), nil
-	case ADSB_EMITTER_TYPE_UNASSIGNED:
-		return []byte("ADSB_EMITTER_TYPE_UNASSIGNED"), nil
-	case ADSB_EMITTER_TYPE_GLIDER:
-		return []byte("ADSB_EMITTER_TYPE_GLIDER"), nil
-	case ADSB_EMITTER_TYPE_LIGHTER_AIR:
-		return []byte("ADSB_EMITTER_TYPE_LIGHTER_AIR"), nil
-	case ADSB_EMITTER_TYPE_PARACHUTE:
-		return []byte("ADSB_EMITTER_TYPE_PARACHUTE"), nil
-	case ADSB_EMITTER_TYPE_ULTRA_LIGHT:
-		return []byte("ADSB_EMITTER_TYPE_ULTRA_LIGHT"), nil
-	case ADSB_EMITTER_TYPE_UNASSIGNED2:
-		return []byte("ADSB_EMITTER_TYPE_UNASSIGNED2"), nil
-	case ADSB_EMITTER_TYPE_UAV:
-		return []byte("ADSB_EMITTER_TYPE_UAV"), nil
-	case ADSB_EMITTER_TYPE_SPACE:
-		return []byte("ADSB_EMITTER_TYPE_SPACE"), nil
-	case ADSB_EMITTER_TYPE_UNASSGINED3:
-		return []byte("ADSB_EMITTER_TYPE_UNASSGINED3"), nil
-	case ADSB_EMITTER_TYPE_EMERGENCY_SURFACE:
-		return []byte("ADSB_EMITTER_TYPE_EMERGENCY_SURFACE"), nil
-	case ADSB_EMITTER_TYPE_SERVICE_SURFACE:
-		return []byte("ADSB_EMITTER_TYPE_SERVICE_SURFACE"), nil
-	case ADSB_EMITTER_TYPE_POINT_OBSTACLE:
-		return []byte("ADSB_EMITTER_TYPE_POINT_OBSTACLE"), nil
+	if l, ok := labels_ADSB_EMITTER_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_ADSB_EMITTER_TYPE = map[string]ADSB_EMITTER_TYPE{
+	"ADSB_EMITTER_TYPE_NO_INFO":           ADSB_EMITTER_TYPE_NO_INFO,
+	"ADSB_EMITTER_TYPE_LIGHT":             ADSB_EMITTER_TYPE_LIGHT,
+	"ADSB_EMITTER_TYPE_SMALL":             ADSB_EMITTER_TYPE_SMALL,
+	"ADSB_EMITTER_TYPE_LARGE":             ADSB_EMITTER_TYPE_LARGE,
+	"ADSB_EMITTER_TYPE_HIGH_VORTEX_LARGE": ADSB_EMITTER_TYPE_HIGH_VORTEX_LARGE,
+	"ADSB_EMITTER_TYPE_HEAVY":             ADSB_EMITTER_TYPE_HEAVY,
+	"ADSB_EMITTER_TYPE_HIGHLY_MANUV":      ADSB_EMITTER_TYPE_HIGHLY_MANUV,
+	"ADSB_EMITTER_TYPE_ROTOCRAFT":         ADSB_EMITTER_TYPE_ROTOCRAFT,
+	"ADSB_EMITTER_TYPE_UNASSIGNED":        ADSB_EMITTER_TYPE_UNASSIGNED,
+	"ADSB_EMITTER_TYPE_GLIDER":            ADSB_EMITTER_TYPE_GLIDER,
+	"ADSB_EMITTER_TYPE_LIGHTER_AIR":       ADSB_EMITTER_TYPE_LIGHTER_AIR,
+	"ADSB_EMITTER_TYPE_PARACHUTE":         ADSB_EMITTER_TYPE_PARACHUTE,
+	"ADSB_EMITTER_TYPE_ULTRA_LIGHT":       ADSB_EMITTER_TYPE_ULTRA_LIGHT,
+	"ADSB_EMITTER_TYPE_UNASSIGNED2":       ADSB_EMITTER_TYPE_UNASSIGNED2,
+	"ADSB_EMITTER_TYPE_UAV":               ADSB_EMITTER_TYPE_UAV,
+	"ADSB_EMITTER_TYPE_SPACE":             ADSB_EMITTER_TYPE_SPACE,
+	"ADSB_EMITTER_TYPE_UNASSGINED3":       ADSB_EMITTER_TYPE_UNASSGINED3,
+	"ADSB_EMITTER_TYPE_EMERGENCY_SURFACE": ADSB_EMITTER_TYPE_EMERGENCY_SURFACE,
+	"ADSB_EMITTER_TYPE_SERVICE_SURFACE":   ADSB_EMITTER_TYPE_SERVICE_SURFACE,
+	"ADSB_EMITTER_TYPE_POINT_OBSTACLE":    ADSB_EMITTER_TYPE_POINT_OBSTACLE,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ADSB_EMITTER_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "ADSB_EMITTER_TYPE_NO_INFO":
-		*e = ADSB_EMITTER_TYPE_NO_INFO
-		return nil
-	case "ADSB_EMITTER_TYPE_LIGHT":
-		*e = ADSB_EMITTER_TYPE_LIGHT
-		return nil
-	case "ADSB_EMITTER_TYPE_SMALL":
-		*e = ADSB_EMITTER_TYPE_SMALL
-		return nil
-	case "ADSB_EMITTER_TYPE_LARGE":
-		*e = ADSB_EMITTER_TYPE_LARGE
-		return nil
-	case "ADSB_EMITTER_TYPE_HIGH_VORTEX_LARGE":
-		*e = ADSB_EMITTER_TYPE_HIGH_VORTEX_LARGE
-		return nil
-	case "ADSB_EMITTER_TYPE_HEAVY":
-		*e = ADSB_EMITTER_TYPE_HEAVY
-		return nil
-	case "ADSB_EMITTER_TYPE_HIGHLY_MANUV":
-		*e = ADSB_EMITTER_TYPE_HIGHLY_MANUV
-		return nil
-	case "ADSB_EMITTER_TYPE_ROTOCRAFT":
-		*e = ADSB_EMITTER_TYPE_ROTOCRAFT
-		return nil
-	case "ADSB_EMITTER_TYPE_UNASSIGNED":
-		*e = ADSB_EMITTER_TYPE_UNASSIGNED
-		return nil
-	case "ADSB_EMITTER_TYPE_GLIDER":
-		*e = ADSB_EMITTER_TYPE_GLIDER
-		return nil
-	case "ADSB_EMITTER_TYPE_LIGHTER_AIR":
-		*e = ADSB_EMITTER_TYPE_LIGHTER_AIR
-		return nil
-	case "ADSB_EMITTER_TYPE_PARACHUTE":
-		*e = ADSB_EMITTER_TYPE_PARACHUTE
-		return nil
-	case "ADSB_EMITTER_TYPE_ULTRA_LIGHT":
-		*e = ADSB_EMITTER_TYPE_ULTRA_LIGHT
-		return nil
-	case "ADSB_EMITTER_TYPE_UNASSIGNED2":
-		*e = ADSB_EMITTER_TYPE_UNASSIGNED2
-		return nil
-	case "ADSB_EMITTER_TYPE_UAV":
-		*e = ADSB_EMITTER_TYPE_UAV
-		return nil
-	case "ADSB_EMITTER_TYPE_SPACE":
-		*e = ADSB_EMITTER_TYPE_SPACE
-		return nil
-	case "ADSB_EMITTER_TYPE_UNASSGINED3":
-		*e = ADSB_EMITTER_TYPE_UNASSGINED3
-		return nil
-	case "ADSB_EMITTER_TYPE_EMERGENCY_SURFACE":
-		*e = ADSB_EMITTER_TYPE_EMERGENCY_SURFACE
-		return nil
-	case "ADSB_EMITTER_TYPE_SERVICE_SURFACE":
-		*e = ADSB_EMITTER_TYPE_SERVICE_SURFACE
-		return nil
-	case "ADSB_EMITTER_TYPE_POINT_OBSTACLE":
-		*e = ADSB_EMITTER_TYPE_POINT_OBSTACLE
+	if rl, ok := reverseLabels_ADSB_EMITTER_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -444,11 +394,10 @@ func (e *ADSB_EMITTER_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e ADSB_EMITTER_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_ADSB_EMITTER_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // These flags indicate status such as data validity of each data source. Set = data valid
@@ -477,65 +426,44 @@ const (
 	ADSB_FLAGS_SOURCE_UAT ADSB_FLAGS = 32768
 )
 
+var labels_ADSB_FLAGS = map[ADSB_FLAGS]string{
+	ADSB_FLAGS_VALID_COORDS:            "ADSB_FLAGS_VALID_COORDS",
+	ADSB_FLAGS_VALID_ALTITUDE:          "ADSB_FLAGS_VALID_ALTITUDE",
+	ADSB_FLAGS_VALID_HEADING:           "ADSB_FLAGS_VALID_HEADING",
+	ADSB_FLAGS_VALID_VELOCITY:          "ADSB_FLAGS_VALID_VELOCITY",
+	ADSB_FLAGS_VALID_CALLSIGN:          "ADSB_FLAGS_VALID_CALLSIGN",
+	ADSB_FLAGS_VALID_SQUAWK:            "ADSB_FLAGS_VALID_SQUAWK",
+	ADSB_FLAGS_SIMULATED:               "ADSB_FLAGS_SIMULATED",
+	ADSB_FLAGS_VERTICAL_VELOCITY_VALID: "ADSB_FLAGS_VERTICAL_VELOCITY_VALID",
+	ADSB_FLAGS_BARO_VALID:              "ADSB_FLAGS_BARO_VALID",
+	ADSB_FLAGS_SOURCE_UAT:              "ADSB_FLAGS_SOURCE_UAT",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ADSB_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case ADSB_FLAGS_VALID_COORDS:
-		return []byte("ADSB_FLAGS_VALID_COORDS"), nil
-	case ADSB_FLAGS_VALID_ALTITUDE:
-		return []byte("ADSB_FLAGS_VALID_ALTITUDE"), nil
-	case ADSB_FLAGS_VALID_HEADING:
-		return []byte("ADSB_FLAGS_VALID_HEADING"), nil
-	case ADSB_FLAGS_VALID_VELOCITY:
-		return []byte("ADSB_FLAGS_VALID_VELOCITY"), nil
-	case ADSB_FLAGS_VALID_CALLSIGN:
-		return []byte("ADSB_FLAGS_VALID_CALLSIGN"), nil
-	case ADSB_FLAGS_VALID_SQUAWK:
-		return []byte("ADSB_FLAGS_VALID_SQUAWK"), nil
-	case ADSB_FLAGS_SIMULATED:
-		return []byte("ADSB_FLAGS_SIMULATED"), nil
-	case ADSB_FLAGS_VERTICAL_VELOCITY_VALID:
-		return []byte("ADSB_FLAGS_VERTICAL_VELOCITY_VALID"), nil
-	case ADSB_FLAGS_BARO_VALID:
-		return []byte("ADSB_FLAGS_BARO_VALID"), nil
-	case ADSB_FLAGS_SOURCE_UAT:
-		return []byte("ADSB_FLAGS_SOURCE_UAT"), nil
+	if l, ok := labels_ADSB_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_ADSB_FLAGS = map[string]ADSB_FLAGS{
+	"ADSB_FLAGS_VALID_COORDS":            ADSB_FLAGS_VALID_COORDS,
+	"ADSB_FLAGS_VALID_ALTITUDE":          ADSB_FLAGS_VALID_ALTITUDE,
+	"ADSB_FLAGS_VALID_HEADING":           ADSB_FLAGS_VALID_HEADING,
+	"ADSB_FLAGS_VALID_VELOCITY":          ADSB_FLAGS_VALID_VELOCITY,
+	"ADSB_FLAGS_VALID_CALLSIGN":          ADSB_FLAGS_VALID_CALLSIGN,
+	"ADSB_FLAGS_VALID_SQUAWK":            ADSB_FLAGS_VALID_SQUAWK,
+	"ADSB_FLAGS_SIMULATED":               ADSB_FLAGS_SIMULATED,
+	"ADSB_FLAGS_VERTICAL_VELOCITY_VALID": ADSB_FLAGS_VERTICAL_VELOCITY_VALID,
+	"ADSB_FLAGS_BARO_VALID":              ADSB_FLAGS_BARO_VALID,
+	"ADSB_FLAGS_SOURCE_UAT":              ADSB_FLAGS_SOURCE_UAT,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ADSB_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "ADSB_FLAGS_VALID_COORDS":
-		*e = ADSB_FLAGS_VALID_COORDS
-		return nil
-	case "ADSB_FLAGS_VALID_ALTITUDE":
-		*e = ADSB_FLAGS_VALID_ALTITUDE
-		return nil
-	case "ADSB_FLAGS_VALID_HEADING":
-		*e = ADSB_FLAGS_VALID_HEADING
-		return nil
-	case "ADSB_FLAGS_VALID_VELOCITY":
-		*e = ADSB_FLAGS_VALID_VELOCITY
-		return nil
-	case "ADSB_FLAGS_VALID_CALLSIGN":
-		*e = ADSB_FLAGS_VALID_CALLSIGN
-		return nil
-	case "ADSB_FLAGS_VALID_SQUAWK":
-		*e = ADSB_FLAGS_VALID_SQUAWK
-		return nil
-	case "ADSB_FLAGS_SIMULATED":
-		*e = ADSB_FLAGS_SIMULATED
-		return nil
-	case "ADSB_FLAGS_VERTICAL_VELOCITY_VALID":
-		*e = ADSB_FLAGS_VERTICAL_VELOCITY_VALID
-		return nil
-	case "ADSB_FLAGS_BARO_VALID":
-		*e = ADSB_FLAGS_BARO_VALID
-		return nil
-	case "ADSB_FLAGS_SOURCE_UAT":
-		*e = ADSB_FLAGS_SOURCE_UAT
+	if rl, ok := reverseLabels_ADSB_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -543,11 +471,10 @@ func (e *ADSB_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e ADSB_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_ADSB_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // These flags are used in the AIS_VESSEL.fields bitmask to indicate validity of data in the other message fields. When set, the data is valid.
@@ -582,80 +509,50 @@ const (
 	AIS_FLAGS_VALID_NAME AIS_FLAGS = 4096
 )
 
+var labels_AIS_FLAGS = map[AIS_FLAGS]string{
+	AIS_FLAGS_POSITION_ACCURACY:         "AIS_FLAGS_POSITION_ACCURACY",
+	AIS_FLAGS_VALID_COG:                 "AIS_FLAGS_VALID_COG",
+	AIS_FLAGS_VALID_VELOCITY:            "AIS_FLAGS_VALID_VELOCITY",
+	AIS_FLAGS_HIGH_VELOCITY:             "AIS_FLAGS_HIGH_VELOCITY",
+	AIS_FLAGS_VALID_TURN_RATE:           "AIS_FLAGS_VALID_TURN_RATE",
+	AIS_FLAGS_TURN_RATE_SIGN_ONLY:       "AIS_FLAGS_TURN_RATE_SIGN_ONLY",
+	AIS_FLAGS_VALID_DIMENSIONS:          "AIS_FLAGS_VALID_DIMENSIONS",
+	AIS_FLAGS_LARGE_BOW_DIMENSION:       "AIS_FLAGS_LARGE_BOW_DIMENSION",
+	AIS_FLAGS_LARGE_STERN_DIMENSION:     "AIS_FLAGS_LARGE_STERN_DIMENSION",
+	AIS_FLAGS_LARGE_PORT_DIMENSION:      "AIS_FLAGS_LARGE_PORT_DIMENSION",
+	AIS_FLAGS_LARGE_STARBOARD_DIMENSION: "AIS_FLAGS_LARGE_STARBOARD_DIMENSION",
+	AIS_FLAGS_VALID_CALLSIGN:            "AIS_FLAGS_VALID_CALLSIGN",
+	AIS_FLAGS_VALID_NAME:                "AIS_FLAGS_VALID_NAME",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e AIS_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case AIS_FLAGS_POSITION_ACCURACY:
-		return []byte("AIS_FLAGS_POSITION_ACCURACY"), nil
-	case AIS_FLAGS_VALID_COG:
-		return []byte("AIS_FLAGS_VALID_COG"), nil
-	case AIS_FLAGS_VALID_VELOCITY:
-		return []byte("AIS_FLAGS_VALID_VELOCITY"), nil
-	case AIS_FLAGS_HIGH_VELOCITY:
-		return []byte("AIS_FLAGS_HIGH_VELOCITY"), nil
-	case AIS_FLAGS_VALID_TURN_RATE:
-		return []byte("AIS_FLAGS_VALID_TURN_RATE"), nil
-	case AIS_FLAGS_TURN_RATE_SIGN_ONLY:
-		return []byte("AIS_FLAGS_TURN_RATE_SIGN_ONLY"), nil
-	case AIS_FLAGS_VALID_DIMENSIONS:
-		return []byte("AIS_FLAGS_VALID_DIMENSIONS"), nil
-	case AIS_FLAGS_LARGE_BOW_DIMENSION:
-		return []byte("AIS_FLAGS_LARGE_BOW_DIMENSION"), nil
-	case AIS_FLAGS_LARGE_STERN_DIMENSION:
-		return []byte("AIS_FLAGS_LARGE_STERN_DIMENSION"), nil
-	case AIS_FLAGS_LARGE_PORT_DIMENSION:
-		return []byte("AIS_FLAGS_LARGE_PORT_DIMENSION"), nil
-	case AIS_FLAGS_LARGE_STARBOARD_DIMENSION:
-		return []byte("AIS_FLAGS_LARGE_STARBOARD_DIMENSION"), nil
-	case AIS_FLAGS_VALID_CALLSIGN:
-		return []byte("AIS_FLAGS_VALID_CALLSIGN"), nil
-	case AIS_FLAGS_VALID_NAME:
-		return []byte("AIS_FLAGS_VALID_NAME"), nil
+	if l, ok := labels_AIS_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_AIS_FLAGS = map[string]AIS_FLAGS{
+	"AIS_FLAGS_POSITION_ACCURACY":         AIS_FLAGS_POSITION_ACCURACY,
+	"AIS_FLAGS_VALID_COG":                 AIS_FLAGS_VALID_COG,
+	"AIS_FLAGS_VALID_VELOCITY":            AIS_FLAGS_VALID_VELOCITY,
+	"AIS_FLAGS_HIGH_VELOCITY":             AIS_FLAGS_HIGH_VELOCITY,
+	"AIS_FLAGS_VALID_TURN_RATE":           AIS_FLAGS_VALID_TURN_RATE,
+	"AIS_FLAGS_TURN_RATE_SIGN_ONLY":       AIS_FLAGS_TURN_RATE_SIGN_ONLY,
+	"AIS_FLAGS_VALID_DIMENSIONS":          AIS_FLAGS_VALID_DIMENSIONS,
+	"AIS_FLAGS_LARGE_BOW_DIMENSION":       AIS_FLAGS_LARGE_BOW_DIMENSION,
+	"AIS_FLAGS_LARGE_STERN_DIMENSION":     AIS_FLAGS_LARGE_STERN_DIMENSION,
+	"AIS_FLAGS_LARGE_PORT_DIMENSION":      AIS_FLAGS_LARGE_PORT_DIMENSION,
+	"AIS_FLAGS_LARGE_STARBOARD_DIMENSION": AIS_FLAGS_LARGE_STARBOARD_DIMENSION,
+	"AIS_FLAGS_VALID_CALLSIGN":            AIS_FLAGS_VALID_CALLSIGN,
+	"AIS_FLAGS_VALID_NAME":                AIS_FLAGS_VALID_NAME,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *AIS_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "AIS_FLAGS_POSITION_ACCURACY":
-		*e = AIS_FLAGS_POSITION_ACCURACY
-		return nil
-	case "AIS_FLAGS_VALID_COG":
-		*e = AIS_FLAGS_VALID_COG
-		return nil
-	case "AIS_FLAGS_VALID_VELOCITY":
-		*e = AIS_FLAGS_VALID_VELOCITY
-		return nil
-	case "AIS_FLAGS_HIGH_VELOCITY":
-		*e = AIS_FLAGS_HIGH_VELOCITY
-		return nil
-	case "AIS_FLAGS_VALID_TURN_RATE":
-		*e = AIS_FLAGS_VALID_TURN_RATE
-		return nil
-	case "AIS_FLAGS_TURN_RATE_SIGN_ONLY":
-		*e = AIS_FLAGS_TURN_RATE_SIGN_ONLY
-		return nil
-	case "AIS_FLAGS_VALID_DIMENSIONS":
-		*e = AIS_FLAGS_VALID_DIMENSIONS
-		return nil
-	case "AIS_FLAGS_LARGE_BOW_DIMENSION":
-		*e = AIS_FLAGS_LARGE_BOW_DIMENSION
-		return nil
-	case "AIS_FLAGS_LARGE_STERN_DIMENSION":
-		*e = AIS_FLAGS_LARGE_STERN_DIMENSION
-		return nil
-	case "AIS_FLAGS_LARGE_PORT_DIMENSION":
-		*e = AIS_FLAGS_LARGE_PORT_DIMENSION
-		return nil
-	case "AIS_FLAGS_LARGE_STARBOARD_DIMENSION":
-		*e = AIS_FLAGS_LARGE_STARBOARD_DIMENSION
-		return nil
-	case "AIS_FLAGS_VALID_CALLSIGN":
-		*e = AIS_FLAGS_VALID_CALLSIGN
-		return nil
-	case "AIS_FLAGS_VALID_NAME":
-		*e = AIS_FLAGS_VALID_NAME
+	if rl, ok := reverseLabels_AIS_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -663,11 +560,10 @@ func (e *AIS_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e AIS_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_AIS_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Navigational status of AIS vessel, enum duplicated from AIS standard, https://gpsd.gitlab.io/gpsd/AIVDM.html
@@ -708,95 +604,56 @@ const (
 	AIS_NAV_UNKNOWN AIS_NAV_STATUS = 15
 )
 
+var labels_AIS_NAV_STATUS = map[AIS_NAV_STATUS]string{
+	UNDER_WAY:                           "UNDER_WAY",
+	AIS_NAV_ANCHORED:                    "AIS_NAV_ANCHORED",
+	AIS_NAV_UN_COMMANDED:                "AIS_NAV_UN_COMMANDED",
+	AIS_NAV_RESTRICTED_MANOEUVERABILITY: "AIS_NAV_RESTRICTED_MANOEUVERABILITY",
+	AIS_NAV_DRAUGHT_CONSTRAINED:         "AIS_NAV_DRAUGHT_CONSTRAINED",
+	AIS_NAV_MOORED:                      "AIS_NAV_MOORED",
+	AIS_NAV_AGROUND:                     "AIS_NAV_AGROUND",
+	AIS_NAV_FISHING:                     "AIS_NAV_FISHING",
+	AIS_NAV_SAILING:                     "AIS_NAV_SAILING",
+	AIS_NAV_RESERVED_HSC:                "AIS_NAV_RESERVED_HSC",
+	AIS_NAV_RESERVED_WIG:                "AIS_NAV_RESERVED_WIG",
+	AIS_NAV_RESERVED_1:                  "AIS_NAV_RESERVED_1",
+	AIS_NAV_RESERVED_2:                  "AIS_NAV_RESERVED_2",
+	AIS_NAV_RESERVED_3:                  "AIS_NAV_RESERVED_3",
+	AIS_NAV_AIS_SART:                    "AIS_NAV_AIS_SART",
+	AIS_NAV_UNKNOWN:                     "AIS_NAV_UNKNOWN",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e AIS_NAV_STATUS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case UNDER_WAY:
-		return []byte("UNDER_WAY"), nil
-	case AIS_NAV_ANCHORED:
-		return []byte("AIS_NAV_ANCHORED"), nil
-	case AIS_NAV_UN_COMMANDED:
-		return []byte("AIS_NAV_UN_COMMANDED"), nil
-	case AIS_NAV_RESTRICTED_MANOEUVERABILITY:
-		return []byte("AIS_NAV_RESTRICTED_MANOEUVERABILITY"), nil
-	case AIS_NAV_DRAUGHT_CONSTRAINED:
-		return []byte("AIS_NAV_DRAUGHT_CONSTRAINED"), nil
-	case AIS_NAV_MOORED:
-		return []byte("AIS_NAV_MOORED"), nil
-	case AIS_NAV_AGROUND:
-		return []byte("AIS_NAV_AGROUND"), nil
-	case AIS_NAV_FISHING:
-		return []byte("AIS_NAV_FISHING"), nil
-	case AIS_NAV_SAILING:
-		return []byte("AIS_NAV_SAILING"), nil
-	case AIS_NAV_RESERVED_HSC:
-		return []byte("AIS_NAV_RESERVED_HSC"), nil
-	case AIS_NAV_RESERVED_WIG:
-		return []byte("AIS_NAV_RESERVED_WIG"), nil
-	case AIS_NAV_RESERVED_1:
-		return []byte("AIS_NAV_RESERVED_1"), nil
-	case AIS_NAV_RESERVED_2:
-		return []byte("AIS_NAV_RESERVED_2"), nil
-	case AIS_NAV_RESERVED_3:
-		return []byte("AIS_NAV_RESERVED_3"), nil
-	case AIS_NAV_AIS_SART:
-		return []byte("AIS_NAV_AIS_SART"), nil
-	case AIS_NAV_UNKNOWN:
-		return []byte("AIS_NAV_UNKNOWN"), nil
+	if l, ok := labels_AIS_NAV_STATUS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_AIS_NAV_STATUS = map[string]AIS_NAV_STATUS{
+	"UNDER_WAY":                           UNDER_WAY,
+	"AIS_NAV_ANCHORED":                    AIS_NAV_ANCHORED,
+	"AIS_NAV_UN_COMMANDED":                AIS_NAV_UN_COMMANDED,
+	"AIS_NAV_RESTRICTED_MANOEUVERABILITY": AIS_NAV_RESTRICTED_MANOEUVERABILITY,
+	"AIS_NAV_DRAUGHT_CONSTRAINED":         AIS_NAV_DRAUGHT_CONSTRAINED,
+	"AIS_NAV_MOORED":                      AIS_NAV_MOORED,
+	"AIS_NAV_AGROUND":                     AIS_NAV_AGROUND,
+	"AIS_NAV_FISHING":                     AIS_NAV_FISHING,
+	"AIS_NAV_SAILING":                     AIS_NAV_SAILING,
+	"AIS_NAV_RESERVED_HSC":                AIS_NAV_RESERVED_HSC,
+	"AIS_NAV_RESERVED_WIG":                AIS_NAV_RESERVED_WIG,
+	"AIS_NAV_RESERVED_1":                  AIS_NAV_RESERVED_1,
+	"AIS_NAV_RESERVED_2":                  AIS_NAV_RESERVED_2,
+	"AIS_NAV_RESERVED_3":                  AIS_NAV_RESERVED_3,
+	"AIS_NAV_AIS_SART":                    AIS_NAV_AIS_SART,
+	"AIS_NAV_UNKNOWN":                     AIS_NAV_UNKNOWN,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *AIS_NAV_STATUS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "UNDER_WAY":
-		*e = UNDER_WAY
-		return nil
-	case "AIS_NAV_ANCHORED":
-		*e = AIS_NAV_ANCHORED
-		return nil
-	case "AIS_NAV_UN_COMMANDED":
-		*e = AIS_NAV_UN_COMMANDED
-		return nil
-	case "AIS_NAV_RESTRICTED_MANOEUVERABILITY":
-		*e = AIS_NAV_RESTRICTED_MANOEUVERABILITY
-		return nil
-	case "AIS_NAV_DRAUGHT_CONSTRAINED":
-		*e = AIS_NAV_DRAUGHT_CONSTRAINED
-		return nil
-	case "AIS_NAV_MOORED":
-		*e = AIS_NAV_MOORED
-		return nil
-	case "AIS_NAV_AGROUND":
-		*e = AIS_NAV_AGROUND
-		return nil
-	case "AIS_NAV_FISHING":
-		*e = AIS_NAV_FISHING
-		return nil
-	case "AIS_NAV_SAILING":
-		*e = AIS_NAV_SAILING
-		return nil
-	case "AIS_NAV_RESERVED_HSC":
-		*e = AIS_NAV_RESERVED_HSC
-		return nil
-	case "AIS_NAV_RESERVED_WIG":
-		*e = AIS_NAV_RESERVED_WIG
-		return nil
-	case "AIS_NAV_RESERVED_1":
-		*e = AIS_NAV_RESERVED_1
-		return nil
-	case "AIS_NAV_RESERVED_2":
-		*e = AIS_NAV_RESERVED_2
-		return nil
-	case "AIS_NAV_RESERVED_3":
-		*e = AIS_NAV_RESERVED_3
-		return nil
-	case "AIS_NAV_AIS_SART":
-		*e = AIS_NAV_AIS_SART
-		return nil
-	case "AIS_NAV_UNKNOWN":
-		*e = AIS_NAV_UNKNOWN
+	if rl, ok := reverseLabels_AIS_NAV_STATUS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -804,11 +661,10 @@ func (e *AIS_NAV_STATUS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e AIS_NAV_STATUS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_AIS_NAV_STATUS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Type of AIS vessel, enum duplicated from AIS standard, https://gpsd.gitlab.io/gpsd/AIVDM.html
@@ -1017,515 +873,224 @@ const (
 	AIS_TYPE_OTHER_UNKNOWN AIS_TYPE = 99
 )
 
+var labels_AIS_TYPE = map[AIS_TYPE]string{
+	AIS_TYPE_UNKNOWN:                        "AIS_TYPE_UNKNOWN",
+	AIS_TYPE_RESERVED_1:                     "AIS_TYPE_RESERVED_1",
+	AIS_TYPE_RESERVED_2:                     "AIS_TYPE_RESERVED_2",
+	AIS_TYPE_RESERVED_3:                     "AIS_TYPE_RESERVED_3",
+	AIS_TYPE_RESERVED_4:                     "AIS_TYPE_RESERVED_4",
+	AIS_TYPE_RESERVED_5:                     "AIS_TYPE_RESERVED_5",
+	AIS_TYPE_RESERVED_6:                     "AIS_TYPE_RESERVED_6",
+	AIS_TYPE_RESERVED_7:                     "AIS_TYPE_RESERVED_7",
+	AIS_TYPE_RESERVED_8:                     "AIS_TYPE_RESERVED_8",
+	AIS_TYPE_RESERVED_9:                     "AIS_TYPE_RESERVED_9",
+	AIS_TYPE_RESERVED_10:                    "AIS_TYPE_RESERVED_10",
+	AIS_TYPE_RESERVED_11:                    "AIS_TYPE_RESERVED_11",
+	AIS_TYPE_RESERVED_12:                    "AIS_TYPE_RESERVED_12",
+	AIS_TYPE_RESERVED_13:                    "AIS_TYPE_RESERVED_13",
+	AIS_TYPE_RESERVED_14:                    "AIS_TYPE_RESERVED_14",
+	AIS_TYPE_RESERVED_15:                    "AIS_TYPE_RESERVED_15",
+	AIS_TYPE_RESERVED_16:                    "AIS_TYPE_RESERVED_16",
+	AIS_TYPE_RESERVED_17:                    "AIS_TYPE_RESERVED_17",
+	AIS_TYPE_RESERVED_18:                    "AIS_TYPE_RESERVED_18",
+	AIS_TYPE_RESERVED_19:                    "AIS_TYPE_RESERVED_19",
+	AIS_TYPE_WIG:                            "AIS_TYPE_WIG",
+	AIS_TYPE_WIG_HAZARDOUS_A:                "AIS_TYPE_WIG_HAZARDOUS_A",
+	AIS_TYPE_WIG_HAZARDOUS_B:                "AIS_TYPE_WIG_HAZARDOUS_B",
+	AIS_TYPE_WIG_HAZARDOUS_C:                "AIS_TYPE_WIG_HAZARDOUS_C",
+	AIS_TYPE_WIG_HAZARDOUS_D:                "AIS_TYPE_WIG_HAZARDOUS_D",
+	AIS_TYPE_WIG_RESERVED_1:                 "AIS_TYPE_WIG_RESERVED_1",
+	AIS_TYPE_WIG_RESERVED_2:                 "AIS_TYPE_WIG_RESERVED_2",
+	AIS_TYPE_WIG_RESERVED_3:                 "AIS_TYPE_WIG_RESERVED_3",
+	AIS_TYPE_WIG_RESERVED_4:                 "AIS_TYPE_WIG_RESERVED_4",
+	AIS_TYPE_WIG_RESERVED_5:                 "AIS_TYPE_WIG_RESERVED_5",
+	AIS_TYPE_FISHING:                        "AIS_TYPE_FISHING",
+	AIS_TYPE_TOWING:                         "AIS_TYPE_TOWING",
+	AIS_TYPE_TOWING_LARGE:                   "AIS_TYPE_TOWING_LARGE",
+	AIS_TYPE_DREDGING:                       "AIS_TYPE_DREDGING",
+	AIS_TYPE_DIVING:                         "AIS_TYPE_DIVING",
+	AIS_TYPE_MILITARY:                       "AIS_TYPE_MILITARY",
+	AIS_TYPE_SAILING:                        "AIS_TYPE_SAILING",
+	AIS_TYPE_PLEASURE:                       "AIS_TYPE_PLEASURE",
+	AIS_TYPE_RESERVED_20:                    "AIS_TYPE_RESERVED_20",
+	AIS_TYPE_RESERVED_21:                    "AIS_TYPE_RESERVED_21",
+	AIS_TYPE_HSC:                            "AIS_TYPE_HSC",
+	AIS_TYPE_HSC_HAZARDOUS_A:                "AIS_TYPE_HSC_HAZARDOUS_A",
+	AIS_TYPE_HSC_HAZARDOUS_B:                "AIS_TYPE_HSC_HAZARDOUS_B",
+	AIS_TYPE_HSC_HAZARDOUS_C:                "AIS_TYPE_HSC_HAZARDOUS_C",
+	AIS_TYPE_HSC_HAZARDOUS_D:                "AIS_TYPE_HSC_HAZARDOUS_D",
+	AIS_TYPE_HSC_RESERVED_1:                 "AIS_TYPE_HSC_RESERVED_1",
+	AIS_TYPE_HSC_RESERVED_2:                 "AIS_TYPE_HSC_RESERVED_2",
+	AIS_TYPE_HSC_RESERVED_3:                 "AIS_TYPE_HSC_RESERVED_3",
+	AIS_TYPE_HSC_RESERVED_4:                 "AIS_TYPE_HSC_RESERVED_4",
+	AIS_TYPE_HSC_UNKNOWN:                    "AIS_TYPE_HSC_UNKNOWN",
+	AIS_TYPE_PILOT:                          "AIS_TYPE_PILOT",
+	AIS_TYPE_SAR:                            "AIS_TYPE_SAR",
+	AIS_TYPE_TUG:                            "AIS_TYPE_TUG",
+	AIS_TYPE_PORT_TENDER:                    "AIS_TYPE_PORT_TENDER",
+	AIS_TYPE_ANTI_POLLUTION:                 "AIS_TYPE_ANTI_POLLUTION",
+	AIS_TYPE_LAW_ENFORCEMENT:                "AIS_TYPE_LAW_ENFORCEMENT",
+	AIS_TYPE_SPARE_LOCAL_1:                  "AIS_TYPE_SPARE_LOCAL_1",
+	AIS_TYPE_SPARE_LOCAL_2:                  "AIS_TYPE_SPARE_LOCAL_2",
+	AIS_TYPE_MEDICAL_TRANSPORT:              "AIS_TYPE_MEDICAL_TRANSPORT",
+	AIS_TYPE_NONECOMBATANT:                  "AIS_TYPE_NONECOMBATANT",
+	AIS_TYPE_PASSENGER:                      "AIS_TYPE_PASSENGER",
+	AIS_TYPE_PASSENGER_HAZARDOUS_A:          "AIS_TYPE_PASSENGER_HAZARDOUS_A",
+	AIS_TYPE_PASSENGER_HAZARDOUS_B:          "AIS_TYPE_PASSENGER_HAZARDOUS_B",
+	AIS_TYPE_AIS_TYPE_PASSENGER_HAZARDOUS_C: "AIS_TYPE_AIS_TYPE_PASSENGER_HAZARDOUS_C",
+	AIS_TYPE_PASSENGER_HAZARDOUS_D:          "AIS_TYPE_PASSENGER_HAZARDOUS_D",
+	AIS_TYPE_PASSENGER_RESERVED_1:           "AIS_TYPE_PASSENGER_RESERVED_1",
+	AIS_TYPE_PASSENGER_RESERVED_2:           "AIS_TYPE_PASSENGER_RESERVED_2",
+	AIS_TYPE_PASSENGER_RESERVED_3:           "AIS_TYPE_PASSENGER_RESERVED_3",
+	AIS_TYPE_AIS_TYPE_PASSENGER_RESERVED_4:  "AIS_TYPE_AIS_TYPE_PASSENGER_RESERVED_4",
+	AIS_TYPE_PASSENGER_UNKNOWN:              "AIS_TYPE_PASSENGER_UNKNOWN",
+	AIS_TYPE_CARGO:                          "AIS_TYPE_CARGO",
+	AIS_TYPE_CARGO_HAZARDOUS_A:              "AIS_TYPE_CARGO_HAZARDOUS_A",
+	AIS_TYPE_CARGO_HAZARDOUS_B:              "AIS_TYPE_CARGO_HAZARDOUS_B",
+	AIS_TYPE_CARGO_HAZARDOUS_C:              "AIS_TYPE_CARGO_HAZARDOUS_C",
+	AIS_TYPE_CARGO_HAZARDOUS_D:              "AIS_TYPE_CARGO_HAZARDOUS_D",
+	AIS_TYPE_CARGO_RESERVED_1:               "AIS_TYPE_CARGO_RESERVED_1",
+	AIS_TYPE_CARGO_RESERVED_2:               "AIS_TYPE_CARGO_RESERVED_2",
+	AIS_TYPE_CARGO_RESERVED_3:               "AIS_TYPE_CARGO_RESERVED_3",
+	AIS_TYPE_CARGO_RESERVED_4:               "AIS_TYPE_CARGO_RESERVED_4",
+	AIS_TYPE_CARGO_UNKNOWN:                  "AIS_TYPE_CARGO_UNKNOWN",
+	AIS_TYPE_TANKER:                         "AIS_TYPE_TANKER",
+	AIS_TYPE_TANKER_HAZARDOUS_A:             "AIS_TYPE_TANKER_HAZARDOUS_A",
+	AIS_TYPE_TANKER_HAZARDOUS_B:             "AIS_TYPE_TANKER_HAZARDOUS_B",
+	AIS_TYPE_TANKER_HAZARDOUS_C:             "AIS_TYPE_TANKER_HAZARDOUS_C",
+	AIS_TYPE_TANKER_HAZARDOUS_D:             "AIS_TYPE_TANKER_HAZARDOUS_D",
+	AIS_TYPE_TANKER_RESERVED_1:              "AIS_TYPE_TANKER_RESERVED_1",
+	AIS_TYPE_TANKER_RESERVED_2:              "AIS_TYPE_TANKER_RESERVED_2",
+	AIS_TYPE_TANKER_RESERVED_3:              "AIS_TYPE_TANKER_RESERVED_3",
+	AIS_TYPE_TANKER_RESERVED_4:              "AIS_TYPE_TANKER_RESERVED_4",
+	AIS_TYPE_TANKER_UNKNOWN:                 "AIS_TYPE_TANKER_UNKNOWN",
+	AIS_TYPE_OTHER:                          "AIS_TYPE_OTHER",
+	AIS_TYPE_OTHER_HAZARDOUS_A:              "AIS_TYPE_OTHER_HAZARDOUS_A",
+	AIS_TYPE_OTHER_HAZARDOUS_B:              "AIS_TYPE_OTHER_HAZARDOUS_B",
+	AIS_TYPE_OTHER_HAZARDOUS_C:              "AIS_TYPE_OTHER_HAZARDOUS_C",
+	AIS_TYPE_OTHER_HAZARDOUS_D:              "AIS_TYPE_OTHER_HAZARDOUS_D",
+	AIS_TYPE_OTHER_RESERVED_1:               "AIS_TYPE_OTHER_RESERVED_1",
+	AIS_TYPE_OTHER_RESERVED_2:               "AIS_TYPE_OTHER_RESERVED_2",
+	AIS_TYPE_OTHER_RESERVED_3:               "AIS_TYPE_OTHER_RESERVED_3",
+	AIS_TYPE_OTHER_RESERVED_4:               "AIS_TYPE_OTHER_RESERVED_4",
+	AIS_TYPE_OTHER_UNKNOWN:                  "AIS_TYPE_OTHER_UNKNOWN",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e AIS_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case AIS_TYPE_UNKNOWN:
-		return []byte("AIS_TYPE_UNKNOWN"), nil
-	case AIS_TYPE_RESERVED_1:
-		return []byte("AIS_TYPE_RESERVED_1"), nil
-	case AIS_TYPE_RESERVED_2:
-		return []byte("AIS_TYPE_RESERVED_2"), nil
-	case AIS_TYPE_RESERVED_3:
-		return []byte("AIS_TYPE_RESERVED_3"), nil
-	case AIS_TYPE_RESERVED_4:
-		return []byte("AIS_TYPE_RESERVED_4"), nil
-	case AIS_TYPE_RESERVED_5:
-		return []byte("AIS_TYPE_RESERVED_5"), nil
-	case AIS_TYPE_RESERVED_6:
-		return []byte("AIS_TYPE_RESERVED_6"), nil
-	case AIS_TYPE_RESERVED_7:
-		return []byte("AIS_TYPE_RESERVED_7"), nil
-	case AIS_TYPE_RESERVED_8:
-		return []byte("AIS_TYPE_RESERVED_8"), nil
-	case AIS_TYPE_RESERVED_9:
-		return []byte("AIS_TYPE_RESERVED_9"), nil
-	case AIS_TYPE_RESERVED_10:
-		return []byte("AIS_TYPE_RESERVED_10"), nil
-	case AIS_TYPE_RESERVED_11:
-		return []byte("AIS_TYPE_RESERVED_11"), nil
-	case AIS_TYPE_RESERVED_12:
-		return []byte("AIS_TYPE_RESERVED_12"), nil
-	case AIS_TYPE_RESERVED_13:
-		return []byte("AIS_TYPE_RESERVED_13"), nil
-	case AIS_TYPE_RESERVED_14:
-		return []byte("AIS_TYPE_RESERVED_14"), nil
-	case AIS_TYPE_RESERVED_15:
-		return []byte("AIS_TYPE_RESERVED_15"), nil
-	case AIS_TYPE_RESERVED_16:
-		return []byte("AIS_TYPE_RESERVED_16"), nil
-	case AIS_TYPE_RESERVED_17:
-		return []byte("AIS_TYPE_RESERVED_17"), nil
-	case AIS_TYPE_RESERVED_18:
-		return []byte("AIS_TYPE_RESERVED_18"), nil
-	case AIS_TYPE_RESERVED_19:
-		return []byte("AIS_TYPE_RESERVED_19"), nil
-	case AIS_TYPE_WIG:
-		return []byte("AIS_TYPE_WIG"), nil
-	case AIS_TYPE_WIG_HAZARDOUS_A:
-		return []byte("AIS_TYPE_WIG_HAZARDOUS_A"), nil
-	case AIS_TYPE_WIG_HAZARDOUS_B:
-		return []byte("AIS_TYPE_WIG_HAZARDOUS_B"), nil
-	case AIS_TYPE_WIG_HAZARDOUS_C:
-		return []byte("AIS_TYPE_WIG_HAZARDOUS_C"), nil
-	case AIS_TYPE_WIG_HAZARDOUS_D:
-		return []byte("AIS_TYPE_WIG_HAZARDOUS_D"), nil
-	case AIS_TYPE_WIG_RESERVED_1:
-		return []byte("AIS_TYPE_WIG_RESERVED_1"), nil
-	case AIS_TYPE_WIG_RESERVED_2:
-		return []byte("AIS_TYPE_WIG_RESERVED_2"), nil
-	case AIS_TYPE_WIG_RESERVED_3:
-		return []byte("AIS_TYPE_WIG_RESERVED_3"), nil
-	case AIS_TYPE_WIG_RESERVED_4:
-		return []byte("AIS_TYPE_WIG_RESERVED_4"), nil
-	case AIS_TYPE_WIG_RESERVED_5:
-		return []byte("AIS_TYPE_WIG_RESERVED_5"), nil
-	case AIS_TYPE_FISHING:
-		return []byte("AIS_TYPE_FISHING"), nil
-	case AIS_TYPE_TOWING:
-		return []byte("AIS_TYPE_TOWING"), nil
-	case AIS_TYPE_TOWING_LARGE:
-		return []byte("AIS_TYPE_TOWING_LARGE"), nil
-	case AIS_TYPE_DREDGING:
-		return []byte("AIS_TYPE_DREDGING"), nil
-	case AIS_TYPE_DIVING:
-		return []byte("AIS_TYPE_DIVING"), nil
-	case AIS_TYPE_MILITARY:
-		return []byte("AIS_TYPE_MILITARY"), nil
-	case AIS_TYPE_SAILING:
-		return []byte("AIS_TYPE_SAILING"), nil
-	case AIS_TYPE_PLEASURE:
-		return []byte("AIS_TYPE_PLEASURE"), nil
-	case AIS_TYPE_RESERVED_20:
-		return []byte("AIS_TYPE_RESERVED_20"), nil
-	case AIS_TYPE_RESERVED_21:
-		return []byte("AIS_TYPE_RESERVED_21"), nil
-	case AIS_TYPE_HSC:
-		return []byte("AIS_TYPE_HSC"), nil
-	case AIS_TYPE_HSC_HAZARDOUS_A:
-		return []byte("AIS_TYPE_HSC_HAZARDOUS_A"), nil
-	case AIS_TYPE_HSC_HAZARDOUS_B:
-		return []byte("AIS_TYPE_HSC_HAZARDOUS_B"), nil
-	case AIS_TYPE_HSC_HAZARDOUS_C:
-		return []byte("AIS_TYPE_HSC_HAZARDOUS_C"), nil
-	case AIS_TYPE_HSC_HAZARDOUS_D:
-		return []byte("AIS_TYPE_HSC_HAZARDOUS_D"), nil
-	case AIS_TYPE_HSC_RESERVED_1:
-		return []byte("AIS_TYPE_HSC_RESERVED_1"), nil
-	case AIS_TYPE_HSC_RESERVED_2:
-		return []byte("AIS_TYPE_HSC_RESERVED_2"), nil
-	case AIS_TYPE_HSC_RESERVED_3:
-		return []byte("AIS_TYPE_HSC_RESERVED_3"), nil
-	case AIS_TYPE_HSC_RESERVED_4:
-		return []byte("AIS_TYPE_HSC_RESERVED_4"), nil
-	case AIS_TYPE_HSC_UNKNOWN:
-		return []byte("AIS_TYPE_HSC_UNKNOWN"), nil
-	case AIS_TYPE_PILOT:
-		return []byte("AIS_TYPE_PILOT"), nil
-	case AIS_TYPE_SAR:
-		return []byte("AIS_TYPE_SAR"), nil
-	case AIS_TYPE_TUG:
-		return []byte("AIS_TYPE_TUG"), nil
-	case AIS_TYPE_PORT_TENDER:
-		return []byte("AIS_TYPE_PORT_TENDER"), nil
-	case AIS_TYPE_ANTI_POLLUTION:
-		return []byte("AIS_TYPE_ANTI_POLLUTION"), nil
-	case AIS_TYPE_LAW_ENFORCEMENT:
-		return []byte("AIS_TYPE_LAW_ENFORCEMENT"), nil
-	case AIS_TYPE_SPARE_LOCAL_1:
-		return []byte("AIS_TYPE_SPARE_LOCAL_1"), nil
-	case AIS_TYPE_SPARE_LOCAL_2:
-		return []byte("AIS_TYPE_SPARE_LOCAL_2"), nil
-	case AIS_TYPE_MEDICAL_TRANSPORT:
-		return []byte("AIS_TYPE_MEDICAL_TRANSPORT"), nil
-	case AIS_TYPE_NONECOMBATANT:
-		return []byte("AIS_TYPE_NONECOMBATANT"), nil
-	case AIS_TYPE_PASSENGER:
-		return []byte("AIS_TYPE_PASSENGER"), nil
-	case AIS_TYPE_PASSENGER_HAZARDOUS_A:
-		return []byte("AIS_TYPE_PASSENGER_HAZARDOUS_A"), nil
-	case AIS_TYPE_PASSENGER_HAZARDOUS_B:
-		return []byte("AIS_TYPE_PASSENGER_HAZARDOUS_B"), nil
-	case AIS_TYPE_AIS_TYPE_PASSENGER_HAZARDOUS_C:
-		return []byte("AIS_TYPE_AIS_TYPE_PASSENGER_HAZARDOUS_C"), nil
-	case AIS_TYPE_PASSENGER_HAZARDOUS_D:
-		return []byte("AIS_TYPE_PASSENGER_HAZARDOUS_D"), nil
-	case AIS_TYPE_PASSENGER_RESERVED_1:
-		return []byte("AIS_TYPE_PASSENGER_RESERVED_1"), nil
-	case AIS_TYPE_PASSENGER_RESERVED_2:
-		return []byte("AIS_TYPE_PASSENGER_RESERVED_2"), nil
-	case AIS_TYPE_PASSENGER_RESERVED_3:
-		return []byte("AIS_TYPE_PASSENGER_RESERVED_3"), nil
-	case AIS_TYPE_AIS_TYPE_PASSENGER_RESERVED_4:
-		return []byte("AIS_TYPE_AIS_TYPE_PASSENGER_RESERVED_4"), nil
-	case AIS_TYPE_PASSENGER_UNKNOWN:
-		return []byte("AIS_TYPE_PASSENGER_UNKNOWN"), nil
-	case AIS_TYPE_CARGO:
-		return []byte("AIS_TYPE_CARGO"), nil
-	case AIS_TYPE_CARGO_HAZARDOUS_A:
-		return []byte("AIS_TYPE_CARGO_HAZARDOUS_A"), nil
-	case AIS_TYPE_CARGO_HAZARDOUS_B:
-		return []byte("AIS_TYPE_CARGO_HAZARDOUS_B"), nil
-	case AIS_TYPE_CARGO_HAZARDOUS_C:
-		return []byte("AIS_TYPE_CARGO_HAZARDOUS_C"), nil
-	case AIS_TYPE_CARGO_HAZARDOUS_D:
-		return []byte("AIS_TYPE_CARGO_HAZARDOUS_D"), nil
-	case AIS_TYPE_CARGO_RESERVED_1:
-		return []byte("AIS_TYPE_CARGO_RESERVED_1"), nil
-	case AIS_TYPE_CARGO_RESERVED_2:
-		return []byte("AIS_TYPE_CARGO_RESERVED_2"), nil
-	case AIS_TYPE_CARGO_RESERVED_3:
-		return []byte("AIS_TYPE_CARGO_RESERVED_3"), nil
-	case AIS_TYPE_CARGO_RESERVED_4:
-		return []byte("AIS_TYPE_CARGO_RESERVED_4"), nil
-	case AIS_TYPE_CARGO_UNKNOWN:
-		return []byte("AIS_TYPE_CARGO_UNKNOWN"), nil
-	case AIS_TYPE_TANKER:
-		return []byte("AIS_TYPE_TANKER"), nil
-	case AIS_TYPE_TANKER_HAZARDOUS_A:
-		return []byte("AIS_TYPE_TANKER_HAZARDOUS_A"), nil
-	case AIS_TYPE_TANKER_HAZARDOUS_B:
-		return []byte("AIS_TYPE_TANKER_HAZARDOUS_B"), nil
-	case AIS_TYPE_TANKER_HAZARDOUS_C:
-		return []byte("AIS_TYPE_TANKER_HAZARDOUS_C"), nil
-	case AIS_TYPE_TANKER_HAZARDOUS_D:
-		return []byte("AIS_TYPE_TANKER_HAZARDOUS_D"), nil
-	case AIS_TYPE_TANKER_RESERVED_1:
-		return []byte("AIS_TYPE_TANKER_RESERVED_1"), nil
-	case AIS_TYPE_TANKER_RESERVED_2:
-		return []byte("AIS_TYPE_TANKER_RESERVED_2"), nil
-	case AIS_TYPE_TANKER_RESERVED_3:
-		return []byte("AIS_TYPE_TANKER_RESERVED_3"), nil
-	case AIS_TYPE_TANKER_RESERVED_4:
-		return []byte("AIS_TYPE_TANKER_RESERVED_4"), nil
-	case AIS_TYPE_TANKER_UNKNOWN:
-		return []byte("AIS_TYPE_TANKER_UNKNOWN"), nil
-	case AIS_TYPE_OTHER:
-		return []byte("AIS_TYPE_OTHER"), nil
-	case AIS_TYPE_OTHER_HAZARDOUS_A:
-		return []byte("AIS_TYPE_OTHER_HAZARDOUS_A"), nil
-	case AIS_TYPE_OTHER_HAZARDOUS_B:
-		return []byte("AIS_TYPE_OTHER_HAZARDOUS_B"), nil
-	case AIS_TYPE_OTHER_HAZARDOUS_C:
-		return []byte("AIS_TYPE_OTHER_HAZARDOUS_C"), nil
-	case AIS_TYPE_OTHER_HAZARDOUS_D:
-		return []byte("AIS_TYPE_OTHER_HAZARDOUS_D"), nil
-	case AIS_TYPE_OTHER_RESERVED_1:
-		return []byte("AIS_TYPE_OTHER_RESERVED_1"), nil
-	case AIS_TYPE_OTHER_RESERVED_2:
-		return []byte("AIS_TYPE_OTHER_RESERVED_2"), nil
-	case AIS_TYPE_OTHER_RESERVED_3:
-		return []byte("AIS_TYPE_OTHER_RESERVED_3"), nil
-	case AIS_TYPE_OTHER_RESERVED_4:
-		return []byte("AIS_TYPE_OTHER_RESERVED_4"), nil
-	case AIS_TYPE_OTHER_UNKNOWN:
-		return []byte("AIS_TYPE_OTHER_UNKNOWN"), nil
+	if l, ok := labels_AIS_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_AIS_TYPE = map[string]AIS_TYPE{
+	"AIS_TYPE_UNKNOWN":                        AIS_TYPE_UNKNOWN,
+	"AIS_TYPE_RESERVED_1":                     AIS_TYPE_RESERVED_1,
+	"AIS_TYPE_RESERVED_2":                     AIS_TYPE_RESERVED_2,
+	"AIS_TYPE_RESERVED_3":                     AIS_TYPE_RESERVED_3,
+	"AIS_TYPE_RESERVED_4":                     AIS_TYPE_RESERVED_4,
+	"AIS_TYPE_RESERVED_5":                     AIS_TYPE_RESERVED_5,
+	"AIS_TYPE_RESERVED_6":                     AIS_TYPE_RESERVED_6,
+	"AIS_TYPE_RESERVED_7":                     AIS_TYPE_RESERVED_7,
+	"AIS_TYPE_RESERVED_8":                     AIS_TYPE_RESERVED_8,
+	"AIS_TYPE_RESERVED_9":                     AIS_TYPE_RESERVED_9,
+	"AIS_TYPE_RESERVED_10":                    AIS_TYPE_RESERVED_10,
+	"AIS_TYPE_RESERVED_11":                    AIS_TYPE_RESERVED_11,
+	"AIS_TYPE_RESERVED_12":                    AIS_TYPE_RESERVED_12,
+	"AIS_TYPE_RESERVED_13":                    AIS_TYPE_RESERVED_13,
+	"AIS_TYPE_RESERVED_14":                    AIS_TYPE_RESERVED_14,
+	"AIS_TYPE_RESERVED_15":                    AIS_TYPE_RESERVED_15,
+	"AIS_TYPE_RESERVED_16":                    AIS_TYPE_RESERVED_16,
+	"AIS_TYPE_RESERVED_17":                    AIS_TYPE_RESERVED_17,
+	"AIS_TYPE_RESERVED_18":                    AIS_TYPE_RESERVED_18,
+	"AIS_TYPE_RESERVED_19":                    AIS_TYPE_RESERVED_19,
+	"AIS_TYPE_WIG":                            AIS_TYPE_WIG,
+	"AIS_TYPE_WIG_HAZARDOUS_A":                AIS_TYPE_WIG_HAZARDOUS_A,
+	"AIS_TYPE_WIG_HAZARDOUS_B":                AIS_TYPE_WIG_HAZARDOUS_B,
+	"AIS_TYPE_WIG_HAZARDOUS_C":                AIS_TYPE_WIG_HAZARDOUS_C,
+	"AIS_TYPE_WIG_HAZARDOUS_D":                AIS_TYPE_WIG_HAZARDOUS_D,
+	"AIS_TYPE_WIG_RESERVED_1":                 AIS_TYPE_WIG_RESERVED_1,
+	"AIS_TYPE_WIG_RESERVED_2":                 AIS_TYPE_WIG_RESERVED_2,
+	"AIS_TYPE_WIG_RESERVED_3":                 AIS_TYPE_WIG_RESERVED_3,
+	"AIS_TYPE_WIG_RESERVED_4":                 AIS_TYPE_WIG_RESERVED_4,
+	"AIS_TYPE_WIG_RESERVED_5":                 AIS_TYPE_WIG_RESERVED_5,
+	"AIS_TYPE_FISHING":                        AIS_TYPE_FISHING,
+	"AIS_TYPE_TOWING":                         AIS_TYPE_TOWING,
+	"AIS_TYPE_TOWING_LARGE":                   AIS_TYPE_TOWING_LARGE,
+	"AIS_TYPE_DREDGING":                       AIS_TYPE_DREDGING,
+	"AIS_TYPE_DIVING":                         AIS_TYPE_DIVING,
+	"AIS_TYPE_MILITARY":                       AIS_TYPE_MILITARY,
+	"AIS_TYPE_SAILING":                        AIS_TYPE_SAILING,
+	"AIS_TYPE_PLEASURE":                       AIS_TYPE_PLEASURE,
+	"AIS_TYPE_RESERVED_20":                    AIS_TYPE_RESERVED_20,
+	"AIS_TYPE_RESERVED_21":                    AIS_TYPE_RESERVED_21,
+	"AIS_TYPE_HSC":                            AIS_TYPE_HSC,
+	"AIS_TYPE_HSC_HAZARDOUS_A":                AIS_TYPE_HSC_HAZARDOUS_A,
+	"AIS_TYPE_HSC_HAZARDOUS_B":                AIS_TYPE_HSC_HAZARDOUS_B,
+	"AIS_TYPE_HSC_HAZARDOUS_C":                AIS_TYPE_HSC_HAZARDOUS_C,
+	"AIS_TYPE_HSC_HAZARDOUS_D":                AIS_TYPE_HSC_HAZARDOUS_D,
+	"AIS_TYPE_HSC_RESERVED_1":                 AIS_TYPE_HSC_RESERVED_1,
+	"AIS_TYPE_HSC_RESERVED_2":                 AIS_TYPE_HSC_RESERVED_2,
+	"AIS_TYPE_HSC_RESERVED_3":                 AIS_TYPE_HSC_RESERVED_3,
+	"AIS_TYPE_HSC_RESERVED_4":                 AIS_TYPE_HSC_RESERVED_4,
+	"AIS_TYPE_HSC_UNKNOWN":                    AIS_TYPE_HSC_UNKNOWN,
+	"AIS_TYPE_PILOT":                          AIS_TYPE_PILOT,
+	"AIS_TYPE_SAR":                            AIS_TYPE_SAR,
+	"AIS_TYPE_TUG":                            AIS_TYPE_TUG,
+	"AIS_TYPE_PORT_TENDER":                    AIS_TYPE_PORT_TENDER,
+	"AIS_TYPE_ANTI_POLLUTION":                 AIS_TYPE_ANTI_POLLUTION,
+	"AIS_TYPE_LAW_ENFORCEMENT":                AIS_TYPE_LAW_ENFORCEMENT,
+	"AIS_TYPE_SPARE_LOCAL_1":                  AIS_TYPE_SPARE_LOCAL_1,
+	"AIS_TYPE_SPARE_LOCAL_2":                  AIS_TYPE_SPARE_LOCAL_2,
+	"AIS_TYPE_MEDICAL_TRANSPORT":              AIS_TYPE_MEDICAL_TRANSPORT,
+	"AIS_TYPE_NONECOMBATANT":                  AIS_TYPE_NONECOMBATANT,
+	"AIS_TYPE_PASSENGER":                      AIS_TYPE_PASSENGER,
+	"AIS_TYPE_PASSENGER_HAZARDOUS_A":          AIS_TYPE_PASSENGER_HAZARDOUS_A,
+	"AIS_TYPE_PASSENGER_HAZARDOUS_B":          AIS_TYPE_PASSENGER_HAZARDOUS_B,
+	"AIS_TYPE_AIS_TYPE_PASSENGER_HAZARDOUS_C": AIS_TYPE_AIS_TYPE_PASSENGER_HAZARDOUS_C,
+	"AIS_TYPE_PASSENGER_HAZARDOUS_D":          AIS_TYPE_PASSENGER_HAZARDOUS_D,
+	"AIS_TYPE_PASSENGER_RESERVED_1":           AIS_TYPE_PASSENGER_RESERVED_1,
+	"AIS_TYPE_PASSENGER_RESERVED_2":           AIS_TYPE_PASSENGER_RESERVED_2,
+	"AIS_TYPE_PASSENGER_RESERVED_3":           AIS_TYPE_PASSENGER_RESERVED_3,
+	"AIS_TYPE_AIS_TYPE_PASSENGER_RESERVED_4":  AIS_TYPE_AIS_TYPE_PASSENGER_RESERVED_4,
+	"AIS_TYPE_PASSENGER_UNKNOWN":              AIS_TYPE_PASSENGER_UNKNOWN,
+	"AIS_TYPE_CARGO":                          AIS_TYPE_CARGO,
+	"AIS_TYPE_CARGO_HAZARDOUS_A":              AIS_TYPE_CARGO_HAZARDOUS_A,
+	"AIS_TYPE_CARGO_HAZARDOUS_B":              AIS_TYPE_CARGO_HAZARDOUS_B,
+	"AIS_TYPE_CARGO_HAZARDOUS_C":              AIS_TYPE_CARGO_HAZARDOUS_C,
+	"AIS_TYPE_CARGO_HAZARDOUS_D":              AIS_TYPE_CARGO_HAZARDOUS_D,
+	"AIS_TYPE_CARGO_RESERVED_1":               AIS_TYPE_CARGO_RESERVED_1,
+	"AIS_TYPE_CARGO_RESERVED_2":               AIS_TYPE_CARGO_RESERVED_2,
+	"AIS_TYPE_CARGO_RESERVED_3":               AIS_TYPE_CARGO_RESERVED_3,
+	"AIS_TYPE_CARGO_RESERVED_4":               AIS_TYPE_CARGO_RESERVED_4,
+	"AIS_TYPE_CARGO_UNKNOWN":                  AIS_TYPE_CARGO_UNKNOWN,
+	"AIS_TYPE_TANKER":                         AIS_TYPE_TANKER,
+	"AIS_TYPE_TANKER_HAZARDOUS_A":             AIS_TYPE_TANKER_HAZARDOUS_A,
+	"AIS_TYPE_TANKER_HAZARDOUS_B":             AIS_TYPE_TANKER_HAZARDOUS_B,
+	"AIS_TYPE_TANKER_HAZARDOUS_C":             AIS_TYPE_TANKER_HAZARDOUS_C,
+	"AIS_TYPE_TANKER_HAZARDOUS_D":             AIS_TYPE_TANKER_HAZARDOUS_D,
+	"AIS_TYPE_TANKER_RESERVED_1":              AIS_TYPE_TANKER_RESERVED_1,
+	"AIS_TYPE_TANKER_RESERVED_2":              AIS_TYPE_TANKER_RESERVED_2,
+	"AIS_TYPE_TANKER_RESERVED_3":              AIS_TYPE_TANKER_RESERVED_3,
+	"AIS_TYPE_TANKER_RESERVED_4":              AIS_TYPE_TANKER_RESERVED_4,
+	"AIS_TYPE_TANKER_UNKNOWN":                 AIS_TYPE_TANKER_UNKNOWN,
+	"AIS_TYPE_OTHER":                          AIS_TYPE_OTHER,
+	"AIS_TYPE_OTHER_HAZARDOUS_A":              AIS_TYPE_OTHER_HAZARDOUS_A,
+	"AIS_TYPE_OTHER_HAZARDOUS_B":              AIS_TYPE_OTHER_HAZARDOUS_B,
+	"AIS_TYPE_OTHER_HAZARDOUS_C":              AIS_TYPE_OTHER_HAZARDOUS_C,
+	"AIS_TYPE_OTHER_HAZARDOUS_D":              AIS_TYPE_OTHER_HAZARDOUS_D,
+	"AIS_TYPE_OTHER_RESERVED_1":               AIS_TYPE_OTHER_RESERVED_1,
+	"AIS_TYPE_OTHER_RESERVED_2":               AIS_TYPE_OTHER_RESERVED_2,
+	"AIS_TYPE_OTHER_RESERVED_3":               AIS_TYPE_OTHER_RESERVED_3,
+	"AIS_TYPE_OTHER_RESERVED_4":               AIS_TYPE_OTHER_RESERVED_4,
+	"AIS_TYPE_OTHER_UNKNOWN":                  AIS_TYPE_OTHER_UNKNOWN,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *AIS_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "AIS_TYPE_UNKNOWN":
-		*e = AIS_TYPE_UNKNOWN
-		return nil
-	case "AIS_TYPE_RESERVED_1":
-		*e = AIS_TYPE_RESERVED_1
-		return nil
-	case "AIS_TYPE_RESERVED_2":
-		*e = AIS_TYPE_RESERVED_2
-		return nil
-	case "AIS_TYPE_RESERVED_3":
-		*e = AIS_TYPE_RESERVED_3
-		return nil
-	case "AIS_TYPE_RESERVED_4":
-		*e = AIS_TYPE_RESERVED_4
-		return nil
-	case "AIS_TYPE_RESERVED_5":
-		*e = AIS_TYPE_RESERVED_5
-		return nil
-	case "AIS_TYPE_RESERVED_6":
-		*e = AIS_TYPE_RESERVED_6
-		return nil
-	case "AIS_TYPE_RESERVED_7":
-		*e = AIS_TYPE_RESERVED_7
-		return nil
-	case "AIS_TYPE_RESERVED_8":
-		*e = AIS_TYPE_RESERVED_8
-		return nil
-	case "AIS_TYPE_RESERVED_9":
-		*e = AIS_TYPE_RESERVED_9
-		return nil
-	case "AIS_TYPE_RESERVED_10":
-		*e = AIS_TYPE_RESERVED_10
-		return nil
-	case "AIS_TYPE_RESERVED_11":
-		*e = AIS_TYPE_RESERVED_11
-		return nil
-	case "AIS_TYPE_RESERVED_12":
-		*e = AIS_TYPE_RESERVED_12
-		return nil
-	case "AIS_TYPE_RESERVED_13":
-		*e = AIS_TYPE_RESERVED_13
-		return nil
-	case "AIS_TYPE_RESERVED_14":
-		*e = AIS_TYPE_RESERVED_14
-		return nil
-	case "AIS_TYPE_RESERVED_15":
-		*e = AIS_TYPE_RESERVED_15
-		return nil
-	case "AIS_TYPE_RESERVED_16":
-		*e = AIS_TYPE_RESERVED_16
-		return nil
-	case "AIS_TYPE_RESERVED_17":
-		*e = AIS_TYPE_RESERVED_17
-		return nil
-	case "AIS_TYPE_RESERVED_18":
-		*e = AIS_TYPE_RESERVED_18
-		return nil
-	case "AIS_TYPE_RESERVED_19":
-		*e = AIS_TYPE_RESERVED_19
-		return nil
-	case "AIS_TYPE_WIG":
-		*e = AIS_TYPE_WIG
-		return nil
-	case "AIS_TYPE_WIG_HAZARDOUS_A":
-		*e = AIS_TYPE_WIG_HAZARDOUS_A
-		return nil
-	case "AIS_TYPE_WIG_HAZARDOUS_B":
-		*e = AIS_TYPE_WIG_HAZARDOUS_B
-		return nil
-	case "AIS_TYPE_WIG_HAZARDOUS_C":
-		*e = AIS_TYPE_WIG_HAZARDOUS_C
-		return nil
-	case "AIS_TYPE_WIG_HAZARDOUS_D":
-		*e = AIS_TYPE_WIG_HAZARDOUS_D
-		return nil
-	case "AIS_TYPE_WIG_RESERVED_1":
-		*e = AIS_TYPE_WIG_RESERVED_1
-		return nil
-	case "AIS_TYPE_WIG_RESERVED_2":
-		*e = AIS_TYPE_WIG_RESERVED_2
-		return nil
-	case "AIS_TYPE_WIG_RESERVED_3":
-		*e = AIS_TYPE_WIG_RESERVED_3
-		return nil
-	case "AIS_TYPE_WIG_RESERVED_4":
-		*e = AIS_TYPE_WIG_RESERVED_4
-		return nil
-	case "AIS_TYPE_WIG_RESERVED_5":
-		*e = AIS_TYPE_WIG_RESERVED_5
-		return nil
-	case "AIS_TYPE_FISHING":
-		*e = AIS_TYPE_FISHING
-		return nil
-	case "AIS_TYPE_TOWING":
-		*e = AIS_TYPE_TOWING
-		return nil
-	case "AIS_TYPE_TOWING_LARGE":
-		*e = AIS_TYPE_TOWING_LARGE
-		return nil
-	case "AIS_TYPE_DREDGING":
-		*e = AIS_TYPE_DREDGING
-		return nil
-	case "AIS_TYPE_DIVING":
-		*e = AIS_TYPE_DIVING
-		return nil
-	case "AIS_TYPE_MILITARY":
-		*e = AIS_TYPE_MILITARY
-		return nil
-	case "AIS_TYPE_SAILING":
-		*e = AIS_TYPE_SAILING
-		return nil
-	case "AIS_TYPE_PLEASURE":
-		*e = AIS_TYPE_PLEASURE
-		return nil
-	case "AIS_TYPE_RESERVED_20":
-		*e = AIS_TYPE_RESERVED_20
-		return nil
-	case "AIS_TYPE_RESERVED_21":
-		*e = AIS_TYPE_RESERVED_21
-		return nil
-	case "AIS_TYPE_HSC":
-		*e = AIS_TYPE_HSC
-		return nil
-	case "AIS_TYPE_HSC_HAZARDOUS_A":
-		*e = AIS_TYPE_HSC_HAZARDOUS_A
-		return nil
-	case "AIS_TYPE_HSC_HAZARDOUS_B":
-		*e = AIS_TYPE_HSC_HAZARDOUS_B
-		return nil
-	case "AIS_TYPE_HSC_HAZARDOUS_C":
-		*e = AIS_TYPE_HSC_HAZARDOUS_C
-		return nil
-	case "AIS_TYPE_HSC_HAZARDOUS_D":
-		*e = AIS_TYPE_HSC_HAZARDOUS_D
-		return nil
-	case "AIS_TYPE_HSC_RESERVED_1":
-		*e = AIS_TYPE_HSC_RESERVED_1
-		return nil
-	case "AIS_TYPE_HSC_RESERVED_2":
-		*e = AIS_TYPE_HSC_RESERVED_2
-		return nil
-	case "AIS_TYPE_HSC_RESERVED_3":
-		*e = AIS_TYPE_HSC_RESERVED_3
-		return nil
-	case "AIS_TYPE_HSC_RESERVED_4":
-		*e = AIS_TYPE_HSC_RESERVED_4
-		return nil
-	case "AIS_TYPE_HSC_UNKNOWN":
-		*e = AIS_TYPE_HSC_UNKNOWN
-		return nil
-	case "AIS_TYPE_PILOT":
-		*e = AIS_TYPE_PILOT
-		return nil
-	case "AIS_TYPE_SAR":
-		*e = AIS_TYPE_SAR
-		return nil
-	case "AIS_TYPE_TUG":
-		*e = AIS_TYPE_TUG
-		return nil
-	case "AIS_TYPE_PORT_TENDER":
-		*e = AIS_TYPE_PORT_TENDER
-		return nil
-	case "AIS_TYPE_ANTI_POLLUTION":
-		*e = AIS_TYPE_ANTI_POLLUTION
-		return nil
-	case "AIS_TYPE_LAW_ENFORCEMENT":
-		*e = AIS_TYPE_LAW_ENFORCEMENT
-		return nil
-	case "AIS_TYPE_SPARE_LOCAL_1":
-		*e = AIS_TYPE_SPARE_LOCAL_1
-		return nil
-	case "AIS_TYPE_SPARE_LOCAL_2":
-		*e = AIS_TYPE_SPARE_LOCAL_2
-		return nil
-	case "AIS_TYPE_MEDICAL_TRANSPORT":
-		*e = AIS_TYPE_MEDICAL_TRANSPORT
-		return nil
-	case "AIS_TYPE_NONECOMBATANT":
-		*e = AIS_TYPE_NONECOMBATANT
-		return nil
-	case "AIS_TYPE_PASSENGER":
-		*e = AIS_TYPE_PASSENGER
-		return nil
-	case "AIS_TYPE_PASSENGER_HAZARDOUS_A":
-		*e = AIS_TYPE_PASSENGER_HAZARDOUS_A
-		return nil
-	case "AIS_TYPE_PASSENGER_HAZARDOUS_B":
-		*e = AIS_TYPE_PASSENGER_HAZARDOUS_B
-		return nil
-	case "AIS_TYPE_AIS_TYPE_PASSENGER_HAZARDOUS_C":
-		*e = AIS_TYPE_AIS_TYPE_PASSENGER_HAZARDOUS_C
-		return nil
-	case "AIS_TYPE_PASSENGER_HAZARDOUS_D":
-		*e = AIS_TYPE_PASSENGER_HAZARDOUS_D
-		return nil
-	case "AIS_TYPE_PASSENGER_RESERVED_1":
-		*e = AIS_TYPE_PASSENGER_RESERVED_1
-		return nil
-	case "AIS_TYPE_PASSENGER_RESERVED_2":
-		*e = AIS_TYPE_PASSENGER_RESERVED_2
-		return nil
-	case "AIS_TYPE_PASSENGER_RESERVED_3":
-		*e = AIS_TYPE_PASSENGER_RESERVED_3
-		return nil
-	case "AIS_TYPE_AIS_TYPE_PASSENGER_RESERVED_4":
-		*e = AIS_TYPE_AIS_TYPE_PASSENGER_RESERVED_4
-		return nil
-	case "AIS_TYPE_PASSENGER_UNKNOWN":
-		*e = AIS_TYPE_PASSENGER_UNKNOWN
-		return nil
-	case "AIS_TYPE_CARGO":
-		*e = AIS_TYPE_CARGO
-		return nil
-	case "AIS_TYPE_CARGO_HAZARDOUS_A":
-		*e = AIS_TYPE_CARGO_HAZARDOUS_A
-		return nil
-	case "AIS_TYPE_CARGO_HAZARDOUS_B":
-		*e = AIS_TYPE_CARGO_HAZARDOUS_B
-		return nil
-	case "AIS_TYPE_CARGO_HAZARDOUS_C":
-		*e = AIS_TYPE_CARGO_HAZARDOUS_C
-		return nil
-	case "AIS_TYPE_CARGO_HAZARDOUS_D":
-		*e = AIS_TYPE_CARGO_HAZARDOUS_D
-		return nil
-	case "AIS_TYPE_CARGO_RESERVED_1":
-		*e = AIS_TYPE_CARGO_RESERVED_1
-		return nil
-	case "AIS_TYPE_CARGO_RESERVED_2":
-		*e = AIS_TYPE_CARGO_RESERVED_2
-		return nil
-	case "AIS_TYPE_CARGO_RESERVED_3":
-		*e = AIS_TYPE_CARGO_RESERVED_3
-		return nil
-	case "AIS_TYPE_CARGO_RESERVED_4":
-		*e = AIS_TYPE_CARGO_RESERVED_4
-		return nil
-	case "AIS_TYPE_CARGO_UNKNOWN":
-		*e = AIS_TYPE_CARGO_UNKNOWN
-		return nil
-	case "AIS_TYPE_TANKER":
-		*e = AIS_TYPE_TANKER
-		return nil
-	case "AIS_TYPE_TANKER_HAZARDOUS_A":
-		*e = AIS_TYPE_TANKER_HAZARDOUS_A
-		return nil
-	case "AIS_TYPE_TANKER_HAZARDOUS_B":
-		*e = AIS_TYPE_TANKER_HAZARDOUS_B
-		return nil
-	case "AIS_TYPE_TANKER_HAZARDOUS_C":
-		*e = AIS_TYPE_TANKER_HAZARDOUS_C
-		return nil
-	case "AIS_TYPE_TANKER_HAZARDOUS_D":
-		*e = AIS_TYPE_TANKER_HAZARDOUS_D
-		return nil
-	case "AIS_TYPE_TANKER_RESERVED_1":
-		*e = AIS_TYPE_TANKER_RESERVED_1
-		return nil
-	case "AIS_TYPE_TANKER_RESERVED_2":
-		*e = AIS_TYPE_TANKER_RESERVED_2
-		return nil
-	case "AIS_TYPE_TANKER_RESERVED_3":
-		*e = AIS_TYPE_TANKER_RESERVED_3
-		return nil
-	case "AIS_TYPE_TANKER_RESERVED_4":
-		*e = AIS_TYPE_TANKER_RESERVED_4
-		return nil
-	case "AIS_TYPE_TANKER_UNKNOWN":
-		*e = AIS_TYPE_TANKER_UNKNOWN
-		return nil
-	case "AIS_TYPE_OTHER":
-		*e = AIS_TYPE_OTHER
-		return nil
-	case "AIS_TYPE_OTHER_HAZARDOUS_A":
-		*e = AIS_TYPE_OTHER_HAZARDOUS_A
-		return nil
-	case "AIS_TYPE_OTHER_HAZARDOUS_B":
-		*e = AIS_TYPE_OTHER_HAZARDOUS_B
-		return nil
-	case "AIS_TYPE_OTHER_HAZARDOUS_C":
-		*e = AIS_TYPE_OTHER_HAZARDOUS_C
-		return nil
-	case "AIS_TYPE_OTHER_HAZARDOUS_D":
-		*e = AIS_TYPE_OTHER_HAZARDOUS_D
-		return nil
-	case "AIS_TYPE_OTHER_RESERVED_1":
-		*e = AIS_TYPE_OTHER_RESERVED_1
-		return nil
-	case "AIS_TYPE_OTHER_RESERVED_2":
-		*e = AIS_TYPE_OTHER_RESERVED_2
-		return nil
-	case "AIS_TYPE_OTHER_RESERVED_3":
-		*e = AIS_TYPE_OTHER_RESERVED_3
-		return nil
-	case "AIS_TYPE_OTHER_RESERVED_4":
-		*e = AIS_TYPE_OTHER_RESERVED_4
-		return nil
-	case "AIS_TYPE_OTHER_UNKNOWN":
-		*e = AIS_TYPE_OTHER_UNKNOWN
+	if rl, ok := reverseLabels_AIS_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -1533,11 +1098,10 @@ func (e *AIS_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e AIS_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_AIS_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Bitmap to indicate which dimensions should be ignored by the vehicle: a value of 0b00000000 indicates that none of the setpoint dimensions should be ignored.
@@ -1558,45 +1122,36 @@ const (
 	ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE ATTITUDE_TARGET_TYPEMASK = 128
 )
 
+var labels_ATTITUDE_TARGET_TYPEMASK = map[ATTITUDE_TARGET_TYPEMASK]string{
+	ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE:  "ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE",
+	ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE: "ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE",
+	ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE:   "ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE",
+	ATTITUDE_TARGET_TYPEMASK_THRUST_BODY_SET:        "ATTITUDE_TARGET_TYPEMASK_THRUST_BODY_SET",
+	ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE:        "ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE",
+	ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE:        "ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ATTITUDE_TARGET_TYPEMASK) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE:
-		return []byte("ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE"), nil
-	case ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE:
-		return []byte("ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE"), nil
-	case ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE:
-		return []byte("ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE"), nil
-	case ATTITUDE_TARGET_TYPEMASK_THRUST_BODY_SET:
-		return []byte("ATTITUDE_TARGET_TYPEMASK_THRUST_BODY_SET"), nil
-	case ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE:
-		return []byte("ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE"), nil
-	case ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE:
-		return []byte("ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE"), nil
+	if l, ok := labels_ATTITUDE_TARGET_TYPEMASK[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_ATTITUDE_TARGET_TYPEMASK = map[string]ATTITUDE_TARGET_TYPEMASK{
+	"ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE":  ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE,
+	"ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE": ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE,
+	"ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE":   ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE,
+	"ATTITUDE_TARGET_TYPEMASK_THRUST_BODY_SET":        ATTITUDE_TARGET_TYPEMASK_THRUST_BODY_SET,
+	"ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE":        ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE,
+	"ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE":        ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ATTITUDE_TARGET_TYPEMASK) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE":
-		*e = ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE
-		return nil
-	case "ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE":
-		*e = ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE
-		return nil
-	case "ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE":
-		*e = ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE
-		return nil
-	case "ATTITUDE_TARGET_TYPEMASK_THRUST_BODY_SET":
-		*e = ATTITUDE_TARGET_TYPEMASK_THRUST_BODY_SET
-		return nil
-	case "ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE":
-		*e = ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE
-		return nil
-	case "ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE":
-		*e = ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE
+	if rl, ok := reverseLabels_ATTITUDE_TARGET_TYPEMASK[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -1604,11 +1159,10 @@ func (e *ATTITUDE_TARGET_TYPEMASK) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e ATTITUDE_TARGET_TYPEMASK) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_ATTITUDE_TARGET_TYPEMASK[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Camera capability flags (Bitmap)
@@ -1641,75 +1195,48 @@ const (
 	CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS CAMERA_CAP_FLAGS = 2048
 )
 
+var labels_CAMERA_CAP_FLAGS = map[CAMERA_CAP_FLAGS]string{
+	CAMERA_CAP_FLAGS_CAPTURE_VIDEO:                   "CAMERA_CAP_FLAGS_CAPTURE_VIDEO",
+	CAMERA_CAP_FLAGS_CAPTURE_IMAGE:                   "CAMERA_CAP_FLAGS_CAPTURE_IMAGE",
+	CAMERA_CAP_FLAGS_HAS_MODES:                       "CAMERA_CAP_FLAGS_HAS_MODES",
+	CAMERA_CAP_FLAGS_CAN_CAPTURE_IMAGE_IN_VIDEO_MODE: "CAMERA_CAP_FLAGS_CAN_CAPTURE_IMAGE_IN_VIDEO_MODE",
+	CAMERA_CAP_FLAGS_CAN_CAPTURE_VIDEO_IN_IMAGE_MODE: "CAMERA_CAP_FLAGS_CAN_CAPTURE_VIDEO_IN_IMAGE_MODE",
+	CAMERA_CAP_FLAGS_HAS_IMAGE_SURVEY_MODE:           "CAMERA_CAP_FLAGS_HAS_IMAGE_SURVEY_MODE",
+	CAMERA_CAP_FLAGS_HAS_BASIC_ZOOM:                  "CAMERA_CAP_FLAGS_HAS_BASIC_ZOOM",
+	CAMERA_CAP_FLAGS_HAS_BASIC_FOCUS:                 "CAMERA_CAP_FLAGS_HAS_BASIC_FOCUS",
+	CAMERA_CAP_FLAGS_HAS_VIDEO_STREAM:                "CAMERA_CAP_FLAGS_HAS_VIDEO_STREAM",
+	CAMERA_CAP_FLAGS_HAS_TRACKING_POINT:              "CAMERA_CAP_FLAGS_HAS_TRACKING_POINT",
+	CAMERA_CAP_FLAGS_HAS_TRACKING_RECTANGLE:          "CAMERA_CAP_FLAGS_HAS_TRACKING_RECTANGLE",
+	CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS:         "CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAMERA_CAP_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case CAMERA_CAP_FLAGS_CAPTURE_VIDEO:
-		return []byte("CAMERA_CAP_FLAGS_CAPTURE_VIDEO"), nil
-	case CAMERA_CAP_FLAGS_CAPTURE_IMAGE:
-		return []byte("CAMERA_CAP_FLAGS_CAPTURE_IMAGE"), nil
-	case CAMERA_CAP_FLAGS_HAS_MODES:
-		return []byte("CAMERA_CAP_FLAGS_HAS_MODES"), nil
-	case CAMERA_CAP_FLAGS_CAN_CAPTURE_IMAGE_IN_VIDEO_MODE:
-		return []byte("CAMERA_CAP_FLAGS_CAN_CAPTURE_IMAGE_IN_VIDEO_MODE"), nil
-	case CAMERA_CAP_FLAGS_CAN_CAPTURE_VIDEO_IN_IMAGE_MODE:
-		return []byte("CAMERA_CAP_FLAGS_CAN_CAPTURE_VIDEO_IN_IMAGE_MODE"), nil
-	case CAMERA_CAP_FLAGS_HAS_IMAGE_SURVEY_MODE:
-		return []byte("CAMERA_CAP_FLAGS_HAS_IMAGE_SURVEY_MODE"), nil
-	case CAMERA_CAP_FLAGS_HAS_BASIC_ZOOM:
-		return []byte("CAMERA_CAP_FLAGS_HAS_BASIC_ZOOM"), nil
-	case CAMERA_CAP_FLAGS_HAS_BASIC_FOCUS:
-		return []byte("CAMERA_CAP_FLAGS_HAS_BASIC_FOCUS"), nil
-	case CAMERA_CAP_FLAGS_HAS_VIDEO_STREAM:
-		return []byte("CAMERA_CAP_FLAGS_HAS_VIDEO_STREAM"), nil
-	case CAMERA_CAP_FLAGS_HAS_TRACKING_POINT:
-		return []byte("CAMERA_CAP_FLAGS_HAS_TRACKING_POINT"), nil
-	case CAMERA_CAP_FLAGS_HAS_TRACKING_RECTANGLE:
-		return []byte("CAMERA_CAP_FLAGS_HAS_TRACKING_RECTANGLE"), nil
-	case CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS:
-		return []byte("CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS"), nil
+	if l, ok := labels_CAMERA_CAP_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_CAMERA_CAP_FLAGS = map[string]CAMERA_CAP_FLAGS{
+	"CAMERA_CAP_FLAGS_CAPTURE_VIDEO":                   CAMERA_CAP_FLAGS_CAPTURE_VIDEO,
+	"CAMERA_CAP_FLAGS_CAPTURE_IMAGE":                   CAMERA_CAP_FLAGS_CAPTURE_IMAGE,
+	"CAMERA_CAP_FLAGS_HAS_MODES":                       CAMERA_CAP_FLAGS_HAS_MODES,
+	"CAMERA_CAP_FLAGS_CAN_CAPTURE_IMAGE_IN_VIDEO_MODE": CAMERA_CAP_FLAGS_CAN_CAPTURE_IMAGE_IN_VIDEO_MODE,
+	"CAMERA_CAP_FLAGS_CAN_CAPTURE_VIDEO_IN_IMAGE_MODE": CAMERA_CAP_FLAGS_CAN_CAPTURE_VIDEO_IN_IMAGE_MODE,
+	"CAMERA_CAP_FLAGS_HAS_IMAGE_SURVEY_MODE":           CAMERA_CAP_FLAGS_HAS_IMAGE_SURVEY_MODE,
+	"CAMERA_CAP_FLAGS_HAS_BASIC_ZOOM":                  CAMERA_CAP_FLAGS_HAS_BASIC_ZOOM,
+	"CAMERA_CAP_FLAGS_HAS_BASIC_FOCUS":                 CAMERA_CAP_FLAGS_HAS_BASIC_FOCUS,
+	"CAMERA_CAP_FLAGS_HAS_VIDEO_STREAM":                CAMERA_CAP_FLAGS_HAS_VIDEO_STREAM,
+	"CAMERA_CAP_FLAGS_HAS_TRACKING_POINT":              CAMERA_CAP_FLAGS_HAS_TRACKING_POINT,
+	"CAMERA_CAP_FLAGS_HAS_TRACKING_RECTANGLE":          CAMERA_CAP_FLAGS_HAS_TRACKING_RECTANGLE,
+	"CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS":         CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CAMERA_CAP_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "CAMERA_CAP_FLAGS_CAPTURE_VIDEO":
-		*e = CAMERA_CAP_FLAGS_CAPTURE_VIDEO
-		return nil
-	case "CAMERA_CAP_FLAGS_CAPTURE_IMAGE":
-		*e = CAMERA_CAP_FLAGS_CAPTURE_IMAGE
-		return nil
-	case "CAMERA_CAP_FLAGS_HAS_MODES":
-		*e = CAMERA_CAP_FLAGS_HAS_MODES
-		return nil
-	case "CAMERA_CAP_FLAGS_CAN_CAPTURE_IMAGE_IN_VIDEO_MODE":
-		*e = CAMERA_CAP_FLAGS_CAN_CAPTURE_IMAGE_IN_VIDEO_MODE
-		return nil
-	case "CAMERA_CAP_FLAGS_CAN_CAPTURE_VIDEO_IN_IMAGE_MODE":
-		*e = CAMERA_CAP_FLAGS_CAN_CAPTURE_VIDEO_IN_IMAGE_MODE
-		return nil
-	case "CAMERA_CAP_FLAGS_HAS_IMAGE_SURVEY_MODE":
-		*e = CAMERA_CAP_FLAGS_HAS_IMAGE_SURVEY_MODE
-		return nil
-	case "CAMERA_CAP_FLAGS_HAS_BASIC_ZOOM":
-		*e = CAMERA_CAP_FLAGS_HAS_BASIC_ZOOM
-		return nil
-	case "CAMERA_CAP_FLAGS_HAS_BASIC_FOCUS":
-		*e = CAMERA_CAP_FLAGS_HAS_BASIC_FOCUS
-		return nil
-	case "CAMERA_CAP_FLAGS_HAS_VIDEO_STREAM":
-		*e = CAMERA_CAP_FLAGS_HAS_VIDEO_STREAM
-		return nil
-	case "CAMERA_CAP_FLAGS_HAS_TRACKING_POINT":
-		*e = CAMERA_CAP_FLAGS_HAS_TRACKING_POINT
-		return nil
-	case "CAMERA_CAP_FLAGS_HAS_TRACKING_RECTANGLE":
-		*e = CAMERA_CAP_FLAGS_HAS_TRACKING_RECTANGLE
-		return nil
-	case "CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS":
-		*e = CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS
+	if rl, ok := reverseLabels_CAMERA_CAP_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -1717,11 +1244,10 @@ func (e *CAMERA_CAP_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e CAMERA_CAP_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_CAMERA_CAP_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Camera Modes.
@@ -1736,30 +1262,30 @@ const (
 	CAMERA_MODE_IMAGE_SURVEY CAMERA_MODE = 2
 )
 
+var labels_CAMERA_MODE = map[CAMERA_MODE]string{
+	CAMERA_MODE_IMAGE:        "CAMERA_MODE_IMAGE",
+	CAMERA_MODE_VIDEO:        "CAMERA_MODE_VIDEO",
+	CAMERA_MODE_IMAGE_SURVEY: "CAMERA_MODE_IMAGE_SURVEY",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAMERA_MODE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case CAMERA_MODE_IMAGE:
-		return []byte("CAMERA_MODE_IMAGE"), nil
-	case CAMERA_MODE_VIDEO:
-		return []byte("CAMERA_MODE_VIDEO"), nil
-	case CAMERA_MODE_IMAGE_SURVEY:
-		return []byte("CAMERA_MODE_IMAGE_SURVEY"), nil
+	if l, ok := labels_CAMERA_MODE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_CAMERA_MODE = map[string]CAMERA_MODE{
+	"CAMERA_MODE_IMAGE":        CAMERA_MODE_IMAGE,
+	"CAMERA_MODE_VIDEO":        CAMERA_MODE_VIDEO,
+	"CAMERA_MODE_IMAGE_SURVEY": CAMERA_MODE_IMAGE_SURVEY,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CAMERA_MODE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "CAMERA_MODE_IMAGE":
-		*e = CAMERA_MODE_IMAGE
-		return nil
-	case "CAMERA_MODE_VIDEO":
-		*e = CAMERA_MODE_VIDEO
-		return nil
-	case "CAMERA_MODE_IMAGE_SURVEY":
-		*e = CAMERA_MODE_IMAGE_SURVEY
+	if rl, ok := reverseLabels_CAMERA_MODE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -1767,11 +1293,10 @@ func (e *CAMERA_MODE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e CAMERA_MODE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_CAMERA_MODE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Camera tracking modes
@@ -1786,30 +1311,30 @@ const (
 	CAMERA_TRACKING_MODE_RECTANGLE CAMERA_TRACKING_MODE = 2
 )
 
+var labels_CAMERA_TRACKING_MODE = map[CAMERA_TRACKING_MODE]string{
+	CAMERA_TRACKING_MODE_NONE:      "CAMERA_TRACKING_MODE_NONE",
+	CAMERA_TRACKING_MODE_POINT:     "CAMERA_TRACKING_MODE_POINT",
+	CAMERA_TRACKING_MODE_RECTANGLE: "CAMERA_TRACKING_MODE_RECTANGLE",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAMERA_TRACKING_MODE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case CAMERA_TRACKING_MODE_NONE:
-		return []byte("CAMERA_TRACKING_MODE_NONE"), nil
-	case CAMERA_TRACKING_MODE_POINT:
-		return []byte("CAMERA_TRACKING_MODE_POINT"), nil
-	case CAMERA_TRACKING_MODE_RECTANGLE:
-		return []byte("CAMERA_TRACKING_MODE_RECTANGLE"), nil
+	if l, ok := labels_CAMERA_TRACKING_MODE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_CAMERA_TRACKING_MODE = map[string]CAMERA_TRACKING_MODE{
+	"CAMERA_TRACKING_MODE_NONE":      CAMERA_TRACKING_MODE_NONE,
+	"CAMERA_TRACKING_MODE_POINT":     CAMERA_TRACKING_MODE_POINT,
+	"CAMERA_TRACKING_MODE_RECTANGLE": CAMERA_TRACKING_MODE_RECTANGLE,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CAMERA_TRACKING_MODE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "CAMERA_TRACKING_MODE_NONE":
-		*e = CAMERA_TRACKING_MODE_NONE
-		return nil
-	case "CAMERA_TRACKING_MODE_POINT":
-		*e = CAMERA_TRACKING_MODE_POINT
-		return nil
-	case "CAMERA_TRACKING_MODE_RECTANGLE":
-		*e = CAMERA_TRACKING_MODE_RECTANGLE
+	if rl, ok := reverseLabels_CAMERA_TRACKING_MODE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -1817,11 +1342,10 @@ func (e *CAMERA_TRACKING_MODE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e CAMERA_TRACKING_MODE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_CAMERA_TRACKING_MODE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Camera tracking status flags
@@ -1836,30 +1360,30 @@ const (
 	CAMERA_TRACKING_STATUS_FLAGS_ERROR CAMERA_TRACKING_STATUS_FLAGS = 2
 )
 
+var labels_CAMERA_TRACKING_STATUS_FLAGS = map[CAMERA_TRACKING_STATUS_FLAGS]string{
+	CAMERA_TRACKING_STATUS_FLAGS_IDLE:   "CAMERA_TRACKING_STATUS_FLAGS_IDLE",
+	CAMERA_TRACKING_STATUS_FLAGS_ACTIVE: "CAMERA_TRACKING_STATUS_FLAGS_ACTIVE",
+	CAMERA_TRACKING_STATUS_FLAGS_ERROR:  "CAMERA_TRACKING_STATUS_FLAGS_ERROR",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAMERA_TRACKING_STATUS_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case CAMERA_TRACKING_STATUS_FLAGS_IDLE:
-		return []byte("CAMERA_TRACKING_STATUS_FLAGS_IDLE"), nil
-	case CAMERA_TRACKING_STATUS_FLAGS_ACTIVE:
-		return []byte("CAMERA_TRACKING_STATUS_FLAGS_ACTIVE"), nil
-	case CAMERA_TRACKING_STATUS_FLAGS_ERROR:
-		return []byte("CAMERA_TRACKING_STATUS_FLAGS_ERROR"), nil
+	if l, ok := labels_CAMERA_TRACKING_STATUS_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_CAMERA_TRACKING_STATUS_FLAGS = map[string]CAMERA_TRACKING_STATUS_FLAGS{
+	"CAMERA_TRACKING_STATUS_FLAGS_IDLE":   CAMERA_TRACKING_STATUS_FLAGS_IDLE,
+	"CAMERA_TRACKING_STATUS_FLAGS_ACTIVE": CAMERA_TRACKING_STATUS_FLAGS_ACTIVE,
+	"CAMERA_TRACKING_STATUS_FLAGS_ERROR":  CAMERA_TRACKING_STATUS_FLAGS_ERROR,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CAMERA_TRACKING_STATUS_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "CAMERA_TRACKING_STATUS_FLAGS_IDLE":
-		*e = CAMERA_TRACKING_STATUS_FLAGS_IDLE
-		return nil
-	case "CAMERA_TRACKING_STATUS_FLAGS_ACTIVE":
-		*e = CAMERA_TRACKING_STATUS_FLAGS_ACTIVE
-		return nil
-	case "CAMERA_TRACKING_STATUS_FLAGS_ERROR":
-		*e = CAMERA_TRACKING_STATUS_FLAGS_ERROR
+	if rl, ok := reverseLabels_CAMERA_TRACKING_STATUS_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -1867,11 +1391,10 @@ func (e *CAMERA_TRACKING_STATUS_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e CAMERA_TRACKING_STATUS_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_CAMERA_TRACKING_STATUS_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Camera tracking target data (shows where tracked target is within image)
@@ -1888,35 +1411,32 @@ const (
 	CAMERA_TRACKING_TARGET_DATA_IN_STATUS CAMERA_TRACKING_TARGET_DATA = 4
 )
 
+var labels_CAMERA_TRACKING_TARGET_DATA = map[CAMERA_TRACKING_TARGET_DATA]string{
+	CAMERA_TRACKING_TARGET_DATA_NONE:      "CAMERA_TRACKING_TARGET_DATA_NONE",
+	CAMERA_TRACKING_TARGET_DATA_EMBEDDED:  "CAMERA_TRACKING_TARGET_DATA_EMBEDDED",
+	CAMERA_TRACKING_TARGET_DATA_RENDERED:  "CAMERA_TRACKING_TARGET_DATA_RENDERED",
+	CAMERA_TRACKING_TARGET_DATA_IN_STATUS: "CAMERA_TRACKING_TARGET_DATA_IN_STATUS",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAMERA_TRACKING_TARGET_DATA) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case CAMERA_TRACKING_TARGET_DATA_NONE:
-		return []byte("CAMERA_TRACKING_TARGET_DATA_NONE"), nil
-	case CAMERA_TRACKING_TARGET_DATA_EMBEDDED:
-		return []byte("CAMERA_TRACKING_TARGET_DATA_EMBEDDED"), nil
-	case CAMERA_TRACKING_TARGET_DATA_RENDERED:
-		return []byte("CAMERA_TRACKING_TARGET_DATA_RENDERED"), nil
-	case CAMERA_TRACKING_TARGET_DATA_IN_STATUS:
-		return []byte("CAMERA_TRACKING_TARGET_DATA_IN_STATUS"), nil
+	if l, ok := labels_CAMERA_TRACKING_TARGET_DATA[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_CAMERA_TRACKING_TARGET_DATA = map[string]CAMERA_TRACKING_TARGET_DATA{
+	"CAMERA_TRACKING_TARGET_DATA_NONE":      CAMERA_TRACKING_TARGET_DATA_NONE,
+	"CAMERA_TRACKING_TARGET_DATA_EMBEDDED":  CAMERA_TRACKING_TARGET_DATA_EMBEDDED,
+	"CAMERA_TRACKING_TARGET_DATA_RENDERED":  CAMERA_TRACKING_TARGET_DATA_RENDERED,
+	"CAMERA_TRACKING_TARGET_DATA_IN_STATUS": CAMERA_TRACKING_TARGET_DATA_IN_STATUS,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CAMERA_TRACKING_TARGET_DATA) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "CAMERA_TRACKING_TARGET_DATA_NONE":
-		*e = CAMERA_TRACKING_TARGET_DATA_NONE
-		return nil
-	case "CAMERA_TRACKING_TARGET_DATA_EMBEDDED":
-		*e = CAMERA_TRACKING_TARGET_DATA_EMBEDDED
-		return nil
-	case "CAMERA_TRACKING_TARGET_DATA_RENDERED":
-		*e = CAMERA_TRACKING_TARGET_DATA_RENDERED
-		return nil
-	case "CAMERA_TRACKING_TARGET_DATA_IN_STATUS":
-		*e = CAMERA_TRACKING_TARGET_DATA_IN_STATUS
+	if rl, ok := reverseLabels_CAMERA_TRACKING_TARGET_DATA[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -1924,11 +1444,10 @@ func (e *CAMERA_TRACKING_TARGET_DATA) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e CAMERA_TRACKING_TARGET_DATA) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_CAMERA_TRACKING_TARGET_DATA[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Zoom types for MAV_CMD_SET_CAMERA_ZOOM
@@ -1945,35 +1464,32 @@ const (
 	ZOOM_TYPE_FOCAL_LENGTH CAMERA_ZOOM_TYPE = 3
 )
 
+var labels_CAMERA_ZOOM_TYPE = map[CAMERA_ZOOM_TYPE]string{
+	ZOOM_TYPE_STEP:         "ZOOM_TYPE_STEP",
+	ZOOM_TYPE_CONTINUOUS:   "ZOOM_TYPE_CONTINUOUS",
+	ZOOM_TYPE_RANGE:        "ZOOM_TYPE_RANGE",
+	ZOOM_TYPE_FOCAL_LENGTH: "ZOOM_TYPE_FOCAL_LENGTH",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAMERA_ZOOM_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case ZOOM_TYPE_STEP:
-		return []byte("ZOOM_TYPE_STEP"), nil
-	case ZOOM_TYPE_CONTINUOUS:
-		return []byte("ZOOM_TYPE_CONTINUOUS"), nil
-	case ZOOM_TYPE_RANGE:
-		return []byte("ZOOM_TYPE_RANGE"), nil
-	case ZOOM_TYPE_FOCAL_LENGTH:
-		return []byte("ZOOM_TYPE_FOCAL_LENGTH"), nil
+	if l, ok := labels_CAMERA_ZOOM_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_CAMERA_ZOOM_TYPE = map[string]CAMERA_ZOOM_TYPE{
+	"ZOOM_TYPE_STEP":         ZOOM_TYPE_STEP,
+	"ZOOM_TYPE_CONTINUOUS":   ZOOM_TYPE_CONTINUOUS,
+	"ZOOM_TYPE_RANGE":        ZOOM_TYPE_RANGE,
+	"ZOOM_TYPE_FOCAL_LENGTH": ZOOM_TYPE_FOCAL_LENGTH,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CAMERA_ZOOM_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "ZOOM_TYPE_STEP":
-		*e = ZOOM_TYPE_STEP
-		return nil
-	case "ZOOM_TYPE_CONTINUOUS":
-		*e = ZOOM_TYPE_CONTINUOUS
-		return nil
-	case "ZOOM_TYPE_RANGE":
-		*e = ZOOM_TYPE_RANGE
-		return nil
-	case "ZOOM_TYPE_FOCAL_LENGTH":
-		*e = ZOOM_TYPE_FOCAL_LENGTH
+	if rl, ok := reverseLabels_CAMERA_ZOOM_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -1981,11 +1497,10 @@ func (e *CAMERA_ZOOM_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e CAMERA_ZOOM_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_CAMERA_ZOOM_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Possible responses from a CELLULAR_CONFIG message.
@@ -2004,40 +1519,34 @@ const (
 	CELLULAR_CONFIG_BLOCKED_PUK_REQUIRED CELLULAR_CONFIG_RESPONSE = 4
 )
 
+var labels_CELLULAR_CONFIG_RESPONSE = map[CELLULAR_CONFIG_RESPONSE]string{
+	CELLULAR_CONFIG_RESPONSE_ACCEPTED:    "CELLULAR_CONFIG_RESPONSE_ACCEPTED",
+	CELLULAR_CONFIG_RESPONSE_APN_ERROR:   "CELLULAR_CONFIG_RESPONSE_APN_ERROR",
+	CELLULAR_CONFIG_RESPONSE_PIN_ERROR:   "CELLULAR_CONFIG_RESPONSE_PIN_ERROR",
+	CELLULAR_CONFIG_RESPONSE_REJECTED:    "CELLULAR_CONFIG_RESPONSE_REJECTED",
+	CELLULAR_CONFIG_BLOCKED_PUK_REQUIRED: "CELLULAR_CONFIG_BLOCKED_PUK_REQUIRED",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CELLULAR_CONFIG_RESPONSE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case CELLULAR_CONFIG_RESPONSE_ACCEPTED:
-		return []byte("CELLULAR_CONFIG_RESPONSE_ACCEPTED"), nil
-	case CELLULAR_CONFIG_RESPONSE_APN_ERROR:
-		return []byte("CELLULAR_CONFIG_RESPONSE_APN_ERROR"), nil
-	case CELLULAR_CONFIG_RESPONSE_PIN_ERROR:
-		return []byte("CELLULAR_CONFIG_RESPONSE_PIN_ERROR"), nil
-	case CELLULAR_CONFIG_RESPONSE_REJECTED:
-		return []byte("CELLULAR_CONFIG_RESPONSE_REJECTED"), nil
-	case CELLULAR_CONFIG_BLOCKED_PUK_REQUIRED:
-		return []byte("CELLULAR_CONFIG_BLOCKED_PUK_REQUIRED"), nil
+	if l, ok := labels_CELLULAR_CONFIG_RESPONSE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_CELLULAR_CONFIG_RESPONSE = map[string]CELLULAR_CONFIG_RESPONSE{
+	"CELLULAR_CONFIG_RESPONSE_ACCEPTED":    CELLULAR_CONFIG_RESPONSE_ACCEPTED,
+	"CELLULAR_CONFIG_RESPONSE_APN_ERROR":   CELLULAR_CONFIG_RESPONSE_APN_ERROR,
+	"CELLULAR_CONFIG_RESPONSE_PIN_ERROR":   CELLULAR_CONFIG_RESPONSE_PIN_ERROR,
+	"CELLULAR_CONFIG_RESPONSE_REJECTED":    CELLULAR_CONFIG_RESPONSE_REJECTED,
+	"CELLULAR_CONFIG_BLOCKED_PUK_REQUIRED": CELLULAR_CONFIG_BLOCKED_PUK_REQUIRED,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CELLULAR_CONFIG_RESPONSE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "CELLULAR_CONFIG_RESPONSE_ACCEPTED":
-		*e = CELLULAR_CONFIG_RESPONSE_ACCEPTED
-		return nil
-	case "CELLULAR_CONFIG_RESPONSE_APN_ERROR":
-		*e = CELLULAR_CONFIG_RESPONSE_APN_ERROR
-		return nil
-	case "CELLULAR_CONFIG_RESPONSE_PIN_ERROR":
-		*e = CELLULAR_CONFIG_RESPONSE_PIN_ERROR
-		return nil
-	case "CELLULAR_CONFIG_RESPONSE_REJECTED":
-		*e = CELLULAR_CONFIG_RESPONSE_REJECTED
-		return nil
-	case "CELLULAR_CONFIG_BLOCKED_PUK_REQUIRED":
-		*e = CELLULAR_CONFIG_BLOCKED_PUK_REQUIRED
+	if rl, ok := reverseLabels_CELLULAR_CONFIG_RESPONSE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -2045,11 +1554,10 @@ func (e *CELLULAR_CONFIG_RESPONSE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e CELLULAR_CONFIG_RESPONSE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_CELLULAR_CONFIG_RESPONSE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // These flags are used to diagnose the failure state of CELLULAR_STATUS
@@ -2066,35 +1574,32 @@ const (
 	CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR CELLULAR_NETWORK_FAILED_REASON = 3
 )
 
+var labels_CELLULAR_NETWORK_FAILED_REASON = map[CELLULAR_NETWORK_FAILED_REASON]string{
+	CELLULAR_NETWORK_FAILED_REASON_NONE:        "CELLULAR_NETWORK_FAILED_REASON_NONE",
+	CELLULAR_NETWORK_FAILED_REASON_UNKNOWN:     "CELLULAR_NETWORK_FAILED_REASON_UNKNOWN",
+	CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING: "CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING",
+	CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR:   "CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CELLULAR_NETWORK_FAILED_REASON) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case CELLULAR_NETWORK_FAILED_REASON_NONE:
-		return []byte("CELLULAR_NETWORK_FAILED_REASON_NONE"), nil
-	case CELLULAR_NETWORK_FAILED_REASON_UNKNOWN:
-		return []byte("CELLULAR_NETWORK_FAILED_REASON_UNKNOWN"), nil
-	case CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING:
-		return []byte("CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING"), nil
-	case CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR:
-		return []byte("CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR"), nil
+	if l, ok := labels_CELLULAR_NETWORK_FAILED_REASON[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_CELLULAR_NETWORK_FAILED_REASON = map[string]CELLULAR_NETWORK_FAILED_REASON{
+	"CELLULAR_NETWORK_FAILED_REASON_NONE":        CELLULAR_NETWORK_FAILED_REASON_NONE,
+	"CELLULAR_NETWORK_FAILED_REASON_UNKNOWN":     CELLULAR_NETWORK_FAILED_REASON_UNKNOWN,
+	"CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING": CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING,
+	"CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR":   CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CELLULAR_NETWORK_FAILED_REASON) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "CELLULAR_NETWORK_FAILED_REASON_NONE":
-		*e = CELLULAR_NETWORK_FAILED_REASON_NONE
-		return nil
-	case "CELLULAR_NETWORK_FAILED_REASON_UNKNOWN":
-		*e = CELLULAR_NETWORK_FAILED_REASON_UNKNOWN
-		return nil
-	case "CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING":
-		*e = CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING
-		return nil
-	case "CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR":
-		*e = CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR
+	if rl, ok := reverseLabels_CELLULAR_NETWORK_FAILED_REASON[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -2102,11 +1607,10 @@ func (e *CELLULAR_NETWORK_FAILED_REASON) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e CELLULAR_NETWORK_FAILED_REASON) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_CELLULAR_NETWORK_FAILED_REASON[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Cellular network radio type
@@ -2125,40 +1629,34 @@ const (
 	CELLULAR_NETWORK_RADIO_TYPE_LTE CELLULAR_NETWORK_RADIO_TYPE = 4
 )
 
+var labels_CELLULAR_NETWORK_RADIO_TYPE = map[CELLULAR_NETWORK_RADIO_TYPE]string{
+	CELLULAR_NETWORK_RADIO_TYPE_NONE:  "CELLULAR_NETWORK_RADIO_TYPE_NONE",
+	CELLULAR_NETWORK_RADIO_TYPE_GSM:   "CELLULAR_NETWORK_RADIO_TYPE_GSM",
+	CELLULAR_NETWORK_RADIO_TYPE_CDMA:  "CELLULAR_NETWORK_RADIO_TYPE_CDMA",
+	CELLULAR_NETWORK_RADIO_TYPE_WCDMA: "CELLULAR_NETWORK_RADIO_TYPE_WCDMA",
+	CELLULAR_NETWORK_RADIO_TYPE_LTE:   "CELLULAR_NETWORK_RADIO_TYPE_LTE",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CELLULAR_NETWORK_RADIO_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case CELLULAR_NETWORK_RADIO_TYPE_NONE:
-		return []byte("CELLULAR_NETWORK_RADIO_TYPE_NONE"), nil
-	case CELLULAR_NETWORK_RADIO_TYPE_GSM:
-		return []byte("CELLULAR_NETWORK_RADIO_TYPE_GSM"), nil
-	case CELLULAR_NETWORK_RADIO_TYPE_CDMA:
-		return []byte("CELLULAR_NETWORK_RADIO_TYPE_CDMA"), nil
-	case CELLULAR_NETWORK_RADIO_TYPE_WCDMA:
-		return []byte("CELLULAR_NETWORK_RADIO_TYPE_WCDMA"), nil
-	case CELLULAR_NETWORK_RADIO_TYPE_LTE:
-		return []byte("CELLULAR_NETWORK_RADIO_TYPE_LTE"), nil
+	if l, ok := labels_CELLULAR_NETWORK_RADIO_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_CELLULAR_NETWORK_RADIO_TYPE = map[string]CELLULAR_NETWORK_RADIO_TYPE{
+	"CELLULAR_NETWORK_RADIO_TYPE_NONE":  CELLULAR_NETWORK_RADIO_TYPE_NONE,
+	"CELLULAR_NETWORK_RADIO_TYPE_GSM":   CELLULAR_NETWORK_RADIO_TYPE_GSM,
+	"CELLULAR_NETWORK_RADIO_TYPE_CDMA":  CELLULAR_NETWORK_RADIO_TYPE_CDMA,
+	"CELLULAR_NETWORK_RADIO_TYPE_WCDMA": CELLULAR_NETWORK_RADIO_TYPE_WCDMA,
+	"CELLULAR_NETWORK_RADIO_TYPE_LTE":   CELLULAR_NETWORK_RADIO_TYPE_LTE,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CELLULAR_NETWORK_RADIO_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "CELLULAR_NETWORK_RADIO_TYPE_NONE":
-		*e = CELLULAR_NETWORK_RADIO_TYPE_NONE
-		return nil
-	case "CELLULAR_NETWORK_RADIO_TYPE_GSM":
-		*e = CELLULAR_NETWORK_RADIO_TYPE_GSM
-		return nil
-	case "CELLULAR_NETWORK_RADIO_TYPE_CDMA":
-		*e = CELLULAR_NETWORK_RADIO_TYPE_CDMA
-		return nil
-	case "CELLULAR_NETWORK_RADIO_TYPE_WCDMA":
-		*e = CELLULAR_NETWORK_RADIO_TYPE_WCDMA
-		return nil
-	case "CELLULAR_NETWORK_RADIO_TYPE_LTE":
-		*e = CELLULAR_NETWORK_RADIO_TYPE_LTE
+	if rl, ok := reverseLabels_CELLULAR_NETWORK_RADIO_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -2166,11 +1664,10 @@ func (e *CELLULAR_NETWORK_RADIO_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e CELLULAR_NETWORK_RADIO_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_CELLULAR_NETWORK_RADIO_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // These flags encode the cellular network status
@@ -2205,80 +1702,50 @@ const (
 	CELLULAR_STATUS_FLAG_CONNECTED CELLULAR_STATUS_FLAG = 12
 )
 
+var labels_CELLULAR_STATUS_FLAG = map[CELLULAR_STATUS_FLAG]string{
+	CELLULAR_STATUS_FLAG_UNKNOWN:       "CELLULAR_STATUS_FLAG_UNKNOWN",
+	CELLULAR_STATUS_FLAG_FAILED:        "CELLULAR_STATUS_FLAG_FAILED",
+	CELLULAR_STATUS_FLAG_INITIALIZING:  "CELLULAR_STATUS_FLAG_INITIALIZING",
+	CELLULAR_STATUS_FLAG_LOCKED:        "CELLULAR_STATUS_FLAG_LOCKED",
+	CELLULAR_STATUS_FLAG_DISABLED:      "CELLULAR_STATUS_FLAG_DISABLED",
+	CELLULAR_STATUS_FLAG_DISABLING:     "CELLULAR_STATUS_FLAG_DISABLING",
+	CELLULAR_STATUS_FLAG_ENABLING:      "CELLULAR_STATUS_FLAG_ENABLING",
+	CELLULAR_STATUS_FLAG_ENABLED:       "CELLULAR_STATUS_FLAG_ENABLED",
+	CELLULAR_STATUS_FLAG_SEARCHING:     "CELLULAR_STATUS_FLAG_SEARCHING",
+	CELLULAR_STATUS_FLAG_REGISTERED:    "CELLULAR_STATUS_FLAG_REGISTERED",
+	CELLULAR_STATUS_FLAG_DISCONNECTING: "CELLULAR_STATUS_FLAG_DISCONNECTING",
+	CELLULAR_STATUS_FLAG_CONNECTING:    "CELLULAR_STATUS_FLAG_CONNECTING",
+	CELLULAR_STATUS_FLAG_CONNECTED:     "CELLULAR_STATUS_FLAG_CONNECTED",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CELLULAR_STATUS_FLAG) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case CELLULAR_STATUS_FLAG_UNKNOWN:
-		return []byte("CELLULAR_STATUS_FLAG_UNKNOWN"), nil
-	case CELLULAR_STATUS_FLAG_FAILED:
-		return []byte("CELLULAR_STATUS_FLAG_FAILED"), nil
-	case CELLULAR_STATUS_FLAG_INITIALIZING:
-		return []byte("CELLULAR_STATUS_FLAG_INITIALIZING"), nil
-	case CELLULAR_STATUS_FLAG_LOCKED:
-		return []byte("CELLULAR_STATUS_FLAG_LOCKED"), nil
-	case CELLULAR_STATUS_FLAG_DISABLED:
-		return []byte("CELLULAR_STATUS_FLAG_DISABLED"), nil
-	case CELLULAR_STATUS_FLAG_DISABLING:
-		return []byte("CELLULAR_STATUS_FLAG_DISABLING"), nil
-	case CELLULAR_STATUS_FLAG_ENABLING:
-		return []byte("CELLULAR_STATUS_FLAG_ENABLING"), nil
-	case CELLULAR_STATUS_FLAG_ENABLED:
-		return []byte("CELLULAR_STATUS_FLAG_ENABLED"), nil
-	case CELLULAR_STATUS_FLAG_SEARCHING:
-		return []byte("CELLULAR_STATUS_FLAG_SEARCHING"), nil
-	case CELLULAR_STATUS_FLAG_REGISTERED:
-		return []byte("CELLULAR_STATUS_FLAG_REGISTERED"), nil
-	case CELLULAR_STATUS_FLAG_DISCONNECTING:
-		return []byte("CELLULAR_STATUS_FLAG_DISCONNECTING"), nil
-	case CELLULAR_STATUS_FLAG_CONNECTING:
-		return []byte("CELLULAR_STATUS_FLAG_CONNECTING"), nil
-	case CELLULAR_STATUS_FLAG_CONNECTED:
-		return []byte("CELLULAR_STATUS_FLAG_CONNECTED"), nil
+	if l, ok := labels_CELLULAR_STATUS_FLAG[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_CELLULAR_STATUS_FLAG = map[string]CELLULAR_STATUS_FLAG{
+	"CELLULAR_STATUS_FLAG_UNKNOWN":       CELLULAR_STATUS_FLAG_UNKNOWN,
+	"CELLULAR_STATUS_FLAG_FAILED":        CELLULAR_STATUS_FLAG_FAILED,
+	"CELLULAR_STATUS_FLAG_INITIALIZING":  CELLULAR_STATUS_FLAG_INITIALIZING,
+	"CELLULAR_STATUS_FLAG_LOCKED":        CELLULAR_STATUS_FLAG_LOCKED,
+	"CELLULAR_STATUS_FLAG_DISABLED":      CELLULAR_STATUS_FLAG_DISABLED,
+	"CELLULAR_STATUS_FLAG_DISABLING":     CELLULAR_STATUS_FLAG_DISABLING,
+	"CELLULAR_STATUS_FLAG_ENABLING":      CELLULAR_STATUS_FLAG_ENABLING,
+	"CELLULAR_STATUS_FLAG_ENABLED":       CELLULAR_STATUS_FLAG_ENABLED,
+	"CELLULAR_STATUS_FLAG_SEARCHING":     CELLULAR_STATUS_FLAG_SEARCHING,
+	"CELLULAR_STATUS_FLAG_REGISTERED":    CELLULAR_STATUS_FLAG_REGISTERED,
+	"CELLULAR_STATUS_FLAG_DISCONNECTING": CELLULAR_STATUS_FLAG_DISCONNECTING,
+	"CELLULAR_STATUS_FLAG_CONNECTING":    CELLULAR_STATUS_FLAG_CONNECTING,
+	"CELLULAR_STATUS_FLAG_CONNECTED":     CELLULAR_STATUS_FLAG_CONNECTED,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CELLULAR_STATUS_FLAG) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "CELLULAR_STATUS_FLAG_UNKNOWN":
-		*e = CELLULAR_STATUS_FLAG_UNKNOWN
-		return nil
-	case "CELLULAR_STATUS_FLAG_FAILED":
-		*e = CELLULAR_STATUS_FLAG_FAILED
-		return nil
-	case "CELLULAR_STATUS_FLAG_INITIALIZING":
-		*e = CELLULAR_STATUS_FLAG_INITIALIZING
-		return nil
-	case "CELLULAR_STATUS_FLAG_LOCKED":
-		*e = CELLULAR_STATUS_FLAG_LOCKED
-		return nil
-	case "CELLULAR_STATUS_FLAG_DISABLED":
-		*e = CELLULAR_STATUS_FLAG_DISABLED
-		return nil
-	case "CELLULAR_STATUS_FLAG_DISABLING":
-		*e = CELLULAR_STATUS_FLAG_DISABLING
-		return nil
-	case "CELLULAR_STATUS_FLAG_ENABLING":
-		*e = CELLULAR_STATUS_FLAG_ENABLING
-		return nil
-	case "CELLULAR_STATUS_FLAG_ENABLED":
-		*e = CELLULAR_STATUS_FLAG_ENABLED
-		return nil
-	case "CELLULAR_STATUS_FLAG_SEARCHING":
-		*e = CELLULAR_STATUS_FLAG_SEARCHING
-		return nil
-	case "CELLULAR_STATUS_FLAG_REGISTERED":
-		*e = CELLULAR_STATUS_FLAG_REGISTERED
-		return nil
-	case "CELLULAR_STATUS_FLAG_DISCONNECTING":
-		*e = CELLULAR_STATUS_FLAG_DISCONNECTING
-		return nil
-	case "CELLULAR_STATUS_FLAG_CONNECTING":
-		*e = CELLULAR_STATUS_FLAG_CONNECTING
-		return nil
-	case "CELLULAR_STATUS_FLAG_CONNECTED":
-		*e = CELLULAR_STATUS_FLAG_CONNECTED
+	if rl, ok := reverseLabels_CELLULAR_STATUS_FLAG[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -2286,11 +1753,10 @@ func (e *CELLULAR_STATUS_FLAG) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e CELLULAR_STATUS_FLAG) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_CELLULAR_STATUS_FLAG[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Component capability flags (Bitmap)
@@ -2303,25 +1769,28 @@ const (
 	COMPONENT_CAP_FLAGS_PARAM_EXT COMPONENT_CAP_FLAGS = 2
 )
 
+var labels_COMPONENT_CAP_FLAGS = map[COMPONENT_CAP_FLAGS]string{
+	COMPONENT_CAP_FLAGS_PARAM:     "COMPONENT_CAP_FLAGS_PARAM",
+	COMPONENT_CAP_FLAGS_PARAM_EXT: "COMPONENT_CAP_FLAGS_PARAM_EXT",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e COMPONENT_CAP_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case COMPONENT_CAP_FLAGS_PARAM:
-		return []byte("COMPONENT_CAP_FLAGS_PARAM"), nil
-	case COMPONENT_CAP_FLAGS_PARAM_EXT:
-		return []byte("COMPONENT_CAP_FLAGS_PARAM_EXT"), nil
+	if l, ok := labels_COMPONENT_CAP_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_COMPONENT_CAP_FLAGS = map[string]COMPONENT_CAP_FLAGS{
+	"COMPONENT_CAP_FLAGS_PARAM":     COMPONENT_CAP_FLAGS_PARAM,
+	"COMPONENT_CAP_FLAGS_PARAM_EXT": COMPONENT_CAP_FLAGS_PARAM_EXT,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *COMPONENT_CAP_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "COMPONENT_CAP_FLAGS_PARAM":
-		*e = COMPONENT_CAP_FLAGS_PARAM
-		return nil
-	case "COMPONENT_CAP_FLAGS_PARAM_EXT":
-		*e = COMPONENT_CAP_FLAGS_PARAM_EXT
+	if rl, ok := reverseLabels_COMPONENT_CAP_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -2329,11 +1798,10 @@ func (e *COMPONENT_CAP_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e COMPONENT_CAP_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_COMPONENT_CAP_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Supported component metadata types. These are used in the "general" metadata file returned by COMPONENT_INFORMATION to provide information about supported metadata types. The types are not used directly in MAVLink messages.
@@ -2352,40 +1820,34 @@ const (
 	COMP_METADATA_TYPE_EVENTS COMP_METADATA_TYPE = 4
 )
 
+var labels_COMP_METADATA_TYPE = map[COMP_METADATA_TYPE]string{
+	COMP_METADATA_TYPE_GENERAL:     "COMP_METADATA_TYPE_GENERAL",
+	COMP_METADATA_TYPE_PARAMETER:   "COMP_METADATA_TYPE_PARAMETER",
+	COMP_METADATA_TYPE_COMMANDS:    "COMP_METADATA_TYPE_COMMANDS",
+	COMP_METADATA_TYPE_PERIPHERALS: "COMP_METADATA_TYPE_PERIPHERALS",
+	COMP_METADATA_TYPE_EVENTS:      "COMP_METADATA_TYPE_EVENTS",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e COMP_METADATA_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case COMP_METADATA_TYPE_GENERAL:
-		return []byte("COMP_METADATA_TYPE_GENERAL"), nil
-	case COMP_METADATA_TYPE_PARAMETER:
-		return []byte("COMP_METADATA_TYPE_PARAMETER"), nil
-	case COMP_METADATA_TYPE_COMMANDS:
-		return []byte("COMP_METADATA_TYPE_COMMANDS"), nil
-	case COMP_METADATA_TYPE_PERIPHERALS:
-		return []byte("COMP_METADATA_TYPE_PERIPHERALS"), nil
-	case COMP_METADATA_TYPE_EVENTS:
-		return []byte("COMP_METADATA_TYPE_EVENTS"), nil
+	if l, ok := labels_COMP_METADATA_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_COMP_METADATA_TYPE = map[string]COMP_METADATA_TYPE{
+	"COMP_METADATA_TYPE_GENERAL":     COMP_METADATA_TYPE_GENERAL,
+	"COMP_METADATA_TYPE_PARAMETER":   COMP_METADATA_TYPE_PARAMETER,
+	"COMP_METADATA_TYPE_COMMANDS":    COMP_METADATA_TYPE_COMMANDS,
+	"COMP_METADATA_TYPE_PERIPHERALS": COMP_METADATA_TYPE_PERIPHERALS,
+	"COMP_METADATA_TYPE_EVENTS":      COMP_METADATA_TYPE_EVENTS,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *COMP_METADATA_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "COMP_METADATA_TYPE_GENERAL":
-		*e = COMP_METADATA_TYPE_GENERAL
-		return nil
-	case "COMP_METADATA_TYPE_PARAMETER":
-		*e = COMP_METADATA_TYPE_PARAMETER
-		return nil
-	case "COMP_METADATA_TYPE_COMMANDS":
-		*e = COMP_METADATA_TYPE_COMMANDS
-		return nil
-	case "COMP_METADATA_TYPE_PERIPHERALS":
-		*e = COMP_METADATA_TYPE_PERIPHERALS
-		return nil
-	case "COMP_METADATA_TYPE_EVENTS":
-		*e = COMP_METADATA_TYPE_EVENTS
+	if rl, ok := reverseLabels_COMP_METADATA_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -2393,11 +1855,10 @@ func (e *COMP_METADATA_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e COMP_METADATA_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_COMP_METADATA_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Indicates the ESC connection type.
@@ -2418,45 +1879,36 @@ const (
 	ESC_CONNECTION_TYPE_DSHOT ESC_CONNECTION_TYPE = 5
 )
 
+var labels_ESC_CONNECTION_TYPE = map[ESC_CONNECTION_TYPE]string{
+	ESC_CONNECTION_TYPE_PPM:     "ESC_CONNECTION_TYPE_PPM",
+	ESC_CONNECTION_TYPE_SERIAL:  "ESC_CONNECTION_TYPE_SERIAL",
+	ESC_CONNECTION_TYPE_ONESHOT: "ESC_CONNECTION_TYPE_ONESHOT",
+	ESC_CONNECTION_TYPE_I2C:     "ESC_CONNECTION_TYPE_I2C",
+	ESC_CONNECTION_TYPE_CAN:     "ESC_CONNECTION_TYPE_CAN",
+	ESC_CONNECTION_TYPE_DSHOT:   "ESC_CONNECTION_TYPE_DSHOT",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ESC_CONNECTION_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case ESC_CONNECTION_TYPE_PPM:
-		return []byte("ESC_CONNECTION_TYPE_PPM"), nil
-	case ESC_CONNECTION_TYPE_SERIAL:
-		return []byte("ESC_CONNECTION_TYPE_SERIAL"), nil
-	case ESC_CONNECTION_TYPE_ONESHOT:
-		return []byte("ESC_CONNECTION_TYPE_ONESHOT"), nil
-	case ESC_CONNECTION_TYPE_I2C:
-		return []byte("ESC_CONNECTION_TYPE_I2C"), nil
-	case ESC_CONNECTION_TYPE_CAN:
-		return []byte("ESC_CONNECTION_TYPE_CAN"), nil
-	case ESC_CONNECTION_TYPE_DSHOT:
-		return []byte("ESC_CONNECTION_TYPE_DSHOT"), nil
+	if l, ok := labels_ESC_CONNECTION_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_ESC_CONNECTION_TYPE = map[string]ESC_CONNECTION_TYPE{
+	"ESC_CONNECTION_TYPE_PPM":     ESC_CONNECTION_TYPE_PPM,
+	"ESC_CONNECTION_TYPE_SERIAL":  ESC_CONNECTION_TYPE_SERIAL,
+	"ESC_CONNECTION_TYPE_ONESHOT": ESC_CONNECTION_TYPE_ONESHOT,
+	"ESC_CONNECTION_TYPE_I2C":     ESC_CONNECTION_TYPE_I2C,
+	"ESC_CONNECTION_TYPE_CAN":     ESC_CONNECTION_TYPE_CAN,
+	"ESC_CONNECTION_TYPE_DSHOT":   ESC_CONNECTION_TYPE_DSHOT,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ESC_CONNECTION_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "ESC_CONNECTION_TYPE_PPM":
-		*e = ESC_CONNECTION_TYPE_PPM
-		return nil
-	case "ESC_CONNECTION_TYPE_SERIAL":
-		*e = ESC_CONNECTION_TYPE_SERIAL
-		return nil
-	case "ESC_CONNECTION_TYPE_ONESHOT":
-		*e = ESC_CONNECTION_TYPE_ONESHOT
-		return nil
-	case "ESC_CONNECTION_TYPE_I2C":
-		*e = ESC_CONNECTION_TYPE_I2C
-		return nil
-	case "ESC_CONNECTION_TYPE_CAN":
-		*e = ESC_CONNECTION_TYPE_CAN
-		return nil
-	case "ESC_CONNECTION_TYPE_DSHOT":
-		*e = ESC_CONNECTION_TYPE_DSHOT
+	if rl, ok := reverseLabels_ESC_CONNECTION_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -2464,11 +1916,10 @@ func (e *ESC_CONNECTION_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e ESC_CONNECTION_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_ESC_CONNECTION_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Flags to report ESC failures.
@@ -2493,55 +1944,40 @@ const (
 	ESC_FAILURE_GENERIC ESC_FAILURE_FLAGS = 64
 )
 
+var labels_ESC_FAILURE_FLAGS = map[ESC_FAILURE_FLAGS]string{
+	ESC_FAILURE_NONE:             "ESC_FAILURE_NONE",
+	ESC_FAILURE_OVER_CURRENT:     "ESC_FAILURE_OVER_CURRENT",
+	ESC_FAILURE_OVER_VOLTAGE:     "ESC_FAILURE_OVER_VOLTAGE",
+	ESC_FAILURE_OVER_TEMPERATURE: "ESC_FAILURE_OVER_TEMPERATURE",
+	ESC_FAILURE_OVER_RPM:         "ESC_FAILURE_OVER_RPM",
+	ESC_FAILURE_INCONSISTENT_CMD: "ESC_FAILURE_INCONSISTENT_CMD",
+	ESC_FAILURE_MOTOR_STUCK:      "ESC_FAILURE_MOTOR_STUCK",
+	ESC_FAILURE_GENERIC:          "ESC_FAILURE_GENERIC",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ESC_FAILURE_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case ESC_FAILURE_NONE:
-		return []byte("ESC_FAILURE_NONE"), nil
-	case ESC_FAILURE_OVER_CURRENT:
-		return []byte("ESC_FAILURE_OVER_CURRENT"), nil
-	case ESC_FAILURE_OVER_VOLTAGE:
-		return []byte("ESC_FAILURE_OVER_VOLTAGE"), nil
-	case ESC_FAILURE_OVER_TEMPERATURE:
-		return []byte("ESC_FAILURE_OVER_TEMPERATURE"), nil
-	case ESC_FAILURE_OVER_RPM:
-		return []byte("ESC_FAILURE_OVER_RPM"), nil
-	case ESC_FAILURE_INCONSISTENT_CMD:
-		return []byte("ESC_FAILURE_INCONSISTENT_CMD"), nil
-	case ESC_FAILURE_MOTOR_STUCK:
-		return []byte("ESC_FAILURE_MOTOR_STUCK"), nil
-	case ESC_FAILURE_GENERIC:
-		return []byte("ESC_FAILURE_GENERIC"), nil
+	if l, ok := labels_ESC_FAILURE_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_ESC_FAILURE_FLAGS = map[string]ESC_FAILURE_FLAGS{
+	"ESC_FAILURE_NONE":             ESC_FAILURE_NONE,
+	"ESC_FAILURE_OVER_CURRENT":     ESC_FAILURE_OVER_CURRENT,
+	"ESC_FAILURE_OVER_VOLTAGE":     ESC_FAILURE_OVER_VOLTAGE,
+	"ESC_FAILURE_OVER_TEMPERATURE": ESC_FAILURE_OVER_TEMPERATURE,
+	"ESC_FAILURE_OVER_RPM":         ESC_FAILURE_OVER_RPM,
+	"ESC_FAILURE_INCONSISTENT_CMD": ESC_FAILURE_INCONSISTENT_CMD,
+	"ESC_FAILURE_MOTOR_STUCK":      ESC_FAILURE_MOTOR_STUCK,
+	"ESC_FAILURE_GENERIC":          ESC_FAILURE_GENERIC,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ESC_FAILURE_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "ESC_FAILURE_NONE":
-		*e = ESC_FAILURE_NONE
-		return nil
-	case "ESC_FAILURE_OVER_CURRENT":
-		*e = ESC_FAILURE_OVER_CURRENT
-		return nil
-	case "ESC_FAILURE_OVER_VOLTAGE":
-		*e = ESC_FAILURE_OVER_VOLTAGE
-		return nil
-	case "ESC_FAILURE_OVER_TEMPERATURE":
-		*e = ESC_FAILURE_OVER_TEMPERATURE
-		return nil
-	case "ESC_FAILURE_OVER_RPM":
-		*e = ESC_FAILURE_OVER_RPM
-		return nil
-	case "ESC_FAILURE_INCONSISTENT_CMD":
-		*e = ESC_FAILURE_INCONSISTENT_CMD
-		return nil
-	case "ESC_FAILURE_MOTOR_STUCK":
-		*e = ESC_FAILURE_MOTOR_STUCK
-		return nil
-	case "ESC_FAILURE_GENERIC":
-		*e = ESC_FAILURE_GENERIC
+	if rl, ok := reverseLabels_ESC_FAILURE_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -2549,11 +1985,10 @@ func (e *ESC_FAILURE_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e ESC_FAILURE_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_ESC_FAILURE_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Flags in ESTIMATOR_STATUS message
@@ -2586,75 +2021,48 @@ const (
 	ESTIMATOR_ACCEL_ERROR ESTIMATOR_STATUS_FLAGS = 2048
 )
 
+var labels_ESTIMATOR_STATUS_FLAGS = map[ESTIMATOR_STATUS_FLAGS]string{
+	ESTIMATOR_ATTITUDE:           "ESTIMATOR_ATTITUDE",
+	ESTIMATOR_VELOCITY_HORIZ:     "ESTIMATOR_VELOCITY_HORIZ",
+	ESTIMATOR_VELOCITY_VERT:      "ESTIMATOR_VELOCITY_VERT",
+	ESTIMATOR_POS_HORIZ_REL:      "ESTIMATOR_POS_HORIZ_REL",
+	ESTIMATOR_POS_HORIZ_ABS:      "ESTIMATOR_POS_HORIZ_ABS",
+	ESTIMATOR_POS_VERT_ABS:       "ESTIMATOR_POS_VERT_ABS",
+	ESTIMATOR_POS_VERT_AGL:       "ESTIMATOR_POS_VERT_AGL",
+	ESTIMATOR_CONST_POS_MODE:     "ESTIMATOR_CONST_POS_MODE",
+	ESTIMATOR_PRED_POS_HORIZ_REL: "ESTIMATOR_PRED_POS_HORIZ_REL",
+	ESTIMATOR_PRED_POS_HORIZ_ABS: "ESTIMATOR_PRED_POS_HORIZ_ABS",
+	ESTIMATOR_GPS_GLITCH:         "ESTIMATOR_GPS_GLITCH",
+	ESTIMATOR_ACCEL_ERROR:        "ESTIMATOR_ACCEL_ERROR",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ESTIMATOR_STATUS_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case ESTIMATOR_ATTITUDE:
-		return []byte("ESTIMATOR_ATTITUDE"), nil
-	case ESTIMATOR_VELOCITY_HORIZ:
-		return []byte("ESTIMATOR_VELOCITY_HORIZ"), nil
-	case ESTIMATOR_VELOCITY_VERT:
-		return []byte("ESTIMATOR_VELOCITY_VERT"), nil
-	case ESTIMATOR_POS_HORIZ_REL:
-		return []byte("ESTIMATOR_POS_HORIZ_REL"), nil
-	case ESTIMATOR_POS_HORIZ_ABS:
-		return []byte("ESTIMATOR_POS_HORIZ_ABS"), nil
-	case ESTIMATOR_POS_VERT_ABS:
-		return []byte("ESTIMATOR_POS_VERT_ABS"), nil
-	case ESTIMATOR_POS_VERT_AGL:
-		return []byte("ESTIMATOR_POS_VERT_AGL"), nil
-	case ESTIMATOR_CONST_POS_MODE:
-		return []byte("ESTIMATOR_CONST_POS_MODE"), nil
-	case ESTIMATOR_PRED_POS_HORIZ_REL:
-		return []byte("ESTIMATOR_PRED_POS_HORIZ_REL"), nil
-	case ESTIMATOR_PRED_POS_HORIZ_ABS:
-		return []byte("ESTIMATOR_PRED_POS_HORIZ_ABS"), nil
-	case ESTIMATOR_GPS_GLITCH:
-		return []byte("ESTIMATOR_GPS_GLITCH"), nil
-	case ESTIMATOR_ACCEL_ERROR:
-		return []byte("ESTIMATOR_ACCEL_ERROR"), nil
+	if l, ok := labels_ESTIMATOR_STATUS_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_ESTIMATOR_STATUS_FLAGS = map[string]ESTIMATOR_STATUS_FLAGS{
+	"ESTIMATOR_ATTITUDE":           ESTIMATOR_ATTITUDE,
+	"ESTIMATOR_VELOCITY_HORIZ":     ESTIMATOR_VELOCITY_HORIZ,
+	"ESTIMATOR_VELOCITY_VERT":      ESTIMATOR_VELOCITY_VERT,
+	"ESTIMATOR_POS_HORIZ_REL":      ESTIMATOR_POS_HORIZ_REL,
+	"ESTIMATOR_POS_HORIZ_ABS":      ESTIMATOR_POS_HORIZ_ABS,
+	"ESTIMATOR_POS_VERT_ABS":       ESTIMATOR_POS_VERT_ABS,
+	"ESTIMATOR_POS_VERT_AGL":       ESTIMATOR_POS_VERT_AGL,
+	"ESTIMATOR_CONST_POS_MODE":     ESTIMATOR_CONST_POS_MODE,
+	"ESTIMATOR_PRED_POS_HORIZ_REL": ESTIMATOR_PRED_POS_HORIZ_REL,
+	"ESTIMATOR_PRED_POS_HORIZ_ABS": ESTIMATOR_PRED_POS_HORIZ_ABS,
+	"ESTIMATOR_GPS_GLITCH":         ESTIMATOR_GPS_GLITCH,
+	"ESTIMATOR_ACCEL_ERROR":        ESTIMATOR_ACCEL_ERROR,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ESTIMATOR_STATUS_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "ESTIMATOR_ATTITUDE":
-		*e = ESTIMATOR_ATTITUDE
-		return nil
-	case "ESTIMATOR_VELOCITY_HORIZ":
-		*e = ESTIMATOR_VELOCITY_HORIZ
-		return nil
-	case "ESTIMATOR_VELOCITY_VERT":
-		*e = ESTIMATOR_VELOCITY_VERT
-		return nil
-	case "ESTIMATOR_POS_HORIZ_REL":
-		*e = ESTIMATOR_POS_HORIZ_REL
-		return nil
-	case "ESTIMATOR_POS_HORIZ_ABS":
-		*e = ESTIMATOR_POS_HORIZ_ABS
-		return nil
-	case "ESTIMATOR_POS_VERT_ABS":
-		*e = ESTIMATOR_POS_VERT_ABS
-		return nil
-	case "ESTIMATOR_POS_VERT_AGL":
-		*e = ESTIMATOR_POS_VERT_AGL
-		return nil
-	case "ESTIMATOR_CONST_POS_MODE":
-		*e = ESTIMATOR_CONST_POS_MODE
-		return nil
-	case "ESTIMATOR_PRED_POS_HORIZ_REL":
-		*e = ESTIMATOR_PRED_POS_HORIZ_REL
-		return nil
-	case "ESTIMATOR_PRED_POS_HORIZ_ABS":
-		*e = ESTIMATOR_PRED_POS_HORIZ_ABS
-		return nil
-	case "ESTIMATOR_GPS_GLITCH":
-		*e = ESTIMATOR_GPS_GLITCH
-		return nil
-	case "ESTIMATOR_ACCEL_ERROR":
-		*e = ESTIMATOR_ACCEL_ERROR
+	if rl, ok := reverseLabels_ESTIMATOR_STATUS_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -2662,11 +2070,10 @@ func (e *ESTIMATOR_STATUS_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e ESTIMATOR_STATUS_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_ESTIMATOR_STATUS_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // List of possible failure type to inject.
@@ -2691,55 +2098,40 @@ const (
 	FAILURE_TYPE_INTERMITTENT FAILURE_TYPE = 7
 )
 
+var labels_FAILURE_TYPE = map[FAILURE_TYPE]string{
+	FAILURE_TYPE_OK:           "FAILURE_TYPE_OK",
+	FAILURE_TYPE_OFF:          "FAILURE_TYPE_OFF",
+	FAILURE_TYPE_STUCK:        "FAILURE_TYPE_STUCK",
+	FAILURE_TYPE_GARBAGE:      "FAILURE_TYPE_GARBAGE",
+	FAILURE_TYPE_WRONG:        "FAILURE_TYPE_WRONG",
+	FAILURE_TYPE_SLOW:         "FAILURE_TYPE_SLOW",
+	FAILURE_TYPE_DELAYED:      "FAILURE_TYPE_DELAYED",
+	FAILURE_TYPE_INTERMITTENT: "FAILURE_TYPE_INTERMITTENT",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FAILURE_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case FAILURE_TYPE_OK:
-		return []byte("FAILURE_TYPE_OK"), nil
-	case FAILURE_TYPE_OFF:
-		return []byte("FAILURE_TYPE_OFF"), nil
-	case FAILURE_TYPE_STUCK:
-		return []byte("FAILURE_TYPE_STUCK"), nil
-	case FAILURE_TYPE_GARBAGE:
-		return []byte("FAILURE_TYPE_GARBAGE"), nil
-	case FAILURE_TYPE_WRONG:
-		return []byte("FAILURE_TYPE_WRONG"), nil
-	case FAILURE_TYPE_SLOW:
-		return []byte("FAILURE_TYPE_SLOW"), nil
-	case FAILURE_TYPE_DELAYED:
-		return []byte("FAILURE_TYPE_DELAYED"), nil
-	case FAILURE_TYPE_INTERMITTENT:
-		return []byte("FAILURE_TYPE_INTERMITTENT"), nil
+	if l, ok := labels_FAILURE_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_FAILURE_TYPE = map[string]FAILURE_TYPE{
+	"FAILURE_TYPE_OK":           FAILURE_TYPE_OK,
+	"FAILURE_TYPE_OFF":          FAILURE_TYPE_OFF,
+	"FAILURE_TYPE_STUCK":        FAILURE_TYPE_STUCK,
+	"FAILURE_TYPE_GARBAGE":      FAILURE_TYPE_GARBAGE,
+	"FAILURE_TYPE_WRONG":        FAILURE_TYPE_WRONG,
+	"FAILURE_TYPE_SLOW":         FAILURE_TYPE_SLOW,
+	"FAILURE_TYPE_DELAYED":      FAILURE_TYPE_DELAYED,
+	"FAILURE_TYPE_INTERMITTENT": FAILURE_TYPE_INTERMITTENT,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FAILURE_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "FAILURE_TYPE_OK":
-		*e = FAILURE_TYPE_OK
-		return nil
-	case "FAILURE_TYPE_OFF":
-		*e = FAILURE_TYPE_OFF
-		return nil
-	case "FAILURE_TYPE_STUCK":
-		*e = FAILURE_TYPE_STUCK
-		return nil
-	case "FAILURE_TYPE_GARBAGE":
-		*e = FAILURE_TYPE_GARBAGE
-		return nil
-	case "FAILURE_TYPE_WRONG":
-		*e = FAILURE_TYPE_WRONG
-		return nil
-	case "FAILURE_TYPE_SLOW":
-		*e = FAILURE_TYPE_SLOW
-		return nil
-	case "FAILURE_TYPE_DELAYED":
-		*e = FAILURE_TYPE_DELAYED
-		return nil
-	case "FAILURE_TYPE_INTERMITTENT":
-		*e = FAILURE_TYPE_INTERMITTENT
+	if rl, ok := reverseLabels_FAILURE_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -2747,11 +2139,10 @@ func (e *FAILURE_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e FAILURE_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_FAILURE_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // List of possible units where failures can be injected.
@@ -2790,90 +2181,54 @@ const (
 	FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL FAILURE_UNIT = 105
 )
 
+var labels_FAILURE_UNIT = map[FAILURE_UNIT]string{
+	FAILURE_UNIT_SENSOR_GYRO:            "FAILURE_UNIT_SENSOR_GYRO",
+	FAILURE_UNIT_SENSOR_ACCEL:           "FAILURE_UNIT_SENSOR_ACCEL",
+	FAILURE_UNIT_SENSOR_MAG:             "FAILURE_UNIT_SENSOR_MAG",
+	FAILURE_UNIT_SENSOR_BARO:            "FAILURE_UNIT_SENSOR_BARO",
+	FAILURE_UNIT_SENSOR_GPS:             "FAILURE_UNIT_SENSOR_GPS",
+	FAILURE_UNIT_SENSOR_OPTICAL_FLOW:    "FAILURE_UNIT_SENSOR_OPTICAL_FLOW",
+	FAILURE_UNIT_SENSOR_VIO:             "FAILURE_UNIT_SENSOR_VIO",
+	FAILURE_UNIT_SENSOR_DISTANCE_SENSOR: "FAILURE_UNIT_SENSOR_DISTANCE_SENSOR",
+	FAILURE_UNIT_SENSOR_AIRSPEED:        "FAILURE_UNIT_SENSOR_AIRSPEED",
+	FAILURE_UNIT_SYSTEM_BATTERY:         "FAILURE_UNIT_SYSTEM_BATTERY",
+	FAILURE_UNIT_SYSTEM_MOTOR:           "FAILURE_UNIT_SYSTEM_MOTOR",
+	FAILURE_UNIT_SYSTEM_SERVO:           "FAILURE_UNIT_SYSTEM_SERVO",
+	FAILURE_UNIT_SYSTEM_AVOIDANCE:       "FAILURE_UNIT_SYSTEM_AVOIDANCE",
+	FAILURE_UNIT_SYSTEM_RC_SIGNAL:       "FAILURE_UNIT_SYSTEM_RC_SIGNAL",
+	FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL:  "FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FAILURE_UNIT) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case FAILURE_UNIT_SENSOR_GYRO:
-		return []byte("FAILURE_UNIT_SENSOR_GYRO"), nil
-	case FAILURE_UNIT_SENSOR_ACCEL:
-		return []byte("FAILURE_UNIT_SENSOR_ACCEL"), nil
-	case FAILURE_UNIT_SENSOR_MAG:
-		return []byte("FAILURE_UNIT_SENSOR_MAG"), nil
-	case FAILURE_UNIT_SENSOR_BARO:
-		return []byte("FAILURE_UNIT_SENSOR_BARO"), nil
-	case FAILURE_UNIT_SENSOR_GPS:
-		return []byte("FAILURE_UNIT_SENSOR_GPS"), nil
-	case FAILURE_UNIT_SENSOR_OPTICAL_FLOW:
-		return []byte("FAILURE_UNIT_SENSOR_OPTICAL_FLOW"), nil
-	case FAILURE_UNIT_SENSOR_VIO:
-		return []byte("FAILURE_UNIT_SENSOR_VIO"), nil
-	case FAILURE_UNIT_SENSOR_DISTANCE_SENSOR:
-		return []byte("FAILURE_UNIT_SENSOR_DISTANCE_SENSOR"), nil
-	case FAILURE_UNIT_SENSOR_AIRSPEED:
-		return []byte("FAILURE_UNIT_SENSOR_AIRSPEED"), nil
-	case FAILURE_UNIT_SYSTEM_BATTERY:
-		return []byte("FAILURE_UNIT_SYSTEM_BATTERY"), nil
-	case FAILURE_UNIT_SYSTEM_MOTOR:
-		return []byte("FAILURE_UNIT_SYSTEM_MOTOR"), nil
-	case FAILURE_UNIT_SYSTEM_SERVO:
-		return []byte("FAILURE_UNIT_SYSTEM_SERVO"), nil
-	case FAILURE_UNIT_SYSTEM_AVOIDANCE:
-		return []byte("FAILURE_UNIT_SYSTEM_AVOIDANCE"), nil
-	case FAILURE_UNIT_SYSTEM_RC_SIGNAL:
-		return []byte("FAILURE_UNIT_SYSTEM_RC_SIGNAL"), nil
-	case FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL:
-		return []byte("FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL"), nil
+	if l, ok := labels_FAILURE_UNIT[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_FAILURE_UNIT = map[string]FAILURE_UNIT{
+	"FAILURE_UNIT_SENSOR_GYRO":            FAILURE_UNIT_SENSOR_GYRO,
+	"FAILURE_UNIT_SENSOR_ACCEL":           FAILURE_UNIT_SENSOR_ACCEL,
+	"FAILURE_UNIT_SENSOR_MAG":             FAILURE_UNIT_SENSOR_MAG,
+	"FAILURE_UNIT_SENSOR_BARO":            FAILURE_UNIT_SENSOR_BARO,
+	"FAILURE_UNIT_SENSOR_GPS":             FAILURE_UNIT_SENSOR_GPS,
+	"FAILURE_UNIT_SENSOR_OPTICAL_FLOW":    FAILURE_UNIT_SENSOR_OPTICAL_FLOW,
+	"FAILURE_UNIT_SENSOR_VIO":             FAILURE_UNIT_SENSOR_VIO,
+	"FAILURE_UNIT_SENSOR_DISTANCE_SENSOR": FAILURE_UNIT_SENSOR_DISTANCE_SENSOR,
+	"FAILURE_UNIT_SENSOR_AIRSPEED":        FAILURE_UNIT_SENSOR_AIRSPEED,
+	"FAILURE_UNIT_SYSTEM_BATTERY":         FAILURE_UNIT_SYSTEM_BATTERY,
+	"FAILURE_UNIT_SYSTEM_MOTOR":           FAILURE_UNIT_SYSTEM_MOTOR,
+	"FAILURE_UNIT_SYSTEM_SERVO":           FAILURE_UNIT_SYSTEM_SERVO,
+	"FAILURE_UNIT_SYSTEM_AVOIDANCE":       FAILURE_UNIT_SYSTEM_AVOIDANCE,
+	"FAILURE_UNIT_SYSTEM_RC_SIGNAL":       FAILURE_UNIT_SYSTEM_RC_SIGNAL,
+	"FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL":  FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FAILURE_UNIT) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "FAILURE_UNIT_SENSOR_GYRO":
-		*e = FAILURE_UNIT_SENSOR_GYRO
-		return nil
-	case "FAILURE_UNIT_SENSOR_ACCEL":
-		*e = FAILURE_UNIT_SENSOR_ACCEL
-		return nil
-	case "FAILURE_UNIT_SENSOR_MAG":
-		*e = FAILURE_UNIT_SENSOR_MAG
-		return nil
-	case "FAILURE_UNIT_SENSOR_BARO":
-		*e = FAILURE_UNIT_SENSOR_BARO
-		return nil
-	case "FAILURE_UNIT_SENSOR_GPS":
-		*e = FAILURE_UNIT_SENSOR_GPS
-		return nil
-	case "FAILURE_UNIT_SENSOR_OPTICAL_FLOW":
-		*e = FAILURE_UNIT_SENSOR_OPTICAL_FLOW
-		return nil
-	case "FAILURE_UNIT_SENSOR_VIO":
-		*e = FAILURE_UNIT_SENSOR_VIO
-		return nil
-	case "FAILURE_UNIT_SENSOR_DISTANCE_SENSOR":
-		*e = FAILURE_UNIT_SENSOR_DISTANCE_SENSOR
-		return nil
-	case "FAILURE_UNIT_SENSOR_AIRSPEED":
-		*e = FAILURE_UNIT_SENSOR_AIRSPEED
-		return nil
-	case "FAILURE_UNIT_SYSTEM_BATTERY":
-		*e = FAILURE_UNIT_SYSTEM_BATTERY
-		return nil
-	case "FAILURE_UNIT_SYSTEM_MOTOR":
-		*e = FAILURE_UNIT_SYSTEM_MOTOR
-		return nil
-	case "FAILURE_UNIT_SYSTEM_SERVO":
-		*e = FAILURE_UNIT_SYSTEM_SERVO
-		return nil
-	case "FAILURE_UNIT_SYSTEM_AVOIDANCE":
-		*e = FAILURE_UNIT_SYSTEM_AVOIDANCE
-		return nil
-	case "FAILURE_UNIT_SYSTEM_RC_SIGNAL":
-		*e = FAILURE_UNIT_SYSTEM_RC_SIGNAL
-		return nil
-	case "FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL":
-		*e = FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL
+	if rl, ok := reverseLabels_FAILURE_UNIT[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -2881,11 +2236,10 @@ func (e *FAILURE_UNIT) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e FAILURE_UNIT) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_FAILURE_UNIT[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Actions following geofence breach.
@@ -2910,55 +2264,40 @@ const (
 	FENCE_ACTION_LAND FENCE_ACTION = 7
 )
 
+var labels_FENCE_ACTION = map[FENCE_ACTION]string{
+	FENCE_ACTION_NONE:            "FENCE_ACTION_NONE",
+	FENCE_ACTION_GUIDED:          "FENCE_ACTION_GUIDED",
+	FENCE_ACTION_REPORT:          "FENCE_ACTION_REPORT",
+	FENCE_ACTION_GUIDED_THR_PASS: "FENCE_ACTION_GUIDED_THR_PASS",
+	FENCE_ACTION_RTL:             "FENCE_ACTION_RTL",
+	FENCE_ACTION_HOLD:            "FENCE_ACTION_HOLD",
+	FENCE_ACTION_TERMINATE:       "FENCE_ACTION_TERMINATE",
+	FENCE_ACTION_LAND:            "FENCE_ACTION_LAND",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FENCE_ACTION) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case FENCE_ACTION_NONE:
-		return []byte("FENCE_ACTION_NONE"), nil
-	case FENCE_ACTION_GUIDED:
-		return []byte("FENCE_ACTION_GUIDED"), nil
-	case FENCE_ACTION_REPORT:
-		return []byte("FENCE_ACTION_REPORT"), nil
-	case FENCE_ACTION_GUIDED_THR_PASS:
-		return []byte("FENCE_ACTION_GUIDED_THR_PASS"), nil
-	case FENCE_ACTION_RTL:
-		return []byte("FENCE_ACTION_RTL"), nil
-	case FENCE_ACTION_HOLD:
-		return []byte("FENCE_ACTION_HOLD"), nil
-	case FENCE_ACTION_TERMINATE:
-		return []byte("FENCE_ACTION_TERMINATE"), nil
-	case FENCE_ACTION_LAND:
-		return []byte("FENCE_ACTION_LAND"), nil
+	if l, ok := labels_FENCE_ACTION[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_FENCE_ACTION = map[string]FENCE_ACTION{
+	"FENCE_ACTION_NONE":            FENCE_ACTION_NONE,
+	"FENCE_ACTION_GUIDED":          FENCE_ACTION_GUIDED,
+	"FENCE_ACTION_REPORT":          FENCE_ACTION_REPORT,
+	"FENCE_ACTION_GUIDED_THR_PASS": FENCE_ACTION_GUIDED_THR_PASS,
+	"FENCE_ACTION_RTL":             FENCE_ACTION_RTL,
+	"FENCE_ACTION_HOLD":            FENCE_ACTION_HOLD,
+	"FENCE_ACTION_TERMINATE":       FENCE_ACTION_TERMINATE,
+	"FENCE_ACTION_LAND":            FENCE_ACTION_LAND,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FENCE_ACTION) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "FENCE_ACTION_NONE":
-		*e = FENCE_ACTION_NONE
-		return nil
-	case "FENCE_ACTION_GUIDED":
-		*e = FENCE_ACTION_GUIDED
-		return nil
-	case "FENCE_ACTION_REPORT":
-		*e = FENCE_ACTION_REPORT
-		return nil
-	case "FENCE_ACTION_GUIDED_THR_PASS":
-		*e = FENCE_ACTION_GUIDED_THR_PASS
-		return nil
-	case "FENCE_ACTION_RTL":
-		*e = FENCE_ACTION_RTL
-		return nil
-	case "FENCE_ACTION_HOLD":
-		*e = FENCE_ACTION_HOLD
-		return nil
-	case "FENCE_ACTION_TERMINATE":
-		*e = FENCE_ACTION_TERMINATE
-		return nil
-	case "FENCE_ACTION_LAND":
-		*e = FENCE_ACTION_LAND
+	if rl, ok := reverseLabels_FENCE_ACTION[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -2966,11 +2305,10 @@ func (e *FENCE_ACTION) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e FENCE_ACTION) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_FENCE_ACTION[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -2987,35 +2325,32 @@ const (
 	FENCE_BREACH_BOUNDARY FENCE_BREACH = 3
 )
 
+var labels_FENCE_BREACH = map[FENCE_BREACH]string{
+	FENCE_BREACH_NONE:     "FENCE_BREACH_NONE",
+	FENCE_BREACH_MINALT:   "FENCE_BREACH_MINALT",
+	FENCE_BREACH_MAXALT:   "FENCE_BREACH_MAXALT",
+	FENCE_BREACH_BOUNDARY: "FENCE_BREACH_BOUNDARY",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FENCE_BREACH) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case FENCE_BREACH_NONE:
-		return []byte("FENCE_BREACH_NONE"), nil
-	case FENCE_BREACH_MINALT:
-		return []byte("FENCE_BREACH_MINALT"), nil
-	case FENCE_BREACH_MAXALT:
-		return []byte("FENCE_BREACH_MAXALT"), nil
-	case FENCE_BREACH_BOUNDARY:
-		return []byte("FENCE_BREACH_BOUNDARY"), nil
+	if l, ok := labels_FENCE_BREACH[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_FENCE_BREACH = map[string]FENCE_BREACH{
+	"FENCE_BREACH_NONE":     FENCE_BREACH_NONE,
+	"FENCE_BREACH_MINALT":   FENCE_BREACH_MINALT,
+	"FENCE_BREACH_MAXALT":   FENCE_BREACH_MAXALT,
+	"FENCE_BREACH_BOUNDARY": FENCE_BREACH_BOUNDARY,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FENCE_BREACH) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "FENCE_BREACH_NONE":
-		*e = FENCE_BREACH_NONE
-		return nil
-	case "FENCE_BREACH_MINALT":
-		*e = FENCE_BREACH_MINALT
-		return nil
-	case "FENCE_BREACH_MAXALT":
-		*e = FENCE_BREACH_MAXALT
-		return nil
-	case "FENCE_BREACH_BOUNDARY":
-		*e = FENCE_BREACH_BOUNDARY
+	if rl, ok := reverseLabels_FENCE_BREACH[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -3023,11 +2358,10 @@ func (e *FENCE_BREACH) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e FENCE_BREACH) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_FENCE_BREACH[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Actions being taken to mitigate/prevent fence breach
@@ -3042,30 +2376,30 @@ const (
 	FENCE_MITIGATE_VEL_LIMIT FENCE_MITIGATE = 2
 )
 
+var labels_FENCE_MITIGATE = map[FENCE_MITIGATE]string{
+	FENCE_MITIGATE_UNKNOWN:   "FENCE_MITIGATE_UNKNOWN",
+	FENCE_MITIGATE_NONE:      "FENCE_MITIGATE_NONE",
+	FENCE_MITIGATE_VEL_LIMIT: "FENCE_MITIGATE_VEL_LIMIT",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FENCE_MITIGATE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case FENCE_MITIGATE_UNKNOWN:
-		return []byte("FENCE_MITIGATE_UNKNOWN"), nil
-	case FENCE_MITIGATE_NONE:
-		return []byte("FENCE_MITIGATE_NONE"), nil
-	case FENCE_MITIGATE_VEL_LIMIT:
-		return []byte("FENCE_MITIGATE_VEL_LIMIT"), nil
+	if l, ok := labels_FENCE_MITIGATE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_FENCE_MITIGATE = map[string]FENCE_MITIGATE{
+	"FENCE_MITIGATE_UNKNOWN":   FENCE_MITIGATE_UNKNOWN,
+	"FENCE_MITIGATE_NONE":      FENCE_MITIGATE_NONE,
+	"FENCE_MITIGATE_VEL_LIMIT": FENCE_MITIGATE_VEL_LIMIT,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FENCE_MITIGATE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "FENCE_MITIGATE_UNKNOWN":
-		*e = FENCE_MITIGATE_UNKNOWN
-		return nil
-	case "FENCE_MITIGATE_NONE":
-		*e = FENCE_MITIGATE_NONE
-		return nil
-	case "FENCE_MITIGATE_VEL_LIMIT":
-		*e = FENCE_MITIGATE_VEL_LIMIT
+	if rl, ok := reverseLabels_FENCE_MITIGATE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -3073,11 +2407,10 @@ func (e *FENCE_MITIGATE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e FENCE_MITIGATE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_FENCE_MITIGATE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // These values define the type of firmware release.  These values indicate the first version or release of this type.  For example the first alpha release would be 64, the second would be 65.
@@ -3096,40 +2429,34 @@ const (
 	FIRMWARE_VERSION_TYPE_OFFICIAL FIRMWARE_VERSION_TYPE = 255
 )
 
+var labels_FIRMWARE_VERSION_TYPE = map[FIRMWARE_VERSION_TYPE]string{
+	FIRMWARE_VERSION_TYPE_DEV:      "FIRMWARE_VERSION_TYPE_DEV",
+	FIRMWARE_VERSION_TYPE_ALPHA:    "FIRMWARE_VERSION_TYPE_ALPHA",
+	FIRMWARE_VERSION_TYPE_BETA:     "FIRMWARE_VERSION_TYPE_BETA",
+	FIRMWARE_VERSION_TYPE_RC:       "FIRMWARE_VERSION_TYPE_RC",
+	FIRMWARE_VERSION_TYPE_OFFICIAL: "FIRMWARE_VERSION_TYPE_OFFICIAL",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FIRMWARE_VERSION_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case FIRMWARE_VERSION_TYPE_DEV:
-		return []byte("FIRMWARE_VERSION_TYPE_DEV"), nil
-	case FIRMWARE_VERSION_TYPE_ALPHA:
-		return []byte("FIRMWARE_VERSION_TYPE_ALPHA"), nil
-	case FIRMWARE_VERSION_TYPE_BETA:
-		return []byte("FIRMWARE_VERSION_TYPE_BETA"), nil
-	case FIRMWARE_VERSION_TYPE_RC:
-		return []byte("FIRMWARE_VERSION_TYPE_RC"), nil
-	case FIRMWARE_VERSION_TYPE_OFFICIAL:
-		return []byte("FIRMWARE_VERSION_TYPE_OFFICIAL"), nil
+	if l, ok := labels_FIRMWARE_VERSION_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_FIRMWARE_VERSION_TYPE = map[string]FIRMWARE_VERSION_TYPE{
+	"FIRMWARE_VERSION_TYPE_DEV":      FIRMWARE_VERSION_TYPE_DEV,
+	"FIRMWARE_VERSION_TYPE_ALPHA":    FIRMWARE_VERSION_TYPE_ALPHA,
+	"FIRMWARE_VERSION_TYPE_BETA":     FIRMWARE_VERSION_TYPE_BETA,
+	"FIRMWARE_VERSION_TYPE_RC":       FIRMWARE_VERSION_TYPE_RC,
+	"FIRMWARE_VERSION_TYPE_OFFICIAL": FIRMWARE_VERSION_TYPE_OFFICIAL,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FIRMWARE_VERSION_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "FIRMWARE_VERSION_TYPE_DEV":
-		*e = FIRMWARE_VERSION_TYPE_DEV
-		return nil
-	case "FIRMWARE_VERSION_TYPE_ALPHA":
-		*e = FIRMWARE_VERSION_TYPE_ALPHA
-		return nil
-	case "FIRMWARE_VERSION_TYPE_BETA":
-		*e = FIRMWARE_VERSION_TYPE_BETA
-		return nil
-	case "FIRMWARE_VERSION_TYPE_RC":
-		*e = FIRMWARE_VERSION_TYPE_RC
-		return nil
-	case "FIRMWARE_VERSION_TYPE_OFFICIAL":
-		*e = FIRMWARE_VERSION_TYPE_OFFICIAL
+	if rl, ok := reverseLabels_FIRMWARE_VERSION_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -3137,11 +2464,10 @@ func (e *FIRMWARE_VERSION_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e FIRMWARE_VERSION_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_FIRMWARE_VERSION_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Gimbal device (low level) capability flags (bitmap)
@@ -3174,75 +2500,48 @@ const (
 	GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_INFINITE_YAW GIMBAL_DEVICE_CAP_FLAGS = 2048
 )
 
+var labels_GIMBAL_DEVICE_CAP_FLAGS = map[GIMBAL_DEVICE_CAP_FLAGS]string{
+	GIMBAL_DEVICE_CAP_FLAGS_HAS_RETRACT:           "GIMBAL_DEVICE_CAP_FLAGS_HAS_RETRACT",
+	GIMBAL_DEVICE_CAP_FLAGS_HAS_NEUTRAL:           "GIMBAL_DEVICE_CAP_FLAGS_HAS_NEUTRAL",
+	GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_AXIS:         "GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_AXIS",
+	GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_FOLLOW:       "GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_FOLLOW",
+	GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_LOCK:         "GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_LOCK",
+	GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_AXIS:        "GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_AXIS",
+	GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_FOLLOW:      "GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_FOLLOW",
+	GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_LOCK:        "GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_LOCK",
+	GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_AXIS:          "GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_AXIS",
+	GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_FOLLOW:        "GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_FOLLOW",
+	GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_LOCK:          "GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_LOCK",
+	GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_INFINITE_YAW: "GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_INFINITE_YAW",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GIMBAL_DEVICE_CAP_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case GIMBAL_DEVICE_CAP_FLAGS_HAS_RETRACT:
-		return []byte("GIMBAL_DEVICE_CAP_FLAGS_HAS_RETRACT"), nil
-	case GIMBAL_DEVICE_CAP_FLAGS_HAS_NEUTRAL:
-		return []byte("GIMBAL_DEVICE_CAP_FLAGS_HAS_NEUTRAL"), nil
-	case GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_AXIS:
-		return []byte("GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_AXIS"), nil
-	case GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_FOLLOW:
-		return []byte("GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_FOLLOW"), nil
-	case GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_LOCK:
-		return []byte("GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_LOCK"), nil
-	case GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_AXIS:
-		return []byte("GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_AXIS"), nil
-	case GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_FOLLOW:
-		return []byte("GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_FOLLOW"), nil
-	case GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_LOCK:
-		return []byte("GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_LOCK"), nil
-	case GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_AXIS:
-		return []byte("GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_AXIS"), nil
-	case GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_FOLLOW:
-		return []byte("GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_FOLLOW"), nil
-	case GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_LOCK:
-		return []byte("GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_LOCK"), nil
-	case GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_INFINITE_YAW:
-		return []byte("GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_INFINITE_YAW"), nil
+	if l, ok := labels_GIMBAL_DEVICE_CAP_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_GIMBAL_DEVICE_CAP_FLAGS = map[string]GIMBAL_DEVICE_CAP_FLAGS{
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_RETRACT":           GIMBAL_DEVICE_CAP_FLAGS_HAS_RETRACT,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_NEUTRAL":           GIMBAL_DEVICE_CAP_FLAGS_HAS_NEUTRAL,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_AXIS":         GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_AXIS,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_FOLLOW":       GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_FOLLOW,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_LOCK":         GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_LOCK,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_AXIS":        GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_AXIS,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_FOLLOW":      GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_FOLLOW,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_LOCK":        GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_LOCK,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_AXIS":          GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_AXIS,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_FOLLOW":        GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_FOLLOW,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_LOCK":          GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_LOCK,
+	"GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_INFINITE_YAW": GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_INFINITE_YAW,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GIMBAL_DEVICE_CAP_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "GIMBAL_DEVICE_CAP_FLAGS_HAS_RETRACT":
-		*e = GIMBAL_DEVICE_CAP_FLAGS_HAS_RETRACT
-		return nil
-	case "GIMBAL_DEVICE_CAP_FLAGS_HAS_NEUTRAL":
-		*e = GIMBAL_DEVICE_CAP_FLAGS_HAS_NEUTRAL
-		return nil
-	case "GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_AXIS":
-		*e = GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_AXIS
-		return nil
-	case "GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_FOLLOW":
-		*e = GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_FOLLOW
-		return nil
-	case "GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_LOCK":
-		*e = GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_LOCK
-		return nil
-	case "GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_AXIS":
-		*e = GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_AXIS
-		return nil
-	case "GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_FOLLOW":
-		*e = GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_FOLLOW
-		return nil
-	case "GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_LOCK":
-		*e = GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_LOCK
-		return nil
-	case "GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_AXIS":
-		*e = GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_AXIS
-		return nil
-	case "GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_FOLLOW":
-		*e = GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_FOLLOW
-		return nil
-	case "GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_LOCK":
-		*e = GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_LOCK
-		return nil
-	case "GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_INFINITE_YAW":
-		*e = GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_INFINITE_YAW
+	if rl, ok := reverseLabels_GIMBAL_DEVICE_CAP_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -3250,11 +2549,10 @@ func (e *GIMBAL_DEVICE_CAP_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e GIMBAL_DEVICE_CAP_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_GIMBAL_DEVICE_CAP_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Gimbal device (low level) error flags (bitmap, 0 means no error)
@@ -3281,60 +2579,42 @@ const (
 	GIMBAL_DEVICE_ERROR_FLAGS_CALIBRATION_RUNNING GIMBAL_DEVICE_ERROR_FLAGS = 256
 )
 
+var labels_GIMBAL_DEVICE_ERROR_FLAGS = map[GIMBAL_DEVICE_ERROR_FLAGS]string{
+	GIMBAL_DEVICE_ERROR_FLAGS_AT_ROLL_LIMIT:       "GIMBAL_DEVICE_ERROR_FLAGS_AT_ROLL_LIMIT",
+	GIMBAL_DEVICE_ERROR_FLAGS_AT_PITCH_LIMIT:      "GIMBAL_DEVICE_ERROR_FLAGS_AT_PITCH_LIMIT",
+	GIMBAL_DEVICE_ERROR_FLAGS_AT_YAW_LIMIT:        "GIMBAL_DEVICE_ERROR_FLAGS_AT_YAW_LIMIT",
+	GIMBAL_DEVICE_ERROR_FLAGS_ENCODER_ERROR:       "GIMBAL_DEVICE_ERROR_FLAGS_ENCODER_ERROR",
+	GIMBAL_DEVICE_ERROR_FLAGS_POWER_ERROR:         "GIMBAL_DEVICE_ERROR_FLAGS_POWER_ERROR",
+	GIMBAL_DEVICE_ERROR_FLAGS_MOTOR_ERROR:         "GIMBAL_DEVICE_ERROR_FLAGS_MOTOR_ERROR",
+	GIMBAL_DEVICE_ERROR_FLAGS_SOFTWARE_ERROR:      "GIMBAL_DEVICE_ERROR_FLAGS_SOFTWARE_ERROR",
+	GIMBAL_DEVICE_ERROR_FLAGS_COMMS_ERROR:         "GIMBAL_DEVICE_ERROR_FLAGS_COMMS_ERROR",
+	GIMBAL_DEVICE_ERROR_FLAGS_CALIBRATION_RUNNING: "GIMBAL_DEVICE_ERROR_FLAGS_CALIBRATION_RUNNING",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GIMBAL_DEVICE_ERROR_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case GIMBAL_DEVICE_ERROR_FLAGS_AT_ROLL_LIMIT:
-		return []byte("GIMBAL_DEVICE_ERROR_FLAGS_AT_ROLL_LIMIT"), nil
-	case GIMBAL_DEVICE_ERROR_FLAGS_AT_PITCH_LIMIT:
-		return []byte("GIMBAL_DEVICE_ERROR_FLAGS_AT_PITCH_LIMIT"), nil
-	case GIMBAL_DEVICE_ERROR_FLAGS_AT_YAW_LIMIT:
-		return []byte("GIMBAL_DEVICE_ERROR_FLAGS_AT_YAW_LIMIT"), nil
-	case GIMBAL_DEVICE_ERROR_FLAGS_ENCODER_ERROR:
-		return []byte("GIMBAL_DEVICE_ERROR_FLAGS_ENCODER_ERROR"), nil
-	case GIMBAL_DEVICE_ERROR_FLAGS_POWER_ERROR:
-		return []byte("GIMBAL_DEVICE_ERROR_FLAGS_POWER_ERROR"), nil
-	case GIMBAL_DEVICE_ERROR_FLAGS_MOTOR_ERROR:
-		return []byte("GIMBAL_DEVICE_ERROR_FLAGS_MOTOR_ERROR"), nil
-	case GIMBAL_DEVICE_ERROR_FLAGS_SOFTWARE_ERROR:
-		return []byte("GIMBAL_DEVICE_ERROR_FLAGS_SOFTWARE_ERROR"), nil
-	case GIMBAL_DEVICE_ERROR_FLAGS_COMMS_ERROR:
-		return []byte("GIMBAL_DEVICE_ERROR_FLAGS_COMMS_ERROR"), nil
-	case GIMBAL_DEVICE_ERROR_FLAGS_CALIBRATION_RUNNING:
-		return []byte("GIMBAL_DEVICE_ERROR_FLAGS_CALIBRATION_RUNNING"), nil
+	if l, ok := labels_GIMBAL_DEVICE_ERROR_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_GIMBAL_DEVICE_ERROR_FLAGS = map[string]GIMBAL_DEVICE_ERROR_FLAGS{
+	"GIMBAL_DEVICE_ERROR_FLAGS_AT_ROLL_LIMIT":       GIMBAL_DEVICE_ERROR_FLAGS_AT_ROLL_LIMIT,
+	"GIMBAL_DEVICE_ERROR_FLAGS_AT_PITCH_LIMIT":      GIMBAL_DEVICE_ERROR_FLAGS_AT_PITCH_LIMIT,
+	"GIMBAL_DEVICE_ERROR_FLAGS_AT_YAW_LIMIT":        GIMBAL_DEVICE_ERROR_FLAGS_AT_YAW_LIMIT,
+	"GIMBAL_DEVICE_ERROR_FLAGS_ENCODER_ERROR":       GIMBAL_DEVICE_ERROR_FLAGS_ENCODER_ERROR,
+	"GIMBAL_DEVICE_ERROR_FLAGS_POWER_ERROR":         GIMBAL_DEVICE_ERROR_FLAGS_POWER_ERROR,
+	"GIMBAL_DEVICE_ERROR_FLAGS_MOTOR_ERROR":         GIMBAL_DEVICE_ERROR_FLAGS_MOTOR_ERROR,
+	"GIMBAL_DEVICE_ERROR_FLAGS_SOFTWARE_ERROR":      GIMBAL_DEVICE_ERROR_FLAGS_SOFTWARE_ERROR,
+	"GIMBAL_DEVICE_ERROR_FLAGS_COMMS_ERROR":         GIMBAL_DEVICE_ERROR_FLAGS_COMMS_ERROR,
+	"GIMBAL_DEVICE_ERROR_FLAGS_CALIBRATION_RUNNING": GIMBAL_DEVICE_ERROR_FLAGS_CALIBRATION_RUNNING,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GIMBAL_DEVICE_ERROR_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "GIMBAL_DEVICE_ERROR_FLAGS_AT_ROLL_LIMIT":
-		*e = GIMBAL_DEVICE_ERROR_FLAGS_AT_ROLL_LIMIT
-		return nil
-	case "GIMBAL_DEVICE_ERROR_FLAGS_AT_PITCH_LIMIT":
-		*e = GIMBAL_DEVICE_ERROR_FLAGS_AT_PITCH_LIMIT
-		return nil
-	case "GIMBAL_DEVICE_ERROR_FLAGS_AT_YAW_LIMIT":
-		*e = GIMBAL_DEVICE_ERROR_FLAGS_AT_YAW_LIMIT
-		return nil
-	case "GIMBAL_DEVICE_ERROR_FLAGS_ENCODER_ERROR":
-		*e = GIMBAL_DEVICE_ERROR_FLAGS_ENCODER_ERROR
-		return nil
-	case "GIMBAL_DEVICE_ERROR_FLAGS_POWER_ERROR":
-		*e = GIMBAL_DEVICE_ERROR_FLAGS_POWER_ERROR
-		return nil
-	case "GIMBAL_DEVICE_ERROR_FLAGS_MOTOR_ERROR":
-		*e = GIMBAL_DEVICE_ERROR_FLAGS_MOTOR_ERROR
-		return nil
-	case "GIMBAL_DEVICE_ERROR_FLAGS_SOFTWARE_ERROR":
-		*e = GIMBAL_DEVICE_ERROR_FLAGS_SOFTWARE_ERROR
-		return nil
-	case "GIMBAL_DEVICE_ERROR_FLAGS_COMMS_ERROR":
-		*e = GIMBAL_DEVICE_ERROR_FLAGS_COMMS_ERROR
-		return nil
-	case "GIMBAL_DEVICE_ERROR_FLAGS_CALIBRATION_RUNNING":
-		*e = GIMBAL_DEVICE_ERROR_FLAGS_CALIBRATION_RUNNING
+	if rl, ok := reverseLabels_GIMBAL_DEVICE_ERROR_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -3342,11 +2622,10 @@ func (e *GIMBAL_DEVICE_ERROR_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e GIMBAL_DEVICE_ERROR_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_GIMBAL_DEVICE_ERROR_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Flags for gimbal device (lower level) operation.
@@ -3365,40 +2644,34 @@ const (
 	GIMBAL_DEVICE_FLAGS_YAW_LOCK GIMBAL_DEVICE_FLAGS = 16
 )
 
+var labels_GIMBAL_DEVICE_FLAGS = map[GIMBAL_DEVICE_FLAGS]string{
+	GIMBAL_DEVICE_FLAGS_RETRACT:    "GIMBAL_DEVICE_FLAGS_RETRACT",
+	GIMBAL_DEVICE_FLAGS_NEUTRAL:    "GIMBAL_DEVICE_FLAGS_NEUTRAL",
+	GIMBAL_DEVICE_FLAGS_ROLL_LOCK:  "GIMBAL_DEVICE_FLAGS_ROLL_LOCK",
+	GIMBAL_DEVICE_FLAGS_PITCH_LOCK: "GIMBAL_DEVICE_FLAGS_PITCH_LOCK",
+	GIMBAL_DEVICE_FLAGS_YAW_LOCK:   "GIMBAL_DEVICE_FLAGS_YAW_LOCK",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GIMBAL_DEVICE_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case GIMBAL_DEVICE_FLAGS_RETRACT:
-		return []byte("GIMBAL_DEVICE_FLAGS_RETRACT"), nil
-	case GIMBAL_DEVICE_FLAGS_NEUTRAL:
-		return []byte("GIMBAL_DEVICE_FLAGS_NEUTRAL"), nil
-	case GIMBAL_DEVICE_FLAGS_ROLL_LOCK:
-		return []byte("GIMBAL_DEVICE_FLAGS_ROLL_LOCK"), nil
-	case GIMBAL_DEVICE_FLAGS_PITCH_LOCK:
-		return []byte("GIMBAL_DEVICE_FLAGS_PITCH_LOCK"), nil
-	case GIMBAL_DEVICE_FLAGS_YAW_LOCK:
-		return []byte("GIMBAL_DEVICE_FLAGS_YAW_LOCK"), nil
+	if l, ok := labels_GIMBAL_DEVICE_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_GIMBAL_DEVICE_FLAGS = map[string]GIMBAL_DEVICE_FLAGS{
+	"GIMBAL_DEVICE_FLAGS_RETRACT":    GIMBAL_DEVICE_FLAGS_RETRACT,
+	"GIMBAL_DEVICE_FLAGS_NEUTRAL":    GIMBAL_DEVICE_FLAGS_NEUTRAL,
+	"GIMBAL_DEVICE_FLAGS_ROLL_LOCK":  GIMBAL_DEVICE_FLAGS_ROLL_LOCK,
+	"GIMBAL_DEVICE_FLAGS_PITCH_LOCK": GIMBAL_DEVICE_FLAGS_PITCH_LOCK,
+	"GIMBAL_DEVICE_FLAGS_YAW_LOCK":   GIMBAL_DEVICE_FLAGS_YAW_LOCK,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GIMBAL_DEVICE_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "GIMBAL_DEVICE_FLAGS_RETRACT":
-		*e = GIMBAL_DEVICE_FLAGS_RETRACT
-		return nil
-	case "GIMBAL_DEVICE_FLAGS_NEUTRAL":
-		*e = GIMBAL_DEVICE_FLAGS_NEUTRAL
-		return nil
-	case "GIMBAL_DEVICE_FLAGS_ROLL_LOCK":
-		*e = GIMBAL_DEVICE_FLAGS_ROLL_LOCK
-		return nil
-	case "GIMBAL_DEVICE_FLAGS_PITCH_LOCK":
-		*e = GIMBAL_DEVICE_FLAGS_PITCH_LOCK
-		return nil
-	case "GIMBAL_DEVICE_FLAGS_YAW_LOCK":
-		*e = GIMBAL_DEVICE_FLAGS_YAW_LOCK
+	if rl, ok := reverseLabels_GIMBAL_DEVICE_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -3406,11 +2679,10 @@ func (e *GIMBAL_DEVICE_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e GIMBAL_DEVICE_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_GIMBAL_DEVICE_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Gimbal manager high level capability flags (bitmap). The first 16 bits are identical to the GIMBAL_DEVICE_CAP_FLAGS which are identical with GIMBAL_DEVICE_FLAGS. However, the gimbal manager does not need to copy the flags from the gimbal but can also enhance the capabilities and thus add flags.
@@ -3447,85 +2719,52 @@ const (
 	GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL GIMBAL_MANAGER_CAP_FLAGS = 131072
 )
 
+var labels_GIMBAL_MANAGER_CAP_FLAGS = map[GIMBAL_MANAGER_CAP_FLAGS]string{
+	GIMBAL_MANAGER_CAP_FLAGS_HAS_RETRACT:               "GIMBAL_MANAGER_CAP_FLAGS_HAS_RETRACT",
+	GIMBAL_MANAGER_CAP_FLAGS_HAS_NEUTRAL:               "GIMBAL_MANAGER_CAP_FLAGS_HAS_NEUTRAL",
+	GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_AXIS:             "GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_AXIS",
+	GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_FOLLOW:           "GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_FOLLOW",
+	GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_LOCK:             "GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_LOCK",
+	GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_AXIS:            "GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_AXIS",
+	GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_FOLLOW:          "GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_FOLLOW",
+	GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_LOCK:            "GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_LOCK",
+	GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_AXIS:              "GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_AXIS",
+	GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_FOLLOW:            "GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_FOLLOW",
+	GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_LOCK:              "GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_LOCK",
+	GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_INFINITE_YAW:     "GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_INFINITE_YAW",
+	GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_LOCAL:  "GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_LOCAL",
+	GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL: "GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GIMBAL_MANAGER_CAP_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case GIMBAL_MANAGER_CAP_FLAGS_HAS_RETRACT:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_HAS_RETRACT"), nil
-	case GIMBAL_MANAGER_CAP_FLAGS_HAS_NEUTRAL:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_HAS_NEUTRAL"), nil
-	case GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_AXIS:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_AXIS"), nil
-	case GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_FOLLOW:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_FOLLOW"), nil
-	case GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_LOCK:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_LOCK"), nil
-	case GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_AXIS:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_AXIS"), nil
-	case GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_FOLLOW:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_FOLLOW"), nil
-	case GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_LOCK:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_LOCK"), nil
-	case GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_AXIS:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_AXIS"), nil
-	case GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_FOLLOW:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_FOLLOW"), nil
-	case GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_LOCK:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_LOCK"), nil
-	case GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_INFINITE_YAW:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_INFINITE_YAW"), nil
-	case GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_LOCAL:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_LOCAL"), nil
-	case GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL:
-		return []byte("GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL"), nil
+	if l, ok := labels_GIMBAL_MANAGER_CAP_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_GIMBAL_MANAGER_CAP_FLAGS = map[string]GIMBAL_MANAGER_CAP_FLAGS{
+	"GIMBAL_MANAGER_CAP_FLAGS_HAS_RETRACT":               GIMBAL_MANAGER_CAP_FLAGS_HAS_RETRACT,
+	"GIMBAL_MANAGER_CAP_FLAGS_HAS_NEUTRAL":               GIMBAL_MANAGER_CAP_FLAGS_HAS_NEUTRAL,
+	"GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_AXIS":             GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_AXIS,
+	"GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_FOLLOW":           GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_FOLLOW,
+	"GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_LOCK":             GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_LOCK,
+	"GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_AXIS":            GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_AXIS,
+	"GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_FOLLOW":          GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_FOLLOW,
+	"GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_LOCK":            GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_LOCK,
+	"GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_AXIS":              GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_AXIS,
+	"GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_FOLLOW":            GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_FOLLOW,
+	"GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_LOCK":              GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_LOCK,
+	"GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_INFINITE_YAW":     GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_INFINITE_YAW,
+	"GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_LOCAL":  GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_LOCAL,
+	"GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL": GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GIMBAL_MANAGER_CAP_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "GIMBAL_MANAGER_CAP_FLAGS_HAS_RETRACT":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_HAS_RETRACT
-		return nil
-	case "GIMBAL_MANAGER_CAP_FLAGS_HAS_NEUTRAL":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_HAS_NEUTRAL
-		return nil
-	case "GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_AXIS":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_AXIS
-		return nil
-	case "GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_FOLLOW":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_FOLLOW
-		return nil
-	case "GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_LOCK":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_HAS_ROLL_LOCK
-		return nil
-	case "GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_AXIS":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_AXIS
-		return nil
-	case "GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_FOLLOW":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_FOLLOW
-		return nil
-	case "GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_LOCK":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_HAS_PITCH_LOCK
-		return nil
-	case "GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_AXIS":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_AXIS
-		return nil
-	case "GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_FOLLOW":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_FOLLOW
-		return nil
-	case "GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_LOCK":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_HAS_YAW_LOCK
-		return nil
-	case "GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_INFINITE_YAW":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_INFINITE_YAW
-		return nil
-	case "GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_LOCAL":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_LOCAL
-		return nil
-	case "GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL":
-		*e = GIMBAL_MANAGER_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL
+	if rl, ok := reverseLabels_GIMBAL_MANAGER_CAP_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -3533,11 +2772,10 @@ func (e *GIMBAL_MANAGER_CAP_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e GIMBAL_MANAGER_CAP_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_GIMBAL_MANAGER_CAP_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Flags for high level gimbal manager operation The first 16 bytes are identical to the GIMBAL_DEVICE_FLAGS.
@@ -3556,40 +2794,34 @@ const (
 	GIMBAL_MANAGER_FLAGS_YAW_LOCK GIMBAL_MANAGER_FLAGS = 16
 )
 
+var labels_GIMBAL_MANAGER_FLAGS = map[GIMBAL_MANAGER_FLAGS]string{
+	GIMBAL_MANAGER_FLAGS_RETRACT:    "GIMBAL_MANAGER_FLAGS_RETRACT",
+	GIMBAL_MANAGER_FLAGS_NEUTRAL:    "GIMBAL_MANAGER_FLAGS_NEUTRAL",
+	GIMBAL_MANAGER_FLAGS_ROLL_LOCK:  "GIMBAL_MANAGER_FLAGS_ROLL_LOCK",
+	GIMBAL_MANAGER_FLAGS_PITCH_LOCK: "GIMBAL_MANAGER_FLAGS_PITCH_LOCK",
+	GIMBAL_MANAGER_FLAGS_YAW_LOCK:   "GIMBAL_MANAGER_FLAGS_YAW_LOCK",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GIMBAL_MANAGER_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case GIMBAL_MANAGER_FLAGS_RETRACT:
-		return []byte("GIMBAL_MANAGER_FLAGS_RETRACT"), nil
-	case GIMBAL_MANAGER_FLAGS_NEUTRAL:
-		return []byte("GIMBAL_MANAGER_FLAGS_NEUTRAL"), nil
-	case GIMBAL_MANAGER_FLAGS_ROLL_LOCK:
-		return []byte("GIMBAL_MANAGER_FLAGS_ROLL_LOCK"), nil
-	case GIMBAL_MANAGER_FLAGS_PITCH_LOCK:
-		return []byte("GIMBAL_MANAGER_FLAGS_PITCH_LOCK"), nil
-	case GIMBAL_MANAGER_FLAGS_YAW_LOCK:
-		return []byte("GIMBAL_MANAGER_FLAGS_YAW_LOCK"), nil
+	if l, ok := labels_GIMBAL_MANAGER_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_GIMBAL_MANAGER_FLAGS = map[string]GIMBAL_MANAGER_FLAGS{
+	"GIMBAL_MANAGER_FLAGS_RETRACT":    GIMBAL_MANAGER_FLAGS_RETRACT,
+	"GIMBAL_MANAGER_FLAGS_NEUTRAL":    GIMBAL_MANAGER_FLAGS_NEUTRAL,
+	"GIMBAL_MANAGER_FLAGS_ROLL_LOCK":  GIMBAL_MANAGER_FLAGS_ROLL_LOCK,
+	"GIMBAL_MANAGER_FLAGS_PITCH_LOCK": GIMBAL_MANAGER_FLAGS_PITCH_LOCK,
+	"GIMBAL_MANAGER_FLAGS_YAW_LOCK":   GIMBAL_MANAGER_FLAGS_YAW_LOCK,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GIMBAL_MANAGER_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "GIMBAL_MANAGER_FLAGS_RETRACT":
-		*e = GIMBAL_MANAGER_FLAGS_RETRACT
-		return nil
-	case "GIMBAL_MANAGER_FLAGS_NEUTRAL":
-		*e = GIMBAL_MANAGER_FLAGS_NEUTRAL
-		return nil
-	case "GIMBAL_MANAGER_FLAGS_ROLL_LOCK":
-		*e = GIMBAL_MANAGER_FLAGS_ROLL_LOCK
-		return nil
-	case "GIMBAL_MANAGER_FLAGS_PITCH_LOCK":
-		*e = GIMBAL_MANAGER_FLAGS_PITCH_LOCK
-		return nil
-	case "GIMBAL_MANAGER_FLAGS_YAW_LOCK":
-		*e = GIMBAL_MANAGER_FLAGS_YAW_LOCK
+	if rl, ok := reverseLabels_GIMBAL_MANAGER_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -3597,11 +2829,10 @@ func (e *GIMBAL_MANAGER_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e GIMBAL_MANAGER_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_GIMBAL_MANAGER_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Type of GPS fix
@@ -3628,60 +2859,42 @@ const (
 	GPS_FIX_TYPE_PPP GPS_FIX_TYPE = 8
 )
 
+var labels_GPS_FIX_TYPE = map[GPS_FIX_TYPE]string{
+	GPS_FIX_TYPE_NO_GPS:    "GPS_FIX_TYPE_NO_GPS",
+	GPS_FIX_TYPE_NO_FIX:    "GPS_FIX_TYPE_NO_FIX",
+	GPS_FIX_TYPE_2D_FIX:    "GPS_FIX_TYPE_2D_FIX",
+	GPS_FIX_TYPE_3D_FIX:    "GPS_FIX_TYPE_3D_FIX",
+	GPS_FIX_TYPE_DGPS:      "GPS_FIX_TYPE_DGPS",
+	GPS_FIX_TYPE_RTK_FLOAT: "GPS_FIX_TYPE_RTK_FLOAT",
+	GPS_FIX_TYPE_RTK_FIXED: "GPS_FIX_TYPE_RTK_FIXED",
+	GPS_FIX_TYPE_STATIC:    "GPS_FIX_TYPE_STATIC",
+	GPS_FIX_TYPE_PPP:       "GPS_FIX_TYPE_PPP",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GPS_FIX_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case GPS_FIX_TYPE_NO_GPS:
-		return []byte("GPS_FIX_TYPE_NO_GPS"), nil
-	case GPS_FIX_TYPE_NO_FIX:
-		return []byte("GPS_FIX_TYPE_NO_FIX"), nil
-	case GPS_FIX_TYPE_2D_FIX:
-		return []byte("GPS_FIX_TYPE_2D_FIX"), nil
-	case GPS_FIX_TYPE_3D_FIX:
-		return []byte("GPS_FIX_TYPE_3D_FIX"), nil
-	case GPS_FIX_TYPE_DGPS:
-		return []byte("GPS_FIX_TYPE_DGPS"), nil
-	case GPS_FIX_TYPE_RTK_FLOAT:
-		return []byte("GPS_FIX_TYPE_RTK_FLOAT"), nil
-	case GPS_FIX_TYPE_RTK_FIXED:
-		return []byte("GPS_FIX_TYPE_RTK_FIXED"), nil
-	case GPS_FIX_TYPE_STATIC:
-		return []byte("GPS_FIX_TYPE_STATIC"), nil
-	case GPS_FIX_TYPE_PPP:
-		return []byte("GPS_FIX_TYPE_PPP"), nil
+	if l, ok := labels_GPS_FIX_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_GPS_FIX_TYPE = map[string]GPS_FIX_TYPE{
+	"GPS_FIX_TYPE_NO_GPS":    GPS_FIX_TYPE_NO_GPS,
+	"GPS_FIX_TYPE_NO_FIX":    GPS_FIX_TYPE_NO_FIX,
+	"GPS_FIX_TYPE_2D_FIX":    GPS_FIX_TYPE_2D_FIX,
+	"GPS_FIX_TYPE_3D_FIX":    GPS_FIX_TYPE_3D_FIX,
+	"GPS_FIX_TYPE_DGPS":      GPS_FIX_TYPE_DGPS,
+	"GPS_FIX_TYPE_RTK_FLOAT": GPS_FIX_TYPE_RTK_FLOAT,
+	"GPS_FIX_TYPE_RTK_FIXED": GPS_FIX_TYPE_RTK_FIXED,
+	"GPS_FIX_TYPE_STATIC":    GPS_FIX_TYPE_STATIC,
+	"GPS_FIX_TYPE_PPP":       GPS_FIX_TYPE_PPP,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GPS_FIX_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "GPS_FIX_TYPE_NO_GPS":
-		*e = GPS_FIX_TYPE_NO_GPS
-		return nil
-	case "GPS_FIX_TYPE_NO_FIX":
-		*e = GPS_FIX_TYPE_NO_FIX
-		return nil
-	case "GPS_FIX_TYPE_2D_FIX":
-		*e = GPS_FIX_TYPE_2D_FIX
-		return nil
-	case "GPS_FIX_TYPE_3D_FIX":
-		*e = GPS_FIX_TYPE_3D_FIX
-		return nil
-	case "GPS_FIX_TYPE_DGPS":
-		*e = GPS_FIX_TYPE_DGPS
-		return nil
-	case "GPS_FIX_TYPE_RTK_FLOAT":
-		*e = GPS_FIX_TYPE_RTK_FLOAT
-		return nil
-	case "GPS_FIX_TYPE_RTK_FIXED":
-		*e = GPS_FIX_TYPE_RTK_FIXED
-		return nil
-	case "GPS_FIX_TYPE_STATIC":
-		*e = GPS_FIX_TYPE_STATIC
-		return nil
-	case "GPS_FIX_TYPE_PPP":
-		*e = GPS_FIX_TYPE_PPP
+	if rl, ok := reverseLabels_GPS_FIX_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -3689,11 +2902,10 @@ func (e *GPS_FIX_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e GPS_FIX_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_GPS_FIX_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -3718,55 +2930,40 @@ const (
 	GPS_INPUT_IGNORE_FLAG_VERTICAL_ACCURACY GPS_INPUT_IGNORE_FLAGS = 128
 )
 
+var labels_GPS_INPUT_IGNORE_FLAGS = map[GPS_INPUT_IGNORE_FLAGS]string{
+	GPS_INPUT_IGNORE_FLAG_ALT:                 "GPS_INPUT_IGNORE_FLAG_ALT",
+	GPS_INPUT_IGNORE_FLAG_HDOP:                "GPS_INPUT_IGNORE_FLAG_HDOP",
+	GPS_INPUT_IGNORE_FLAG_VDOP:                "GPS_INPUT_IGNORE_FLAG_VDOP",
+	GPS_INPUT_IGNORE_FLAG_VEL_HORIZ:           "GPS_INPUT_IGNORE_FLAG_VEL_HORIZ",
+	GPS_INPUT_IGNORE_FLAG_VEL_VERT:            "GPS_INPUT_IGNORE_FLAG_VEL_VERT",
+	GPS_INPUT_IGNORE_FLAG_SPEED_ACCURACY:      "GPS_INPUT_IGNORE_FLAG_SPEED_ACCURACY",
+	GPS_INPUT_IGNORE_FLAG_HORIZONTAL_ACCURACY: "GPS_INPUT_IGNORE_FLAG_HORIZONTAL_ACCURACY",
+	GPS_INPUT_IGNORE_FLAG_VERTICAL_ACCURACY:   "GPS_INPUT_IGNORE_FLAG_VERTICAL_ACCURACY",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GPS_INPUT_IGNORE_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case GPS_INPUT_IGNORE_FLAG_ALT:
-		return []byte("GPS_INPUT_IGNORE_FLAG_ALT"), nil
-	case GPS_INPUT_IGNORE_FLAG_HDOP:
-		return []byte("GPS_INPUT_IGNORE_FLAG_HDOP"), nil
-	case GPS_INPUT_IGNORE_FLAG_VDOP:
-		return []byte("GPS_INPUT_IGNORE_FLAG_VDOP"), nil
-	case GPS_INPUT_IGNORE_FLAG_VEL_HORIZ:
-		return []byte("GPS_INPUT_IGNORE_FLAG_VEL_HORIZ"), nil
-	case GPS_INPUT_IGNORE_FLAG_VEL_VERT:
-		return []byte("GPS_INPUT_IGNORE_FLAG_VEL_VERT"), nil
-	case GPS_INPUT_IGNORE_FLAG_SPEED_ACCURACY:
-		return []byte("GPS_INPUT_IGNORE_FLAG_SPEED_ACCURACY"), nil
-	case GPS_INPUT_IGNORE_FLAG_HORIZONTAL_ACCURACY:
-		return []byte("GPS_INPUT_IGNORE_FLAG_HORIZONTAL_ACCURACY"), nil
-	case GPS_INPUT_IGNORE_FLAG_VERTICAL_ACCURACY:
-		return []byte("GPS_INPUT_IGNORE_FLAG_VERTICAL_ACCURACY"), nil
+	if l, ok := labels_GPS_INPUT_IGNORE_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_GPS_INPUT_IGNORE_FLAGS = map[string]GPS_INPUT_IGNORE_FLAGS{
+	"GPS_INPUT_IGNORE_FLAG_ALT":                 GPS_INPUT_IGNORE_FLAG_ALT,
+	"GPS_INPUT_IGNORE_FLAG_HDOP":                GPS_INPUT_IGNORE_FLAG_HDOP,
+	"GPS_INPUT_IGNORE_FLAG_VDOP":                GPS_INPUT_IGNORE_FLAG_VDOP,
+	"GPS_INPUT_IGNORE_FLAG_VEL_HORIZ":           GPS_INPUT_IGNORE_FLAG_VEL_HORIZ,
+	"GPS_INPUT_IGNORE_FLAG_VEL_VERT":            GPS_INPUT_IGNORE_FLAG_VEL_VERT,
+	"GPS_INPUT_IGNORE_FLAG_SPEED_ACCURACY":      GPS_INPUT_IGNORE_FLAG_SPEED_ACCURACY,
+	"GPS_INPUT_IGNORE_FLAG_HORIZONTAL_ACCURACY": GPS_INPUT_IGNORE_FLAG_HORIZONTAL_ACCURACY,
+	"GPS_INPUT_IGNORE_FLAG_VERTICAL_ACCURACY":   GPS_INPUT_IGNORE_FLAG_VERTICAL_ACCURACY,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GPS_INPUT_IGNORE_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "GPS_INPUT_IGNORE_FLAG_ALT":
-		*e = GPS_INPUT_IGNORE_FLAG_ALT
-		return nil
-	case "GPS_INPUT_IGNORE_FLAG_HDOP":
-		*e = GPS_INPUT_IGNORE_FLAG_HDOP
-		return nil
-	case "GPS_INPUT_IGNORE_FLAG_VDOP":
-		*e = GPS_INPUT_IGNORE_FLAG_VDOP
-		return nil
-	case "GPS_INPUT_IGNORE_FLAG_VEL_HORIZ":
-		*e = GPS_INPUT_IGNORE_FLAG_VEL_HORIZ
-		return nil
-	case "GPS_INPUT_IGNORE_FLAG_VEL_VERT":
-		*e = GPS_INPUT_IGNORE_FLAG_VEL_VERT
-		return nil
-	case "GPS_INPUT_IGNORE_FLAG_SPEED_ACCURACY":
-		*e = GPS_INPUT_IGNORE_FLAG_SPEED_ACCURACY
-		return nil
-	case "GPS_INPUT_IGNORE_FLAG_HORIZONTAL_ACCURACY":
-		*e = GPS_INPUT_IGNORE_FLAG_HORIZONTAL_ACCURACY
-		return nil
-	case "GPS_INPUT_IGNORE_FLAG_VERTICAL_ACCURACY":
-		*e = GPS_INPUT_IGNORE_FLAG_VERTICAL_ACCURACY
+	if rl, ok := reverseLabels_GPS_INPUT_IGNORE_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -3774,11 +2971,10 @@ func (e *GPS_INPUT_IGNORE_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e GPS_INPUT_IGNORE_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_GPS_INPUT_IGNORE_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Gripper actions.
@@ -3791,25 +2987,28 @@ const (
 	GRIPPER_ACTION_GRAB GRIPPER_ACTIONS = 1
 )
 
+var labels_GRIPPER_ACTIONS = map[GRIPPER_ACTIONS]string{
+	GRIPPER_ACTION_RELEASE: "GRIPPER_ACTION_RELEASE",
+	GRIPPER_ACTION_GRAB:    "GRIPPER_ACTION_GRAB",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GRIPPER_ACTIONS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case GRIPPER_ACTION_RELEASE:
-		return []byte("GRIPPER_ACTION_RELEASE"), nil
-	case GRIPPER_ACTION_GRAB:
-		return []byte("GRIPPER_ACTION_GRAB"), nil
+	if l, ok := labels_GRIPPER_ACTIONS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_GRIPPER_ACTIONS = map[string]GRIPPER_ACTIONS{
+	"GRIPPER_ACTION_RELEASE": GRIPPER_ACTION_RELEASE,
+	"GRIPPER_ACTION_GRAB":    GRIPPER_ACTION_GRAB,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GRIPPER_ACTIONS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "GRIPPER_ACTION_RELEASE":
-		*e = GRIPPER_ACTION_RELEASE
-		return nil
-	case "GRIPPER_ACTION_GRAB":
-		*e = GRIPPER_ACTION_GRAB
+	if rl, ok := reverseLabels_GRIPPER_ACTIONS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -3817,11 +3016,10 @@ func (e *GRIPPER_ACTIONS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e GRIPPER_ACTIONS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_GRIPPER_ACTIONS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Flags in the HIGHRES_IMU message indicate which fields have updated since the last message
@@ -3860,90 +3058,54 @@ const (
 	HIGHRES_IMU_UPDATED_ALL HIGHRES_IMU_UPDATED_FLAGS = 65535
 )
 
+var labels_HIGHRES_IMU_UPDATED_FLAGS = map[HIGHRES_IMU_UPDATED_FLAGS]string{
+	HIGHRES_IMU_UPDATED_NONE:          "HIGHRES_IMU_UPDATED_NONE",
+	HIGHRES_IMU_UPDATED_XACC:          "HIGHRES_IMU_UPDATED_XACC",
+	HIGHRES_IMU_UPDATED_YACC:          "HIGHRES_IMU_UPDATED_YACC",
+	HIGHRES_IMU_UPDATED_ZACC:          "HIGHRES_IMU_UPDATED_ZACC",
+	HIGHRES_IMU_UPDATED_XGYRO:         "HIGHRES_IMU_UPDATED_XGYRO",
+	HIGHRES_IMU_UPDATED_YGYRO:         "HIGHRES_IMU_UPDATED_YGYRO",
+	HIGHRES_IMU_UPDATED_ZGYRO:         "HIGHRES_IMU_UPDATED_ZGYRO",
+	HIGHRES_IMU_UPDATED_XMAG:          "HIGHRES_IMU_UPDATED_XMAG",
+	HIGHRES_IMU_UPDATED_YMAG:          "HIGHRES_IMU_UPDATED_YMAG",
+	HIGHRES_IMU_UPDATED_ZMAG:          "HIGHRES_IMU_UPDATED_ZMAG",
+	HIGHRES_IMU_UPDATED_ABS_PRESSURE:  "HIGHRES_IMU_UPDATED_ABS_PRESSURE",
+	HIGHRES_IMU_UPDATED_DIFF_PRESSURE: "HIGHRES_IMU_UPDATED_DIFF_PRESSURE",
+	HIGHRES_IMU_UPDATED_PRESSURE_ALT:  "HIGHRES_IMU_UPDATED_PRESSURE_ALT",
+	HIGHRES_IMU_UPDATED_TEMPERATURE:   "HIGHRES_IMU_UPDATED_TEMPERATURE",
+	HIGHRES_IMU_UPDATED_ALL:           "HIGHRES_IMU_UPDATED_ALL",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e HIGHRES_IMU_UPDATED_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case HIGHRES_IMU_UPDATED_NONE:
-		return []byte("HIGHRES_IMU_UPDATED_NONE"), nil
-	case HIGHRES_IMU_UPDATED_XACC:
-		return []byte("HIGHRES_IMU_UPDATED_XACC"), nil
-	case HIGHRES_IMU_UPDATED_YACC:
-		return []byte("HIGHRES_IMU_UPDATED_YACC"), nil
-	case HIGHRES_IMU_UPDATED_ZACC:
-		return []byte("HIGHRES_IMU_UPDATED_ZACC"), nil
-	case HIGHRES_IMU_UPDATED_XGYRO:
-		return []byte("HIGHRES_IMU_UPDATED_XGYRO"), nil
-	case HIGHRES_IMU_UPDATED_YGYRO:
-		return []byte("HIGHRES_IMU_UPDATED_YGYRO"), nil
-	case HIGHRES_IMU_UPDATED_ZGYRO:
-		return []byte("HIGHRES_IMU_UPDATED_ZGYRO"), nil
-	case HIGHRES_IMU_UPDATED_XMAG:
-		return []byte("HIGHRES_IMU_UPDATED_XMAG"), nil
-	case HIGHRES_IMU_UPDATED_YMAG:
-		return []byte("HIGHRES_IMU_UPDATED_YMAG"), nil
-	case HIGHRES_IMU_UPDATED_ZMAG:
-		return []byte("HIGHRES_IMU_UPDATED_ZMAG"), nil
-	case HIGHRES_IMU_UPDATED_ABS_PRESSURE:
-		return []byte("HIGHRES_IMU_UPDATED_ABS_PRESSURE"), nil
-	case HIGHRES_IMU_UPDATED_DIFF_PRESSURE:
-		return []byte("HIGHRES_IMU_UPDATED_DIFF_PRESSURE"), nil
-	case HIGHRES_IMU_UPDATED_PRESSURE_ALT:
-		return []byte("HIGHRES_IMU_UPDATED_PRESSURE_ALT"), nil
-	case HIGHRES_IMU_UPDATED_TEMPERATURE:
-		return []byte("HIGHRES_IMU_UPDATED_TEMPERATURE"), nil
-	case HIGHRES_IMU_UPDATED_ALL:
-		return []byte("HIGHRES_IMU_UPDATED_ALL"), nil
+	if l, ok := labels_HIGHRES_IMU_UPDATED_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_HIGHRES_IMU_UPDATED_FLAGS = map[string]HIGHRES_IMU_UPDATED_FLAGS{
+	"HIGHRES_IMU_UPDATED_NONE":          HIGHRES_IMU_UPDATED_NONE,
+	"HIGHRES_IMU_UPDATED_XACC":          HIGHRES_IMU_UPDATED_XACC,
+	"HIGHRES_IMU_UPDATED_YACC":          HIGHRES_IMU_UPDATED_YACC,
+	"HIGHRES_IMU_UPDATED_ZACC":          HIGHRES_IMU_UPDATED_ZACC,
+	"HIGHRES_IMU_UPDATED_XGYRO":         HIGHRES_IMU_UPDATED_XGYRO,
+	"HIGHRES_IMU_UPDATED_YGYRO":         HIGHRES_IMU_UPDATED_YGYRO,
+	"HIGHRES_IMU_UPDATED_ZGYRO":         HIGHRES_IMU_UPDATED_ZGYRO,
+	"HIGHRES_IMU_UPDATED_XMAG":          HIGHRES_IMU_UPDATED_XMAG,
+	"HIGHRES_IMU_UPDATED_YMAG":          HIGHRES_IMU_UPDATED_YMAG,
+	"HIGHRES_IMU_UPDATED_ZMAG":          HIGHRES_IMU_UPDATED_ZMAG,
+	"HIGHRES_IMU_UPDATED_ABS_PRESSURE":  HIGHRES_IMU_UPDATED_ABS_PRESSURE,
+	"HIGHRES_IMU_UPDATED_DIFF_PRESSURE": HIGHRES_IMU_UPDATED_DIFF_PRESSURE,
+	"HIGHRES_IMU_UPDATED_PRESSURE_ALT":  HIGHRES_IMU_UPDATED_PRESSURE_ALT,
+	"HIGHRES_IMU_UPDATED_TEMPERATURE":   HIGHRES_IMU_UPDATED_TEMPERATURE,
+	"HIGHRES_IMU_UPDATED_ALL":           HIGHRES_IMU_UPDATED_ALL,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *HIGHRES_IMU_UPDATED_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "HIGHRES_IMU_UPDATED_NONE":
-		*e = HIGHRES_IMU_UPDATED_NONE
-		return nil
-	case "HIGHRES_IMU_UPDATED_XACC":
-		*e = HIGHRES_IMU_UPDATED_XACC
-		return nil
-	case "HIGHRES_IMU_UPDATED_YACC":
-		*e = HIGHRES_IMU_UPDATED_YACC
-		return nil
-	case "HIGHRES_IMU_UPDATED_ZACC":
-		*e = HIGHRES_IMU_UPDATED_ZACC
-		return nil
-	case "HIGHRES_IMU_UPDATED_XGYRO":
-		*e = HIGHRES_IMU_UPDATED_XGYRO
-		return nil
-	case "HIGHRES_IMU_UPDATED_YGYRO":
-		*e = HIGHRES_IMU_UPDATED_YGYRO
-		return nil
-	case "HIGHRES_IMU_UPDATED_ZGYRO":
-		*e = HIGHRES_IMU_UPDATED_ZGYRO
-		return nil
-	case "HIGHRES_IMU_UPDATED_XMAG":
-		*e = HIGHRES_IMU_UPDATED_XMAG
-		return nil
-	case "HIGHRES_IMU_UPDATED_YMAG":
-		*e = HIGHRES_IMU_UPDATED_YMAG
-		return nil
-	case "HIGHRES_IMU_UPDATED_ZMAG":
-		*e = HIGHRES_IMU_UPDATED_ZMAG
-		return nil
-	case "HIGHRES_IMU_UPDATED_ABS_PRESSURE":
-		*e = HIGHRES_IMU_UPDATED_ABS_PRESSURE
-		return nil
-	case "HIGHRES_IMU_UPDATED_DIFF_PRESSURE":
-		*e = HIGHRES_IMU_UPDATED_DIFF_PRESSURE
-		return nil
-	case "HIGHRES_IMU_UPDATED_PRESSURE_ALT":
-		*e = HIGHRES_IMU_UPDATED_PRESSURE_ALT
-		return nil
-	case "HIGHRES_IMU_UPDATED_TEMPERATURE":
-		*e = HIGHRES_IMU_UPDATED_TEMPERATURE
-		return nil
-	case "HIGHRES_IMU_UPDATED_ALL":
-		*e = HIGHRES_IMU_UPDATED_ALL
+	if rl, ok := reverseLabels_HIGHRES_IMU_UPDATED_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -3951,11 +3113,10 @@ func (e *HIGHRES_IMU_UPDATED_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e HIGHRES_IMU_UPDATED_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_HIGHRES_IMU_UPDATED_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Flags in the HIL_SENSOR message indicate which fields have updated since the last message
@@ -3994,90 +3155,54 @@ const (
 	HIL_SENSOR_UPDATED_RESET HIL_SENSOR_UPDATED_FLAGS = 2147483648
 )
 
+var labels_HIL_SENSOR_UPDATED_FLAGS = map[HIL_SENSOR_UPDATED_FLAGS]string{
+	HIL_SENSOR_UPDATED_NONE:          "HIL_SENSOR_UPDATED_NONE",
+	HIL_SENSOR_UPDATED_XACC:          "HIL_SENSOR_UPDATED_XACC",
+	HIL_SENSOR_UPDATED_YACC:          "HIL_SENSOR_UPDATED_YACC",
+	HIL_SENSOR_UPDATED_ZACC:          "HIL_SENSOR_UPDATED_ZACC",
+	HIL_SENSOR_UPDATED_XGYRO:         "HIL_SENSOR_UPDATED_XGYRO",
+	HIL_SENSOR_UPDATED_YGYRO:         "HIL_SENSOR_UPDATED_YGYRO",
+	HIL_SENSOR_UPDATED_ZGYRO:         "HIL_SENSOR_UPDATED_ZGYRO",
+	HIL_SENSOR_UPDATED_XMAG:          "HIL_SENSOR_UPDATED_XMAG",
+	HIL_SENSOR_UPDATED_YMAG:          "HIL_SENSOR_UPDATED_YMAG",
+	HIL_SENSOR_UPDATED_ZMAG:          "HIL_SENSOR_UPDATED_ZMAG",
+	HIL_SENSOR_UPDATED_ABS_PRESSURE:  "HIL_SENSOR_UPDATED_ABS_PRESSURE",
+	HIL_SENSOR_UPDATED_DIFF_PRESSURE: "HIL_SENSOR_UPDATED_DIFF_PRESSURE",
+	HIL_SENSOR_UPDATED_PRESSURE_ALT:  "HIL_SENSOR_UPDATED_PRESSURE_ALT",
+	HIL_SENSOR_UPDATED_TEMPERATURE:   "HIL_SENSOR_UPDATED_TEMPERATURE",
+	HIL_SENSOR_UPDATED_RESET:         "HIL_SENSOR_UPDATED_RESET",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e HIL_SENSOR_UPDATED_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case HIL_SENSOR_UPDATED_NONE:
-		return []byte("HIL_SENSOR_UPDATED_NONE"), nil
-	case HIL_SENSOR_UPDATED_XACC:
-		return []byte("HIL_SENSOR_UPDATED_XACC"), nil
-	case HIL_SENSOR_UPDATED_YACC:
-		return []byte("HIL_SENSOR_UPDATED_YACC"), nil
-	case HIL_SENSOR_UPDATED_ZACC:
-		return []byte("HIL_SENSOR_UPDATED_ZACC"), nil
-	case HIL_SENSOR_UPDATED_XGYRO:
-		return []byte("HIL_SENSOR_UPDATED_XGYRO"), nil
-	case HIL_SENSOR_UPDATED_YGYRO:
-		return []byte("HIL_SENSOR_UPDATED_YGYRO"), nil
-	case HIL_SENSOR_UPDATED_ZGYRO:
-		return []byte("HIL_SENSOR_UPDATED_ZGYRO"), nil
-	case HIL_SENSOR_UPDATED_XMAG:
-		return []byte("HIL_SENSOR_UPDATED_XMAG"), nil
-	case HIL_SENSOR_UPDATED_YMAG:
-		return []byte("HIL_SENSOR_UPDATED_YMAG"), nil
-	case HIL_SENSOR_UPDATED_ZMAG:
-		return []byte("HIL_SENSOR_UPDATED_ZMAG"), nil
-	case HIL_SENSOR_UPDATED_ABS_PRESSURE:
-		return []byte("HIL_SENSOR_UPDATED_ABS_PRESSURE"), nil
-	case HIL_SENSOR_UPDATED_DIFF_PRESSURE:
-		return []byte("HIL_SENSOR_UPDATED_DIFF_PRESSURE"), nil
-	case HIL_SENSOR_UPDATED_PRESSURE_ALT:
-		return []byte("HIL_SENSOR_UPDATED_PRESSURE_ALT"), nil
-	case HIL_SENSOR_UPDATED_TEMPERATURE:
-		return []byte("HIL_SENSOR_UPDATED_TEMPERATURE"), nil
-	case HIL_SENSOR_UPDATED_RESET:
-		return []byte("HIL_SENSOR_UPDATED_RESET"), nil
+	if l, ok := labels_HIL_SENSOR_UPDATED_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_HIL_SENSOR_UPDATED_FLAGS = map[string]HIL_SENSOR_UPDATED_FLAGS{
+	"HIL_SENSOR_UPDATED_NONE":          HIL_SENSOR_UPDATED_NONE,
+	"HIL_SENSOR_UPDATED_XACC":          HIL_SENSOR_UPDATED_XACC,
+	"HIL_SENSOR_UPDATED_YACC":          HIL_SENSOR_UPDATED_YACC,
+	"HIL_SENSOR_UPDATED_ZACC":          HIL_SENSOR_UPDATED_ZACC,
+	"HIL_SENSOR_UPDATED_XGYRO":         HIL_SENSOR_UPDATED_XGYRO,
+	"HIL_SENSOR_UPDATED_YGYRO":         HIL_SENSOR_UPDATED_YGYRO,
+	"HIL_SENSOR_UPDATED_ZGYRO":         HIL_SENSOR_UPDATED_ZGYRO,
+	"HIL_SENSOR_UPDATED_XMAG":          HIL_SENSOR_UPDATED_XMAG,
+	"HIL_SENSOR_UPDATED_YMAG":          HIL_SENSOR_UPDATED_YMAG,
+	"HIL_SENSOR_UPDATED_ZMAG":          HIL_SENSOR_UPDATED_ZMAG,
+	"HIL_SENSOR_UPDATED_ABS_PRESSURE":  HIL_SENSOR_UPDATED_ABS_PRESSURE,
+	"HIL_SENSOR_UPDATED_DIFF_PRESSURE": HIL_SENSOR_UPDATED_DIFF_PRESSURE,
+	"HIL_SENSOR_UPDATED_PRESSURE_ALT":  HIL_SENSOR_UPDATED_PRESSURE_ALT,
+	"HIL_SENSOR_UPDATED_TEMPERATURE":   HIL_SENSOR_UPDATED_TEMPERATURE,
+	"HIL_SENSOR_UPDATED_RESET":         HIL_SENSOR_UPDATED_RESET,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *HIL_SENSOR_UPDATED_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "HIL_SENSOR_UPDATED_NONE":
-		*e = HIL_SENSOR_UPDATED_NONE
-		return nil
-	case "HIL_SENSOR_UPDATED_XACC":
-		*e = HIL_SENSOR_UPDATED_XACC
-		return nil
-	case "HIL_SENSOR_UPDATED_YACC":
-		*e = HIL_SENSOR_UPDATED_YACC
-		return nil
-	case "HIL_SENSOR_UPDATED_ZACC":
-		*e = HIL_SENSOR_UPDATED_ZACC
-		return nil
-	case "HIL_SENSOR_UPDATED_XGYRO":
-		*e = HIL_SENSOR_UPDATED_XGYRO
-		return nil
-	case "HIL_SENSOR_UPDATED_YGYRO":
-		*e = HIL_SENSOR_UPDATED_YGYRO
-		return nil
-	case "HIL_SENSOR_UPDATED_ZGYRO":
-		*e = HIL_SENSOR_UPDATED_ZGYRO
-		return nil
-	case "HIL_SENSOR_UPDATED_XMAG":
-		*e = HIL_SENSOR_UPDATED_XMAG
-		return nil
-	case "HIL_SENSOR_UPDATED_YMAG":
-		*e = HIL_SENSOR_UPDATED_YMAG
-		return nil
-	case "HIL_SENSOR_UPDATED_ZMAG":
-		*e = HIL_SENSOR_UPDATED_ZMAG
-		return nil
-	case "HIL_SENSOR_UPDATED_ABS_PRESSURE":
-		*e = HIL_SENSOR_UPDATED_ABS_PRESSURE
-		return nil
-	case "HIL_SENSOR_UPDATED_DIFF_PRESSURE":
-		*e = HIL_SENSOR_UPDATED_DIFF_PRESSURE
-		return nil
-	case "HIL_SENSOR_UPDATED_PRESSURE_ALT":
-		*e = HIL_SENSOR_UPDATED_PRESSURE_ALT
-		return nil
-	case "HIL_SENSOR_UPDATED_TEMPERATURE":
-		*e = HIL_SENSOR_UPDATED_TEMPERATURE
-		return nil
-	case "HIL_SENSOR_UPDATED_RESET":
-		*e = HIL_SENSOR_UPDATED_RESET
+	if rl, ok := reverseLabels_HIL_SENSOR_UPDATED_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -4085,11 +3210,10 @@ func (e *HIL_SENSOR_UPDATED_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e HIL_SENSOR_UPDATED_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_HIL_SENSOR_UPDATED_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Flags to report failure cases over the high latency telemtry.
@@ -4126,85 +3250,52 @@ const (
 	HL_FAILURE_FLAG_MISSION HL_FAILURE_FLAG = 8192
 )
 
+var labels_HL_FAILURE_FLAG = map[HL_FAILURE_FLAG]string{
+	HL_FAILURE_FLAG_GPS:                   "HL_FAILURE_FLAG_GPS",
+	HL_FAILURE_FLAG_DIFFERENTIAL_PRESSURE: "HL_FAILURE_FLAG_DIFFERENTIAL_PRESSURE",
+	HL_FAILURE_FLAG_ABSOLUTE_PRESSURE:     "HL_FAILURE_FLAG_ABSOLUTE_PRESSURE",
+	HL_FAILURE_FLAG_3D_ACCEL:              "HL_FAILURE_FLAG_3D_ACCEL",
+	HL_FAILURE_FLAG_3D_GYRO:               "HL_FAILURE_FLAG_3D_GYRO",
+	HL_FAILURE_FLAG_3D_MAG:                "HL_FAILURE_FLAG_3D_MAG",
+	HL_FAILURE_FLAG_TERRAIN:               "HL_FAILURE_FLAG_TERRAIN",
+	HL_FAILURE_FLAG_BATTERY:               "HL_FAILURE_FLAG_BATTERY",
+	HL_FAILURE_FLAG_RC_RECEIVER:           "HL_FAILURE_FLAG_RC_RECEIVER",
+	HL_FAILURE_FLAG_OFFBOARD_LINK:         "HL_FAILURE_FLAG_OFFBOARD_LINK",
+	HL_FAILURE_FLAG_ENGINE:                "HL_FAILURE_FLAG_ENGINE",
+	HL_FAILURE_FLAG_GEOFENCE:              "HL_FAILURE_FLAG_GEOFENCE",
+	HL_FAILURE_FLAG_ESTIMATOR:             "HL_FAILURE_FLAG_ESTIMATOR",
+	HL_FAILURE_FLAG_MISSION:               "HL_FAILURE_FLAG_MISSION",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e HL_FAILURE_FLAG) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case HL_FAILURE_FLAG_GPS:
-		return []byte("HL_FAILURE_FLAG_GPS"), nil
-	case HL_FAILURE_FLAG_DIFFERENTIAL_PRESSURE:
-		return []byte("HL_FAILURE_FLAG_DIFFERENTIAL_PRESSURE"), nil
-	case HL_FAILURE_FLAG_ABSOLUTE_PRESSURE:
-		return []byte("HL_FAILURE_FLAG_ABSOLUTE_PRESSURE"), nil
-	case HL_FAILURE_FLAG_3D_ACCEL:
-		return []byte("HL_FAILURE_FLAG_3D_ACCEL"), nil
-	case HL_FAILURE_FLAG_3D_GYRO:
-		return []byte("HL_FAILURE_FLAG_3D_GYRO"), nil
-	case HL_FAILURE_FLAG_3D_MAG:
-		return []byte("HL_FAILURE_FLAG_3D_MAG"), nil
-	case HL_FAILURE_FLAG_TERRAIN:
-		return []byte("HL_FAILURE_FLAG_TERRAIN"), nil
-	case HL_FAILURE_FLAG_BATTERY:
-		return []byte("HL_FAILURE_FLAG_BATTERY"), nil
-	case HL_FAILURE_FLAG_RC_RECEIVER:
-		return []byte("HL_FAILURE_FLAG_RC_RECEIVER"), nil
-	case HL_FAILURE_FLAG_OFFBOARD_LINK:
-		return []byte("HL_FAILURE_FLAG_OFFBOARD_LINK"), nil
-	case HL_FAILURE_FLAG_ENGINE:
-		return []byte("HL_FAILURE_FLAG_ENGINE"), nil
-	case HL_FAILURE_FLAG_GEOFENCE:
-		return []byte("HL_FAILURE_FLAG_GEOFENCE"), nil
-	case HL_FAILURE_FLAG_ESTIMATOR:
-		return []byte("HL_FAILURE_FLAG_ESTIMATOR"), nil
-	case HL_FAILURE_FLAG_MISSION:
-		return []byte("HL_FAILURE_FLAG_MISSION"), nil
+	if l, ok := labels_HL_FAILURE_FLAG[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_HL_FAILURE_FLAG = map[string]HL_FAILURE_FLAG{
+	"HL_FAILURE_FLAG_GPS":                   HL_FAILURE_FLAG_GPS,
+	"HL_FAILURE_FLAG_DIFFERENTIAL_PRESSURE": HL_FAILURE_FLAG_DIFFERENTIAL_PRESSURE,
+	"HL_FAILURE_FLAG_ABSOLUTE_PRESSURE":     HL_FAILURE_FLAG_ABSOLUTE_PRESSURE,
+	"HL_FAILURE_FLAG_3D_ACCEL":              HL_FAILURE_FLAG_3D_ACCEL,
+	"HL_FAILURE_FLAG_3D_GYRO":               HL_FAILURE_FLAG_3D_GYRO,
+	"HL_FAILURE_FLAG_3D_MAG":                HL_FAILURE_FLAG_3D_MAG,
+	"HL_FAILURE_FLAG_TERRAIN":               HL_FAILURE_FLAG_TERRAIN,
+	"HL_FAILURE_FLAG_BATTERY":               HL_FAILURE_FLAG_BATTERY,
+	"HL_FAILURE_FLAG_RC_RECEIVER":           HL_FAILURE_FLAG_RC_RECEIVER,
+	"HL_FAILURE_FLAG_OFFBOARD_LINK":         HL_FAILURE_FLAG_OFFBOARD_LINK,
+	"HL_FAILURE_FLAG_ENGINE":                HL_FAILURE_FLAG_ENGINE,
+	"HL_FAILURE_FLAG_GEOFENCE":              HL_FAILURE_FLAG_GEOFENCE,
+	"HL_FAILURE_FLAG_ESTIMATOR":             HL_FAILURE_FLAG_ESTIMATOR,
+	"HL_FAILURE_FLAG_MISSION":               HL_FAILURE_FLAG_MISSION,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *HL_FAILURE_FLAG) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "HL_FAILURE_FLAG_GPS":
-		*e = HL_FAILURE_FLAG_GPS
-		return nil
-	case "HL_FAILURE_FLAG_DIFFERENTIAL_PRESSURE":
-		*e = HL_FAILURE_FLAG_DIFFERENTIAL_PRESSURE
-		return nil
-	case "HL_FAILURE_FLAG_ABSOLUTE_PRESSURE":
-		*e = HL_FAILURE_FLAG_ABSOLUTE_PRESSURE
-		return nil
-	case "HL_FAILURE_FLAG_3D_ACCEL":
-		*e = HL_FAILURE_FLAG_3D_ACCEL
-		return nil
-	case "HL_FAILURE_FLAG_3D_GYRO":
-		*e = HL_FAILURE_FLAG_3D_GYRO
-		return nil
-	case "HL_FAILURE_FLAG_3D_MAG":
-		*e = HL_FAILURE_FLAG_3D_MAG
-		return nil
-	case "HL_FAILURE_FLAG_TERRAIN":
-		*e = HL_FAILURE_FLAG_TERRAIN
-		return nil
-	case "HL_FAILURE_FLAG_BATTERY":
-		*e = HL_FAILURE_FLAG_BATTERY
-		return nil
-	case "HL_FAILURE_FLAG_RC_RECEIVER":
-		*e = HL_FAILURE_FLAG_RC_RECEIVER
-		return nil
-	case "HL_FAILURE_FLAG_OFFBOARD_LINK":
-		*e = HL_FAILURE_FLAG_OFFBOARD_LINK
-		return nil
-	case "HL_FAILURE_FLAG_ENGINE":
-		*e = HL_FAILURE_FLAG_ENGINE
-		return nil
-	case "HL_FAILURE_FLAG_GEOFENCE":
-		*e = HL_FAILURE_FLAG_GEOFENCE
-		return nil
-	case "HL_FAILURE_FLAG_ESTIMATOR":
-		*e = HL_FAILURE_FLAG_ESTIMATOR
-		return nil
-	case "HL_FAILURE_FLAG_MISSION":
-		*e = HL_FAILURE_FLAG_MISSION
+	if rl, ok := reverseLabels_HL_FAILURE_FLAG[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -4212,11 +3303,10 @@ func (e *HL_FAILURE_FLAG) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e HL_FAILURE_FLAG) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_HL_FAILURE_FLAG[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Type of landing target
@@ -4233,35 +3323,32 @@ const (
 	LANDING_TARGET_TYPE_VISION_OTHER LANDING_TARGET_TYPE = 3
 )
 
+var labels_LANDING_TARGET_TYPE = map[LANDING_TARGET_TYPE]string{
+	LANDING_TARGET_TYPE_LIGHT_BEACON:    "LANDING_TARGET_TYPE_LIGHT_BEACON",
+	LANDING_TARGET_TYPE_RADIO_BEACON:    "LANDING_TARGET_TYPE_RADIO_BEACON",
+	LANDING_TARGET_TYPE_VISION_FIDUCIAL: "LANDING_TARGET_TYPE_VISION_FIDUCIAL",
+	LANDING_TARGET_TYPE_VISION_OTHER:    "LANDING_TARGET_TYPE_VISION_OTHER",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e LANDING_TARGET_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case LANDING_TARGET_TYPE_LIGHT_BEACON:
-		return []byte("LANDING_TARGET_TYPE_LIGHT_BEACON"), nil
-	case LANDING_TARGET_TYPE_RADIO_BEACON:
-		return []byte("LANDING_TARGET_TYPE_RADIO_BEACON"), nil
-	case LANDING_TARGET_TYPE_VISION_FIDUCIAL:
-		return []byte("LANDING_TARGET_TYPE_VISION_FIDUCIAL"), nil
-	case LANDING_TARGET_TYPE_VISION_OTHER:
-		return []byte("LANDING_TARGET_TYPE_VISION_OTHER"), nil
+	if l, ok := labels_LANDING_TARGET_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_LANDING_TARGET_TYPE = map[string]LANDING_TARGET_TYPE{
+	"LANDING_TARGET_TYPE_LIGHT_BEACON":    LANDING_TARGET_TYPE_LIGHT_BEACON,
+	"LANDING_TARGET_TYPE_RADIO_BEACON":    LANDING_TARGET_TYPE_RADIO_BEACON,
+	"LANDING_TARGET_TYPE_VISION_FIDUCIAL": LANDING_TARGET_TYPE_VISION_FIDUCIAL,
+	"LANDING_TARGET_TYPE_VISION_OTHER":    LANDING_TARGET_TYPE_VISION_OTHER,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *LANDING_TARGET_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "LANDING_TARGET_TYPE_LIGHT_BEACON":
-		*e = LANDING_TARGET_TYPE_LIGHT_BEACON
-		return nil
-	case "LANDING_TARGET_TYPE_RADIO_BEACON":
-		*e = LANDING_TARGET_TYPE_RADIO_BEACON
-		return nil
-	case "LANDING_TARGET_TYPE_VISION_FIDUCIAL":
-		*e = LANDING_TARGET_TYPE_VISION_FIDUCIAL
-		return nil
-	case "LANDING_TARGET_TYPE_VISION_OTHER":
-		*e = LANDING_TARGET_TYPE_VISION_OTHER
+	if rl, ok := reverseLabels_LANDING_TARGET_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -4269,11 +3356,10 @@ func (e *LANDING_TARGET_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e LANDING_TARGET_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_LANDING_TARGET_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -4298,55 +3384,40 @@ const (
 	MAG_CAL_BAD_RADIUS MAG_CAL_STATUS = 7
 )
 
+var labels_MAG_CAL_STATUS = map[MAG_CAL_STATUS]string{
+	MAG_CAL_NOT_STARTED:      "MAG_CAL_NOT_STARTED",
+	MAG_CAL_WAITING_TO_START: "MAG_CAL_WAITING_TO_START",
+	MAG_CAL_RUNNING_STEP_ONE: "MAG_CAL_RUNNING_STEP_ONE",
+	MAG_CAL_RUNNING_STEP_TWO: "MAG_CAL_RUNNING_STEP_TWO",
+	MAG_CAL_SUCCESS:          "MAG_CAL_SUCCESS",
+	MAG_CAL_FAILED:           "MAG_CAL_FAILED",
+	MAG_CAL_BAD_ORIENTATION:  "MAG_CAL_BAD_ORIENTATION",
+	MAG_CAL_BAD_RADIUS:       "MAG_CAL_BAD_RADIUS",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAG_CAL_STATUS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAG_CAL_NOT_STARTED:
-		return []byte("MAG_CAL_NOT_STARTED"), nil
-	case MAG_CAL_WAITING_TO_START:
-		return []byte("MAG_CAL_WAITING_TO_START"), nil
-	case MAG_CAL_RUNNING_STEP_ONE:
-		return []byte("MAG_CAL_RUNNING_STEP_ONE"), nil
-	case MAG_CAL_RUNNING_STEP_TWO:
-		return []byte("MAG_CAL_RUNNING_STEP_TWO"), nil
-	case MAG_CAL_SUCCESS:
-		return []byte("MAG_CAL_SUCCESS"), nil
-	case MAG_CAL_FAILED:
-		return []byte("MAG_CAL_FAILED"), nil
-	case MAG_CAL_BAD_ORIENTATION:
-		return []byte("MAG_CAL_BAD_ORIENTATION"), nil
-	case MAG_CAL_BAD_RADIUS:
-		return []byte("MAG_CAL_BAD_RADIUS"), nil
+	if l, ok := labels_MAG_CAL_STATUS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAG_CAL_STATUS = map[string]MAG_CAL_STATUS{
+	"MAG_CAL_NOT_STARTED":      MAG_CAL_NOT_STARTED,
+	"MAG_CAL_WAITING_TO_START": MAG_CAL_WAITING_TO_START,
+	"MAG_CAL_RUNNING_STEP_ONE": MAG_CAL_RUNNING_STEP_ONE,
+	"MAG_CAL_RUNNING_STEP_TWO": MAG_CAL_RUNNING_STEP_TWO,
+	"MAG_CAL_SUCCESS":          MAG_CAL_SUCCESS,
+	"MAG_CAL_FAILED":           MAG_CAL_FAILED,
+	"MAG_CAL_BAD_ORIENTATION":  MAG_CAL_BAD_ORIENTATION,
+	"MAG_CAL_BAD_RADIUS":       MAG_CAL_BAD_RADIUS,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAG_CAL_STATUS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAG_CAL_NOT_STARTED":
-		*e = MAG_CAL_NOT_STARTED
-		return nil
-	case "MAG_CAL_WAITING_TO_START":
-		*e = MAG_CAL_WAITING_TO_START
-		return nil
-	case "MAG_CAL_RUNNING_STEP_ONE":
-		*e = MAG_CAL_RUNNING_STEP_ONE
-		return nil
-	case "MAG_CAL_RUNNING_STEP_TWO":
-		*e = MAG_CAL_RUNNING_STEP_TWO
-		return nil
-	case "MAG_CAL_SUCCESS":
-		*e = MAG_CAL_SUCCESS
-		return nil
-	case "MAG_CAL_FAILED":
-		*e = MAG_CAL_FAILED
-		return nil
-	case "MAG_CAL_BAD_ORIENTATION":
-		*e = MAG_CAL_BAD_ORIENTATION
-		return nil
-	case "MAG_CAL_BAD_RADIUS":
-		*e = MAG_CAL_BAD_RADIUS
+	if rl, ok := reverseLabels_MAG_CAL_STATUS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -4354,11 +3425,10 @@ func (e *MAG_CAL_STATUS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAG_CAL_STATUS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAG_CAL_STATUS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -4379,45 +3449,36 @@ const (
 	MAVLINK_DATA_STREAM_IMG_PNG MAVLINK_DATA_STREAM_TYPE = 5
 )
 
+var labels_MAVLINK_DATA_STREAM_TYPE = map[MAVLINK_DATA_STREAM_TYPE]string{
+	MAVLINK_DATA_STREAM_IMG_JPEG:   "MAVLINK_DATA_STREAM_IMG_JPEG",
+	MAVLINK_DATA_STREAM_IMG_BMP:    "MAVLINK_DATA_STREAM_IMG_BMP",
+	MAVLINK_DATA_STREAM_IMG_RAW8U:  "MAVLINK_DATA_STREAM_IMG_RAW8U",
+	MAVLINK_DATA_STREAM_IMG_RAW32U: "MAVLINK_DATA_STREAM_IMG_RAW32U",
+	MAVLINK_DATA_STREAM_IMG_PGM:    "MAVLINK_DATA_STREAM_IMG_PGM",
+	MAVLINK_DATA_STREAM_IMG_PNG:    "MAVLINK_DATA_STREAM_IMG_PNG",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAVLINK_DATA_STREAM_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAVLINK_DATA_STREAM_IMG_JPEG:
-		return []byte("MAVLINK_DATA_STREAM_IMG_JPEG"), nil
-	case MAVLINK_DATA_STREAM_IMG_BMP:
-		return []byte("MAVLINK_DATA_STREAM_IMG_BMP"), nil
-	case MAVLINK_DATA_STREAM_IMG_RAW8U:
-		return []byte("MAVLINK_DATA_STREAM_IMG_RAW8U"), nil
-	case MAVLINK_DATA_STREAM_IMG_RAW32U:
-		return []byte("MAVLINK_DATA_STREAM_IMG_RAW32U"), nil
-	case MAVLINK_DATA_STREAM_IMG_PGM:
-		return []byte("MAVLINK_DATA_STREAM_IMG_PGM"), nil
-	case MAVLINK_DATA_STREAM_IMG_PNG:
-		return []byte("MAVLINK_DATA_STREAM_IMG_PNG"), nil
+	if l, ok := labels_MAVLINK_DATA_STREAM_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAVLINK_DATA_STREAM_TYPE = map[string]MAVLINK_DATA_STREAM_TYPE{
+	"MAVLINK_DATA_STREAM_IMG_JPEG":   MAVLINK_DATA_STREAM_IMG_JPEG,
+	"MAVLINK_DATA_STREAM_IMG_BMP":    MAVLINK_DATA_STREAM_IMG_BMP,
+	"MAVLINK_DATA_STREAM_IMG_RAW8U":  MAVLINK_DATA_STREAM_IMG_RAW8U,
+	"MAVLINK_DATA_STREAM_IMG_RAW32U": MAVLINK_DATA_STREAM_IMG_RAW32U,
+	"MAVLINK_DATA_STREAM_IMG_PGM":    MAVLINK_DATA_STREAM_IMG_PGM,
+	"MAVLINK_DATA_STREAM_IMG_PNG":    MAVLINK_DATA_STREAM_IMG_PNG,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAVLINK_DATA_STREAM_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAVLINK_DATA_STREAM_IMG_JPEG":
-		*e = MAVLINK_DATA_STREAM_IMG_JPEG
-		return nil
-	case "MAVLINK_DATA_STREAM_IMG_BMP":
-		*e = MAVLINK_DATA_STREAM_IMG_BMP
-		return nil
-	case "MAVLINK_DATA_STREAM_IMG_RAW8U":
-		*e = MAVLINK_DATA_STREAM_IMG_RAW8U
-		return nil
-	case "MAVLINK_DATA_STREAM_IMG_RAW32U":
-		*e = MAVLINK_DATA_STREAM_IMG_RAW32U
-		return nil
-	case "MAVLINK_DATA_STREAM_IMG_PGM":
-		*e = MAVLINK_DATA_STREAM_IMG_PGM
-		return nil
-	case "MAVLINK_DATA_STREAM_IMG_PNG":
-		*e = MAVLINK_DATA_STREAM_IMG_PNG
+	if rl, ok := reverseLabels_MAVLINK_DATA_STREAM_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -4425,11 +3486,10 @@ func (e *MAVLINK_DATA_STREAM_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAVLINK_DATA_STREAM_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAVLINK_DATA_STREAM_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -4450,45 +3510,36 @@ const (
 	MAV_ARM_AUTH_DENIED_REASON_BAD_WEATHER MAV_ARM_AUTH_DENIED_REASON = 5
 )
 
+var labels_MAV_ARM_AUTH_DENIED_REASON = map[MAV_ARM_AUTH_DENIED_REASON]string{
+	MAV_ARM_AUTH_DENIED_REASON_GENERIC:          "MAV_ARM_AUTH_DENIED_REASON_GENERIC",
+	MAV_ARM_AUTH_DENIED_REASON_NONE:             "MAV_ARM_AUTH_DENIED_REASON_NONE",
+	MAV_ARM_AUTH_DENIED_REASON_INVALID_WAYPOINT: "MAV_ARM_AUTH_DENIED_REASON_INVALID_WAYPOINT",
+	MAV_ARM_AUTH_DENIED_REASON_TIMEOUT:          "MAV_ARM_AUTH_DENIED_REASON_TIMEOUT",
+	MAV_ARM_AUTH_DENIED_REASON_AIRSPACE_IN_USE:  "MAV_ARM_AUTH_DENIED_REASON_AIRSPACE_IN_USE",
+	MAV_ARM_AUTH_DENIED_REASON_BAD_WEATHER:      "MAV_ARM_AUTH_DENIED_REASON_BAD_WEATHER",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ARM_AUTH_DENIED_REASON) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_ARM_AUTH_DENIED_REASON_GENERIC:
-		return []byte("MAV_ARM_AUTH_DENIED_REASON_GENERIC"), nil
-	case MAV_ARM_AUTH_DENIED_REASON_NONE:
-		return []byte("MAV_ARM_AUTH_DENIED_REASON_NONE"), nil
-	case MAV_ARM_AUTH_DENIED_REASON_INVALID_WAYPOINT:
-		return []byte("MAV_ARM_AUTH_DENIED_REASON_INVALID_WAYPOINT"), nil
-	case MAV_ARM_AUTH_DENIED_REASON_TIMEOUT:
-		return []byte("MAV_ARM_AUTH_DENIED_REASON_TIMEOUT"), nil
-	case MAV_ARM_AUTH_DENIED_REASON_AIRSPACE_IN_USE:
-		return []byte("MAV_ARM_AUTH_DENIED_REASON_AIRSPACE_IN_USE"), nil
-	case MAV_ARM_AUTH_DENIED_REASON_BAD_WEATHER:
-		return []byte("MAV_ARM_AUTH_DENIED_REASON_BAD_WEATHER"), nil
+	if l, ok := labels_MAV_ARM_AUTH_DENIED_REASON[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_ARM_AUTH_DENIED_REASON = map[string]MAV_ARM_AUTH_DENIED_REASON{
+	"MAV_ARM_AUTH_DENIED_REASON_GENERIC":          MAV_ARM_AUTH_DENIED_REASON_GENERIC,
+	"MAV_ARM_AUTH_DENIED_REASON_NONE":             MAV_ARM_AUTH_DENIED_REASON_NONE,
+	"MAV_ARM_AUTH_DENIED_REASON_INVALID_WAYPOINT": MAV_ARM_AUTH_DENIED_REASON_INVALID_WAYPOINT,
+	"MAV_ARM_AUTH_DENIED_REASON_TIMEOUT":          MAV_ARM_AUTH_DENIED_REASON_TIMEOUT,
+	"MAV_ARM_AUTH_DENIED_REASON_AIRSPACE_IN_USE":  MAV_ARM_AUTH_DENIED_REASON_AIRSPACE_IN_USE,
+	"MAV_ARM_AUTH_DENIED_REASON_BAD_WEATHER":      MAV_ARM_AUTH_DENIED_REASON_BAD_WEATHER,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ARM_AUTH_DENIED_REASON) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_ARM_AUTH_DENIED_REASON_GENERIC":
-		*e = MAV_ARM_AUTH_DENIED_REASON_GENERIC
-		return nil
-	case "MAV_ARM_AUTH_DENIED_REASON_NONE":
-		*e = MAV_ARM_AUTH_DENIED_REASON_NONE
-		return nil
-	case "MAV_ARM_AUTH_DENIED_REASON_INVALID_WAYPOINT":
-		*e = MAV_ARM_AUTH_DENIED_REASON_INVALID_WAYPOINT
-		return nil
-	case "MAV_ARM_AUTH_DENIED_REASON_TIMEOUT":
-		*e = MAV_ARM_AUTH_DENIED_REASON_TIMEOUT
-		return nil
-	case "MAV_ARM_AUTH_DENIED_REASON_AIRSPACE_IN_USE":
-		*e = MAV_ARM_AUTH_DENIED_REASON_AIRSPACE_IN_USE
-		return nil
-	case "MAV_ARM_AUTH_DENIED_REASON_BAD_WEATHER":
-		*e = MAV_ARM_AUTH_DENIED_REASON_BAD_WEATHER
+	if rl, ok := reverseLabels_MAV_ARM_AUTH_DENIED_REASON[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -4496,11 +3547,10 @@ func (e *MAV_ARM_AUTH_DENIED_REASON) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ARM_AUTH_DENIED_REASON) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_ARM_AUTH_DENIED_REASON[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Micro air vehicle / autopilot classes. This identifies the individual model.
@@ -4551,120 +3601,66 @@ const (
 	MAV_AUTOPILOT_REFLEX MAV_AUTOPILOT = 20
 )
 
+var labels_MAV_AUTOPILOT = map[MAV_AUTOPILOT]string{
+	MAV_AUTOPILOT_GENERIC:                                      "MAV_AUTOPILOT_GENERIC",
+	MAV_AUTOPILOT_RESERVED:                                     "MAV_AUTOPILOT_RESERVED",
+	MAV_AUTOPILOT_SLUGS:                                        "MAV_AUTOPILOT_SLUGS",
+	MAV_AUTOPILOT_ARDUPILOTMEGA:                                "MAV_AUTOPILOT_ARDUPILOTMEGA",
+	MAV_AUTOPILOT_OPENPILOT:                                    "MAV_AUTOPILOT_OPENPILOT",
+	MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY:                       "MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY",
+	MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY: "MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY",
+	MAV_AUTOPILOT_GENERIC_MISSION_FULL:                         "MAV_AUTOPILOT_GENERIC_MISSION_FULL",
+	MAV_AUTOPILOT_INVALID:                                      "MAV_AUTOPILOT_INVALID",
+	MAV_AUTOPILOT_PPZ:                                          "MAV_AUTOPILOT_PPZ",
+	MAV_AUTOPILOT_UDB:                                          "MAV_AUTOPILOT_UDB",
+	MAV_AUTOPILOT_FP:                                           "MAV_AUTOPILOT_FP",
+	MAV_AUTOPILOT_PX4:                                          "MAV_AUTOPILOT_PX4",
+	MAV_AUTOPILOT_SMACCMPILOT:                                  "MAV_AUTOPILOT_SMACCMPILOT",
+	MAV_AUTOPILOT_AUTOQUAD:                                     "MAV_AUTOPILOT_AUTOQUAD",
+	MAV_AUTOPILOT_ARMAZILA:                                     "MAV_AUTOPILOT_ARMAZILA",
+	MAV_AUTOPILOT_AEROB:                                        "MAV_AUTOPILOT_AEROB",
+	MAV_AUTOPILOT_ASLUAV:                                       "MAV_AUTOPILOT_ASLUAV",
+	MAV_AUTOPILOT_SMARTAP:                                      "MAV_AUTOPILOT_SMARTAP",
+	MAV_AUTOPILOT_AIRRAILS:                                     "MAV_AUTOPILOT_AIRRAILS",
+	MAV_AUTOPILOT_REFLEX:                                       "MAV_AUTOPILOT_REFLEX",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_AUTOPILOT) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_AUTOPILOT_GENERIC:
-		return []byte("MAV_AUTOPILOT_GENERIC"), nil
-	case MAV_AUTOPILOT_RESERVED:
-		return []byte("MAV_AUTOPILOT_RESERVED"), nil
-	case MAV_AUTOPILOT_SLUGS:
-		return []byte("MAV_AUTOPILOT_SLUGS"), nil
-	case MAV_AUTOPILOT_ARDUPILOTMEGA:
-		return []byte("MAV_AUTOPILOT_ARDUPILOTMEGA"), nil
-	case MAV_AUTOPILOT_OPENPILOT:
-		return []byte("MAV_AUTOPILOT_OPENPILOT"), nil
-	case MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY:
-		return []byte("MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY"), nil
-	case MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY:
-		return []byte("MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY"), nil
-	case MAV_AUTOPILOT_GENERIC_MISSION_FULL:
-		return []byte("MAV_AUTOPILOT_GENERIC_MISSION_FULL"), nil
-	case MAV_AUTOPILOT_INVALID:
-		return []byte("MAV_AUTOPILOT_INVALID"), nil
-	case MAV_AUTOPILOT_PPZ:
-		return []byte("MAV_AUTOPILOT_PPZ"), nil
-	case MAV_AUTOPILOT_UDB:
-		return []byte("MAV_AUTOPILOT_UDB"), nil
-	case MAV_AUTOPILOT_FP:
-		return []byte("MAV_AUTOPILOT_FP"), nil
-	case MAV_AUTOPILOT_PX4:
-		return []byte("MAV_AUTOPILOT_PX4"), nil
-	case MAV_AUTOPILOT_SMACCMPILOT:
-		return []byte("MAV_AUTOPILOT_SMACCMPILOT"), nil
-	case MAV_AUTOPILOT_AUTOQUAD:
-		return []byte("MAV_AUTOPILOT_AUTOQUAD"), nil
-	case MAV_AUTOPILOT_ARMAZILA:
-		return []byte("MAV_AUTOPILOT_ARMAZILA"), nil
-	case MAV_AUTOPILOT_AEROB:
-		return []byte("MAV_AUTOPILOT_AEROB"), nil
-	case MAV_AUTOPILOT_ASLUAV:
-		return []byte("MAV_AUTOPILOT_ASLUAV"), nil
-	case MAV_AUTOPILOT_SMARTAP:
-		return []byte("MAV_AUTOPILOT_SMARTAP"), nil
-	case MAV_AUTOPILOT_AIRRAILS:
-		return []byte("MAV_AUTOPILOT_AIRRAILS"), nil
-	case MAV_AUTOPILOT_REFLEX:
-		return []byte("MAV_AUTOPILOT_REFLEX"), nil
+	if l, ok := labels_MAV_AUTOPILOT[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_AUTOPILOT = map[string]MAV_AUTOPILOT{
+	"MAV_AUTOPILOT_GENERIC":                                      MAV_AUTOPILOT_GENERIC,
+	"MAV_AUTOPILOT_RESERVED":                                     MAV_AUTOPILOT_RESERVED,
+	"MAV_AUTOPILOT_SLUGS":                                        MAV_AUTOPILOT_SLUGS,
+	"MAV_AUTOPILOT_ARDUPILOTMEGA":                                MAV_AUTOPILOT_ARDUPILOTMEGA,
+	"MAV_AUTOPILOT_OPENPILOT":                                    MAV_AUTOPILOT_OPENPILOT,
+	"MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY":                       MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY,
+	"MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY": MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY,
+	"MAV_AUTOPILOT_GENERIC_MISSION_FULL":                         MAV_AUTOPILOT_GENERIC_MISSION_FULL,
+	"MAV_AUTOPILOT_INVALID":                                      MAV_AUTOPILOT_INVALID,
+	"MAV_AUTOPILOT_PPZ":                                          MAV_AUTOPILOT_PPZ,
+	"MAV_AUTOPILOT_UDB":                                          MAV_AUTOPILOT_UDB,
+	"MAV_AUTOPILOT_FP":                                           MAV_AUTOPILOT_FP,
+	"MAV_AUTOPILOT_PX4":                                          MAV_AUTOPILOT_PX4,
+	"MAV_AUTOPILOT_SMACCMPILOT":                                  MAV_AUTOPILOT_SMACCMPILOT,
+	"MAV_AUTOPILOT_AUTOQUAD":                                     MAV_AUTOPILOT_AUTOQUAD,
+	"MAV_AUTOPILOT_ARMAZILA":                                     MAV_AUTOPILOT_ARMAZILA,
+	"MAV_AUTOPILOT_AEROB":                                        MAV_AUTOPILOT_AEROB,
+	"MAV_AUTOPILOT_ASLUAV":                                       MAV_AUTOPILOT_ASLUAV,
+	"MAV_AUTOPILOT_SMARTAP":                                      MAV_AUTOPILOT_SMARTAP,
+	"MAV_AUTOPILOT_AIRRAILS":                                     MAV_AUTOPILOT_AIRRAILS,
+	"MAV_AUTOPILOT_REFLEX":                                       MAV_AUTOPILOT_REFLEX,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_AUTOPILOT) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_AUTOPILOT_GENERIC":
-		*e = MAV_AUTOPILOT_GENERIC
-		return nil
-	case "MAV_AUTOPILOT_RESERVED":
-		*e = MAV_AUTOPILOT_RESERVED
-		return nil
-	case "MAV_AUTOPILOT_SLUGS":
-		*e = MAV_AUTOPILOT_SLUGS
-		return nil
-	case "MAV_AUTOPILOT_ARDUPILOTMEGA":
-		*e = MAV_AUTOPILOT_ARDUPILOTMEGA
-		return nil
-	case "MAV_AUTOPILOT_OPENPILOT":
-		*e = MAV_AUTOPILOT_OPENPILOT
-		return nil
-	case "MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY":
-		*e = MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY
-		return nil
-	case "MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY":
-		*e = MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY
-		return nil
-	case "MAV_AUTOPILOT_GENERIC_MISSION_FULL":
-		*e = MAV_AUTOPILOT_GENERIC_MISSION_FULL
-		return nil
-	case "MAV_AUTOPILOT_INVALID":
-		*e = MAV_AUTOPILOT_INVALID
-		return nil
-	case "MAV_AUTOPILOT_PPZ":
-		*e = MAV_AUTOPILOT_PPZ
-		return nil
-	case "MAV_AUTOPILOT_UDB":
-		*e = MAV_AUTOPILOT_UDB
-		return nil
-	case "MAV_AUTOPILOT_FP":
-		*e = MAV_AUTOPILOT_FP
-		return nil
-	case "MAV_AUTOPILOT_PX4":
-		*e = MAV_AUTOPILOT_PX4
-		return nil
-	case "MAV_AUTOPILOT_SMACCMPILOT":
-		*e = MAV_AUTOPILOT_SMACCMPILOT
-		return nil
-	case "MAV_AUTOPILOT_AUTOQUAD":
-		*e = MAV_AUTOPILOT_AUTOQUAD
-		return nil
-	case "MAV_AUTOPILOT_ARMAZILA":
-		*e = MAV_AUTOPILOT_ARMAZILA
-		return nil
-	case "MAV_AUTOPILOT_AEROB":
-		*e = MAV_AUTOPILOT_AEROB
-		return nil
-	case "MAV_AUTOPILOT_ASLUAV":
-		*e = MAV_AUTOPILOT_ASLUAV
-		return nil
-	case "MAV_AUTOPILOT_SMARTAP":
-		*e = MAV_AUTOPILOT_SMARTAP
-		return nil
-	case "MAV_AUTOPILOT_AIRRAILS":
-		*e = MAV_AUTOPILOT_AIRRAILS
-		return nil
-	case "MAV_AUTOPILOT_REFLEX":
-		*e = MAV_AUTOPILOT_REFLEX
+	if rl, ok := reverseLabels_MAV_AUTOPILOT[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -4672,11 +3668,10 @@ func (e *MAV_AUTOPILOT) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_AUTOPILOT) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_AUTOPILOT[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Enumeration for battery charge states.
@@ -4701,55 +3696,40 @@ const (
 	MAV_BATTERY_CHARGE_STATE_CHARGING MAV_BATTERY_CHARGE_STATE = 7
 )
 
+var labels_MAV_BATTERY_CHARGE_STATE = map[MAV_BATTERY_CHARGE_STATE]string{
+	MAV_BATTERY_CHARGE_STATE_UNDEFINED: "MAV_BATTERY_CHARGE_STATE_UNDEFINED",
+	MAV_BATTERY_CHARGE_STATE_OK:        "MAV_BATTERY_CHARGE_STATE_OK",
+	MAV_BATTERY_CHARGE_STATE_LOW:       "MAV_BATTERY_CHARGE_STATE_LOW",
+	MAV_BATTERY_CHARGE_STATE_CRITICAL:  "MAV_BATTERY_CHARGE_STATE_CRITICAL",
+	MAV_BATTERY_CHARGE_STATE_EMERGENCY: "MAV_BATTERY_CHARGE_STATE_EMERGENCY",
+	MAV_BATTERY_CHARGE_STATE_FAILED:    "MAV_BATTERY_CHARGE_STATE_FAILED",
+	MAV_BATTERY_CHARGE_STATE_UNHEALTHY: "MAV_BATTERY_CHARGE_STATE_UNHEALTHY",
+	MAV_BATTERY_CHARGE_STATE_CHARGING:  "MAV_BATTERY_CHARGE_STATE_CHARGING",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_BATTERY_CHARGE_STATE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_BATTERY_CHARGE_STATE_UNDEFINED:
-		return []byte("MAV_BATTERY_CHARGE_STATE_UNDEFINED"), nil
-	case MAV_BATTERY_CHARGE_STATE_OK:
-		return []byte("MAV_BATTERY_CHARGE_STATE_OK"), nil
-	case MAV_BATTERY_CHARGE_STATE_LOW:
-		return []byte("MAV_BATTERY_CHARGE_STATE_LOW"), nil
-	case MAV_BATTERY_CHARGE_STATE_CRITICAL:
-		return []byte("MAV_BATTERY_CHARGE_STATE_CRITICAL"), nil
-	case MAV_BATTERY_CHARGE_STATE_EMERGENCY:
-		return []byte("MAV_BATTERY_CHARGE_STATE_EMERGENCY"), nil
-	case MAV_BATTERY_CHARGE_STATE_FAILED:
-		return []byte("MAV_BATTERY_CHARGE_STATE_FAILED"), nil
-	case MAV_BATTERY_CHARGE_STATE_UNHEALTHY:
-		return []byte("MAV_BATTERY_CHARGE_STATE_UNHEALTHY"), nil
-	case MAV_BATTERY_CHARGE_STATE_CHARGING:
-		return []byte("MAV_BATTERY_CHARGE_STATE_CHARGING"), nil
+	if l, ok := labels_MAV_BATTERY_CHARGE_STATE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_BATTERY_CHARGE_STATE = map[string]MAV_BATTERY_CHARGE_STATE{
+	"MAV_BATTERY_CHARGE_STATE_UNDEFINED": MAV_BATTERY_CHARGE_STATE_UNDEFINED,
+	"MAV_BATTERY_CHARGE_STATE_OK":        MAV_BATTERY_CHARGE_STATE_OK,
+	"MAV_BATTERY_CHARGE_STATE_LOW":       MAV_BATTERY_CHARGE_STATE_LOW,
+	"MAV_BATTERY_CHARGE_STATE_CRITICAL":  MAV_BATTERY_CHARGE_STATE_CRITICAL,
+	"MAV_BATTERY_CHARGE_STATE_EMERGENCY": MAV_BATTERY_CHARGE_STATE_EMERGENCY,
+	"MAV_BATTERY_CHARGE_STATE_FAILED":    MAV_BATTERY_CHARGE_STATE_FAILED,
+	"MAV_BATTERY_CHARGE_STATE_UNHEALTHY": MAV_BATTERY_CHARGE_STATE_UNHEALTHY,
+	"MAV_BATTERY_CHARGE_STATE_CHARGING":  MAV_BATTERY_CHARGE_STATE_CHARGING,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_BATTERY_CHARGE_STATE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_BATTERY_CHARGE_STATE_UNDEFINED":
-		*e = MAV_BATTERY_CHARGE_STATE_UNDEFINED
-		return nil
-	case "MAV_BATTERY_CHARGE_STATE_OK":
-		*e = MAV_BATTERY_CHARGE_STATE_OK
-		return nil
-	case "MAV_BATTERY_CHARGE_STATE_LOW":
-		*e = MAV_BATTERY_CHARGE_STATE_LOW
-		return nil
-	case "MAV_BATTERY_CHARGE_STATE_CRITICAL":
-		*e = MAV_BATTERY_CHARGE_STATE_CRITICAL
-		return nil
-	case "MAV_BATTERY_CHARGE_STATE_EMERGENCY":
-		*e = MAV_BATTERY_CHARGE_STATE_EMERGENCY
-		return nil
-	case "MAV_BATTERY_CHARGE_STATE_FAILED":
-		*e = MAV_BATTERY_CHARGE_STATE_FAILED
-		return nil
-	case "MAV_BATTERY_CHARGE_STATE_UNHEALTHY":
-		*e = MAV_BATTERY_CHARGE_STATE_UNHEALTHY
-		return nil
-	case "MAV_BATTERY_CHARGE_STATE_CHARGING":
-		*e = MAV_BATTERY_CHARGE_STATE_CHARGING
+	if rl, ok := reverseLabels_MAV_BATTERY_CHARGE_STATE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -4757,11 +3737,10 @@ func (e *MAV_BATTERY_CHARGE_STATE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_BATTERY_CHARGE_STATE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_BATTERY_CHARGE_STATE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Smart battery supply status/fault flags (bitmask) for health indication. The battery must also report either MAV_BATTERY_CHARGE_STATE_FAILED or MAV_BATTERY_CHARGE_STATE_UNHEALTHY if any of these are set.
@@ -4788,60 +3767,42 @@ const (
 	BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION MAV_BATTERY_FAULT = 256
 )
 
+var labels_MAV_BATTERY_FAULT = map[MAV_BATTERY_FAULT]string{
+	MAV_BATTERY_FAULT_DEEP_DISCHARGE:               "MAV_BATTERY_FAULT_DEEP_DISCHARGE",
+	MAV_BATTERY_FAULT_SPIKES:                       "MAV_BATTERY_FAULT_SPIKES",
+	MAV_BATTERY_FAULT_CELL_FAIL:                    "MAV_BATTERY_FAULT_CELL_FAIL",
+	MAV_BATTERY_FAULT_OVER_CURRENT:                 "MAV_BATTERY_FAULT_OVER_CURRENT",
+	MAV_BATTERY_FAULT_OVER_TEMPERATURE:             "MAV_BATTERY_FAULT_OVER_TEMPERATURE",
+	MAV_BATTERY_FAULT_UNDER_TEMPERATURE:            "MAV_BATTERY_FAULT_UNDER_TEMPERATURE",
+	MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE:         "MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE",
+	MAV_BATTERY_FAULT_INCOMPATIBLE_FIRMWARE:        "MAV_BATTERY_FAULT_INCOMPATIBLE_FIRMWARE",
+	BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION: "BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_BATTERY_FAULT) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_BATTERY_FAULT_DEEP_DISCHARGE:
-		return []byte("MAV_BATTERY_FAULT_DEEP_DISCHARGE"), nil
-	case MAV_BATTERY_FAULT_SPIKES:
-		return []byte("MAV_BATTERY_FAULT_SPIKES"), nil
-	case MAV_BATTERY_FAULT_CELL_FAIL:
-		return []byte("MAV_BATTERY_FAULT_CELL_FAIL"), nil
-	case MAV_BATTERY_FAULT_OVER_CURRENT:
-		return []byte("MAV_BATTERY_FAULT_OVER_CURRENT"), nil
-	case MAV_BATTERY_FAULT_OVER_TEMPERATURE:
-		return []byte("MAV_BATTERY_FAULT_OVER_TEMPERATURE"), nil
-	case MAV_BATTERY_FAULT_UNDER_TEMPERATURE:
-		return []byte("MAV_BATTERY_FAULT_UNDER_TEMPERATURE"), nil
-	case MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE:
-		return []byte("MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE"), nil
-	case MAV_BATTERY_FAULT_INCOMPATIBLE_FIRMWARE:
-		return []byte("MAV_BATTERY_FAULT_INCOMPATIBLE_FIRMWARE"), nil
-	case BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION:
-		return []byte("BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION"), nil
+	if l, ok := labels_MAV_BATTERY_FAULT[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_BATTERY_FAULT = map[string]MAV_BATTERY_FAULT{
+	"MAV_BATTERY_FAULT_DEEP_DISCHARGE":               MAV_BATTERY_FAULT_DEEP_DISCHARGE,
+	"MAV_BATTERY_FAULT_SPIKES":                       MAV_BATTERY_FAULT_SPIKES,
+	"MAV_BATTERY_FAULT_CELL_FAIL":                    MAV_BATTERY_FAULT_CELL_FAIL,
+	"MAV_BATTERY_FAULT_OVER_CURRENT":                 MAV_BATTERY_FAULT_OVER_CURRENT,
+	"MAV_BATTERY_FAULT_OVER_TEMPERATURE":             MAV_BATTERY_FAULT_OVER_TEMPERATURE,
+	"MAV_BATTERY_FAULT_UNDER_TEMPERATURE":            MAV_BATTERY_FAULT_UNDER_TEMPERATURE,
+	"MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE":         MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE,
+	"MAV_BATTERY_FAULT_INCOMPATIBLE_FIRMWARE":        MAV_BATTERY_FAULT_INCOMPATIBLE_FIRMWARE,
+	"BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION": BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_BATTERY_FAULT) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_BATTERY_FAULT_DEEP_DISCHARGE":
-		*e = MAV_BATTERY_FAULT_DEEP_DISCHARGE
-		return nil
-	case "MAV_BATTERY_FAULT_SPIKES":
-		*e = MAV_BATTERY_FAULT_SPIKES
-		return nil
-	case "MAV_BATTERY_FAULT_CELL_FAIL":
-		*e = MAV_BATTERY_FAULT_CELL_FAIL
-		return nil
-	case "MAV_BATTERY_FAULT_OVER_CURRENT":
-		*e = MAV_BATTERY_FAULT_OVER_CURRENT
-		return nil
-	case "MAV_BATTERY_FAULT_OVER_TEMPERATURE":
-		*e = MAV_BATTERY_FAULT_OVER_TEMPERATURE
-		return nil
-	case "MAV_BATTERY_FAULT_UNDER_TEMPERATURE":
-		*e = MAV_BATTERY_FAULT_UNDER_TEMPERATURE
-		return nil
-	case "MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE":
-		*e = MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE
-		return nil
-	case "MAV_BATTERY_FAULT_INCOMPATIBLE_FIRMWARE":
-		*e = MAV_BATTERY_FAULT_INCOMPATIBLE_FIRMWARE
-		return nil
-	case "BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION":
-		*e = BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION
+	if rl, ok := reverseLabels_MAV_BATTERY_FAULT[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -4849,11 +3810,10 @@ func (e *MAV_BATTERY_FAULT) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_BATTERY_FAULT) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_BATTERY_FAULT[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Enumeration of battery functions
@@ -4872,40 +3832,34 @@ const (
 	MAV_BATTERY_TYPE_PAYLOAD MAV_BATTERY_FUNCTION = 4
 )
 
+var labels_MAV_BATTERY_FUNCTION = map[MAV_BATTERY_FUNCTION]string{
+	MAV_BATTERY_FUNCTION_UNKNOWN:    "MAV_BATTERY_FUNCTION_UNKNOWN",
+	MAV_BATTERY_FUNCTION_ALL:        "MAV_BATTERY_FUNCTION_ALL",
+	MAV_BATTERY_FUNCTION_PROPULSION: "MAV_BATTERY_FUNCTION_PROPULSION",
+	MAV_BATTERY_FUNCTION_AVIONICS:   "MAV_BATTERY_FUNCTION_AVIONICS",
+	MAV_BATTERY_TYPE_PAYLOAD:        "MAV_BATTERY_TYPE_PAYLOAD",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_BATTERY_FUNCTION) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_BATTERY_FUNCTION_UNKNOWN:
-		return []byte("MAV_BATTERY_FUNCTION_UNKNOWN"), nil
-	case MAV_BATTERY_FUNCTION_ALL:
-		return []byte("MAV_BATTERY_FUNCTION_ALL"), nil
-	case MAV_BATTERY_FUNCTION_PROPULSION:
-		return []byte("MAV_BATTERY_FUNCTION_PROPULSION"), nil
-	case MAV_BATTERY_FUNCTION_AVIONICS:
-		return []byte("MAV_BATTERY_FUNCTION_AVIONICS"), nil
-	case MAV_BATTERY_TYPE_PAYLOAD:
-		return []byte("MAV_BATTERY_TYPE_PAYLOAD"), nil
+	if l, ok := labels_MAV_BATTERY_FUNCTION[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_BATTERY_FUNCTION = map[string]MAV_BATTERY_FUNCTION{
+	"MAV_BATTERY_FUNCTION_UNKNOWN":    MAV_BATTERY_FUNCTION_UNKNOWN,
+	"MAV_BATTERY_FUNCTION_ALL":        MAV_BATTERY_FUNCTION_ALL,
+	"MAV_BATTERY_FUNCTION_PROPULSION": MAV_BATTERY_FUNCTION_PROPULSION,
+	"MAV_BATTERY_FUNCTION_AVIONICS":   MAV_BATTERY_FUNCTION_AVIONICS,
+	"MAV_BATTERY_TYPE_PAYLOAD":        MAV_BATTERY_TYPE_PAYLOAD,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_BATTERY_FUNCTION) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_BATTERY_FUNCTION_UNKNOWN":
-		*e = MAV_BATTERY_FUNCTION_UNKNOWN
-		return nil
-	case "MAV_BATTERY_FUNCTION_ALL":
-		*e = MAV_BATTERY_FUNCTION_ALL
-		return nil
-	case "MAV_BATTERY_FUNCTION_PROPULSION":
-		*e = MAV_BATTERY_FUNCTION_PROPULSION
-		return nil
-	case "MAV_BATTERY_FUNCTION_AVIONICS":
-		*e = MAV_BATTERY_FUNCTION_AVIONICS
-		return nil
-	case "MAV_BATTERY_TYPE_PAYLOAD":
-		*e = MAV_BATTERY_TYPE_PAYLOAD
+	if rl, ok := reverseLabels_MAV_BATTERY_FUNCTION[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -4913,11 +3867,10 @@ func (e *MAV_BATTERY_FUNCTION) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_BATTERY_FUNCTION) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_BATTERY_FUNCTION[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Battery mode. Note, the normal operation mode (i.e. when flying) should be reported as MAV_BATTERY_MODE_UNKNOWN to allow message trimming in normal flight.
@@ -4932,30 +3885,30 @@ const (
 	MAV_BATTERY_MODE_HOT_SWAP MAV_BATTERY_MODE = 2
 )
 
+var labels_MAV_BATTERY_MODE = map[MAV_BATTERY_MODE]string{
+	MAV_BATTERY_MODE_UNKNOWN:          "MAV_BATTERY_MODE_UNKNOWN",
+	MAV_BATTERY_MODE_AUTO_DISCHARGING: "MAV_BATTERY_MODE_AUTO_DISCHARGING",
+	MAV_BATTERY_MODE_HOT_SWAP:         "MAV_BATTERY_MODE_HOT_SWAP",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_BATTERY_MODE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_BATTERY_MODE_UNKNOWN:
-		return []byte("MAV_BATTERY_MODE_UNKNOWN"), nil
-	case MAV_BATTERY_MODE_AUTO_DISCHARGING:
-		return []byte("MAV_BATTERY_MODE_AUTO_DISCHARGING"), nil
-	case MAV_BATTERY_MODE_HOT_SWAP:
-		return []byte("MAV_BATTERY_MODE_HOT_SWAP"), nil
+	if l, ok := labels_MAV_BATTERY_MODE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_BATTERY_MODE = map[string]MAV_BATTERY_MODE{
+	"MAV_BATTERY_MODE_UNKNOWN":          MAV_BATTERY_MODE_UNKNOWN,
+	"MAV_BATTERY_MODE_AUTO_DISCHARGING": MAV_BATTERY_MODE_AUTO_DISCHARGING,
+	"MAV_BATTERY_MODE_HOT_SWAP":         MAV_BATTERY_MODE_HOT_SWAP,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_BATTERY_MODE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_BATTERY_MODE_UNKNOWN":
-		*e = MAV_BATTERY_MODE_UNKNOWN
-		return nil
-	case "MAV_BATTERY_MODE_AUTO_DISCHARGING":
-		*e = MAV_BATTERY_MODE_AUTO_DISCHARGING
-		return nil
-	case "MAV_BATTERY_MODE_HOT_SWAP":
-		*e = MAV_BATTERY_MODE_HOT_SWAP
+	if rl, ok := reverseLabels_MAV_BATTERY_MODE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -4963,11 +3916,10 @@ func (e *MAV_BATTERY_MODE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_BATTERY_MODE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_BATTERY_MODE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Enumeration of battery types
@@ -4986,40 +3938,34 @@ const (
 	MAV_BATTERY_TYPE_NIMH MAV_BATTERY_TYPE = 4
 )
 
+var labels_MAV_BATTERY_TYPE = map[MAV_BATTERY_TYPE]string{
+	MAV_BATTERY_TYPE_UNKNOWN: "MAV_BATTERY_TYPE_UNKNOWN",
+	MAV_BATTERY_TYPE_LIPO:    "MAV_BATTERY_TYPE_LIPO",
+	MAV_BATTERY_TYPE_LIFE:    "MAV_BATTERY_TYPE_LIFE",
+	MAV_BATTERY_TYPE_LION:    "MAV_BATTERY_TYPE_LION",
+	MAV_BATTERY_TYPE_NIMH:    "MAV_BATTERY_TYPE_NIMH",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_BATTERY_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_BATTERY_TYPE_UNKNOWN:
-		return []byte("MAV_BATTERY_TYPE_UNKNOWN"), nil
-	case MAV_BATTERY_TYPE_LIPO:
-		return []byte("MAV_BATTERY_TYPE_LIPO"), nil
-	case MAV_BATTERY_TYPE_LIFE:
-		return []byte("MAV_BATTERY_TYPE_LIFE"), nil
-	case MAV_BATTERY_TYPE_LION:
-		return []byte("MAV_BATTERY_TYPE_LION"), nil
-	case MAV_BATTERY_TYPE_NIMH:
-		return []byte("MAV_BATTERY_TYPE_NIMH"), nil
+	if l, ok := labels_MAV_BATTERY_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_BATTERY_TYPE = map[string]MAV_BATTERY_TYPE{
+	"MAV_BATTERY_TYPE_UNKNOWN": MAV_BATTERY_TYPE_UNKNOWN,
+	"MAV_BATTERY_TYPE_LIPO":    MAV_BATTERY_TYPE_LIPO,
+	"MAV_BATTERY_TYPE_LIFE":    MAV_BATTERY_TYPE_LIFE,
+	"MAV_BATTERY_TYPE_LION":    MAV_BATTERY_TYPE_LION,
+	"MAV_BATTERY_TYPE_NIMH":    MAV_BATTERY_TYPE_NIMH,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_BATTERY_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_BATTERY_TYPE_UNKNOWN":
-		*e = MAV_BATTERY_TYPE_UNKNOWN
-		return nil
-	case "MAV_BATTERY_TYPE_LIPO":
-		*e = MAV_BATTERY_TYPE_LIPO
-		return nil
-	case "MAV_BATTERY_TYPE_LIFE":
-		*e = MAV_BATTERY_TYPE_LIFE
-		return nil
-	case "MAV_BATTERY_TYPE_LION":
-		*e = MAV_BATTERY_TYPE_LION
-		return nil
-	case "MAV_BATTERY_TYPE_NIMH":
-		*e = MAV_BATTERY_TYPE_NIMH
+	if rl, ok := reverseLabels_MAV_BATTERY_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -5027,11 +3973,10 @@ func (e *MAV_BATTERY_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_BATTERY_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_BATTERY_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Commands to be executed by the MAV. They can be executed on user request, or as part of a mission script. If the action is used in a mission, the parameter mapping to the waypoint/mission message is as follows: Param 1, Param 2, Param 3, Param 4, X: Param 5, Y:Param 6, Z:Param 7. This command list is similar what ARINC 424 is for commercial aircraft: A data format how to interpret waypoint/mission data. NaN and INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current yaw or latitude rather than a specific value). See https://mavlink.io/en/guide/xml_schema.html#MAV_CMD for information about the structure of the MAV_CMD entries
@@ -5352,795 +4297,336 @@ const (
 	MAV_CMD_USER_5 MAV_CMD = 31014
 )
 
+var labels_MAV_CMD = map[MAV_CMD]string{
+	MAV_CMD_NAV_WAYPOINT:                       "MAV_CMD_NAV_WAYPOINT",
+	MAV_CMD_NAV_LOITER_UNLIM:                   "MAV_CMD_NAV_LOITER_UNLIM",
+	MAV_CMD_NAV_LOITER_TURNS:                   "MAV_CMD_NAV_LOITER_TURNS",
+	MAV_CMD_NAV_LOITER_TIME:                    "MAV_CMD_NAV_LOITER_TIME",
+	MAV_CMD_NAV_RETURN_TO_LAUNCH:               "MAV_CMD_NAV_RETURN_TO_LAUNCH",
+	MAV_CMD_NAV_LAND:                           "MAV_CMD_NAV_LAND",
+	MAV_CMD_NAV_TAKEOFF:                        "MAV_CMD_NAV_TAKEOFF",
+	MAV_CMD_NAV_LAND_LOCAL:                     "MAV_CMD_NAV_LAND_LOCAL",
+	MAV_CMD_NAV_TAKEOFF_LOCAL:                  "MAV_CMD_NAV_TAKEOFF_LOCAL",
+	MAV_CMD_NAV_FOLLOW:                         "MAV_CMD_NAV_FOLLOW",
+	MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT:        "MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT",
+	MAV_CMD_NAV_LOITER_TO_ALT:                  "MAV_CMD_NAV_LOITER_TO_ALT",
+	MAV_CMD_DO_FOLLOW:                          "MAV_CMD_DO_FOLLOW",
+	MAV_CMD_DO_FOLLOW_REPOSITION:               "MAV_CMD_DO_FOLLOW_REPOSITION",
+	MAV_CMD_DO_ORBIT:                           "MAV_CMD_DO_ORBIT",
+	MAV_CMD_NAV_ROI:                            "MAV_CMD_NAV_ROI",
+	MAV_CMD_NAV_PATHPLANNING:                   "MAV_CMD_NAV_PATHPLANNING",
+	MAV_CMD_NAV_SPLINE_WAYPOINT:                "MAV_CMD_NAV_SPLINE_WAYPOINT",
+	MAV_CMD_NAV_VTOL_TAKEOFF:                   "MAV_CMD_NAV_VTOL_TAKEOFF",
+	MAV_CMD_NAV_VTOL_LAND:                      "MAV_CMD_NAV_VTOL_LAND",
+	MAV_CMD_NAV_GUIDED_ENABLE:                  "MAV_CMD_NAV_GUIDED_ENABLE",
+	MAV_CMD_NAV_DELAY:                          "MAV_CMD_NAV_DELAY",
+	MAV_CMD_NAV_PAYLOAD_PLACE:                  "MAV_CMD_NAV_PAYLOAD_PLACE",
+	MAV_CMD_NAV_LAST:                           "MAV_CMD_NAV_LAST",
+	MAV_CMD_CONDITION_DELAY:                    "MAV_CMD_CONDITION_DELAY",
+	MAV_CMD_CONDITION_CHANGE_ALT:               "MAV_CMD_CONDITION_CHANGE_ALT",
+	MAV_CMD_CONDITION_DISTANCE:                 "MAV_CMD_CONDITION_DISTANCE",
+	MAV_CMD_CONDITION_YAW:                      "MAV_CMD_CONDITION_YAW",
+	MAV_CMD_CONDITION_LAST:                     "MAV_CMD_CONDITION_LAST",
+	MAV_CMD_DO_SET_MODE:                        "MAV_CMD_DO_SET_MODE",
+	MAV_CMD_DO_JUMP:                            "MAV_CMD_DO_JUMP",
+	MAV_CMD_DO_CHANGE_SPEED:                    "MAV_CMD_DO_CHANGE_SPEED",
+	MAV_CMD_DO_SET_HOME:                        "MAV_CMD_DO_SET_HOME",
+	MAV_CMD_DO_SET_PARAMETER:                   "MAV_CMD_DO_SET_PARAMETER",
+	MAV_CMD_DO_SET_RELAY:                       "MAV_CMD_DO_SET_RELAY",
+	MAV_CMD_DO_REPEAT_RELAY:                    "MAV_CMD_DO_REPEAT_RELAY",
+	MAV_CMD_DO_SET_SERVO:                       "MAV_CMD_DO_SET_SERVO",
+	MAV_CMD_DO_REPEAT_SERVO:                    "MAV_CMD_DO_REPEAT_SERVO",
+	MAV_CMD_DO_FLIGHTTERMINATION:               "MAV_CMD_DO_FLIGHTTERMINATION",
+	MAV_CMD_DO_CHANGE_ALTITUDE:                 "MAV_CMD_DO_CHANGE_ALTITUDE",
+	MAV_CMD_DO_SET_ACTUATOR:                    "MAV_CMD_DO_SET_ACTUATOR",
+	MAV_CMD_DO_LAND_START:                      "MAV_CMD_DO_LAND_START",
+	MAV_CMD_DO_RALLY_LAND:                      "MAV_CMD_DO_RALLY_LAND",
+	MAV_CMD_DO_GO_AROUND:                       "MAV_CMD_DO_GO_AROUND",
+	MAV_CMD_DO_REPOSITION:                      "MAV_CMD_DO_REPOSITION",
+	MAV_CMD_DO_PAUSE_CONTINUE:                  "MAV_CMD_DO_PAUSE_CONTINUE",
+	MAV_CMD_DO_SET_REVERSE:                     "MAV_CMD_DO_SET_REVERSE",
+	MAV_CMD_DO_SET_ROI_LOCATION:                "MAV_CMD_DO_SET_ROI_LOCATION",
+	MAV_CMD_DO_SET_ROI_WPNEXT_OFFSET:           "MAV_CMD_DO_SET_ROI_WPNEXT_OFFSET",
+	MAV_CMD_DO_SET_ROI_NONE:                    "MAV_CMD_DO_SET_ROI_NONE",
+	MAV_CMD_DO_SET_ROI_SYSID:                   "MAV_CMD_DO_SET_ROI_SYSID",
+	MAV_CMD_DO_CONTROL_VIDEO:                   "MAV_CMD_DO_CONTROL_VIDEO",
+	MAV_CMD_DO_SET_ROI:                         "MAV_CMD_DO_SET_ROI",
+	MAV_CMD_DO_DIGICAM_CONFIGURE:               "MAV_CMD_DO_DIGICAM_CONFIGURE",
+	MAV_CMD_DO_DIGICAM_CONTROL:                 "MAV_CMD_DO_DIGICAM_CONTROL",
+	MAV_CMD_DO_MOUNT_CONFIGURE:                 "MAV_CMD_DO_MOUNT_CONFIGURE",
+	MAV_CMD_DO_MOUNT_CONTROL:                   "MAV_CMD_DO_MOUNT_CONTROL",
+	MAV_CMD_DO_SET_CAM_TRIGG_DIST:              "MAV_CMD_DO_SET_CAM_TRIGG_DIST",
+	MAV_CMD_DO_FENCE_ENABLE:                    "MAV_CMD_DO_FENCE_ENABLE",
+	MAV_CMD_DO_PARACHUTE:                       "MAV_CMD_DO_PARACHUTE",
+	MAV_CMD_DO_MOTOR_TEST:                      "MAV_CMD_DO_MOTOR_TEST",
+	MAV_CMD_DO_INVERTED_FLIGHT:                 "MAV_CMD_DO_INVERTED_FLIGHT",
+	MAV_CMD_DO_GRIPPER:                         "MAV_CMD_DO_GRIPPER",
+	MAV_CMD_DO_AUTOTUNE_ENABLE:                 "MAV_CMD_DO_AUTOTUNE_ENABLE",
+	MAV_CMD_NAV_SET_YAW_SPEED:                  "MAV_CMD_NAV_SET_YAW_SPEED",
+	MAV_CMD_DO_SET_CAM_TRIGG_INTERVAL:          "MAV_CMD_DO_SET_CAM_TRIGG_INTERVAL",
+	MAV_CMD_DO_MOUNT_CONTROL_QUAT:              "MAV_CMD_DO_MOUNT_CONTROL_QUAT",
+	MAV_CMD_DO_GUIDED_MASTER:                   "MAV_CMD_DO_GUIDED_MASTER",
+	MAV_CMD_DO_GUIDED_LIMITS:                   "MAV_CMD_DO_GUIDED_LIMITS",
+	MAV_CMD_DO_ENGINE_CONTROL:                  "MAV_CMD_DO_ENGINE_CONTROL",
+	MAV_CMD_DO_SET_MISSION_CURRENT:             "MAV_CMD_DO_SET_MISSION_CURRENT",
+	MAV_CMD_DO_LAST:                            "MAV_CMD_DO_LAST",
+	MAV_CMD_PREFLIGHT_CALIBRATION:              "MAV_CMD_PREFLIGHT_CALIBRATION",
+	MAV_CMD_PREFLIGHT_SET_SENSOR_OFFSETS:       "MAV_CMD_PREFLIGHT_SET_SENSOR_OFFSETS",
+	MAV_CMD_PREFLIGHT_UAVCAN:                   "MAV_CMD_PREFLIGHT_UAVCAN",
+	MAV_CMD_PREFLIGHT_STORAGE:                  "MAV_CMD_PREFLIGHT_STORAGE",
+	MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN:          "MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN",
+	MAV_CMD_OVERRIDE_GOTO:                      "MAV_CMD_OVERRIDE_GOTO",
+	MAV_CMD_OBLIQUE_SURVEY:                     "MAV_CMD_OBLIQUE_SURVEY",
+	MAV_CMD_MISSION_START:                      "MAV_CMD_MISSION_START",
+	MAV_CMD_COMPONENT_ARM_DISARM:               "MAV_CMD_COMPONENT_ARM_DISARM",
+	MAV_CMD_RUN_PREARM_CHECKS:                  "MAV_CMD_RUN_PREARM_CHECKS",
+	MAV_CMD_ILLUMINATOR_ON_OFF:                 "MAV_CMD_ILLUMINATOR_ON_OFF",
+	MAV_CMD_GET_HOME_POSITION:                  "MAV_CMD_GET_HOME_POSITION",
+	MAV_CMD_INJECT_FAILURE:                     "MAV_CMD_INJECT_FAILURE",
+	MAV_CMD_START_RX_PAIR:                      "MAV_CMD_START_RX_PAIR",
+	MAV_CMD_GET_MESSAGE_INTERVAL:               "MAV_CMD_GET_MESSAGE_INTERVAL",
+	MAV_CMD_SET_MESSAGE_INTERVAL:               "MAV_CMD_SET_MESSAGE_INTERVAL",
+	MAV_CMD_REQUEST_MESSAGE:                    "MAV_CMD_REQUEST_MESSAGE",
+	MAV_CMD_REQUEST_PROTOCOL_VERSION:           "MAV_CMD_REQUEST_PROTOCOL_VERSION",
+	MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES:     "MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES",
+	MAV_CMD_REQUEST_CAMERA_INFORMATION:         "MAV_CMD_REQUEST_CAMERA_INFORMATION",
+	MAV_CMD_REQUEST_CAMERA_SETTINGS:            "MAV_CMD_REQUEST_CAMERA_SETTINGS",
+	MAV_CMD_REQUEST_STORAGE_INFORMATION:        "MAV_CMD_REQUEST_STORAGE_INFORMATION",
+	MAV_CMD_STORAGE_FORMAT:                     "MAV_CMD_STORAGE_FORMAT",
+	MAV_CMD_REQUEST_CAMERA_CAPTURE_STATUS:      "MAV_CMD_REQUEST_CAMERA_CAPTURE_STATUS",
+	MAV_CMD_REQUEST_FLIGHT_INFORMATION:         "MAV_CMD_REQUEST_FLIGHT_INFORMATION",
+	MAV_CMD_RESET_CAMERA_SETTINGS:              "MAV_CMD_RESET_CAMERA_SETTINGS",
+	MAV_CMD_SET_CAMERA_MODE:                    "MAV_CMD_SET_CAMERA_MODE",
+	MAV_CMD_SET_CAMERA_ZOOM:                    "MAV_CMD_SET_CAMERA_ZOOM",
+	MAV_CMD_SET_CAMERA_FOCUS:                   "MAV_CMD_SET_CAMERA_FOCUS",
+	MAV_CMD_SET_STORAGE_USAGE:                  "MAV_CMD_SET_STORAGE_USAGE",
+	MAV_CMD_JUMP_TAG:                           "MAV_CMD_JUMP_TAG",
+	MAV_CMD_DO_JUMP_TAG:                        "MAV_CMD_DO_JUMP_TAG",
+	MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW:         "MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW",
+	MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE:        "MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE",
+	MAV_CMD_IMAGE_START_CAPTURE:                "MAV_CMD_IMAGE_START_CAPTURE",
+	MAV_CMD_IMAGE_STOP_CAPTURE:                 "MAV_CMD_IMAGE_STOP_CAPTURE",
+	MAV_CMD_REQUEST_CAMERA_IMAGE_CAPTURE:       "MAV_CMD_REQUEST_CAMERA_IMAGE_CAPTURE",
+	MAV_CMD_DO_TRIGGER_CONTROL:                 "MAV_CMD_DO_TRIGGER_CONTROL",
+	MAV_CMD_CAMERA_TRACK_POINT:                 "MAV_CMD_CAMERA_TRACK_POINT",
+	MAV_CMD_CAMERA_TRACK_RECTANGLE:             "MAV_CMD_CAMERA_TRACK_RECTANGLE",
+	MAV_CMD_CAMERA_STOP_TRACKING:               "MAV_CMD_CAMERA_STOP_TRACKING",
+	MAV_CMD_VIDEO_START_CAPTURE:                "MAV_CMD_VIDEO_START_CAPTURE",
+	MAV_CMD_VIDEO_STOP_CAPTURE:                 "MAV_CMD_VIDEO_STOP_CAPTURE",
+	MAV_CMD_VIDEO_START_STREAMING:              "MAV_CMD_VIDEO_START_STREAMING",
+	MAV_CMD_VIDEO_STOP_STREAMING:               "MAV_CMD_VIDEO_STOP_STREAMING",
+	MAV_CMD_REQUEST_VIDEO_STREAM_INFORMATION:   "MAV_CMD_REQUEST_VIDEO_STREAM_INFORMATION",
+	MAV_CMD_REQUEST_VIDEO_STREAM_STATUS:        "MAV_CMD_REQUEST_VIDEO_STREAM_STATUS",
+	MAV_CMD_LOGGING_START:                      "MAV_CMD_LOGGING_START",
+	MAV_CMD_LOGGING_STOP:                       "MAV_CMD_LOGGING_STOP",
+	MAV_CMD_AIRFRAME_CONFIGURATION:             "MAV_CMD_AIRFRAME_CONFIGURATION",
+	MAV_CMD_CONTROL_HIGH_LATENCY:               "MAV_CMD_CONTROL_HIGH_LATENCY",
+	MAV_CMD_PANORAMA_CREATE:                    "MAV_CMD_PANORAMA_CREATE",
+	MAV_CMD_DO_VTOL_TRANSITION:                 "MAV_CMD_DO_VTOL_TRANSITION",
+	MAV_CMD_ARM_AUTHORIZATION_REQUEST:          "MAV_CMD_ARM_AUTHORIZATION_REQUEST",
+	MAV_CMD_SET_GUIDED_SUBMODE_STANDARD:        "MAV_CMD_SET_GUIDED_SUBMODE_STANDARD",
+	MAV_CMD_SET_GUIDED_SUBMODE_CIRCLE:          "MAV_CMD_SET_GUIDED_SUBMODE_CIRCLE",
+	MAV_CMD_CONDITION_GATE:                     "MAV_CMD_CONDITION_GATE",
+	MAV_CMD_NAV_FENCE_RETURN_POINT:             "MAV_CMD_NAV_FENCE_RETURN_POINT",
+	MAV_CMD_NAV_FENCE_POLYGON_VERTEX_INCLUSION: "MAV_CMD_NAV_FENCE_POLYGON_VERTEX_INCLUSION",
+	MAV_CMD_NAV_FENCE_POLYGON_VERTEX_EXCLUSION: "MAV_CMD_NAV_FENCE_POLYGON_VERTEX_EXCLUSION",
+	MAV_CMD_NAV_FENCE_CIRCLE_INCLUSION:         "MAV_CMD_NAV_FENCE_CIRCLE_INCLUSION",
+	MAV_CMD_NAV_FENCE_CIRCLE_EXCLUSION:         "MAV_CMD_NAV_FENCE_CIRCLE_EXCLUSION",
+	MAV_CMD_NAV_RALLY_POINT:                    "MAV_CMD_NAV_RALLY_POINT",
+	MAV_CMD_UAVCAN_GET_NODE_INFO:               "MAV_CMD_UAVCAN_GET_NODE_INFO",
+	MAV_CMD_DO_ADSB_OUT_IDENT:                  "MAV_CMD_DO_ADSB_OUT_IDENT",
+	MAV_CMD_PAYLOAD_PREPARE_DEPLOY:             "MAV_CMD_PAYLOAD_PREPARE_DEPLOY",
+	MAV_CMD_PAYLOAD_CONTROL_DEPLOY:             "MAV_CMD_PAYLOAD_CONTROL_DEPLOY",
+	MAV_CMD_FIXED_MAG_CAL_YAW:                  "MAV_CMD_FIXED_MAG_CAL_YAW",
+	MAV_CMD_DO_WINCH:                           "MAV_CMD_DO_WINCH",
+	MAV_CMD_WAYPOINT_USER_1:                    "MAV_CMD_WAYPOINT_USER_1",
+	MAV_CMD_WAYPOINT_USER_2:                    "MAV_CMD_WAYPOINT_USER_2",
+	MAV_CMD_WAYPOINT_USER_3:                    "MAV_CMD_WAYPOINT_USER_3",
+	MAV_CMD_WAYPOINT_USER_4:                    "MAV_CMD_WAYPOINT_USER_4",
+	MAV_CMD_WAYPOINT_USER_5:                    "MAV_CMD_WAYPOINT_USER_5",
+	MAV_CMD_SPATIAL_USER_1:                     "MAV_CMD_SPATIAL_USER_1",
+	MAV_CMD_SPATIAL_USER_2:                     "MAV_CMD_SPATIAL_USER_2",
+	MAV_CMD_SPATIAL_USER_3:                     "MAV_CMD_SPATIAL_USER_3",
+	MAV_CMD_SPATIAL_USER_4:                     "MAV_CMD_SPATIAL_USER_4",
+	MAV_CMD_SPATIAL_USER_5:                     "MAV_CMD_SPATIAL_USER_5",
+	MAV_CMD_USER_1:                             "MAV_CMD_USER_1",
+	MAV_CMD_USER_2:                             "MAV_CMD_USER_2",
+	MAV_CMD_USER_3:                             "MAV_CMD_USER_3",
+	MAV_CMD_USER_4:                             "MAV_CMD_USER_4",
+	MAV_CMD_USER_5:                             "MAV_CMD_USER_5",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_CMD) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_CMD_NAV_WAYPOINT:
-		return []byte("MAV_CMD_NAV_WAYPOINT"), nil
-	case MAV_CMD_NAV_LOITER_UNLIM:
-		return []byte("MAV_CMD_NAV_LOITER_UNLIM"), nil
-	case MAV_CMD_NAV_LOITER_TURNS:
-		return []byte("MAV_CMD_NAV_LOITER_TURNS"), nil
-	case MAV_CMD_NAV_LOITER_TIME:
-		return []byte("MAV_CMD_NAV_LOITER_TIME"), nil
-	case MAV_CMD_NAV_RETURN_TO_LAUNCH:
-		return []byte("MAV_CMD_NAV_RETURN_TO_LAUNCH"), nil
-	case MAV_CMD_NAV_LAND:
-		return []byte("MAV_CMD_NAV_LAND"), nil
-	case MAV_CMD_NAV_TAKEOFF:
-		return []byte("MAV_CMD_NAV_TAKEOFF"), nil
-	case MAV_CMD_NAV_LAND_LOCAL:
-		return []byte("MAV_CMD_NAV_LAND_LOCAL"), nil
-	case MAV_CMD_NAV_TAKEOFF_LOCAL:
-		return []byte("MAV_CMD_NAV_TAKEOFF_LOCAL"), nil
-	case MAV_CMD_NAV_FOLLOW:
-		return []byte("MAV_CMD_NAV_FOLLOW"), nil
-	case MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT:
-		return []byte("MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT"), nil
-	case MAV_CMD_NAV_LOITER_TO_ALT:
-		return []byte("MAV_CMD_NAV_LOITER_TO_ALT"), nil
-	case MAV_CMD_DO_FOLLOW:
-		return []byte("MAV_CMD_DO_FOLLOW"), nil
-	case MAV_CMD_DO_FOLLOW_REPOSITION:
-		return []byte("MAV_CMD_DO_FOLLOW_REPOSITION"), nil
-	case MAV_CMD_DO_ORBIT:
-		return []byte("MAV_CMD_DO_ORBIT"), nil
-	case MAV_CMD_NAV_ROI:
-		return []byte("MAV_CMD_NAV_ROI"), nil
-	case MAV_CMD_NAV_PATHPLANNING:
-		return []byte("MAV_CMD_NAV_PATHPLANNING"), nil
-	case MAV_CMD_NAV_SPLINE_WAYPOINT:
-		return []byte("MAV_CMD_NAV_SPLINE_WAYPOINT"), nil
-	case MAV_CMD_NAV_VTOL_TAKEOFF:
-		return []byte("MAV_CMD_NAV_VTOL_TAKEOFF"), nil
-	case MAV_CMD_NAV_VTOL_LAND:
-		return []byte("MAV_CMD_NAV_VTOL_LAND"), nil
-	case MAV_CMD_NAV_GUIDED_ENABLE:
-		return []byte("MAV_CMD_NAV_GUIDED_ENABLE"), nil
-	case MAV_CMD_NAV_DELAY:
-		return []byte("MAV_CMD_NAV_DELAY"), nil
-	case MAV_CMD_NAV_PAYLOAD_PLACE:
-		return []byte("MAV_CMD_NAV_PAYLOAD_PLACE"), nil
-	case MAV_CMD_NAV_LAST:
-		return []byte("MAV_CMD_NAV_LAST"), nil
-	case MAV_CMD_CONDITION_DELAY:
-		return []byte("MAV_CMD_CONDITION_DELAY"), nil
-	case MAV_CMD_CONDITION_CHANGE_ALT:
-		return []byte("MAV_CMD_CONDITION_CHANGE_ALT"), nil
-	case MAV_CMD_CONDITION_DISTANCE:
-		return []byte("MAV_CMD_CONDITION_DISTANCE"), nil
-	case MAV_CMD_CONDITION_YAW:
-		return []byte("MAV_CMD_CONDITION_YAW"), nil
-	case MAV_CMD_CONDITION_LAST:
-		return []byte("MAV_CMD_CONDITION_LAST"), nil
-	case MAV_CMD_DO_SET_MODE:
-		return []byte("MAV_CMD_DO_SET_MODE"), nil
-	case MAV_CMD_DO_JUMP:
-		return []byte("MAV_CMD_DO_JUMP"), nil
-	case MAV_CMD_DO_CHANGE_SPEED:
-		return []byte("MAV_CMD_DO_CHANGE_SPEED"), nil
-	case MAV_CMD_DO_SET_HOME:
-		return []byte("MAV_CMD_DO_SET_HOME"), nil
-	case MAV_CMD_DO_SET_PARAMETER:
-		return []byte("MAV_CMD_DO_SET_PARAMETER"), nil
-	case MAV_CMD_DO_SET_RELAY:
-		return []byte("MAV_CMD_DO_SET_RELAY"), nil
-	case MAV_CMD_DO_REPEAT_RELAY:
-		return []byte("MAV_CMD_DO_REPEAT_RELAY"), nil
-	case MAV_CMD_DO_SET_SERVO:
-		return []byte("MAV_CMD_DO_SET_SERVO"), nil
-	case MAV_CMD_DO_REPEAT_SERVO:
-		return []byte("MAV_CMD_DO_REPEAT_SERVO"), nil
-	case MAV_CMD_DO_FLIGHTTERMINATION:
-		return []byte("MAV_CMD_DO_FLIGHTTERMINATION"), nil
-	case MAV_CMD_DO_CHANGE_ALTITUDE:
-		return []byte("MAV_CMD_DO_CHANGE_ALTITUDE"), nil
-	case MAV_CMD_DO_SET_ACTUATOR:
-		return []byte("MAV_CMD_DO_SET_ACTUATOR"), nil
-	case MAV_CMD_DO_LAND_START:
-		return []byte("MAV_CMD_DO_LAND_START"), nil
-	case MAV_CMD_DO_RALLY_LAND:
-		return []byte("MAV_CMD_DO_RALLY_LAND"), nil
-	case MAV_CMD_DO_GO_AROUND:
-		return []byte("MAV_CMD_DO_GO_AROUND"), nil
-	case MAV_CMD_DO_REPOSITION:
-		return []byte("MAV_CMD_DO_REPOSITION"), nil
-	case MAV_CMD_DO_PAUSE_CONTINUE:
-		return []byte("MAV_CMD_DO_PAUSE_CONTINUE"), nil
-	case MAV_CMD_DO_SET_REVERSE:
-		return []byte("MAV_CMD_DO_SET_REVERSE"), nil
-	case MAV_CMD_DO_SET_ROI_LOCATION:
-		return []byte("MAV_CMD_DO_SET_ROI_LOCATION"), nil
-	case MAV_CMD_DO_SET_ROI_WPNEXT_OFFSET:
-		return []byte("MAV_CMD_DO_SET_ROI_WPNEXT_OFFSET"), nil
-	case MAV_CMD_DO_SET_ROI_NONE:
-		return []byte("MAV_CMD_DO_SET_ROI_NONE"), nil
-	case MAV_CMD_DO_SET_ROI_SYSID:
-		return []byte("MAV_CMD_DO_SET_ROI_SYSID"), nil
-	case MAV_CMD_DO_CONTROL_VIDEO:
-		return []byte("MAV_CMD_DO_CONTROL_VIDEO"), nil
-	case MAV_CMD_DO_SET_ROI:
-		return []byte("MAV_CMD_DO_SET_ROI"), nil
-	case MAV_CMD_DO_DIGICAM_CONFIGURE:
-		return []byte("MAV_CMD_DO_DIGICAM_CONFIGURE"), nil
-	case MAV_CMD_DO_DIGICAM_CONTROL:
-		return []byte("MAV_CMD_DO_DIGICAM_CONTROL"), nil
-	case MAV_CMD_DO_MOUNT_CONFIGURE:
-		return []byte("MAV_CMD_DO_MOUNT_CONFIGURE"), nil
-	case MAV_CMD_DO_MOUNT_CONTROL:
-		return []byte("MAV_CMD_DO_MOUNT_CONTROL"), nil
-	case MAV_CMD_DO_SET_CAM_TRIGG_DIST:
-		return []byte("MAV_CMD_DO_SET_CAM_TRIGG_DIST"), nil
-	case MAV_CMD_DO_FENCE_ENABLE:
-		return []byte("MAV_CMD_DO_FENCE_ENABLE"), nil
-	case MAV_CMD_DO_PARACHUTE:
-		return []byte("MAV_CMD_DO_PARACHUTE"), nil
-	case MAV_CMD_DO_MOTOR_TEST:
-		return []byte("MAV_CMD_DO_MOTOR_TEST"), nil
-	case MAV_CMD_DO_INVERTED_FLIGHT:
-		return []byte("MAV_CMD_DO_INVERTED_FLIGHT"), nil
-	case MAV_CMD_DO_GRIPPER:
-		return []byte("MAV_CMD_DO_GRIPPER"), nil
-	case MAV_CMD_DO_AUTOTUNE_ENABLE:
-		return []byte("MAV_CMD_DO_AUTOTUNE_ENABLE"), nil
-	case MAV_CMD_NAV_SET_YAW_SPEED:
-		return []byte("MAV_CMD_NAV_SET_YAW_SPEED"), nil
-	case MAV_CMD_DO_SET_CAM_TRIGG_INTERVAL:
-		return []byte("MAV_CMD_DO_SET_CAM_TRIGG_INTERVAL"), nil
-	case MAV_CMD_DO_MOUNT_CONTROL_QUAT:
-		return []byte("MAV_CMD_DO_MOUNT_CONTROL_QUAT"), nil
-	case MAV_CMD_DO_GUIDED_MASTER:
-		return []byte("MAV_CMD_DO_GUIDED_MASTER"), nil
-	case MAV_CMD_DO_GUIDED_LIMITS:
-		return []byte("MAV_CMD_DO_GUIDED_LIMITS"), nil
-	case MAV_CMD_DO_ENGINE_CONTROL:
-		return []byte("MAV_CMD_DO_ENGINE_CONTROL"), nil
-	case MAV_CMD_DO_SET_MISSION_CURRENT:
-		return []byte("MAV_CMD_DO_SET_MISSION_CURRENT"), nil
-	case MAV_CMD_DO_LAST:
-		return []byte("MAV_CMD_DO_LAST"), nil
-	case MAV_CMD_PREFLIGHT_CALIBRATION:
-		return []byte("MAV_CMD_PREFLIGHT_CALIBRATION"), nil
-	case MAV_CMD_PREFLIGHT_SET_SENSOR_OFFSETS:
-		return []byte("MAV_CMD_PREFLIGHT_SET_SENSOR_OFFSETS"), nil
-	case MAV_CMD_PREFLIGHT_UAVCAN:
-		return []byte("MAV_CMD_PREFLIGHT_UAVCAN"), nil
-	case MAV_CMD_PREFLIGHT_STORAGE:
-		return []byte("MAV_CMD_PREFLIGHT_STORAGE"), nil
-	case MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN:
-		return []byte("MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN"), nil
-	case MAV_CMD_OVERRIDE_GOTO:
-		return []byte("MAV_CMD_OVERRIDE_GOTO"), nil
-	case MAV_CMD_OBLIQUE_SURVEY:
-		return []byte("MAV_CMD_OBLIQUE_SURVEY"), nil
-	case MAV_CMD_MISSION_START:
-		return []byte("MAV_CMD_MISSION_START"), nil
-	case MAV_CMD_COMPONENT_ARM_DISARM:
-		return []byte("MAV_CMD_COMPONENT_ARM_DISARM"), nil
-	case MAV_CMD_RUN_PREARM_CHECKS:
-		return []byte("MAV_CMD_RUN_PREARM_CHECKS"), nil
-	case MAV_CMD_ILLUMINATOR_ON_OFF:
-		return []byte("MAV_CMD_ILLUMINATOR_ON_OFF"), nil
-	case MAV_CMD_GET_HOME_POSITION:
-		return []byte("MAV_CMD_GET_HOME_POSITION"), nil
-	case MAV_CMD_INJECT_FAILURE:
-		return []byte("MAV_CMD_INJECT_FAILURE"), nil
-	case MAV_CMD_START_RX_PAIR:
-		return []byte("MAV_CMD_START_RX_PAIR"), nil
-	case MAV_CMD_GET_MESSAGE_INTERVAL:
-		return []byte("MAV_CMD_GET_MESSAGE_INTERVAL"), nil
-	case MAV_CMD_SET_MESSAGE_INTERVAL:
-		return []byte("MAV_CMD_SET_MESSAGE_INTERVAL"), nil
-	case MAV_CMD_REQUEST_MESSAGE:
-		return []byte("MAV_CMD_REQUEST_MESSAGE"), nil
-	case MAV_CMD_REQUEST_PROTOCOL_VERSION:
-		return []byte("MAV_CMD_REQUEST_PROTOCOL_VERSION"), nil
-	case MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES:
-		return []byte("MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES"), nil
-	case MAV_CMD_REQUEST_CAMERA_INFORMATION:
-		return []byte("MAV_CMD_REQUEST_CAMERA_INFORMATION"), nil
-	case MAV_CMD_REQUEST_CAMERA_SETTINGS:
-		return []byte("MAV_CMD_REQUEST_CAMERA_SETTINGS"), nil
-	case MAV_CMD_REQUEST_STORAGE_INFORMATION:
-		return []byte("MAV_CMD_REQUEST_STORAGE_INFORMATION"), nil
-	case MAV_CMD_STORAGE_FORMAT:
-		return []byte("MAV_CMD_STORAGE_FORMAT"), nil
-	case MAV_CMD_REQUEST_CAMERA_CAPTURE_STATUS:
-		return []byte("MAV_CMD_REQUEST_CAMERA_CAPTURE_STATUS"), nil
-	case MAV_CMD_REQUEST_FLIGHT_INFORMATION:
-		return []byte("MAV_CMD_REQUEST_FLIGHT_INFORMATION"), nil
-	case MAV_CMD_RESET_CAMERA_SETTINGS:
-		return []byte("MAV_CMD_RESET_CAMERA_SETTINGS"), nil
-	case MAV_CMD_SET_CAMERA_MODE:
-		return []byte("MAV_CMD_SET_CAMERA_MODE"), nil
-	case MAV_CMD_SET_CAMERA_ZOOM:
-		return []byte("MAV_CMD_SET_CAMERA_ZOOM"), nil
-	case MAV_CMD_SET_CAMERA_FOCUS:
-		return []byte("MAV_CMD_SET_CAMERA_FOCUS"), nil
-	case MAV_CMD_SET_STORAGE_USAGE:
-		return []byte("MAV_CMD_SET_STORAGE_USAGE"), nil
-	case MAV_CMD_JUMP_TAG:
-		return []byte("MAV_CMD_JUMP_TAG"), nil
-	case MAV_CMD_DO_JUMP_TAG:
-		return []byte("MAV_CMD_DO_JUMP_TAG"), nil
-	case MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW:
-		return []byte("MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW"), nil
-	case MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE:
-		return []byte("MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE"), nil
-	case MAV_CMD_IMAGE_START_CAPTURE:
-		return []byte("MAV_CMD_IMAGE_START_CAPTURE"), nil
-	case MAV_CMD_IMAGE_STOP_CAPTURE:
-		return []byte("MAV_CMD_IMAGE_STOP_CAPTURE"), nil
-	case MAV_CMD_REQUEST_CAMERA_IMAGE_CAPTURE:
-		return []byte("MAV_CMD_REQUEST_CAMERA_IMAGE_CAPTURE"), nil
-	case MAV_CMD_DO_TRIGGER_CONTROL:
-		return []byte("MAV_CMD_DO_TRIGGER_CONTROL"), nil
-	case MAV_CMD_CAMERA_TRACK_POINT:
-		return []byte("MAV_CMD_CAMERA_TRACK_POINT"), nil
-	case MAV_CMD_CAMERA_TRACK_RECTANGLE:
-		return []byte("MAV_CMD_CAMERA_TRACK_RECTANGLE"), nil
-	case MAV_CMD_CAMERA_STOP_TRACKING:
-		return []byte("MAV_CMD_CAMERA_STOP_TRACKING"), nil
-	case MAV_CMD_VIDEO_START_CAPTURE:
-		return []byte("MAV_CMD_VIDEO_START_CAPTURE"), nil
-	case MAV_CMD_VIDEO_STOP_CAPTURE:
-		return []byte("MAV_CMD_VIDEO_STOP_CAPTURE"), nil
-	case MAV_CMD_VIDEO_START_STREAMING:
-		return []byte("MAV_CMD_VIDEO_START_STREAMING"), nil
-	case MAV_CMD_VIDEO_STOP_STREAMING:
-		return []byte("MAV_CMD_VIDEO_STOP_STREAMING"), nil
-	case MAV_CMD_REQUEST_VIDEO_STREAM_INFORMATION:
-		return []byte("MAV_CMD_REQUEST_VIDEO_STREAM_INFORMATION"), nil
-	case MAV_CMD_REQUEST_VIDEO_STREAM_STATUS:
-		return []byte("MAV_CMD_REQUEST_VIDEO_STREAM_STATUS"), nil
-	case MAV_CMD_LOGGING_START:
-		return []byte("MAV_CMD_LOGGING_START"), nil
-	case MAV_CMD_LOGGING_STOP:
-		return []byte("MAV_CMD_LOGGING_STOP"), nil
-	case MAV_CMD_AIRFRAME_CONFIGURATION:
-		return []byte("MAV_CMD_AIRFRAME_CONFIGURATION"), nil
-	case MAV_CMD_CONTROL_HIGH_LATENCY:
-		return []byte("MAV_CMD_CONTROL_HIGH_LATENCY"), nil
-	case MAV_CMD_PANORAMA_CREATE:
-		return []byte("MAV_CMD_PANORAMA_CREATE"), nil
-	case MAV_CMD_DO_VTOL_TRANSITION:
-		return []byte("MAV_CMD_DO_VTOL_TRANSITION"), nil
-	case MAV_CMD_ARM_AUTHORIZATION_REQUEST:
-		return []byte("MAV_CMD_ARM_AUTHORIZATION_REQUEST"), nil
-	case MAV_CMD_SET_GUIDED_SUBMODE_STANDARD:
-		return []byte("MAV_CMD_SET_GUIDED_SUBMODE_STANDARD"), nil
-	case MAV_CMD_SET_GUIDED_SUBMODE_CIRCLE:
-		return []byte("MAV_CMD_SET_GUIDED_SUBMODE_CIRCLE"), nil
-	case MAV_CMD_CONDITION_GATE:
-		return []byte("MAV_CMD_CONDITION_GATE"), nil
-	case MAV_CMD_NAV_FENCE_RETURN_POINT:
-		return []byte("MAV_CMD_NAV_FENCE_RETURN_POINT"), nil
-	case MAV_CMD_NAV_FENCE_POLYGON_VERTEX_INCLUSION:
-		return []byte("MAV_CMD_NAV_FENCE_POLYGON_VERTEX_INCLUSION"), nil
-	case MAV_CMD_NAV_FENCE_POLYGON_VERTEX_EXCLUSION:
-		return []byte("MAV_CMD_NAV_FENCE_POLYGON_VERTEX_EXCLUSION"), nil
-	case MAV_CMD_NAV_FENCE_CIRCLE_INCLUSION:
-		return []byte("MAV_CMD_NAV_FENCE_CIRCLE_INCLUSION"), nil
-	case MAV_CMD_NAV_FENCE_CIRCLE_EXCLUSION:
-		return []byte("MAV_CMD_NAV_FENCE_CIRCLE_EXCLUSION"), nil
-	case MAV_CMD_NAV_RALLY_POINT:
-		return []byte("MAV_CMD_NAV_RALLY_POINT"), nil
-	case MAV_CMD_UAVCAN_GET_NODE_INFO:
-		return []byte("MAV_CMD_UAVCAN_GET_NODE_INFO"), nil
-	case MAV_CMD_DO_ADSB_OUT_IDENT:
-		return []byte("MAV_CMD_DO_ADSB_OUT_IDENT"), nil
-	case MAV_CMD_PAYLOAD_PREPARE_DEPLOY:
-		return []byte("MAV_CMD_PAYLOAD_PREPARE_DEPLOY"), nil
-	case MAV_CMD_PAYLOAD_CONTROL_DEPLOY:
-		return []byte("MAV_CMD_PAYLOAD_CONTROL_DEPLOY"), nil
-	case MAV_CMD_FIXED_MAG_CAL_YAW:
-		return []byte("MAV_CMD_FIXED_MAG_CAL_YAW"), nil
-	case MAV_CMD_DO_WINCH:
-		return []byte("MAV_CMD_DO_WINCH"), nil
-	case MAV_CMD_WAYPOINT_USER_1:
-		return []byte("MAV_CMD_WAYPOINT_USER_1"), nil
-	case MAV_CMD_WAYPOINT_USER_2:
-		return []byte("MAV_CMD_WAYPOINT_USER_2"), nil
-	case MAV_CMD_WAYPOINT_USER_3:
-		return []byte("MAV_CMD_WAYPOINT_USER_3"), nil
-	case MAV_CMD_WAYPOINT_USER_4:
-		return []byte("MAV_CMD_WAYPOINT_USER_4"), nil
-	case MAV_CMD_WAYPOINT_USER_5:
-		return []byte("MAV_CMD_WAYPOINT_USER_5"), nil
-	case MAV_CMD_SPATIAL_USER_1:
-		return []byte("MAV_CMD_SPATIAL_USER_1"), nil
-	case MAV_CMD_SPATIAL_USER_2:
-		return []byte("MAV_CMD_SPATIAL_USER_2"), nil
-	case MAV_CMD_SPATIAL_USER_3:
-		return []byte("MAV_CMD_SPATIAL_USER_3"), nil
-	case MAV_CMD_SPATIAL_USER_4:
-		return []byte("MAV_CMD_SPATIAL_USER_4"), nil
-	case MAV_CMD_SPATIAL_USER_5:
-		return []byte("MAV_CMD_SPATIAL_USER_5"), nil
-	case MAV_CMD_USER_1:
-		return []byte("MAV_CMD_USER_1"), nil
-	case MAV_CMD_USER_2:
-		return []byte("MAV_CMD_USER_2"), nil
-	case MAV_CMD_USER_3:
-		return []byte("MAV_CMD_USER_3"), nil
-	case MAV_CMD_USER_4:
-		return []byte("MAV_CMD_USER_4"), nil
-	case MAV_CMD_USER_5:
-		return []byte("MAV_CMD_USER_5"), nil
+	if l, ok := labels_MAV_CMD[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_CMD = map[string]MAV_CMD{
+	"MAV_CMD_NAV_WAYPOINT":                       MAV_CMD_NAV_WAYPOINT,
+	"MAV_CMD_NAV_LOITER_UNLIM":                   MAV_CMD_NAV_LOITER_UNLIM,
+	"MAV_CMD_NAV_LOITER_TURNS":                   MAV_CMD_NAV_LOITER_TURNS,
+	"MAV_CMD_NAV_LOITER_TIME":                    MAV_CMD_NAV_LOITER_TIME,
+	"MAV_CMD_NAV_RETURN_TO_LAUNCH":               MAV_CMD_NAV_RETURN_TO_LAUNCH,
+	"MAV_CMD_NAV_LAND":                           MAV_CMD_NAV_LAND,
+	"MAV_CMD_NAV_TAKEOFF":                        MAV_CMD_NAV_TAKEOFF,
+	"MAV_CMD_NAV_LAND_LOCAL":                     MAV_CMD_NAV_LAND_LOCAL,
+	"MAV_CMD_NAV_TAKEOFF_LOCAL":                  MAV_CMD_NAV_TAKEOFF_LOCAL,
+	"MAV_CMD_NAV_FOLLOW":                         MAV_CMD_NAV_FOLLOW,
+	"MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT":        MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT,
+	"MAV_CMD_NAV_LOITER_TO_ALT":                  MAV_CMD_NAV_LOITER_TO_ALT,
+	"MAV_CMD_DO_FOLLOW":                          MAV_CMD_DO_FOLLOW,
+	"MAV_CMD_DO_FOLLOW_REPOSITION":               MAV_CMD_DO_FOLLOW_REPOSITION,
+	"MAV_CMD_DO_ORBIT":                           MAV_CMD_DO_ORBIT,
+	"MAV_CMD_NAV_ROI":                            MAV_CMD_NAV_ROI,
+	"MAV_CMD_NAV_PATHPLANNING":                   MAV_CMD_NAV_PATHPLANNING,
+	"MAV_CMD_NAV_SPLINE_WAYPOINT":                MAV_CMD_NAV_SPLINE_WAYPOINT,
+	"MAV_CMD_NAV_VTOL_TAKEOFF":                   MAV_CMD_NAV_VTOL_TAKEOFF,
+	"MAV_CMD_NAV_VTOL_LAND":                      MAV_CMD_NAV_VTOL_LAND,
+	"MAV_CMD_NAV_GUIDED_ENABLE":                  MAV_CMD_NAV_GUIDED_ENABLE,
+	"MAV_CMD_NAV_DELAY":                          MAV_CMD_NAV_DELAY,
+	"MAV_CMD_NAV_PAYLOAD_PLACE":                  MAV_CMD_NAV_PAYLOAD_PLACE,
+	"MAV_CMD_NAV_LAST":                           MAV_CMD_NAV_LAST,
+	"MAV_CMD_CONDITION_DELAY":                    MAV_CMD_CONDITION_DELAY,
+	"MAV_CMD_CONDITION_CHANGE_ALT":               MAV_CMD_CONDITION_CHANGE_ALT,
+	"MAV_CMD_CONDITION_DISTANCE":                 MAV_CMD_CONDITION_DISTANCE,
+	"MAV_CMD_CONDITION_YAW":                      MAV_CMD_CONDITION_YAW,
+	"MAV_CMD_CONDITION_LAST":                     MAV_CMD_CONDITION_LAST,
+	"MAV_CMD_DO_SET_MODE":                        MAV_CMD_DO_SET_MODE,
+	"MAV_CMD_DO_JUMP":                            MAV_CMD_DO_JUMP,
+	"MAV_CMD_DO_CHANGE_SPEED":                    MAV_CMD_DO_CHANGE_SPEED,
+	"MAV_CMD_DO_SET_HOME":                        MAV_CMD_DO_SET_HOME,
+	"MAV_CMD_DO_SET_PARAMETER":                   MAV_CMD_DO_SET_PARAMETER,
+	"MAV_CMD_DO_SET_RELAY":                       MAV_CMD_DO_SET_RELAY,
+	"MAV_CMD_DO_REPEAT_RELAY":                    MAV_CMD_DO_REPEAT_RELAY,
+	"MAV_CMD_DO_SET_SERVO":                       MAV_CMD_DO_SET_SERVO,
+	"MAV_CMD_DO_REPEAT_SERVO":                    MAV_CMD_DO_REPEAT_SERVO,
+	"MAV_CMD_DO_FLIGHTTERMINATION":               MAV_CMD_DO_FLIGHTTERMINATION,
+	"MAV_CMD_DO_CHANGE_ALTITUDE":                 MAV_CMD_DO_CHANGE_ALTITUDE,
+	"MAV_CMD_DO_SET_ACTUATOR":                    MAV_CMD_DO_SET_ACTUATOR,
+	"MAV_CMD_DO_LAND_START":                      MAV_CMD_DO_LAND_START,
+	"MAV_CMD_DO_RALLY_LAND":                      MAV_CMD_DO_RALLY_LAND,
+	"MAV_CMD_DO_GO_AROUND":                       MAV_CMD_DO_GO_AROUND,
+	"MAV_CMD_DO_REPOSITION":                      MAV_CMD_DO_REPOSITION,
+	"MAV_CMD_DO_PAUSE_CONTINUE":                  MAV_CMD_DO_PAUSE_CONTINUE,
+	"MAV_CMD_DO_SET_REVERSE":                     MAV_CMD_DO_SET_REVERSE,
+	"MAV_CMD_DO_SET_ROI_LOCATION":                MAV_CMD_DO_SET_ROI_LOCATION,
+	"MAV_CMD_DO_SET_ROI_WPNEXT_OFFSET":           MAV_CMD_DO_SET_ROI_WPNEXT_OFFSET,
+	"MAV_CMD_DO_SET_ROI_NONE":                    MAV_CMD_DO_SET_ROI_NONE,
+	"MAV_CMD_DO_SET_ROI_SYSID":                   MAV_CMD_DO_SET_ROI_SYSID,
+	"MAV_CMD_DO_CONTROL_VIDEO":                   MAV_CMD_DO_CONTROL_VIDEO,
+	"MAV_CMD_DO_SET_ROI":                         MAV_CMD_DO_SET_ROI,
+	"MAV_CMD_DO_DIGICAM_CONFIGURE":               MAV_CMD_DO_DIGICAM_CONFIGURE,
+	"MAV_CMD_DO_DIGICAM_CONTROL":                 MAV_CMD_DO_DIGICAM_CONTROL,
+	"MAV_CMD_DO_MOUNT_CONFIGURE":                 MAV_CMD_DO_MOUNT_CONFIGURE,
+	"MAV_CMD_DO_MOUNT_CONTROL":                   MAV_CMD_DO_MOUNT_CONTROL,
+	"MAV_CMD_DO_SET_CAM_TRIGG_DIST":              MAV_CMD_DO_SET_CAM_TRIGG_DIST,
+	"MAV_CMD_DO_FENCE_ENABLE":                    MAV_CMD_DO_FENCE_ENABLE,
+	"MAV_CMD_DO_PARACHUTE":                       MAV_CMD_DO_PARACHUTE,
+	"MAV_CMD_DO_MOTOR_TEST":                      MAV_CMD_DO_MOTOR_TEST,
+	"MAV_CMD_DO_INVERTED_FLIGHT":                 MAV_CMD_DO_INVERTED_FLIGHT,
+	"MAV_CMD_DO_GRIPPER":                         MAV_CMD_DO_GRIPPER,
+	"MAV_CMD_DO_AUTOTUNE_ENABLE":                 MAV_CMD_DO_AUTOTUNE_ENABLE,
+	"MAV_CMD_NAV_SET_YAW_SPEED":                  MAV_CMD_NAV_SET_YAW_SPEED,
+	"MAV_CMD_DO_SET_CAM_TRIGG_INTERVAL":          MAV_CMD_DO_SET_CAM_TRIGG_INTERVAL,
+	"MAV_CMD_DO_MOUNT_CONTROL_QUAT":              MAV_CMD_DO_MOUNT_CONTROL_QUAT,
+	"MAV_CMD_DO_GUIDED_MASTER":                   MAV_CMD_DO_GUIDED_MASTER,
+	"MAV_CMD_DO_GUIDED_LIMITS":                   MAV_CMD_DO_GUIDED_LIMITS,
+	"MAV_CMD_DO_ENGINE_CONTROL":                  MAV_CMD_DO_ENGINE_CONTROL,
+	"MAV_CMD_DO_SET_MISSION_CURRENT":             MAV_CMD_DO_SET_MISSION_CURRENT,
+	"MAV_CMD_DO_LAST":                            MAV_CMD_DO_LAST,
+	"MAV_CMD_PREFLIGHT_CALIBRATION":              MAV_CMD_PREFLIGHT_CALIBRATION,
+	"MAV_CMD_PREFLIGHT_SET_SENSOR_OFFSETS":       MAV_CMD_PREFLIGHT_SET_SENSOR_OFFSETS,
+	"MAV_CMD_PREFLIGHT_UAVCAN":                   MAV_CMD_PREFLIGHT_UAVCAN,
+	"MAV_CMD_PREFLIGHT_STORAGE":                  MAV_CMD_PREFLIGHT_STORAGE,
+	"MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN":          MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN,
+	"MAV_CMD_OVERRIDE_GOTO":                      MAV_CMD_OVERRIDE_GOTO,
+	"MAV_CMD_OBLIQUE_SURVEY":                     MAV_CMD_OBLIQUE_SURVEY,
+	"MAV_CMD_MISSION_START":                      MAV_CMD_MISSION_START,
+	"MAV_CMD_COMPONENT_ARM_DISARM":               MAV_CMD_COMPONENT_ARM_DISARM,
+	"MAV_CMD_RUN_PREARM_CHECKS":                  MAV_CMD_RUN_PREARM_CHECKS,
+	"MAV_CMD_ILLUMINATOR_ON_OFF":                 MAV_CMD_ILLUMINATOR_ON_OFF,
+	"MAV_CMD_GET_HOME_POSITION":                  MAV_CMD_GET_HOME_POSITION,
+	"MAV_CMD_INJECT_FAILURE":                     MAV_CMD_INJECT_FAILURE,
+	"MAV_CMD_START_RX_PAIR":                      MAV_CMD_START_RX_PAIR,
+	"MAV_CMD_GET_MESSAGE_INTERVAL":               MAV_CMD_GET_MESSAGE_INTERVAL,
+	"MAV_CMD_SET_MESSAGE_INTERVAL":               MAV_CMD_SET_MESSAGE_INTERVAL,
+	"MAV_CMD_REQUEST_MESSAGE":                    MAV_CMD_REQUEST_MESSAGE,
+	"MAV_CMD_REQUEST_PROTOCOL_VERSION":           MAV_CMD_REQUEST_PROTOCOL_VERSION,
+	"MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES":     MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES,
+	"MAV_CMD_REQUEST_CAMERA_INFORMATION":         MAV_CMD_REQUEST_CAMERA_INFORMATION,
+	"MAV_CMD_REQUEST_CAMERA_SETTINGS":            MAV_CMD_REQUEST_CAMERA_SETTINGS,
+	"MAV_CMD_REQUEST_STORAGE_INFORMATION":        MAV_CMD_REQUEST_STORAGE_INFORMATION,
+	"MAV_CMD_STORAGE_FORMAT":                     MAV_CMD_STORAGE_FORMAT,
+	"MAV_CMD_REQUEST_CAMERA_CAPTURE_STATUS":      MAV_CMD_REQUEST_CAMERA_CAPTURE_STATUS,
+	"MAV_CMD_REQUEST_FLIGHT_INFORMATION":         MAV_CMD_REQUEST_FLIGHT_INFORMATION,
+	"MAV_CMD_RESET_CAMERA_SETTINGS":              MAV_CMD_RESET_CAMERA_SETTINGS,
+	"MAV_CMD_SET_CAMERA_MODE":                    MAV_CMD_SET_CAMERA_MODE,
+	"MAV_CMD_SET_CAMERA_ZOOM":                    MAV_CMD_SET_CAMERA_ZOOM,
+	"MAV_CMD_SET_CAMERA_FOCUS":                   MAV_CMD_SET_CAMERA_FOCUS,
+	"MAV_CMD_SET_STORAGE_USAGE":                  MAV_CMD_SET_STORAGE_USAGE,
+	"MAV_CMD_JUMP_TAG":                           MAV_CMD_JUMP_TAG,
+	"MAV_CMD_DO_JUMP_TAG":                        MAV_CMD_DO_JUMP_TAG,
+	"MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW":         MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW,
+	"MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE":        MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE,
+	"MAV_CMD_IMAGE_START_CAPTURE":                MAV_CMD_IMAGE_START_CAPTURE,
+	"MAV_CMD_IMAGE_STOP_CAPTURE":                 MAV_CMD_IMAGE_STOP_CAPTURE,
+	"MAV_CMD_REQUEST_CAMERA_IMAGE_CAPTURE":       MAV_CMD_REQUEST_CAMERA_IMAGE_CAPTURE,
+	"MAV_CMD_DO_TRIGGER_CONTROL":                 MAV_CMD_DO_TRIGGER_CONTROL,
+	"MAV_CMD_CAMERA_TRACK_POINT":                 MAV_CMD_CAMERA_TRACK_POINT,
+	"MAV_CMD_CAMERA_TRACK_RECTANGLE":             MAV_CMD_CAMERA_TRACK_RECTANGLE,
+	"MAV_CMD_CAMERA_STOP_TRACKING":               MAV_CMD_CAMERA_STOP_TRACKING,
+	"MAV_CMD_VIDEO_START_CAPTURE":                MAV_CMD_VIDEO_START_CAPTURE,
+	"MAV_CMD_VIDEO_STOP_CAPTURE":                 MAV_CMD_VIDEO_STOP_CAPTURE,
+	"MAV_CMD_VIDEO_START_STREAMING":              MAV_CMD_VIDEO_START_STREAMING,
+	"MAV_CMD_VIDEO_STOP_STREAMING":               MAV_CMD_VIDEO_STOP_STREAMING,
+	"MAV_CMD_REQUEST_VIDEO_STREAM_INFORMATION":   MAV_CMD_REQUEST_VIDEO_STREAM_INFORMATION,
+	"MAV_CMD_REQUEST_VIDEO_STREAM_STATUS":        MAV_CMD_REQUEST_VIDEO_STREAM_STATUS,
+	"MAV_CMD_LOGGING_START":                      MAV_CMD_LOGGING_START,
+	"MAV_CMD_LOGGING_STOP":                       MAV_CMD_LOGGING_STOP,
+	"MAV_CMD_AIRFRAME_CONFIGURATION":             MAV_CMD_AIRFRAME_CONFIGURATION,
+	"MAV_CMD_CONTROL_HIGH_LATENCY":               MAV_CMD_CONTROL_HIGH_LATENCY,
+	"MAV_CMD_PANORAMA_CREATE":                    MAV_CMD_PANORAMA_CREATE,
+	"MAV_CMD_DO_VTOL_TRANSITION":                 MAV_CMD_DO_VTOL_TRANSITION,
+	"MAV_CMD_ARM_AUTHORIZATION_REQUEST":          MAV_CMD_ARM_AUTHORIZATION_REQUEST,
+	"MAV_CMD_SET_GUIDED_SUBMODE_STANDARD":        MAV_CMD_SET_GUIDED_SUBMODE_STANDARD,
+	"MAV_CMD_SET_GUIDED_SUBMODE_CIRCLE":          MAV_CMD_SET_GUIDED_SUBMODE_CIRCLE,
+	"MAV_CMD_CONDITION_GATE":                     MAV_CMD_CONDITION_GATE,
+	"MAV_CMD_NAV_FENCE_RETURN_POINT":             MAV_CMD_NAV_FENCE_RETURN_POINT,
+	"MAV_CMD_NAV_FENCE_POLYGON_VERTEX_INCLUSION": MAV_CMD_NAV_FENCE_POLYGON_VERTEX_INCLUSION,
+	"MAV_CMD_NAV_FENCE_POLYGON_VERTEX_EXCLUSION": MAV_CMD_NAV_FENCE_POLYGON_VERTEX_EXCLUSION,
+	"MAV_CMD_NAV_FENCE_CIRCLE_INCLUSION":         MAV_CMD_NAV_FENCE_CIRCLE_INCLUSION,
+	"MAV_CMD_NAV_FENCE_CIRCLE_EXCLUSION":         MAV_CMD_NAV_FENCE_CIRCLE_EXCLUSION,
+	"MAV_CMD_NAV_RALLY_POINT":                    MAV_CMD_NAV_RALLY_POINT,
+	"MAV_CMD_UAVCAN_GET_NODE_INFO":               MAV_CMD_UAVCAN_GET_NODE_INFO,
+	"MAV_CMD_DO_ADSB_OUT_IDENT":                  MAV_CMD_DO_ADSB_OUT_IDENT,
+	"MAV_CMD_PAYLOAD_PREPARE_DEPLOY":             MAV_CMD_PAYLOAD_PREPARE_DEPLOY,
+	"MAV_CMD_PAYLOAD_CONTROL_DEPLOY":             MAV_CMD_PAYLOAD_CONTROL_DEPLOY,
+	"MAV_CMD_FIXED_MAG_CAL_YAW":                  MAV_CMD_FIXED_MAG_CAL_YAW,
+	"MAV_CMD_DO_WINCH":                           MAV_CMD_DO_WINCH,
+	"MAV_CMD_WAYPOINT_USER_1":                    MAV_CMD_WAYPOINT_USER_1,
+	"MAV_CMD_WAYPOINT_USER_2":                    MAV_CMD_WAYPOINT_USER_2,
+	"MAV_CMD_WAYPOINT_USER_3":                    MAV_CMD_WAYPOINT_USER_3,
+	"MAV_CMD_WAYPOINT_USER_4":                    MAV_CMD_WAYPOINT_USER_4,
+	"MAV_CMD_WAYPOINT_USER_5":                    MAV_CMD_WAYPOINT_USER_5,
+	"MAV_CMD_SPATIAL_USER_1":                     MAV_CMD_SPATIAL_USER_1,
+	"MAV_CMD_SPATIAL_USER_2":                     MAV_CMD_SPATIAL_USER_2,
+	"MAV_CMD_SPATIAL_USER_3":                     MAV_CMD_SPATIAL_USER_3,
+	"MAV_CMD_SPATIAL_USER_4":                     MAV_CMD_SPATIAL_USER_4,
+	"MAV_CMD_SPATIAL_USER_5":                     MAV_CMD_SPATIAL_USER_5,
+	"MAV_CMD_USER_1":                             MAV_CMD_USER_1,
+	"MAV_CMD_USER_2":                             MAV_CMD_USER_2,
+	"MAV_CMD_USER_3":                             MAV_CMD_USER_3,
+	"MAV_CMD_USER_4":                             MAV_CMD_USER_4,
+	"MAV_CMD_USER_5":                             MAV_CMD_USER_5,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_CMD) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_CMD_NAV_WAYPOINT":
-		*e = MAV_CMD_NAV_WAYPOINT
-		return nil
-	case "MAV_CMD_NAV_LOITER_UNLIM":
-		*e = MAV_CMD_NAV_LOITER_UNLIM
-		return nil
-	case "MAV_CMD_NAV_LOITER_TURNS":
-		*e = MAV_CMD_NAV_LOITER_TURNS
-		return nil
-	case "MAV_CMD_NAV_LOITER_TIME":
-		*e = MAV_CMD_NAV_LOITER_TIME
-		return nil
-	case "MAV_CMD_NAV_RETURN_TO_LAUNCH":
-		*e = MAV_CMD_NAV_RETURN_TO_LAUNCH
-		return nil
-	case "MAV_CMD_NAV_LAND":
-		*e = MAV_CMD_NAV_LAND
-		return nil
-	case "MAV_CMD_NAV_TAKEOFF":
-		*e = MAV_CMD_NAV_TAKEOFF
-		return nil
-	case "MAV_CMD_NAV_LAND_LOCAL":
-		*e = MAV_CMD_NAV_LAND_LOCAL
-		return nil
-	case "MAV_CMD_NAV_TAKEOFF_LOCAL":
-		*e = MAV_CMD_NAV_TAKEOFF_LOCAL
-		return nil
-	case "MAV_CMD_NAV_FOLLOW":
-		*e = MAV_CMD_NAV_FOLLOW
-		return nil
-	case "MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT":
-		*e = MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT
-		return nil
-	case "MAV_CMD_NAV_LOITER_TO_ALT":
-		*e = MAV_CMD_NAV_LOITER_TO_ALT
-		return nil
-	case "MAV_CMD_DO_FOLLOW":
-		*e = MAV_CMD_DO_FOLLOW
-		return nil
-	case "MAV_CMD_DO_FOLLOW_REPOSITION":
-		*e = MAV_CMD_DO_FOLLOW_REPOSITION
-		return nil
-	case "MAV_CMD_DO_ORBIT":
-		*e = MAV_CMD_DO_ORBIT
-		return nil
-	case "MAV_CMD_NAV_ROI":
-		*e = MAV_CMD_NAV_ROI
-		return nil
-	case "MAV_CMD_NAV_PATHPLANNING":
-		*e = MAV_CMD_NAV_PATHPLANNING
-		return nil
-	case "MAV_CMD_NAV_SPLINE_WAYPOINT":
-		*e = MAV_CMD_NAV_SPLINE_WAYPOINT
-		return nil
-	case "MAV_CMD_NAV_VTOL_TAKEOFF":
-		*e = MAV_CMD_NAV_VTOL_TAKEOFF
-		return nil
-	case "MAV_CMD_NAV_VTOL_LAND":
-		*e = MAV_CMD_NAV_VTOL_LAND
-		return nil
-	case "MAV_CMD_NAV_GUIDED_ENABLE":
-		*e = MAV_CMD_NAV_GUIDED_ENABLE
-		return nil
-	case "MAV_CMD_NAV_DELAY":
-		*e = MAV_CMD_NAV_DELAY
-		return nil
-	case "MAV_CMD_NAV_PAYLOAD_PLACE":
-		*e = MAV_CMD_NAV_PAYLOAD_PLACE
-		return nil
-	case "MAV_CMD_NAV_LAST":
-		*e = MAV_CMD_NAV_LAST
-		return nil
-	case "MAV_CMD_CONDITION_DELAY":
-		*e = MAV_CMD_CONDITION_DELAY
-		return nil
-	case "MAV_CMD_CONDITION_CHANGE_ALT":
-		*e = MAV_CMD_CONDITION_CHANGE_ALT
-		return nil
-	case "MAV_CMD_CONDITION_DISTANCE":
-		*e = MAV_CMD_CONDITION_DISTANCE
-		return nil
-	case "MAV_CMD_CONDITION_YAW":
-		*e = MAV_CMD_CONDITION_YAW
-		return nil
-	case "MAV_CMD_CONDITION_LAST":
-		*e = MAV_CMD_CONDITION_LAST
-		return nil
-	case "MAV_CMD_DO_SET_MODE":
-		*e = MAV_CMD_DO_SET_MODE
-		return nil
-	case "MAV_CMD_DO_JUMP":
-		*e = MAV_CMD_DO_JUMP
-		return nil
-	case "MAV_CMD_DO_CHANGE_SPEED":
-		*e = MAV_CMD_DO_CHANGE_SPEED
-		return nil
-	case "MAV_CMD_DO_SET_HOME":
-		*e = MAV_CMD_DO_SET_HOME
-		return nil
-	case "MAV_CMD_DO_SET_PARAMETER":
-		*e = MAV_CMD_DO_SET_PARAMETER
-		return nil
-	case "MAV_CMD_DO_SET_RELAY":
-		*e = MAV_CMD_DO_SET_RELAY
-		return nil
-	case "MAV_CMD_DO_REPEAT_RELAY":
-		*e = MAV_CMD_DO_REPEAT_RELAY
-		return nil
-	case "MAV_CMD_DO_SET_SERVO":
-		*e = MAV_CMD_DO_SET_SERVO
-		return nil
-	case "MAV_CMD_DO_REPEAT_SERVO":
-		*e = MAV_CMD_DO_REPEAT_SERVO
-		return nil
-	case "MAV_CMD_DO_FLIGHTTERMINATION":
-		*e = MAV_CMD_DO_FLIGHTTERMINATION
-		return nil
-	case "MAV_CMD_DO_CHANGE_ALTITUDE":
-		*e = MAV_CMD_DO_CHANGE_ALTITUDE
-		return nil
-	case "MAV_CMD_DO_SET_ACTUATOR":
-		*e = MAV_CMD_DO_SET_ACTUATOR
-		return nil
-	case "MAV_CMD_DO_LAND_START":
-		*e = MAV_CMD_DO_LAND_START
-		return nil
-	case "MAV_CMD_DO_RALLY_LAND":
-		*e = MAV_CMD_DO_RALLY_LAND
-		return nil
-	case "MAV_CMD_DO_GO_AROUND":
-		*e = MAV_CMD_DO_GO_AROUND
-		return nil
-	case "MAV_CMD_DO_REPOSITION":
-		*e = MAV_CMD_DO_REPOSITION
-		return nil
-	case "MAV_CMD_DO_PAUSE_CONTINUE":
-		*e = MAV_CMD_DO_PAUSE_CONTINUE
-		return nil
-	case "MAV_CMD_DO_SET_REVERSE":
-		*e = MAV_CMD_DO_SET_REVERSE
-		return nil
-	case "MAV_CMD_DO_SET_ROI_LOCATION":
-		*e = MAV_CMD_DO_SET_ROI_LOCATION
-		return nil
-	case "MAV_CMD_DO_SET_ROI_WPNEXT_OFFSET":
-		*e = MAV_CMD_DO_SET_ROI_WPNEXT_OFFSET
-		return nil
-	case "MAV_CMD_DO_SET_ROI_NONE":
-		*e = MAV_CMD_DO_SET_ROI_NONE
-		return nil
-	case "MAV_CMD_DO_SET_ROI_SYSID":
-		*e = MAV_CMD_DO_SET_ROI_SYSID
-		return nil
-	case "MAV_CMD_DO_CONTROL_VIDEO":
-		*e = MAV_CMD_DO_CONTROL_VIDEO
-		return nil
-	case "MAV_CMD_DO_SET_ROI":
-		*e = MAV_CMD_DO_SET_ROI
-		return nil
-	case "MAV_CMD_DO_DIGICAM_CONFIGURE":
-		*e = MAV_CMD_DO_DIGICAM_CONFIGURE
-		return nil
-	case "MAV_CMD_DO_DIGICAM_CONTROL":
-		*e = MAV_CMD_DO_DIGICAM_CONTROL
-		return nil
-	case "MAV_CMD_DO_MOUNT_CONFIGURE":
-		*e = MAV_CMD_DO_MOUNT_CONFIGURE
-		return nil
-	case "MAV_CMD_DO_MOUNT_CONTROL":
-		*e = MAV_CMD_DO_MOUNT_CONTROL
-		return nil
-	case "MAV_CMD_DO_SET_CAM_TRIGG_DIST":
-		*e = MAV_CMD_DO_SET_CAM_TRIGG_DIST
-		return nil
-	case "MAV_CMD_DO_FENCE_ENABLE":
-		*e = MAV_CMD_DO_FENCE_ENABLE
-		return nil
-	case "MAV_CMD_DO_PARACHUTE":
-		*e = MAV_CMD_DO_PARACHUTE
-		return nil
-	case "MAV_CMD_DO_MOTOR_TEST":
-		*e = MAV_CMD_DO_MOTOR_TEST
-		return nil
-	case "MAV_CMD_DO_INVERTED_FLIGHT":
-		*e = MAV_CMD_DO_INVERTED_FLIGHT
-		return nil
-	case "MAV_CMD_DO_GRIPPER":
-		*e = MAV_CMD_DO_GRIPPER
-		return nil
-	case "MAV_CMD_DO_AUTOTUNE_ENABLE":
-		*e = MAV_CMD_DO_AUTOTUNE_ENABLE
-		return nil
-	case "MAV_CMD_NAV_SET_YAW_SPEED":
-		*e = MAV_CMD_NAV_SET_YAW_SPEED
-		return nil
-	case "MAV_CMD_DO_SET_CAM_TRIGG_INTERVAL":
-		*e = MAV_CMD_DO_SET_CAM_TRIGG_INTERVAL
-		return nil
-	case "MAV_CMD_DO_MOUNT_CONTROL_QUAT":
-		*e = MAV_CMD_DO_MOUNT_CONTROL_QUAT
-		return nil
-	case "MAV_CMD_DO_GUIDED_MASTER":
-		*e = MAV_CMD_DO_GUIDED_MASTER
-		return nil
-	case "MAV_CMD_DO_GUIDED_LIMITS":
-		*e = MAV_CMD_DO_GUIDED_LIMITS
-		return nil
-	case "MAV_CMD_DO_ENGINE_CONTROL":
-		*e = MAV_CMD_DO_ENGINE_CONTROL
-		return nil
-	case "MAV_CMD_DO_SET_MISSION_CURRENT":
-		*e = MAV_CMD_DO_SET_MISSION_CURRENT
-		return nil
-	case "MAV_CMD_DO_LAST":
-		*e = MAV_CMD_DO_LAST
-		return nil
-	case "MAV_CMD_PREFLIGHT_CALIBRATION":
-		*e = MAV_CMD_PREFLIGHT_CALIBRATION
-		return nil
-	case "MAV_CMD_PREFLIGHT_SET_SENSOR_OFFSETS":
-		*e = MAV_CMD_PREFLIGHT_SET_SENSOR_OFFSETS
-		return nil
-	case "MAV_CMD_PREFLIGHT_UAVCAN":
-		*e = MAV_CMD_PREFLIGHT_UAVCAN
-		return nil
-	case "MAV_CMD_PREFLIGHT_STORAGE":
-		*e = MAV_CMD_PREFLIGHT_STORAGE
-		return nil
-	case "MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN":
-		*e = MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN
-		return nil
-	case "MAV_CMD_OVERRIDE_GOTO":
-		*e = MAV_CMD_OVERRIDE_GOTO
-		return nil
-	case "MAV_CMD_OBLIQUE_SURVEY":
-		*e = MAV_CMD_OBLIQUE_SURVEY
-		return nil
-	case "MAV_CMD_MISSION_START":
-		*e = MAV_CMD_MISSION_START
-		return nil
-	case "MAV_CMD_COMPONENT_ARM_DISARM":
-		*e = MAV_CMD_COMPONENT_ARM_DISARM
-		return nil
-	case "MAV_CMD_RUN_PREARM_CHECKS":
-		*e = MAV_CMD_RUN_PREARM_CHECKS
-		return nil
-	case "MAV_CMD_ILLUMINATOR_ON_OFF":
-		*e = MAV_CMD_ILLUMINATOR_ON_OFF
-		return nil
-	case "MAV_CMD_GET_HOME_POSITION":
-		*e = MAV_CMD_GET_HOME_POSITION
-		return nil
-	case "MAV_CMD_INJECT_FAILURE":
-		*e = MAV_CMD_INJECT_FAILURE
-		return nil
-	case "MAV_CMD_START_RX_PAIR":
-		*e = MAV_CMD_START_RX_PAIR
-		return nil
-	case "MAV_CMD_GET_MESSAGE_INTERVAL":
-		*e = MAV_CMD_GET_MESSAGE_INTERVAL
-		return nil
-	case "MAV_CMD_SET_MESSAGE_INTERVAL":
-		*e = MAV_CMD_SET_MESSAGE_INTERVAL
-		return nil
-	case "MAV_CMD_REQUEST_MESSAGE":
-		*e = MAV_CMD_REQUEST_MESSAGE
-		return nil
-	case "MAV_CMD_REQUEST_PROTOCOL_VERSION":
-		*e = MAV_CMD_REQUEST_PROTOCOL_VERSION
-		return nil
-	case "MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES":
-		*e = MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES
-		return nil
-	case "MAV_CMD_REQUEST_CAMERA_INFORMATION":
-		*e = MAV_CMD_REQUEST_CAMERA_INFORMATION
-		return nil
-	case "MAV_CMD_REQUEST_CAMERA_SETTINGS":
-		*e = MAV_CMD_REQUEST_CAMERA_SETTINGS
-		return nil
-	case "MAV_CMD_REQUEST_STORAGE_INFORMATION":
-		*e = MAV_CMD_REQUEST_STORAGE_INFORMATION
-		return nil
-	case "MAV_CMD_STORAGE_FORMAT":
-		*e = MAV_CMD_STORAGE_FORMAT
-		return nil
-	case "MAV_CMD_REQUEST_CAMERA_CAPTURE_STATUS":
-		*e = MAV_CMD_REQUEST_CAMERA_CAPTURE_STATUS
-		return nil
-	case "MAV_CMD_REQUEST_FLIGHT_INFORMATION":
-		*e = MAV_CMD_REQUEST_FLIGHT_INFORMATION
-		return nil
-	case "MAV_CMD_RESET_CAMERA_SETTINGS":
-		*e = MAV_CMD_RESET_CAMERA_SETTINGS
-		return nil
-	case "MAV_CMD_SET_CAMERA_MODE":
-		*e = MAV_CMD_SET_CAMERA_MODE
-		return nil
-	case "MAV_CMD_SET_CAMERA_ZOOM":
-		*e = MAV_CMD_SET_CAMERA_ZOOM
-		return nil
-	case "MAV_CMD_SET_CAMERA_FOCUS":
-		*e = MAV_CMD_SET_CAMERA_FOCUS
-		return nil
-	case "MAV_CMD_SET_STORAGE_USAGE":
-		*e = MAV_CMD_SET_STORAGE_USAGE
-		return nil
-	case "MAV_CMD_JUMP_TAG":
-		*e = MAV_CMD_JUMP_TAG
-		return nil
-	case "MAV_CMD_DO_JUMP_TAG":
-		*e = MAV_CMD_DO_JUMP_TAG
-		return nil
-	case "MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW":
-		*e = MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW
-		return nil
-	case "MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE":
-		*e = MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE
-		return nil
-	case "MAV_CMD_IMAGE_START_CAPTURE":
-		*e = MAV_CMD_IMAGE_START_CAPTURE
-		return nil
-	case "MAV_CMD_IMAGE_STOP_CAPTURE":
-		*e = MAV_CMD_IMAGE_STOP_CAPTURE
-		return nil
-	case "MAV_CMD_REQUEST_CAMERA_IMAGE_CAPTURE":
-		*e = MAV_CMD_REQUEST_CAMERA_IMAGE_CAPTURE
-		return nil
-	case "MAV_CMD_DO_TRIGGER_CONTROL":
-		*e = MAV_CMD_DO_TRIGGER_CONTROL
-		return nil
-	case "MAV_CMD_CAMERA_TRACK_POINT":
-		*e = MAV_CMD_CAMERA_TRACK_POINT
-		return nil
-	case "MAV_CMD_CAMERA_TRACK_RECTANGLE":
-		*e = MAV_CMD_CAMERA_TRACK_RECTANGLE
-		return nil
-	case "MAV_CMD_CAMERA_STOP_TRACKING":
-		*e = MAV_CMD_CAMERA_STOP_TRACKING
-		return nil
-	case "MAV_CMD_VIDEO_START_CAPTURE":
-		*e = MAV_CMD_VIDEO_START_CAPTURE
-		return nil
-	case "MAV_CMD_VIDEO_STOP_CAPTURE":
-		*e = MAV_CMD_VIDEO_STOP_CAPTURE
-		return nil
-	case "MAV_CMD_VIDEO_START_STREAMING":
-		*e = MAV_CMD_VIDEO_START_STREAMING
-		return nil
-	case "MAV_CMD_VIDEO_STOP_STREAMING":
-		*e = MAV_CMD_VIDEO_STOP_STREAMING
-		return nil
-	case "MAV_CMD_REQUEST_VIDEO_STREAM_INFORMATION":
-		*e = MAV_CMD_REQUEST_VIDEO_STREAM_INFORMATION
-		return nil
-	case "MAV_CMD_REQUEST_VIDEO_STREAM_STATUS":
-		*e = MAV_CMD_REQUEST_VIDEO_STREAM_STATUS
-		return nil
-	case "MAV_CMD_LOGGING_START":
-		*e = MAV_CMD_LOGGING_START
-		return nil
-	case "MAV_CMD_LOGGING_STOP":
-		*e = MAV_CMD_LOGGING_STOP
-		return nil
-	case "MAV_CMD_AIRFRAME_CONFIGURATION":
-		*e = MAV_CMD_AIRFRAME_CONFIGURATION
-		return nil
-	case "MAV_CMD_CONTROL_HIGH_LATENCY":
-		*e = MAV_CMD_CONTROL_HIGH_LATENCY
-		return nil
-	case "MAV_CMD_PANORAMA_CREATE":
-		*e = MAV_CMD_PANORAMA_CREATE
-		return nil
-	case "MAV_CMD_DO_VTOL_TRANSITION":
-		*e = MAV_CMD_DO_VTOL_TRANSITION
-		return nil
-	case "MAV_CMD_ARM_AUTHORIZATION_REQUEST":
-		*e = MAV_CMD_ARM_AUTHORIZATION_REQUEST
-		return nil
-	case "MAV_CMD_SET_GUIDED_SUBMODE_STANDARD":
-		*e = MAV_CMD_SET_GUIDED_SUBMODE_STANDARD
-		return nil
-	case "MAV_CMD_SET_GUIDED_SUBMODE_CIRCLE":
-		*e = MAV_CMD_SET_GUIDED_SUBMODE_CIRCLE
-		return nil
-	case "MAV_CMD_CONDITION_GATE":
-		*e = MAV_CMD_CONDITION_GATE
-		return nil
-	case "MAV_CMD_NAV_FENCE_RETURN_POINT":
-		*e = MAV_CMD_NAV_FENCE_RETURN_POINT
-		return nil
-	case "MAV_CMD_NAV_FENCE_POLYGON_VERTEX_INCLUSION":
-		*e = MAV_CMD_NAV_FENCE_POLYGON_VERTEX_INCLUSION
-		return nil
-	case "MAV_CMD_NAV_FENCE_POLYGON_VERTEX_EXCLUSION":
-		*e = MAV_CMD_NAV_FENCE_POLYGON_VERTEX_EXCLUSION
-		return nil
-	case "MAV_CMD_NAV_FENCE_CIRCLE_INCLUSION":
-		*e = MAV_CMD_NAV_FENCE_CIRCLE_INCLUSION
-		return nil
-	case "MAV_CMD_NAV_FENCE_CIRCLE_EXCLUSION":
-		*e = MAV_CMD_NAV_FENCE_CIRCLE_EXCLUSION
-		return nil
-	case "MAV_CMD_NAV_RALLY_POINT":
-		*e = MAV_CMD_NAV_RALLY_POINT
-		return nil
-	case "MAV_CMD_UAVCAN_GET_NODE_INFO":
-		*e = MAV_CMD_UAVCAN_GET_NODE_INFO
-		return nil
-	case "MAV_CMD_DO_ADSB_OUT_IDENT":
-		*e = MAV_CMD_DO_ADSB_OUT_IDENT
-		return nil
-	case "MAV_CMD_PAYLOAD_PREPARE_DEPLOY":
-		*e = MAV_CMD_PAYLOAD_PREPARE_DEPLOY
-		return nil
-	case "MAV_CMD_PAYLOAD_CONTROL_DEPLOY":
-		*e = MAV_CMD_PAYLOAD_CONTROL_DEPLOY
-		return nil
-	case "MAV_CMD_FIXED_MAG_CAL_YAW":
-		*e = MAV_CMD_FIXED_MAG_CAL_YAW
-		return nil
-	case "MAV_CMD_DO_WINCH":
-		*e = MAV_CMD_DO_WINCH
-		return nil
-	case "MAV_CMD_WAYPOINT_USER_1":
-		*e = MAV_CMD_WAYPOINT_USER_1
-		return nil
-	case "MAV_CMD_WAYPOINT_USER_2":
-		*e = MAV_CMD_WAYPOINT_USER_2
-		return nil
-	case "MAV_CMD_WAYPOINT_USER_3":
-		*e = MAV_CMD_WAYPOINT_USER_3
-		return nil
-	case "MAV_CMD_WAYPOINT_USER_4":
-		*e = MAV_CMD_WAYPOINT_USER_4
-		return nil
-	case "MAV_CMD_WAYPOINT_USER_5":
-		*e = MAV_CMD_WAYPOINT_USER_5
-		return nil
-	case "MAV_CMD_SPATIAL_USER_1":
-		*e = MAV_CMD_SPATIAL_USER_1
-		return nil
-	case "MAV_CMD_SPATIAL_USER_2":
-		*e = MAV_CMD_SPATIAL_USER_2
-		return nil
-	case "MAV_CMD_SPATIAL_USER_3":
-		*e = MAV_CMD_SPATIAL_USER_3
-		return nil
-	case "MAV_CMD_SPATIAL_USER_4":
-		*e = MAV_CMD_SPATIAL_USER_4
-		return nil
-	case "MAV_CMD_SPATIAL_USER_5":
-		*e = MAV_CMD_SPATIAL_USER_5
-		return nil
-	case "MAV_CMD_USER_1":
-		*e = MAV_CMD_USER_1
-		return nil
-	case "MAV_CMD_USER_2":
-		*e = MAV_CMD_USER_2
-		return nil
-	case "MAV_CMD_USER_3":
-		*e = MAV_CMD_USER_3
-		return nil
-	case "MAV_CMD_USER_4":
-		*e = MAV_CMD_USER_4
-		return nil
-	case "MAV_CMD_USER_5":
-		*e = MAV_CMD_USER_5
+	if rl, ok := reverseLabels_MAV_CMD[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -6148,11 +4634,10 @@ func (e *MAV_CMD) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_CMD) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_CMD[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // ACK / NACK / ERROR values as a result of MAV_CMDs and for mission item transmission.
@@ -6179,60 +4664,42 @@ const (
 	MAV_CMD_ACK_ERR_Z_ALT_OUT_OF_RANGE MAV_CMD_ACK = 8
 )
 
+var labels_MAV_CMD_ACK = map[MAV_CMD_ACK]string{
+	MAV_CMD_ACK_OK:                                 "MAV_CMD_ACK_OK",
+	MAV_CMD_ACK_ERR_FAIL:                           "MAV_CMD_ACK_ERR_FAIL",
+	MAV_CMD_ACK_ERR_ACCESS_DENIED:                  "MAV_CMD_ACK_ERR_ACCESS_DENIED",
+	MAV_CMD_ACK_ERR_NOT_SUPPORTED:                  "MAV_CMD_ACK_ERR_NOT_SUPPORTED",
+	MAV_CMD_ACK_ERR_COORDINATE_FRAME_NOT_SUPPORTED: "MAV_CMD_ACK_ERR_COORDINATE_FRAME_NOT_SUPPORTED",
+	MAV_CMD_ACK_ERR_COORDINATES_OUT_OF_RANGE:       "MAV_CMD_ACK_ERR_COORDINATES_OUT_OF_RANGE",
+	MAV_CMD_ACK_ERR_X_LAT_OUT_OF_RANGE:             "MAV_CMD_ACK_ERR_X_LAT_OUT_OF_RANGE",
+	MAV_CMD_ACK_ERR_Y_LON_OUT_OF_RANGE:             "MAV_CMD_ACK_ERR_Y_LON_OUT_OF_RANGE",
+	MAV_CMD_ACK_ERR_Z_ALT_OUT_OF_RANGE:             "MAV_CMD_ACK_ERR_Z_ALT_OUT_OF_RANGE",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_CMD_ACK) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_CMD_ACK_OK:
-		return []byte("MAV_CMD_ACK_OK"), nil
-	case MAV_CMD_ACK_ERR_FAIL:
-		return []byte("MAV_CMD_ACK_ERR_FAIL"), nil
-	case MAV_CMD_ACK_ERR_ACCESS_DENIED:
-		return []byte("MAV_CMD_ACK_ERR_ACCESS_DENIED"), nil
-	case MAV_CMD_ACK_ERR_NOT_SUPPORTED:
-		return []byte("MAV_CMD_ACK_ERR_NOT_SUPPORTED"), nil
-	case MAV_CMD_ACK_ERR_COORDINATE_FRAME_NOT_SUPPORTED:
-		return []byte("MAV_CMD_ACK_ERR_COORDINATE_FRAME_NOT_SUPPORTED"), nil
-	case MAV_CMD_ACK_ERR_COORDINATES_OUT_OF_RANGE:
-		return []byte("MAV_CMD_ACK_ERR_COORDINATES_OUT_OF_RANGE"), nil
-	case MAV_CMD_ACK_ERR_X_LAT_OUT_OF_RANGE:
-		return []byte("MAV_CMD_ACK_ERR_X_LAT_OUT_OF_RANGE"), nil
-	case MAV_CMD_ACK_ERR_Y_LON_OUT_OF_RANGE:
-		return []byte("MAV_CMD_ACK_ERR_Y_LON_OUT_OF_RANGE"), nil
-	case MAV_CMD_ACK_ERR_Z_ALT_OUT_OF_RANGE:
-		return []byte("MAV_CMD_ACK_ERR_Z_ALT_OUT_OF_RANGE"), nil
+	if l, ok := labels_MAV_CMD_ACK[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_CMD_ACK = map[string]MAV_CMD_ACK{
+	"MAV_CMD_ACK_OK":                                 MAV_CMD_ACK_OK,
+	"MAV_CMD_ACK_ERR_FAIL":                           MAV_CMD_ACK_ERR_FAIL,
+	"MAV_CMD_ACK_ERR_ACCESS_DENIED":                  MAV_CMD_ACK_ERR_ACCESS_DENIED,
+	"MAV_CMD_ACK_ERR_NOT_SUPPORTED":                  MAV_CMD_ACK_ERR_NOT_SUPPORTED,
+	"MAV_CMD_ACK_ERR_COORDINATE_FRAME_NOT_SUPPORTED": MAV_CMD_ACK_ERR_COORDINATE_FRAME_NOT_SUPPORTED,
+	"MAV_CMD_ACK_ERR_COORDINATES_OUT_OF_RANGE":       MAV_CMD_ACK_ERR_COORDINATES_OUT_OF_RANGE,
+	"MAV_CMD_ACK_ERR_X_LAT_OUT_OF_RANGE":             MAV_CMD_ACK_ERR_X_LAT_OUT_OF_RANGE,
+	"MAV_CMD_ACK_ERR_Y_LON_OUT_OF_RANGE":             MAV_CMD_ACK_ERR_Y_LON_OUT_OF_RANGE,
+	"MAV_CMD_ACK_ERR_Z_ALT_OUT_OF_RANGE":             MAV_CMD_ACK_ERR_Z_ALT_OUT_OF_RANGE,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_CMD_ACK) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_CMD_ACK_OK":
-		*e = MAV_CMD_ACK_OK
-		return nil
-	case "MAV_CMD_ACK_ERR_FAIL":
-		*e = MAV_CMD_ACK_ERR_FAIL
-		return nil
-	case "MAV_CMD_ACK_ERR_ACCESS_DENIED":
-		*e = MAV_CMD_ACK_ERR_ACCESS_DENIED
-		return nil
-	case "MAV_CMD_ACK_ERR_NOT_SUPPORTED":
-		*e = MAV_CMD_ACK_ERR_NOT_SUPPORTED
-		return nil
-	case "MAV_CMD_ACK_ERR_COORDINATE_FRAME_NOT_SUPPORTED":
-		*e = MAV_CMD_ACK_ERR_COORDINATE_FRAME_NOT_SUPPORTED
-		return nil
-	case "MAV_CMD_ACK_ERR_COORDINATES_OUT_OF_RANGE":
-		*e = MAV_CMD_ACK_ERR_COORDINATES_OUT_OF_RANGE
-		return nil
-	case "MAV_CMD_ACK_ERR_X_LAT_OUT_OF_RANGE":
-		*e = MAV_CMD_ACK_ERR_X_LAT_OUT_OF_RANGE
-		return nil
-	case "MAV_CMD_ACK_ERR_Y_LON_OUT_OF_RANGE":
-		*e = MAV_CMD_ACK_ERR_Y_LON_OUT_OF_RANGE
-		return nil
-	case "MAV_CMD_ACK_ERR_Z_ALT_OUT_OF_RANGE":
-		*e = MAV_CMD_ACK_ERR_Z_ALT_OUT_OF_RANGE
+	if rl, ok := reverseLabels_MAV_CMD_ACK[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -6240,11 +4707,10 @@ func (e *MAV_CMD_ACK) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_CMD_ACK) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_CMD_ACK[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Possible actions an aircraft can take to avoid a collision.
@@ -6267,50 +4733,38 @@ const (
 	MAV_COLLISION_ACTION_HOVER MAV_COLLISION_ACTION = 6
 )
 
+var labels_MAV_COLLISION_ACTION = map[MAV_COLLISION_ACTION]string{
+	MAV_COLLISION_ACTION_NONE:               "MAV_COLLISION_ACTION_NONE",
+	MAV_COLLISION_ACTION_REPORT:             "MAV_COLLISION_ACTION_REPORT",
+	MAV_COLLISION_ACTION_ASCEND_OR_DESCEND:  "MAV_COLLISION_ACTION_ASCEND_OR_DESCEND",
+	MAV_COLLISION_ACTION_MOVE_HORIZONTALLY:  "MAV_COLLISION_ACTION_MOVE_HORIZONTALLY",
+	MAV_COLLISION_ACTION_MOVE_PERPENDICULAR: "MAV_COLLISION_ACTION_MOVE_PERPENDICULAR",
+	MAV_COLLISION_ACTION_RTL:                "MAV_COLLISION_ACTION_RTL",
+	MAV_COLLISION_ACTION_HOVER:              "MAV_COLLISION_ACTION_HOVER",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_COLLISION_ACTION) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_COLLISION_ACTION_NONE:
-		return []byte("MAV_COLLISION_ACTION_NONE"), nil
-	case MAV_COLLISION_ACTION_REPORT:
-		return []byte("MAV_COLLISION_ACTION_REPORT"), nil
-	case MAV_COLLISION_ACTION_ASCEND_OR_DESCEND:
-		return []byte("MAV_COLLISION_ACTION_ASCEND_OR_DESCEND"), nil
-	case MAV_COLLISION_ACTION_MOVE_HORIZONTALLY:
-		return []byte("MAV_COLLISION_ACTION_MOVE_HORIZONTALLY"), nil
-	case MAV_COLLISION_ACTION_MOVE_PERPENDICULAR:
-		return []byte("MAV_COLLISION_ACTION_MOVE_PERPENDICULAR"), nil
-	case MAV_COLLISION_ACTION_RTL:
-		return []byte("MAV_COLLISION_ACTION_RTL"), nil
-	case MAV_COLLISION_ACTION_HOVER:
-		return []byte("MAV_COLLISION_ACTION_HOVER"), nil
+	if l, ok := labels_MAV_COLLISION_ACTION[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_COLLISION_ACTION = map[string]MAV_COLLISION_ACTION{
+	"MAV_COLLISION_ACTION_NONE":               MAV_COLLISION_ACTION_NONE,
+	"MAV_COLLISION_ACTION_REPORT":             MAV_COLLISION_ACTION_REPORT,
+	"MAV_COLLISION_ACTION_ASCEND_OR_DESCEND":  MAV_COLLISION_ACTION_ASCEND_OR_DESCEND,
+	"MAV_COLLISION_ACTION_MOVE_HORIZONTALLY":  MAV_COLLISION_ACTION_MOVE_HORIZONTALLY,
+	"MAV_COLLISION_ACTION_MOVE_PERPENDICULAR": MAV_COLLISION_ACTION_MOVE_PERPENDICULAR,
+	"MAV_COLLISION_ACTION_RTL":                MAV_COLLISION_ACTION_RTL,
+	"MAV_COLLISION_ACTION_HOVER":              MAV_COLLISION_ACTION_HOVER,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_COLLISION_ACTION) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_COLLISION_ACTION_NONE":
-		*e = MAV_COLLISION_ACTION_NONE
-		return nil
-	case "MAV_COLLISION_ACTION_REPORT":
-		*e = MAV_COLLISION_ACTION_REPORT
-		return nil
-	case "MAV_COLLISION_ACTION_ASCEND_OR_DESCEND":
-		*e = MAV_COLLISION_ACTION_ASCEND_OR_DESCEND
-		return nil
-	case "MAV_COLLISION_ACTION_MOVE_HORIZONTALLY":
-		*e = MAV_COLLISION_ACTION_MOVE_HORIZONTALLY
-		return nil
-	case "MAV_COLLISION_ACTION_MOVE_PERPENDICULAR":
-		*e = MAV_COLLISION_ACTION_MOVE_PERPENDICULAR
-		return nil
-	case "MAV_COLLISION_ACTION_RTL":
-		*e = MAV_COLLISION_ACTION_RTL
-		return nil
-	case "MAV_COLLISION_ACTION_HOVER":
-		*e = MAV_COLLISION_ACTION_HOVER
+	if rl, ok := reverseLabels_MAV_COLLISION_ACTION[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -6318,11 +4772,10 @@ func (e *MAV_COLLISION_ACTION) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_COLLISION_ACTION) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_COLLISION_ACTION[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Source of information about this collision.
@@ -6335,25 +4788,28 @@ const (
 	MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT MAV_COLLISION_SRC = 1
 )
 
+var labels_MAV_COLLISION_SRC = map[MAV_COLLISION_SRC]string{
+	MAV_COLLISION_SRC_ADSB:                   "MAV_COLLISION_SRC_ADSB",
+	MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT: "MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_COLLISION_SRC) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_COLLISION_SRC_ADSB:
-		return []byte("MAV_COLLISION_SRC_ADSB"), nil
-	case MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT:
-		return []byte("MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT"), nil
+	if l, ok := labels_MAV_COLLISION_SRC[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_COLLISION_SRC = map[string]MAV_COLLISION_SRC{
+	"MAV_COLLISION_SRC_ADSB":                   MAV_COLLISION_SRC_ADSB,
+	"MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT": MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_COLLISION_SRC) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_COLLISION_SRC_ADSB":
-		*e = MAV_COLLISION_SRC_ADSB
-		return nil
-	case "MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT":
-		*e = MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT
+	if rl, ok := reverseLabels_MAV_COLLISION_SRC[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -6361,11 +4817,10 @@ func (e *MAV_COLLISION_SRC) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_COLLISION_SRC) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_COLLISION_SRC[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Aircraft-rated danger from this threat.
@@ -6380,30 +4835,30 @@ const (
 	MAV_COLLISION_THREAT_LEVEL_HIGH MAV_COLLISION_THREAT_LEVEL = 2
 )
 
+var labels_MAV_COLLISION_THREAT_LEVEL = map[MAV_COLLISION_THREAT_LEVEL]string{
+	MAV_COLLISION_THREAT_LEVEL_NONE: "MAV_COLLISION_THREAT_LEVEL_NONE",
+	MAV_COLLISION_THREAT_LEVEL_LOW:  "MAV_COLLISION_THREAT_LEVEL_LOW",
+	MAV_COLLISION_THREAT_LEVEL_HIGH: "MAV_COLLISION_THREAT_LEVEL_HIGH",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_COLLISION_THREAT_LEVEL) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_COLLISION_THREAT_LEVEL_NONE:
-		return []byte("MAV_COLLISION_THREAT_LEVEL_NONE"), nil
-	case MAV_COLLISION_THREAT_LEVEL_LOW:
-		return []byte("MAV_COLLISION_THREAT_LEVEL_LOW"), nil
-	case MAV_COLLISION_THREAT_LEVEL_HIGH:
-		return []byte("MAV_COLLISION_THREAT_LEVEL_HIGH"), nil
+	if l, ok := labels_MAV_COLLISION_THREAT_LEVEL[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_COLLISION_THREAT_LEVEL = map[string]MAV_COLLISION_THREAT_LEVEL{
+	"MAV_COLLISION_THREAT_LEVEL_NONE": MAV_COLLISION_THREAT_LEVEL_NONE,
+	"MAV_COLLISION_THREAT_LEVEL_LOW":  MAV_COLLISION_THREAT_LEVEL_LOW,
+	"MAV_COLLISION_THREAT_LEVEL_HIGH": MAV_COLLISION_THREAT_LEVEL_HIGH,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_COLLISION_THREAT_LEVEL) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_COLLISION_THREAT_LEVEL_NONE":
-		*e = MAV_COLLISION_THREAT_LEVEL_NONE
-		return nil
-	case "MAV_COLLISION_THREAT_LEVEL_LOW":
-		*e = MAV_COLLISION_THREAT_LEVEL_LOW
-		return nil
-	case "MAV_COLLISION_THREAT_LEVEL_HIGH":
-		*e = MAV_COLLISION_THREAT_LEVEL_HIGH
+	if rl, ok := reverseLabels_MAV_COLLISION_THREAT_LEVEL[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -6411,11 +4866,10 @@ func (e *MAV_COLLISION_THREAT_LEVEL) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_COLLISION_THREAT_LEVEL) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_COLLISION_THREAT_LEVEL[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Component ids (values) for the different types and instances of onboard hardware/software that might make up a MAVLink system (autopilot, cameras, servos, GPS systems, avoidance systems etc.).      Components must use the appropriate ID in their source address when sending messages. Components can also use IDs to determine if they are the intended recipient of an incoming message. The MAV_COMP_ID_ALL value is used to indicate messages that must be processed by all components.      When creating new entries, components that can have multiple instances (e.g. cameras, servos etc.) should be allocated sequential values. An appropriate number of values should be left free after these components to allow the number of instances to be expanded.
@@ -6690,680 +5144,290 @@ const (
 	MAV_COMP_ID_SYSTEM_CONTROL MAV_COMPONENT = 250
 )
 
+var labels_MAV_COMPONENT = map[MAV_COMPONENT]string{
+	MAV_COMP_ID_ALL:                      "MAV_COMP_ID_ALL",
+	MAV_COMP_ID_AUTOPILOT1:               "MAV_COMP_ID_AUTOPILOT1",
+	MAV_COMP_ID_USER1:                    "MAV_COMP_ID_USER1",
+	MAV_COMP_ID_USER2:                    "MAV_COMP_ID_USER2",
+	MAV_COMP_ID_USER3:                    "MAV_COMP_ID_USER3",
+	MAV_COMP_ID_USER4:                    "MAV_COMP_ID_USER4",
+	MAV_COMP_ID_USER5:                    "MAV_COMP_ID_USER5",
+	MAV_COMP_ID_USER6:                    "MAV_COMP_ID_USER6",
+	MAV_COMP_ID_USER7:                    "MAV_COMP_ID_USER7",
+	MAV_COMP_ID_USER8:                    "MAV_COMP_ID_USER8",
+	MAV_COMP_ID_USER9:                    "MAV_COMP_ID_USER9",
+	MAV_COMP_ID_USER10:                   "MAV_COMP_ID_USER10",
+	MAV_COMP_ID_USER11:                   "MAV_COMP_ID_USER11",
+	MAV_COMP_ID_USER12:                   "MAV_COMP_ID_USER12",
+	MAV_COMP_ID_USER13:                   "MAV_COMP_ID_USER13",
+	MAV_COMP_ID_USER14:                   "MAV_COMP_ID_USER14",
+	MAV_COMP_ID_USER15:                   "MAV_COMP_ID_USER15",
+	MAV_COMP_ID_USER16:                   "MAV_COMP_ID_USER16",
+	MAV_COMP_ID_USER17:                   "MAV_COMP_ID_USER17",
+	MAV_COMP_ID_USER18:                   "MAV_COMP_ID_USER18",
+	MAV_COMP_ID_USER19:                   "MAV_COMP_ID_USER19",
+	MAV_COMP_ID_USER20:                   "MAV_COMP_ID_USER20",
+	MAV_COMP_ID_USER21:                   "MAV_COMP_ID_USER21",
+	MAV_COMP_ID_USER22:                   "MAV_COMP_ID_USER22",
+	MAV_COMP_ID_USER23:                   "MAV_COMP_ID_USER23",
+	MAV_COMP_ID_USER24:                   "MAV_COMP_ID_USER24",
+	MAV_COMP_ID_USER25:                   "MAV_COMP_ID_USER25",
+	MAV_COMP_ID_USER26:                   "MAV_COMP_ID_USER26",
+	MAV_COMP_ID_USER27:                   "MAV_COMP_ID_USER27",
+	MAV_COMP_ID_USER28:                   "MAV_COMP_ID_USER28",
+	MAV_COMP_ID_USER29:                   "MAV_COMP_ID_USER29",
+	MAV_COMP_ID_USER30:                   "MAV_COMP_ID_USER30",
+	MAV_COMP_ID_USER31:                   "MAV_COMP_ID_USER31",
+	MAV_COMP_ID_USER32:                   "MAV_COMP_ID_USER32",
+	MAV_COMP_ID_USER33:                   "MAV_COMP_ID_USER33",
+	MAV_COMP_ID_USER34:                   "MAV_COMP_ID_USER34",
+	MAV_COMP_ID_USER35:                   "MAV_COMP_ID_USER35",
+	MAV_COMP_ID_USER36:                   "MAV_COMP_ID_USER36",
+	MAV_COMP_ID_USER37:                   "MAV_COMP_ID_USER37",
+	MAV_COMP_ID_USER38:                   "MAV_COMP_ID_USER38",
+	MAV_COMP_ID_USER39:                   "MAV_COMP_ID_USER39",
+	MAV_COMP_ID_USER40:                   "MAV_COMP_ID_USER40",
+	MAV_COMP_ID_USER41:                   "MAV_COMP_ID_USER41",
+	MAV_COMP_ID_USER42:                   "MAV_COMP_ID_USER42",
+	MAV_COMP_ID_USER43:                   "MAV_COMP_ID_USER43",
+	MAV_COMP_ID_TELEMETRY_RADIO:          "MAV_COMP_ID_TELEMETRY_RADIO",
+	MAV_COMP_ID_USER45:                   "MAV_COMP_ID_USER45",
+	MAV_COMP_ID_USER46:                   "MAV_COMP_ID_USER46",
+	MAV_COMP_ID_USER47:                   "MAV_COMP_ID_USER47",
+	MAV_COMP_ID_USER48:                   "MAV_COMP_ID_USER48",
+	MAV_COMP_ID_USER49:                   "MAV_COMP_ID_USER49",
+	MAV_COMP_ID_USER50:                   "MAV_COMP_ID_USER50",
+	MAV_COMP_ID_USER51:                   "MAV_COMP_ID_USER51",
+	MAV_COMP_ID_USER52:                   "MAV_COMP_ID_USER52",
+	MAV_COMP_ID_USER53:                   "MAV_COMP_ID_USER53",
+	MAV_COMP_ID_USER54:                   "MAV_COMP_ID_USER54",
+	MAV_COMP_ID_USER55:                   "MAV_COMP_ID_USER55",
+	MAV_COMP_ID_USER56:                   "MAV_COMP_ID_USER56",
+	MAV_COMP_ID_USER57:                   "MAV_COMP_ID_USER57",
+	MAV_COMP_ID_USER58:                   "MAV_COMP_ID_USER58",
+	MAV_COMP_ID_USER59:                   "MAV_COMP_ID_USER59",
+	MAV_COMP_ID_USER60:                   "MAV_COMP_ID_USER60",
+	MAV_COMP_ID_USER61:                   "MAV_COMP_ID_USER61",
+	MAV_COMP_ID_USER62:                   "MAV_COMP_ID_USER62",
+	MAV_COMP_ID_USER63:                   "MAV_COMP_ID_USER63",
+	MAV_COMP_ID_USER64:                   "MAV_COMP_ID_USER64",
+	MAV_COMP_ID_USER65:                   "MAV_COMP_ID_USER65",
+	MAV_COMP_ID_USER66:                   "MAV_COMP_ID_USER66",
+	MAV_COMP_ID_USER67:                   "MAV_COMP_ID_USER67",
+	MAV_COMP_ID_USER68:                   "MAV_COMP_ID_USER68",
+	MAV_COMP_ID_USER69:                   "MAV_COMP_ID_USER69",
+	MAV_COMP_ID_USER70:                   "MAV_COMP_ID_USER70",
+	MAV_COMP_ID_USER71:                   "MAV_COMP_ID_USER71",
+	MAV_COMP_ID_USER72:                   "MAV_COMP_ID_USER72",
+	MAV_COMP_ID_USER73:                   "MAV_COMP_ID_USER73",
+	MAV_COMP_ID_USER74:                   "MAV_COMP_ID_USER74",
+	MAV_COMP_ID_USER75:                   "MAV_COMP_ID_USER75",
+	MAV_COMP_ID_CAMERA:                   "MAV_COMP_ID_CAMERA",
+	MAV_COMP_ID_CAMERA2:                  "MAV_COMP_ID_CAMERA2",
+	MAV_COMP_ID_CAMERA3:                  "MAV_COMP_ID_CAMERA3",
+	MAV_COMP_ID_CAMERA4:                  "MAV_COMP_ID_CAMERA4",
+	MAV_COMP_ID_CAMERA5:                  "MAV_COMP_ID_CAMERA5",
+	MAV_COMP_ID_CAMERA6:                  "MAV_COMP_ID_CAMERA6",
+	MAV_COMP_ID_SERVO1:                   "MAV_COMP_ID_SERVO1",
+	MAV_COMP_ID_SERVO2:                   "MAV_COMP_ID_SERVO2",
+	MAV_COMP_ID_SERVO3:                   "MAV_COMP_ID_SERVO3",
+	MAV_COMP_ID_SERVO4:                   "MAV_COMP_ID_SERVO4",
+	MAV_COMP_ID_SERVO5:                   "MAV_COMP_ID_SERVO5",
+	MAV_COMP_ID_SERVO6:                   "MAV_COMP_ID_SERVO6",
+	MAV_COMP_ID_SERVO7:                   "MAV_COMP_ID_SERVO7",
+	MAV_COMP_ID_SERVO8:                   "MAV_COMP_ID_SERVO8",
+	MAV_COMP_ID_SERVO9:                   "MAV_COMP_ID_SERVO9",
+	MAV_COMP_ID_SERVO10:                  "MAV_COMP_ID_SERVO10",
+	MAV_COMP_ID_SERVO11:                  "MAV_COMP_ID_SERVO11",
+	MAV_COMP_ID_SERVO12:                  "MAV_COMP_ID_SERVO12",
+	MAV_COMP_ID_SERVO13:                  "MAV_COMP_ID_SERVO13",
+	MAV_COMP_ID_SERVO14:                  "MAV_COMP_ID_SERVO14",
+	MAV_COMP_ID_GIMBAL:                   "MAV_COMP_ID_GIMBAL",
+	MAV_COMP_ID_LOG:                      "MAV_COMP_ID_LOG",
+	MAV_COMP_ID_ADSB:                     "MAV_COMP_ID_ADSB",
+	MAV_COMP_ID_OSD:                      "MAV_COMP_ID_OSD",
+	MAV_COMP_ID_PERIPHERAL:               "MAV_COMP_ID_PERIPHERAL",
+	MAV_COMP_ID_QX1_GIMBAL:               "MAV_COMP_ID_QX1_GIMBAL",
+	MAV_COMP_ID_FLARM:                    "MAV_COMP_ID_FLARM",
+	MAV_COMP_ID_PARACHUTE:                "MAV_COMP_ID_PARACHUTE",
+	MAV_COMP_ID_GIMBAL2:                  "MAV_COMP_ID_GIMBAL2",
+	MAV_COMP_ID_GIMBAL3:                  "MAV_COMP_ID_GIMBAL3",
+	MAV_COMP_ID_GIMBAL4:                  "MAV_COMP_ID_GIMBAL4",
+	MAV_COMP_ID_GIMBAL5:                  "MAV_COMP_ID_GIMBAL5",
+	MAV_COMP_ID_GIMBAL6:                  "MAV_COMP_ID_GIMBAL6",
+	MAV_COMP_ID_BATTERY:                  "MAV_COMP_ID_BATTERY",
+	MAV_COMP_ID_BATTERY2:                 "MAV_COMP_ID_BATTERY2",
+	MAV_COMP_ID_MISSIONPLANNER:           "MAV_COMP_ID_MISSIONPLANNER",
+	MAV_COMP_ID_ONBOARD_COMPUTER:         "MAV_COMP_ID_ONBOARD_COMPUTER",
+	MAV_COMP_ID_ONBOARD_COMPUTER2:        "MAV_COMP_ID_ONBOARD_COMPUTER2",
+	MAV_COMP_ID_ONBOARD_COMPUTER3:        "MAV_COMP_ID_ONBOARD_COMPUTER3",
+	MAV_COMP_ID_ONBOARD_COMPUTER4:        "MAV_COMP_ID_ONBOARD_COMPUTER4",
+	MAV_COMP_ID_PATHPLANNER:              "MAV_COMP_ID_PATHPLANNER",
+	MAV_COMP_ID_OBSTACLE_AVOIDANCE:       "MAV_COMP_ID_OBSTACLE_AVOIDANCE",
+	MAV_COMP_ID_VISUAL_INERTIAL_ODOMETRY: "MAV_COMP_ID_VISUAL_INERTIAL_ODOMETRY",
+	MAV_COMP_ID_PAIRING_MANAGER:          "MAV_COMP_ID_PAIRING_MANAGER",
+	MAV_COMP_ID_IMU:                      "MAV_COMP_ID_IMU",
+	MAV_COMP_ID_IMU_2:                    "MAV_COMP_ID_IMU_2",
+	MAV_COMP_ID_IMU_3:                    "MAV_COMP_ID_IMU_3",
+	MAV_COMP_ID_GPS:                      "MAV_COMP_ID_GPS",
+	MAV_COMP_ID_GPS2:                     "MAV_COMP_ID_GPS2",
+	MAV_COMP_ID_ODID_TXRX_1:              "MAV_COMP_ID_ODID_TXRX_1",
+	MAV_COMP_ID_ODID_TXRX_2:              "MAV_COMP_ID_ODID_TXRX_2",
+	MAV_COMP_ID_ODID_TXRX_3:              "MAV_COMP_ID_ODID_TXRX_3",
+	MAV_COMP_ID_UDP_BRIDGE:               "MAV_COMP_ID_UDP_BRIDGE",
+	MAV_COMP_ID_UART_BRIDGE:              "MAV_COMP_ID_UART_BRIDGE",
+	MAV_COMP_ID_TUNNEL_NODE:              "MAV_COMP_ID_TUNNEL_NODE",
+	MAV_COMP_ID_SYSTEM_CONTROL:           "MAV_COMP_ID_SYSTEM_CONTROL",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_COMPONENT) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_COMP_ID_ALL:
-		return []byte("MAV_COMP_ID_ALL"), nil
-	case MAV_COMP_ID_AUTOPILOT1:
-		return []byte("MAV_COMP_ID_AUTOPILOT1"), nil
-	case MAV_COMP_ID_USER1:
-		return []byte("MAV_COMP_ID_USER1"), nil
-	case MAV_COMP_ID_USER2:
-		return []byte("MAV_COMP_ID_USER2"), nil
-	case MAV_COMP_ID_USER3:
-		return []byte("MAV_COMP_ID_USER3"), nil
-	case MAV_COMP_ID_USER4:
-		return []byte("MAV_COMP_ID_USER4"), nil
-	case MAV_COMP_ID_USER5:
-		return []byte("MAV_COMP_ID_USER5"), nil
-	case MAV_COMP_ID_USER6:
-		return []byte("MAV_COMP_ID_USER6"), nil
-	case MAV_COMP_ID_USER7:
-		return []byte("MAV_COMP_ID_USER7"), nil
-	case MAV_COMP_ID_USER8:
-		return []byte("MAV_COMP_ID_USER8"), nil
-	case MAV_COMP_ID_USER9:
-		return []byte("MAV_COMP_ID_USER9"), nil
-	case MAV_COMP_ID_USER10:
-		return []byte("MAV_COMP_ID_USER10"), nil
-	case MAV_COMP_ID_USER11:
-		return []byte("MAV_COMP_ID_USER11"), nil
-	case MAV_COMP_ID_USER12:
-		return []byte("MAV_COMP_ID_USER12"), nil
-	case MAV_COMP_ID_USER13:
-		return []byte("MAV_COMP_ID_USER13"), nil
-	case MAV_COMP_ID_USER14:
-		return []byte("MAV_COMP_ID_USER14"), nil
-	case MAV_COMP_ID_USER15:
-		return []byte("MAV_COMP_ID_USER15"), nil
-	case MAV_COMP_ID_USER16:
-		return []byte("MAV_COMP_ID_USER16"), nil
-	case MAV_COMP_ID_USER17:
-		return []byte("MAV_COMP_ID_USER17"), nil
-	case MAV_COMP_ID_USER18:
-		return []byte("MAV_COMP_ID_USER18"), nil
-	case MAV_COMP_ID_USER19:
-		return []byte("MAV_COMP_ID_USER19"), nil
-	case MAV_COMP_ID_USER20:
-		return []byte("MAV_COMP_ID_USER20"), nil
-	case MAV_COMP_ID_USER21:
-		return []byte("MAV_COMP_ID_USER21"), nil
-	case MAV_COMP_ID_USER22:
-		return []byte("MAV_COMP_ID_USER22"), nil
-	case MAV_COMP_ID_USER23:
-		return []byte("MAV_COMP_ID_USER23"), nil
-	case MAV_COMP_ID_USER24:
-		return []byte("MAV_COMP_ID_USER24"), nil
-	case MAV_COMP_ID_USER25:
-		return []byte("MAV_COMP_ID_USER25"), nil
-	case MAV_COMP_ID_USER26:
-		return []byte("MAV_COMP_ID_USER26"), nil
-	case MAV_COMP_ID_USER27:
-		return []byte("MAV_COMP_ID_USER27"), nil
-	case MAV_COMP_ID_USER28:
-		return []byte("MAV_COMP_ID_USER28"), nil
-	case MAV_COMP_ID_USER29:
-		return []byte("MAV_COMP_ID_USER29"), nil
-	case MAV_COMP_ID_USER30:
-		return []byte("MAV_COMP_ID_USER30"), nil
-	case MAV_COMP_ID_USER31:
-		return []byte("MAV_COMP_ID_USER31"), nil
-	case MAV_COMP_ID_USER32:
-		return []byte("MAV_COMP_ID_USER32"), nil
-	case MAV_COMP_ID_USER33:
-		return []byte("MAV_COMP_ID_USER33"), nil
-	case MAV_COMP_ID_USER34:
-		return []byte("MAV_COMP_ID_USER34"), nil
-	case MAV_COMP_ID_USER35:
-		return []byte("MAV_COMP_ID_USER35"), nil
-	case MAV_COMP_ID_USER36:
-		return []byte("MAV_COMP_ID_USER36"), nil
-	case MAV_COMP_ID_USER37:
-		return []byte("MAV_COMP_ID_USER37"), nil
-	case MAV_COMP_ID_USER38:
-		return []byte("MAV_COMP_ID_USER38"), nil
-	case MAV_COMP_ID_USER39:
-		return []byte("MAV_COMP_ID_USER39"), nil
-	case MAV_COMP_ID_USER40:
-		return []byte("MAV_COMP_ID_USER40"), nil
-	case MAV_COMP_ID_USER41:
-		return []byte("MAV_COMP_ID_USER41"), nil
-	case MAV_COMP_ID_USER42:
-		return []byte("MAV_COMP_ID_USER42"), nil
-	case MAV_COMP_ID_USER43:
-		return []byte("MAV_COMP_ID_USER43"), nil
-	case MAV_COMP_ID_TELEMETRY_RADIO:
-		return []byte("MAV_COMP_ID_TELEMETRY_RADIO"), nil
-	case MAV_COMP_ID_USER45:
-		return []byte("MAV_COMP_ID_USER45"), nil
-	case MAV_COMP_ID_USER46:
-		return []byte("MAV_COMP_ID_USER46"), nil
-	case MAV_COMP_ID_USER47:
-		return []byte("MAV_COMP_ID_USER47"), nil
-	case MAV_COMP_ID_USER48:
-		return []byte("MAV_COMP_ID_USER48"), nil
-	case MAV_COMP_ID_USER49:
-		return []byte("MAV_COMP_ID_USER49"), nil
-	case MAV_COMP_ID_USER50:
-		return []byte("MAV_COMP_ID_USER50"), nil
-	case MAV_COMP_ID_USER51:
-		return []byte("MAV_COMP_ID_USER51"), nil
-	case MAV_COMP_ID_USER52:
-		return []byte("MAV_COMP_ID_USER52"), nil
-	case MAV_COMP_ID_USER53:
-		return []byte("MAV_COMP_ID_USER53"), nil
-	case MAV_COMP_ID_USER54:
-		return []byte("MAV_COMP_ID_USER54"), nil
-	case MAV_COMP_ID_USER55:
-		return []byte("MAV_COMP_ID_USER55"), nil
-	case MAV_COMP_ID_USER56:
-		return []byte("MAV_COMP_ID_USER56"), nil
-	case MAV_COMP_ID_USER57:
-		return []byte("MAV_COMP_ID_USER57"), nil
-	case MAV_COMP_ID_USER58:
-		return []byte("MAV_COMP_ID_USER58"), nil
-	case MAV_COMP_ID_USER59:
-		return []byte("MAV_COMP_ID_USER59"), nil
-	case MAV_COMP_ID_USER60:
-		return []byte("MAV_COMP_ID_USER60"), nil
-	case MAV_COMP_ID_USER61:
-		return []byte("MAV_COMP_ID_USER61"), nil
-	case MAV_COMP_ID_USER62:
-		return []byte("MAV_COMP_ID_USER62"), nil
-	case MAV_COMP_ID_USER63:
-		return []byte("MAV_COMP_ID_USER63"), nil
-	case MAV_COMP_ID_USER64:
-		return []byte("MAV_COMP_ID_USER64"), nil
-	case MAV_COMP_ID_USER65:
-		return []byte("MAV_COMP_ID_USER65"), nil
-	case MAV_COMP_ID_USER66:
-		return []byte("MAV_COMP_ID_USER66"), nil
-	case MAV_COMP_ID_USER67:
-		return []byte("MAV_COMP_ID_USER67"), nil
-	case MAV_COMP_ID_USER68:
-		return []byte("MAV_COMP_ID_USER68"), nil
-	case MAV_COMP_ID_USER69:
-		return []byte("MAV_COMP_ID_USER69"), nil
-	case MAV_COMP_ID_USER70:
-		return []byte("MAV_COMP_ID_USER70"), nil
-	case MAV_COMP_ID_USER71:
-		return []byte("MAV_COMP_ID_USER71"), nil
-	case MAV_COMP_ID_USER72:
-		return []byte("MAV_COMP_ID_USER72"), nil
-	case MAV_COMP_ID_USER73:
-		return []byte("MAV_COMP_ID_USER73"), nil
-	case MAV_COMP_ID_USER74:
-		return []byte("MAV_COMP_ID_USER74"), nil
-	case MAV_COMP_ID_USER75:
-		return []byte("MAV_COMP_ID_USER75"), nil
-	case MAV_COMP_ID_CAMERA:
-		return []byte("MAV_COMP_ID_CAMERA"), nil
-	case MAV_COMP_ID_CAMERA2:
-		return []byte("MAV_COMP_ID_CAMERA2"), nil
-	case MAV_COMP_ID_CAMERA3:
-		return []byte("MAV_COMP_ID_CAMERA3"), nil
-	case MAV_COMP_ID_CAMERA4:
-		return []byte("MAV_COMP_ID_CAMERA4"), nil
-	case MAV_COMP_ID_CAMERA5:
-		return []byte("MAV_COMP_ID_CAMERA5"), nil
-	case MAV_COMP_ID_CAMERA6:
-		return []byte("MAV_COMP_ID_CAMERA6"), nil
-	case MAV_COMP_ID_SERVO1:
-		return []byte("MAV_COMP_ID_SERVO1"), nil
-	case MAV_COMP_ID_SERVO2:
-		return []byte("MAV_COMP_ID_SERVO2"), nil
-	case MAV_COMP_ID_SERVO3:
-		return []byte("MAV_COMP_ID_SERVO3"), nil
-	case MAV_COMP_ID_SERVO4:
-		return []byte("MAV_COMP_ID_SERVO4"), nil
-	case MAV_COMP_ID_SERVO5:
-		return []byte("MAV_COMP_ID_SERVO5"), nil
-	case MAV_COMP_ID_SERVO6:
-		return []byte("MAV_COMP_ID_SERVO6"), nil
-	case MAV_COMP_ID_SERVO7:
-		return []byte("MAV_COMP_ID_SERVO7"), nil
-	case MAV_COMP_ID_SERVO8:
-		return []byte("MAV_COMP_ID_SERVO8"), nil
-	case MAV_COMP_ID_SERVO9:
-		return []byte("MAV_COMP_ID_SERVO9"), nil
-	case MAV_COMP_ID_SERVO10:
-		return []byte("MAV_COMP_ID_SERVO10"), nil
-	case MAV_COMP_ID_SERVO11:
-		return []byte("MAV_COMP_ID_SERVO11"), nil
-	case MAV_COMP_ID_SERVO12:
-		return []byte("MAV_COMP_ID_SERVO12"), nil
-	case MAV_COMP_ID_SERVO13:
-		return []byte("MAV_COMP_ID_SERVO13"), nil
-	case MAV_COMP_ID_SERVO14:
-		return []byte("MAV_COMP_ID_SERVO14"), nil
-	case MAV_COMP_ID_GIMBAL:
-		return []byte("MAV_COMP_ID_GIMBAL"), nil
-	case MAV_COMP_ID_LOG:
-		return []byte("MAV_COMP_ID_LOG"), nil
-	case MAV_COMP_ID_ADSB:
-		return []byte("MAV_COMP_ID_ADSB"), nil
-	case MAV_COMP_ID_OSD:
-		return []byte("MAV_COMP_ID_OSD"), nil
-	case MAV_COMP_ID_PERIPHERAL:
-		return []byte("MAV_COMP_ID_PERIPHERAL"), nil
-	case MAV_COMP_ID_QX1_GIMBAL:
-		return []byte("MAV_COMP_ID_QX1_GIMBAL"), nil
-	case MAV_COMP_ID_FLARM:
-		return []byte("MAV_COMP_ID_FLARM"), nil
-	case MAV_COMP_ID_PARACHUTE:
-		return []byte("MAV_COMP_ID_PARACHUTE"), nil
-	case MAV_COMP_ID_GIMBAL2:
-		return []byte("MAV_COMP_ID_GIMBAL2"), nil
-	case MAV_COMP_ID_GIMBAL3:
-		return []byte("MAV_COMP_ID_GIMBAL3"), nil
-	case MAV_COMP_ID_GIMBAL4:
-		return []byte("MAV_COMP_ID_GIMBAL4"), nil
-	case MAV_COMP_ID_GIMBAL5:
-		return []byte("MAV_COMP_ID_GIMBAL5"), nil
-	case MAV_COMP_ID_GIMBAL6:
-		return []byte("MAV_COMP_ID_GIMBAL6"), nil
-	case MAV_COMP_ID_BATTERY:
-		return []byte("MAV_COMP_ID_BATTERY"), nil
-	case MAV_COMP_ID_BATTERY2:
-		return []byte("MAV_COMP_ID_BATTERY2"), nil
-	case MAV_COMP_ID_MISSIONPLANNER:
-		return []byte("MAV_COMP_ID_MISSIONPLANNER"), nil
-	case MAV_COMP_ID_ONBOARD_COMPUTER:
-		return []byte("MAV_COMP_ID_ONBOARD_COMPUTER"), nil
-	case MAV_COMP_ID_ONBOARD_COMPUTER2:
-		return []byte("MAV_COMP_ID_ONBOARD_COMPUTER2"), nil
-	case MAV_COMP_ID_ONBOARD_COMPUTER3:
-		return []byte("MAV_COMP_ID_ONBOARD_COMPUTER3"), nil
-	case MAV_COMP_ID_ONBOARD_COMPUTER4:
-		return []byte("MAV_COMP_ID_ONBOARD_COMPUTER4"), nil
-	case MAV_COMP_ID_PATHPLANNER:
-		return []byte("MAV_COMP_ID_PATHPLANNER"), nil
-	case MAV_COMP_ID_OBSTACLE_AVOIDANCE:
-		return []byte("MAV_COMP_ID_OBSTACLE_AVOIDANCE"), nil
-	case MAV_COMP_ID_VISUAL_INERTIAL_ODOMETRY:
-		return []byte("MAV_COMP_ID_VISUAL_INERTIAL_ODOMETRY"), nil
-	case MAV_COMP_ID_PAIRING_MANAGER:
-		return []byte("MAV_COMP_ID_PAIRING_MANAGER"), nil
-	case MAV_COMP_ID_IMU:
-		return []byte("MAV_COMP_ID_IMU"), nil
-	case MAV_COMP_ID_IMU_2:
-		return []byte("MAV_COMP_ID_IMU_2"), nil
-	case MAV_COMP_ID_IMU_3:
-		return []byte("MAV_COMP_ID_IMU_3"), nil
-	case MAV_COMP_ID_GPS:
-		return []byte("MAV_COMP_ID_GPS"), nil
-	case MAV_COMP_ID_GPS2:
-		return []byte("MAV_COMP_ID_GPS2"), nil
-	case MAV_COMP_ID_ODID_TXRX_1:
-		return []byte("MAV_COMP_ID_ODID_TXRX_1"), nil
-	case MAV_COMP_ID_ODID_TXRX_2:
-		return []byte("MAV_COMP_ID_ODID_TXRX_2"), nil
-	case MAV_COMP_ID_ODID_TXRX_3:
-		return []byte("MAV_COMP_ID_ODID_TXRX_3"), nil
-	case MAV_COMP_ID_UDP_BRIDGE:
-		return []byte("MAV_COMP_ID_UDP_BRIDGE"), nil
-	case MAV_COMP_ID_UART_BRIDGE:
-		return []byte("MAV_COMP_ID_UART_BRIDGE"), nil
-	case MAV_COMP_ID_TUNNEL_NODE:
-		return []byte("MAV_COMP_ID_TUNNEL_NODE"), nil
-	case MAV_COMP_ID_SYSTEM_CONTROL:
-		return []byte("MAV_COMP_ID_SYSTEM_CONTROL"), nil
+	if l, ok := labels_MAV_COMPONENT[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_COMPONENT = map[string]MAV_COMPONENT{
+	"MAV_COMP_ID_ALL":                      MAV_COMP_ID_ALL,
+	"MAV_COMP_ID_AUTOPILOT1":               MAV_COMP_ID_AUTOPILOT1,
+	"MAV_COMP_ID_USER1":                    MAV_COMP_ID_USER1,
+	"MAV_COMP_ID_USER2":                    MAV_COMP_ID_USER2,
+	"MAV_COMP_ID_USER3":                    MAV_COMP_ID_USER3,
+	"MAV_COMP_ID_USER4":                    MAV_COMP_ID_USER4,
+	"MAV_COMP_ID_USER5":                    MAV_COMP_ID_USER5,
+	"MAV_COMP_ID_USER6":                    MAV_COMP_ID_USER6,
+	"MAV_COMP_ID_USER7":                    MAV_COMP_ID_USER7,
+	"MAV_COMP_ID_USER8":                    MAV_COMP_ID_USER8,
+	"MAV_COMP_ID_USER9":                    MAV_COMP_ID_USER9,
+	"MAV_COMP_ID_USER10":                   MAV_COMP_ID_USER10,
+	"MAV_COMP_ID_USER11":                   MAV_COMP_ID_USER11,
+	"MAV_COMP_ID_USER12":                   MAV_COMP_ID_USER12,
+	"MAV_COMP_ID_USER13":                   MAV_COMP_ID_USER13,
+	"MAV_COMP_ID_USER14":                   MAV_COMP_ID_USER14,
+	"MAV_COMP_ID_USER15":                   MAV_COMP_ID_USER15,
+	"MAV_COMP_ID_USER16":                   MAV_COMP_ID_USER16,
+	"MAV_COMP_ID_USER17":                   MAV_COMP_ID_USER17,
+	"MAV_COMP_ID_USER18":                   MAV_COMP_ID_USER18,
+	"MAV_COMP_ID_USER19":                   MAV_COMP_ID_USER19,
+	"MAV_COMP_ID_USER20":                   MAV_COMP_ID_USER20,
+	"MAV_COMP_ID_USER21":                   MAV_COMP_ID_USER21,
+	"MAV_COMP_ID_USER22":                   MAV_COMP_ID_USER22,
+	"MAV_COMP_ID_USER23":                   MAV_COMP_ID_USER23,
+	"MAV_COMP_ID_USER24":                   MAV_COMP_ID_USER24,
+	"MAV_COMP_ID_USER25":                   MAV_COMP_ID_USER25,
+	"MAV_COMP_ID_USER26":                   MAV_COMP_ID_USER26,
+	"MAV_COMP_ID_USER27":                   MAV_COMP_ID_USER27,
+	"MAV_COMP_ID_USER28":                   MAV_COMP_ID_USER28,
+	"MAV_COMP_ID_USER29":                   MAV_COMP_ID_USER29,
+	"MAV_COMP_ID_USER30":                   MAV_COMP_ID_USER30,
+	"MAV_COMP_ID_USER31":                   MAV_COMP_ID_USER31,
+	"MAV_COMP_ID_USER32":                   MAV_COMP_ID_USER32,
+	"MAV_COMP_ID_USER33":                   MAV_COMP_ID_USER33,
+	"MAV_COMP_ID_USER34":                   MAV_COMP_ID_USER34,
+	"MAV_COMP_ID_USER35":                   MAV_COMP_ID_USER35,
+	"MAV_COMP_ID_USER36":                   MAV_COMP_ID_USER36,
+	"MAV_COMP_ID_USER37":                   MAV_COMP_ID_USER37,
+	"MAV_COMP_ID_USER38":                   MAV_COMP_ID_USER38,
+	"MAV_COMP_ID_USER39":                   MAV_COMP_ID_USER39,
+	"MAV_COMP_ID_USER40":                   MAV_COMP_ID_USER40,
+	"MAV_COMP_ID_USER41":                   MAV_COMP_ID_USER41,
+	"MAV_COMP_ID_USER42":                   MAV_COMP_ID_USER42,
+	"MAV_COMP_ID_USER43":                   MAV_COMP_ID_USER43,
+	"MAV_COMP_ID_TELEMETRY_RADIO":          MAV_COMP_ID_TELEMETRY_RADIO,
+	"MAV_COMP_ID_USER45":                   MAV_COMP_ID_USER45,
+	"MAV_COMP_ID_USER46":                   MAV_COMP_ID_USER46,
+	"MAV_COMP_ID_USER47":                   MAV_COMP_ID_USER47,
+	"MAV_COMP_ID_USER48":                   MAV_COMP_ID_USER48,
+	"MAV_COMP_ID_USER49":                   MAV_COMP_ID_USER49,
+	"MAV_COMP_ID_USER50":                   MAV_COMP_ID_USER50,
+	"MAV_COMP_ID_USER51":                   MAV_COMP_ID_USER51,
+	"MAV_COMP_ID_USER52":                   MAV_COMP_ID_USER52,
+	"MAV_COMP_ID_USER53":                   MAV_COMP_ID_USER53,
+	"MAV_COMP_ID_USER54":                   MAV_COMP_ID_USER54,
+	"MAV_COMP_ID_USER55":                   MAV_COMP_ID_USER55,
+	"MAV_COMP_ID_USER56":                   MAV_COMP_ID_USER56,
+	"MAV_COMP_ID_USER57":                   MAV_COMP_ID_USER57,
+	"MAV_COMP_ID_USER58":                   MAV_COMP_ID_USER58,
+	"MAV_COMP_ID_USER59":                   MAV_COMP_ID_USER59,
+	"MAV_COMP_ID_USER60":                   MAV_COMP_ID_USER60,
+	"MAV_COMP_ID_USER61":                   MAV_COMP_ID_USER61,
+	"MAV_COMP_ID_USER62":                   MAV_COMP_ID_USER62,
+	"MAV_COMP_ID_USER63":                   MAV_COMP_ID_USER63,
+	"MAV_COMP_ID_USER64":                   MAV_COMP_ID_USER64,
+	"MAV_COMP_ID_USER65":                   MAV_COMP_ID_USER65,
+	"MAV_COMP_ID_USER66":                   MAV_COMP_ID_USER66,
+	"MAV_COMP_ID_USER67":                   MAV_COMP_ID_USER67,
+	"MAV_COMP_ID_USER68":                   MAV_COMP_ID_USER68,
+	"MAV_COMP_ID_USER69":                   MAV_COMP_ID_USER69,
+	"MAV_COMP_ID_USER70":                   MAV_COMP_ID_USER70,
+	"MAV_COMP_ID_USER71":                   MAV_COMP_ID_USER71,
+	"MAV_COMP_ID_USER72":                   MAV_COMP_ID_USER72,
+	"MAV_COMP_ID_USER73":                   MAV_COMP_ID_USER73,
+	"MAV_COMP_ID_USER74":                   MAV_COMP_ID_USER74,
+	"MAV_COMP_ID_USER75":                   MAV_COMP_ID_USER75,
+	"MAV_COMP_ID_CAMERA":                   MAV_COMP_ID_CAMERA,
+	"MAV_COMP_ID_CAMERA2":                  MAV_COMP_ID_CAMERA2,
+	"MAV_COMP_ID_CAMERA3":                  MAV_COMP_ID_CAMERA3,
+	"MAV_COMP_ID_CAMERA4":                  MAV_COMP_ID_CAMERA4,
+	"MAV_COMP_ID_CAMERA5":                  MAV_COMP_ID_CAMERA5,
+	"MAV_COMP_ID_CAMERA6":                  MAV_COMP_ID_CAMERA6,
+	"MAV_COMP_ID_SERVO1":                   MAV_COMP_ID_SERVO1,
+	"MAV_COMP_ID_SERVO2":                   MAV_COMP_ID_SERVO2,
+	"MAV_COMP_ID_SERVO3":                   MAV_COMP_ID_SERVO3,
+	"MAV_COMP_ID_SERVO4":                   MAV_COMP_ID_SERVO4,
+	"MAV_COMP_ID_SERVO5":                   MAV_COMP_ID_SERVO5,
+	"MAV_COMP_ID_SERVO6":                   MAV_COMP_ID_SERVO6,
+	"MAV_COMP_ID_SERVO7":                   MAV_COMP_ID_SERVO7,
+	"MAV_COMP_ID_SERVO8":                   MAV_COMP_ID_SERVO8,
+	"MAV_COMP_ID_SERVO9":                   MAV_COMP_ID_SERVO9,
+	"MAV_COMP_ID_SERVO10":                  MAV_COMP_ID_SERVO10,
+	"MAV_COMP_ID_SERVO11":                  MAV_COMP_ID_SERVO11,
+	"MAV_COMP_ID_SERVO12":                  MAV_COMP_ID_SERVO12,
+	"MAV_COMP_ID_SERVO13":                  MAV_COMP_ID_SERVO13,
+	"MAV_COMP_ID_SERVO14":                  MAV_COMP_ID_SERVO14,
+	"MAV_COMP_ID_GIMBAL":                   MAV_COMP_ID_GIMBAL,
+	"MAV_COMP_ID_LOG":                      MAV_COMP_ID_LOG,
+	"MAV_COMP_ID_ADSB":                     MAV_COMP_ID_ADSB,
+	"MAV_COMP_ID_OSD":                      MAV_COMP_ID_OSD,
+	"MAV_COMP_ID_PERIPHERAL":               MAV_COMP_ID_PERIPHERAL,
+	"MAV_COMP_ID_QX1_GIMBAL":               MAV_COMP_ID_QX1_GIMBAL,
+	"MAV_COMP_ID_FLARM":                    MAV_COMP_ID_FLARM,
+	"MAV_COMP_ID_PARACHUTE":                MAV_COMP_ID_PARACHUTE,
+	"MAV_COMP_ID_GIMBAL2":                  MAV_COMP_ID_GIMBAL2,
+	"MAV_COMP_ID_GIMBAL3":                  MAV_COMP_ID_GIMBAL3,
+	"MAV_COMP_ID_GIMBAL4":                  MAV_COMP_ID_GIMBAL4,
+	"MAV_COMP_ID_GIMBAL5":                  MAV_COMP_ID_GIMBAL5,
+	"MAV_COMP_ID_GIMBAL6":                  MAV_COMP_ID_GIMBAL6,
+	"MAV_COMP_ID_BATTERY":                  MAV_COMP_ID_BATTERY,
+	"MAV_COMP_ID_BATTERY2":                 MAV_COMP_ID_BATTERY2,
+	"MAV_COMP_ID_MISSIONPLANNER":           MAV_COMP_ID_MISSIONPLANNER,
+	"MAV_COMP_ID_ONBOARD_COMPUTER":         MAV_COMP_ID_ONBOARD_COMPUTER,
+	"MAV_COMP_ID_ONBOARD_COMPUTER2":        MAV_COMP_ID_ONBOARD_COMPUTER2,
+	"MAV_COMP_ID_ONBOARD_COMPUTER3":        MAV_COMP_ID_ONBOARD_COMPUTER3,
+	"MAV_COMP_ID_ONBOARD_COMPUTER4":        MAV_COMP_ID_ONBOARD_COMPUTER4,
+	"MAV_COMP_ID_PATHPLANNER":              MAV_COMP_ID_PATHPLANNER,
+	"MAV_COMP_ID_OBSTACLE_AVOIDANCE":       MAV_COMP_ID_OBSTACLE_AVOIDANCE,
+	"MAV_COMP_ID_VISUAL_INERTIAL_ODOMETRY": MAV_COMP_ID_VISUAL_INERTIAL_ODOMETRY,
+	"MAV_COMP_ID_PAIRING_MANAGER":          MAV_COMP_ID_PAIRING_MANAGER,
+	"MAV_COMP_ID_IMU":                      MAV_COMP_ID_IMU,
+	"MAV_COMP_ID_IMU_2":                    MAV_COMP_ID_IMU_2,
+	"MAV_COMP_ID_IMU_3":                    MAV_COMP_ID_IMU_3,
+	"MAV_COMP_ID_GPS":                      MAV_COMP_ID_GPS,
+	"MAV_COMP_ID_GPS2":                     MAV_COMP_ID_GPS2,
+	"MAV_COMP_ID_ODID_TXRX_1":              MAV_COMP_ID_ODID_TXRX_1,
+	"MAV_COMP_ID_ODID_TXRX_2":              MAV_COMP_ID_ODID_TXRX_2,
+	"MAV_COMP_ID_ODID_TXRX_3":              MAV_COMP_ID_ODID_TXRX_3,
+	"MAV_COMP_ID_UDP_BRIDGE":               MAV_COMP_ID_UDP_BRIDGE,
+	"MAV_COMP_ID_UART_BRIDGE":              MAV_COMP_ID_UART_BRIDGE,
+	"MAV_COMP_ID_TUNNEL_NODE":              MAV_COMP_ID_TUNNEL_NODE,
+	"MAV_COMP_ID_SYSTEM_CONTROL":           MAV_COMP_ID_SYSTEM_CONTROL,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_COMP_ID_ALL":
-		*e = MAV_COMP_ID_ALL
-		return nil
-	case "MAV_COMP_ID_AUTOPILOT1":
-		*e = MAV_COMP_ID_AUTOPILOT1
-		return nil
-	case "MAV_COMP_ID_USER1":
-		*e = MAV_COMP_ID_USER1
-		return nil
-	case "MAV_COMP_ID_USER2":
-		*e = MAV_COMP_ID_USER2
-		return nil
-	case "MAV_COMP_ID_USER3":
-		*e = MAV_COMP_ID_USER3
-		return nil
-	case "MAV_COMP_ID_USER4":
-		*e = MAV_COMP_ID_USER4
-		return nil
-	case "MAV_COMP_ID_USER5":
-		*e = MAV_COMP_ID_USER5
-		return nil
-	case "MAV_COMP_ID_USER6":
-		*e = MAV_COMP_ID_USER6
-		return nil
-	case "MAV_COMP_ID_USER7":
-		*e = MAV_COMP_ID_USER7
-		return nil
-	case "MAV_COMP_ID_USER8":
-		*e = MAV_COMP_ID_USER8
-		return nil
-	case "MAV_COMP_ID_USER9":
-		*e = MAV_COMP_ID_USER9
-		return nil
-	case "MAV_COMP_ID_USER10":
-		*e = MAV_COMP_ID_USER10
-		return nil
-	case "MAV_COMP_ID_USER11":
-		*e = MAV_COMP_ID_USER11
-		return nil
-	case "MAV_COMP_ID_USER12":
-		*e = MAV_COMP_ID_USER12
-		return nil
-	case "MAV_COMP_ID_USER13":
-		*e = MAV_COMP_ID_USER13
-		return nil
-	case "MAV_COMP_ID_USER14":
-		*e = MAV_COMP_ID_USER14
-		return nil
-	case "MAV_COMP_ID_USER15":
-		*e = MAV_COMP_ID_USER15
-		return nil
-	case "MAV_COMP_ID_USER16":
-		*e = MAV_COMP_ID_USER16
-		return nil
-	case "MAV_COMP_ID_USER17":
-		*e = MAV_COMP_ID_USER17
-		return nil
-	case "MAV_COMP_ID_USER18":
-		*e = MAV_COMP_ID_USER18
-		return nil
-	case "MAV_COMP_ID_USER19":
-		*e = MAV_COMP_ID_USER19
-		return nil
-	case "MAV_COMP_ID_USER20":
-		*e = MAV_COMP_ID_USER20
-		return nil
-	case "MAV_COMP_ID_USER21":
-		*e = MAV_COMP_ID_USER21
-		return nil
-	case "MAV_COMP_ID_USER22":
-		*e = MAV_COMP_ID_USER22
-		return nil
-	case "MAV_COMP_ID_USER23":
-		*e = MAV_COMP_ID_USER23
-		return nil
-	case "MAV_COMP_ID_USER24":
-		*e = MAV_COMP_ID_USER24
-		return nil
-	case "MAV_COMP_ID_USER25":
-		*e = MAV_COMP_ID_USER25
-		return nil
-	case "MAV_COMP_ID_USER26":
-		*e = MAV_COMP_ID_USER26
-		return nil
-	case "MAV_COMP_ID_USER27":
-		*e = MAV_COMP_ID_USER27
-		return nil
-	case "MAV_COMP_ID_USER28":
-		*e = MAV_COMP_ID_USER28
-		return nil
-	case "MAV_COMP_ID_USER29":
-		*e = MAV_COMP_ID_USER29
-		return nil
-	case "MAV_COMP_ID_USER30":
-		*e = MAV_COMP_ID_USER30
-		return nil
-	case "MAV_COMP_ID_USER31":
-		*e = MAV_COMP_ID_USER31
-		return nil
-	case "MAV_COMP_ID_USER32":
-		*e = MAV_COMP_ID_USER32
-		return nil
-	case "MAV_COMP_ID_USER33":
-		*e = MAV_COMP_ID_USER33
-		return nil
-	case "MAV_COMP_ID_USER34":
-		*e = MAV_COMP_ID_USER34
-		return nil
-	case "MAV_COMP_ID_USER35":
-		*e = MAV_COMP_ID_USER35
-		return nil
-	case "MAV_COMP_ID_USER36":
-		*e = MAV_COMP_ID_USER36
-		return nil
-	case "MAV_COMP_ID_USER37":
-		*e = MAV_COMP_ID_USER37
-		return nil
-	case "MAV_COMP_ID_USER38":
-		*e = MAV_COMP_ID_USER38
-		return nil
-	case "MAV_COMP_ID_USER39":
-		*e = MAV_COMP_ID_USER39
-		return nil
-	case "MAV_COMP_ID_USER40":
-		*e = MAV_COMP_ID_USER40
-		return nil
-	case "MAV_COMP_ID_USER41":
-		*e = MAV_COMP_ID_USER41
-		return nil
-	case "MAV_COMP_ID_USER42":
-		*e = MAV_COMP_ID_USER42
-		return nil
-	case "MAV_COMP_ID_USER43":
-		*e = MAV_COMP_ID_USER43
-		return nil
-	case "MAV_COMP_ID_TELEMETRY_RADIO":
-		*e = MAV_COMP_ID_TELEMETRY_RADIO
-		return nil
-	case "MAV_COMP_ID_USER45":
-		*e = MAV_COMP_ID_USER45
-		return nil
-	case "MAV_COMP_ID_USER46":
-		*e = MAV_COMP_ID_USER46
-		return nil
-	case "MAV_COMP_ID_USER47":
-		*e = MAV_COMP_ID_USER47
-		return nil
-	case "MAV_COMP_ID_USER48":
-		*e = MAV_COMP_ID_USER48
-		return nil
-	case "MAV_COMP_ID_USER49":
-		*e = MAV_COMP_ID_USER49
-		return nil
-	case "MAV_COMP_ID_USER50":
-		*e = MAV_COMP_ID_USER50
-		return nil
-	case "MAV_COMP_ID_USER51":
-		*e = MAV_COMP_ID_USER51
-		return nil
-	case "MAV_COMP_ID_USER52":
-		*e = MAV_COMP_ID_USER52
-		return nil
-	case "MAV_COMP_ID_USER53":
-		*e = MAV_COMP_ID_USER53
-		return nil
-	case "MAV_COMP_ID_USER54":
-		*e = MAV_COMP_ID_USER54
-		return nil
-	case "MAV_COMP_ID_USER55":
-		*e = MAV_COMP_ID_USER55
-		return nil
-	case "MAV_COMP_ID_USER56":
-		*e = MAV_COMP_ID_USER56
-		return nil
-	case "MAV_COMP_ID_USER57":
-		*e = MAV_COMP_ID_USER57
-		return nil
-	case "MAV_COMP_ID_USER58":
-		*e = MAV_COMP_ID_USER58
-		return nil
-	case "MAV_COMP_ID_USER59":
-		*e = MAV_COMP_ID_USER59
-		return nil
-	case "MAV_COMP_ID_USER60":
-		*e = MAV_COMP_ID_USER60
-		return nil
-	case "MAV_COMP_ID_USER61":
-		*e = MAV_COMP_ID_USER61
-		return nil
-	case "MAV_COMP_ID_USER62":
-		*e = MAV_COMP_ID_USER62
-		return nil
-	case "MAV_COMP_ID_USER63":
-		*e = MAV_COMP_ID_USER63
-		return nil
-	case "MAV_COMP_ID_USER64":
-		*e = MAV_COMP_ID_USER64
-		return nil
-	case "MAV_COMP_ID_USER65":
-		*e = MAV_COMP_ID_USER65
-		return nil
-	case "MAV_COMP_ID_USER66":
-		*e = MAV_COMP_ID_USER66
-		return nil
-	case "MAV_COMP_ID_USER67":
-		*e = MAV_COMP_ID_USER67
-		return nil
-	case "MAV_COMP_ID_USER68":
-		*e = MAV_COMP_ID_USER68
-		return nil
-	case "MAV_COMP_ID_USER69":
-		*e = MAV_COMP_ID_USER69
-		return nil
-	case "MAV_COMP_ID_USER70":
-		*e = MAV_COMP_ID_USER70
-		return nil
-	case "MAV_COMP_ID_USER71":
-		*e = MAV_COMP_ID_USER71
-		return nil
-	case "MAV_COMP_ID_USER72":
-		*e = MAV_COMP_ID_USER72
-		return nil
-	case "MAV_COMP_ID_USER73":
-		*e = MAV_COMP_ID_USER73
-		return nil
-	case "MAV_COMP_ID_USER74":
-		*e = MAV_COMP_ID_USER74
-		return nil
-	case "MAV_COMP_ID_USER75":
-		*e = MAV_COMP_ID_USER75
-		return nil
-	case "MAV_COMP_ID_CAMERA":
-		*e = MAV_COMP_ID_CAMERA
-		return nil
-	case "MAV_COMP_ID_CAMERA2":
-		*e = MAV_COMP_ID_CAMERA2
-		return nil
-	case "MAV_COMP_ID_CAMERA3":
-		*e = MAV_COMP_ID_CAMERA3
-		return nil
-	case "MAV_COMP_ID_CAMERA4":
-		*e = MAV_COMP_ID_CAMERA4
-		return nil
-	case "MAV_COMP_ID_CAMERA5":
-		*e = MAV_COMP_ID_CAMERA5
-		return nil
-	case "MAV_COMP_ID_CAMERA6":
-		*e = MAV_COMP_ID_CAMERA6
-		return nil
-	case "MAV_COMP_ID_SERVO1":
-		*e = MAV_COMP_ID_SERVO1
-		return nil
-	case "MAV_COMP_ID_SERVO2":
-		*e = MAV_COMP_ID_SERVO2
-		return nil
-	case "MAV_COMP_ID_SERVO3":
-		*e = MAV_COMP_ID_SERVO3
-		return nil
-	case "MAV_COMP_ID_SERVO4":
-		*e = MAV_COMP_ID_SERVO4
-		return nil
-	case "MAV_COMP_ID_SERVO5":
-		*e = MAV_COMP_ID_SERVO5
-		return nil
-	case "MAV_COMP_ID_SERVO6":
-		*e = MAV_COMP_ID_SERVO6
-		return nil
-	case "MAV_COMP_ID_SERVO7":
-		*e = MAV_COMP_ID_SERVO7
-		return nil
-	case "MAV_COMP_ID_SERVO8":
-		*e = MAV_COMP_ID_SERVO8
-		return nil
-	case "MAV_COMP_ID_SERVO9":
-		*e = MAV_COMP_ID_SERVO9
-		return nil
-	case "MAV_COMP_ID_SERVO10":
-		*e = MAV_COMP_ID_SERVO10
-		return nil
-	case "MAV_COMP_ID_SERVO11":
-		*e = MAV_COMP_ID_SERVO11
-		return nil
-	case "MAV_COMP_ID_SERVO12":
-		*e = MAV_COMP_ID_SERVO12
-		return nil
-	case "MAV_COMP_ID_SERVO13":
-		*e = MAV_COMP_ID_SERVO13
-		return nil
-	case "MAV_COMP_ID_SERVO14":
-		*e = MAV_COMP_ID_SERVO14
-		return nil
-	case "MAV_COMP_ID_GIMBAL":
-		*e = MAV_COMP_ID_GIMBAL
-		return nil
-	case "MAV_COMP_ID_LOG":
-		*e = MAV_COMP_ID_LOG
-		return nil
-	case "MAV_COMP_ID_ADSB":
-		*e = MAV_COMP_ID_ADSB
-		return nil
-	case "MAV_COMP_ID_OSD":
-		*e = MAV_COMP_ID_OSD
-		return nil
-	case "MAV_COMP_ID_PERIPHERAL":
-		*e = MAV_COMP_ID_PERIPHERAL
-		return nil
-	case "MAV_COMP_ID_QX1_GIMBAL":
-		*e = MAV_COMP_ID_QX1_GIMBAL
-		return nil
-	case "MAV_COMP_ID_FLARM":
-		*e = MAV_COMP_ID_FLARM
-		return nil
-	case "MAV_COMP_ID_PARACHUTE":
-		*e = MAV_COMP_ID_PARACHUTE
-		return nil
-	case "MAV_COMP_ID_GIMBAL2":
-		*e = MAV_COMP_ID_GIMBAL2
-		return nil
-	case "MAV_COMP_ID_GIMBAL3":
-		*e = MAV_COMP_ID_GIMBAL3
-		return nil
-	case "MAV_COMP_ID_GIMBAL4":
-		*e = MAV_COMP_ID_GIMBAL4
-		return nil
-	case "MAV_COMP_ID_GIMBAL5":
-		*e = MAV_COMP_ID_GIMBAL5
-		return nil
-	case "MAV_COMP_ID_GIMBAL6":
-		*e = MAV_COMP_ID_GIMBAL6
-		return nil
-	case "MAV_COMP_ID_BATTERY":
-		*e = MAV_COMP_ID_BATTERY
-		return nil
-	case "MAV_COMP_ID_BATTERY2":
-		*e = MAV_COMP_ID_BATTERY2
-		return nil
-	case "MAV_COMP_ID_MISSIONPLANNER":
-		*e = MAV_COMP_ID_MISSIONPLANNER
-		return nil
-	case "MAV_COMP_ID_ONBOARD_COMPUTER":
-		*e = MAV_COMP_ID_ONBOARD_COMPUTER
-		return nil
-	case "MAV_COMP_ID_ONBOARD_COMPUTER2":
-		*e = MAV_COMP_ID_ONBOARD_COMPUTER2
-		return nil
-	case "MAV_COMP_ID_ONBOARD_COMPUTER3":
-		*e = MAV_COMP_ID_ONBOARD_COMPUTER3
-		return nil
-	case "MAV_COMP_ID_ONBOARD_COMPUTER4":
-		*e = MAV_COMP_ID_ONBOARD_COMPUTER4
-		return nil
-	case "MAV_COMP_ID_PATHPLANNER":
-		*e = MAV_COMP_ID_PATHPLANNER
-		return nil
-	case "MAV_COMP_ID_OBSTACLE_AVOIDANCE":
-		*e = MAV_COMP_ID_OBSTACLE_AVOIDANCE
-		return nil
-	case "MAV_COMP_ID_VISUAL_INERTIAL_ODOMETRY":
-		*e = MAV_COMP_ID_VISUAL_INERTIAL_ODOMETRY
-		return nil
-	case "MAV_COMP_ID_PAIRING_MANAGER":
-		*e = MAV_COMP_ID_PAIRING_MANAGER
-		return nil
-	case "MAV_COMP_ID_IMU":
-		*e = MAV_COMP_ID_IMU
-		return nil
-	case "MAV_COMP_ID_IMU_2":
-		*e = MAV_COMP_ID_IMU_2
-		return nil
-	case "MAV_COMP_ID_IMU_3":
-		*e = MAV_COMP_ID_IMU_3
-		return nil
-	case "MAV_COMP_ID_GPS":
-		*e = MAV_COMP_ID_GPS
-		return nil
-	case "MAV_COMP_ID_GPS2":
-		*e = MAV_COMP_ID_GPS2
-		return nil
-	case "MAV_COMP_ID_ODID_TXRX_1":
-		*e = MAV_COMP_ID_ODID_TXRX_1
-		return nil
-	case "MAV_COMP_ID_ODID_TXRX_2":
-		*e = MAV_COMP_ID_ODID_TXRX_2
-		return nil
-	case "MAV_COMP_ID_ODID_TXRX_3":
-		*e = MAV_COMP_ID_ODID_TXRX_3
-		return nil
-	case "MAV_COMP_ID_UDP_BRIDGE":
-		*e = MAV_COMP_ID_UDP_BRIDGE
-		return nil
-	case "MAV_COMP_ID_UART_BRIDGE":
-		*e = MAV_COMP_ID_UART_BRIDGE
-		return nil
-	case "MAV_COMP_ID_TUNNEL_NODE":
-		*e = MAV_COMP_ID_TUNNEL_NODE
-		return nil
-	case "MAV_COMP_ID_SYSTEM_CONTROL":
-		*e = MAV_COMP_ID_SYSTEM_CONTROL
+	if rl, ok := reverseLabels_MAV_COMPONENT[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -7371,11 +5435,10 @@ func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_COMPONENT) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_COMPONENT[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // A data stream is not a fixed set of messages, but rather a     recommendation to the autopilot software. Individual autopilots may or may not obey     the recommended messages.
@@ -7402,60 +5465,42 @@ const (
 	MAV_DATA_STREAM_EXTRA3 MAV_DATA_STREAM = 12
 )
 
+var labels_MAV_DATA_STREAM = map[MAV_DATA_STREAM]string{
+	MAV_DATA_STREAM_ALL:             "MAV_DATA_STREAM_ALL",
+	MAV_DATA_STREAM_RAW_SENSORS:     "MAV_DATA_STREAM_RAW_SENSORS",
+	MAV_DATA_STREAM_EXTENDED_STATUS: "MAV_DATA_STREAM_EXTENDED_STATUS",
+	MAV_DATA_STREAM_RC_CHANNELS:     "MAV_DATA_STREAM_RC_CHANNELS",
+	MAV_DATA_STREAM_RAW_CONTROLLER:  "MAV_DATA_STREAM_RAW_CONTROLLER",
+	MAV_DATA_STREAM_POSITION:        "MAV_DATA_STREAM_POSITION",
+	MAV_DATA_STREAM_EXTRA1:          "MAV_DATA_STREAM_EXTRA1",
+	MAV_DATA_STREAM_EXTRA2:          "MAV_DATA_STREAM_EXTRA2",
+	MAV_DATA_STREAM_EXTRA3:          "MAV_DATA_STREAM_EXTRA3",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_DATA_STREAM) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_DATA_STREAM_ALL:
-		return []byte("MAV_DATA_STREAM_ALL"), nil
-	case MAV_DATA_STREAM_RAW_SENSORS:
-		return []byte("MAV_DATA_STREAM_RAW_SENSORS"), nil
-	case MAV_DATA_STREAM_EXTENDED_STATUS:
-		return []byte("MAV_DATA_STREAM_EXTENDED_STATUS"), nil
-	case MAV_DATA_STREAM_RC_CHANNELS:
-		return []byte("MAV_DATA_STREAM_RC_CHANNELS"), nil
-	case MAV_DATA_STREAM_RAW_CONTROLLER:
-		return []byte("MAV_DATA_STREAM_RAW_CONTROLLER"), nil
-	case MAV_DATA_STREAM_POSITION:
-		return []byte("MAV_DATA_STREAM_POSITION"), nil
-	case MAV_DATA_STREAM_EXTRA1:
-		return []byte("MAV_DATA_STREAM_EXTRA1"), nil
-	case MAV_DATA_STREAM_EXTRA2:
-		return []byte("MAV_DATA_STREAM_EXTRA2"), nil
-	case MAV_DATA_STREAM_EXTRA3:
-		return []byte("MAV_DATA_STREAM_EXTRA3"), nil
+	if l, ok := labels_MAV_DATA_STREAM[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_DATA_STREAM = map[string]MAV_DATA_STREAM{
+	"MAV_DATA_STREAM_ALL":             MAV_DATA_STREAM_ALL,
+	"MAV_DATA_STREAM_RAW_SENSORS":     MAV_DATA_STREAM_RAW_SENSORS,
+	"MAV_DATA_STREAM_EXTENDED_STATUS": MAV_DATA_STREAM_EXTENDED_STATUS,
+	"MAV_DATA_STREAM_RC_CHANNELS":     MAV_DATA_STREAM_RC_CHANNELS,
+	"MAV_DATA_STREAM_RAW_CONTROLLER":  MAV_DATA_STREAM_RAW_CONTROLLER,
+	"MAV_DATA_STREAM_POSITION":        MAV_DATA_STREAM_POSITION,
+	"MAV_DATA_STREAM_EXTRA1":          MAV_DATA_STREAM_EXTRA1,
+	"MAV_DATA_STREAM_EXTRA2":          MAV_DATA_STREAM_EXTRA2,
+	"MAV_DATA_STREAM_EXTRA3":          MAV_DATA_STREAM_EXTRA3,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_DATA_STREAM) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_DATA_STREAM_ALL":
-		*e = MAV_DATA_STREAM_ALL
-		return nil
-	case "MAV_DATA_STREAM_RAW_SENSORS":
-		*e = MAV_DATA_STREAM_RAW_SENSORS
-		return nil
-	case "MAV_DATA_STREAM_EXTENDED_STATUS":
-		*e = MAV_DATA_STREAM_EXTENDED_STATUS
-		return nil
-	case "MAV_DATA_STREAM_RC_CHANNELS":
-		*e = MAV_DATA_STREAM_RC_CHANNELS
-		return nil
-	case "MAV_DATA_STREAM_RAW_CONTROLLER":
-		*e = MAV_DATA_STREAM_RAW_CONTROLLER
-		return nil
-	case "MAV_DATA_STREAM_POSITION":
-		*e = MAV_DATA_STREAM_POSITION
-		return nil
-	case "MAV_DATA_STREAM_EXTRA1":
-		*e = MAV_DATA_STREAM_EXTRA1
-		return nil
-	case "MAV_DATA_STREAM_EXTRA2":
-		*e = MAV_DATA_STREAM_EXTRA2
-		return nil
-	case "MAV_DATA_STREAM_EXTRA3":
-		*e = MAV_DATA_STREAM_EXTRA3
+	if rl, ok := reverseLabels_MAV_DATA_STREAM[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -7463,11 +5508,10 @@ func (e *MAV_DATA_STREAM) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_DATA_STREAM) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_DATA_STREAM[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Enumeration of distance sensor types
@@ -7486,40 +5530,34 @@ const (
 	MAV_DISTANCE_SENSOR_UNKNOWN MAV_DISTANCE_SENSOR = 4
 )
 
+var labels_MAV_DISTANCE_SENSOR = map[MAV_DISTANCE_SENSOR]string{
+	MAV_DISTANCE_SENSOR_LASER:      "MAV_DISTANCE_SENSOR_LASER",
+	MAV_DISTANCE_SENSOR_ULTRASOUND: "MAV_DISTANCE_SENSOR_ULTRASOUND",
+	MAV_DISTANCE_SENSOR_INFRARED:   "MAV_DISTANCE_SENSOR_INFRARED",
+	MAV_DISTANCE_SENSOR_RADAR:      "MAV_DISTANCE_SENSOR_RADAR",
+	MAV_DISTANCE_SENSOR_UNKNOWN:    "MAV_DISTANCE_SENSOR_UNKNOWN",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_DISTANCE_SENSOR) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_DISTANCE_SENSOR_LASER:
-		return []byte("MAV_DISTANCE_SENSOR_LASER"), nil
-	case MAV_DISTANCE_SENSOR_ULTRASOUND:
-		return []byte("MAV_DISTANCE_SENSOR_ULTRASOUND"), nil
-	case MAV_DISTANCE_SENSOR_INFRARED:
-		return []byte("MAV_DISTANCE_SENSOR_INFRARED"), nil
-	case MAV_DISTANCE_SENSOR_RADAR:
-		return []byte("MAV_DISTANCE_SENSOR_RADAR"), nil
-	case MAV_DISTANCE_SENSOR_UNKNOWN:
-		return []byte("MAV_DISTANCE_SENSOR_UNKNOWN"), nil
+	if l, ok := labels_MAV_DISTANCE_SENSOR[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_DISTANCE_SENSOR = map[string]MAV_DISTANCE_SENSOR{
+	"MAV_DISTANCE_SENSOR_LASER":      MAV_DISTANCE_SENSOR_LASER,
+	"MAV_DISTANCE_SENSOR_ULTRASOUND": MAV_DISTANCE_SENSOR_ULTRASOUND,
+	"MAV_DISTANCE_SENSOR_INFRARED":   MAV_DISTANCE_SENSOR_INFRARED,
+	"MAV_DISTANCE_SENSOR_RADAR":      MAV_DISTANCE_SENSOR_RADAR,
+	"MAV_DISTANCE_SENSOR_UNKNOWN":    MAV_DISTANCE_SENSOR_UNKNOWN,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_DISTANCE_SENSOR) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_DISTANCE_SENSOR_LASER":
-		*e = MAV_DISTANCE_SENSOR_LASER
-		return nil
-	case "MAV_DISTANCE_SENSOR_ULTRASOUND":
-		*e = MAV_DISTANCE_SENSOR_ULTRASOUND
-		return nil
-	case "MAV_DISTANCE_SENSOR_INFRARED":
-		*e = MAV_DISTANCE_SENSOR_INFRARED
-		return nil
-	case "MAV_DISTANCE_SENSOR_RADAR":
-		*e = MAV_DISTANCE_SENSOR_RADAR
-		return nil
-	case "MAV_DISTANCE_SENSOR_UNKNOWN":
-		*e = MAV_DISTANCE_SENSOR_UNKNOWN
+	if rl, ok := reverseLabels_MAV_DISTANCE_SENSOR[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -7527,11 +5565,10 @@ func (e *MAV_DISTANCE_SENSOR) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_DISTANCE_SENSOR) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_DISTANCE_SENSOR[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Bitmap of options for the MAV_CMD_DO_REPOSITION
@@ -7542,20 +5579,26 @@ const (
 	MAV_DO_REPOSITION_FLAGS_CHANGE_MODE MAV_DO_REPOSITION_FLAGS = 1
 )
 
+var labels_MAV_DO_REPOSITION_FLAGS = map[MAV_DO_REPOSITION_FLAGS]string{
+	MAV_DO_REPOSITION_FLAGS_CHANGE_MODE: "MAV_DO_REPOSITION_FLAGS_CHANGE_MODE",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_DO_REPOSITION_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_DO_REPOSITION_FLAGS_CHANGE_MODE:
-		return []byte("MAV_DO_REPOSITION_FLAGS_CHANGE_MODE"), nil
+	if l, ok := labels_MAV_DO_REPOSITION_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_DO_REPOSITION_FLAGS = map[string]MAV_DO_REPOSITION_FLAGS{
+	"MAV_DO_REPOSITION_FLAGS_CHANGE_MODE": MAV_DO_REPOSITION_FLAGS_CHANGE_MODE,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_DO_REPOSITION_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_DO_REPOSITION_FLAGS_CHANGE_MODE":
-		*e = MAV_DO_REPOSITION_FLAGS_CHANGE_MODE
+	if rl, ok := reverseLabels_MAV_DO_REPOSITION_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -7563,11 +5606,10 @@ func (e *MAV_DO_REPOSITION_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_DO_REPOSITION_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_DO_REPOSITION_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Enumeration of estimator types
@@ -7594,60 +5636,42 @@ const (
 	MAV_ESTIMATOR_TYPE_AUTOPILOT MAV_ESTIMATOR_TYPE = 8
 )
 
+var labels_MAV_ESTIMATOR_TYPE = map[MAV_ESTIMATOR_TYPE]string{
+	MAV_ESTIMATOR_TYPE_UNKNOWN:   "MAV_ESTIMATOR_TYPE_UNKNOWN",
+	MAV_ESTIMATOR_TYPE_NAIVE:     "MAV_ESTIMATOR_TYPE_NAIVE",
+	MAV_ESTIMATOR_TYPE_VISION:    "MAV_ESTIMATOR_TYPE_VISION",
+	MAV_ESTIMATOR_TYPE_VIO:       "MAV_ESTIMATOR_TYPE_VIO",
+	MAV_ESTIMATOR_TYPE_GPS:       "MAV_ESTIMATOR_TYPE_GPS",
+	MAV_ESTIMATOR_TYPE_GPS_INS:   "MAV_ESTIMATOR_TYPE_GPS_INS",
+	MAV_ESTIMATOR_TYPE_MOCAP:     "MAV_ESTIMATOR_TYPE_MOCAP",
+	MAV_ESTIMATOR_TYPE_LIDAR:     "MAV_ESTIMATOR_TYPE_LIDAR",
+	MAV_ESTIMATOR_TYPE_AUTOPILOT: "MAV_ESTIMATOR_TYPE_AUTOPILOT",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ESTIMATOR_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_ESTIMATOR_TYPE_UNKNOWN:
-		return []byte("MAV_ESTIMATOR_TYPE_UNKNOWN"), nil
-	case MAV_ESTIMATOR_TYPE_NAIVE:
-		return []byte("MAV_ESTIMATOR_TYPE_NAIVE"), nil
-	case MAV_ESTIMATOR_TYPE_VISION:
-		return []byte("MAV_ESTIMATOR_TYPE_VISION"), nil
-	case MAV_ESTIMATOR_TYPE_VIO:
-		return []byte("MAV_ESTIMATOR_TYPE_VIO"), nil
-	case MAV_ESTIMATOR_TYPE_GPS:
-		return []byte("MAV_ESTIMATOR_TYPE_GPS"), nil
-	case MAV_ESTIMATOR_TYPE_GPS_INS:
-		return []byte("MAV_ESTIMATOR_TYPE_GPS_INS"), nil
-	case MAV_ESTIMATOR_TYPE_MOCAP:
-		return []byte("MAV_ESTIMATOR_TYPE_MOCAP"), nil
-	case MAV_ESTIMATOR_TYPE_LIDAR:
-		return []byte("MAV_ESTIMATOR_TYPE_LIDAR"), nil
-	case MAV_ESTIMATOR_TYPE_AUTOPILOT:
-		return []byte("MAV_ESTIMATOR_TYPE_AUTOPILOT"), nil
+	if l, ok := labels_MAV_ESTIMATOR_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_ESTIMATOR_TYPE = map[string]MAV_ESTIMATOR_TYPE{
+	"MAV_ESTIMATOR_TYPE_UNKNOWN":   MAV_ESTIMATOR_TYPE_UNKNOWN,
+	"MAV_ESTIMATOR_TYPE_NAIVE":     MAV_ESTIMATOR_TYPE_NAIVE,
+	"MAV_ESTIMATOR_TYPE_VISION":    MAV_ESTIMATOR_TYPE_VISION,
+	"MAV_ESTIMATOR_TYPE_VIO":       MAV_ESTIMATOR_TYPE_VIO,
+	"MAV_ESTIMATOR_TYPE_GPS":       MAV_ESTIMATOR_TYPE_GPS,
+	"MAV_ESTIMATOR_TYPE_GPS_INS":   MAV_ESTIMATOR_TYPE_GPS_INS,
+	"MAV_ESTIMATOR_TYPE_MOCAP":     MAV_ESTIMATOR_TYPE_MOCAP,
+	"MAV_ESTIMATOR_TYPE_LIDAR":     MAV_ESTIMATOR_TYPE_LIDAR,
+	"MAV_ESTIMATOR_TYPE_AUTOPILOT": MAV_ESTIMATOR_TYPE_AUTOPILOT,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ESTIMATOR_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_ESTIMATOR_TYPE_UNKNOWN":
-		*e = MAV_ESTIMATOR_TYPE_UNKNOWN
-		return nil
-	case "MAV_ESTIMATOR_TYPE_NAIVE":
-		*e = MAV_ESTIMATOR_TYPE_NAIVE
-		return nil
-	case "MAV_ESTIMATOR_TYPE_VISION":
-		*e = MAV_ESTIMATOR_TYPE_VISION
-		return nil
-	case "MAV_ESTIMATOR_TYPE_VIO":
-		*e = MAV_ESTIMATOR_TYPE_VIO
-		return nil
-	case "MAV_ESTIMATOR_TYPE_GPS":
-		*e = MAV_ESTIMATOR_TYPE_GPS
-		return nil
-	case "MAV_ESTIMATOR_TYPE_GPS_INS":
-		*e = MAV_ESTIMATOR_TYPE_GPS_INS
-		return nil
-	case "MAV_ESTIMATOR_TYPE_MOCAP":
-		*e = MAV_ESTIMATOR_TYPE_MOCAP
-		return nil
-	case "MAV_ESTIMATOR_TYPE_LIDAR":
-		*e = MAV_ESTIMATOR_TYPE_LIDAR
-		return nil
-	case "MAV_ESTIMATOR_TYPE_AUTOPILOT":
-		*e = MAV_ESTIMATOR_TYPE_AUTOPILOT
+	if rl, ok := reverseLabels_MAV_ESTIMATOR_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -7655,11 +5679,10 @@ func (e *MAV_ESTIMATOR_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ESTIMATOR_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_ESTIMATOR_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Flags for CURRENT_EVENT_SEQUENCE.
@@ -7670,20 +5693,26 @@ const (
 	MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET MAV_EVENT_CURRENT_SEQUENCE_FLAGS = 1
 )
 
+var labels_MAV_EVENT_CURRENT_SEQUENCE_FLAGS = map[MAV_EVENT_CURRENT_SEQUENCE_FLAGS]string{
+	MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET: "MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_EVENT_CURRENT_SEQUENCE_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET:
-		return []byte("MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET"), nil
+	if l, ok := labels_MAV_EVENT_CURRENT_SEQUENCE_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_EVENT_CURRENT_SEQUENCE_FLAGS = map[string]MAV_EVENT_CURRENT_SEQUENCE_FLAGS{
+	"MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET": MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_EVENT_CURRENT_SEQUENCE_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET":
-		*e = MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET
+	if rl, ok := reverseLabels_MAV_EVENT_CURRENT_SEQUENCE_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -7691,11 +5720,10 @@ func (e *MAV_EVENT_CURRENT_SEQUENCE_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_EVENT_CURRENT_SEQUENCE_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_EVENT_CURRENT_SEQUENCE_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Reason for an event error response.
@@ -7706,20 +5734,26 @@ const (
 	MAV_EVENT_ERROR_REASON_UNAVAILABLE MAV_EVENT_ERROR_REASON = 0
 )
 
+var labels_MAV_EVENT_ERROR_REASON = map[MAV_EVENT_ERROR_REASON]string{
+	MAV_EVENT_ERROR_REASON_UNAVAILABLE: "MAV_EVENT_ERROR_REASON_UNAVAILABLE",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_EVENT_ERROR_REASON) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_EVENT_ERROR_REASON_UNAVAILABLE:
-		return []byte("MAV_EVENT_ERROR_REASON_UNAVAILABLE"), nil
+	if l, ok := labels_MAV_EVENT_ERROR_REASON[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_EVENT_ERROR_REASON = map[string]MAV_EVENT_ERROR_REASON{
+	"MAV_EVENT_ERROR_REASON_UNAVAILABLE": MAV_EVENT_ERROR_REASON_UNAVAILABLE,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_EVENT_ERROR_REASON) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_EVENT_ERROR_REASON_UNAVAILABLE":
-		*e = MAV_EVENT_ERROR_REASON_UNAVAILABLE
+	if rl, ok := reverseLabels_MAV_EVENT_ERROR_REASON[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -7727,11 +5761,10 @@ func (e *MAV_EVENT_ERROR_REASON) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_EVENT_ERROR_REASON) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_EVENT_ERROR_REASON[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Co-ordinate frames used by MAVLink. Not all frames are supported by all commands, messages, or vehicles.            Global frames use the following naming conventions:      - `GLOBAL`: Global co-ordinate frame with WGS84 latitude/longitude and altitude positive over mean sea level (MSL) by default.         The following modifiers may be used with `GLOBAL`:        - `RELATIVE_ALT`: Altitude is relative to the vehicle home position rather than MSL        - `TERRAIN_ALT`: Altitude is relative to ground level rather than MSL        - `INT`: Latitude/longitude (in degrees) are scaled by multiplying by 1E7        Local frames use the following naming conventions:      - `LOCAL`: Origin of local frame is fixed relative to earth. Unless otherwise specified this origin is the origin of the vehicle position-estimator ("EKF").      - `BODY`: Origin of local frame travels with the vehicle. NOTE, `BODY` does NOT indicate alignment of frame axis with vehicle attitude.      - `OFFSET`: Deprecated synonym for `BODY` (origin travels with the vehicle). Not to be used for new frames.      Some deprecated frames do not follow these conventions (e.g. MAV_FRAME_BODY_NED and MAV_FRAME_BODY_OFFSET_NED).
@@ -7784,125 +5817,68 @@ const (
 	MAV_FRAME_LOCAL_FLU MAV_FRAME = 21
 )
 
+var labels_MAV_FRAME = map[MAV_FRAME]string{
+	MAV_FRAME_GLOBAL:                  "MAV_FRAME_GLOBAL",
+	MAV_FRAME_LOCAL_NED:               "MAV_FRAME_LOCAL_NED",
+	MAV_FRAME_MISSION:                 "MAV_FRAME_MISSION",
+	MAV_FRAME_GLOBAL_RELATIVE_ALT:     "MAV_FRAME_GLOBAL_RELATIVE_ALT",
+	MAV_FRAME_LOCAL_ENU:               "MAV_FRAME_LOCAL_ENU",
+	MAV_FRAME_GLOBAL_INT:              "MAV_FRAME_GLOBAL_INT",
+	MAV_FRAME_GLOBAL_RELATIVE_ALT_INT: "MAV_FRAME_GLOBAL_RELATIVE_ALT_INT",
+	MAV_FRAME_LOCAL_OFFSET_NED:        "MAV_FRAME_LOCAL_OFFSET_NED",
+	MAV_FRAME_BODY_NED:                "MAV_FRAME_BODY_NED",
+	MAV_FRAME_BODY_OFFSET_NED:         "MAV_FRAME_BODY_OFFSET_NED",
+	MAV_FRAME_GLOBAL_TERRAIN_ALT:      "MAV_FRAME_GLOBAL_TERRAIN_ALT",
+	MAV_FRAME_GLOBAL_TERRAIN_ALT_INT:  "MAV_FRAME_GLOBAL_TERRAIN_ALT_INT",
+	MAV_FRAME_BODY_FRD:                "MAV_FRAME_BODY_FRD",
+	MAV_FRAME_RESERVED_13:             "MAV_FRAME_RESERVED_13",
+	MAV_FRAME_RESERVED_14:             "MAV_FRAME_RESERVED_14",
+	MAV_FRAME_RESERVED_15:             "MAV_FRAME_RESERVED_15",
+	MAV_FRAME_RESERVED_16:             "MAV_FRAME_RESERVED_16",
+	MAV_FRAME_RESERVED_17:             "MAV_FRAME_RESERVED_17",
+	MAV_FRAME_RESERVED_18:             "MAV_FRAME_RESERVED_18",
+	MAV_FRAME_RESERVED_19:             "MAV_FRAME_RESERVED_19",
+	MAV_FRAME_LOCAL_FRD:               "MAV_FRAME_LOCAL_FRD",
+	MAV_FRAME_LOCAL_FLU:               "MAV_FRAME_LOCAL_FLU",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_FRAME) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_FRAME_GLOBAL:
-		return []byte("MAV_FRAME_GLOBAL"), nil
-	case MAV_FRAME_LOCAL_NED:
-		return []byte("MAV_FRAME_LOCAL_NED"), nil
-	case MAV_FRAME_MISSION:
-		return []byte("MAV_FRAME_MISSION"), nil
-	case MAV_FRAME_GLOBAL_RELATIVE_ALT:
-		return []byte("MAV_FRAME_GLOBAL_RELATIVE_ALT"), nil
-	case MAV_FRAME_LOCAL_ENU:
-		return []byte("MAV_FRAME_LOCAL_ENU"), nil
-	case MAV_FRAME_GLOBAL_INT:
-		return []byte("MAV_FRAME_GLOBAL_INT"), nil
-	case MAV_FRAME_GLOBAL_RELATIVE_ALT_INT:
-		return []byte("MAV_FRAME_GLOBAL_RELATIVE_ALT_INT"), nil
-	case MAV_FRAME_LOCAL_OFFSET_NED:
-		return []byte("MAV_FRAME_LOCAL_OFFSET_NED"), nil
-	case MAV_FRAME_BODY_NED:
-		return []byte("MAV_FRAME_BODY_NED"), nil
-	case MAV_FRAME_BODY_OFFSET_NED:
-		return []byte("MAV_FRAME_BODY_OFFSET_NED"), nil
-	case MAV_FRAME_GLOBAL_TERRAIN_ALT:
-		return []byte("MAV_FRAME_GLOBAL_TERRAIN_ALT"), nil
-	case MAV_FRAME_GLOBAL_TERRAIN_ALT_INT:
-		return []byte("MAV_FRAME_GLOBAL_TERRAIN_ALT_INT"), nil
-	case MAV_FRAME_BODY_FRD:
-		return []byte("MAV_FRAME_BODY_FRD"), nil
-	case MAV_FRAME_RESERVED_13:
-		return []byte("MAV_FRAME_RESERVED_13"), nil
-	case MAV_FRAME_RESERVED_14:
-		return []byte("MAV_FRAME_RESERVED_14"), nil
-	case MAV_FRAME_RESERVED_15:
-		return []byte("MAV_FRAME_RESERVED_15"), nil
-	case MAV_FRAME_RESERVED_16:
-		return []byte("MAV_FRAME_RESERVED_16"), nil
-	case MAV_FRAME_RESERVED_17:
-		return []byte("MAV_FRAME_RESERVED_17"), nil
-	case MAV_FRAME_RESERVED_18:
-		return []byte("MAV_FRAME_RESERVED_18"), nil
-	case MAV_FRAME_RESERVED_19:
-		return []byte("MAV_FRAME_RESERVED_19"), nil
-	case MAV_FRAME_LOCAL_FRD:
-		return []byte("MAV_FRAME_LOCAL_FRD"), nil
-	case MAV_FRAME_LOCAL_FLU:
-		return []byte("MAV_FRAME_LOCAL_FLU"), nil
+	if l, ok := labels_MAV_FRAME[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_FRAME = map[string]MAV_FRAME{
+	"MAV_FRAME_GLOBAL":                  MAV_FRAME_GLOBAL,
+	"MAV_FRAME_LOCAL_NED":               MAV_FRAME_LOCAL_NED,
+	"MAV_FRAME_MISSION":                 MAV_FRAME_MISSION,
+	"MAV_FRAME_GLOBAL_RELATIVE_ALT":     MAV_FRAME_GLOBAL_RELATIVE_ALT,
+	"MAV_FRAME_LOCAL_ENU":               MAV_FRAME_LOCAL_ENU,
+	"MAV_FRAME_GLOBAL_INT":              MAV_FRAME_GLOBAL_INT,
+	"MAV_FRAME_GLOBAL_RELATIVE_ALT_INT": MAV_FRAME_GLOBAL_RELATIVE_ALT_INT,
+	"MAV_FRAME_LOCAL_OFFSET_NED":        MAV_FRAME_LOCAL_OFFSET_NED,
+	"MAV_FRAME_BODY_NED":                MAV_FRAME_BODY_NED,
+	"MAV_FRAME_BODY_OFFSET_NED":         MAV_FRAME_BODY_OFFSET_NED,
+	"MAV_FRAME_GLOBAL_TERRAIN_ALT":      MAV_FRAME_GLOBAL_TERRAIN_ALT,
+	"MAV_FRAME_GLOBAL_TERRAIN_ALT_INT":  MAV_FRAME_GLOBAL_TERRAIN_ALT_INT,
+	"MAV_FRAME_BODY_FRD":                MAV_FRAME_BODY_FRD,
+	"MAV_FRAME_RESERVED_13":             MAV_FRAME_RESERVED_13,
+	"MAV_FRAME_RESERVED_14":             MAV_FRAME_RESERVED_14,
+	"MAV_FRAME_RESERVED_15":             MAV_FRAME_RESERVED_15,
+	"MAV_FRAME_RESERVED_16":             MAV_FRAME_RESERVED_16,
+	"MAV_FRAME_RESERVED_17":             MAV_FRAME_RESERVED_17,
+	"MAV_FRAME_RESERVED_18":             MAV_FRAME_RESERVED_18,
+	"MAV_FRAME_RESERVED_19":             MAV_FRAME_RESERVED_19,
+	"MAV_FRAME_LOCAL_FRD":               MAV_FRAME_LOCAL_FRD,
+	"MAV_FRAME_LOCAL_FLU":               MAV_FRAME_LOCAL_FLU,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_FRAME) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_FRAME_GLOBAL":
-		*e = MAV_FRAME_GLOBAL
-		return nil
-	case "MAV_FRAME_LOCAL_NED":
-		*e = MAV_FRAME_LOCAL_NED
-		return nil
-	case "MAV_FRAME_MISSION":
-		*e = MAV_FRAME_MISSION
-		return nil
-	case "MAV_FRAME_GLOBAL_RELATIVE_ALT":
-		*e = MAV_FRAME_GLOBAL_RELATIVE_ALT
-		return nil
-	case "MAV_FRAME_LOCAL_ENU":
-		*e = MAV_FRAME_LOCAL_ENU
-		return nil
-	case "MAV_FRAME_GLOBAL_INT":
-		*e = MAV_FRAME_GLOBAL_INT
-		return nil
-	case "MAV_FRAME_GLOBAL_RELATIVE_ALT_INT":
-		*e = MAV_FRAME_GLOBAL_RELATIVE_ALT_INT
-		return nil
-	case "MAV_FRAME_LOCAL_OFFSET_NED":
-		*e = MAV_FRAME_LOCAL_OFFSET_NED
-		return nil
-	case "MAV_FRAME_BODY_NED":
-		*e = MAV_FRAME_BODY_NED
-		return nil
-	case "MAV_FRAME_BODY_OFFSET_NED":
-		*e = MAV_FRAME_BODY_OFFSET_NED
-		return nil
-	case "MAV_FRAME_GLOBAL_TERRAIN_ALT":
-		*e = MAV_FRAME_GLOBAL_TERRAIN_ALT
-		return nil
-	case "MAV_FRAME_GLOBAL_TERRAIN_ALT_INT":
-		*e = MAV_FRAME_GLOBAL_TERRAIN_ALT_INT
-		return nil
-	case "MAV_FRAME_BODY_FRD":
-		*e = MAV_FRAME_BODY_FRD
-		return nil
-	case "MAV_FRAME_RESERVED_13":
-		*e = MAV_FRAME_RESERVED_13
-		return nil
-	case "MAV_FRAME_RESERVED_14":
-		*e = MAV_FRAME_RESERVED_14
-		return nil
-	case "MAV_FRAME_RESERVED_15":
-		*e = MAV_FRAME_RESERVED_15
-		return nil
-	case "MAV_FRAME_RESERVED_16":
-		*e = MAV_FRAME_RESERVED_16
-		return nil
-	case "MAV_FRAME_RESERVED_17":
-		*e = MAV_FRAME_RESERVED_17
-		return nil
-	case "MAV_FRAME_RESERVED_18":
-		*e = MAV_FRAME_RESERVED_18
-		return nil
-	case "MAV_FRAME_RESERVED_19":
-		*e = MAV_FRAME_RESERVED_19
-		return nil
-	case "MAV_FRAME_LOCAL_FRD":
-		*e = MAV_FRAME_LOCAL_FRD
-		return nil
-	case "MAV_FRAME_LOCAL_FLU":
-		*e = MAV_FRAME_LOCAL_FLU
+	if rl, ok := reverseLabels_MAV_FRAME[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -7910,11 +5886,10 @@ func (e *MAV_FRAME) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_FRAME) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_FRAME[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Flags to report status/failure cases for a power generator (used in GENERATOR_STATUS). Note that FAULTS are conditions that cause the generator to fail. Warnings are conditions that require attention before the next use (they indicate the system is not operating properly).
@@ -7969,130 +5944,70 @@ const (
 	MAV_GENERATOR_STATUS_FLAG_IDLE MAV_GENERATOR_STATUS_FLAG = 4194304
 )
 
+var labels_MAV_GENERATOR_STATUS_FLAG = map[MAV_GENERATOR_STATUS_FLAG]string{
+	MAV_GENERATOR_STATUS_FLAG_OFF:                              "MAV_GENERATOR_STATUS_FLAG_OFF",
+	MAV_GENERATOR_STATUS_FLAG_READY:                            "MAV_GENERATOR_STATUS_FLAG_READY",
+	MAV_GENERATOR_STATUS_FLAG_GENERATING:                       "MAV_GENERATOR_STATUS_FLAG_GENERATING",
+	MAV_GENERATOR_STATUS_FLAG_CHARGING:                         "MAV_GENERATOR_STATUS_FLAG_CHARGING",
+	MAV_GENERATOR_STATUS_FLAG_REDUCED_POWER:                    "MAV_GENERATOR_STATUS_FLAG_REDUCED_POWER",
+	MAV_GENERATOR_STATUS_FLAG_MAXPOWER:                         "MAV_GENERATOR_STATUS_FLAG_MAXPOWER",
+	MAV_GENERATOR_STATUS_FLAG_OVERTEMP_WARNING:                 "MAV_GENERATOR_STATUS_FLAG_OVERTEMP_WARNING",
+	MAV_GENERATOR_STATUS_FLAG_OVERTEMP_FAULT:                   "MAV_GENERATOR_STATUS_FLAG_OVERTEMP_FAULT",
+	MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_WARNING:     "MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_WARNING",
+	MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_FAULT:       "MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_FAULT",
+	MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_FAULT:                "MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_FAULT",
+	MAV_GENERATOR_STATUS_FLAG_POWERSOURCE_FAULT:                "MAV_GENERATOR_STATUS_FLAG_POWERSOURCE_FAULT",
+	MAV_GENERATOR_STATUS_FLAG_COMMUNICATION_WARNING:            "MAV_GENERATOR_STATUS_FLAG_COMMUNICATION_WARNING",
+	MAV_GENERATOR_STATUS_FLAG_COOLING_WARNING:                  "MAV_GENERATOR_STATUS_FLAG_COOLING_WARNING",
+	MAV_GENERATOR_STATUS_FLAG_POWER_RAIL_FAULT:                 "MAV_GENERATOR_STATUS_FLAG_POWER_RAIL_FAULT",
+	MAV_GENERATOR_STATUS_FLAG_OVERCURRENT_FAULT:                "MAV_GENERATOR_STATUS_FLAG_OVERCURRENT_FAULT",
+	MAV_GENERATOR_STATUS_FLAG_BATTERY_OVERCHARGE_CURRENT_FAULT: "MAV_GENERATOR_STATUS_FLAG_BATTERY_OVERCHARGE_CURRENT_FAULT",
+	MAV_GENERATOR_STATUS_FLAG_OVERVOLTAGE_FAULT:                "MAV_GENERATOR_STATUS_FLAG_OVERVOLTAGE_FAULT",
+	MAV_GENERATOR_STATUS_FLAG_BATTERY_UNDERVOLT_FAULT:          "MAV_GENERATOR_STATUS_FLAG_BATTERY_UNDERVOLT_FAULT",
+	MAV_GENERATOR_STATUS_FLAG_START_INHIBITED:                  "MAV_GENERATOR_STATUS_FLAG_START_INHIBITED",
+	MAV_GENERATOR_STATUS_FLAG_MAINTENANCE_REQUIRED:             "MAV_GENERATOR_STATUS_FLAG_MAINTENANCE_REQUIRED",
+	MAV_GENERATOR_STATUS_FLAG_WARMING_UP:                       "MAV_GENERATOR_STATUS_FLAG_WARMING_UP",
+	MAV_GENERATOR_STATUS_FLAG_IDLE:                             "MAV_GENERATOR_STATUS_FLAG_IDLE",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_GENERATOR_STATUS_FLAG) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_GENERATOR_STATUS_FLAG_OFF:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_OFF"), nil
-	case MAV_GENERATOR_STATUS_FLAG_READY:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_READY"), nil
-	case MAV_GENERATOR_STATUS_FLAG_GENERATING:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_GENERATING"), nil
-	case MAV_GENERATOR_STATUS_FLAG_CHARGING:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_CHARGING"), nil
-	case MAV_GENERATOR_STATUS_FLAG_REDUCED_POWER:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_REDUCED_POWER"), nil
-	case MAV_GENERATOR_STATUS_FLAG_MAXPOWER:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_MAXPOWER"), nil
-	case MAV_GENERATOR_STATUS_FLAG_OVERTEMP_WARNING:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_OVERTEMP_WARNING"), nil
-	case MAV_GENERATOR_STATUS_FLAG_OVERTEMP_FAULT:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_OVERTEMP_FAULT"), nil
-	case MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_WARNING:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_WARNING"), nil
-	case MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_FAULT:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_FAULT"), nil
-	case MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_FAULT:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_FAULT"), nil
-	case MAV_GENERATOR_STATUS_FLAG_POWERSOURCE_FAULT:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_POWERSOURCE_FAULT"), nil
-	case MAV_GENERATOR_STATUS_FLAG_COMMUNICATION_WARNING:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_COMMUNICATION_WARNING"), nil
-	case MAV_GENERATOR_STATUS_FLAG_COOLING_WARNING:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_COOLING_WARNING"), nil
-	case MAV_GENERATOR_STATUS_FLAG_POWER_RAIL_FAULT:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_POWER_RAIL_FAULT"), nil
-	case MAV_GENERATOR_STATUS_FLAG_OVERCURRENT_FAULT:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_OVERCURRENT_FAULT"), nil
-	case MAV_GENERATOR_STATUS_FLAG_BATTERY_OVERCHARGE_CURRENT_FAULT:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_BATTERY_OVERCHARGE_CURRENT_FAULT"), nil
-	case MAV_GENERATOR_STATUS_FLAG_OVERVOLTAGE_FAULT:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_OVERVOLTAGE_FAULT"), nil
-	case MAV_GENERATOR_STATUS_FLAG_BATTERY_UNDERVOLT_FAULT:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_BATTERY_UNDERVOLT_FAULT"), nil
-	case MAV_GENERATOR_STATUS_FLAG_START_INHIBITED:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_START_INHIBITED"), nil
-	case MAV_GENERATOR_STATUS_FLAG_MAINTENANCE_REQUIRED:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_MAINTENANCE_REQUIRED"), nil
-	case MAV_GENERATOR_STATUS_FLAG_WARMING_UP:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_WARMING_UP"), nil
-	case MAV_GENERATOR_STATUS_FLAG_IDLE:
-		return []byte("MAV_GENERATOR_STATUS_FLAG_IDLE"), nil
+	if l, ok := labels_MAV_GENERATOR_STATUS_FLAG[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_GENERATOR_STATUS_FLAG = map[string]MAV_GENERATOR_STATUS_FLAG{
+	"MAV_GENERATOR_STATUS_FLAG_OFF":                              MAV_GENERATOR_STATUS_FLAG_OFF,
+	"MAV_GENERATOR_STATUS_FLAG_READY":                            MAV_GENERATOR_STATUS_FLAG_READY,
+	"MAV_GENERATOR_STATUS_FLAG_GENERATING":                       MAV_GENERATOR_STATUS_FLAG_GENERATING,
+	"MAV_GENERATOR_STATUS_FLAG_CHARGING":                         MAV_GENERATOR_STATUS_FLAG_CHARGING,
+	"MAV_GENERATOR_STATUS_FLAG_REDUCED_POWER":                    MAV_GENERATOR_STATUS_FLAG_REDUCED_POWER,
+	"MAV_GENERATOR_STATUS_FLAG_MAXPOWER":                         MAV_GENERATOR_STATUS_FLAG_MAXPOWER,
+	"MAV_GENERATOR_STATUS_FLAG_OVERTEMP_WARNING":                 MAV_GENERATOR_STATUS_FLAG_OVERTEMP_WARNING,
+	"MAV_GENERATOR_STATUS_FLAG_OVERTEMP_FAULT":                   MAV_GENERATOR_STATUS_FLAG_OVERTEMP_FAULT,
+	"MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_WARNING":     MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_WARNING,
+	"MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_FAULT":       MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_FAULT,
+	"MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_FAULT":                MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_FAULT,
+	"MAV_GENERATOR_STATUS_FLAG_POWERSOURCE_FAULT":                MAV_GENERATOR_STATUS_FLAG_POWERSOURCE_FAULT,
+	"MAV_GENERATOR_STATUS_FLAG_COMMUNICATION_WARNING":            MAV_GENERATOR_STATUS_FLAG_COMMUNICATION_WARNING,
+	"MAV_GENERATOR_STATUS_FLAG_COOLING_WARNING":                  MAV_GENERATOR_STATUS_FLAG_COOLING_WARNING,
+	"MAV_GENERATOR_STATUS_FLAG_POWER_RAIL_FAULT":                 MAV_GENERATOR_STATUS_FLAG_POWER_RAIL_FAULT,
+	"MAV_GENERATOR_STATUS_FLAG_OVERCURRENT_FAULT":                MAV_GENERATOR_STATUS_FLAG_OVERCURRENT_FAULT,
+	"MAV_GENERATOR_STATUS_FLAG_BATTERY_OVERCHARGE_CURRENT_FAULT": MAV_GENERATOR_STATUS_FLAG_BATTERY_OVERCHARGE_CURRENT_FAULT,
+	"MAV_GENERATOR_STATUS_FLAG_OVERVOLTAGE_FAULT":                MAV_GENERATOR_STATUS_FLAG_OVERVOLTAGE_FAULT,
+	"MAV_GENERATOR_STATUS_FLAG_BATTERY_UNDERVOLT_FAULT":          MAV_GENERATOR_STATUS_FLAG_BATTERY_UNDERVOLT_FAULT,
+	"MAV_GENERATOR_STATUS_FLAG_START_INHIBITED":                  MAV_GENERATOR_STATUS_FLAG_START_INHIBITED,
+	"MAV_GENERATOR_STATUS_FLAG_MAINTENANCE_REQUIRED":             MAV_GENERATOR_STATUS_FLAG_MAINTENANCE_REQUIRED,
+	"MAV_GENERATOR_STATUS_FLAG_WARMING_UP":                       MAV_GENERATOR_STATUS_FLAG_WARMING_UP,
+	"MAV_GENERATOR_STATUS_FLAG_IDLE":                             MAV_GENERATOR_STATUS_FLAG_IDLE,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_GENERATOR_STATUS_FLAG) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_GENERATOR_STATUS_FLAG_OFF":
-		*e = MAV_GENERATOR_STATUS_FLAG_OFF
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_READY":
-		*e = MAV_GENERATOR_STATUS_FLAG_READY
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_GENERATING":
-		*e = MAV_GENERATOR_STATUS_FLAG_GENERATING
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_CHARGING":
-		*e = MAV_GENERATOR_STATUS_FLAG_CHARGING
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_REDUCED_POWER":
-		*e = MAV_GENERATOR_STATUS_FLAG_REDUCED_POWER
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_MAXPOWER":
-		*e = MAV_GENERATOR_STATUS_FLAG_MAXPOWER
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_OVERTEMP_WARNING":
-		*e = MAV_GENERATOR_STATUS_FLAG_OVERTEMP_WARNING
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_OVERTEMP_FAULT":
-		*e = MAV_GENERATOR_STATUS_FLAG_OVERTEMP_FAULT
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_WARNING":
-		*e = MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_WARNING
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_FAULT":
-		*e = MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_FAULT
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_FAULT":
-		*e = MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_FAULT
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_POWERSOURCE_FAULT":
-		*e = MAV_GENERATOR_STATUS_FLAG_POWERSOURCE_FAULT
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_COMMUNICATION_WARNING":
-		*e = MAV_GENERATOR_STATUS_FLAG_COMMUNICATION_WARNING
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_COOLING_WARNING":
-		*e = MAV_GENERATOR_STATUS_FLAG_COOLING_WARNING
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_POWER_RAIL_FAULT":
-		*e = MAV_GENERATOR_STATUS_FLAG_POWER_RAIL_FAULT
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_OVERCURRENT_FAULT":
-		*e = MAV_GENERATOR_STATUS_FLAG_OVERCURRENT_FAULT
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_BATTERY_OVERCHARGE_CURRENT_FAULT":
-		*e = MAV_GENERATOR_STATUS_FLAG_BATTERY_OVERCHARGE_CURRENT_FAULT
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_OVERVOLTAGE_FAULT":
-		*e = MAV_GENERATOR_STATUS_FLAG_OVERVOLTAGE_FAULT
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_BATTERY_UNDERVOLT_FAULT":
-		*e = MAV_GENERATOR_STATUS_FLAG_BATTERY_UNDERVOLT_FAULT
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_START_INHIBITED":
-		*e = MAV_GENERATOR_STATUS_FLAG_START_INHIBITED
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_MAINTENANCE_REQUIRED":
-		*e = MAV_GENERATOR_STATUS_FLAG_MAINTENANCE_REQUIRED
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_WARMING_UP":
-		*e = MAV_GENERATOR_STATUS_FLAG_WARMING_UP
-		return nil
-	case "MAV_GENERATOR_STATUS_FLAG_IDLE":
-		*e = MAV_GENERATOR_STATUS_FLAG_IDLE
+	if rl, ok := reverseLabels_MAV_GENERATOR_STATUS_FLAG[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -8100,11 +6015,10 @@ func (e *MAV_GENERATOR_STATUS_FLAG) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_GENERATOR_STATUS_FLAG) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_GENERATOR_STATUS_FLAG[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Actions that may be specified in MAV_CMD_OVERRIDE_GOTO to override mission execution.
@@ -8121,35 +6035,32 @@ const (
 	MAV_GOTO_HOLD_AT_SPECIFIED_POSITION MAV_GOTO = 3
 )
 
+var labels_MAV_GOTO = map[MAV_GOTO]string{
+	MAV_GOTO_DO_HOLD:                    "MAV_GOTO_DO_HOLD",
+	MAV_GOTO_DO_CONTINUE:                "MAV_GOTO_DO_CONTINUE",
+	MAV_GOTO_HOLD_AT_CURRENT_POSITION:   "MAV_GOTO_HOLD_AT_CURRENT_POSITION",
+	MAV_GOTO_HOLD_AT_SPECIFIED_POSITION: "MAV_GOTO_HOLD_AT_SPECIFIED_POSITION",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_GOTO) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_GOTO_DO_HOLD:
-		return []byte("MAV_GOTO_DO_HOLD"), nil
-	case MAV_GOTO_DO_CONTINUE:
-		return []byte("MAV_GOTO_DO_CONTINUE"), nil
-	case MAV_GOTO_HOLD_AT_CURRENT_POSITION:
-		return []byte("MAV_GOTO_HOLD_AT_CURRENT_POSITION"), nil
-	case MAV_GOTO_HOLD_AT_SPECIFIED_POSITION:
-		return []byte("MAV_GOTO_HOLD_AT_SPECIFIED_POSITION"), nil
+	if l, ok := labels_MAV_GOTO[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_GOTO = map[string]MAV_GOTO{
+	"MAV_GOTO_DO_HOLD":                    MAV_GOTO_DO_HOLD,
+	"MAV_GOTO_DO_CONTINUE":                MAV_GOTO_DO_CONTINUE,
+	"MAV_GOTO_HOLD_AT_CURRENT_POSITION":   MAV_GOTO_HOLD_AT_CURRENT_POSITION,
+	"MAV_GOTO_HOLD_AT_SPECIFIED_POSITION": MAV_GOTO_HOLD_AT_SPECIFIED_POSITION,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_GOTO) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_GOTO_DO_HOLD":
-		*e = MAV_GOTO_DO_HOLD
-		return nil
-	case "MAV_GOTO_DO_CONTINUE":
-		*e = MAV_GOTO_DO_CONTINUE
-		return nil
-	case "MAV_GOTO_HOLD_AT_CURRENT_POSITION":
-		*e = MAV_GOTO_HOLD_AT_CURRENT_POSITION
-		return nil
-	case "MAV_GOTO_HOLD_AT_SPECIFIED_POSITION":
-		*e = MAV_GOTO_HOLD_AT_SPECIFIED_POSITION
+	if rl, ok := reverseLabels_MAV_GOTO[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -8157,11 +6068,10 @@ func (e *MAV_GOTO) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_GOTO) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_GOTO[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Enumeration of landed detector states
@@ -8180,40 +6090,34 @@ const (
 	MAV_LANDED_STATE_LANDING MAV_LANDED_STATE = 4
 )
 
+var labels_MAV_LANDED_STATE = map[MAV_LANDED_STATE]string{
+	MAV_LANDED_STATE_UNDEFINED: "MAV_LANDED_STATE_UNDEFINED",
+	MAV_LANDED_STATE_ON_GROUND: "MAV_LANDED_STATE_ON_GROUND",
+	MAV_LANDED_STATE_IN_AIR:    "MAV_LANDED_STATE_IN_AIR",
+	MAV_LANDED_STATE_TAKEOFF:   "MAV_LANDED_STATE_TAKEOFF",
+	MAV_LANDED_STATE_LANDING:   "MAV_LANDED_STATE_LANDING",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_LANDED_STATE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_LANDED_STATE_UNDEFINED:
-		return []byte("MAV_LANDED_STATE_UNDEFINED"), nil
-	case MAV_LANDED_STATE_ON_GROUND:
-		return []byte("MAV_LANDED_STATE_ON_GROUND"), nil
-	case MAV_LANDED_STATE_IN_AIR:
-		return []byte("MAV_LANDED_STATE_IN_AIR"), nil
-	case MAV_LANDED_STATE_TAKEOFF:
-		return []byte("MAV_LANDED_STATE_TAKEOFF"), nil
-	case MAV_LANDED_STATE_LANDING:
-		return []byte("MAV_LANDED_STATE_LANDING"), nil
+	if l, ok := labels_MAV_LANDED_STATE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_LANDED_STATE = map[string]MAV_LANDED_STATE{
+	"MAV_LANDED_STATE_UNDEFINED": MAV_LANDED_STATE_UNDEFINED,
+	"MAV_LANDED_STATE_ON_GROUND": MAV_LANDED_STATE_ON_GROUND,
+	"MAV_LANDED_STATE_IN_AIR":    MAV_LANDED_STATE_IN_AIR,
+	"MAV_LANDED_STATE_TAKEOFF":   MAV_LANDED_STATE_TAKEOFF,
+	"MAV_LANDED_STATE_LANDING":   MAV_LANDED_STATE_LANDING,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_LANDED_STATE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_LANDED_STATE_UNDEFINED":
-		*e = MAV_LANDED_STATE_UNDEFINED
-		return nil
-	case "MAV_LANDED_STATE_ON_GROUND":
-		*e = MAV_LANDED_STATE_ON_GROUND
-		return nil
-	case "MAV_LANDED_STATE_IN_AIR":
-		*e = MAV_LANDED_STATE_IN_AIR
-		return nil
-	case "MAV_LANDED_STATE_TAKEOFF":
-		*e = MAV_LANDED_STATE_TAKEOFF
-		return nil
-	case "MAV_LANDED_STATE_LANDING":
-		*e = MAV_LANDED_STATE_LANDING
+	if rl, ok := reverseLabels_MAV_LANDED_STATE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -8221,11 +6125,10 @@ func (e *MAV_LANDED_STATE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_LANDED_STATE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_LANDED_STATE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Result of mission operation (in a MISSION_ACK message).
@@ -8266,95 +6169,56 @@ const (
 	MAV_MISSION_OPERATION_CANCELLED MAV_MISSION_RESULT = 15
 )
 
+var labels_MAV_MISSION_RESULT = map[MAV_MISSION_RESULT]string{
+	MAV_MISSION_ACCEPTED:            "MAV_MISSION_ACCEPTED",
+	MAV_MISSION_ERROR:               "MAV_MISSION_ERROR",
+	MAV_MISSION_UNSUPPORTED_FRAME:   "MAV_MISSION_UNSUPPORTED_FRAME",
+	MAV_MISSION_UNSUPPORTED:         "MAV_MISSION_UNSUPPORTED",
+	MAV_MISSION_NO_SPACE:            "MAV_MISSION_NO_SPACE",
+	MAV_MISSION_INVALID:             "MAV_MISSION_INVALID",
+	MAV_MISSION_INVALID_PARAM1:      "MAV_MISSION_INVALID_PARAM1",
+	MAV_MISSION_INVALID_PARAM2:      "MAV_MISSION_INVALID_PARAM2",
+	MAV_MISSION_INVALID_PARAM3:      "MAV_MISSION_INVALID_PARAM3",
+	MAV_MISSION_INVALID_PARAM4:      "MAV_MISSION_INVALID_PARAM4",
+	MAV_MISSION_INVALID_PARAM5_X:    "MAV_MISSION_INVALID_PARAM5_X",
+	MAV_MISSION_INVALID_PARAM6_Y:    "MAV_MISSION_INVALID_PARAM6_Y",
+	MAV_MISSION_INVALID_PARAM7:      "MAV_MISSION_INVALID_PARAM7",
+	MAV_MISSION_INVALID_SEQUENCE:    "MAV_MISSION_INVALID_SEQUENCE",
+	MAV_MISSION_DENIED:              "MAV_MISSION_DENIED",
+	MAV_MISSION_OPERATION_CANCELLED: "MAV_MISSION_OPERATION_CANCELLED",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MISSION_RESULT) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_MISSION_ACCEPTED:
-		return []byte("MAV_MISSION_ACCEPTED"), nil
-	case MAV_MISSION_ERROR:
-		return []byte("MAV_MISSION_ERROR"), nil
-	case MAV_MISSION_UNSUPPORTED_FRAME:
-		return []byte("MAV_MISSION_UNSUPPORTED_FRAME"), nil
-	case MAV_MISSION_UNSUPPORTED:
-		return []byte("MAV_MISSION_UNSUPPORTED"), nil
-	case MAV_MISSION_NO_SPACE:
-		return []byte("MAV_MISSION_NO_SPACE"), nil
-	case MAV_MISSION_INVALID:
-		return []byte("MAV_MISSION_INVALID"), nil
-	case MAV_MISSION_INVALID_PARAM1:
-		return []byte("MAV_MISSION_INVALID_PARAM1"), nil
-	case MAV_MISSION_INVALID_PARAM2:
-		return []byte("MAV_MISSION_INVALID_PARAM2"), nil
-	case MAV_MISSION_INVALID_PARAM3:
-		return []byte("MAV_MISSION_INVALID_PARAM3"), nil
-	case MAV_MISSION_INVALID_PARAM4:
-		return []byte("MAV_MISSION_INVALID_PARAM4"), nil
-	case MAV_MISSION_INVALID_PARAM5_X:
-		return []byte("MAV_MISSION_INVALID_PARAM5_X"), nil
-	case MAV_MISSION_INVALID_PARAM6_Y:
-		return []byte("MAV_MISSION_INVALID_PARAM6_Y"), nil
-	case MAV_MISSION_INVALID_PARAM7:
-		return []byte("MAV_MISSION_INVALID_PARAM7"), nil
-	case MAV_MISSION_INVALID_SEQUENCE:
-		return []byte("MAV_MISSION_INVALID_SEQUENCE"), nil
-	case MAV_MISSION_DENIED:
-		return []byte("MAV_MISSION_DENIED"), nil
-	case MAV_MISSION_OPERATION_CANCELLED:
-		return []byte("MAV_MISSION_OPERATION_CANCELLED"), nil
+	if l, ok := labels_MAV_MISSION_RESULT[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_MISSION_RESULT = map[string]MAV_MISSION_RESULT{
+	"MAV_MISSION_ACCEPTED":            MAV_MISSION_ACCEPTED,
+	"MAV_MISSION_ERROR":               MAV_MISSION_ERROR,
+	"MAV_MISSION_UNSUPPORTED_FRAME":   MAV_MISSION_UNSUPPORTED_FRAME,
+	"MAV_MISSION_UNSUPPORTED":         MAV_MISSION_UNSUPPORTED,
+	"MAV_MISSION_NO_SPACE":            MAV_MISSION_NO_SPACE,
+	"MAV_MISSION_INVALID":             MAV_MISSION_INVALID,
+	"MAV_MISSION_INVALID_PARAM1":      MAV_MISSION_INVALID_PARAM1,
+	"MAV_MISSION_INVALID_PARAM2":      MAV_MISSION_INVALID_PARAM2,
+	"MAV_MISSION_INVALID_PARAM3":      MAV_MISSION_INVALID_PARAM3,
+	"MAV_MISSION_INVALID_PARAM4":      MAV_MISSION_INVALID_PARAM4,
+	"MAV_MISSION_INVALID_PARAM5_X":    MAV_MISSION_INVALID_PARAM5_X,
+	"MAV_MISSION_INVALID_PARAM6_Y":    MAV_MISSION_INVALID_PARAM6_Y,
+	"MAV_MISSION_INVALID_PARAM7":      MAV_MISSION_INVALID_PARAM7,
+	"MAV_MISSION_INVALID_SEQUENCE":    MAV_MISSION_INVALID_SEQUENCE,
+	"MAV_MISSION_DENIED":              MAV_MISSION_DENIED,
+	"MAV_MISSION_OPERATION_CANCELLED": MAV_MISSION_OPERATION_CANCELLED,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_MISSION_RESULT) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_MISSION_ACCEPTED":
-		*e = MAV_MISSION_ACCEPTED
-		return nil
-	case "MAV_MISSION_ERROR":
-		*e = MAV_MISSION_ERROR
-		return nil
-	case "MAV_MISSION_UNSUPPORTED_FRAME":
-		*e = MAV_MISSION_UNSUPPORTED_FRAME
-		return nil
-	case "MAV_MISSION_UNSUPPORTED":
-		*e = MAV_MISSION_UNSUPPORTED
-		return nil
-	case "MAV_MISSION_NO_SPACE":
-		*e = MAV_MISSION_NO_SPACE
-		return nil
-	case "MAV_MISSION_INVALID":
-		*e = MAV_MISSION_INVALID
-		return nil
-	case "MAV_MISSION_INVALID_PARAM1":
-		*e = MAV_MISSION_INVALID_PARAM1
-		return nil
-	case "MAV_MISSION_INVALID_PARAM2":
-		*e = MAV_MISSION_INVALID_PARAM2
-		return nil
-	case "MAV_MISSION_INVALID_PARAM3":
-		*e = MAV_MISSION_INVALID_PARAM3
-		return nil
-	case "MAV_MISSION_INVALID_PARAM4":
-		*e = MAV_MISSION_INVALID_PARAM4
-		return nil
-	case "MAV_MISSION_INVALID_PARAM5_X":
-		*e = MAV_MISSION_INVALID_PARAM5_X
-		return nil
-	case "MAV_MISSION_INVALID_PARAM6_Y":
-		*e = MAV_MISSION_INVALID_PARAM6_Y
-		return nil
-	case "MAV_MISSION_INVALID_PARAM7":
-		*e = MAV_MISSION_INVALID_PARAM7
-		return nil
-	case "MAV_MISSION_INVALID_SEQUENCE":
-		*e = MAV_MISSION_INVALID_SEQUENCE
-		return nil
-	case "MAV_MISSION_DENIED":
-		*e = MAV_MISSION_DENIED
-		return nil
-	case "MAV_MISSION_OPERATION_CANCELLED":
-		*e = MAV_MISSION_OPERATION_CANCELLED
+	if rl, ok := reverseLabels_MAV_MISSION_RESULT[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -8362,11 +6226,10 @@ func (e *MAV_MISSION_RESULT) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_MISSION_RESULT) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_MISSION_RESULT[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Type of mission items being requested/sent in mission protocol.
@@ -8383,35 +6246,32 @@ const (
 	MAV_MISSION_TYPE_ALL MAV_MISSION_TYPE = 255
 )
 
+var labels_MAV_MISSION_TYPE = map[MAV_MISSION_TYPE]string{
+	MAV_MISSION_TYPE_MISSION: "MAV_MISSION_TYPE_MISSION",
+	MAV_MISSION_TYPE_FENCE:   "MAV_MISSION_TYPE_FENCE",
+	MAV_MISSION_TYPE_RALLY:   "MAV_MISSION_TYPE_RALLY",
+	MAV_MISSION_TYPE_ALL:     "MAV_MISSION_TYPE_ALL",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MISSION_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_MISSION_TYPE_MISSION:
-		return []byte("MAV_MISSION_TYPE_MISSION"), nil
-	case MAV_MISSION_TYPE_FENCE:
-		return []byte("MAV_MISSION_TYPE_FENCE"), nil
-	case MAV_MISSION_TYPE_RALLY:
-		return []byte("MAV_MISSION_TYPE_RALLY"), nil
-	case MAV_MISSION_TYPE_ALL:
-		return []byte("MAV_MISSION_TYPE_ALL"), nil
+	if l, ok := labels_MAV_MISSION_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_MISSION_TYPE = map[string]MAV_MISSION_TYPE{
+	"MAV_MISSION_TYPE_MISSION": MAV_MISSION_TYPE_MISSION,
+	"MAV_MISSION_TYPE_FENCE":   MAV_MISSION_TYPE_FENCE,
+	"MAV_MISSION_TYPE_RALLY":   MAV_MISSION_TYPE_RALLY,
+	"MAV_MISSION_TYPE_ALL":     MAV_MISSION_TYPE_ALL,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_MISSION_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_MISSION_TYPE_MISSION":
-		*e = MAV_MISSION_TYPE_MISSION
-		return nil
-	case "MAV_MISSION_TYPE_FENCE":
-		*e = MAV_MISSION_TYPE_FENCE
-		return nil
-	case "MAV_MISSION_TYPE_RALLY":
-		*e = MAV_MISSION_TYPE_RALLY
-		return nil
-	case "MAV_MISSION_TYPE_ALL":
-		*e = MAV_MISSION_TYPE_ALL
+	if rl, ok := reverseLabels_MAV_MISSION_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -8419,11 +6279,10 @@ func (e *MAV_MISSION_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_MISSION_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_MISSION_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // These defines are predefined OR-combined mode flags. There is no need to use values from this enum, but it               simplifies the use of the mode flags. Note that manual input is enabled in all modes as a safety override.
@@ -8454,70 +6313,46 @@ const (
 	MAV_MODE_TEST_ARMED MAV_MODE = 194
 )
 
+var labels_MAV_MODE = map[MAV_MODE]string{
+	MAV_MODE_PREFLIGHT:          "MAV_MODE_PREFLIGHT",
+	MAV_MODE_STABILIZE_DISARMED: "MAV_MODE_STABILIZE_DISARMED",
+	MAV_MODE_STABILIZE_ARMED:    "MAV_MODE_STABILIZE_ARMED",
+	MAV_MODE_MANUAL_DISARMED:    "MAV_MODE_MANUAL_DISARMED",
+	MAV_MODE_MANUAL_ARMED:       "MAV_MODE_MANUAL_ARMED",
+	MAV_MODE_GUIDED_DISARMED:    "MAV_MODE_GUIDED_DISARMED",
+	MAV_MODE_GUIDED_ARMED:       "MAV_MODE_GUIDED_ARMED",
+	MAV_MODE_AUTO_DISARMED:      "MAV_MODE_AUTO_DISARMED",
+	MAV_MODE_AUTO_ARMED:         "MAV_MODE_AUTO_ARMED",
+	MAV_MODE_TEST_DISARMED:      "MAV_MODE_TEST_DISARMED",
+	MAV_MODE_TEST_ARMED:         "MAV_MODE_TEST_ARMED",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MODE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_MODE_PREFLIGHT:
-		return []byte("MAV_MODE_PREFLIGHT"), nil
-	case MAV_MODE_STABILIZE_DISARMED:
-		return []byte("MAV_MODE_STABILIZE_DISARMED"), nil
-	case MAV_MODE_STABILIZE_ARMED:
-		return []byte("MAV_MODE_STABILIZE_ARMED"), nil
-	case MAV_MODE_MANUAL_DISARMED:
-		return []byte("MAV_MODE_MANUAL_DISARMED"), nil
-	case MAV_MODE_MANUAL_ARMED:
-		return []byte("MAV_MODE_MANUAL_ARMED"), nil
-	case MAV_MODE_GUIDED_DISARMED:
-		return []byte("MAV_MODE_GUIDED_DISARMED"), nil
-	case MAV_MODE_GUIDED_ARMED:
-		return []byte("MAV_MODE_GUIDED_ARMED"), nil
-	case MAV_MODE_AUTO_DISARMED:
-		return []byte("MAV_MODE_AUTO_DISARMED"), nil
-	case MAV_MODE_AUTO_ARMED:
-		return []byte("MAV_MODE_AUTO_ARMED"), nil
-	case MAV_MODE_TEST_DISARMED:
-		return []byte("MAV_MODE_TEST_DISARMED"), nil
-	case MAV_MODE_TEST_ARMED:
-		return []byte("MAV_MODE_TEST_ARMED"), nil
+	if l, ok := labels_MAV_MODE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_MODE = map[string]MAV_MODE{
+	"MAV_MODE_PREFLIGHT":          MAV_MODE_PREFLIGHT,
+	"MAV_MODE_STABILIZE_DISARMED": MAV_MODE_STABILIZE_DISARMED,
+	"MAV_MODE_STABILIZE_ARMED":    MAV_MODE_STABILIZE_ARMED,
+	"MAV_MODE_MANUAL_DISARMED":    MAV_MODE_MANUAL_DISARMED,
+	"MAV_MODE_MANUAL_ARMED":       MAV_MODE_MANUAL_ARMED,
+	"MAV_MODE_GUIDED_DISARMED":    MAV_MODE_GUIDED_DISARMED,
+	"MAV_MODE_GUIDED_ARMED":       MAV_MODE_GUIDED_ARMED,
+	"MAV_MODE_AUTO_DISARMED":      MAV_MODE_AUTO_DISARMED,
+	"MAV_MODE_AUTO_ARMED":         MAV_MODE_AUTO_ARMED,
+	"MAV_MODE_TEST_DISARMED":      MAV_MODE_TEST_DISARMED,
+	"MAV_MODE_TEST_ARMED":         MAV_MODE_TEST_ARMED,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_MODE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_MODE_PREFLIGHT":
-		*e = MAV_MODE_PREFLIGHT
-		return nil
-	case "MAV_MODE_STABILIZE_DISARMED":
-		*e = MAV_MODE_STABILIZE_DISARMED
-		return nil
-	case "MAV_MODE_STABILIZE_ARMED":
-		*e = MAV_MODE_STABILIZE_ARMED
-		return nil
-	case "MAV_MODE_MANUAL_DISARMED":
-		*e = MAV_MODE_MANUAL_DISARMED
-		return nil
-	case "MAV_MODE_MANUAL_ARMED":
-		*e = MAV_MODE_MANUAL_ARMED
-		return nil
-	case "MAV_MODE_GUIDED_DISARMED":
-		*e = MAV_MODE_GUIDED_DISARMED
-		return nil
-	case "MAV_MODE_GUIDED_ARMED":
-		*e = MAV_MODE_GUIDED_ARMED
-		return nil
-	case "MAV_MODE_AUTO_DISARMED":
-		*e = MAV_MODE_AUTO_DISARMED
-		return nil
-	case "MAV_MODE_AUTO_ARMED":
-		*e = MAV_MODE_AUTO_ARMED
-		return nil
-	case "MAV_MODE_TEST_DISARMED":
-		*e = MAV_MODE_TEST_DISARMED
-		return nil
-	case "MAV_MODE_TEST_ARMED":
-		*e = MAV_MODE_TEST_ARMED
+	if rl, ok := reverseLabels_MAV_MODE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -8525,11 +6360,10 @@ func (e *MAV_MODE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_MODE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_MODE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // These flags encode the MAV mode.
@@ -8554,55 +6388,40 @@ const (
 	MAV_MODE_FLAG_CUSTOM_MODE_ENABLED MAV_MODE_FLAG = 1
 )
 
+var labels_MAV_MODE_FLAG = map[MAV_MODE_FLAG]string{
+	MAV_MODE_FLAG_SAFETY_ARMED:         "MAV_MODE_FLAG_SAFETY_ARMED",
+	MAV_MODE_FLAG_MANUAL_INPUT_ENABLED: "MAV_MODE_FLAG_MANUAL_INPUT_ENABLED",
+	MAV_MODE_FLAG_HIL_ENABLED:          "MAV_MODE_FLAG_HIL_ENABLED",
+	MAV_MODE_FLAG_STABILIZE_ENABLED:    "MAV_MODE_FLAG_STABILIZE_ENABLED",
+	MAV_MODE_FLAG_GUIDED_ENABLED:       "MAV_MODE_FLAG_GUIDED_ENABLED",
+	MAV_MODE_FLAG_AUTO_ENABLED:         "MAV_MODE_FLAG_AUTO_ENABLED",
+	MAV_MODE_FLAG_TEST_ENABLED:         "MAV_MODE_FLAG_TEST_ENABLED",
+	MAV_MODE_FLAG_CUSTOM_MODE_ENABLED:  "MAV_MODE_FLAG_CUSTOM_MODE_ENABLED",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MODE_FLAG) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_MODE_FLAG_SAFETY_ARMED:
-		return []byte("MAV_MODE_FLAG_SAFETY_ARMED"), nil
-	case MAV_MODE_FLAG_MANUAL_INPUT_ENABLED:
-		return []byte("MAV_MODE_FLAG_MANUAL_INPUT_ENABLED"), nil
-	case MAV_MODE_FLAG_HIL_ENABLED:
-		return []byte("MAV_MODE_FLAG_HIL_ENABLED"), nil
-	case MAV_MODE_FLAG_STABILIZE_ENABLED:
-		return []byte("MAV_MODE_FLAG_STABILIZE_ENABLED"), nil
-	case MAV_MODE_FLAG_GUIDED_ENABLED:
-		return []byte("MAV_MODE_FLAG_GUIDED_ENABLED"), nil
-	case MAV_MODE_FLAG_AUTO_ENABLED:
-		return []byte("MAV_MODE_FLAG_AUTO_ENABLED"), nil
-	case MAV_MODE_FLAG_TEST_ENABLED:
-		return []byte("MAV_MODE_FLAG_TEST_ENABLED"), nil
-	case MAV_MODE_FLAG_CUSTOM_MODE_ENABLED:
-		return []byte("MAV_MODE_FLAG_CUSTOM_MODE_ENABLED"), nil
+	if l, ok := labels_MAV_MODE_FLAG[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_MODE_FLAG = map[string]MAV_MODE_FLAG{
+	"MAV_MODE_FLAG_SAFETY_ARMED":         MAV_MODE_FLAG_SAFETY_ARMED,
+	"MAV_MODE_FLAG_MANUAL_INPUT_ENABLED": MAV_MODE_FLAG_MANUAL_INPUT_ENABLED,
+	"MAV_MODE_FLAG_HIL_ENABLED":          MAV_MODE_FLAG_HIL_ENABLED,
+	"MAV_MODE_FLAG_STABILIZE_ENABLED":    MAV_MODE_FLAG_STABILIZE_ENABLED,
+	"MAV_MODE_FLAG_GUIDED_ENABLED":       MAV_MODE_FLAG_GUIDED_ENABLED,
+	"MAV_MODE_FLAG_AUTO_ENABLED":         MAV_MODE_FLAG_AUTO_ENABLED,
+	"MAV_MODE_FLAG_TEST_ENABLED":         MAV_MODE_FLAG_TEST_ENABLED,
+	"MAV_MODE_FLAG_CUSTOM_MODE_ENABLED":  MAV_MODE_FLAG_CUSTOM_MODE_ENABLED,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_MODE_FLAG) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_MODE_FLAG_SAFETY_ARMED":
-		*e = MAV_MODE_FLAG_SAFETY_ARMED
-		return nil
-	case "MAV_MODE_FLAG_MANUAL_INPUT_ENABLED":
-		*e = MAV_MODE_FLAG_MANUAL_INPUT_ENABLED
-		return nil
-	case "MAV_MODE_FLAG_HIL_ENABLED":
-		*e = MAV_MODE_FLAG_HIL_ENABLED
-		return nil
-	case "MAV_MODE_FLAG_STABILIZE_ENABLED":
-		*e = MAV_MODE_FLAG_STABILIZE_ENABLED
-		return nil
-	case "MAV_MODE_FLAG_GUIDED_ENABLED":
-		*e = MAV_MODE_FLAG_GUIDED_ENABLED
-		return nil
-	case "MAV_MODE_FLAG_AUTO_ENABLED":
-		*e = MAV_MODE_FLAG_AUTO_ENABLED
-		return nil
-	case "MAV_MODE_FLAG_TEST_ENABLED":
-		*e = MAV_MODE_FLAG_TEST_ENABLED
-		return nil
-	case "MAV_MODE_FLAG_CUSTOM_MODE_ENABLED":
-		*e = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED
+	if rl, ok := reverseLabels_MAV_MODE_FLAG[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -8610,11 +6429,10 @@ func (e *MAV_MODE_FLAG) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_MODE_FLAG) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_MODE_FLAG[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // These values encode the bit positions of the decode position. These values can be used to read the value of a flag bit by combining the base_mode variable with AND with the flag position value. The result will be either 0 or 1, depending on if the flag is set or not.
@@ -8639,55 +6457,40 @@ const (
 	MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE MAV_MODE_FLAG_DECODE_POSITION = 1
 )
 
+var labels_MAV_MODE_FLAG_DECODE_POSITION = map[MAV_MODE_FLAG_DECODE_POSITION]string{
+	MAV_MODE_FLAG_DECODE_POSITION_SAFETY:      "MAV_MODE_FLAG_DECODE_POSITION_SAFETY",
+	MAV_MODE_FLAG_DECODE_POSITION_MANUAL:      "MAV_MODE_FLAG_DECODE_POSITION_MANUAL",
+	MAV_MODE_FLAG_DECODE_POSITION_HIL:         "MAV_MODE_FLAG_DECODE_POSITION_HIL",
+	MAV_MODE_FLAG_DECODE_POSITION_STABILIZE:   "MAV_MODE_FLAG_DECODE_POSITION_STABILIZE",
+	MAV_MODE_FLAG_DECODE_POSITION_GUIDED:      "MAV_MODE_FLAG_DECODE_POSITION_GUIDED",
+	MAV_MODE_FLAG_DECODE_POSITION_AUTO:        "MAV_MODE_FLAG_DECODE_POSITION_AUTO",
+	MAV_MODE_FLAG_DECODE_POSITION_TEST:        "MAV_MODE_FLAG_DECODE_POSITION_TEST",
+	MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE: "MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MODE_FLAG_DECODE_POSITION) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_MODE_FLAG_DECODE_POSITION_SAFETY:
-		return []byte("MAV_MODE_FLAG_DECODE_POSITION_SAFETY"), nil
-	case MAV_MODE_FLAG_DECODE_POSITION_MANUAL:
-		return []byte("MAV_MODE_FLAG_DECODE_POSITION_MANUAL"), nil
-	case MAV_MODE_FLAG_DECODE_POSITION_HIL:
-		return []byte("MAV_MODE_FLAG_DECODE_POSITION_HIL"), nil
-	case MAV_MODE_FLAG_DECODE_POSITION_STABILIZE:
-		return []byte("MAV_MODE_FLAG_DECODE_POSITION_STABILIZE"), nil
-	case MAV_MODE_FLAG_DECODE_POSITION_GUIDED:
-		return []byte("MAV_MODE_FLAG_DECODE_POSITION_GUIDED"), nil
-	case MAV_MODE_FLAG_DECODE_POSITION_AUTO:
-		return []byte("MAV_MODE_FLAG_DECODE_POSITION_AUTO"), nil
-	case MAV_MODE_FLAG_DECODE_POSITION_TEST:
-		return []byte("MAV_MODE_FLAG_DECODE_POSITION_TEST"), nil
-	case MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE:
-		return []byte("MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE"), nil
+	if l, ok := labels_MAV_MODE_FLAG_DECODE_POSITION[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_MODE_FLAG_DECODE_POSITION = map[string]MAV_MODE_FLAG_DECODE_POSITION{
+	"MAV_MODE_FLAG_DECODE_POSITION_SAFETY":      MAV_MODE_FLAG_DECODE_POSITION_SAFETY,
+	"MAV_MODE_FLAG_DECODE_POSITION_MANUAL":      MAV_MODE_FLAG_DECODE_POSITION_MANUAL,
+	"MAV_MODE_FLAG_DECODE_POSITION_HIL":         MAV_MODE_FLAG_DECODE_POSITION_HIL,
+	"MAV_MODE_FLAG_DECODE_POSITION_STABILIZE":   MAV_MODE_FLAG_DECODE_POSITION_STABILIZE,
+	"MAV_MODE_FLAG_DECODE_POSITION_GUIDED":      MAV_MODE_FLAG_DECODE_POSITION_GUIDED,
+	"MAV_MODE_FLAG_DECODE_POSITION_AUTO":        MAV_MODE_FLAG_DECODE_POSITION_AUTO,
+	"MAV_MODE_FLAG_DECODE_POSITION_TEST":        MAV_MODE_FLAG_DECODE_POSITION_TEST,
+	"MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE": MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_MODE_FLAG_DECODE_POSITION) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_MODE_FLAG_DECODE_POSITION_SAFETY":
-		*e = MAV_MODE_FLAG_DECODE_POSITION_SAFETY
-		return nil
-	case "MAV_MODE_FLAG_DECODE_POSITION_MANUAL":
-		*e = MAV_MODE_FLAG_DECODE_POSITION_MANUAL
-		return nil
-	case "MAV_MODE_FLAG_DECODE_POSITION_HIL":
-		*e = MAV_MODE_FLAG_DECODE_POSITION_HIL
-		return nil
-	case "MAV_MODE_FLAG_DECODE_POSITION_STABILIZE":
-		*e = MAV_MODE_FLAG_DECODE_POSITION_STABILIZE
-		return nil
-	case "MAV_MODE_FLAG_DECODE_POSITION_GUIDED":
-		*e = MAV_MODE_FLAG_DECODE_POSITION_GUIDED
-		return nil
-	case "MAV_MODE_FLAG_DECODE_POSITION_AUTO":
-		*e = MAV_MODE_FLAG_DECODE_POSITION_AUTO
-		return nil
-	case "MAV_MODE_FLAG_DECODE_POSITION_TEST":
-		*e = MAV_MODE_FLAG_DECODE_POSITION_TEST
-		return nil
-	case "MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE":
-		*e = MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE
+	if rl, ok := reverseLabels_MAV_MODE_FLAG_DECODE_POSITION[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -8695,11 +6498,10 @@ func (e *MAV_MODE_FLAG_DECODE_POSITION) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_MODE_FLAG_DECODE_POSITION) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_MODE_FLAG_DECODE_POSITION[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Enumeration of possible mount operation modes. This message is used by obsolete/deprecated gimbal messages.
@@ -8722,50 +6524,38 @@ const (
 	MAV_MOUNT_MODE_HOME_LOCATION MAV_MOUNT_MODE = 6
 )
 
+var labels_MAV_MOUNT_MODE = map[MAV_MOUNT_MODE]string{
+	MAV_MOUNT_MODE_RETRACT:           "MAV_MOUNT_MODE_RETRACT",
+	MAV_MOUNT_MODE_NEUTRAL:           "MAV_MOUNT_MODE_NEUTRAL",
+	MAV_MOUNT_MODE_MAVLINK_TARGETING: "MAV_MOUNT_MODE_MAVLINK_TARGETING",
+	MAV_MOUNT_MODE_RC_TARGETING:      "MAV_MOUNT_MODE_RC_TARGETING",
+	MAV_MOUNT_MODE_GPS_POINT:         "MAV_MOUNT_MODE_GPS_POINT",
+	MAV_MOUNT_MODE_SYSID_TARGET:      "MAV_MOUNT_MODE_SYSID_TARGET",
+	MAV_MOUNT_MODE_HOME_LOCATION:     "MAV_MOUNT_MODE_HOME_LOCATION",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MOUNT_MODE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_MOUNT_MODE_RETRACT:
-		return []byte("MAV_MOUNT_MODE_RETRACT"), nil
-	case MAV_MOUNT_MODE_NEUTRAL:
-		return []byte("MAV_MOUNT_MODE_NEUTRAL"), nil
-	case MAV_MOUNT_MODE_MAVLINK_TARGETING:
-		return []byte("MAV_MOUNT_MODE_MAVLINK_TARGETING"), nil
-	case MAV_MOUNT_MODE_RC_TARGETING:
-		return []byte("MAV_MOUNT_MODE_RC_TARGETING"), nil
-	case MAV_MOUNT_MODE_GPS_POINT:
-		return []byte("MAV_MOUNT_MODE_GPS_POINT"), nil
-	case MAV_MOUNT_MODE_SYSID_TARGET:
-		return []byte("MAV_MOUNT_MODE_SYSID_TARGET"), nil
-	case MAV_MOUNT_MODE_HOME_LOCATION:
-		return []byte("MAV_MOUNT_MODE_HOME_LOCATION"), nil
+	if l, ok := labels_MAV_MOUNT_MODE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_MOUNT_MODE = map[string]MAV_MOUNT_MODE{
+	"MAV_MOUNT_MODE_RETRACT":           MAV_MOUNT_MODE_RETRACT,
+	"MAV_MOUNT_MODE_NEUTRAL":           MAV_MOUNT_MODE_NEUTRAL,
+	"MAV_MOUNT_MODE_MAVLINK_TARGETING": MAV_MOUNT_MODE_MAVLINK_TARGETING,
+	"MAV_MOUNT_MODE_RC_TARGETING":      MAV_MOUNT_MODE_RC_TARGETING,
+	"MAV_MOUNT_MODE_GPS_POINT":         MAV_MOUNT_MODE_GPS_POINT,
+	"MAV_MOUNT_MODE_SYSID_TARGET":      MAV_MOUNT_MODE_SYSID_TARGET,
+	"MAV_MOUNT_MODE_HOME_LOCATION":     MAV_MOUNT_MODE_HOME_LOCATION,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_MOUNT_MODE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_MOUNT_MODE_RETRACT":
-		*e = MAV_MOUNT_MODE_RETRACT
-		return nil
-	case "MAV_MOUNT_MODE_NEUTRAL":
-		*e = MAV_MOUNT_MODE_NEUTRAL
-		return nil
-	case "MAV_MOUNT_MODE_MAVLINK_TARGETING":
-		*e = MAV_MOUNT_MODE_MAVLINK_TARGETING
-		return nil
-	case "MAV_MOUNT_MODE_RC_TARGETING":
-		*e = MAV_MOUNT_MODE_RC_TARGETING
-		return nil
-	case "MAV_MOUNT_MODE_GPS_POINT":
-		*e = MAV_MOUNT_MODE_GPS_POINT
-		return nil
-	case "MAV_MOUNT_MODE_SYSID_TARGET":
-		*e = MAV_MOUNT_MODE_SYSID_TARGET
-		return nil
-	case "MAV_MOUNT_MODE_HOME_LOCATION":
-		*e = MAV_MOUNT_MODE_HOME_LOCATION
+	if rl, ok := reverseLabels_MAV_MOUNT_MODE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -8773,11 +6563,10 @@ func (e *MAV_MOUNT_MODE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_MOUNT_MODE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_MOUNT_MODE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -8798,45 +6587,36 @@ const (
 	MAV_ODID_AUTH_TYPE_SPECIFIC_AUTHENTICATION MAV_ODID_AUTH_TYPE = 5
 )
 
+var labels_MAV_ODID_AUTH_TYPE = map[MAV_ODID_AUTH_TYPE]string{
+	MAV_ODID_AUTH_TYPE_NONE:                    "MAV_ODID_AUTH_TYPE_NONE",
+	MAV_ODID_AUTH_TYPE_UAS_ID_SIGNATURE:        "MAV_ODID_AUTH_TYPE_UAS_ID_SIGNATURE",
+	MAV_ODID_AUTH_TYPE_OPERATOR_ID_SIGNATURE:   "MAV_ODID_AUTH_TYPE_OPERATOR_ID_SIGNATURE",
+	MAV_ODID_AUTH_TYPE_MESSAGE_SET_SIGNATURE:   "MAV_ODID_AUTH_TYPE_MESSAGE_SET_SIGNATURE",
+	MAV_ODID_AUTH_TYPE_NETWORK_REMOTE_ID:       "MAV_ODID_AUTH_TYPE_NETWORK_REMOTE_ID",
+	MAV_ODID_AUTH_TYPE_SPECIFIC_AUTHENTICATION: "MAV_ODID_AUTH_TYPE_SPECIFIC_AUTHENTICATION",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_AUTH_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_ODID_AUTH_TYPE_NONE:
-		return []byte("MAV_ODID_AUTH_TYPE_NONE"), nil
-	case MAV_ODID_AUTH_TYPE_UAS_ID_SIGNATURE:
-		return []byte("MAV_ODID_AUTH_TYPE_UAS_ID_SIGNATURE"), nil
-	case MAV_ODID_AUTH_TYPE_OPERATOR_ID_SIGNATURE:
-		return []byte("MAV_ODID_AUTH_TYPE_OPERATOR_ID_SIGNATURE"), nil
-	case MAV_ODID_AUTH_TYPE_MESSAGE_SET_SIGNATURE:
-		return []byte("MAV_ODID_AUTH_TYPE_MESSAGE_SET_SIGNATURE"), nil
-	case MAV_ODID_AUTH_TYPE_NETWORK_REMOTE_ID:
-		return []byte("MAV_ODID_AUTH_TYPE_NETWORK_REMOTE_ID"), nil
-	case MAV_ODID_AUTH_TYPE_SPECIFIC_AUTHENTICATION:
-		return []byte("MAV_ODID_AUTH_TYPE_SPECIFIC_AUTHENTICATION"), nil
+	if l, ok := labels_MAV_ODID_AUTH_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_ODID_AUTH_TYPE = map[string]MAV_ODID_AUTH_TYPE{
+	"MAV_ODID_AUTH_TYPE_NONE":                    MAV_ODID_AUTH_TYPE_NONE,
+	"MAV_ODID_AUTH_TYPE_UAS_ID_SIGNATURE":        MAV_ODID_AUTH_TYPE_UAS_ID_SIGNATURE,
+	"MAV_ODID_AUTH_TYPE_OPERATOR_ID_SIGNATURE":   MAV_ODID_AUTH_TYPE_OPERATOR_ID_SIGNATURE,
+	"MAV_ODID_AUTH_TYPE_MESSAGE_SET_SIGNATURE":   MAV_ODID_AUTH_TYPE_MESSAGE_SET_SIGNATURE,
+	"MAV_ODID_AUTH_TYPE_NETWORK_REMOTE_ID":       MAV_ODID_AUTH_TYPE_NETWORK_REMOTE_ID,
+	"MAV_ODID_AUTH_TYPE_SPECIFIC_AUTHENTICATION": MAV_ODID_AUTH_TYPE_SPECIFIC_AUTHENTICATION,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_AUTH_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_ODID_AUTH_TYPE_NONE":
-		*e = MAV_ODID_AUTH_TYPE_NONE
-		return nil
-	case "MAV_ODID_AUTH_TYPE_UAS_ID_SIGNATURE":
-		*e = MAV_ODID_AUTH_TYPE_UAS_ID_SIGNATURE
-		return nil
-	case "MAV_ODID_AUTH_TYPE_OPERATOR_ID_SIGNATURE":
-		*e = MAV_ODID_AUTH_TYPE_OPERATOR_ID_SIGNATURE
-		return nil
-	case "MAV_ODID_AUTH_TYPE_MESSAGE_SET_SIGNATURE":
-		*e = MAV_ODID_AUTH_TYPE_MESSAGE_SET_SIGNATURE
-		return nil
-	case "MAV_ODID_AUTH_TYPE_NETWORK_REMOTE_ID":
-		*e = MAV_ODID_AUTH_TYPE_NETWORK_REMOTE_ID
-		return nil
-	case "MAV_ODID_AUTH_TYPE_SPECIFIC_AUTHENTICATION":
-		*e = MAV_ODID_AUTH_TYPE_SPECIFIC_AUTHENTICATION
+	if rl, ok := reverseLabels_MAV_ODID_AUTH_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -8844,11 +6624,10 @@ func (e *MAV_ODID_AUTH_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_AUTH_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_ODID_AUTH_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -8865,35 +6644,32 @@ const (
 	MAV_ODID_CATEGORY_EU_CERTIFIED MAV_ODID_CATEGORY_EU = 3
 )
 
+var labels_MAV_ODID_CATEGORY_EU = map[MAV_ODID_CATEGORY_EU]string{
+	MAV_ODID_CATEGORY_EU_UNDECLARED: "MAV_ODID_CATEGORY_EU_UNDECLARED",
+	MAV_ODID_CATEGORY_EU_OPEN:       "MAV_ODID_CATEGORY_EU_OPEN",
+	MAV_ODID_CATEGORY_EU_SPECIFIC:   "MAV_ODID_CATEGORY_EU_SPECIFIC",
+	MAV_ODID_CATEGORY_EU_CERTIFIED:  "MAV_ODID_CATEGORY_EU_CERTIFIED",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_CATEGORY_EU) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_ODID_CATEGORY_EU_UNDECLARED:
-		return []byte("MAV_ODID_CATEGORY_EU_UNDECLARED"), nil
-	case MAV_ODID_CATEGORY_EU_OPEN:
-		return []byte("MAV_ODID_CATEGORY_EU_OPEN"), nil
-	case MAV_ODID_CATEGORY_EU_SPECIFIC:
-		return []byte("MAV_ODID_CATEGORY_EU_SPECIFIC"), nil
-	case MAV_ODID_CATEGORY_EU_CERTIFIED:
-		return []byte("MAV_ODID_CATEGORY_EU_CERTIFIED"), nil
+	if l, ok := labels_MAV_ODID_CATEGORY_EU[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_ODID_CATEGORY_EU = map[string]MAV_ODID_CATEGORY_EU{
+	"MAV_ODID_CATEGORY_EU_UNDECLARED": MAV_ODID_CATEGORY_EU_UNDECLARED,
+	"MAV_ODID_CATEGORY_EU_OPEN":       MAV_ODID_CATEGORY_EU_OPEN,
+	"MAV_ODID_CATEGORY_EU_SPECIFIC":   MAV_ODID_CATEGORY_EU_SPECIFIC,
+	"MAV_ODID_CATEGORY_EU_CERTIFIED":  MAV_ODID_CATEGORY_EU_CERTIFIED,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_CATEGORY_EU) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_ODID_CATEGORY_EU_UNDECLARED":
-		*e = MAV_ODID_CATEGORY_EU_UNDECLARED
-		return nil
-	case "MAV_ODID_CATEGORY_EU_OPEN":
-		*e = MAV_ODID_CATEGORY_EU_OPEN
-		return nil
-	case "MAV_ODID_CATEGORY_EU_SPECIFIC":
-		*e = MAV_ODID_CATEGORY_EU_SPECIFIC
-		return nil
-	case "MAV_ODID_CATEGORY_EU_CERTIFIED":
-		*e = MAV_ODID_CATEGORY_EU_CERTIFIED
+	if rl, ok := reverseLabels_MAV_ODID_CATEGORY_EU[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -8901,11 +6677,10 @@ func (e *MAV_ODID_CATEGORY_EU) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_CATEGORY_EU) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_ODID_CATEGORY_EU[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -8918,25 +6693,28 @@ const (
 	MAV_ODID_CLASSIFICATION_TYPE_EU MAV_ODID_CLASSIFICATION_TYPE = 1
 )
 
+var labels_MAV_ODID_CLASSIFICATION_TYPE = map[MAV_ODID_CLASSIFICATION_TYPE]string{
+	MAV_ODID_CLASSIFICATION_TYPE_UNDECLARED: "MAV_ODID_CLASSIFICATION_TYPE_UNDECLARED",
+	MAV_ODID_CLASSIFICATION_TYPE_EU:         "MAV_ODID_CLASSIFICATION_TYPE_EU",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_CLASSIFICATION_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_ODID_CLASSIFICATION_TYPE_UNDECLARED:
-		return []byte("MAV_ODID_CLASSIFICATION_TYPE_UNDECLARED"), nil
-	case MAV_ODID_CLASSIFICATION_TYPE_EU:
-		return []byte("MAV_ODID_CLASSIFICATION_TYPE_EU"), nil
+	if l, ok := labels_MAV_ODID_CLASSIFICATION_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_ODID_CLASSIFICATION_TYPE = map[string]MAV_ODID_CLASSIFICATION_TYPE{
+	"MAV_ODID_CLASSIFICATION_TYPE_UNDECLARED": MAV_ODID_CLASSIFICATION_TYPE_UNDECLARED,
+	"MAV_ODID_CLASSIFICATION_TYPE_EU":         MAV_ODID_CLASSIFICATION_TYPE_EU,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_CLASSIFICATION_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_ODID_CLASSIFICATION_TYPE_UNDECLARED":
-		*e = MAV_ODID_CLASSIFICATION_TYPE_UNDECLARED
-		return nil
-	case "MAV_ODID_CLASSIFICATION_TYPE_EU":
-		*e = MAV_ODID_CLASSIFICATION_TYPE_EU
+	if rl, ok := reverseLabels_MAV_ODID_CLASSIFICATION_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -8944,11 +6722,10 @@ func (e *MAV_ODID_CLASSIFICATION_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_CLASSIFICATION_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_ODID_CLASSIFICATION_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -8973,55 +6750,40 @@ const (
 	MAV_ODID_CLASS_EU_CLASS_6 MAV_ODID_CLASS_EU = 7
 )
 
+var labels_MAV_ODID_CLASS_EU = map[MAV_ODID_CLASS_EU]string{
+	MAV_ODID_CLASS_EU_UNDECLARED: "MAV_ODID_CLASS_EU_UNDECLARED",
+	MAV_ODID_CLASS_EU_CLASS_0:    "MAV_ODID_CLASS_EU_CLASS_0",
+	MAV_ODID_CLASS_EU_CLASS_1:    "MAV_ODID_CLASS_EU_CLASS_1",
+	MAV_ODID_CLASS_EU_CLASS_2:    "MAV_ODID_CLASS_EU_CLASS_2",
+	MAV_ODID_CLASS_EU_CLASS_3:    "MAV_ODID_CLASS_EU_CLASS_3",
+	MAV_ODID_CLASS_EU_CLASS_4:    "MAV_ODID_CLASS_EU_CLASS_4",
+	MAV_ODID_CLASS_EU_CLASS_5:    "MAV_ODID_CLASS_EU_CLASS_5",
+	MAV_ODID_CLASS_EU_CLASS_6:    "MAV_ODID_CLASS_EU_CLASS_6",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_CLASS_EU) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_ODID_CLASS_EU_UNDECLARED:
-		return []byte("MAV_ODID_CLASS_EU_UNDECLARED"), nil
-	case MAV_ODID_CLASS_EU_CLASS_0:
-		return []byte("MAV_ODID_CLASS_EU_CLASS_0"), nil
-	case MAV_ODID_CLASS_EU_CLASS_1:
-		return []byte("MAV_ODID_CLASS_EU_CLASS_1"), nil
-	case MAV_ODID_CLASS_EU_CLASS_2:
-		return []byte("MAV_ODID_CLASS_EU_CLASS_2"), nil
-	case MAV_ODID_CLASS_EU_CLASS_3:
-		return []byte("MAV_ODID_CLASS_EU_CLASS_3"), nil
-	case MAV_ODID_CLASS_EU_CLASS_4:
-		return []byte("MAV_ODID_CLASS_EU_CLASS_4"), nil
-	case MAV_ODID_CLASS_EU_CLASS_5:
-		return []byte("MAV_ODID_CLASS_EU_CLASS_5"), nil
-	case MAV_ODID_CLASS_EU_CLASS_6:
-		return []byte("MAV_ODID_CLASS_EU_CLASS_6"), nil
+	if l, ok := labels_MAV_ODID_CLASS_EU[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_ODID_CLASS_EU = map[string]MAV_ODID_CLASS_EU{
+	"MAV_ODID_CLASS_EU_UNDECLARED": MAV_ODID_CLASS_EU_UNDECLARED,
+	"MAV_ODID_CLASS_EU_CLASS_0":    MAV_ODID_CLASS_EU_CLASS_0,
+	"MAV_ODID_CLASS_EU_CLASS_1":    MAV_ODID_CLASS_EU_CLASS_1,
+	"MAV_ODID_CLASS_EU_CLASS_2":    MAV_ODID_CLASS_EU_CLASS_2,
+	"MAV_ODID_CLASS_EU_CLASS_3":    MAV_ODID_CLASS_EU_CLASS_3,
+	"MAV_ODID_CLASS_EU_CLASS_4":    MAV_ODID_CLASS_EU_CLASS_4,
+	"MAV_ODID_CLASS_EU_CLASS_5":    MAV_ODID_CLASS_EU_CLASS_5,
+	"MAV_ODID_CLASS_EU_CLASS_6":    MAV_ODID_CLASS_EU_CLASS_6,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_CLASS_EU) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_ODID_CLASS_EU_UNDECLARED":
-		*e = MAV_ODID_CLASS_EU_UNDECLARED
-		return nil
-	case "MAV_ODID_CLASS_EU_CLASS_0":
-		*e = MAV_ODID_CLASS_EU_CLASS_0
-		return nil
-	case "MAV_ODID_CLASS_EU_CLASS_1":
-		*e = MAV_ODID_CLASS_EU_CLASS_1
-		return nil
-	case "MAV_ODID_CLASS_EU_CLASS_2":
-		*e = MAV_ODID_CLASS_EU_CLASS_2
-		return nil
-	case "MAV_ODID_CLASS_EU_CLASS_3":
-		*e = MAV_ODID_CLASS_EU_CLASS_3
-		return nil
-	case "MAV_ODID_CLASS_EU_CLASS_4":
-		*e = MAV_ODID_CLASS_EU_CLASS_4
-		return nil
-	case "MAV_ODID_CLASS_EU_CLASS_5":
-		*e = MAV_ODID_CLASS_EU_CLASS_5
-		return nil
-	case "MAV_ODID_CLASS_EU_CLASS_6":
-		*e = MAV_ODID_CLASS_EU_CLASS_6
+	if rl, ok := reverseLabels_MAV_ODID_CLASS_EU[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -9029,11 +6791,10 @@ func (e *MAV_ODID_CLASS_EU) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_CLASS_EU) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_ODID_CLASS_EU[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -9044,20 +6805,26 @@ const (
 	MAV_ODID_DESC_TYPE_TEXT MAV_ODID_DESC_TYPE = 0
 )
 
+var labels_MAV_ODID_DESC_TYPE = map[MAV_ODID_DESC_TYPE]string{
+	MAV_ODID_DESC_TYPE_TEXT: "MAV_ODID_DESC_TYPE_TEXT",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_DESC_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_ODID_DESC_TYPE_TEXT:
-		return []byte("MAV_ODID_DESC_TYPE_TEXT"), nil
+	if l, ok := labels_MAV_ODID_DESC_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_ODID_DESC_TYPE = map[string]MAV_ODID_DESC_TYPE{
+	"MAV_ODID_DESC_TYPE_TEXT": MAV_ODID_DESC_TYPE_TEXT,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_DESC_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_ODID_DESC_TYPE_TEXT":
-		*e = MAV_ODID_DESC_TYPE_TEXT
+	if rl, ok := reverseLabels_MAV_ODID_DESC_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -9065,11 +6832,10 @@ func (e *MAV_ODID_DESC_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_DESC_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_ODID_DESC_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -9082,25 +6848,28 @@ const (
 	MAV_ODID_HEIGHT_REF_OVER_GROUND MAV_ODID_HEIGHT_REF = 1
 )
 
+var labels_MAV_ODID_HEIGHT_REF = map[MAV_ODID_HEIGHT_REF]string{
+	MAV_ODID_HEIGHT_REF_OVER_TAKEOFF: "MAV_ODID_HEIGHT_REF_OVER_TAKEOFF",
+	MAV_ODID_HEIGHT_REF_OVER_GROUND:  "MAV_ODID_HEIGHT_REF_OVER_GROUND",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_HEIGHT_REF) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_ODID_HEIGHT_REF_OVER_TAKEOFF:
-		return []byte("MAV_ODID_HEIGHT_REF_OVER_TAKEOFF"), nil
-	case MAV_ODID_HEIGHT_REF_OVER_GROUND:
-		return []byte("MAV_ODID_HEIGHT_REF_OVER_GROUND"), nil
+	if l, ok := labels_MAV_ODID_HEIGHT_REF[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_ODID_HEIGHT_REF = map[string]MAV_ODID_HEIGHT_REF{
+	"MAV_ODID_HEIGHT_REF_OVER_TAKEOFF": MAV_ODID_HEIGHT_REF_OVER_TAKEOFF,
+	"MAV_ODID_HEIGHT_REF_OVER_GROUND":  MAV_ODID_HEIGHT_REF_OVER_GROUND,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_HEIGHT_REF) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_ODID_HEIGHT_REF_OVER_TAKEOFF":
-		*e = MAV_ODID_HEIGHT_REF_OVER_TAKEOFF
-		return nil
-	case "MAV_ODID_HEIGHT_REF_OVER_GROUND":
-		*e = MAV_ODID_HEIGHT_REF_OVER_GROUND
+	if rl, ok := reverseLabels_MAV_ODID_HEIGHT_REF[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -9108,11 +6877,10 @@ func (e *MAV_ODID_HEIGHT_REF) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_HEIGHT_REF) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_ODID_HEIGHT_REF[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -9147,80 +6915,50 @@ const (
 	MAV_ODID_HOR_ACC_1_METER MAV_ODID_HOR_ACC = 12
 )
 
+var labels_MAV_ODID_HOR_ACC = map[MAV_ODID_HOR_ACC]string{
+	MAV_ODID_HOR_ACC_UNKNOWN:  "MAV_ODID_HOR_ACC_UNKNOWN",
+	MAV_ODID_HOR_ACC_10NM:     "MAV_ODID_HOR_ACC_10NM",
+	MAV_ODID_HOR_ACC_4NM:      "MAV_ODID_HOR_ACC_4NM",
+	MAV_ODID_HOR_ACC_2NM:      "MAV_ODID_HOR_ACC_2NM",
+	MAV_ODID_HOR_ACC_1NM:      "MAV_ODID_HOR_ACC_1NM",
+	MAV_ODID_HOR_ACC_0_5NM:    "MAV_ODID_HOR_ACC_0_5NM",
+	MAV_ODID_HOR_ACC_0_3NM:    "MAV_ODID_HOR_ACC_0_3NM",
+	MAV_ODID_HOR_ACC_0_1NM:    "MAV_ODID_HOR_ACC_0_1NM",
+	MAV_ODID_HOR_ACC_0_05NM:   "MAV_ODID_HOR_ACC_0_05NM",
+	MAV_ODID_HOR_ACC_30_METER: "MAV_ODID_HOR_ACC_30_METER",
+	MAV_ODID_HOR_ACC_10_METER: "MAV_ODID_HOR_ACC_10_METER",
+	MAV_ODID_HOR_ACC_3_METER:  "MAV_ODID_HOR_ACC_3_METER",
+	MAV_ODID_HOR_ACC_1_METER:  "MAV_ODID_HOR_ACC_1_METER",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_HOR_ACC) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_ODID_HOR_ACC_UNKNOWN:
-		return []byte("MAV_ODID_HOR_ACC_UNKNOWN"), nil
-	case MAV_ODID_HOR_ACC_10NM:
-		return []byte("MAV_ODID_HOR_ACC_10NM"), nil
-	case MAV_ODID_HOR_ACC_4NM:
-		return []byte("MAV_ODID_HOR_ACC_4NM"), nil
-	case MAV_ODID_HOR_ACC_2NM:
-		return []byte("MAV_ODID_HOR_ACC_2NM"), nil
-	case MAV_ODID_HOR_ACC_1NM:
-		return []byte("MAV_ODID_HOR_ACC_1NM"), nil
-	case MAV_ODID_HOR_ACC_0_5NM:
-		return []byte("MAV_ODID_HOR_ACC_0_5NM"), nil
-	case MAV_ODID_HOR_ACC_0_3NM:
-		return []byte("MAV_ODID_HOR_ACC_0_3NM"), nil
-	case MAV_ODID_HOR_ACC_0_1NM:
-		return []byte("MAV_ODID_HOR_ACC_0_1NM"), nil
-	case MAV_ODID_HOR_ACC_0_05NM:
-		return []byte("MAV_ODID_HOR_ACC_0_05NM"), nil
-	case MAV_ODID_HOR_ACC_30_METER:
-		return []byte("MAV_ODID_HOR_ACC_30_METER"), nil
-	case MAV_ODID_HOR_ACC_10_METER:
-		return []byte("MAV_ODID_HOR_ACC_10_METER"), nil
-	case MAV_ODID_HOR_ACC_3_METER:
-		return []byte("MAV_ODID_HOR_ACC_3_METER"), nil
-	case MAV_ODID_HOR_ACC_1_METER:
-		return []byte("MAV_ODID_HOR_ACC_1_METER"), nil
+	if l, ok := labels_MAV_ODID_HOR_ACC[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_ODID_HOR_ACC = map[string]MAV_ODID_HOR_ACC{
+	"MAV_ODID_HOR_ACC_UNKNOWN":  MAV_ODID_HOR_ACC_UNKNOWN,
+	"MAV_ODID_HOR_ACC_10NM":     MAV_ODID_HOR_ACC_10NM,
+	"MAV_ODID_HOR_ACC_4NM":      MAV_ODID_HOR_ACC_4NM,
+	"MAV_ODID_HOR_ACC_2NM":      MAV_ODID_HOR_ACC_2NM,
+	"MAV_ODID_HOR_ACC_1NM":      MAV_ODID_HOR_ACC_1NM,
+	"MAV_ODID_HOR_ACC_0_5NM":    MAV_ODID_HOR_ACC_0_5NM,
+	"MAV_ODID_HOR_ACC_0_3NM":    MAV_ODID_HOR_ACC_0_3NM,
+	"MAV_ODID_HOR_ACC_0_1NM":    MAV_ODID_HOR_ACC_0_1NM,
+	"MAV_ODID_HOR_ACC_0_05NM":   MAV_ODID_HOR_ACC_0_05NM,
+	"MAV_ODID_HOR_ACC_30_METER": MAV_ODID_HOR_ACC_30_METER,
+	"MAV_ODID_HOR_ACC_10_METER": MAV_ODID_HOR_ACC_10_METER,
+	"MAV_ODID_HOR_ACC_3_METER":  MAV_ODID_HOR_ACC_3_METER,
+	"MAV_ODID_HOR_ACC_1_METER":  MAV_ODID_HOR_ACC_1_METER,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_HOR_ACC) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_ODID_HOR_ACC_UNKNOWN":
-		*e = MAV_ODID_HOR_ACC_UNKNOWN
-		return nil
-	case "MAV_ODID_HOR_ACC_10NM":
-		*e = MAV_ODID_HOR_ACC_10NM
-		return nil
-	case "MAV_ODID_HOR_ACC_4NM":
-		*e = MAV_ODID_HOR_ACC_4NM
-		return nil
-	case "MAV_ODID_HOR_ACC_2NM":
-		*e = MAV_ODID_HOR_ACC_2NM
-		return nil
-	case "MAV_ODID_HOR_ACC_1NM":
-		*e = MAV_ODID_HOR_ACC_1NM
-		return nil
-	case "MAV_ODID_HOR_ACC_0_5NM":
-		*e = MAV_ODID_HOR_ACC_0_5NM
-		return nil
-	case "MAV_ODID_HOR_ACC_0_3NM":
-		*e = MAV_ODID_HOR_ACC_0_3NM
-		return nil
-	case "MAV_ODID_HOR_ACC_0_1NM":
-		*e = MAV_ODID_HOR_ACC_0_1NM
-		return nil
-	case "MAV_ODID_HOR_ACC_0_05NM":
-		*e = MAV_ODID_HOR_ACC_0_05NM
-		return nil
-	case "MAV_ODID_HOR_ACC_30_METER":
-		*e = MAV_ODID_HOR_ACC_30_METER
-		return nil
-	case "MAV_ODID_HOR_ACC_10_METER":
-		*e = MAV_ODID_HOR_ACC_10_METER
-		return nil
-	case "MAV_ODID_HOR_ACC_3_METER":
-		*e = MAV_ODID_HOR_ACC_3_METER
-		return nil
-	case "MAV_ODID_HOR_ACC_1_METER":
-		*e = MAV_ODID_HOR_ACC_1_METER
+	if rl, ok := reverseLabels_MAV_ODID_HOR_ACC[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -9228,11 +6966,10 @@ func (e *MAV_ODID_HOR_ACC) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_HOR_ACC) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_ODID_HOR_ACC[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -9251,40 +6988,34 @@ const (
 	MAV_ODID_ID_TYPE_SPECIFIC_SESSION_ID MAV_ODID_ID_TYPE = 4
 )
 
+var labels_MAV_ODID_ID_TYPE = map[MAV_ODID_ID_TYPE]string{
+	MAV_ODID_ID_TYPE_NONE:                "MAV_ODID_ID_TYPE_NONE",
+	MAV_ODID_ID_TYPE_SERIAL_NUMBER:       "MAV_ODID_ID_TYPE_SERIAL_NUMBER",
+	MAV_ODID_ID_TYPE_CAA_REGISTRATION_ID: "MAV_ODID_ID_TYPE_CAA_REGISTRATION_ID",
+	MAV_ODID_ID_TYPE_UTM_ASSIGNED_UUID:   "MAV_ODID_ID_TYPE_UTM_ASSIGNED_UUID",
+	MAV_ODID_ID_TYPE_SPECIFIC_SESSION_ID: "MAV_ODID_ID_TYPE_SPECIFIC_SESSION_ID",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_ID_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_ODID_ID_TYPE_NONE:
-		return []byte("MAV_ODID_ID_TYPE_NONE"), nil
-	case MAV_ODID_ID_TYPE_SERIAL_NUMBER:
-		return []byte("MAV_ODID_ID_TYPE_SERIAL_NUMBER"), nil
-	case MAV_ODID_ID_TYPE_CAA_REGISTRATION_ID:
-		return []byte("MAV_ODID_ID_TYPE_CAA_REGISTRATION_ID"), nil
-	case MAV_ODID_ID_TYPE_UTM_ASSIGNED_UUID:
-		return []byte("MAV_ODID_ID_TYPE_UTM_ASSIGNED_UUID"), nil
-	case MAV_ODID_ID_TYPE_SPECIFIC_SESSION_ID:
-		return []byte("MAV_ODID_ID_TYPE_SPECIFIC_SESSION_ID"), nil
+	if l, ok := labels_MAV_ODID_ID_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_ODID_ID_TYPE = map[string]MAV_ODID_ID_TYPE{
+	"MAV_ODID_ID_TYPE_NONE":                MAV_ODID_ID_TYPE_NONE,
+	"MAV_ODID_ID_TYPE_SERIAL_NUMBER":       MAV_ODID_ID_TYPE_SERIAL_NUMBER,
+	"MAV_ODID_ID_TYPE_CAA_REGISTRATION_ID": MAV_ODID_ID_TYPE_CAA_REGISTRATION_ID,
+	"MAV_ODID_ID_TYPE_UTM_ASSIGNED_UUID":   MAV_ODID_ID_TYPE_UTM_ASSIGNED_UUID,
+	"MAV_ODID_ID_TYPE_SPECIFIC_SESSION_ID": MAV_ODID_ID_TYPE_SPECIFIC_SESSION_ID,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_ID_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_ODID_ID_TYPE_NONE":
-		*e = MAV_ODID_ID_TYPE_NONE
-		return nil
-	case "MAV_ODID_ID_TYPE_SERIAL_NUMBER":
-		*e = MAV_ODID_ID_TYPE_SERIAL_NUMBER
-		return nil
-	case "MAV_ODID_ID_TYPE_CAA_REGISTRATION_ID":
-		*e = MAV_ODID_ID_TYPE_CAA_REGISTRATION_ID
-		return nil
-	case "MAV_ODID_ID_TYPE_UTM_ASSIGNED_UUID":
-		*e = MAV_ODID_ID_TYPE_UTM_ASSIGNED_UUID
-		return nil
-	case "MAV_ODID_ID_TYPE_SPECIFIC_SESSION_ID":
-		*e = MAV_ODID_ID_TYPE_SPECIFIC_SESSION_ID
+	if rl, ok := reverseLabels_MAV_ODID_ID_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -9292,11 +7023,10 @@ func (e *MAV_ODID_ID_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_ID_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_ODID_ID_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -9307,20 +7037,26 @@ const (
 	MAV_ODID_OPERATOR_ID_TYPE_CAA MAV_ODID_OPERATOR_ID_TYPE = 0
 )
 
+var labels_MAV_ODID_OPERATOR_ID_TYPE = map[MAV_ODID_OPERATOR_ID_TYPE]string{
+	MAV_ODID_OPERATOR_ID_TYPE_CAA: "MAV_ODID_OPERATOR_ID_TYPE_CAA",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_OPERATOR_ID_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_ODID_OPERATOR_ID_TYPE_CAA:
-		return []byte("MAV_ODID_OPERATOR_ID_TYPE_CAA"), nil
+	if l, ok := labels_MAV_ODID_OPERATOR_ID_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_ODID_OPERATOR_ID_TYPE = map[string]MAV_ODID_OPERATOR_ID_TYPE{
+	"MAV_ODID_OPERATOR_ID_TYPE_CAA": MAV_ODID_OPERATOR_ID_TYPE_CAA,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_OPERATOR_ID_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_ODID_OPERATOR_ID_TYPE_CAA":
-		*e = MAV_ODID_OPERATOR_ID_TYPE_CAA
+	if rl, ok := reverseLabels_MAV_ODID_OPERATOR_ID_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -9328,11 +7064,10 @@ func (e *MAV_ODID_OPERATOR_ID_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_OPERATOR_ID_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_ODID_OPERATOR_ID_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -9347,30 +7082,30 @@ const (
 	MAV_ODID_OPERATOR_LOCATION_TYPE_FIXED MAV_ODID_OPERATOR_LOCATION_TYPE = 2
 )
 
+var labels_MAV_ODID_OPERATOR_LOCATION_TYPE = map[MAV_ODID_OPERATOR_LOCATION_TYPE]string{
+	MAV_ODID_OPERATOR_LOCATION_TYPE_TAKEOFF:   "MAV_ODID_OPERATOR_LOCATION_TYPE_TAKEOFF",
+	MAV_ODID_OPERATOR_LOCATION_TYPE_LIVE_GNSS: "MAV_ODID_OPERATOR_LOCATION_TYPE_LIVE_GNSS",
+	MAV_ODID_OPERATOR_LOCATION_TYPE_FIXED:     "MAV_ODID_OPERATOR_LOCATION_TYPE_FIXED",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_OPERATOR_LOCATION_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_ODID_OPERATOR_LOCATION_TYPE_TAKEOFF:
-		return []byte("MAV_ODID_OPERATOR_LOCATION_TYPE_TAKEOFF"), nil
-	case MAV_ODID_OPERATOR_LOCATION_TYPE_LIVE_GNSS:
-		return []byte("MAV_ODID_OPERATOR_LOCATION_TYPE_LIVE_GNSS"), nil
-	case MAV_ODID_OPERATOR_LOCATION_TYPE_FIXED:
-		return []byte("MAV_ODID_OPERATOR_LOCATION_TYPE_FIXED"), nil
+	if l, ok := labels_MAV_ODID_OPERATOR_LOCATION_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_ODID_OPERATOR_LOCATION_TYPE = map[string]MAV_ODID_OPERATOR_LOCATION_TYPE{
+	"MAV_ODID_OPERATOR_LOCATION_TYPE_TAKEOFF":   MAV_ODID_OPERATOR_LOCATION_TYPE_TAKEOFF,
+	"MAV_ODID_OPERATOR_LOCATION_TYPE_LIVE_GNSS": MAV_ODID_OPERATOR_LOCATION_TYPE_LIVE_GNSS,
+	"MAV_ODID_OPERATOR_LOCATION_TYPE_FIXED":     MAV_ODID_OPERATOR_LOCATION_TYPE_FIXED,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_OPERATOR_LOCATION_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_ODID_OPERATOR_LOCATION_TYPE_TAKEOFF":
-		*e = MAV_ODID_OPERATOR_LOCATION_TYPE_TAKEOFF
-		return nil
-	case "MAV_ODID_OPERATOR_LOCATION_TYPE_LIVE_GNSS":
-		*e = MAV_ODID_OPERATOR_LOCATION_TYPE_LIVE_GNSS
-		return nil
-	case "MAV_ODID_OPERATOR_LOCATION_TYPE_FIXED":
-		*e = MAV_ODID_OPERATOR_LOCATION_TYPE_FIXED
+	if rl, ok := reverseLabels_MAV_ODID_OPERATOR_LOCATION_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -9378,11 +7113,10 @@ func (e *MAV_ODID_OPERATOR_LOCATION_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_OPERATOR_LOCATION_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_ODID_OPERATOR_LOCATION_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -9401,40 +7135,34 @@ const (
 	MAV_ODID_SPEED_ACC_0_3_METERS_PER_SECOND MAV_ODID_SPEED_ACC = 4
 )
 
+var labels_MAV_ODID_SPEED_ACC = map[MAV_ODID_SPEED_ACC]string{
+	MAV_ODID_SPEED_ACC_UNKNOWN:               "MAV_ODID_SPEED_ACC_UNKNOWN",
+	MAV_ODID_SPEED_ACC_10_METERS_PER_SECOND:  "MAV_ODID_SPEED_ACC_10_METERS_PER_SECOND",
+	MAV_ODID_SPEED_ACC_3_METERS_PER_SECOND:   "MAV_ODID_SPEED_ACC_3_METERS_PER_SECOND",
+	MAV_ODID_SPEED_ACC_1_METERS_PER_SECOND:   "MAV_ODID_SPEED_ACC_1_METERS_PER_SECOND",
+	MAV_ODID_SPEED_ACC_0_3_METERS_PER_SECOND: "MAV_ODID_SPEED_ACC_0_3_METERS_PER_SECOND",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_SPEED_ACC) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_ODID_SPEED_ACC_UNKNOWN:
-		return []byte("MAV_ODID_SPEED_ACC_UNKNOWN"), nil
-	case MAV_ODID_SPEED_ACC_10_METERS_PER_SECOND:
-		return []byte("MAV_ODID_SPEED_ACC_10_METERS_PER_SECOND"), nil
-	case MAV_ODID_SPEED_ACC_3_METERS_PER_SECOND:
-		return []byte("MAV_ODID_SPEED_ACC_3_METERS_PER_SECOND"), nil
-	case MAV_ODID_SPEED_ACC_1_METERS_PER_SECOND:
-		return []byte("MAV_ODID_SPEED_ACC_1_METERS_PER_SECOND"), nil
-	case MAV_ODID_SPEED_ACC_0_3_METERS_PER_SECOND:
-		return []byte("MAV_ODID_SPEED_ACC_0_3_METERS_PER_SECOND"), nil
+	if l, ok := labels_MAV_ODID_SPEED_ACC[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_ODID_SPEED_ACC = map[string]MAV_ODID_SPEED_ACC{
+	"MAV_ODID_SPEED_ACC_UNKNOWN":               MAV_ODID_SPEED_ACC_UNKNOWN,
+	"MAV_ODID_SPEED_ACC_10_METERS_PER_SECOND":  MAV_ODID_SPEED_ACC_10_METERS_PER_SECOND,
+	"MAV_ODID_SPEED_ACC_3_METERS_PER_SECOND":   MAV_ODID_SPEED_ACC_3_METERS_PER_SECOND,
+	"MAV_ODID_SPEED_ACC_1_METERS_PER_SECOND":   MAV_ODID_SPEED_ACC_1_METERS_PER_SECOND,
+	"MAV_ODID_SPEED_ACC_0_3_METERS_PER_SECOND": MAV_ODID_SPEED_ACC_0_3_METERS_PER_SECOND,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_SPEED_ACC) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_ODID_SPEED_ACC_UNKNOWN":
-		*e = MAV_ODID_SPEED_ACC_UNKNOWN
-		return nil
-	case "MAV_ODID_SPEED_ACC_10_METERS_PER_SECOND":
-		*e = MAV_ODID_SPEED_ACC_10_METERS_PER_SECOND
-		return nil
-	case "MAV_ODID_SPEED_ACC_3_METERS_PER_SECOND":
-		*e = MAV_ODID_SPEED_ACC_3_METERS_PER_SECOND
-		return nil
-	case "MAV_ODID_SPEED_ACC_1_METERS_PER_SECOND":
-		*e = MAV_ODID_SPEED_ACC_1_METERS_PER_SECOND
-		return nil
-	case "MAV_ODID_SPEED_ACC_0_3_METERS_PER_SECOND":
-		*e = MAV_ODID_SPEED_ACC_0_3_METERS_PER_SECOND
+	if rl, ok := reverseLabels_MAV_ODID_SPEED_ACC[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -9442,11 +7170,10 @@ func (e *MAV_ODID_SPEED_ACC) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_SPEED_ACC) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_ODID_SPEED_ACC[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -9463,35 +7190,32 @@ const (
 	MAV_ODID_STATUS_EMERGENCY MAV_ODID_STATUS = 3
 )
 
+var labels_MAV_ODID_STATUS = map[MAV_ODID_STATUS]string{
+	MAV_ODID_STATUS_UNDECLARED: "MAV_ODID_STATUS_UNDECLARED",
+	MAV_ODID_STATUS_GROUND:     "MAV_ODID_STATUS_GROUND",
+	MAV_ODID_STATUS_AIRBORNE:   "MAV_ODID_STATUS_AIRBORNE",
+	MAV_ODID_STATUS_EMERGENCY:  "MAV_ODID_STATUS_EMERGENCY",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_STATUS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_ODID_STATUS_UNDECLARED:
-		return []byte("MAV_ODID_STATUS_UNDECLARED"), nil
-	case MAV_ODID_STATUS_GROUND:
-		return []byte("MAV_ODID_STATUS_GROUND"), nil
-	case MAV_ODID_STATUS_AIRBORNE:
-		return []byte("MAV_ODID_STATUS_AIRBORNE"), nil
-	case MAV_ODID_STATUS_EMERGENCY:
-		return []byte("MAV_ODID_STATUS_EMERGENCY"), nil
+	if l, ok := labels_MAV_ODID_STATUS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_ODID_STATUS = map[string]MAV_ODID_STATUS{
+	"MAV_ODID_STATUS_UNDECLARED": MAV_ODID_STATUS_UNDECLARED,
+	"MAV_ODID_STATUS_GROUND":     MAV_ODID_STATUS_GROUND,
+	"MAV_ODID_STATUS_AIRBORNE":   MAV_ODID_STATUS_AIRBORNE,
+	"MAV_ODID_STATUS_EMERGENCY":  MAV_ODID_STATUS_EMERGENCY,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_STATUS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_ODID_STATUS_UNDECLARED":
-		*e = MAV_ODID_STATUS_UNDECLARED
-		return nil
-	case "MAV_ODID_STATUS_GROUND":
-		*e = MAV_ODID_STATUS_GROUND
-		return nil
-	case "MAV_ODID_STATUS_AIRBORNE":
-		*e = MAV_ODID_STATUS_AIRBORNE
-		return nil
-	case "MAV_ODID_STATUS_EMERGENCY":
-		*e = MAV_ODID_STATUS_EMERGENCY
+	if rl, ok := reverseLabels_MAV_ODID_STATUS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -9499,11 +7223,10 @@ func (e *MAV_ODID_STATUS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_STATUS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_ODID_STATUS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -9544,95 +7267,56 @@ const (
 	MAV_ODID_TIME_ACC_1_5_SECOND MAV_ODID_TIME_ACC = 15
 )
 
+var labels_MAV_ODID_TIME_ACC = map[MAV_ODID_TIME_ACC]string{
+	MAV_ODID_TIME_ACC_UNKNOWN:    "MAV_ODID_TIME_ACC_UNKNOWN",
+	MAV_ODID_TIME_ACC_0_1_SECOND: "MAV_ODID_TIME_ACC_0_1_SECOND",
+	MAV_ODID_TIME_ACC_0_2_SECOND: "MAV_ODID_TIME_ACC_0_2_SECOND",
+	MAV_ODID_TIME_ACC_0_3_SECOND: "MAV_ODID_TIME_ACC_0_3_SECOND",
+	MAV_ODID_TIME_ACC_0_4_SECOND: "MAV_ODID_TIME_ACC_0_4_SECOND",
+	MAV_ODID_TIME_ACC_0_5_SECOND: "MAV_ODID_TIME_ACC_0_5_SECOND",
+	MAV_ODID_TIME_ACC_0_6_SECOND: "MAV_ODID_TIME_ACC_0_6_SECOND",
+	MAV_ODID_TIME_ACC_0_7_SECOND: "MAV_ODID_TIME_ACC_0_7_SECOND",
+	MAV_ODID_TIME_ACC_0_8_SECOND: "MAV_ODID_TIME_ACC_0_8_SECOND",
+	MAV_ODID_TIME_ACC_0_9_SECOND: "MAV_ODID_TIME_ACC_0_9_SECOND",
+	MAV_ODID_TIME_ACC_1_0_SECOND: "MAV_ODID_TIME_ACC_1_0_SECOND",
+	MAV_ODID_TIME_ACC_1_1_SECOND: "MAV_ODID_TIME_ACC_1_1_SECOND",
+	MAV_ODID_TIME_ACC_1_2_SECOND: "MAV_ODID_TIME_ACC_1_2_SECOND",
+	MAV_ODID_TIME_ACC_1_3_SECOND: "MAV_ODID_TIME_ACC_1_3_SECOND",
+	MAV_ODID_TIME_ACC_1_4_SECOND: "MAV_ODID_TIME_ACC_1_4_SECOND",
+	MAV_ODID_TIME_ACC_1_5_SECOND: "MAV_ODID_TIME_ACC_1_5_SECOND",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_TIME_ACC) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_ODID_TIME_ACC_UNKNOWN:
-		return []byte("MAV_ODID_TIME_ACC_UNKNOWN"), nil
-	case MAV_ODID_TIME_ACC_0_1_SECOND:
-		return []byte("MAV_ODID_TIME_ACC_0_1_SECOND"), nil
-	case MAV_ODID_TIME_ACC_0_2_SECOND:
-		return []byte("MAV_ODID_TIME_ACC_0_2_SECOND"), nil
-	case MAV_ODID_TIME_ACC_0_3_SECOND:
-		return []byte("MAV_ODID_TIME_ACC_0_3_SECOND"), nil
-	case MAV_ODID_TIME_ACC_0_4_SECOND:
-		return []byte("MAV_ODID_TIME_ACC_0_4_SECOND"), nil
-	case MAV_ODID_TIME_ACC_0_5_SECOND:
-		return []byte("MAV_ODID_TIME_ACC_0_5_SECOND"), nil
-	case MAV_ODID_TIME_ACC_0_6_SECOND:
-		return []byte("MAV_ODID_TIME_ACC_0_6_SECOND"), nil
-	case MAV_ODID_TIME_ACC_0_7_SECOND:
-		return []byte("MAV_ODID_TIME_ACC_0_7_SECOND"), nil
-	case MAV_ODID_TIME_ACC_0_8_SECOND:
-		return []byte("MAV_ODID_TIME_ACC_0_8_SECOND"), nil
-	case MAV_ODID_TIME_ACC_0_9_SECOND:
-		return []byte("MAV_ODID_TIME_ACC_0_9_SECOND"), nil
-	case MAV_ODID_TIME_ACC_1_0_SECOND:
-		return []byte("MAV_ODID_TIME_ACC_1_0_SECOND"), nil
-	case MAV_ODID_TIME_ACC_1_1_SECOND:
-		return []byte("MAV_ODID_TIME_ACC_1_1_SECOND"), nil
-	case MAV_ODID_TIME_ACC_1_2_SECOND:
-		return []byte("MAV_ODID_TIME_ACC_1_2_SECOND"), nil
-	case MAV_ODID_TIME_ACC_1_3_SECOND:
-		return []byte("MAV_ODID_TIME_ACC_1_3_SECOND"), nil
-	case MAV_ODID_TIME_ACC_1_4_SECOND:
-		return []byte("MAV_ODID_TIME_ACC_1_4_SECOND"), nil
-	case MAV_ODID_TIME_ACC_1_5_SECOND:
-		return []byte("MAV_ODID_TIME_ACC_1_5_SECOND"), nil
+	if l, ok := labels_MAV_ODID_TIME_ACC[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_ODID_TIME_ACC = map[string]MAV_ODID_TIME_ACC{
+	"MAV_ODID_TIME_ACC_UNKNOWN":    MAV_ODID_TIME_ACC_UNKNOWN,
+	"MAV_ODID_TIME_ACC_0_1_SECOND": MAV_ODID_TIME_ACC_0_1_SECOND,
+	"MAV_ODID_TIME_ACC_0_2_SECOND": MAV_ODID_TIME_ACC_0_2_SECOND,
+	"MAV_ODID_TIME_ACC_0_3_SECOND": MAV_ODID_TIME_ACC_0_3_SECOND,
+	"MAV_ODID_TIME_ACC_0_4_SECOND": MAV_ODID_TIME_ACC_0_4_SECOND,
+	"MAV_ODID_TIME_ACC_0_5_SECOND": MAV_ODID_TIME_ACC_0_5_SECOND,
+	"MAV_ODID_TIME_ACC_0_6_SECOND": MAV_ODID_TIME_ACC_0_6_SECOND,
+	"MAV_ODID_TIME_ACC_0_7_SECOND": MAV_ODID_TIME_ACC_0_7_SECOND,
+	"MAV_ODID_TIME_ACC_0_8_SECOND": MAV_ODID_TIME_ACC_0_8_SECOND,
+	"MAV_ODID_TIME_ACC_0_9_SECOND": MAV_ODID_TIME_ACC_0_9_SECOND,
+	"MAV_ODID_TIME_ACC_1_0_SECOND": MAV_ODID_TIME_ACC_1_0_SECOND,
+	"MAV_ODID_TIME_ACC_1_1_SECOND": MAV_ODID_TIME_ACC_1_1_SECOND,
+	"MAV_ODID_TIME_ACC_1_2_SECOND": MAV_ODID_TIME_ACC_1_2_SECOND,
+	"MAV_ODID_TIME_ACC_1_3_SECOND": MAV_ODID_TIME_ACC_1_3_SECOND,
+	"MAV_ODID_TIME_ACC_1_4_SECOND": MAV_ODID_TIME_ACC_1_4_SECOND,
+	"MAV_ODID_TIME_ACC_1_5_SECOND": MAV_ODID_TIME_ACC_1_5_SECOND,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_TIME_ACC) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_ODID_TIME_ACC_UNKNOWN":
-		*e = MAV_ODID_TIME_ACC_UNKNOWN
-		return nil
-	case "MAV_ODID_TIME_ACC_0_1_SECOND":
-		*e = MAV_ODID_TIME_ACC_0_1_SECOND
-		return nil
-	case "MAV_ODID_TIME_ACC_0_2_SECOND":
-		*e = MAV_ODID_TIME_ACC_0_2_SECOND
-		return nil
-	case "MAV_ODID_TIME_ACC_0_3_SECOND":
-		*e = MAV_ODID_TIME_ACC_0_3_SECOND
-		return nil
-	case "MAV_ODID_TIME_ACC_0_4_SECOND":
-		*e = MAV_ODID_TIME_ACC_0_4_SECOND
-		return nil
-	case "MAV_ODID_TIME_ACC_0_5_SECOND":
-		*e = MAV_ODID_TIME_ACC_0_5_SECOND
-		return nil
-	case "MAV_ODID_TIME_ACC_0_6_SECOND":
-		*e = MAV_ODID_TIME_ACC_0_6_SECOND
-		return nil
-	case "MAV_ODID_TIME_ACC_0_7_SECOND":
-		*e = MAV_ODID_TIME_ACC_0_7_SECOND
-		return nil
-	case "MAV_ODID_TIME_ACC_0_8_SECOND":
-		*e = MAV_ODID_TIME_ACC_0_8_SECOND
-		return nil
-	case "MAV_ODID_TIME_ACC_0_9_SECOND":
-		*e = MAV_ODID_TIME_ACC_0_9_SECOND
-		return nil
-	case "MAV_ODID_TIME_ACC_1_0_SECOND":
-		*e = MAV_ODID_TIME_ACC_1_0_SECOND
-		return nil
-	case "MAV_ODID_TIME_ACC_1_1_SECOND":
-		*e = MAV_ODID_TIME_ACC_1_1_SECOND
-		return nil
-	case "MAV_ODID_TIME_ACC_1_2_SECOND":
-		*e = MAV_ODID_TIME_ACC_1_2_SECOND
-		return nil
-	case "MAV_ODID_TIME_ACC_1_3_SECOND":
-		*e = MAV_ODID_TIME_ACC_1_3_SECOND
-		return nil
-	case "MAV_ODID_TIME_ACC_1_4_SECOND":
-		*e = MAV_ODID_TIME_ACC_1_4_SECOND
-		return nil
-	case "MAV_ODID_TIME_ACC_1_5_SECOND":
-		*e = MAV_ODID_TIME_ACC_1_5_SECOND
+	if rl, ok := reverseLabels_MAV_ODID_TIME_ACC[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -9640,11 +7324,10 @@ func (e *MAV_ODID_TIME_ACC) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_TIME_ACC) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_ODID_TIME_ACC[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -9685,95 +7368,56 @@ const (
 	MAV_ODID_UA_TYPE_OTHER MAV_ODID_UA_TYPE = 15
 )
 
+var labels_MAV_ODID_UA_TYPE = map[MAV_ODID_UA_TYPE]string{
+	MAV_ODID_UA_TYPE_NONE:                      "MAV_ODID_UA_TYPE_NONE",
+	MAV_ODID_UA_TYPE_AEROPLANE:                 "MAV_ODID_UA_TYPE_AEROPLANE",
+	MAV_ODID_UA_TYPE_HELICOPTER_OR_MULTIROTOR:  "MAV_ODID_UA_TYPE_HELICOPTER_OR_MULTIROTOR",
+	MAV_ODID_UA_TYPE_GYROPLANE:                 "MAV_ODID_UA_TYPE_GYROPLANE",
+	MAV_ODID_UA_TYPE_HYBRID_LIFT:               "MAV_ODID_UA_TYPE_HYBRID_LIFT",
+	MAV_ODID_UA_TYPE_ORNITHOPTER:               "MAV_ODID_UA_TYPE_ORNITHOPTER",
+	MAV_ODID_UA_TYPE_GLIDER:                    "MAV_ODID_UA_TYPE_GLIDER",
+	MAV_ODID_UA_TYPE_KITE:                      "MAV_ODID_UA_TYPE_KITE",
+	MAV_ODID_UA_TYPE_FREE_BALLOON:              "MAV_ODID_UA_TYPE_FREE_BALLOON",
+	MAV_ODID_UA_TYPE_CAPTIVE_BALLOON:           "MAV_ODID_UA_TYPE_CAPTIVE_BALLOON",
+	MAV_ODID_UA_TYPE_AIRSHIP:                   "MAV_ODID_UA_TYPE_AIRSHIP",
+	MAV_ODID_UA_TYPE_FREE_FALL_PARACHUTE:       "MAV_ODID_UA_TYPE_FREE_FALL_PARACHUTE",
+	MAV_ODID_UA_TYPE_ROCKET:                    "MAV_ODID_UA_TYPE_ROCKET",
+	MAV_ODID_UA_TYPE_TETHERED_POWERED_AIRCRAFT: "MAV_ODID_UA_TYPE_TETHERED_POWERED_AIRCRAFT",
+	MAV_ODID_UA_TYPE_GROUND_OBSTACLE:           "MAV_ODID_UA_TYPE_GROUND_OBSTACLE",
+	MAV_ODID_UA_TYPE_OTHER:                     "MAV_ODID_UA_TYPE_OTHER",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_UA_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_ODID_UA_TYPE_NONE:
-		return []byte("MAV_ODID_UA_TYPE_NONE"), nil
-	case MAV_ODID_UA_TYPE_AEROPLANE:
-		return []byte("MAV_ODID_UA_TYPE_AEROPLANE"), nil
-	case MAV_ODID_UA_TYPE_HELICOPTER_OR_MULTIROTOR:
-		return []byte("MAV_ODID_UA_TYPE_HELICOPTER_OR_MULTIROTOR"), nil
-	case MAV_ODID_UA_TYPE_GYROPLANE:
-		return []byte("MAV_ODID_UA_TYPE_GYROPLANE"), nil
-	case MAV_ODID_UA_TYPE_HYBRID_LIFT:
-		return []byte("MAV_ODID_UA_TYPE_HYBRID_LIFT"), nil
-	case MAV_ODID_UA_TYPE_ORNITHOPTER:
-		return []byte("MAV_ODID_UA_TYPE_ORNITHOPTER"), nil
-	case MAV_ODID_UA_TYPE_GLIDER:
-		return []byte("MAV_ODID_UA_TYPE_GLIDER"), nil
-	case MAV_ODID_UA_TYPE_KITE:
-		return []byte("MAV_ODID_UA_TYPE_KITE"), nil
-	case MAV_ODID_UA_TYPE_FREE_BALLOON:
-		return []byte("MAV_ODID_UA_TYPE_FREE_BALLOON"), nil
-	case MAV_ODID_UA_TYPE_CAPTIVE_BALLOON:
-		return []byte("MAV_ODID_UA_TYPE_CAPTIVE_BALLOON"), nil
-	case MAV_ODID_UA_TYPE_AIRSHIP:
-		return []byte("MAV_ODID_UA_TYPE_AIRSHIP"), nil
-	case MAV_ODID_UA_TYPE_FREE_FALL_PARACHUTE:
-		return []byte("MAV_ODID_UA_TYPE_FREE_FALL_PARACHUTE"), nil
-	case MAV_ODID_UA_TYPE_ROCKET:
-		return []byte("MAV_ODID_UA_TYPE_ROCKET"), nil
-	case MAV_ODID_UA_TYPE_TETHERED_POWERED_AIRCRAFT:
-		return []byte("MAV_ODID_UA_TYPE_TETHERED_POWERED_AIRCRAFT"), nil
-	case MAV_ODID_UA_TYPE_GROUND_OBSTACLE:
-		return []byte("MAV_ODID_UA_TYPE_GROUND_OBSTACLE"), nil
-	case MAV_ODID_UA_TYPE_OTHER:
-		return []byte("MAV_ODID_UA_TYPE_OTHER"), nil
+	if l, ok := labels_MAV_ODID_UA_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_ODID_UA_TYPE = map[string]MAV_ODID_UA_TYPE{
+	"MAV_ODID_UA_TYPE_NONE":                      MAV_ODID_UA_TYPE_NONE,
+	"MAV_ODID_UA_TYPE_AEROPLANE":                 MAV_ODID_UA_TYPE_AEROPLANE,
+	"MAV_ODID_UA_TYPE_HELICOPTER_OR_MULTIROTOR":  MAV_ODID_UA_TYPE_HELICOPTER_OR_MULTIROTOR,
+	"MAV_ODID_UA_TYPE_GYROPLANE":                 MAV_ODID_UA_TYPE_GYROPLANE,
+	"MAV_ODID_UA_TYPE_HYBRID_LIFT":               MAV_ODID_UA_TYPE_HYBRID_LIFT,
+	"MAV_ODID_UA_TYPE_ORNITHOPTER":               MAV_ODID_UA_TYPE_ORNITHOPTER,
+	"MAV_ODID_UA_TYPE_GLIDER":                    MAV_ODID_UA_TYPE_GLIDER,
+	"MAV_ODID_UA_TYPE_KITE":                      MAV_ODID_UA_TYPE_KITE,
+	"MAV_ODID_UA_TYPE_FREE_BALLOON":              MAV_ODID_UA_TYPE_FREE_BALLOON,
+	"MAV_ODID_UA_TYPE_CAPTIVE_BALLOON":           MAV_ODID_UA_TYPE_CAPTIVE_BALLOON,
+	"MAV_ODID_UA_TYPE_AIRSHIP":                   MAV_ODID_UA_TYPE_AIRSHIP,
+	"MAV_ODID_UA_TYPE_FREE_FALL_PARACHUTE":       MAV_ODID_UA_TYPE_FREE_FALL_PARACHUTE,
+	"MAV_ODID_UA_TYPE_ROCKET":                    MAV_ODID_UA_TYPE_ROCKET,
+	"MAV_ODID_UA_TYPE_TETHERED_POWERED_AIRCRAFT": MAV_ODID_UA_TYPE_TETHERED_POWERED_AIRCRAFT,
+	"MAV_ODID_UA_TYPE_GROUND_OBSTACLE":           MAV_ODID_UA_TYPE_GROUND_OBSTACLE,
+	"MAV_ODID_UA_TYPE_OTHER":                     MAV_ODID_UA_TYPE_OTHER,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_UA_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_ODID_UA_TYPE_NONE":
-		*e = MAV_ODID_UA_TYPE_NONE
-		return nil
-	case "MAV_ODID_UA_TYPE_AEROPLANE":
-		*e = MAV_ODID_UA_TYPE_AEROPLANE
-		return nil
-	case "MAV_ODID_UA_TYPE_HELICOPTER_OR_MULTIROTOR":
-		*e = MAV_ODID_UA_TYPE_HELICOPTER_OR_MULTIROTOR
-		return nil
-	case "MAV_ODID_UA_TYPE_GYROPLANE":
-		*e = MAV_ODID_UA_TYPE_GYROPLANE
-		return nil
-	case "MAV_ODID_UA_TYPE_HYBRID_LIFT":
-		*e = MAV_ODID_UA_TYPE_HYBRID_LIFT
-		return nil
-	case "MAV_ODID_UA_TYPE_ORNITHOPTER":
-		*e = MAV_ODID_UA_TYPE_ORNITHOPTER
-		return nil
-	case "MAV_ODID_UA_TYPE_GLIDER":
-		*e = MAV_ODID_UA_TYPE_GLIDER
-		return nil
-	case "MAV_ODID_UA_TYPE_KITE":
-		*e = MAV_ODID_UA_TYPE_KITE
-		return nil
-	case "MAV_ODID_UA_TYPE_FREE_BALLOON":
-		*e = MAV_ODID_UA_TYPE_FREE_BALLOON
-		return nil
-	case "MAV_ODID_UA_TYPE_CAPTIVE_BALLOON":
-		*e = MAV_ODID_UA_TYPE_CAPTIVE_BALLOON
-		return nil
-	case "MAV_ODID_UA_TYPE_AIRSHIP":
-		*e = MAV_ODID_UA_TYPE_AIRSHIP
-		return nil
-	case "MAV_ODID_UA_TYPE_FREE_FALL_PARACHUTE":
-		*e = MAV_ODID_UA_TYPE_FREE_FALL_PARACHUTE
-		return nil
-	case "MAV_ODID_UA_TYPE_ROCKET":
-		*e = MAV_ODID_UA_TYPE_ROCKET
-		return nil
-	case "MAV_ODID_UA_TYPE_TETHERED_POWERED_AIRCRAFT":
-		*e = MAV_ODID_UA_TYPE_TETHERED_POWERED_AIRCRAFT
-		return nil
-	case "MAV_ODID_UA_TYPE_GROUND_OBSTACLE":
-		*e = MAV_ODID_UA_TYPE_GROUND_OBSTACLE
-		return nil
-	case "MAV_ODID_UA_TYPE_OTHER":
-		*e = MAV_ODID_UA_TYPE_OTHER
+	if rl, ok := reverseLabels_MAV_ODID_UA_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -9781,11 +7425,10 @@ func (e *MAV_ODID_UA_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_UA_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_ODID_UA_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -9808,50 +7451,38 @@ const (
 	MAV_ODID_VER_ACC_1_METER MAV_ODID_VER_ACC = 6
 )
 
+var labels_MAV_ODID_VER_ACC = map[MAV_ODID_VER_ACC]string{
+	MAV_ODID_VER_ACC_UNKNOWN:   "MAV_ODID_VER_ACC_UNKNOWN",
+	MAV_ODID_VER_ACC_150_METER: "MAV_ODID_VER_ACC_150_METER",
+	MAV_ODID_VER_ACC_45_METER:  "MAV_ODID_VER_ACC_45_METER",
+	MAV_ODID_VER_ACC_25_METER:  "MAV_ODID_VER_ACC_25_METER",
+	MAV_ODID_VER_ACC_10_METER:  "MAV_ODID_VER_ACC_10_METER",
+	MAV_ODID_VER_ACC_3_METER:   "MAV_ODID_VER_ACC_3_METER",
+	MAV_ODID_VER_ACC_1_METER:   "MAV_ODID_VER_ACC_1_METER",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_VER_ACC) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_ODID_VER_ACC_UNKNOWN:
-		return []byte("MAV_ODID_VER_ACC_UNKNOWN"), nil
-	case MAV_ODID_VER_ACC_150_METER:
-		return []byte("MAV_ODID_VER_ACC_150_METER"), nil
-	case MAV_ODID_VER_ACC_45_METER:
-		return []byte("MAV_ODID_VER_ACC_45_METER"), nil
-	case MAV_ODID_VER_ACC_25_METER:
-		return []byte("MAV_ODID_VER_ACC_25_METER"), nil
-	case MAV_ODID_VER_ACC_10_METER:
-		return []byte("MAV_ODID_VER_ACC_10_METER"), nil
-	case MAV_ODID_VER_ACC_3_METER:
-		return []byte("MAV_ODID_VER_ACC_3_METER"), nil
-	case MAV_ODID_VER_ACC_1_METER:
-		return []byte("MAV_ODID_VER_ACC_1_METER"), nil
+	if l, ok := labels_MAV_ODID_VER_ACC[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_ODID_VER_ACC = map[string]MAV_ODID_VER_ACC{
+	"MAV_ODID_VER_ACC_UNKNOWN":   MAV_ODID_VER_ACC_UNKNOWN,
+	"MAV_ODID_VER_ACC_150_METER": MAV_ODID_VER_ACC_150_METER,
+	"MAV_ODID_VER_ACC_45_METER":  MAV_ODID_VER_ACC_45_METER,
+	"MAV_ODID_VER_ACC_25_METER":  MAV_ODID_VER_ACC_25_METER,
+	"MAV_ODID_VER_ACC_10_METER":  MAV_ODID_VER_ACC_10_METER,
+	"MAV_ODID_VER_ACC_3_METER":   MAV_ODID_VER_ACC_3_METER,
+	"MAV_ODID_VER_ACC_1_METER":   MAV_ODID_VER_ACC_1_METER,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_VER_ACC) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_ODID_VER_ACC_UNKNOWN":
-		*e = MAV_ODID_VER_ACC_UNKNOWN
-		return nil
-	case "MAV_ODID_VER_ACC_150_METER":
-		*e = MAV_ODID_VER_ACC_150_METER
-		return nil
-	case "MAV_ODID_VER_ACC_45_METER":
-		*e = MAV_ODID_VER_ACC_45_METER
-		return nil
-	case "MAV_ODID_VER_ACC_25_METER":
-		*e = MAV_ODID_VER_ACC_25_METER
-		return nil
-	case "MAV_ODID_VER_ACC_10_METER":
-		*e = MAV_ODID_VER_ACC_10_METER
-		return nil
-	case "MAV_ODID_VER_ACC_3_METER":
-		*e = MAV_ODID_VER_ACC_3_METER
-		return nil
-	case "MAV_ODID_VER_ACC_1_METER":
-		*e = MAV_ODID_VER_ACC_1_METER
+	if rl, ok := reverseLabels_MAV_ODID_VER_ACC[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -9859,11 +7490,10 @@ func (e *MAV_ODID_VER_ACC) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_VER_ACC) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_ODID_VER_ACC[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Specifies the datatype of a MAVLink extended parameter.
@@ -9894,70 +7524,46 @@ const (
 	MAV_PARAM_EXT_TYPE_CUSTOM MAV_PARAM_EXT_TYPE = 11
 )
 
+var labels_MAV_PARAM_EXT_TYPE = map[MAV_PARAM_EXT_TYPE]string{
+	MAV_PARAM_EXT_TYPE_UINT8:  "MAV_PARAM_EXT_TYPE_UINT8",
+	MAV_PARAM_EXT_TYPE_INT8:   "MAV_PARAM_EXT_TYPE_INT8",
+	MAV_PARAM_EXT_TYPE_UINT16: "MAV_PARAM_EXT_TYPE_UINT16",
+	MAV_PARAM_EXT_TYPE_INT16:  "MAV_PARAM_EXT_TYPE_INT16",
+	MAV_PARAM_EXT_TYPE_UINT32: "MAV_PARAM_EXT_TYPE_UINT32",
+	MAV_PARAM_EXT_TYPE_INT32:  "MAV_PARAM_EXT_TYPE_INT32",
+	MAV_PARAM_EXT_TYPE_UINT64: "MAV_PARAM_EXT_TYPE_UINT64",
+	MAV_PARAM_EXT_TYPE_INT64:  "MAV_PARAM_EXT_TYPE_INT64",
+	MAV_PARAM_EXT_TYPE_REAL32: "MAV_PARAM_EXT_TYPE_REAL32",
+	MAV_PARAM_EXT_TYPE_REAL64: "MAV_PARAM_EXT_TYPE_REAL64",
+	MAV_PARAM_EXT_TYPE_CUSTOM: "MAV_PARAM_EXT_TYPE_CUSTOM",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_PARAM_EXT_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_PARAM_EXT_TYPE_UINT8:
-		return []byte("MAV_PARAM_EXT_TYPE_UINT8"), nil
-	case MAV_PARAM_EXT_TYPE_INT8:
-		return []byte("MAV_PARAM_EXT_TYPE_INT8"), nil
-	case MAV_PARAM_EXT_TYPE_UINT16:
-		return []byte("MAV_PARAM_EXT_TYPE_UINT16"), nil
-	case MAV_PARAM_EXT_TYPE_INT16:
-		return []byte("MAV_PARAM_EXT_TYPE_INT16"), nil
-	case MAV_PARAM_EXT_TYPE_UINT32:
-		return []byte("MAV_PARAM_EXT_TYPE_UINT32"), nil
-	case MAV_PARAM_EXT_TYPE_INT32:
-		return []byte("MAV_PARAM_EXT_TYPE_INT32"), nil
-	case MAV_PARAM_EXT_TYPE_UINT64:
-		return []byte("MAV_PARAM_EXT_TYPE_UINT64"), nil
-	case MAV_PARAM_EXT_TYPE_INT64:
-		return []byte("MAV_PARAM_EXT_TYPE_INT64"), nil
-	case MAV_PARAM_EXT_TYPE_REAL32:
-		return []byte("MAV_PARAM_EXT_TYPE_REAL32"), nil
-	case MAV_PARAM_EXT_TYPE_REAL64:
-		return []byte("MAV_PARAM_EXT_TYPE_REAL64"), nil
-	case MAV_PARAM_EXT_TYPE_CUSTOM:
-		return []byte("MAV_PARAM_EXT_TYPE_CUSTOM"), nil
+	if l, ok := labels_MAV_PARAM_EXT_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_PARAM_EXT_TYPE = map[string]MAV_PARAM_EXT_TYPE{
+	"MAV_PARAM_EXT_TYPE_UINT8":  MAV_PARAM_EXT_TYPE_UINT8,
+	"MAV_PARAM_EXT_TYPE_INT8":   MAV_PARAM_EXT_TYPE_INT8,
+	"MAV_PARAM_EXT_TYPE_UINT16": MAV_PARAM_EXT_TYPE_UINT16,
+	"MAV_PARAM_EXT_TYPE_INT16":  MAV_PARAM_EXT_TYPE_INT16,
+	"MAV_PARAM_EXT_TYPE_UINT32": MAV_PARAM_EXT_TYPE_UINT32,
+	"MAV_PARAM_EXT_TYPE_INT32":  MAV_PARAM_EXT_TYPE_INT32,
+	"MAV_PARAM_EXT_TYPE_UINT64": MAV_PARAM_EXT_TYPE_UINT64,
+	"MAV_PARAM_EXT_TYPE_INT64":  MAV_PARAM_EXT_TYPE_INT64,
+	"MAV_PARAM_EXT_TYPE_REAL32": MAV_PARAM_EXT_TYPE_REAL32,
+	"MAV_PARAM_EXT_TYPE_REAL64": MAV_PARAM_EXT_TYPE_REAL64,
+	"MAV_PARAM_EXT_TYPE_CUSTOM": MAV_PARAM_EXT_TYPE_CUSTOM,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_PARAM_EXT_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_PARAM_EXT_TYPE_UINT8":
-		*e = MAV_PARAM_EXT_TYPE_UINT8
-		return nil
-	case "MAV_PARAM_EXT_TYPE_INT8":
-		*e = MAV_PARAM_EXT_TYPE_INT8
-		return nil
-	case "MAV_PARAM_EXT_TYPE_UINT16":
-		*e = MAV_PARAM_EXT_TYPE_UINT16
-		return nil
-	case "MAV_PARAM_EXT_TYPE_INT16":
-		*e = MAV_PARAM_EXT_TYPE_INT16
-		return nil
-	case "MAV_PARAM_EXT_TYPE_UINT32":
-		*e = MAV_PARAM_EXT_TYPE_UINT32
-		return nil
-	case "MAV_PARAM_EXT_TYPE_INT32":
-		*e = MAV_PARAM_EXT_TYPE_INT32
-		return nil
-	case "MAV_PARAM_EXT_TYPE_UINT64":
-		*e = MAV_PARAM_EXT_TYPE_UINT64
-		return nil
-	case "MAV_PARAM_EXT_TYPE_INT64":
-		*e = MAV_PARAM_EXT_TYPE_INT64
-		return nil
-	case "MAV_PARAM_EXT_TYPE_REAL32":
-		*e = MAV_PARAM_EXT_TYPE_REAL32
-		return nil
-	case "MAV_PARAM_EXT_TYPE_REAL64":
-		*e = MAV_PARAM_EXT_TYPE_REAL64
-		return nil
-	case "MAV_PARAM_EXT_TYPE_CUSTOM":
-		*e = MAV_PARAM_EXT_TYPE_CUSTOM
+	if rl, ok := reverseLabels_MAV_PARAM_EXT_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -9965,11 +7571,10 @@ func (e *MAV_PARAM_EXT_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_PARAM_EXT_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_PARAM_EXT_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Specifies the datatype of a MAVLink parameter.
@@ -9998,65 +7603,44 @@ const (
 	MAV_PARAM_TYPE_REAL64 MAV_PARAM_TYPE = 10
 )
 
+var labels_MAV_PARAM_TYPE = map[MAV_PARAM_TYPE]string{
+	MAV_PARAM_TYPE_UINT8:  "MAV_PARAM_TYPE_UINT8",
+	MAV_PARAM_TYPE_INT8:   "MAV_PARAM_TYPE_INT8",
+	MAV_PARAM_TYPE_UINT16: "MAV_PARAM_TYPE_UINT16",
+	MAV_PARAM_TYPE_INT16:  "MAV_PARAM_TYPE_INT16",
+	MAV_PARAM_TYPE_UINT32: "MAV_PARAM_TYPE_UINT32",
+	MAV_PARAM_TYPE_INT32:  "MAV_PARAM_TYPE_INT32",
+	MAV_PARAM_TYPE_UINT64: "MAV_PARAM_TYPE_UINT64",
+	MAV_PARAM_TYPE_INT64:  "MAV_PARAM_TYPE_INT64",
+	MAV_PARAM_TYPE_REAL32: "MAV_PARAM_TYPE_REAL32",
+	MAV_PARAM_TYPE_REAL64: "MAV_PARAM_TYPE_REAL64",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_PARAM_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_PARAM_TYPE_UINT8:
-		return []byte("MAV_PARAM_TYPE_UINT8"), nil
-	case MAV_PARAM_TYPE_INT8:
-		return []byte("MAV_PARAM_TYPE_INT8"), nil
-	case MAV_PARAM_TYPE_UINT16:
-		return []byte("MAV_PARAM_TYPE_UINT16"), nil
-	case MAV_PARAM_TYPE_INT16:
-		return []byte("MAV_PARAM_TYPE_INT16"), nil
-	case MAV_PARAM_TYPE_UINT32:
-		return []byte("MAV_PARAM_TYPE_UINT32"), nil
-	case MAV_PARAM_TYPE_INT32:
-		return []byte("MAV_PARAM_TYPE_INT32"), nil
-	case MAV_PARAM_TYPE_UINT64:
-		return []byte("MAV_PARAM_TYPE_UINT64"), nil
-	case MAV_PARAM_TYPE_INT64:
-		return []byte("MAV_PARAM_TYPE_INT64"), nil
-	case MAV_PARAM_TYPE_REAL32:
-		return []byte("MAV_PARAM_TYPE_REAL32"), nil
-	case MAV_PARAM_TYPE_REAL64:
-		return []byte("MAV_PARAM_TYPE_REAL64"), nil
+	if l, ok := labels_MAV_PARAM_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_PARAM_TYPE = map[string]MAV_PARAM_TYPE{
+	"MAV_PARAM_TYPE_UINT8":  MAV_PARAM_TYPE_UINT8,
+	"MAV_PARAM_TYPE_INT8":   MAV_PARAM_TYPE_INT8,
+	"MAV_PARAM_TYPE_UINT16": MAV_PARAM_TYPE_UINT16,
+	"MAV_PARAM_TYPE_INT16":  MAV_PARAM_TYPE_INT16,
+	"MAV_PARAM_TYPE_UINT32": MAV_PARAM_TYPE_UINT32,
+	"MAV_PARAM_TYPE_INT32":  MAV_PARAM_TYPE_INT32,
+	"MAV_PARAM_TYPE_UINT64": MAV_PARAM_TYPE_UINT64,
+	"MAV_PARAM_TYPE_INT64":  MAV_PARAM_TYPE_INT64,
+	"MAV_PARAM_TYPE_REAL32": MAV_PARAM_TYPE_REAL32,
+	"MAV_PARAM_TYPE_REAL64": MAV_PARAM_TYPE_REAL64,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_PARAM_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_PARAM_TYPE_UINT8":
-		*e = MAV_PARAM_TYPE_UINT8
-		return nil
-	case "MAV_PARAM_TYPE_INT8":
-		*e = MAV_PARAM_TYPE_INT8
-		return nil
-	case "MAV_PARAM_TYPE_UINT16":
-		*e = MAV_PARAM_TYPE_UINT16
-		return nil
-	case "MAV_PARAM_TYPE_INT16":
-		*e = MAV_PARAM_TYPE_INT16
-		return nil
-	case "MAV_PARAM_TYPE_UINT32":
-		*e = MAV_PARAM_TYPE_UINT32
-		return nil
-	case "MAV_PARAM_TYPE_INT32":
-		*e = MAV_PARAM_TYPE_INT32
-		return nil
-	case "MAV_PARAM_TYPE_UINT64":
-		*e = MAV_PARAM_TYPE_UINT64
-		return nil
-	case "MAV_PARAM_TYPE_INT64":
-		*e = MAV_PARAM_TYPE_INT64
-		return nil
-	case "MAV_PARAM_TYPE_REAL32":
-		*e = MAV_PARAM_TYPE_REAL32
-		return nil
-	case "MAV_PARAM_TYPE_REAL64":
-		*e = MAV_PARAM_TYPE_REAL64
+	if rl, ok := reverseLabels_MAV_PARAM_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -10064,11 +7648,10 @@ func (e *MAV_PARAM_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_PARAM_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_PARAM_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Power supply status flags (bitmask)
@@ -10089,45 +7672,36 @@ const (
 	MAV_POWER_STATUS_CHANGED MAV_POWER_STATUS = 32
 )
 
+var labels_MAV_POWER_STATUS = map[MAV_POWER_STATUS]string{
+	MAV_POWER_STATUS_BRICK_VALID:                "MAV_POWER_STATUS_BRICK_VALID",
+	MAV_POWER_STATUS_SERVO_VALID:                "MAV_POWER_STATUS_SERVO_VALID",
+	MAV_POWER_STATUS_USB_CONNECTED:              "MAV_POWER_STATUS_USB_CONNECTED",
+	MAV_POWER_STATUS_PERIPH_OVERCURRENT:         "MAV_POWER_STATUS_PERIPH_OVERCURRENT",
+	MAV_POWER_STATUS_PERIPH_HIPOWER_OVERCURRENT: "MAV_POWER_STATUS_PERIPH_HIPOWER_OVERCURRENT",
+	MAV_POWER_STATUS_CHANGED:                    "MAV_POWER_STATUS_CHANGED",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_POWER_STATUS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_POWER_STATUS_BRICK_VALID:
-		return []byte("MAV_POWER_STATUS_BRICK_VALID"), nil
-	case MAV_POWER_STATUS_SERVO_VALID:
-		return []byte("MAV_POWER_STATUS_SERVO_VALID"), nil
-	case MAV_POWER_STATUS_USB_CONNECTED:
-		return []byte("MAV_POWER_STATUS_USB_CONNECTED"), nil
-	case MAV_POWER_STATUS_PERIPH_OVERCURRENT:
-		return []byte("MAV_POWER_STATUS_PERIPH_OVERCURRENT"), nil
-	case MAV_POWER_STATUS_PERIPH_HIPOWER_OVERCURRENT:
-		return []byte("MAV_POWER_STATUS_PERIPH_HIPOWER_OVERCURRENT"), nil
-	case MAV_POWER_STATUS_CHANGED:
-		return []byte("MAV_POWER_STATUS_CHANGED"), nil
+	if l, ok := labels_MAV_POWER_STATUS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_POWER_STATUS = map[string]MAV_POWER_STATUS{
+	"MAV_POWER_STATUS_BRICK_VALID":                MAV_POWER_STATUS_BRICK_VALID,
+	"MAV_POWER_STATUS_SERVO_VALID":                MAV_POWER_STATUS_SERVO_VALID,
+	"MAV_POWER_STATUS_USB_CONNECTED":              MAV_POWER_STATUS_USB_CONNECTED,
+	"MAV_POWER_STATUS_PERIPH_OVERCURRENT":         MAV_POWER_STATUS_PERIPH_OVERCURRENT,
+	"MAV_POWER_STATUS_PERIPH_HIPOWER_OVERCURRENT": MAV_POWER_STATUS_PERIPH_HIPOWER_OVERCURRENT,
+	"MAV_POWER_STATUS_CHANGED":                    MAV_POWER_STATUS_CHANGED,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_POWER_STATUS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_POWER_STATUS_BRICK_VALID":
-		*e = MAV_POWER_STATUS_BRICK_VALID
-		return nil
-	case "MAV_POWER_STATUS_SERVO_VALID":
-		*e = MAV_POWER_STATUS_SERVO_VALID
-		return nil
-	case "MAV_POWER_STATUS_USB_CONNECTED":
-		*e = MAV_POWER_STATUS_USB_CONNECTED
-		return nil
-	case "MAV_POWER_STATUS_PERIPH_OVERCURRENT":
-		*e = MAV_POWER_STATUS_PERIPH_OVERCURRENT
-		return nil
-	case "MAV_POWER_STATUS_PERIPH_HIPOWER_OVERCURRENT":
-		*e = MAV_POWER_STATUS_PERIPH_HIPOWER_OVERCURRENT
-		return nil
-	case "MAV_POWER_STATUS_CHANGED":
-		*e = MAV_POWER_STATUS_CHANGED
+	if rl, ok := reverseLabels_MAV_POWER_STATUS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -10135,11 +7709,10 @@ func (e *MAV_POWER_STATUS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_POWER_STATUS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_POWER_STATUS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Bitmask of (optional) autopilot capabilities (64 bit). If a bit is set, the autopilot supports this capability.
@@ -10182,100 +7755,58 @@ const (
 	MAV_PROTOCOL_CAPABILITY_FLIGHT_INFORMATION MAV_PROTOCOL_CAPABILITY = 65536
 )
 
+var labels_MAV_PROTOCOL_CAPABILITY = map[MAV_PROTOCOL_CAPABILITY]string{
+	MAV_PROTOCOL_CAPABILITY_MISSION_FLOAT:                  "MAV_PROTOCOL_CAPABILITY_MISSION_FLOAT",
+	MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT:                    "MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT",
+	MAV_PROTOCOL_CAPABILITY_MISSION_INT:                    "MAV_PROTOCOL_CAPABILITY_MISSION_INT",
+	MAV_PROTOCOL_CAPABILITY_COMMAND_INT:                    "MAV_PROTOCOL_CAPABILITY_COMMAND_INT",
+	MAV_PROTOCOL_CAPABILITY_PARAM_UNION:                    "MAV_PROTOCOL_CAPABILITY_PARAM_UNION",
+	MAV_PROTOCOL_CAPABILITY_FTP:                            "MAV_PROTOCOL_CAPABILITY_FTP",
+	MAV_PROTOCOL_CAPABILITY_SET_ATTITUDE_TARGET:            "MAV_PROTOCOL_CAPABILITY_SET_ATTITUDE_TARGET",
+	MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_LOCAL_NED:  "MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_LOCAL_NED",
+	MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_GLOBAL_INT: "MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_GLOBAL_INT",
+	MAV_PROTOCOL_CAPABILITY_TERRAIN:                        "MAV_PROTOCOL_CAPABILITY_TERRAIN",
+	MAV_PROTOCOL_CAPABILITY_SET_ACTUATOR_TARGET:            "MAV_PROTOCOL_CAPABILITY_SET_ACTUATOR_TARGET",
+	MAV_PROTOCOL_CAPABILITY_FLIGHT_TERMINATION:             "MAV_PROTOCOL_CAPABILITY_FLIGHT_TERMINATION",
+	MAV_PROTOCOL_CAPABILITY_COMPASS_CALIBRATION:            "MAV_PROTOCOL_CAPABILITY_COMPASS_CALIBRATION",
+	MAV_PROTOCOL_CAPABILITY_MAVLINK2:                       "MAV_PROTOCOL_CAPABILITY_MAVLINK2",
+	MAV_PROTOCOL_CAPABILITY_MISSION_FENCE:                  "MAV_PROTOCOL_CAPABILITY_MISSION_FENCE",
+	MAV_PROTOCOL_CAPABILITY_MISSION_RALLY:                  "MAV_PROTOCOL_CAPABILITY_MISSION_RALLY",
+	MAV_PROTOCOL_CAPABILITY_FLIGHT_INFORMATION:             "MAV_PROTOCOL_CAPABILITY_FLIGHT_INFORMATION",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_PROTOCOL_CAPABILITY) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_PROTOCOL_CAPABILITY_MISSION_FLOAT:
-		return []byte("MAV_PROTOCOL_CAPABILITY_MISSION_FLOAT"), nil
-	case MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT:
-		return []byte("MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT"), nil
-	case MAV_PROTOCOL_CAPABILITY_MISSION_INT:
-		return []byte("MAV_PROTOCOL_CAPABILITY_MISSION_INT"), nil
-	case MAV_PROTOCOL_CAPABILITY_COMMAND_INT:
-		return []byte("MAV_PROTOCOL_CAPABILITY_COMMAND_INT"), nil
-	case MAV_PROTOCOL_CAPABILITY_PARAM_UNION:
-		return []byte("MAV_PROTOCOL_CAPABILITY_PARAM_UNION"), nil
-	case MAV_PROTOCOL_CAPABILITY_FTP:
-		return []byte("MAV_PROTOCOL_CAPABILITY_FTP"), nil
-	case MAV_PROTOCOL_CAPABILITY_SET_ATTITUDE_TARGET:
-		return []byte("MAV_PROTOCOL_CAPABILITY_SET_ATTITUDE_TARGET"), nil
-	case MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_LOCAL_NED:
-		return []byte("MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_LOCAL_NED"), nil
-	case MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_GLOBAL_INT:
-		return []byte("MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_GLOBAL_INT"), nil
-	case MAV_PROTOCOL_CAPABILITY_TERRAIN:
-		return []byte("MAV_PROTOCOL_CAPABILITY_TERRAIN"), nil
-	case MAV_PROTOCOL_CAPABILITY_SET_ACTUATOR_TARGET:
-		return []byte("MAV_PROTOCOL_CAPABILITY_SET_ACTUATOR_TARGET"), nil
-	case MAV_PROTOCOL_CAPABILITY_FLIGHT_TERMINATION:
-		return []byte("MAV_PROTOCOL_CAPABILITY_FLIGHT_TERMINATION"), nil
-	case MAV_PROTOCOL_CAPABILITY_COMPASS_CALIBRATION:
-		return []byte("MAV_PROTOCOL_CAPABILITY_COMPASS_CALIBRATION"), nil
-	case MAV_PROTOCOL_CAPABILITY_MAVLINK2:
-		return []byte("MAV_PROTOCOL_CAPABILITY_MAVLINK2"), nil
-	case MAV_PROTOCOL_CAPABILITY_MISSION_FENCE:
-		return []byte("MAV_PROTOCOL_CAPABILITY_MISSION_FENCE"), nil
-	case MAV_PROTOCOL_CAPABILITY_MISSION_RALLY:
-		return []byte("MAV_PROTOCOL_CAPABILITY_MISSION_RALLY"), nil
-	case MAV_PROTOCOL_CAPABILITY_FLIGHT_INFORMATION:
-		return []byte("MAV_PROTOCOL_CAPABILITY_FLIGHT_INFORMATION"), nil
+	if l, ok := labels_MAV_PROTOCOL_CAPABILITY[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_PROTOCOL_CAPABILITY = map[string]MAV_PROTOCOL_CAPABILITY{
+	"MAV_PROTOCOL_CAPABILITY_MISSION_FLOAT":                  MAV_PROTOCOL_CAPABILITY_MISSION_FLOAT,
+	"MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT":                    MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT,
+	"MAV_PROTOCOL_CAPABILITY_MISSION_INT":                    MAV_PROTOCOL_CAPABILITY_MISSION_INT,
+	"MAV_PROTOCOL_CAPABILITY_COMMAND_INT":                    MAV_PROTOCOL_CAPABILITY_COMMAND_INT,
+	"MAV_PROTOCOL_CAPABILITY_PARAM_UNION":                    MAV_PROTOCOL_CAPABILITY_PARAM_UNION,
+	"MAV_PROTOCOL_CAPABILITY_FTP":                            MAV_PROTOCOL_CAPABILITY_FTP,
+	"MAV_PROTOCOL_CAPABILITY_SET_ATTITUDE_TARGET":            MAV_PROTOCOL_CAPABILITY_SET_ATTITUDE_TARGET,
+	"MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_LOCAL_NED":  MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_LOCAL_NED,
+	"MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_GLOBAL_INT": MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_GLOBAL_INT,
+	"MAV_PROTOCOL_CAPABILITY_TERRAIN":                        MAV_PROTOCOL_CAPABILITY_TERRAIN,
+	"MAV_PROTOCOL_CAPABILITY_SET_ACTUATOR_TARGET":            MAV_PROTOCOL_CAPABILITY_SET_ACTUATOR_TARGET,
+	"MAV_PROTOCOL_CAPABILITY_FLIGHT_TERMINATION":             MAV_PROTOCOL_CAPABILITY_FLIGHT_TERMINATION,
+	"MAV_PROTOCOL_CAPABILITY_COMPASS_CALIBRATION":            MAV_PROTOCOL_CAPABILITY_COMPASS_CALIBRATION,
+	"MAV_PROTOCOL_CAPABILITY_MAVLINK2":                       MAV_PROTOCOL_CAPABILITY_MAVLINK2,
+	"MAV_PROTOCOL_CAPABILITY_MISSION_FENCE":                  MAV_PROTOCOL_CAPABILITY_MISSION_FENCE,
+	"MAV_PROTOCOL_CAPABILITY_MISSION_RALLY":                  MAV_PROTOCOL_CAPABILITY_MISSION_RALLY,
+	"MAV_PROTOCOL_CAPABILITY_FLIGHT_INFORMATION":             MAV_PROTOCOL_CAPABILITY_FLIGHT_INFORMATION,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_PROTOCOL_CAPABILITY) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_PROTOCOL_CAPABILITY_MISSION_FLOAT":
-		*e = MAV_PROTOCOL_CAPABILITY_MISSION_FLOAT
-		return nil
-	case "MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT":
-		*e = MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT
-		return nil
-	case "MAV_PROTOCOL_CAPABILITY_MISSION_INT":
-		*e = MAV_PROTOCOL_CAPABILITY_MISSION_INT
-		return nil
-	case "MAV_PROTOCOL_CAPABILITY_COMMAND_INT":
-		*e = MAV_PROTOCOL_CAPABILITY_COMMAND_INT
-		return nil
-	case "MAV_PROTOCOL_CAPABILITY_PARAM_UNION":
-		*e = MAV_PROTOCOL_CAPABILITY_PARAM_UNION
-		return nil
-	case "MAV_PROTOCOL_CAPABILITY_FTP":
-		*e = MAV_PROTOCOL_CAPABILITY_FTP
-		return nil
-	case "MAV_PROTOCOL_CAPABILITY_SET_ATTITUDE_TARGET":
-		*e = MAV_PROTOCOL_CAPABILITY_SET_ATTITUDE_TARGET
-		return nil
-	case "MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_LOCAL_NED":
-		*e = MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_LOCAL_NED
-		return nil
-	case "MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_GLOBAL_INT":
-		*e = MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_GLOBAL_INT
-		return nil
-	case "MAV_PROTOCOL_CAPABILITY_TERRAIN":
-		*e = MAV_PROTOCOL_CAPABILITY_TERRAIN
-		return nil
-	case "MAV_PROTOCOL_CAPABILITY_SET_ACTUATOR_TARGET":
-		*e = MAV_PROTOCOL_CAPABILITY_SET_ACTUATOR_TARGET
-		return nil
-	case "MAV_PROTOCOL_CAPABILITY_FLIGHT_TERMINATION":
-		*e = MAV_PROTOCOL_CAPABILITY_FLIGHT_TERMINATION
-		return nil
-	case "MAV_PROTOCOL_CAPABILITY_COMPASS_CALIBRATION":
-		*e = MAV_PROTOCOL_CAPABILITY_COMPASS_CALIBRATION
-		return nil
-	case "MAV_PROTOCOL_CAPABILITY_MAVLINK2":
-		*e = MAV_PROTOCOL_CAPABILITY_MAVLINK2
-		return nil
-	case "MAV_PROTOCOL_CAPABILITY_MISSION_FENCE":
-		*e = MAV_PROTOCOL_CAPABILITY_MISSION_FENCE
-		return nil
-	case "MAV_PROTOCOL_CAPABILITY_MISSION_RALLY":
-		*e = MAV_PROTOCOL_CAPABILITY_MISSION_RALLY
-		return nil
-	case "MAV_PROTOCOL_CAPABILITY_FLIGHT_INFORMATION":
-		*e = MAV_PROTOCOL_CAPABILITY_FLIGHT_INFORMATION
+	if rl, ok := reverseLabels_MAV_PROTOCOL_CAPABILITY[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -10283,11 +7814,10 @@ func (e *MAV_PROTOCOL_CAPABILITY) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_PROTOCOL_CAPABILITY) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_PROTOCOL_CAPABILITY[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Result from a MAVLink command (MAV_CMD)
@@ -10310,50 +7840,38 @@ const (
 	MAV_RESULT_CANCELLED MAV_RESULT = 6
 )
 
+var labels_MAV_RESULT = map[MAV_RESULT]string{
+	MAV_RESULT_ACCEPTED:             "MAV_RESULT_ACCEPTED",
+	MAV_RESULT_TEMPORARILY_REJECTED: "MAV_RESULT_TEMPORARILY_REJECTED",
+	MAV_RESULT_DENIED:               "MAV_RESULT_DENIED",
+	MAV_RESULT_UNSUPPORTED:          "MAV_RESULT_UNSUPPORTED",
+	MAV_RESULT_FAILED:               "MAV_RESULT_FAILED",
+	MAV_RESULT_IN_PROGRESS:          "MAV_RESULT_IN_PROGRESS",
+	MAV_RESULT_CANCELLED:            "MAV_RESULT_CANCELLED",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_RESULT) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_RESULT_ACCEPTED:
-		return []byte("MAV_RESULT_ACCEPTED"), nil
-	case MAV_RESULT_TEMPORARILY_REJECTED:
-		return []byte("MAV_RESULT_TEMPORARILY_REJECTED"), nil
-	case MAV_RESULT_DENIED:
-		return []byte("MAV_RESULT_DENIED"), nil
-	case MAV_RESULT_UNSUPPORTED:
-		return []byte("MAV_RESULT_UNSUPPORTED"), nil
-	case MAV_RESULT_FAILED:
-		return []byte("MAV_RESULT_FAILED"), nil
-	case MAV_RESULT_IN_PROGRESS:
-		return []byte("MAV_RESULT_IN_PROGRESS"), nil
-	case MAV_RESULT_CANCELLED:
-		return []byte("MAV_RESULT_CANCELLED"), nil
+	if l, ok := labels_MAV_RESULT[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_RESULT = map[string]MAV_RESULT{
+	"MAV_RESULT_ACCEPTED":             MAV_RESULT_ACCEPTED,
+	"MAV_RESULT_TEMPORARILY_REJECTED": MAV_RESULT_TEMPORARILY_REJECTED,
+	"MAV_RESULT_DENIED":               MAV_RESULT_DENIED,
+	"MAV_RESULT_UNSUPPORTED":          MAV_RESULT_UNSUPPORTED,
+	"MAV_RESULT_FAILED":               MAV_RESULT_FAILED,
+	"MAV_RESULT_IN_PROGRESS":          MAV_RESULT_IN_PROGRESS,
+	"MAV_RESULT_CANCELLED":            MAV_RESULT_CANCELLED,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_RESULT) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_RESULT_ACCEPTED":
-		*e = MAV_RESULT_ACCEPTED
-		return nil
-	case "MAV_RESULT_TEMPORARILY_REJECTED":
-		*e = MAV_RESULT_TEMPORARILY_REJECTED
-		return nil
-	case "MAV_RESULT_DENIED":
-		*e = MAV_RESULT_DENIED
-		return nil
-	case "MAV_RESULT_UNSUPPORTED":
-		*e = MAV_RESULT_UNSUPPORTED
-		return nil
-	case "MAV_RESULT_FAILED":
-		*e = MAV_RESULT_FAILED
-		return nil
-	case "MAV_RESULT_IN_PROGRESS":
-		*e = MAV_RESULT_IN_PROGRESS
-		return nil
-	case "MAV_RESULT_CANCELLED":
-		*e = MAV_RESULT_CANCELLED
+	if rl, ok := reverseLabels_MAV_RESULT[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -10361,11 +7879,10 @@ func (e *MAV_RESULT) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_RESULT) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_RESULT[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // The ROI (region of interest) for the vehicle. This can be                be used by the vehicle for camera/vehicle attitude alignment (see                MAV_CMD_NAV_ROI).
@@ -10384,40 +7901,34 @@ const (
 	MAV_ROI_TARGET MAV_ROI = 4
 )
 
+var labels_MAV_ROI = map[MAV_ROI]string{
+	MAV_ROI_NONE:     "MAV_ROI_NONE",
+	MAV_ROI_WPNEXT:   "MAV_ROI_WPNEXT",
+	MAV_ROI_WPINDEX:  "MAV_ROI_WPINDEX",
+	MAV_ROI_LOCATION: "MAV_ROI_LOCATION",
+	MAV_ROI_TARGET:   "MAV_ROI_TARGET",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ROI) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_ROI_NONE:
-		return []byte("MAV_ROI_NONE"), nil
-	case MAV_ROI_WPNEXT:
-		return []byte("MAV_ROI_WPNEXT"), nil
-	case MAV_ROI_WPINDEX:
-		return []byte("MAV_ROI_WPINDEX"), nil
-	case MAV_ROI_LOCATION:
-		return []byte("MAV_ROI_LOCATION"), nil
-	case MAV_ROI_TARGET:
-		return []byte("MAV_ROI_TARGET"), nil
+	if l, ok := labels_MAV_ROI[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_ROI = map[string]MAV_ROI{
+	"MAV_ROI_NONE":     MAV_ROI_NONE,
+	"MAV_ROI_WPNEXT":   MAV_ROI_WPNEXT,
+	"MAV_ROI_WPINDEX":  MAV_ROI_WPINDEX,
+	"MAV_ROI_LOCATION": MAV_ROI_LOCATION,
+	"MAV_ROI_TARGET":   MAV_ROI_TARGET,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ROI) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_ROI_NONE":
-		*e = MAV_ROI_NONE
-		return nil
-	case "MAV_ROI_WPNEXT":
-		*e = MAV_ROI_WPNEXT
-		return nil
-	case "MAV_ROI_WPINDEX":
-		*e = MAV_ROI_WPINDEX
-		return nil
-	case "MAV_ROI_LOCATION":
-		*e = MAV_ROI_LOCATION
-		return nil
-	case "MAV_ROI_TARGET":
-		*e = MAV_ROI_TARGET
+	if rl, ok := reverseLabels_MAV_ROI[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -10425,11 +7936,10 @@ func (e *MAV_ROI) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ROI) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_ROI[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Enumeration of sensor orientation, according to its rotations
@@ -10522,225 +8032,108 @@ const (
 	MAV_SENSOR_ROTATION_CUSTOM MAV_SENSOR_ORIENTATION = 100
 )
 
+var labels_MAV_SENSOR_ORIENTATION = map[MAV_SENSOR_ORIENTATION]string{
+	MAV_SENSOR_ROTATION_NONE:                     "MAV_SENSOR_ROTATION_NONE",
+	MAV_SENSOR_ROTATION_YAW_45:                   "MAV_SENSOR_ROTATION_YAW_45",
+	MAV_SENSOR_ROTATION_YAW_90:                   "MAV_SENSOR_ROTATION_YAW_90",
+	MAV_SENSOR_ROTATION_YAW_135:                  "MAV_SENSOR_ROTATION_YAW_135",
+	MAV_SENSOR_ROTATION_YAW_180:                  "MAV_SENSOR_ROTATION_YAW_180",
+	MAV_SENSOR_ROTATION_YAW_225:                  "MAV_SENSOR_ROTATION_YAW_225",
+	MAV_SENSOR_ROTATION_YAW_270:                  "MAV_SENSOR_ROTATION_YAW_270",
+	MAV_SENSOR_ROTATION_YAW_315:                  "MAV_SENSOR_ROTATION_YAW_315",
+	MAV_SENSOR_ROTATION_ROLL_180:                 "MAV_SENSOR_ROTATION_ROLL_180",
+	MAV_SENSOR_ROTATION_ROLL_180_YAW_45:          "MAV_SENSOR_ROTATION_ROLL_180_YAW_45",
+	MAV_SENSOR_ROTATION_ROLL_180_YAW_90:          "MAV_SENSOR_ROTATION_ROLL_180_YAW_90",
+	MAV_SENSOR_ROTATION_ROLL_180_YAW_135:         "MAV_SENSOR_ROTATION_ROLL_180_YAW_135",
+	MAV_SENSOR_ROTATION_PITCH_180:                "MAV_SENSOR_ROTATION_PITCH_180",
+	MAV_SENSOR_ROTATION_ROLL_180_YAW_225:         "MAV_SENSOR_ROTATION_ROLL_180_YAW_225",
+	MAV_SENSOR_ROTATION_ROLL_180_YAW_270:         "MAV_SENSOR_ROTATION_ROLL_180_YAW_270",
+	MAV_SENSOR_ROTATION_ROLL_180_YAW_315:         "MAV_SENSOR_ROTATION_ROLL_180_YAW_315",
+	MAV_SENSOR_ROTATION_ROLL_90:                  "MAV_SENSOR_ROTATION_ROLL_90",
+	MAV_SENSOR_ROTATION_ROLL_90_YAW_45:           "MAV_SENSOR_ROTATION_ROLL_90_YAW_45",
+	MAV_SENSOR_ROTATION_ROLL_90_YAW_90:           "MAV_SENSOR_ROTATION_ROLL_90_YAW_90",
+	MAV_SENSOR_ROTATION_ROLL_90_YAW_135:          "MAV_SENSOR_ROTATION_ROLL_90_YAW_135",
+	MAV_SENSOR_ROTATION_ROLL_270:                 "MAV_SENSOR_ROTATION_ROLL_270",
+	MAV_SENSOR_ROTATION_ROLL_270_YAW_45:          "MAV_SENSOR_ROTATION_ROLL_270_YAW_45",
+	MAV_SENSOR_ROTATION_ROLL_270_YAW_90:          "MAV_SENSOR_ROTATION_ROLL_270_YAW_90",
+	MAV_SENSOR_ROTATION_ROLL_270_YAW_135:         "MAV_SENSOR_ROTATION_ROLL_270_YAW_135",
+	MAV_SENSOR_ROTATION_PITCH_90:                 "MAV_SENSOR_ROTATION_PITCH_90",
+	MAV_SENSOR_ROTATION_PITCH_270:                "MAV_SENSOR_ROTATION_PITCH_270",
+	MAV_SENSOR_ROTATION_PITCH_180_YAW_90:         "MAV_SENSOR_ROTATION_PITCH_180_YAW_90",
+	MAV_SENSOR_ROTATION_PITCH_180_YAW_270:        "MAV_SENSOR_ROTATION_PITCH_180_YAW_270",
+	MAV_SENSOR_ROTATION_ROLL_90_PITCH_90:         "MAV_SENSOR_ROTATION_ROLL_90_PITCH_90",
+	MAV_SENSOR_ROTATION_ROLL_180_PITCH_90:        "MAV_SENSOR_ROTATION_ROLL_180_PITCH_90",
+	MAV_SENSOR_ROTATION_ROLL_270_PITCH_90:        "MAV_SENSOR_ROTATION_ROLL_270_PITCH_90",
+	MAV_SENSOR_ROTATION_ROLL_90_PITCH_180:        "MAV_SENSOR_ROTATION_ROLL_90_PITCH_180",
+	MAV_SENSOR_ROTATION_ROLL_270_PITCH_180:       "MAV_SENSOR_ROTATION_ROLL_270_PITCH_180",
+	MAV_SENSOR_ROTATION_ROLL_90_PITCH_270:        "MAV_SENSOR_ROTATION_ROLL_90_PITCH_270",
+	MAV_SENSOR_ROTATION_ROLL_180_PITCH_270:       "MAV_SENSOR_ROTATION_ROLL_180_PITCH_270",
+	MAV_SENSOR_ROTATION_ROLL_270_PITCH_270:       "MAV_SENSOR_ROTATION_ROLL_270_PITCH_270",
+	MAV_SENSOR_ROTATION_ROLL_90_PITCH_180_YAW_90: "MAV_SENSOR_ROTATION_ROLL_90_PITCH_180_YAW_90",
+	MAV_SENSOR_ROTATION_ROLL_90_YAW_270:          "MAV_SENSOR_ROTATION_ROLL_90_YAW_270",
+	MAV_SENSOR_ROTATION_ROLL_90_PITCH_68_YAW_293: "MAV_SENSOR_ROTATION_ROLL_90_PITCH_68_YAW_293",
+	MAV_SENSOR_ROTATION_PITCH_315:                "MAV_SENSOR_ROTATION_PITCH_315",
+	MAV_SENSOR_ROTATION_ROLL_90_PITCH_315:        "MAV_SENSOR_ROTATION_ROLL_90_PITCH_315",
+	MAV_SENSOR_ROTATION_CUSTOM:                   "MAV_SENSOR_ROTATION_CUSTOM",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_SENSOR_ORIENTATION) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_SENSOR_ROTATION_NONE:
-		return []byte("MAV_SENSOR_ROTATION_NONE"), nil
-	case MAV_SENSOR_ROTATION_YAW_45:
-		return []byte("MAV_SENSOR_ROTATION_YAW_45"), nil
-	case MAV_SENSOR_ROTATION_YAW_90:
-		return []byte("MAV_SENSOR_ROTATION_YAW_90"), nil
-	case MAV_SENSOR_ROTATION_YAW_135:
-		return []byte("MAV_SENSOR_ROTATION_YAW_135"), nil
-	case MAV_SENSOR_ROTATION_YAW_180:
-		return []byte("MAV_SENSOR_ROTATION_YAW_180"), nil
-	case MAV_SENSOR_ROTATION_YAW_225:
-		return []byte("MAV_SENSOR_ROTATION_YAW_225"), nil
-	case MAV_SENSOR_ROTATION_YAW_270:
-		return []byte("MAV_SENSOR_ROTATION_YAW_270"), nil
-	case MAV_SENSOR_ROTATION_YAW_315:
-		return []byte("MAV_SENSOR_ROTATION_YAW_315"), nil
-	case MAV_SENSOR_ROTATION_ROLL_180:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_180"), nil
-	case MAV_SENSOR_ROTATION_ROLL_180_YAW_45:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_180_YAW_45"), nil
-	case MAV_SENSOR_ROTATION_ROLL_180_YAW_90:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_180_YAW_90"), nil
-	case MAV_SENSOR_ROTATION_ROLL_180_YAW_135:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_180_YAW_135"), nil
-	case MAV_SENSOR_ROTATION_PITCH_180:
-		return []byte("MAV_SENSOR_ROTATION_PITCH_180"), nil
-	case MAV_SENSOR_ROTATION_ROLL_180_YAW_225:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_180_YAW_225"), nil
-	case MAV_SENSOR_ROTATION_ROLL_180_YAW_270:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_180_YAW_270"), nil
-	case MAV_SENSOR_ROTATION_ROLL_180_YAW_315:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_180_YAW_315"), nil
-	case MAV_SENSOR_ROTATION_ROLL_90:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_90"), nil
-	case MAV_SENSOR_ROTATION_ROLL_90_YAW_45:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_90_YAW_45"), nil
-	case MAV_SENSOR_ROTATION_ROLL_90_YAW_90:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_90_YAW_90"), nil
-	case MAV_SENSOR_ROTATION_ROLL_90_YAW_135:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_90_YAW_135"), nil
-	case MAV_SENSOR_ROTATION_ROLL_270:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_270"), nil
-	case MAV_SENSOR_ROTATION_ROLL_270_YAW_45:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_270_YAW_45"), nil
-	case MAV_SENSOR_ROTATION_ROLL_270_YAW_90:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_270_YAW_90"), nil
-	case MAV_SENSOR_ROTATION_ROLL_270_YAW_135:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_270_YAW_135"), nil
-	case MAV_SENSOR_ROTATION_PITCH_90:
-		return []byte("MAV_SENSOR_ROTATION_PITCH_90"), nil
-	case MAV_SENSOR_ROTATION_PITCH_270:
-		return []byte("MAV_SENSOR_ROTATION_PITCH_270"), nil
-	case MAV_SENSOR_ROTATION_PITCH_180_YAW_90:
-		return []byte("MAV_SENSOR_ROTATION_PITCH_180_YAW_90"), nil
-	case MAV_SENSOR_ROTATION_PITCH_180_YAW_270:
-		return []byte("MAV_SENSOR_ROTATION_PITCH_180_YAW_270"), nil
-	case MAV_SENSOR_ROTATION_ROLL_90_PITCH_90:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_90_PITCH_90"), nil
-	case MAV_SENSOR_ROTATION_ROLL_180_PITCH_90:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_180_PITCH_90"), nil
-	case MAV_SENSOR_ROTATION_ROLL_270_PITCH_90:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_270_PITCH_90"), nil
-	case MAV_SENSOR_ROTATION_ROLL_90_PITCH_180:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_90_PITCH_180"), nil
-	case MAV_SENSOR_ROTATION_ROLL_270_PITCH_180:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_270_PITCH_180"), nil
-	case MAV_SENSOR_ROTATION_ROLL_90_PITCH_270:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_90_PITCH_270"), nil
-	case MAV_SENSOR_ROTATION_ROLL_180_PITCH_270:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_180_PITCH_270"), nil
-	case MAV_SENSOR_ROTATION_ROLL_270_PITCH_270:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_270_PITCH_270"), nil
-	case MAV_SENSOR_ROTATION_ROLL_90_PITCH_180_YAW_90:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_90_PITCH_180_YAW_90"), nil
-	case MAV_SENSOR_ROTATION_ROLL_90_YAW_270:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_90_YAW_270"), nil
-	case MAV_SENSOR_ROTATION_ROLL_90_PITCH_68_YAW_293:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_90_PITCH_68_YAW_293"), nil
-	case MAV_SENSOR_ROTATION_PITCH_315:
-		return []byte("MAV_SENSOR_ROTATION_PITCH_315"), nil
-	case MAV_SENSOR_ROTATION_ROLL_90_PITCH_315:
-		return []byte("MAV_SENSOR_ROTATION_ROLL_90_PITCH_315"), nil
-	case MAV_SENSOR_ROTATION_CUSTOM:
-		return []byte("MAV_SENSOR_ROTATION_CUSTOM"), nil
+	if l, ok := labels_MAV_SENSOR_ORIENTATION[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_SENSOR_ORIENTATION = map[string]MAV_SENSOR_ORIENTATION{
+	"MAV_SENSOR_ROTATION_NONE":                     MAV_SENSOR_ROTATION_NONE,
+	"MAV_SENSOR_ROTATION_YAW_45":                   MAV_SENSOR_ROTATION_YAW_45,
+	"MAV_SENSOR_ROTATION_YAW_90":                   MAV_SENSOR_ROTATION_YAW_90,
+	"MAV_SENSOR_ROTATION_YAW_135":                  MAV_SENSOR_ROTATION_YAW_135,
+	"MAV_SENSOR_ROTATION_YAW_180":                  MAV_SENSOR_ROTATION_YAW_180,
+	"MAV_SENSOR_ROTATION_YAW_225":                  MAV_SENSOR_ROTATION_YAW_225,
+	"MAV_SENSOR_ROTATION_YAW_270":                  MAV_SENSOR_ROTATION_YAW_270,
+	"MAV_SENSOR_ROTATION_YAW_315":                  MAV_SENSOR_ROTATION_YAW_315,
+	"MAV_SENSOR_ROTATION_ROLL_180":                 MAV_SENSOR_ROTATION_ROLL_180,
+	"MAV_SENSOR_ROTATION_ROLL_180_YAW_45":          MAV_SENSOR_ROTATION_ROLL_180_YAW_45,
+	"MAV_SENSOR_ROTATION_ROLL_180_YAW_90":          MAV_SENSOR_ROTATION_ROLL_180_YAW_90,
+	"MAV_SENSOR_ROTATION_ROLL_180_YAW_135":         MAV_SENSOR_ROTATION_ROLL_180_YAW_135,
+	"MAV_SENSOR_ROTATION_PITCH_180":                MAV_SENSOR_ROTATION_PITCH_180,
+	"MAV_SENSOR_ROTATION_ROLL_180_YAW_225":         MAV_SENSOR_ROTATION_ROLL_180_YAW_225,
+	"MAV_SENSOR_ROTATION_ROLL_180_YAW_270":         MAV_SENSOR_ROTATION_ROLL_180_YAW_270,
+	"MAV_SENSOR_ROTATION_ROLL_180_YAW_315":         MAV_SENSOR_ROTATION_ROLL_180_YAW_315,
+	"MAV_SENSOR_ROTATION_ROLL_90":                  MAV_SENSOR_ROTATION_ROLL_90,
+	"MAV_SENSOR_ROTATION_ROLL_90_YAW_45":           MAV_SENSOR_ROTATION_ROLL_90_YAW_45,
+	"MAV_SENSOR_ROTATION_ROLL_90_YAW_90":           MAV_SENSOR_ROTATION_ROLL_90_YAW_90,
+	"MAV_SENSOR_ROTATION_ROLL_90_YAW_135":          MAV_SENSOR_ROTATION_ROLL_90_YAW_135,
+	"MAV_SENSOR_ROTATION_ROLL_270":                 MAV_SENSOR_ROTATION_ROLL_270,
+	"MAV_SENSOR_ROTATION_ROLL_270_YAW_45":          MAV_SENSOR_ROTATION_ROLL_270_YAW_45,
+	"MAV_SENSOR_ROTATION_ROLL_270_YAW_90":          MAV_SENSOR_ROTATION_ROLL_270_YAW_90,
+	"MAV_SENSOR_ROTATION_ROLL_270_YAW_135":         MAV_SENSOR_ROTATION_ROLL_270_YAW_135,
+	"MAV_SENSOR_ROTATION_PITCH_90":                 MAV_SENSOR_ROTATION_PITCH_90,
+	"MAV_SENSOR_ROTATION_PITCH_270":                MAV_SENSOR_ROTATION_PITCH_270,
+	"MAV_SENSOR_ROTATION_PITCH_180_YAW_90":         MAV_SENSOR_ROTATION_PITCH_180_YAW_90,
+	"MAV_SENSOR_ROTATION_PITCH_180_YAW_270":        MAV_SENSOR_ROTATION_PITCH_180_YAW_270,
+	"MAV_SENSOR_ROTATION_ROLL_90_PITCH_90":         MAV_SENSOR_ROTATION_ROLL_90_PITCH_90,
+	"MAV_SENSOR_ROTATION_ROLL_180_PITCH_90":        MAV_SENSOR_ROTATION_ROLL_180_PITCH_90,
+	"MAV_SENSOR_ROTATION_ROLL_270_PITCH_90":        MAV_SENSOR_ROTATION_ROLL_270_PITCH_90,
+	"MAV_SENSOR_ROTATION_ROLL_90_PITCH_180":        MAV_SENSOR_ROTATION_ROLL_90_PITCH_180,
+	"MAV_SENSOR_ROTATION_ROLL_270_PITCH_180":       MAV_SENSOR_ROTATION_ROLL_270_PITCH_180,
+	"MAV_SENSOR_ROTATION_ROLL_90_PITCH_270":        MAV_SENSOR_ROTATION_ROLL_90_PITCH_270,
+	"MAV_SENSOR_ROTATION_ROLL_180_PITCH_270":       MAV_SENSOR_ROTATION_ROLL_180_PITCH_270,
+	"MAV_SENSOR_ROTATION_ROLL_270_PITCH_270":       MAV_SENSOR_ROTATION_ROLL_270_PITCH_270,
+	"MAV_SENSOR_ROTATION_ROLL_90_PITCH_180_YAW_90": MAV_SENSOR_ROTATION_ROLL_90_PITCH_180_YAW_90,
+	"MAV_SENSOR_ROTATION_ROLL_90_YAW_270":          MAV_SENSOR_ROTATION_ROLL_90_YAW_270,
+	"MAV_SENSOR_ROTATION_ROLL_90_PITCH_68_YAW_293": MAV_SENSOR_ROTATION_ROLL_90_PITCH_68_YAW_293,
+	"MAV_SENSOR_ROTATION_PITCH_315":                MAV_SENSOR_ROTATION_PITCH_315,
+	"MAV_SENSOR_ROTATION_ROLL_90_PITCH_315":        MAV_SENSOR_ROTATION_ROLL_90_PITCH_315,
+	"MAV_SENSOR_ROTATION_CUSTOM":                   MAV_SENSOR_ROTATION_CUSTOM,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_SENSOR_ORIENTATION) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_SENSOR_ROTATION_NONE":
-		*e = MAV_SENSOR_ROTATION_NONE
-		return nil
-	case "MAV_SENSOR_ROTATION_YAW_45":
-		*e = MAV_SENSOR_ROTATION_YAW_45
-		return nil
-	case "MAV_SENSOR_ROTATION_YAW_90":
-		*e = MAV_SENSOR_ROTATION_YAW_90
-		return nil
-	case "MAV_SENSOR_ROTATION_YAW_135":
-		*e = MAV_SENSOR_ROTATION_YAW_135
-		return nil
-	case "MAV_SENSOR_ROTATION_YAW_180":
-		*e = MAV_SENSOR_ROTATION_YAW_180
-		return nil
-	case "MAV_SENSOR_ROTATION_YAW_225":
-		*e = MAV_SENSOR_ROTATION_YAW_225
-		return nil
-	case "MAV_SENSOR_ROTATION_YAW_270":
-		*e = MAV_SENSOR_ROTATION_YAW_270
-		return nil
-	case "MAV_SENSOR_ROTATION_YAW_315":
-		*e = MAV_SENSOR_ROTATION_YAW_315
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_180":
-		*e = MAV_SENSOR_ROTATION_ROLL_180
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_180_YAW_45":
-		*e = MAV_SENSOR_ROTATION_ROLL_180_YAW_45
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_180_YAW_90":
-		*e = MAV_SENSOR_ROTATION_ROLL_180_YAW_90
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_180_YAW_135":
-		*e = MAV_SENSOR_ROTATION_ROLL_180_YAW_135
-		return nil
-	case "MAV_SENSOR_ROTATION_PITCH_180":
-		*e = MAV_SENSOR_ROTATION_PITCH_180
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_180_YAW_225":
-		*e = MAV_SENSOR_ROTATION_ROLL_180_YAW_225
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_180_YAW_270":
-		*e = MAV_SENSOR_ROTATION_ROLL_180_YAW_270
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_180_YAW_315":
-		*e = MAV_SENSOR_ROTATION_ROLL_180_YAW_315
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_90":
-		*e = MAV_SENSOR_ROTATION_ROLL_90
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_90_YAW_45":
-		*e = MAV_SENSOR_ROTATION_ROLL_90_YAW_45
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_90_YAW_90":
-		*e = MAV_SENSOR_ROTATION_ROLL_90_YAW_90
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_90_YAW_135":
-		*e = MAV_SENSOR_ROTATION_ROLL_90_YAW_135
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_270":
-		*e = MAV_SENSOR_ROTATION_ROLL_270
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_270_YAW_45":
-		*e = MAV_SENSOR_ROTATION_ROLL_270_YAW_45
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_270_YAW_90":
-		*e = MAV_SENSOR_ROTATION_ROLL_270_YAW_90
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_270_YAW_135":
-		*e = MAV_SENSOR_ROTATION_ROLL_270_YAW_135
-		return nil
-	case "MAV_SENSOR_ROTATION_PITCH_90":
-		*e = MAV_SENSOR_ROTATION_PITCH_90
-		return nil
-	case "MAV_SENSOR_ROTATION_PITCH_270":
-		*e = MAV_SENSOR_ROTATION_PITCH_270
-		return nil
-	case "MAV_SENSOR_ROTATION_PITCH_180_YAW_90":
-		*e = MAV_SENSOR_ROTATION_PITCH_180_YAW_90
-		return nil
-	case "MAV_SENSOR_ROTATION_PITCH_180_YAW_270":
-		*e = MAV_SENSOR_ROTATION_PITCH_180_YAW_270
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_90_PITCH_90":
-		*e = MAV_SENSOR_ROTATION_ROLL_90_PITCH_90
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_180_PITCH_90":
-		*e = MAV_SENSOR_ROTATION_ROLL_180_PITCH_90
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_270_PITCH_90":
-		*e = MAV_SENSOR_ROTATION_ROLL_270_PITCH_90
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_90_PITCH_180":
-		*e = MAV_SENSOR_ROTATION_ROLL_90_PITCH_180
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_270_PITCH_180":
-		*e = MAV_SENSOR_ROTATION_ROLL_270_PITCH_180
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_90_PITCH_270":
-		*e = MAV_SENSOR_ROTATION_ROLL_90_PITCH_270
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_180_PITCH_270":
-		*e = MAV_SENSOR_ROTATION_ROLL_180_PITCH_270
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_270_PITCH_270":
-		*e = MAV_SENSOR_ROTATION_ROLL_270_PITCH_270
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_90_PITCH_180_YAW_90":
-		*e = MAV_SENSOR_ROTATION_ROLL_90_PITCH_180_YAW_90
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_90_YAW_270":
-		*e = MAV_SENSOR_ROTATION_ROLL_90_YAW_270
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_90_PITCH_68_YAW_293":
-		*e = MAV_SENSOR_ROTATION_ROLL_90_PITCH_68_YAW_293
-		return nil
-	case "MAV_SENSOR_ROTATION_PITCH_315":
-		*e = MAV_SENSOR_ROTATION_PITCH_315
-		return nil
-	case "MAV_SENSOR_ROTATION_ROLL_90_PITCH_315":
-		*e = MAV_SENSOR_ROTATION_ROLL_90_PITCH_315
-		return nil
-	case "MAV_SENSOR_ROTATION_CUSTOM":
-		*e = MAV_SENSOR_ROTATION_CUSTOM
+	if rl, ok := reverseLabels_MAV_SENSOR_ORIENTATION[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -10748,11 +8141,10 @@ func (e *MAV_SENSOR_ORIENTATION) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_SENSOR_ORIENTATION) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_SENSOR_ORIENTATION[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Indicates the severity level, generally used for status messages to indicate their relative urgency. Based on RFC-5424 using expanded definitions at: http://www.kiwisyslog.com/kb/info:-syslog-message-levels/.
@@ -10777,55 +8169,40 @@ const (
 	MAV_SEVERITY_DEBUG MAV_SEVERITY = 7
 )
 
+var labels_MAV_SEVERITY = map[MAV_SEVERITY]string{
+	MAV_SEVERITY_EMERGENCY: "MAV_SEVERITY_EMERGENCY",
+	MAV_SEVERITY_ALERT:     "MAV_SEVERITY_ALERT",
+	MAV_SEVERITY_CRITICAL:  "MAV_SEVERITY_CRITICAL",
+	MAV_SEVERITY_ERROR:     "MAV_SEVERITY_ERROR",
+	MAV_SEVERITY_WARNING:   "MAV_SEVERITY_WARNING",
+	MAV_SEVERITY_NOTICE:    "MAV_SEVERITY_NOTICE",
+	MAV_SEVERITY_INFO:      "MAV_SEVERITY_INFO",
+	MAV_SEVERITY_DEBUG:     "MAV_SEVERITY_DEBUG",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_SEVERITY) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_SEVERITY_EMERGENCY:
-		return []byte("MAV_SEVERITY_EMERGENCY"), nil
-	case MAV_SEVERITY_ALERT:
-		return []byte("MAV_SEVERITY_ALERT"), nil
-	case MAV_SEVERITY_CRITICAL:
-		return []byte("MAV_SEVERITY_CRITICAL"), nil
-	case MAV_SEVERITY_ERROR:
-		return []byte("MAV_SEVERITY_ERROR"), nil
-	case MAV_SEVERITY_WARNING:
-		return []byte("MAV_SEVERITY_WARNING"), nil
-	case MAV_SEVERITY_NOTICE:
-		return []byte("MAV_SEVERITY_NOTICE"), nil
-	case MAV_SEVERITY_INFO:
-		return []byte("MAV_SEVERITY_INFO"), nil
-	case MAV_SEVERITY_DEBUG:
-		return []byte("MAV_SEVERITY_DEBUG"), nil
+	if l, ok := labels_MAV_SEVERITY[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_SEVERITY = map[string]MAV_SEVERITY{
+	"MAV_SEVERITY_EMERGENCY": MAV_SEVERITY_EMERGENCY,
+	"MAV_SEVERITY_ALERT":     MAV_SEVERITY_ALERT,
+	"MAV_SEVERITY_CRITICAL":  MAV_SEVERITY_CRITICAL,
+	"MAV_SEVERITY_ERROR":     MAV_SEVERITY_ERROR,
+	"MAV_SEVERITY_WARNING":   MAV_SEVERITY_WARNING,
+	"MAV_SEVERITY_NOTICE":    MAV_SEVERITY_NOTICE,
+	"MAV_SEVERITY_INFO":      MAV_SEVERITY_INFO,
+	"MAV_SEVERITY_DEBUG":     MAV_SEVERITY_DEBUG,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_SEVERITY) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_SEVERITY_EMERGENCY":
-		*e = MAV_SEVERITY_EMERGENCY
-		return nil
-	case "MAV_SEVERITY_ALERT":
-		*e = MAV_SEVERITY_ALERT
-		return nil
-	case "MAV_SEVERITY_CRITICAL":
-		*e = MAV_SEVERITY_CRITICAL
-		return nil
-	case "MAV_SEVERITY_ERROR":
-		*e = MAV_SEVERITY_ERROR
-		return nil
-	case "MAV_SEVERITY_WARNING":
-		*e = MAV_SEVERITY_WARNING
-		return nil
-	case "MAV_SEVERITY_NOTICE":
-		*e = MAV_SEVERITY_NOTICE
-		return nil
-	case "MAV_SEVERITY_INFO":
-		*e = MAV_SEVERITY_INFO
-		return nil
-	case "MAV_SEVERITY_DEBUG":
-		*e = MAV_SEVERITY_DEBUG
+	if rl, ok := reverseLabels_MAV_SEVERITY[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -10833,11 +8210,10 @@ func (e *MAV_SEVERITY) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_SEVERITY) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_SEVERITY[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -10864,60 +8240,42 @@ const (
 	MAV_STATE_FLIGHT_TERMINATION MAV_STATE = 8
 )
 
+var labels_MAV_STATE = map[MAV_STATE]string{
+	MAV_STATE_UNINIT:             "MAV_STATE_UNINIT",
+	MAV_STATE_BOOT:               "MAV_STATE_BOOT",
+	MAV_STATE_CALIBRATING:        "MAV_STATE_CALIBRATING",
+	MAV_STATE_STANDBY:            "MAV_STATE_STANDBY",
+	MAV_STATE_ACTIVE:             "MAV_STATE_ACTIVE",
+	MAV_STATE_CRITICAL:           "MAV_STATE_CRITICAL",
+	MAV_STATE_EMERGENCY:          "MAV_STATE_EMERGENCY",
+	MAV_STATE_POWEROFF:           "MAV_STATE_POWEROFF",
+	MAV_STATE_FLIGHT_TERMINATION: "MAV_STATE_FLIGHT_TERMINATION",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_STATE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_STATE_UNINIT:
-		return []byte("MAV_STATE_UNINIT"), nil
-	case MAV_STATE_BOOT:
-		return []byte("MAV_STATE_BOOT"), nil
-	case MAV_STATE_CALIBRATING:
-		return []byte("MAV_STATE_CALIBRATING"), nil
-	case MAV_STATE_STANDBY:
-		return []byte("MAV_STATE_STANDBY"), nil
-	case MAV_STATE_ACTIVE:
-		return []byte("MAV_STATE_ACTIVE"), nil
-	case MAV_STATE_CRITICAL:
-		return []byte("MAV_STATE_CRITICAL"), nil
-	case MAV_STATE_EMERGENCY:
-		return []byte("MAV_STATE_EMERGENCY"), nil
-	case MAV_STATE_POWEROFF:
-		return []byte("MAV_STATE_POWEROFF"), nil
-	case MAV_STATE_FLIGHT_TERMINATION:
-		return []byte("MAV_STATE_FLIGHT_TERMINATION"), nil
+	if l, ok := labels_MAV_STATE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_STATE = map[string]MAV_STATE{
+	"MAV_STATE_UNINIT":             MAV_STATE_UNINIT,
+	"MAV_STATE_BOOT":               MAV_STATE_BOOT,
+	"MAV_STATE_CALIBRATING":        MAV_STATE_CALIBRATING,
+	"MAV_STATE_STANDBY":            MAV_STATE_STANDBY,
+	"MAV_STATE_ACTIVE":             MAV_STATE_ACTIVE,
+	"MAV_STATE_CRITICAL":           MAV_STATE_CRITICAL,
+	"MAV_STATE_EMERGENCY":          MAV_STATE_EMERGENCY,
+	"MAV_STATE_POWEROFF":           MAV_STATE_POWEROFF,
+	"MAV_STATE_FLIGHT_TERMINATION": MAV_STATE_FLIGHT_TERMINATION,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_STATE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_STATE_UNINIT":
-		*e = MAV_STATE_UNINIT
-		return nil
-	case "MAV_STATE_BOOT":
-		*e = MAV_STATE_BOOT
-		return nil
-	case "MAV_STATE_CALIBRATING":
-		*e = MAV_STATE_CALIBRATING
-		return nil
-	case "MAV_STATE_STANDBY":
-		*e = MAV_STATE_STANDBY
-		return nil
-	case "MAV_STATE_ACTIVE":
-		*e = MAV_STATE_ACTIVE
-		return nil
-	case "MAV_STATE_CRITICAL":
-		*e = MAV_STATE_CRITICAL
-		return nil
-	case "MAV_STATE_EMERGENCY":
-		*e = MAV_STATE_EMERGENCY
-		return nil
-	case "MAV_STATE_POWEROFF":
-		*e = MAV_STATE_POWEROFF
-		return nil
-	case "MAV_STATE_FLIGHT_TERMINATION":
-		*e = MAV_STATE_FLIGHT_TERMINATION
+	if rl, ok := reverseLabels_MAV_STATE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -10925,11 +8283,10 @@ func (e *MAV_STATE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_STATE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_STATE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // These encode the sensors whose status is sent as part of the SYS_STATUS message.
@@ -11000,170 +8357,86 @@ const (
 	MAV_SYS_STATUS_SENSOR_PROPULSION MAV_SYS_STATUS_SENSOR = 1073741824
 )
 
+var labels_MAV_SYS_STATUS_SENSOR = map[MAV_SYS_STATUS_SENSOR]string{
+	MAV_SYS_STATUS_SENSOR_3D_GYRO:                "MAV_SYS_STATUS_SENSOR_3D_GYRO",
+	MAV_SYS_STATUS_SENSOR_3D_ACCEL:               "MAV_SYS_STATUS_SENSOR_3D_ACCEL",
+	MAV_SYS_STATUS_SENSOR_3D_MAG:                 "MAV_SYS_STATUS_SENSOR_3D_MAG",
+	MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE:      "MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE",
+	MAV_SYS_STATUS_SENSOR_DIFFERENTIAL_PRESSURE:  "MAV_SYS_STATUS_SENSOR_DIFFERENTIAL_PRESSURE",
+	MAV_SYS_STATUS_SENSOR_GPS:                    "MAV_SYS_STATUS_SENSOR_GPS",
+	MAV_SYS_STATUS_SENSOR_OPTICAL_FLOW:           "MAV_SYS_STATUS_SENSOR_OPTICAL_FLOW",
+	MAV_SYS_STATUS_SENSOR_VISION_POSITION:        "MAV_SYS_STATUS_SENSOR_VISION_POSITION",
+	MAV_SYS_STATUS_SENSOR_LASER_POSITION:         "MAV_SYS_STATUS_SENSOR_LASER_POSITION",
+	MAV_SYS_STATUS_SENSOR_EXTERNAL_GROUND_TRUTH:  "MAV_SYS_STATUS_SENSOR_EXTERNAL_GROUND_TRUTH",
+	MAV_SYS_STATUS_SENSOR_ANGULAR_RATE_CONTROL:   "MAV_SYS_STATUS_SENSOR_ANGULAR_RATE_CONTROL",
+	MAV_SYS_STATUS_SENSOR_ATTITUDE_STABILIZATION: "MAV_SYS_STATUS_SENSOR_ATTITUDE_STABILIZATION",
+	MAV_SYS_STATUS_SENSOR_YAW_POSITION:           "MAV_SYS_STATUS_SENSOR_YAW_POSITION",
+	MAV_SYS_STATUS_SENSOR_Z_ALTITUDE_CONTROL:     "MAV_SYS_STATUS_SENSOR_Z_ALTITUDE_CONTROL",
+	MAV_SYS_STATUS_SENSOR_XY_POSITION_CONTROL:    "MAV_SYS_STATUS_SENSOR_XY_POSITION_CONTROL",
+	MAV_SYS_STATUS_SENSOR_MOTOR_OUTPUTS:          "MAV_SYS_STATUS_SENSOR_MOTOR_OUTPUTS",
+	MAV_SYS_STATUS_SENSOR_RC_RECEIVER:            "MAV_SYS_STATUS_SENSOR_RC_RECEIVER",
+	MAV_SYS_STATUS_SENSOR_3D_GYRO2:               "MAV_SYS_STATUS_SENSOR_3D_GYRO2",
+	MAV_SYS_STATUS_SENSOR_3D_ACCEL2:              "MAV_SYS_STATUS_SENSOR_3D_ACCEL2",
+	MAV_SYS_STATUS_SENSOR_3D_MAG2:                "MAV_SYS_STATUS_SENSOR_3D_MAG2",
+	MAV_SYS_STATUS_GEOFENCE:                      "MAV_SYS_STATUS_GEOFENCE",
+	MAV_SYS_STATUS_AHRS:                          "MAV_SYS_STATUS_AHRS",
+	MAV_SYS_STATUS_TERRAIN:                       "MAV_SYS_STATUS_TERRAIN",
+	MAV_SYS_STATUS_REVERSE_MOTOR:                 "MAV_SYS_STATUS_REVERSE_MOTOR",
+	MAV_SYS_STATUS_LOGGING:                       "MAV_SYS_STATUS_LOGGING",
+	MAV_SYS_STATUS_SENSOR_BATTERY:                "MAV_SYS_STATUS_SENSOR_BATTERY",
+	MAV_SYS_STATUS_SENSOR_PROXIMITY:              "MAV_SYS_STATUS_SENSOR_PROXIMITY",
+	MAV_SYS_STATUS_SENSOR_SATCOM:                 "MAV_SYS_STATUS_SENSOR_SATCOM",
+	MAV_SYS_STATUS_PREARM_CHECK:                  "MAV_SYS_STATUS_PREARM_CHECK",
+	MAV_SYS_STATUS_OBSTACLE_AVOIDANCE:            "MAV_SYS_STATUS_OBSTACLE_AVOIDANCE",
+	MAV_SYS_STATUS_SENSOR_PROPULSION:             "MAV_SYS_STATUS_SENSOR_PROPULSION",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_SYS_STATUS_SENSOR) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_SYS_STATUS_SENSOR_3D_GYRO:
-		return []byte("MAV_SYS_STATUS_SENSOR_3D_GYRO"), nil
-	case MAV_SYS_STATUS_SENSOR_3D_ACCEL:
-		return []byte("MAV_SYS_STATUS_SENSOR_3D_ACCEL"), nil
-	case MAV_SYS_STATUS_SENSOR_3D_MAG:
-		return []byte("MAV_SYS_STATUS_SENSOR_3D_MAG"), nil
-	case MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE:
-		return []byte("MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE"), nil
-	case MAV_SYS_STATUS_SENSOR_DIFFERENTIAL_PRESSURE:
-		return []byte("MAV_SYS_STATUS_SENSOR_DIFFERENTIAL_PRESSURE"), nil
-	case MAV_SYS_STATUS_SENSOR_GPS:
-		return []byte("MAV_SYS_STATUS_SENSOR_GPS"), nil
-	case MAV_SYS_STATUS_SENSOR_OPTICAL_FLOW:
-		return []byte("MAV_SYS_STATUS_SENSOR_OPTICAL_FLOW"), nil
-	case MAV_SYS_STATUS_SENSOR_VISION_POSITION:
-		return []byte("MAV_SYS_STATUS_SENSOR_VISION_POSITION"), nil
-	case MAV_SYS_STATUS_SENSOR_LASER_POSITION:
-		return []byte("MAV_SYS_STATUS_SENSOR_LASER_POSITION"), nil
-	case MAV_SYS_STATUS_SENSOR_EXTERNAL_GROUND_TRUTH:
-		return []byte("MAV_SYS_STATUS_SENSOR_EXTERNAL_GROUND_TRUTH"), nil
-	case MAV_SYS_STATUS_SENSOR_ANGULAR_RATE_CONTROL:
-		return []byte("MAV_SYS_STATUS_SENSOR_ANGULAR_RATE_CONTROL"), nil
-	case MAV_SYS_STATUS_SENSOR_ATTITUDE_STABILIZATION:
-		return []byte("MAV_SYS_STATUS_SENSOR_ATTITUDE_STABILIZATION"), nil
-	case MAV_SYS_STATUS_SENSOR_YAW_POSITION:
-		return []byte("MAV_SYS_STATUS_SENSOR_YAW_POSITION"), nil
-	case MAV_SYS_STATUS_SENSOR_Z_ALTITUDE_CONTROL:
-		return []byte("MAV_SYS_STATUS_SENSOR_Z_ALTITUDE_CONTROL"), nil
-	case MAV_SYS_STATUS_SENSOR_XY_POSITION_CONTROL:
-		return []byte("MAV_SYS_STATUS_SENSOR_XY_POSITION_CONTROL"), nil
-	case MAV_SYS_STATUS_SENSOR_MOTOR_OUTPUTS:
-		return []byte("MAV_SYS_STATUS_SENSOR_MOTOR_OUTPUTS"), nil
-	case MAV_SYS_STATUS_SENSOR_RC_RECEIVER:
-		return []byte("MAV_SYS_STATUS_SENSOR_RC_RECEIVER"), nil
-	case MAV_SYS_STATUS_SENSOR_3D_GYRO2:
-		return []byte("MAV_SYS_STATUS_SENSOR_3D_GYRO2"), nil
-	case MAV_SYS_STATUS_SENSOR_3D_ACCEL2:
-		return []byte("MAV_SYS_STATUS_SENSOR_3D_ACCEL2"), nil
-	case MAV_SYS_STATUS_SENSOR_3D_MAG2:
-		return []byte("MAV_SYS_STATUS_SENSOR_3D_MAG2"), nil
-	case MAV_SYS_STATUS_GEOFENCE:
-		return []byte("MAV_SYS_STATUS_GEOFENCE"), nil
-	case MAV_SYS_STATUS_AHRS:
-		return []byte("MAV_SYS_STATUS_AHRS"), nil
-	case MAV_SYS_STATUS_TERRAIN:
-		return []byte("MAV_SYS_STATUS_TERRAIN"), nil
-	case MAV_SYS_STATUS_REVERSE_MOTOR:
-		return []byte("MAV_SYS_STATUS_REVERSE_MOTOR"), nil
-	case MAV_SYS_STATUS_LOGGING:
-		return []byte("MAV_SYS_STATUS_LOGGING"), nil
-	case MAV_SYS_STATUS_SENSOR_BATTERY:
-		return []byte("MAV_SYS_STATUS_SENSOR_BATTERY"), nil
-	case MAV_SYS_STATUS_SENSOR_PROXIMITY:
-		return []byte("MAV_SYS_STATUS_SENSOR_PROXIMITY"), nil
-	case MAV_SYS_STATUS_SENSOR_SATCOM:
-		return []byte("MAV_SYS_STATUS_SENSOR_SATCOM"), nil
-	case MAV_SYS_STATUS_PREARM_CHECK:
-		return []byte("MAV_SYS_STATUS_PREARM_CHECK"), nil
-	case MAV_SYS_STATUS_OBSTACLE_AVOIDANCE:
-		return []byte("MAV_SYS_STATUS_OBSTACLE_AVOIDANCE"), nil
-	case MAV_SYS_STATUS_SENSOR_PROPULSION:
-		return []byte("MAV_SYS_STATUS_SENSOR_PROPULSION"), nil
+	if l, ok := labels_MAV_SYS_STATUS_SENSOR[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_SYS_STATUS_SENSOR = map[string]MAV_SYS_STATUS_SENSOR{
+	"MAV_SYS_STATUS_SENSOR_3D_GYRO":                MAV_SYS_STATUS_SENSOR_3D_GYRO,
+	"MAV_SYS_STATUS_SENSOR_3D_ACCEL":               MAV_SYS_STATUS_SENSOR_3D_ACCEL,
+	"MAV_SYS_STATUS_SENSOR_3D_MAG":                 MAV_SYS_STATUS_SENSOR_3D_MAG,
+	"MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE":      MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE,
+	"MAV_SYS_STATUS_SENSOR_DIFFERENTIAL_PRESSURE":  MAV_SYS_STATUS_SENSOR_DIFFERENTIAL_PRESSURE,
+	"MAV_SYS_STATUS_SENSOR_GPS":                    MAV_SYS_STATUS_SENSOR_GPS,
+	"MAV_SYS_STATUS_SENSOR_OPTICAL_FLOW":           MAV_SYS_STATUS_SENSOR_OPTICAL_FLOW,
+	"MAV_SYS_STATUS_SENSOR_VISION_POSITION":        MAV_SYS_STATUS_SENSOR_VISION_POSITION,
+	"MAV_SYS_STATUS_SENSOR_LASER_POSITION":         MAV_SYS_STATUS_SENSOR_LASER_POSITION,
+	"MAV_SYS_STATUS_SENSOR_EXTERNAL_GROUND_TRUTH":  MAV_SYS_STATUS_SENSOR_EXTERNAL_GROUND_TRUTH,
+	"MAV_SYS_STATUS_SENSOR_ANGULAR_RATE_CONTROL":   MAV_SYS_STATUS_SENSOR_ANGULAR_RATE_CONTROL,
+	"MAV_SYS_STATUS_SENSOR_ATTITUDE_STABILIZATION": MAV_SYS_STATUS_SENSOR_ATTITUDE_STABILIZATION,
+	"MAV_SYS_STATUS_SENSOR_YAW_POSITION":           MAV_SYS_STATUS_SENSOR_YAW_POSITION,
+	"MAV_SYS_STATUS_SENSOR_Z_ALTITUDE_CONTROL":     MAV_SYS_STATUS_SENSOR_Z_ALTITUDE_CONTROL,
+	"MAV_SYS_STATUS_SENSOR_XY_POSITION_CONTROL":    MAV_SYS_STATUS_SENSOR_XY_POSITION_CONTROL,
+	"MAV_SYS_STATUS_SENSOR_MOTOR_OUTPUTS":          MAV_SYS_STATUS_SENSOR_MOTOR_OUTPUTS,
+	"MAV_SYS_STATUS_SENSOR_RC_RECEIVER":            MAV_SYS_STATUS_SENSOR_RC_RECEIVER,
+	"MAV_SYS_STATUS_SENSOR_3D_GYRO2":               MAV_SYS_STATUS_SENSOR_3D_GYRO2,
+	"MAV_SYS_STATUS_SENSOR_3D_ACCEL2":              MAV_SYS_STATUS_SENSOR_3D_ACCEL2,
+	"MAV_SYS_STATUS_SENSOR_3D_MAG2":                MAV_SYS_STATUS_SENSOR_3D_MAG2,
+	"MAV_SYS_STATUS_GEOFENCE":                      MAV_SYS_STATUS_GEOFENCE,
+	"MAV_SYS_STATUS_AHRS":                          MAV_SYS_STATUS_AHRS,
+	"MAV_SYS_STATUS_TERRAIN":                       MAV_SYS_STATUS_TERRAIN,
+	"MAV_SYS_STATUS_REVERSE_MOTOR":                 MAV_SYS_STATUS_REVERSE_MOTOR,
+	"MAV_SYS_STATUS_LOGGING":                       MAV_SYS_STATUS_LOGGING,
+	"MAV_SYS_STATUS_SENSOR_BATTERY":                MAV_SYS_STATUS_SENSOR_BATTERY,
+	"MAV_SYS_STATUS_SENSOR_PROXIMITY":              MAV_SYS_STATUS_SENSOR_PROXIMITY,
+	"MAV_SYS_STATUS_SENSOR_SATCOM":                 MAV_SYS_STATUS_SENSOR_SATCOM,
+	"MAV_SYS_STATUS_PREARM_CHECK":                  MAV_SYS_STATUS_PREARM_CHECK,
+	"MAV_SYS_STATUS_OBSTACLE_AVOIDANCE":            MAV_SYS_STATUS_OBSTACLE_AVOIDANCE,
+	"MAV_SYS_STATUS_SENSOR_PROPULSION":             MAV_SYS_STATUS_SENSOR_PROPULSION,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_SYS_STATUS_SENSOR) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_SYS_STATUS_SENSOR_3D_GYRO":
-		*e = MAV_SYS_STATUS_SENSOR_3D_GYRO
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_3D_ACCEL":
-		*e = MAV_SYS_STATUS_SENSOR_3D_ACCEL
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_3D_MAG":
-		*e = MAV_SYS_STATUS_SENSOR_3D_MAG
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE":
-		*e = MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_DIFFERENTIAL_PRESSURE":
-		*e = MAV_SYS_STATUS_SENSOR_DIFFERENTIAL_PRESSURE
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_GPS":
-		*e = MAV_SYS_STATUS_SENSOR_GPS
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_OPTICAL_FLOW":
-		*e = MAV_SYS_STATUS_SENSOR_OPTICAL_FLOW
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_VISION_POSITION":
-		*e = MAV_SYS_STATUS_SENSOR_VISION_POSITION
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_LASER_POSITION":
-		*e = MAV_SYS_STATUS_SENSOR_LASER_POSITION
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_EXTERNAL_GROUND_TRUTH":
-		*e = MAV_SYS_STATUS_SENSOR_EXTERNAL_GROUND_TRUTH
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_ANGULAR_RATE_CONTROL":
-		*e = MAV_SYS_STATUS_SENSOR_ANGULAR_RATE_CONTROL
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_ATTITUDE_STABILIZATION":
-		*e = MAV_SYS_STATUS_SENSOR_ATTITUDE_STABILIZATION
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_YAW_POSITION":
-		*e = MAV_SYS_STATUS_SENSOR_YAW_POSITION
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_Z_ALTITUDE_CONTROL":
-		*e = MAV_SYS_STATUS_SENSOR_Z_ALTITUDE_CONTROL
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_XY_POSITION_CONTROL":
-		*e = MAV_SYS_STATUS_SENSOR_XY_POSITION_CONTROL
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_MOTOR_OUTPUTS":
-		*e = MAV_SYS_STATUS_SENSOR_MOTOR_OUTPUTS
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_RC_RECEIVER":
-		*e = MAV_SYS_STATUS_SENSOR_RC_RECEIVER
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_3D_GYRO2":
-		*e = MAV_SYS_STATUS_SENSOR_3D_GYRO2
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_3D_ACCEL2":
-		*e = MAV_SYS_STATUS_SENSOR_3D_ACCEL2
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_3D_MAG2":
-		*e = MAV_SYS_STATUS_SENSOR_3D_MAG2
-		return nil
-	case "MAV_SYS_STATUS_GEOFENCE":
-		*e = MAV_SYS_STATUS_GEOFENCE
-		return nil
-	case "MAV_SYS_STATUS_AHRS":
-		*e = MAV_SYS_STATUS_AHRS
-		return nil
-	case "MAV_SYS_STATUS_TERRAIN":
-		*e = MAV_SYS_STATUS_TERRAIN
-		return nil
-	case "MAV_SYS_STATUS_REVERSE_MOTOR":
-		*e = MAV_SYS_STATUS_REVERSE_MOTOR
-		return nil
-	case "MAV_SYS_STATUS_LOGGING":
-		*e = MAV_SYS_STATUS_LOGGING
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_BATTERY":
-		*e = MAV_SYS_STATUS_SENSOR_BATTERY
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_PROXIMITY":
-		*e = MAV_SYS_STATUS_SENSOR_PROXIMITY
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_SATCOM":
-		*e = MAV_SYS_STATUS_SENSOR_SATCOM
-		return nil
-	case "MAV_SYS_STATUS_PREARM_CHECK":
-		*e = MAV_SYS_STATUS_PREARM_CHECK
-		return nil
-	case "MAV_SYS_STATUS_OBSTACLE_AVOIDANCE":
-		*e = MAV_SYS_STATUS_OBSTACLE_AVOIDANCE
-		return nil
-	case "MAV_SYS_STATUS_SENSOR_PROPULSION":
-		*e = MAV_SYS_STATUS_SENSOR_PROPULSION
+	if rl, ok := reverseLabels_MAV_SYS_STATUS_SENSOR[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -11171,11 +8444,10 @@ func (e *MAV_SYS_STATUS_SENSOR) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_SYS_STATUS_SENSOR) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_SYS_STATUS_SENSOR[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -11206,70 +8478,46 @@ const (
 	MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED9 MAV_TUNNEL_PAYLOAD_TYPE = 209
 )
 
+var labels_MAV_TUNNEL_PAYLOAD_TYPE = map[MAV_TUNNEL_PAYLOAD_TYPE]string{
+	MAV_TUNNEL_PAYLOAD_TYPE_UNKNOWN:           "MAV_TUNNEL_PAYLOAD_TYPE_UNKNOWN",
+	MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED0: "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED0",
+	MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED1: "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED1",
+	MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED2: "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED2",
+	MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED3: "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED3",
+	MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED4: "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED4",
+	MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED5: "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED5",
+	MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED6: "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED6",
+	MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED7: "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED7",
+	MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED8: "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED8",
+	MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED9: "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED9",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_TUNNEL_PAYLOAD_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_TUNNEL_PAYLOAD_TYPE_UNKNOWN:
-		return []byte("MAV_TUNNEL_PAYLOAD_TYPE_UNKNOWN"), nil
-	case MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED0:
-		return []byte("MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED0"), nil
-	case MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED1:
-		return []byte("MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED1"), nil
-	case MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED2:
-		return []byte("MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED2"), nil
-	case MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED3:
-		return []byte("MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED3"), nil
-	case MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED4:
-		return []byte("MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED4"), nil
-	case MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED5:
-		return []byte("MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED5"), nil
-	case MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED6:
-		return []byte("MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED6"), nil
-	case MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED7:
-		return []byte("MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED7"), nil
-	case MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED8:
-		return []byte("MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED8"), nil
-	case MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED9:
-		return []byte("MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED9"), nil
+	if l, ok := labels_MAV_TUNNEL_PAYLOAD_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_TUNNEL_PAYLOAD_TYPE = map[string]MAV_TUNNEL_PAYLOAD_TYPE{
+	"MAV_TUNNEL_PAYLOAD_TYPE_UNKNOWN":           MAV_TUNNEL_PAYLOAD_TYPE_UNKNOWN,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED0": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED0,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED1": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED1,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED2": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED2,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED3": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED3,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED4": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED4,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED5": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED5,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED6": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED6,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED7": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED7,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED8": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED8,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED9": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED9,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_TUNNEL_PAYLOAD_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_TUNNEL_PAYLOAD_TYPE_UNKNOWN":
-		*e = MAV_TUNNEL_PAYLOAD_TYPE_UNKNOWN
-		return nil
-	case "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED0":
-		*e = MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED0
-		return nil
-	case "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED1":
-		*e = MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED1
-		return nil
-	case "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED2":
-		*e = MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED2
-		return nil
-	case "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED3":
-		*e = MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED3
-		return nil
-	case "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED4":
-		*e = MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED4
-		return nil
-	case "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED5":
-		*e = MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED5
-		return nil
-	case "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED6":
-		*e = MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED6
-		return nil
-	case "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED7":
-		*e = MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED7
-		return nil
-	case "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED8":
-		*e = MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED8
-		return nil
-	case "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED9":
-		*e = MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED9
+	if rl, ok := reverseLabels_MAV_TUNNEL_PAYLOAD_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -11277,11 +8525,10 @@ func (e *MAV_TUNNEL_PAYLOAD_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_TUNNEL_PAYLOAD_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_TUNNEL_PAYLOAD_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // MAVLINK component type reported in HEARTBEAT message. Flight controllers must report the type of the vehicle on which they are mounted (e.g. MAV_TYPE_OCTOROTOR). All other components must report a value appropriate for their type (e.g. a camera must use MAV_TYPE_CAMERA).
@@ -11366,205 +8613,100 @@ const (
 	MAV_TYPE_PARACHUTE MAV_TYPE = 37
 )
 
+var labels_MAV_TYPE = map[MAV_TYPE]string{
+	MAV_TYPE_GENERIC:            "MAV_TYPE_GENERIC",
+	MAV_TYPE_FIXED_WING:         "MAV_TYPE_FIXED_WING",
+	MAV_TYPE_QUADROTOR:          "MAV_TYPE_QUADROTOR",
+	MAV_TYPE_COAXIAL:            "MAV_TYPE_COAXIAL",
+	MAV_TYPE_HELICOPTER:         "MAV_TYPE_HELICOPTER",
+	MAV_TYPE_ANTENNA_TRACKER:    "MAV_TYPE_ANTENNA_TRACKER",
+	MAV_TYPE_GCS:                "MAV_TYPE_GCS",
+	MAV_TYPE_AIRSHIP:            "MAV_TYPE_AIRSHIP",
+	MAV_TYPE_FREE_BALLOON:       "MAV_TYPE_FREE_BALLOON",
+	MAV_TYPE_ROCKET:             "MAV_TYPE_ROCKET",
+	MAV_TYPE_GROUND_ROVER:       "MAV_TYPE_GROUND_ROVER",
+	MAV_TYPE_SURFACE_BOAT:       "MAV_TYPE_SURFACE_BOAT",
+	MAV_TYPE_SUBMARINE:          "MAV_TYPE_SUBMARINE",
+	MAV_TYPE_HEXAROTOR:          "MAV_TYPE_HEXAROTOR",
+	MAV_TYPE_OCTOROTOR:          "MAV_TYPE_OCTOROTOR",
+	MAV_TYPE_TRICOPTER:          "MAV_TYPE_TRICOPTER",
+	MAV_TYPE_FLAPPING_WING:      "MAV_TYPE_FLAPPING_WING",
+	MAV_TYPE_KITE:               "MAV_TYPE_KITE",
+	MAV_TYPE_ONBOARD_CONTROLLER: "MAV_TYPE_ONBOARD_CONTROLLER",
+	MAV_TYPE_VTOL_DUOROTOR:      "MAV_TYPE_VTOL_DUOROTOR",
+	MAV_TYPE_VTOL_QUADROTOR:     "MAV_TYPE_VTOL_QUADROTOR",
+	MAV_TYPE_VTOL_TILTROTOR:     "MAV_TYPE_VTOL_TILTROTOR",
+	MAV_TYPE_VTOL_RESERVED2:     "MAV_TYPE_VTOL_RESERVED2",
+	MAV_TYPE_VTOL_RESERVED3:     "MAV_TYPE_VTOL_RESERVED3",
+	MAV_TYPE_VTOL_RESERVED4:     "MAV_TYPE_VTOL_RESERVED4",
+	MAV_TYPE_VTOL_RESERVED5:     "MAV_TYPE_VTOL_RESERVED5",
+	MAV_TYPE_GIMBAL:             "MAV_TYPE_GIMBAL",
+	MAV_TYPE_ADSB:               "MAV_TYPE_ADSB",
+	MAV_TYPE_PARAFOIL:           "MAV_TYPE_PARAFOIL",
+	MAV_TYPE_DODECAROTOR:        "MAV_TYPE_DODECAROTOR",
+	MAV_TYPE_CAMERA:             "MAV_TYPE_CAMERA",
+	MAV_TYPE_CHARGING_STATION:   "MAV_TYPE_CHARGING_STATION",
+	MAV_TYPE_FLARM:              "MAV_TYPE_FLARM",
+	MAV_TYPE_SERVO:              "MAV_TYPE_SERVO",
+	MAV_TYPE_ODID:               "MAV_TYPE_ODID",
+	MAV_TYPE_DECAROTOR:          "MAV_TYPE_DECAROTOR",
+	MAV_TYPE_BATTERY:            "MAV_TYPE_BATTERY",
+	MAV_TYPE_PARACHUTE:          "MAV_TYPE_PARACHUTE",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_TYPE_GENERIC:
-		return []byte("MAV_TYPE_GENERIC"), nil
-	case MAV_TYPE_FIXED_WING:
-		return []byte("MAV_TYPE_FIXED_WING"), nil
-	case MAV_TYPE_QUADROTOR:
-		return []byte("MAV_TYPE_QUADROTOR"), nil
-	case MAV_TYPE_COAXIAL:
-		return []byte("MAV_TYPE_COAXIAL"), nil
-	case MAV_TYPE_HELICOPTER:
-		return []byte("MAV_TYPE_HELICOPTER"), nil
-	case MAV_TYPE_ANTENNA_TRACKER:
-		return []byte("MAV_TYPE_ANTENNA_TRACKER"), nil
-	case MAV_TYPE_GCS:
-		return []byte("MAV_TYPE_GCS"), nil
-	case MAV_TYPE_AIRSHIP:
-		return []byte("MAV_TYPE_AIRSHIP"), nil
-	case MAV_TYPE_FREE_BALLOON:
-		return []byte("MAV_TYPE_FREE_BALLOON"), nil
-	case MAV_TYPE_ROCKET:
-		return []byte("MAV_TYPE_ROCKET"), nil
-	case MAV_TYPE_GROUND_ROVER:
-		return []byte("MAV_TYPE_GROUND_ROVER"), nil
-	case MAV_TYPE_SURFACE_BOAT:
-		return []byte("MAV_TYPE_SURFACE_BOAT"), nil
-	case MAV_TYPE_SUBMARINE:
-		return []byte("MAV_TYPE_SUBMARINE"), nil
-	case MAV_TYPE_HEXAROTOR:
-		return []byte("MAV_TYPE_HEXAROTOR"), nil
-	case MAV_TYPE_OCTOROTOR:
-		return []byte("MAV_TYPE_OCTOROTOR"), nil
-	case MAV_TYPE_TRICOPTER:
-		return []byte("MAV_TYPE_TRICOPTER"), nil
-	case MAV_TYPE_FLAPPING_WING:
-		return []byte("MAV_TYPE_FLAPPING_WING"), nil
-	case MAV_TYPE_KITE:
-		return []byte("MAV_TYPE_KITE"), nil
-	case MAV_TYPE_ONBOARD_CONTROLLER:
-		return []byte("MAV_TYPE_ONBOARD_CONTROLLER"), nil
-	case MAV_TYPE_VTOL_DUOROTOR:
-		return []byte("MAV_TYPE_VTOL_DUOROTOR"), nil
-	case MAV_TYPE_VTOL_QUADROTOR:
-		return []byte("MAV_TYPE_VTOL_QUADROTOR"), nil
-	case MAV_TYPE_VTOL_TILTROTOR:
-		return []byte("MAV_TYPE_VTOL_TILTROTOR"), nil
-	case MAV_TYPE_VTOL_RESERVED2:
-		return []byte("MAV_TYPE_VTOL_RESERVED2"), nil
-	case MAV_TYPE_VTOL_RESERVED3:
-		return []byte("MAV_TYPE_VTOL_RESERVED3"), nil
-	case MAV_TYPE_VTOL_RESERVED4:
-		return []byte("MAV_TYPE_VTOL_RESERVED4"), nil
-	case MAV_TYPE_VTOL_RESERVED5:
-		return []byte("MAV_TYPE_VTOL_RESERVED5"), nil
-	case MAV_TYPE_GIMBAL:
-		return []byte("MAV_TYPE_GIMBAL"), nil
-	case MAV_TYPE_ADSB:
-		return []byte("MAV_TYPE_ADSB"), nil
-	case MAV_TYPE_PARAFOIL:
-		return []byte("MAV_TYPE_PARAFOIL"), nil
-	case MAV_TYPE_DODECAROTOR:
-		return []byte("MAV_TYPE_DODECAROTOR"), nil
-	case MAV_TYPE_CAMERA:
-		return []byte("MAV_TYPE_CAMERA"), nil
-	case MAV_TYPE_CHARGING_STATION:
-		return []byte("MAV_TYPE_CHARGING_STATION"), nil
-	case MAV_TYPE_FLARM:
-		return []byte("MAV_TYPE_FLARM"), nil
-	case MAV_TYPE_SERVO:
-		return []byte("MAV_TYPE_SERVO"), nil
-	case MAV_TYPE_ODID:
-		return []byte("MAV_TYPE_ODID"), nil
-	case MAV_TYPE_DECAROTOR:
-		return []byte("MAV_TYPE_DECAROTOR"), nil
-	case MAV_TYPE_BATTERY:
-		return []byte("MAV_TYPE_BATTERY"), nil
-	case MAV_TYPE_PARACHUTE:
-		return []byte("MAV_TYPE_PARACHUTE"), nil
+	if l, ok := labels_MAV_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_TYPE = map[string]MAV_TYPE{
+	"MAV_TYPE_GENERIC":            MAV_TYPE_GENERIC,
+	"MAV_TYPE_FIXED_WING":         MAV_TYPE_FIXED_WING,
+	"MAV_TYPE_QUADROTOR":          MAV_TYPE_QUADROTOR,
+	"MAV_TYPE_COAXIAL":            MAV_TYPE_COAXIAL,
+	"MAV_TYPE_HELICOPTER":         MAV_TYPE_HELICOPTER,
+	"MAV_TYPE_ANTENNA_TRACKER":    MAV_TYPE_ANTENNA_TRACKER,
+	"MAV_TYPE_GCS":                MAV_TYPE_GCS,
+	"MAV_TYPE_AIRSHIP":            MAV_TYPE_AIRSHIP,
+	"MAV_TYPE_FREE_BALLOON":       MAV_TYPE_FREE_BALLOON,
+	"MAV_TYPE_ROCKET":             MAV_TYPE_ROCKET,
+	"MAV_TYPE_GROUND_ROVER":       MAV_TYPE_GROUND_ROVER,
+	"MAV_TYPE_SURFACE_BOAT":       MAV_TYPE_SURFACE_BOAT,
+	"MAV_TYPE_SUBMARINE":          MAV_TYPE_SUBMARINE,
+	"MAV_TYPE_HEXAROTOR":          MAV_TYPE_HEXAROTOR,
+	"MAV_TYPE_OCTOROTOR":          MAV_TYPE_OCTOROTOR,
+	"MAV_TYPE_TRICOPTER":          MAV_TYPE_TRICOPTER,
+	"MAV_TYPE_FLAPPING_WING":      MAV_TYPE_FLAPPING_WING,
+	"MAV_TYPE_KITE":               MAV_TYPE_KITE,
+	"MAV_TYPE_ONBOARD_CONTROLLER": MAV_TYPE_ONBOARD_CONTROLLER,
+	"MAV_TYPE_VTOL_DUOROTOR":      MAV_TYPE_VTOL_DUOROTOR,
+	"MAV_TYPE_VTOL_QUADROTOR":     MAV_TYPE_VTOL_QUADROTOR,
+	"MAV_TYPE_VTOL_TILTROTOR":     MAV_TYPE_VTOL_TILTROTOR,
+	"MAV_TYPE_VTOL_RESERVED2":     MAV_TYPE_VTOL_RESERVED2,
+	"MAV_TYPE_VTOL_RESERVED3":     MAV_TYPE_VTOL_RESERVED3,
+	"MAV_TYPE_VTOL_RESERVED4":     MAV_TYPE_VTOL_RESERVED4,
+	"MAV_TYPE_VTOL_RESERVED5":     MAV_TYPE_VTOL_RESERVED5,
+	"MAV_TYPE_GIMBAL":             MAV_TYPE_GIMBAL,
+	"MAV_TYPE_ADSB":               MAV_TYPE_ADSB,
+	"MAV_TYPE_PARAFOIL":           MAV_TYPE_PARAFOIL,
+	"MAV_TYPE_DODECAROTOR":        MAV_TYPE_DODECAROTOR,
+	"MAV_TYPE_CAMERA":             MAV_TYPE_CAMERA,
+	"MAV_TYPE_CHARGING_STATION":   MAV_TYPE_CHARGING_STATION,
+	"MAV_TYPE_FLARM":              MAV_TYPE_FLARM,
+	"MAV_TYPE_SERVO":              MAV_TYPE_SERVO,
+	"MAV_TYPE_ODID":               MAV_TYPE_ODID,
+	"MAV_TYPE_DECAROTOR":          MAV_TYPE_DECAROTOR,
+	"MAV_TYPE_BATTERY":            MAV_TYPE_BATTERY,
+	"MAV_TYPE_PARACHUTE":          MAV_TYPE_PARACHUTE,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_TYPE_GENERIC":
-		*e = MAV_TYPE_GENERIC
-		return nil
-	case "MAV_TYPE_FIXED_WING":
-		*e = MAV_TYPE_FIXED_WING
-		return nil
-	case "MAV_TYPE_QUADROTOR":
-		*e = MAV_TYPE_QUADROTOR
-		return nil
-	case "MAV_TYPE_COAXIAL":
-		*e = MAV_TYPE_COAXIAL
-		return nil
-	case "MAV_TYPE_HELICOPTER":
-		*e = MAV_TYPE_HELICOPTER
-		return nil
-	case "MAV_TYPE_ANTENNA_TRACKER":
-		*e = MAV_TYPE_ANTENNA_TRACKER
-		return nil
-	case "MAV_TYPE_GCS":
-		*e = MAV_TYPE_GCS
-		return nil
-	case "MAV_TYPE_AIRSHIP":
-		*e = MAV_TYPE_AIRSHIP
-		return nil
-	case "MAV_TYPE_FREE_BALLOON":
-		*e = MAV_TYPE_FREE_BALLOON
-		return nil
-	case "MAV_TYPE_ROCKET":
-		*e = MAV_TYPE_ROCKET
-		return nil
-	case "MAV_TYPE_GROUND_ROVER":
-		*e = MAV_TYPE_GROUND_ROVER
-		return nil
-	case "MAV_TYPE_SURFACE_BOAT":
-		*e = MAV_TYPE_SURFACE_BOAT
-		return nil
-	case "MAV_TYPE_SUBMARINE":
-		*e = MAV_TYPE_SUBMARINE
-		return nil
-	case "MAV_TYPE_HEXAROTOR":
-		*e = MAV_TYPE_HEXAROTOR
-		return nil
-	case "MAV_TYPE_OCTOROTOR":
-		*e = MAV_TYPE_OCTOROTOR
-		return nil
-	case "MAV_TYPE_TRICOPTER":
-		*e = MAV_TYPE_TRICOPTER
-		return nil
-	case "MAV_TYPE_FLAPPING_WING":
-		*e = MAV_TYPE_FLAPPING_WING
-		return nil
-	case "MAV_TYPE_KITE":
-		*e = MAV_TYPE_KITE
-		return nil
-	case "MAV_TYPE_ONBOARD_CONTROLLER":
-		*e = MAV_TYPE_ONBOARD_CONTROLLER
-		return nil
-	case "MAV_TYPE_VTOL_DUOROTOR":
-		*e = MAV_TYPE_VTOL_DUOROTOR
-		return nil
-	case "MAV_TYPE_VTOL_QUADROTOR":
-		*e = MAV_TYPE_VTOL_QUADROTOR
-		return nil
-	case "MAV_TYPE_VTOL_TILTROTOR":
-		*e = MAV_TYPE_VTOL_TILTROTOR
-		return nil
-	case "MAV_TYPE_VTOL_RESERVED2":
-		*e = MAV_TYPE_VTOL_RESERVED2
-		return nil
-	case "MAV_TYPE_VTOL_RESERVED3":
-		*e = MAV_TYPE_VTOL_RESERVED3
-		return nil
-	case "MAV_TYPE_VTOL_RESERVED4":
-		*e = MAV_TYPE_VTOL_RESERVED4
-		return nil
-	case "MAV_TYPE_VTOL_RESERVED5":
-		*e = MAV_TYPE_VTOL_RESERVED5
-		return nil
-	case "MAV_TYPE_GIMBAL":
-		*e = MAV_TYPE_GIMBAL
-		return nil
-	case "MAV_TYPE_ADSB":
-		*e = MAV_TYPE_ADSB
-		return nil
-	case "MAV_TYPE_PARAFOIL":
-		*e = MAV_TYPE_PARAFOIL
-		return nil
-	case "MAV_TYPE_DODECAROTOR":
-		*e = MAV_TYPE_DODECAROTOR
-		return nil
-	case "MAV_TYPE_CAMERA":
-		*e = MAV_TYPE_CAMERA
-		return nil
-	case "MAV_TYPE_CHARGING_STATION":
-		*e = MAV_TYPE_CHARGING_STATION
-		return nil
-	case "MAV_TYPE_FLARM":
-		*e = MAV_TYPE_FLARM
-		return nil
-	case "MAV_TYPE_SERVO":
-		*e = MAV_TYPE_SERVO
-		return nil
-	case "MAV_TYPE_ODID":
-		*e = MAV_TYPE_ODID
-		return nil
-	case "MAV_TYPE_DECAROTOR":
-		*e = MAV_TYPE_DECAROTOR
-		return nil
-	case "MAV_TYPE_BATTERY":
-		*e = MAV_TYPE_BATTERY
-		return nil
-	case "MAV_TYPE_PARACHUTE":
-		*e = MAV_TYPE_PARACHUTE
+	if rl, ok := reverseLabels_MAV_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -11572,11 +8714,10 @@ func (e *MAV_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Enumeration of VTOL states
@@ -11595,40 +8736,34 @@ const (
 	MAV_VTOL_STATE_FW MAV_VTOL_STATE = 4
 )
 
+var labels_MAV_VTOL_STATE = map[MAV_VTOL_STATE]string{
+	MAV_VTOL_STATE_UNDEFINED:        "MAV_VTOL_STATE_UNDEFINED",
+	MAV_VTOL_STATE_TRANSITION_TO_FW: "MAV_VTOL_STATE_TRANSITION_TO_FW",
+	MAV_VTOL_STATE_TRANSITION_TO_MC: "MAV_VTOL_STATE_TRANSITION_TO_MC",
+	MAV_VTOL_STATE_MC:               "MAV_VTOL_STATE_MC",
+	MAV_VTOL_STATE_FW:               "MAV_VTOL_STATE_FW",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_VTOL_STATE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_VTOL_STATE_UNDEFINED:
-		return []byte("MAV_VTOL_STATE_UNDEFINED"), nil
-	case MAV_VTOL_STATE_TRANSITION_TO_FW:
-		return []byte("MAV_VTOL_STATE_TRANSITION_TO_FW"), nil
-	case MAV_VTOL_STATE_TRANSITION_TO_MC:
-		return []byte("MAV_VTOL_STATE_TRANSITION_TO_MC"), nil
-	case MAV_VTOL_STATE_MC:
-		return []byte("MAV_VTOL_STATE_MC"), nil
-	case MAV_VTOL_STATE_FW:
-		return []byte("MAV_VTOL_STATE_FW"), nil
+	if l, ok := labels_MAV_VTOL_STATE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_VTOL_STATE = map[string]MAV_VTOL_STATE{
+	"MAV_VTOL_STATE_UNDEFINED":        MAV_VTOL_STATE_UNDEFINED,
+	"MAV_VTOL_STATE_TRANSITION_TO_FW": MAV_VTOL_STATE_TRANSITION_TO_FW,
+	"MAV_VTOL_STATE_TRANSITION_TO_MC": MAV_VTOL_STATE_TRANSITION_TO_MC,
+	"MAV_VTOL_STATE_MC":               MAV_VTOL_STATE_MC,
+	"MAV_VTOL_STATE_FW":               MAV_VTOL_STATE_FW,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_VTOL_STATE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_VTOL_STATE_UNDEFINED":
-		*e = MAV_VTOL_STATE_UNDEFINED
-		return nil
-	case "MAV_VTOL_STATE_TRANSITION_TO_FW":
-		*e = MAV_VTOL_STATE_TRANSITION_TO_FW
-		return nil
-	case "MAV_VTOL_STATE_TRANSITION_TO_MC":
-		*e = MAV_VTOL_STATE_TRANSITION_TO_MC
-		return nil
-	case "MAV_VTOL_STATE_MC":
-		*e = MAV_VTOL_STATE_MC
-		return nil
-	case "MAV_VTOL_STATE_FW":
-		*e = MAV_VTOL_STATE_FW
+	if rl, ok := reverseLabels_MAV_VTOL_STATE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -11636,11 +8771,10 @@ func (e *MAV_VTOL_STATE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_VTOL_STATE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_VTOL_STATE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Winch status flags used in WINCH_STATUS
@@ -11657,35 +8791,32 @@ const (
 	MAV_WINCH_STATUS_CLUTCH_ENGAGED MAV_WINCH_STATUS_FLAG = 8
 )
 
+var labels_MAV_WINCH_STATUS_FLAG = map[MAV_WINCH_STATUS_FLAG]string{
+	MAV_WINCH_STATUS_HEALTHY:         "MAV_WINCH_STATUS_HEALTHY",
+	MAV_WINCH_STATUS_FULLY_RETRACTED: "MAV_WINCH_STATUS_FULLY_RETRACTED",
+	MAV_WINCH_STATUS_MOVING:          "MAV_WINCH_STATUS_MOVING",
+	MAV_WINCH_STATUS_CLUTCH_ENGAGED:  "MAV_WINCH_STATUS_CLUTCH_ENGAGED",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_WINCH_STATUS_FLAG) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MAV_WINCH_STATUS_HEALTHY:
-		return []byte("MAV_WINCH_STATUS_HEALTHY"), nil
-	case MAV_WINCH_STATUS_FULLY_RETRACTED:
-		return []byte("MAV_WINCH_STATUS_FULLY_RETRACTED"), nil
-	case MAV_WINCH_STATUS_MOVING:
-		return []byte("MAV_WINCH_STATUS_MOVING"), nil
-	case MAV_WINCH_STATUS_CLUTCH_ENGAGED:
-		return []byte("MAV_WINCH_STATUS_CLUTCH_ENGAGED"), nil
+	if l, ok := labels_MAV_WINCH_STATUS_FLAG[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MAV_WINCH_STATUS_FLAG = map[string]MAV_WINCH_STATUS_FLAG{
+	"MAV_WINCH_STATUS_HEALTHY":         MAV_WINCH_STATUS_HEALTHY,
+	"MAV_WINCH_STATUS_FULLY_RETRACTED": MAV_WINCH_STATUS_FULLY_RETRACTED,
+	"MAV_WINCH_STATUS_MOVING":          MAV_WINCH_STATUS_MOVING,
+	"MAV_WINCH_STATUS_CLUTCH_ENGAGED":  MAV_WINCH_STATUS_CLUTCH_ENGAGED,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_WINCH_STATUS_FLAG) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MAV_WINCH_STATUS_HEALTHY":
-		*e = MAV_WINCH_STATUS_HEALTHY
-		return nil
-	case "MAV_WINCH_STATUS_FULLY_RETRACTED":
-		*e = MAV_WINCH_STATUS_FULLY_RETRACTED
-		return nil
-	case "MAV_WINCH_STATUS_MOVING":
-		*e = MAV_WINCH_STATUS_MOVING
-		return nil
-	case "MAV_WINCH_STATUS_CLUTCH_ENGAGED":
-		*e = MAV_WINCH_STATUS_CLUTCH_ENGAGED
+	if rl, ok := reverseLabels_MAV_WINCH_STATUS_FLAG[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -11693,11 +8824,10 @@ func (e *MAV_WINCH_STATUS_FLAG) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_WINCH_STATUS_FLAG) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MAV_WINCH_STATUS_FLAG[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Sequence that motors are tested when using MAV_CMD_DO_MOTOR_TEST.
@@ -11712,30 +8842,30 @@ const (
 	MOTOR_TEST_ORDER_BOARD MOTOR_TEST_ORDER = 2
 )
 
+var labels_MOTOR_TEST_ORDER = map[MOTOR_TEST_ORDER]string{
+	MOTOR_TEST_ORDER_DEFAULT:  "MOTOR_TEST_ORDER_DEFAULT",
+	MOTOR_TEST_ORDER_SEQUENCE: "MOTOR_TEST_ORDER_SEQUENCE",
+	MOTOR_TEST_ORDER_BOARD:    "MOTOR_TEST_ORDER_BOARD",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MOTOR_TEST_ORDER) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MOTOR_TEST_ORDER_DEFAULT:
-		return []byte("MOTOR_TEST_ORDER_DEFAULT"), nil
-	case MOTOR_TEST_ORDER_SEQUENCE:
-		return []byte("MOTOR_TEST_ORDER_SEQUENCE"), nil
-	case MOTOR_TEST_ORDER_BOARD:
-		return []byte("MOTOR_TEST_ORDER_BOARD"), nil
+	if l, ok := labels_MOTOR_TEST_ORDER[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MOTOR_TEST_ORDER = map[string]MOTOR_TEST_ORDER{
+	"MOTOR_TEST_ORDER_DEFAULT":  MOTOR_TEST_ORDER_DEFAULT,
+	"MOTOR_TEST_ORDER_SEQUENCE": MOTOR_TEST_ORDER_SEQUENCE,
+	"MOTOR_TEST_ORDER_BOARD":    MOTOR_TEST_ORDER_BOARD,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MOTOR_TEST_ORDER) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MOTOR_TEST_ORDER_DEFAULT":
-		*e = MOTOR_TEST_ORDER_DEFAULT
-		return nil
-	case "MOTOR_TEST_ORDER_SEQUENCE":
-		*e = MOTOR_TEST_ORDER_SEQUENCE
-		return nil
-	case "MOTOR_TEST_ORDER_BOARD":
-		*e = MOTOR_TEST_ORDER_BOARD
+	if rl, ok := reverseLabels_MOTOR_TEST_ORDER[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -11743,11 +8873,10 @@ func (e *MOTOR_TEST_ORDER) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MOTOR_TEST_ORDER) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MOTOR_TEST_ORDER[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Defines how throttle value is represented in MAV_CMD_DO_MOTOR_TEST.
@@ -11764,35 +8893,32 @@ const (
 	MOTOR_TEST_COMPASS_CAL MOTOR_TEST_THROTTLE_TYPE = 3
 )
 
+var labels_MOTOR_TEST_THROTTLE_TYPE = map[MOTOR_TEST_THROTTLE_TYPE]string{
+	MOTOR_TEST_THROTTLE_PERCENT: "MOTOR_TEST_THROTTLE_PERCENT",
+	MOTOR_TEST_THROTTLE_PWM:     "MOTOR_TEST_THROTTLE_PWM",
+	MOTOR_TEST_THROTTLE_PILOT:   "MOTOR_TEST_THROTTLE_PILOT",
+	MOTOR_TEST_COMPASS_CAL:      "MOTOR_TEST_COMPASS_CAL",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MOTOR_TEST_THROTTLE_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case MOTOR_TEST_THROTTLE_PERCENT:
-		return []byte("MOTOR_TEST_THROTTLE_PERCENT"), nil
-	case MOTOR_TEST_THROTTLE_PWM:
-		return []byte("MOTOR_TEST_THROTTLE_PWM"), nil
-	case MOTOR_TEST_THROTTLE_PILOT:
-		return []byte("MOTOR_TEST_THROTTLE_PILOT"), nil
-	case MOTOR_TEST_COMPASS_CAL:
-		return []byte("MOTOR_TEST_COMPASS_CAL"), nil
+	if l, ok := labels_MOTOR_TEST_THROTTLE_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_MOTOR_TEST_THROTTLE_TYPE = map[string]MOTOR_TEST_THROTTLE_TYPE{
+	"MOTOR_TEST_THROTTLE_PERCENT": MOTOR_TEST_THROTTLE_PERCENT,
+	"MOTOR_TEST_THROTTLE_PWM":     MOTOR_TEST_THROTTLE_PWM,
+	"MOTOR_TEST_THROTTLE_PILOT":   MOTOR_TEST_THROTTLE_PILOT,
+	"MOTOR_TEST_COMPASS_CAL":      MOTOR_TEST_COMPASS_CAL,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MOTOR_TEST_THROTTLE_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "MOTOR_TEST_THROTTLE_PERCENT":
-		*e = MOTOR_TEST_THROTTLE_PERCENT
-		return nil
-	case "MOTOR_TEST_THROTTLE_PWM":
-		*e = MOTOR_TEST_THROTTLE_PWM
-		return nil
-	case "MOTOR_TEST_THROTTLE_PILOT":
-		*e = MOTOR_TEST_THROTTLE_PILOT
-		return nil
-	case "MOTOR_TEST_COMPASS_CAL":
-		*e = MOTOR_TEST_COMPASS_CAL
+	if rl, ok := reverseLabels_MOTOR_TEST_THROTTLE_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -11800,11 +8926,10 @@ func (e *MOTOR_TEST_THROTTLE_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MOTOR_TEST_THROTTLE_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_MOTOR_TEST_THROTTLE_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -11819,30 +8944,30 @@ const (
 	NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT NAV_VTOL_LAND_OPTIONS = 2
 )
 
+var labels_NAV_VTOL_LAND_OPTIONS = map[NAV_VTOL_LAND_OPTIONS]string{
+	NAV_VTOL_LAND_OPTIONS_DEFAULT:       "NAV_VTOL_LAND_OPTIONS_DEFAULT",
+	NAV_VTOL_LAND_OPTIONS_FW_DESCENT:    "NAV_VTOL_LAND_OPTIONS_FW_DESCENT",
+	NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT: "NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e NAV_VTOL_LAND_OPTIONS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case NAV_VTOL_LAND_OPTIONS_DEFAULT:
-		return []byte("NAV_VTOL_LAND_OPTIONS_DEFAULT"), nil
-	case NAV_VTOL_LAND_OPTIONS_FW_DESCENT:
-		return []byte("NAV_VTOL_LAND_OPTIONS_FW_DESCENT"), nil
-	case NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT:
-		return []byte("NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT"), nil
+	if l, ok := labels_NAV_VTOL_LAND_OPTIONS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_NAV_VTOL_LAND_OPTIONS = map[string]NAV_VTOL_LAND_OPTIONS{
+	"NAV_VTOL_LAND_OPTIONS_DEFAULT":       NAV_VTOL_LAND_OPTIONS_DEFAULT,
+	"NAV_VTOL_LAND_OPTIONS_FW_DESCENT":    NAV_VTOL_LAND_OPTIONS_FW_DESCENT,
+	"NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT": NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *NAV_VTOL_LAND_OPTIONS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "NAV_VTOL_LAND_OPTIONS_DEFAULT":
-		*e = NAV_VTOL_LAND_OPTIONS_DEFAULT
-		return nil
-	case "NAV_VTOL_LAND_OPTIONS_FW_DESCENT":
-		*e = NAV_VTOL_LAND_OPTIONS_FW_DESCENT
-		return nil
-	case "NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT":
-		*e = NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT
+	if rl, ok := reverseLabels_NAV_VTOL_LAND_OPTIONS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -11850,11 +8975,10 @@ func (e *NAV_VTOL_LAND_OPTIONS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e NAV_VTOL_LAND_OPTIONS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_NAV_VTOL_LAND_OPTIONS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Yaw behaviour during orbit flight.
@@ -11873,40 +8997,34 @@ const (
 	ORBIT_YAW_BEHAVIOUR_RC_CONTROLLED ORBIT_YAW_BEHAVIOUR = 4
 )
 
+var labels_ORBIT_YAW_BEHAVIOUR = map[ORBIT_YAW_BEHAVIOUR]string{
+	ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TO_CIRCLE_CENTER:  "ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TO_CIRCLE_CENTER",
+	ORBIT_YAW_BEHAVIOUR_HOLD_INITIAL_HEADING:         "ORBIT_YAW_BEHAVIOUR_HOLD_INITIAL_HEADING",
+	ORBIT_YAW_BEHAVIOUR_UNCONTROLLED:                 "ORBIT_YAW_BEHAVIOUR_UNCONTROLLED",
+	ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TANGENT_TO_CIRCLE: "ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TANGENT_TO_CIRCLE",
+	ORBIT_YAW_BEHAVIOUR_RC_CONTROLLED:                "ORBIT_YAW_BEHAVIOUR_RC_CONTROLLED",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ORBIT_YAW_BEHAVIOUR) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TO_CIRCLE_CENTER:
-		return []byte("ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TO_CIRCLE_CENTER"), nil
-	case ORBIT_YAW_BEHAVIOUR_HOLD_INITIAL_HEADING:
-		return []byte("ORBIT_YAW_BEHAVIOUR_HOLD_INITIAL_HEADING"), nil
-	case ORBIT_YAW_BEHAVIOUR_UNCONTROLLED:
-		return []byte("ORBIT_YAW_BEHAVIOUR_UNCONTROLLED"), nil
-	case ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TANGENT_TO_CIRCLE:
-		return []byte("ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TANGENT_TO_CIRCLE"), nil
-	case ORBIT_YAW_BEHAVIOUR_RC_CONTROLLED:
-		return []byte("ORBIT_YAW_BEHAVIOUR_RC_CONTROLLED"), nil
+	if l, ok := labels_ORBIT_YAW_BEHAVIOUR[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_ORBIT_YAW_BEHAVIOUR = map[string]ORBIT_YAW_BEHAVIOUR{
+	"ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TO_CIRCLE_CENTER":  ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TO_CIRCLE_CENTER,
+	"ORBIT_YAW_BEHAVIOUR_HOLD_INITIAL_HEADING":         ORBIT_YAW_BEHAVIOUR_HOLD_INITIAL_HEADING,
+	"ORBIT_YAW_BEHAVIOUR_UNCONTROLLED":                 ORBIT_YAW_BEHAVIOUR_UNCONTROLLED,
+	"ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TANGENT_TO_CIRCLE": ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TANGENT_TO_CIRCLE,
+	"ORBIT_YAW_BEHAVIOUR_RC_CONTROLLED":                ORBIT_YAW_BEHAVIOUR_RC_CONTROLLED,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ORBIT_YAW_BEHAVIOUR) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TO_CIRCLE_CENTER":
-		*e = ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TO_CIRCLE_CENTER
-		return nil
-	case "ORBIT_YAW_BEHAVIOUR_HOLD_INITIAL_HEADING":
-		*e = ORBIT_YAW_BEHAVIOUR_HOLD_INITIAL_HEADING
-		return nil
-	case "ORBIT_YAW_BEHAVIOUR_UNCONTROLLED":
-		*e = ORBIT_YAW_BEHAVIOUR_UNCONTROLLED
-		return nil
-	case "ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TANGENT_TO_CIRCLE":
-		*e = ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TANGENT_TO_CIRCLE
-		return nil
-	case "ORBIT_YAW_BEHAVIOUR_RC_CONTROLLED":
-		*e = ORBIT_YAW_BEHAVIOUR_RC_CONTROLLED
+	if rl, ok := reverseLabels_ORBIT_YAW_BEHAVIOUR[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -11914,11 +9032,10 @@ func (e *ORBIT_YAW_BEHAVIOUR) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e ORBIT_YAW_BEHAVIOUR) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_ORBIT_YAW_BEHAVIOUR[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Parachute actions. Trigger release and enable/disable auto-release.
@@ -11933,30 +9050,30 @@ const (
 	PARACHUTE_RELEASE PARACHUTE_ACTION = 2
 )
 
+var labels_PARACHUTE_ACTION = map[PARACHUTE_ACTION]string{
+	PARACHUTE_DISABLE: "PARACHUTE_DISABLE",
+	PARACHUTE_ENABLE:  "PARACHUTE_ENABLE",
+	PARACHUTE_RELEASE: "PARACHUTE_RELEASE",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e PARACHUTE_ACTION) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case PARACHUTE_DISABLE:
-		return []byte("PARACHUTE_DISABLE"), nil
-	case PARACHUTE_ENABLE:
-		return []byte("PARACHUTE_ENABLE"), nil
-	case PARACHUTE_RELEASE:
-		return []byte("PARACHUTE_RELEASE"), nil
+	if l, ok := labels_PARACHUTE_ACTION[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_PARACHUTE_ACTION = map[string]PARACHUTE_ACTION{
+	"PARACHUTE_DISABLE": PARACHUTE_DISABLE,
+	"PARACHUTE_ENABLE":  PARACHUTE_ENABLE,
+	"PARACHUTE_RELEASE": PARACHUTE_RELEASE,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *PARACHUTE_ACTION) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "PARACHUTE_DISABLE":
-		*e = PARACHUTE_DISABLE
-		return nil
-	case "PARACHUTE_ENABLE":
-		*e = PARACHUTE_ENABLE
-		return nil
-	case "PARACHUTE_RELEASE":
-		*e = PARACHUTE_RELEASE
+	if rl, ok := reverseLabels_PARACHUTE_ACTION[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -11964,11 +9081,10 @@ func (e *PARACHUTE_ACTION) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e PARACHUTE_ACTION) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_PARACHUTE_ACTION[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Result from PARAM_EXT_SET message (or a PARAM_SET within a transaction).
@@ -11985,35 +9101,32 @@ const (
 	PARAM_ACK_IN_PROGRESS PARAM_ACK = 3
 )
 
+var labels_PARAM_ACK = map[PARAM_ACK]string{
+	PARAM_ACK_ACCEPTED:          "PARAM_ACK_ACCEPTED",
+	PARAM_ACK_VALUE_UNSUPPORTED: "PARAM_ACK_VALUE_UNSUPPORTED",
+	PARAM_ACK_FAILED:            "PARAM_ACK_FAILED",
+	PARAM_ACK_IN_PROGRESS:       "PARAM_ACK_IN_PROGRESS",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e PARAM_ACK) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case PARAM_ACK_ACCEPTED:
-		return []byte("PARAM_ACK_ACCEPTED"), nil
-	case PARAM_ACK_VALUE_UNSUPPORTED:
-		return []byte("PARAM_ACK_VALUE_UNSUPPORTED"), nil
-	case PARAM_ACK_FAILED:
-		return []byte("PARAM_ACK_FAILED"), nil
-	case PARAM_ACK_IN_PROGRESS:
-		return []byte("PARAM_ACK_IN_PROGRESS"), nil
+	if l, ok := labels_PARAM_ACK[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_PARAM_ACK = map[string]PARAM_ACK{
+	"PARAM_ACK_ACCEPTED":          PARAM_ACK_ACCEPTED,
+	"PARAM_ACK_VALUE_UNSUPPORTED": PARAM_ACK_VALUE_UNSUPPORTED,
+	"PARAM_ACK_FAILED":            PARAM_ACK_FAILED,
+	"PARAM_ACK_IN_PROGRESS":       PARAM_ACK_IN_PROGRESS,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *PARAM_ACK) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "PARAM_ACK_ACCEPTED":
-		*e = PARAM_ACK_ACCEPTED
-		return nil
-	case "PARAM_ACK_VALUE_UNSUPPORTED":
-		*e = PARAM_ACK_VALUE_UNSUPPORTED
-		return nil
-	case "PARAM_ACK_FAILED":
-		*e = PARAM_ACK_FAILED
-		return nil
-	case "PARAM_ACK_IN_PROGRESS":
-		*e = PARAM_ACK_IN_PROGRESS
+	if rl, ok := reverseLabels_PARAM_ACK[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -12021,11 +9134,10 @@ func (e *PARAM_ACK) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e PARAM_ACK) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_PARAM_ACK[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Bitmap to indicate which dimensions should be ignored by the vehicle: a value of 0b0000000000000000 or 0b0000001000000000 indicates that none of the setpoint dimensions should be ignored. If bit 9 is set the floats afx afy afz should be interpreted as force instead of acceleration.
@@ -12058,75 +9170,48 @@ const (
 	POSITION_TARGET_TYPEMASK_YAW_RATE_IGNORE POSITION_TARGET_TYPEMASK = 2048
 )
 
+var labels_POSITION_TARGET_TYPEMASK = map[POSITION_TARGET_TYPEMASK]string{
+	POSITION_TARGET_TYPEMASK_X_IGNORE:        "POSITION_TARGET_TYPEMASK_X_IGNORE",
+	POSITION_TARGET_TYPEMASK_Y_IGNORE:        "POSITION_TARGET_TYPEMASK_Y_IGNORE",
+	POSITION_TARGET_TYPEMASK_Z_IGNORE:        "POSITION_TARGET_TYPEMASK_Z_IGNORE",
+	POSITION_TARGET_TYPEMASK_VX_IGNORE:       "POSITION_TARGET_TYPEMASK_VX_IGNORE",
+	POSITION_TARGET_TYPEMASK_VY_IGNORE:       "POSITION_TARGET_TYPEMASK_VY_IGNORE",
+	POSITION_TARGET_TYPEMASK_VZ_IGNORE:       "POSITION_TARGET_TYPEMASK_VZ_IGNORE",
+	POSITION_TARGET_TYPEMASK_AX_IGNORE:       "POSITION_TARGET_TYPEMASK_AX_IGNORE",
+	POSITION_TARGET_TYPEMASK_AY_IGNORE:       "POSITION_TARGET_TYPEMASK_AY_IGNORE",
+	POSITION_TARGET_TYPEMASK_AZ_IGNORE:       "POSITION_TARGET_TYPEMASK_AZ_IGNORE",
+	POSITION_TARGET_TYPEMASK_FORCE_SET:       "POSITION_TARGET_TYPEMASK_FORCE_SET",
+	POSITION_TARGET_TYPEMASK_YAW_IGNORE:      "POSITION_TARGET_TYPEMASK_YAW_IGNORE",
+	POSITION_TARGET_TYPEMASK_YAW_RATE_IGNORE: "POSITION_TARGET_TYPEMASK_YAW_RATE_IGNORE",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e POSITION_TARGET_TYPEMASK) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case POSITION_TARGET_TYPEMASK_X_IGNORE:
-		return []byte("POSITION_TARGET_TYPEMASK_X_IGNORE"), nil
-	case POSITION_TARGET_TYPEMASK_Y_IGNORE:
-		return []byte("POSITION_TARGET_TYPEMASK_Y_IGNORE"), nil
-	case POSITION_TARGET_TYPEMASK_Z_IGNORE:
-		return []byte("POSITION_TARGET_TYPEMASK_Z_IGNORE"), nil
-	case POSITION_TARGET_TYPEMASK_VX_IGNORE:
-		return []byte("POSITION_TARGET_TYPEMASK_VX_IGNORE"), nil
-	case POSITION_TARGET_TYPEMASK_VY_IGNORE:
-		return []byte("POSITION_TARGET_TYPEMASK_VY_IGNORE"), nil
-	case POSITION_TARGET_TYPEMASK_VZ_IGNORE:
-		return []byte("POSITION_TARGET_TYPEMASK_VZ_IGNORE"), nil
-	case POSITION_TARGET_TYPEMASK_AX_IGNORE:
-		return []byte("POSITION_TARGET_TYPEMASK_AX_IGNORE"), nil
-	case POSITION_TARGET_TYPEMASK_AY_IGNORE:
-		return []byte("POSITION_TARGET_TYPEMASK_AY_IGNORE"), nil
-	case POSITION_TARGET_TYPEMASK_AZ_IGNORE:
-		return []byte("POSITION_TARGET_TYPEMASK_AZ_IGNORE"), nil
-	case POSITION_TARGET_TYPEMASK_FORCE_SET:
-		return []byte("POSITION_TARGET_TYPEMASK_FORCE_SET"), nil
-	case POSITION_TARGET_TYPEMASK_YAW_IGNORE:
-		return []byte("POSITION_TARGET_TYPEMASK_YAW_IGNORE"), nil
-	case POSITION_TARGET_TYPEMASK_YAW_RATE_IGNORE:
-		return []byte("POSITION_TARGET_TYPEMASK_YAW_RATE_IGNORE"), nil
+	if l, ok := labels_POSITION_TARGET_TYPEMASK[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_POSITION_TARGET_TYPEMASK = map[string]POSITION_TARGET_TYPEMASK{
+	"POSITION_TARGET_TYPEMASK_X_IGNORE":        POSITION_TARGET_TYPEMASK_X_IGNORE,
+	"POSITION_TARGET_TYPEMASK_Y_IGNORE":        POSITION_TARGET_TYPEMASK_Y_IGNORE,
+	"POSITION_TARGET_TYPEMASK_Z_IGNORE":        POSITION_TARGET_TYPEMASK_Z_IGNORE,
+	"POSITION_TARGET_TYPEMASK_VX_IGNORE":       POSITION_TARGET_TYPEMASK_VX_IGNORE,
+	"POSITION_TARGET_TYPEMASK_VY_IGNORE":       POSITION_TARGET_TYPEMASK_VY_IGNORE,
+	"POSITION_TARGET_TYPEMASK_VZ_IGNORE":       POSITION_TARGET_TYPEMASK_VZ_IGNORE,
+	"POSITION_TARGET_TYPEMASK_AX_IGNORE":       POSITION_TARGET_TYPEMASK_AX_IGNORE,
+	"POSITION_TARGET_TYPEMASK_AY_IGNORE":       POSITION_TARGET_TYPEMASK_AY_IGNORE,
+	"POSITION_TARGET_TYPEMASK_AZ_IGNORE":       POSITION_TARGET_TYPEMASK_AZ_IGNORE,
+	"POSITION_TARGET_TYPEMASK_FORCE_SET":       POSITION_TARGET_TYPEMASK_FORCE_SET,
+	"POSITION_TARGET_TYPEMASK_YAW_IGNORE":      POSITION_TARGET_TYPEMASK_YAW_IGNORE,
+	"POSITION_TARGET_TYPEMASK_YAW_RATE_IGNORE": POSITION_TARGET_TYPEMASK_YAW_RATE_IGNORE,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *POSITION_TARGET_TYPEMASK) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "POSITION_TARGET_TYPEMASK_X_IGNORE":
-		*e = POSITION_TARGET_TYPEMASK_X_IGNORE
-		return nil
-	case "POSITION_TARGET_TYPEMASK_Y_IGNORE":
-		*e = POSITION_TARGET_TYPEMASK_Y_IGNORE
-		return nil
-	case "POSITION_TARGET_TYPEMASK_Z_IGNORE":
-		*e = POSITION_TARGET_TYPEMASK_Z_IGNORE
-		return nil
-	case "POSITION_TARGET_TYPEMASK_VX_IGNORE":
-		*e = POSITION_TARGET_TYPEMASK_VX_IGNORE
-		return nil
-	case "POSITION_TARGET_TYPEMASK_VY_IGNORE":
-		*e = POSITION_TARGET_TYPEMASK_VY_IGNORE
-		return nil
-	case "POSITION_TARGET_TYPEMASK_VZ_IGNORE":
-		*e = POSITION_TARGET_TYPEMASK_VZ_IGNORE
-		return nil
-	case "POSITION_TARGET_TYPEMASK_AX_IGNORE":
-		*e = POSITION_TARGET_TYPEMASK_AX_IGNORE
-		return nil
-	case "POSITION_TARGET_TYPEMASK_AY_IGNORE":
-		*e = POSITION_TARGET_TYPEMASK_AY_IGNORE
-		return nil
-	case "POSITION_TARGET_TYPEMASK_AZ_IGNORE":
-		*e = POSITION_TARGET_TYPEMASK_AZ_IGNORE
-		return nil
-	case "POSITION_TARGET_TYPEMASK_FORCE_SET":
-		*e = POSITION_TARGET_TYPEMASK_FORCE_SET
-		return nil
-	case "POSITION_TARGET_TYPEMASK_YAW_IGNORE":
-		*e = POSITION_TARGET_TYPEMASK_YAW_IGNORE
-		return nil
-	case "POSITION_TARGET_TYPEMASK_YAW_RATE_IGNORE":
-		*e = POSITION_TARGET_TYPEMASK_YAW_RATE_IGNORE
+	if rl, ok := reverseLabels_POSITION_TARGET_TYPEMASK[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -12134,11 +9219,10 @@ func (e *POSITION_TARGET_TYPEMASK) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e POSITION_TARGET_TYPEMASK) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_POSITION_TARGET_TYPEMASK[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Precision land modes (used in MAV_CMD_NAV_LAND).
@@ -12153,30 +9237,30 @@ const (
 	PRECISION_LAND_MODE_REQUIRED PRECISION_LAND_MODE = 2
 )
 
+var labels_PRECISION_LAND_MODE = map[PRECISION_LAND_MODE]string{
+	PRECISION_LAND_MODE_DISABLED:      "PRECISION_LAND_MODE_DISABLED",
+	PRECISION_LAND_MODE_OPPORTUNISTIC: "PRECISION_LAND_MODE_OPPORTUNISTIC",
+	PRECISION_LAND_MODE_REQUIRED:      "PRECISION_LAND_MODE_REQUIRED",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e PRECISION_LAND_MODE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case PRECISION_LAND_MODE_DISABLED:
-		return []byte("PRECISION_LAND_MODE_DISABLED"), nil
-	case PRECISION_LAND_MODE_OPPORTUNISTIC:
-		return []byte("PRECISION_LAND_MODE_OPPORTUNISTIC"), nil
-	case PRECISION_LAND_MODE_REQUIRED:
-		return []byte("PRECISION_LAND_MODE_REQUIRED"), nil
+	if l, ok := labels_PRECISION_LAND_MODE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_PRECISION_LAND_MODE = map[string]PRECISION_LAND_MODE{
+	"PRECISION_LAND_MODE_DISABLED":      PRECISION_LAND_MODE_DISABLED,
+	"PRECISION_LAND_MODE_OPPORTUNISTIC": PRECISION_LAND_MODE_OPPORTUNISTIC,
+	"PRECISION_LAND_MODE_REQUIRED":      PRECISION_LAND_MODE_REQUIRED,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *PRECISION_LAND_MODE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "PRECISION_LAND_MODE_DISABLED":
-		*e = PRECISION_LAND_MODE_DISABLED
-		return nil
-	case "PRECISION_LAND_MODE_OPPORTUNISTIC":
-		*e = PRECISION_LAND_MODE_OPPORTUNISTIC
-		return nil
-	case "PRECISION_LAND_MODE_REQUIRED":
-		*e = PRECISION_LAND_MODE_REQUIRED
+	if rl, ok := reverseLabels_PRECISION_LAND_MODE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -12184,11 +9268,10 @@ func (e *PRECISION_LAND_MODE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e PRECISION_LAND_MODE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_PRECISION_LAND_MODE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // RC type
@@ -12201,25 +9284,28 @@ const (
 	RC_TYPE_SPEKTRUM_DSMX RC_TYPE = 1
 )
 
+var labels_RC_TYPE = map[RC_TYPE]string{
+	RC_TYPE_SPEKTRUM_DSM2: "RC_TYPE_SPEKTRUM_DSM2",
+	RC_TYPE_SPEKTRUM_DSMX: "RC_TYPE_SPEKTRUM_DSMX",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e RC_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case RC_TYPE_SPEKTRUM_DSM2:
-		return []byte("RC_TYPE_SPEKTRUM_DSM2"), nil
-	case RC_TYPE_SPEKTRUM_DSMX:
-		return []byte("RC_TYPE_SPEKTRUM_DSMX"), nil
+	if l, ok := labels_RC_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_RC_TYPE = map[string]RC_TYPE{
+	"RC_TYPE_SPEKTRUM_DSM2": RC_TYPE_SPEKTRUM_DSM2,
+	"RC_TYPE_SPEKTRUM_DSMX": RC_TYPE_SPEKTRUM_DSMX,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *RC_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "RC_TYPE_SPEKTRUM_DSM2":
-		*e = RC_TYPE_SPEKTRUM_DSM2
-		return nil
-	case "RC_TYPE_SPEKTRUM_DSMX":
-		*e = RC_TYPE_SPEKTRUM_DSMX
+	if rl, ok := reverseLabels_RC_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -12227,11 +9313,10 @@ func (e *RC_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e RC_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_RC_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // RTK GPS baseline coordinate system, used for RTK corrections
@@ -12244,25 +9329,28 @@ const (
 	RTK_BASELINE_COORDINATE_SYSTEM_NED RTK_BASELINE_COORDINATE_SYSTEM = 1
 )
 
+var labels_RTK_BASELINE_COORDINATE_SYSTEM = map[RTK_BASELINE_COORDINATE_SYSTEM]string{
+	RTK_BASELINE_COORDINATE_SYSTEM_ECEF: "RTK_BASELINE_COORDINATE_SYSTEM_ECEF",
+	RTK_BASELINE_COORDINATE_SYSTEM_NED:  "RTK_BASELINE_COORDINATE_SYSTEM_NED",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e RTK_BASELINE_COORDINATE_SYSTEM) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case RTK_BASELINE_COORDINATE_SYSTEM_ECEF:
-		return []byte("RTK_BASELINE_COORDINATE_SYSTEM_ECEF"), nil
-	case RTK_BASELINE_COORDINATE_SYSTEM_NED:
-		return []byte("RTK_BASELINE_COORDINATE_SYSTEM_NED"), nil
+	if l, ok := labels_RTK_BASELINE_COORDINATE_SYSTEM[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_RTK_BASELINE_COORDINATE_SYSTEM = map[string]RTK_BASELINE_COORDINATE_SYSTEM{
+	"RTK_BASELINE_COORDINATE_SYSTEM_ECEF": RTK_BASELINE_COORDINATE_SYSTEM_ECEF,
+	"RTK_BASELINE_COORDINATE_SYSTEM_NED":  RTK_BASELINE_COORDINATE_SYSTEM_NED,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *RTK_BASELINE_COORDINATE_SYSTEM) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "RTK_BASELINE_COORDINATE_SYSTEM_ECEF":
-		*e = RTK_BASELINE_COORDINATE_SYSTEM_ECEF
-		return nil
-	case "RTK_BASELINE_COORDINATE_SYSTEM_NED":
-		*e = RTK_BASELINE_COORDINATE_SYSTEM_NED
+	if rl, ok := reverseLabels_RTK_BASELINE_COORDINATE_SYSTEM[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -12270,11 +9358,10 @@ func (e *RTK_BASELINE_COORDINATE_SYSTEM) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e RTK_BASELINE_COORDINATE_SYSTEM) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_RTK_BASELINE_COORDINATE_SYSTEM[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // SERIAL_CONTROL device types
@@ -12313,90 +9400,54 @@ const (
 	SERIAL_CONTROL_SERIAL9 SERIAL_CONTROL_DEV = 109
 )
 
+var labels_SERIAL_CONTROL_DEV = map[SERIAL_CONTROL_DEV]string{
+	SERIAL_CONTROL_DEV_TELEM1: "SERIAL_CONTROL_DEV_TELEM1",
+	SERIAL_CONTROL_DEV_TELEM2: "SERIAL_CONTROL_DEV_TELEM2",
+	SERIAL_CONTROL_DEV_GPS1:   "SERIAL_CONTROL_DEV_GPS1",
+	SERIAL_CONTROL_DEV_GPS2:   "SERIAL_CONTROL_DEV_GPS2",
+	SERIAL_CONTROL_DEV_SHELL:  "SERIAL_CONTROL_DEV_SHELL",
+	SERIAL_CONTROL_SERIAL0:    "SERIAL_CONTROL_SERIAL0",
+	SERIAL_CONTROL_SERIAL1:    "SERIAL_CONTROL_SERIAL1",
+	SERIAL_CONTROL_SERIAL2:    "SERIAL_CONTROL_SERIAL2",
+	SERIAL_CONTROL_SERIAL3:    "SERIAL_CONTROL_SERIAL3",
+	SERIAL_CONTROL_SERIAL4:    "SERIAL_CONTROL_SERIAL4",
+	SERIAL_CONTROL_SERIAL5:    "SERIAL_CONTROL_SERIAL5",
+	SERIAL_CONTROL_SERIAL6:    "SERIAL_CONTROL_SERIAL6",
+	SERIAL_CONTROL_SERIAL7:    "SERIAL_CONTROL_SERIAL7",
+	SERIAL_CONTROL_SERIAL8:    "SERIAL_CONTROL_SERIAL8",
+	SERIAL_CONTROL_SERIAL9:    "SERIAL_CONTROL_SERIAL9",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e SERIAL_CONTROL_DEV) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case SERIAL_CONTROL_DEV_TELEM1:
-		return []byte("SERIAL_CONTROL_DEV_TELEM1"), nil
-	case SERIAL_CONTROL_DEV_TELEM2:
-		return []byte("SERIAL_CONTROL_DEV_TELEM2"), nil
-	case SERIAL_CONTROL_DEV_GPS1:
-		return []byte("SERIAL_CONTROL_DEV_GPS1"), nil
-	case SERIAL_CONTROL_DEV_GPS2:
-		return []byte("SERIAL_CONTROL_DEV_GPS2"), nil
-	case SERIAL_CONTROL_DEV_SHELL:
-		return []byte("SERIAL_CONTROL_DEV_SHELL"), nil
-	case SERIAL_CONTROL_SERIAL0:
-		return []byte("SERIAL_CONTROL_SERIAL0"), nil
-	case SERIAL_CONTROL_SERIAL1:
-		return []byte("SERIAL_CONTROL_SERIAL1"), nil
-	case SERIAL_CONTROL_SERIAL2:
-		return []byte("SERIAL_CONTROL_SERIAL2"), nil
-	case SERIAL_CONTROL_SERIAL3:
-		return []byte("SERIAL_CONTROL_SERIAL3"), nil
-	case SERIAL_CONTROL_SERIAL4:
-		return []byte("SERIAL_CONTROL_SERIAL4"), nil
-	case SERIAL_CONTROL_SERIAL5:
-		return []byte("SERIAL_CONTROL_SERIAL5"), nil
-	case SERIAL_CONTROL_SERIAL6:
-		return []byte("SERIAL_CONTROL_SERIAL6"), nil
-	case SERIAL_CONTROL_SERIAL7:
-		return []byte("SERIAL_CONTROL_SERIAL7"), nil
-	case SERIAL_CONTROL_SERIAL8:
-		return []byte("SERIAL_CONTROL_SERIAL8"), nil
-	case SERIAL_CONTROL_SERIAL9:
-		return []byte("SERIAL_CONTROL_SERIAL9"), nil
+	if l, ok := labels_SERIAL_CONTROL_DEV[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_SERIAL_CONTROL_DEV = map[string]SERIAL_CONTROL_DEV{
+	"SERIAL_CONTROL_DEV_TELEM1": SERIAL_CONTROL_DEV_TELEM1,
+	"SERIAL_CONTROL_DEV_TELEM2": SERIAL_CONTROL_DEV_TELEM2,
+	"SERIAL_CONTROL_DEV_GPS1":   SERIAL_CONTROL_DEV_GPS1,
+	"SERIAL_CONTROL_DEV_GPS2":   SERIAL_CONTROL_DEV_GPS2,
+	"SERIAL_CONTROL_DEV_SHELL":  SERIAL_CONTROL_DEV_SHELL,
+	"SERIAL_CONTROL_SERIAL0":    SERIAL_CONTROL_SERIAL0,
+	"SERIAL_CONTROL_SERIAL1":    SERIAL_CONTROL_SERIAL1,
+	"SERIAL_CONTROL_SERIAL2":    SERIAL_CONTROL_SERIAL2,
+	"SERIAL_CONTROL_SERIAL3":    SERIAL_CONTROL_SERIAL3,
+	"SERIAL_CONTROL_SERIAL4":    SERIAL_CONTROL_SERIAL4,
+	"SERIAL_CONTROL_SERIAL5":    SERIAL_CONTROL_SERIAL5,
+	"SERIAL_CONTROL_SERIAL6":    SERIAL_CONTROL_SERIAL6,
+	"SERIAL_CONTROL_SERIAL7":    SERIAL_CONTROL_SERIAL7,
+	"SERIAL_CONTROL_SERIAL8":    SERIAL_CONTROL_SERIAL8,
+	"SERIAL_CONTROL_SERIAL9":    SERIAL_CONTROL_SERIAL9,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *SERIAL_CONTROL_DEV) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "SERIAL_CONTROL_DEV_TELEM1":
-		*e = SERIAL_CONTROL_DEV_TELEM1
-		return nil
-	case "SERIAL_CONTROL_DEV_TELEM2":
-		*e = SERIAL_CONTROL_DEV_TELEM2
-		return nil
-	case "SERIAL_CONTROL_DEV_GPS1":
-		*e = SERIAL_CONTROL_DEV_GPS1
-		return nil
-	case "SERIAL_CONTROL_DEV_GPS2":
-		*e = SERIAL_CONTROL_DEV_GPS2
-		return nil
-	case "SERIAL_CONTROL_DEV_SHELL":
-		*e = SERIAL_CONTROL_DEV_SHELL
-		return nil
-	case "SERIAL_CONTROL_SERIAL0":
-		*e = SERIAL_CONTROL_SERIAL0
-		return nil
-	case "SERIAL_CONTROL_SERIAL1":
-		*e = SERIAL_CONTROL_SERIAL1
-		return nil
-	case "SERIAL_CONTROL_SERIAL2":
-		*e = SERIAL_CONTROL_SERIAL2
-		return nil
-	case "SERIAL_CONTROL_SERIAL3":
-		*e = SERIAL_CONTROL_SERIAL3
-		return nil
-	case "SERIAL_CONTROL_SERIAL4":
-		*e = SERIAL_CONTROL_SERIAL4
-		return nil
-	case "SERIAL_CONTROL_SERIAL5":
-		*e = SERIAL_CONTROL_SERIAL5
-		return nil
-	case "SERIAL_CONTROL_SERIAL6":
-		*e = SERIAL_CONTROL_SERIAL6
-		return nil
-	case "SERIAL_CONTROL_SERIAL7":
-		*e = SERIAL_CONTROL_SERIAL7
-		return nil
-	case "SERIAL_CONTROL_SERIAL8":
-		*e = SERIAL_CONTROL_SERIAL8
-		return nil
-	case "SERIAL_CONTROL_SERIAL9":
-		*e = SERIAL_CONTROL_SERIAL9
+	if rl, ok := reverseLabels_SERIAL_CONTROL_DEV[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -12404,11 +9455,10 @@ func (e *SERIAL_CONTROL_DEV) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e SERIAL_CONTROL_DEV) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_SERIAL_CONTROL_DEV[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // SERIAL_CONTROL flags (bitmask)
@@ -12427,40 +9477,34 @@ const (
 	SERIAL_CONTROL_FLAG_MULTI SERIAL_CONTROL_FLAG = 16
 )
 
+var labels_SERIAL_CONTROL_FLAG = map[SERIAL_CONTROL_FLAG]string{
+	SERIAL_CONTROL_FLAG_REPLY:     "SERIAL_CONTROL_FLAG_REPLY",
+	SERIAL_CONTROL_FLAG_RESPOND:   "SERIAL_CONTROL_FLAG_RESPOND",
+	SERIAL_CONTROL_FLAG_EXCLUSIVE: "SERIAL_CONTROL_FLAG_EXCLUSIVE",
+	SERIAL_CONTROL_FLAG_BLOCKING:  "SERIAL_CONTROL_FLAG_BLOCKING",
+	SERIAL_CONTROL_FLAG_MULTI:     "SERIAL_CONTROL_FLAG_MULTI",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e SERIAL_CONTROL_FLAG) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case SERIAL_CONTROL_FLAG_REPLY:
-		return []byte("SERIAL_CONTROL_FLAG_REPLY"), nil
-	case SERIAL_CONTROL_FLAG_RESPOND:
-		return []byte("SERIAL_CONTROL_FLAG_RESPOND"), nil
-	case SERIAL_CONTROL_FLAG_EXCLUSIVE:
-		return []byte("SERIAL_CONTROL_FLAG_EXCLUSIVE"), nil
-	case SERIAL_CONTROL_FLAG_BLOCKING:
-		return []byte("SERIAL_CONTROL_FLAG_BLOCKING"), nil
-	case SERIAL_CONTROL_FLAG_MULTI:
-		return []byte("SERIAL_CONTROL_FLAG_MULTI"), nil
+	if l, ok := labels_SERIAL_CONTROL_FLAG[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_SERIAL_CONTROL_FLAG = map[string]SERIAL_CONTROL_FLAG{
+	"SERIAL_CONTROL_FLAG_REPLY":     SERIAL_CONTROL_FLAG_REPLY,
+	"SERIAL_CONTROL_FLAG_RESPOND":   SERIAL_CONTROL_FLAG_RESPOND,
+	"SERIAL_CONTROL_FLAG_EXCLUSIVE": SERIAL_CONTROL_FLAG_EXCLUSIVE,
+	"SERIAL_CONTROL_FLAG_BLOCKING":  SERIAL_CONTROL_FLAG_BLOCKING,
+	"SERIAL_CONTROL_FLAG_MULTI":     SERIAL_CONTROL_FLAG_MULTI,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *SERIAL_CONTROL_FLAG) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "SERIAL_CONTROL_FLAG_REPLY":
-		*e = SERIAL_CONTROL_FLAG_REPLY
-		return nil
-	case "SERIAL_CONTROL_FLAG_RESPOND":
-		*e = SERIAL_CONTROL_FLAG_RESPOND
-		return nil
-	case "SERIAL_CONTROL_FLAG_EXCLUSIVE":
-		*e = SERIAL_CONTROL_FLAG_EXCLUSIVE
-		return nil
-	case "SERIAL_CONTROL_FLAG_BLOCKING":
-		*e = SERIAL_CONTROL_FLAG_BLOCKING
-		return nil
-	case "SERIAL_CONTROL_FLAG_MULTI":
-		*e = SERIAL_CONTROL_FLAG_MULTI
+	if rl, ok := reverseLabels_SERIAL_CONTROL_FLAG[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -12468,11 +9512,10 @@ func (e *SERIAL_CONTROL_FLAG) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e SERIAL_CONTROL_FLAG) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_SERIAL_CONTROL_FLAG[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Focus types for MAV_CMD_SET_CAMERA_FOCUS
@@ -12489,35 +9532,32 @@ const (
 	FOCUS_TYPE_METERS SET_FOCUS_TYPE = 3
 )
 
+var labels_SET_FOCUS_TYPE = map[SET_FOCUS_TYPE]string{
+	FOCUS_TYPE_STEP:       "FOCUS_TYPE_STEP",
+	FOCUS_TYPE_CONTINUOUS: "FOCUS_TYPE_CONTINUOUS",
+	FOCUS_TYPE_RANGE:      "FOCUS_TYPE_RANGE",
+	FOCUS_TYPE_METERS:     "FOCUS_TYPE_METERS",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e SET_FOCUS_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case FOCUS_TYPE_STEP:
-		return []byte("FOCUS_TYPE_STEP"), nil
-	case FOCUS_TYPE_CONTINUOUS:
-		return []byte("FOCUS_TYPE_CONTINUOUS"), nil
-	case FOCUS_TYPE_RANGE:
-		return []byte("FOCUS_TYPE_RANGE"), nil
-	case FOCUS_TYPE_METERS:
-		return []byte("FOCUS_TYPE_METERS"), nil
+	if l, ok := labels_SET_FOCUS_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_SET_FOCUS_TYPE = map[string]SET_FOCUS_TYPE{
+	"FOCUS_TYPE_STEP":       FOCUS_TYPE_STEP,
+	"FOCUS_TYPE_CONTINUOUS": FOCUS_TYPE_CONTINUOUS,
+	"FOCUS_TYPE_RANGE":      FOCUS_TYPE_RANGE,
+	"FOCUS_TYPE_METERS":     FOCUS_TYPE_METERS,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *SET_FOCUS_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "FOCUS_TYPE_STEP":
-		*e = FOCUS_TYPE_STEP
-		return nil
-	case "FOCUS_TYPE_CONTINUOUS":
-		*e = FOCUS_TYPE_CONTINUOUS
-		return nil
-	case "FOCUS_TYPE_RANGE":
-		*e = FOCUS_TYPE_RANGE
-		return nil
-	case "FOCUS_TYPE_METERS":
-		*e = FOCUS_TYPE_METERS
+	if rl, ok := reverseLabels_SET_FOCUS_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -12525,11 +9565,10 @@ func (e *SET_FOCUS_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e SET_FOCUS_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_SET_FOCUS_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Flags to indicate the status of camera storage.
@@ -12546,35 +9585,32 @@ const (
 	STORAGE_STATUS_NOT_SUPPORTED STORAGE_STATUS = 3
 )
 
+var labels_STORAGE_STATUS = map[STORAGE_STATUS]string{
+	STORAGE_STATUS_EMPTY:         "STORAGE_STATUS_EMPTY",
+	STORAGE_STATUS_UNFORMATTED:   "STORAGE_STATUS_UNFORMATTED",
+	STORAGE_STATUS_READY:         "STORAGE_STATUS_READY",
+	STORAGE_STATUS_NOT_SUPPORTED: "STORAGE_STATUS_NOT_SUPPORTED",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e STORAGE_STATUS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case STORAGE_STATUS_EMPTY:
-		return []byte("STORAGE_STATUS_EMPTY"), nil
-	case STORAGE_STATUS_UNFORMATTED:
-		return []byte("STORAGE_STATUS_UNFORMATTED"), nil
-	case STORAGE_STATUS_READY:
-		return []byte("STORAGE_STATUS_READY"), nil
-	case STORAGE_STATUS_NOT_SUPPORTED:
-		return []byte("STORAGE_STATUS_NOT_SUPPORTED"), nil
+	if l, ok := labels_STORAGE_STATUS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_STORAGE_STATUS = map[string]STORAGE_STATUS{
+	"STORAGE_STATUS_EMPTY":         STORAGE_STATUS_EMPTY,
+	"STORAGE_STATUS_UNFORMATTED":   STORAGE_STATUS_UNFORMATTED,
+	"STORAGE_STATUS_READY":         STORAGE_STATUS_READY,
+	"STORAGE_STATUS_NOT_SUPPORTED": STORAGE_STATUS_NOT_SUPPORTED,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *STORAGE_STATUS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "STORAGE_STATUS_EMPTY":
-		*e = STORAGE_STATUS_EMPTY
-		return nil
-	case "STORAGE_STATUS_UNFORMATTED":
-		*e = STORAGE_STATUS_UNFORMATTED
-		return nil
-	case "STORAGE_STATUS_READY":
-		*e = STORAGE_STATUS_READY
-		return nil
-	case "STORAGE_STATUS_NOT_SUPPORTED":
-		*e = STORAGE_STATUS_NOT_SUPPORTED
+	if rl, ok := reverseLabels_STORAGE_STATUS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -12582,11 +9618,10 @@ func (e *STORAGE_STATUS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e STORAGE_STATUS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_STORAGE_STATUS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Flags to indicate the type of storage.
@@ -12613,60 +9648,42 @@ const (
 	STORAGE_TYPE_OTHER STORAGE_TYPE = 254
 )
 
+var labels_STORAGE_TYPE = map[STORAGE_TYPE]string{
+	STORAGE_TYPE_UNKNOWN:   "STORAGE_TYPE_UNKNOWN",
+	STORAGE_TYPE_USB_STICK: "STORAGE_TYPE_USB_STICK",
+	STORAGE_TYPE_SD:        "STORAGE_TYPE_SD",
+	STORAGE_TYPE_MICROSD:   "STORAGE_TYPE_MICROSD",
+	STORAGE_TYPE_CF:        "STORAGE_TYPE_CF",
+	STORAGE_TYPE_CFE:       "STORAGE_TYPE_CFE",
+	STORAGE_TYPE_XQD:       "STORAGE_TYPE_XQD",
+	STORAGE_TYPE_HD:        "STORAGE_TYPE_HD",
+	STORAGE_TYPE_OTHER:     "STORAGE_TYPE_OTHER",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e STORAGE_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case STORAGE_TYPE_UNKNOWN:
-		return []byte("STORAGE_TYPE_UNKNOWN"), nil
-	case STORAGE_TYPE_USB_STICK:
-		return []byte("STORAGE_TYPE_USB_STICK"), nil
-	case STORAGE_TYPE_SD:
-		return []byte("STORAGE_TYPE_SD"), nil
-	case STORAGE_TYPE_MICROSD:
-		return []byte("STORAGE_TYPE_MICROSD"), nil
-	case STORAGE_TYPE_CF:
-		return []byte("STORAGE_TYPE_CF"), nil
-	case STORAGE_TYPE_CFE:
-		return []byte("STORAGE_TYPE_CFE"), nil
-	case STORAGE_TYPE_XQD:
-		return []byte("STORAGE_TYPE_XQD"), nil
-	case STORAGE_TYPE_HD:
-		return []byte("STORAGE_TYPE_HD"), nil
-	case STORAGE_TYPE_OTHER:
-		return []byte("STORAGE_TYPE_OTHER"), nil
+	if l, ok := labels_STORAGE_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_STORAGE_TYPE = map[string]STORAGE_TYPE{
+	"STORAGE_TYPE_UNKNOWN":   STORAGE_TYPE_UNKNOWN,
+	"STORAGE_TYPE_USB_STICK": STORAGE_TYPE_USB_STICK,
+	"STORAGE_TYPE_SD":        STORAGE_TYPE_SD,
+	"STORAGE_TYPE_MICROSD":   STORAGE_TYPE_MICROSD,
+	"STORAGE_TYPE_CF":        STORAGE_TYPE_CF,
+	"STORAGE_TYPE_CFE":       STORAGE_TYPE_CFE,
+	"STORAGE_TYPE_XQD":       STORAGE_TYPE_XQD,
+	"STORAGE_TYPE_HD":        STORAGE_TYPE_HD,
+	"STORAGE_TYPE_OTHER":     STORAGE_TYPE_OTHER,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *STORAGE_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "STORAGE_TYPE_UNKNOWN":
-		*e = STORAGE_TYPE_UNKNOWN
-		return nil
-	case "STORAGE_TYPE_USB_STICK":
-		*e = STORAGE_TYPE_USB_STICK
-		return nil
-	case "STORAGE_TYPE_SD":
-		*e = STORAGE_TYPE_SD
-		return nil
-	case "STORAGE_TYPE_MICROSD":
-		*e = STORAGE_TYPE_MICROSD
-		return nil
-	case "STORAGE_TYPE_CF":
-		*e = STORAGE_TYPE_CF
-		return nil
-	case "STORAGE_TYPE_CFE":
-		*e = STORAGE_TYPE_CFE
-		return nil
-	case "STORAGE_TYPE_XQD":
-		*e = STORAGE_TYPE_XQD
-		return nil
-	case "STORAGE_TYPE_HD":
-		*e = STORAGE_TYPE_HD
-		return nil
-	case "STORAGE_TYPE_OTHER":
-		*e = STORAGE_TYPE_OTHER
+	if rl, ok := reverseLabels_STORAGE_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -12674,11 +9691,10 @@ func (e *STORAGE_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e STORAGE_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_STORAGE_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Flags to indicate usage for a particular storage (see `STORAGE_INFORMATION.storage_usage` and `MAV_CMD_SET_STORAGE_USAGE`).
@@ -12695,35 +9711,32 @@ const (
 	STORAGE_USAGE_FLAG_LOGS STORAGE_USAGE_FLAG = 8
 )
 
+var labels_STORAGE_USAGE_FLAG = map[STORAGE_USAGE_FLAG]string{
+	STORAGE_USAGE_FLAG_SET:   "STORAGE_USAGE_FLAG_SET",
+	STORAGE_USAGE_FLAG_PHOTO: "STORAGE_USAGE_FLAG_PHOTO",
+	STORAGE_USAGE_FLAG_VIDEO: "STORAGE_USAGE_FLAG_VIDEO",
+	STORAGE_USAGE_FLAG_LOGS:  "STORAGE_USAGE_FLAG_LOGS",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e STORAGE_USAGE_FLAG) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case STORAGE_USAGE_FLAG_SET:
-		return []byte("STORAGE_USAGE_FLAG_SET"), nil
-	case STORAGE_USAGE_FLAG_PHOTO:
-		return []byte("STORAGE_USAGE_FLAG_PHOTO"), nil
-	case STORAGE_USAGE_FLAG_VIDEO:
-		return []byte("STORAGE_USAGE_FLAG_VIDEO"), nil
-	case STORAGE_USAGE_FLAG_LOGS:
-		return []byte("STORAGE_USAGE_FLAG_LOGS"), nil
+	if l, ok := labels_STORAGE_USAGE_FLAG[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_STORAGE_USAGE_FLAG = map[string]STORAGE_USAGE_FLAG{
+	"STORAGE_USAGE_FLAG_SET":   STORAGE_USAGE_FLAG_SET,
+	"STORAGE_USAGE_FLAG_PHOTO": STORAGE_USAGE_FLAG_PHOTO,
+	"STORAGE_USAGE_FLAG_VIDEO": STORAGE_USAGE_FLAG_VIDEO,
+	"STORAGE_USAGE_FLAG_LOGS":  STORAGE_USAGE_FLAG_LOGS,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *STORAGE_USAGE_FLAG) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "STORAGE_USAGE_FLAG_SET":
-		*e = STORAGE_USAGE_FLAG_SET
-		return nil
-	case "STORAGE_USAGE_FLAG_PHOTO":
-		*e = STORAGE_USAGE_FLAG_PHOTO
-		return nil
-	case "STORAGE_USAGE_FLAG_VIDEO":
-		*e = STORAGE_USAGE_FLAG_VIDEO
-		return nil
-	case "STORAGE_USAGE_FLAG_LOGS":
-		*e = STORAGE_USAGE_FLAG_LOGS
+	if rl, ok := reverseLabels_STORAGE_USAGE_FLAG[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -12731,11 +9744,10 @@ func (e *STORAGE_USAGE_FLAG) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e STORAGE_USAGE_FLAG) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_STORAGE_USAGE_FLAG[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Tune formats (used for vehicle buzzer/tone generation).
@@ -12748,25 +9760,28 @@ const (
 	TUNE_FORMAT_MML_MODERN TUNE_FORMAT = 2
 )
 
+var labels_TUNE_FORMAT = map[TUNE_FORMAT]string{
+	TUNE_FORMAT_QBASIC1_1:  "TUNE_FORMAT_QBASIC1_1",
+	TUNE_FORMAT_MML_MODERN: "TUNE_FORMAT_MML_MODERN",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e TUNE_FORMAT) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case TUNE_FORMAT_QBASIC1_1:
-		return []byte("TUNE_FORMAT_QBASIC1_1"), nil
-	case TUNE_FORMAT_MML_MODERN:
-		return []byte("TUNE_FORMAT_MML_MODERN"), nil
+	if l, ok := labels_TUNE_FORMAT[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_TUNE_FORMAT = map[string]TUNE_FORMAT{
+	"TUNE_FORMAT_QBASIC1_1":  TUNE_FORMAT_QBASIC1_1,
+	"TUNE_FORMAT_MML_MODERN": TUNE_FORMAT_MML_MODERN,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *TUNE_FORMAT) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "TUNE_FORMAT_QBASIC1_1":
-		*e = TUNE_FORMAT_QBASIC1_1
-		return nil
-	case "TUNE_FORMAT_MML_MODERN":
-		*e = TUNE_FORMAT_MML_MODERN
+	if rl, ok := reverseLabels_TUNE_FORMAT[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -12774,11 +9789,10 @@ func (e *TUNE_FORMAT) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e TUNE_FORMAT) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_TUNE_FORMAT[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Generalized UAVCAN node health
@@ -12795,35 +9809,32 @@ const (
 	UAVCAN_NODE_HEALTH_CRITICAL UAVCAN_NODE_HEALTH = 3
 )
 
+var labels_UAVCAN_NODE_HEALTH = map[UAVCAN_NODE_HEALTH]string{
+	UAVCAN_NODE_HEALTH_OK:       "UAVCAN_NODE_HEALTH_OK",
+	UAVCAN_NODE_HEALTH_WARNING:  "UAVCAN_NODE_HEALTH_WARNING",
+	UAVCAN_NODE_HEALTH_ERROR:    "UAVCAN_NODE_HEALTH_ERROR",
+	UAVCAN_NODE_HEALTH_CRITICAL: "UAVCAN_NODE_HEALTH_CRITICAL",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVCAN_NODE_HEALTH) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case UAVCAN_NODE_HEALTH_OK:
-		return []byte("UAVCAN_NODE_HEALTH_OK"), nil
-	case UAVCAN_NODE_HEALTH_WARNING:
-		return []byte("UAVCAN_NODE_HEALTH_WARNING"), nil
-	case UAVCAN_NODE_HEALTH_ERROR:
-		return []byte("UAVCAN_NODE_HEALTH_ERROR"), nil
-	case UAVCAN_NODE_HEALTH_CRITICAL:
-		return []byte("UAVCAN_NODE_HEALTH_CRITICAL"), nil
+	if l, ok := labels_UAVCAN_NODE_HEALTH[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_UAVCAN_NODE_HEALTH = map[string]UAVCAN_NODE_HEALTH{
+	"UAVCAN_NODE_HEALTH_OK":       UAVCAN_NODE_HEALTH_OK,
+	"UAVCAN_NODE_HEALTH_WARNING":  UAVCAN_NODE_HEALTH_WARNING,
+	"UAVCAN_NODE_HEALTH_ERROR":    UAVCAN_NODE_HEALTH_ERROR,
+	"UAVCAN_NODE_HEALTH_CRITICAL": UAVCAN_NODE_HEALTH_CRITICAL,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVCAN_NODE_HEALTH) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "UAVCAN_NODE_HEALTH_OK":
-		*e = UAVCAN_NODE_HEALTH_OK
-		return nil
-	case "UAVCAN_NODE_HEALTH_WARNING":
-		*e = UAVCAN_NODE_HEALTH_WARNING
-		return nil
-	case "UAVCAN_NODE_HEALTH_ERROR":
-		*e = UAVCAN_NODE_HEALTH_ERROR
-		return nil
-	case "UAVCAN_NODE_HEALTH_CRITICAL":
-		*e = UAVCAN_NODE_HEALTH_CRITICAL
+	if rl, ok := reverseLabels_UAVCAN_NODE_HEALTH[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -12831,11 +9842,10 @@ func (e *UAVCAN_NODE_HEALTH) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e UAVCAN_NODE_HEALTH) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_UAVCAN_NODE_HEALTH[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Generalized UAVCAN node mode
@@ -12854,40 +9864,34 @@ const (
 	UAVCAN_NODE_MODE_OFFLINE UAVCAN_NODE_MODE = 7
 )
 
+var labels_UAVCAN_NODE_MODE = map[UAVCAN_NODE_MODE]string{
+	UAVCAN_NODE_MODE_OPERATIONAL:     "UAVCAN_NODE_MODE_OPERATIONAL",
+	UAVCAN_NODE_MODE_INITIALIZATION:  "UAVCAN_NODE_MODE_INITIALIZATION",
+	UAVCAN_NODE_MODE_MAINTENANCE:     "UAVCAN_NODE_MODE_MAINTENANCE",
+	UAVCAN_NODE_MODE_SOFTWARE_UPDATE: "UAVCAN_NODE_MODE_SOFTWARE_UPDATE",
+	UAVCAN_NODE_MODE_OFFLINE:         "UAVCAN_NODE_MODE_OFFLINE",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVCAN_NODE_MODE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case UAVCAN_NODE_MODE_OPERATIONAL:
-		return []byte("UAVCAN_NODE_MODE_OPERATIONAL"), nil
-	case UAVCAN_NODE_MODE_INITIALIZATION:
-		return []byte("UAVCAN_NODE_MODE_INITIALIZATION"), nil
-	case UAVCAN_NODE_MODE_MAINTENANCE:
-		return []byte("UAVCAN_NODE_MODE_MAINTENANCE"), nil
-	case UAVCAN_NODE_MODE_SOFTWARE_UPDATE:
-		return []byte("UAVCAN_NODE_MODE_SOFTWARE_UPDATE"), nil
-	case UAVCAN_NODE_MODE_OFFLINE:
-		return []byte("UAVCAN_NODE_MODE_OFFLINE"), nil
+	if l, ok := labels_UAVCAN_NODE_MODE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_UAVCAN_NODE_MODE = map[string]UAVCAN_NODE_MODE{
+	"UAVCAN_NODE_MODE_OPERATIONAL":     UAVCAN_NODE_MODE_OPERATIONAL,
+	"UAVCAN_NODE_MODE_INITIALIZATION":  UAVCAN_NODE_MODE_INITIALIZATION,
+	"UAVCAN_NODE_MODE_MAINTENANCE":     UAVCAN_NODE_MODE_MAINTENANCE,
+	"UAVCAN_NODE_MODE_SOFTWARE_UPDATE": UAVCAN_NODE_MODE_SOFTWARE_UPDATE,
+	"UAVCAN_NODE_MODE_OFFLINE":         UAVCAN_NODE_MODE_OFFLINE,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVCAN_NODE_MODE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "UAVCAN_NODE_MODE_OPERATIONAL":
-		*e = UAVCAN_NODE_MODE_OPERATIONAL
-		return nil
-	case "UAVCAN_NODE_MODE_INITIALIZATION":
-		*e = UAVCAN_NODE_MODE_INITIALIZATION
-		return nil
-	case "UAVCAN_NODE_MODE_MAINTENANCE":
-		*e = UAVCAN_NODE_MODE_MAINTENANCE
-		return nil
-	case "UAVCAN_NODE_MODE_SOFTWARE_UPDATE":
-		*e = UAVCAN_NODE_MODE_SOFTWARE_UPDATE
-		return nil
-	case "UAVCAN_NODE_MODE_OFFLINE":
-		*e = UAVCAN_NODE_MODE_OFFLINE
+	if rl, ok := reverseLabels_UAVCAN_NODE_MODE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -12895,11 +9899,10 @@ func (e *UAVCAN_NODE_MODE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e UAVCAN_NODE_MODE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_UAVCAN_NODE_MODE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Emergency status encoding
@@ -12924,55 +9927,40 @@ const (
 	UAVIONIX_ADSB_OUT_RESERVED UAVIONIX_ADSB_EMERGENCY_STATUS = 7
 )
 
+var labels_UAVIONIX_ADSB_EMERGENCY_STATUS = map[UAVIONIX_ADSB_EMERGENCY_STATUS]string{
+	UAVIONIX_ADSB_OUT_NO_EMERGENCY:                    "UAVIONIX_ADSB_OUT_NO_EMERGENCY",
+	UAVIONIX_ADSB_OUT_GENERAL_EMERGENCY:               "UAVIONIX_ADSB_OUT_GENERAL_EMERGENCY",
+	UAVIONIX_ADSB_OUT_LIFEGUARD_EMERGENCY:             "UAVIONIX_ADSB_OUT_LIFEGUARD_EMERGENCY",
+	UAVIONIX_ADSB_OUT_MINIMUM_FUEL_EMERGENCY:          "UAVIONIX_ADSB_OUT_MINIMUM_FUEL_EMERGENCY",
+	UAVIONIX_ADSB_OUT_NO_COMM_EMERGENCY:               "UAVIONIX_ADSB_OUT_NO_COMM_EMERGENCY",
+	UAVIONIX_ADSB_OUT_UNLAWFUL_INTERFERANCE_EMERGENCY: "UAVIONIX_ADSB_OUT_UNLAWFUL_INTERFERANCE_EMERGENCY",
+	UAVIONIX_ADSB_OUT_DOWNED_AIRCRAFT_EMERGENCY:       "UAVIONIX_ADSB_OUT_DOWNED_AIRCRAFT_EMERGENCY",
+	UAVIONIX_ADSB_OUT_RESERVED:                        "UAVIONIX_ADSB_OUT_RESERVED",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_EMERGENCY_STATUS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case UAVIONIX_ADSB_OUT_NO_EMERGENCY:
-		return []byte("UAVIONIX_ADSB_OUT_NO_EMERGENCY"), nil
-	case UAVIONIX_ADSB_OUT_GENERAL_EMERGENCY:
-		return []byte("UAVIONIX_ADSB_OUT_GENERAL_EMERGENCY"), nil
-	case UAVIONIX_ADSB_OUT_LIFEGUARD_EMERGENCY:
-		return []byte("UAVIONIX_ADSB_OUT_LIFEGUARD_EMERGENCY"), nil
-	case UAVIONIX_ADSB_OUT_MINIMUM_FUEL_EMERGENCY:
-		return []byte("UAVIONIX_ADSB_OUT_MINIMUM_FUEL_EMERGENCY"), nil
-	case UAVIONIX_ADSB_OUT_NO_COMM_EMERGENCY:
-		return []byte("UAVIONIX_ADSB_OUT_NO_COMM_EMERGENCY"), nil
-	case UAVIONIX_ADSB_OUT_UNLAWFUL_INTERFERANCE_EMERGENCY:
-		return []byte("UAVIONIX_ADSB_OUT_UNLAWFUL_INTERFERANCE_EMERGENCY"), nil
-	case UAVIONIX_ADSB_OUT_DOWNED_AIRCRAFT_EMERGENCY:
-		return []byte("UAVIONIX_ADSB_OUT_DOWNED_AIRCRAFT_EMERGENCY"), nil
-	case UAVIONIX_ADSB_OUT_RESERVED:
-		return []byte("UAVIONIX_ADSB_OUT_RESERVED"), nil
+	if l, ok := labels_UAVIONIX_ADSB_EMERGENCY_STATUS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_UAVIONIX_ADSB_EMERGENCY_STATUS = map[string]UAVIONIX_ADSB_EMERGENCY_STATUS{
+	"UAVIONIX_ADSB_OUT_NO_EMERGENCY":                    UAVIONIX_ADSB_OUT_NO_EMERGENCY,
+	"UAVIONIX_ADSB_OUT_GENERAL_EMERGENCY":               UAVIONIX_ADSB_OUT_GENERAL_EMERGENCY,
+	"UAVIONIX_ADSB_OUT_LIFEGUARD_EMERGENCY":             UAVIONIX_ADSB_OUT_LIFEGUARD_EMERGENCY,
+	"UAVIONIX_ADSB_OUT_MINIMUM_FUEL_EMERGENCY":          UAVIONIX_ADSB_OUT_MINIMUM_FUEL_EMERGENCY,
+	"UAVIONIX_ADSB_OUT_NO_COMM_EMERGENCY":               UAVIONIX_ADSB_OUT_NO_COMM_EMERGENCY,
+	"UAVIONIX_ADSB_OUT_UNLAWFUL_INTERFERANCE_EMERGENCY": UAVIONIX_ADSB_OUT_UNLAWFUL_INTERFERANCE_EMERGENCY,
+	"UAVIONIX_ADSB_OUT_DOWNED_AIRCRAFT_EMERGENCY":       UAVIONIX_ADSB_OUT_DOWNED_AIRCRAFT_EMERGENCY,
+	"UAVIONIX_ADSB_OUT_RESERVED":                        UAVIONIX_ADSB_OUT_RESERVED,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_EMERGENCY_STATUS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "UAVIONIX_ADSB_OUT_NO_EMERGENCY":
-		*e = UAVIONIX_ADSB_OUT_NO_EMERGENCY
-		return nil
-	case "UAVIONIX_ADSB_OUT_GENERAL_EMERGENCY":
-		*e = UAVIONIX_ADSB_OUT_GENERAL_EMERGENCY
-		return nil
-	case "UAVIONIX_ADSB_OUT_LIFEGUARD_EMERGENCY":
-		*e = UAVIONIX_ADSB_OUT_LIFEGUARD_EMERGENCY
-		return nil
-	case "UAVIONIX_ADSB_OUT_MINIMUM_FUEL_EMERGENCY":
-		*e = UAVIONIX_ADSB_OUT_MINIMUM_FUEL_EMERGENCY
-		return nil
-	case "UAVIONIX_ADSB_OUT_NO_COMM_EMERGENCY":
-		*e = UAVIONIX_ADSB_OUT_NO_COMM_EMERGENCY
-		return nil
-	case "UAVIONIX_ADSB_OUT_UNLAWFUL_INTERFERANCE_EMERGENCY":
-		*e = UAVIONIX_ADSB_OUT_UNLAWFUL_INTERFERANCE_EMERGENCY
-		return nil
-	case "UAVIONIX_ADSB_OUT_DOWNED_AIRCRAFT_EMERGENCY":
-		*e = UAVIONIX_ADSB_OUT_DOWNED_AIRCRAFT_EMERGENCY
-		return nil
-	case "UAVIONIX_ADSB_OUT_RESERVED":
-		*e = UAVIONIX_ADSB_OUT_RESERVED
+	if rl, ok := reverseLabels_UAVIONIX_ADSB_EMERGENCY_STATUS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -12980,11 +9968,10 @@ func (e *UAVIONIX_ADSB_EMERGENCY_STATUS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e UAVIONIX_ADSB_EMERGENCY_STATUS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_UAVIONIX_ADSB_EMERGENCY_STATUS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Definitions for aircraft size
@@ -13025,95 +10012,56 @@ const (
 	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W90M UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 15
 )
 
+var labels_UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = map[UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE]string{
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_NO_DATA:     "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_NO_DATA",
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L15M_W23M:   "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L15M_W23M",
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25M_W28P5M: "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25M_W28P5M",
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25_34M:     "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25_34M",
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_33M:     "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_33M",
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_38M:     "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_38M",
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_39P5M:   "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_39P5M",
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_45M:     "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_45M",
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_45M:     "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_45M",
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_52M:     "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_52M",
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_59P5M:   "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_59P5M",
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_67M:     "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_67M",
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W72P5M:  "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W72P5M",
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W80M:    "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W80M",
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W80M:    "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W80M",
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W90M:    "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W90M",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_NO_DATA:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_NO_DATA"), nil
-	case UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L15M_W23M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L15M_W23M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25M_W28P5M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25M_W28P5M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25_34M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25_34M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_33M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_33M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_38M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_38M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_39P5M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_39P5M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_45M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_45M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_45M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_45M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_52M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_52M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_59P5M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_59P5M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_67M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_67M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W72P5M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W72P5M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W80M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W80M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W80M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W80M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W90M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W90M"), nil
+	if l, ok := labels_UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = map[string]UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE{
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_NO_DATA":     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_NO_DATA,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L15M_W23M":   UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L15M_W23M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25M_W28P5M": UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25M_W28P5M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25_34M":     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25_34M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_33M":     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_33M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_38M":     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_38M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_39P5M":   UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_39P5M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_45M":     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_45M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_45M":     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_45M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_52M":     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_52M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_59P5M":   UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_59P5M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_67M":     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_67M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W72P5M":  UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W72P5M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W80M":    UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W80M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W80M":    UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W80M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W90M":    UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W90M,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_NO_DATA":
-		*e = UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_NO_DATA
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L15M_W23M":
-		*e = UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L15M_W23M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25M_W28P5M":
-		*e = UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25M_W28P5M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25_34M":
-		*e = UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25_34M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_33M":
-		*e = UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_33M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_38M":
-		*e = UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_38M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_39P5M":
-		*e = UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_39P5M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_45M":
-		*e = UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_45M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_45M":
-		*e = UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_45M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_52M":
-		*e = UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_52M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_59P5M":
-		*e = UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_59P5M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_67M":
-		*e = UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_67M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W72P5M":
-		*e = UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W72P5M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W80M":
-		*e = UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W80M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W80M":
-		*e = UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W80M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W90M":
-		*e = UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W90M
+	if rl, ok := reverseLabels_UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -13121,11 +10069,10 @@ func (e *UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // GPS lataral offset encoding
@@ -13150,55 +10097,40 @@ const (
 	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_6M UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT = 7
 )
 
+var labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT = map[UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT]string{
+	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_NO_DATA:  "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_NO_DATA",
+	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_2M:  "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_2M",
+	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_4M:  "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_4M",
+	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_6M:  "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_6M",
+	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_0M: "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_0M",
+	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_2M: "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_2M",
+	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_4M: "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_4M",
+	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_6M: "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_6M",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_NO_DATA:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_NO_DATA"), nil
-	case UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_2M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_2M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_4M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_4M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_6M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_6M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_0M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_0M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_2M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_2M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_4M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_4M"), nil
-	case UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_6M:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_6M"), nil
+	if l, ok := labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT = map[string]UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT{
+	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_NO_DATA":  UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_NO_DATA,
+	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_2M":  UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_2M,
+	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_4M":  UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_4M,
+	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_6M":  UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_6M,
+	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_0M": UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_0M,
+	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_2M": UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_2M,
+	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_4M": UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_4M,
+	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_6M": UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_6M,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_NO_DATA":
-		*e = UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_NO_DATA
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_2M":
-		*e = UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_2M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_4M":
-		*e = UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_4M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_6M":
-		*e = UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_6M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_0M":
-		*e = UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_0M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_2M":
-		*e = UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_2M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_4M":
-		*e = UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_4M
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_6M":
-		*e = UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_6M
+	if rl, ok := reverseLabels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -13206,11 +10138,10 @@ func (e *UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT) UnmarshalText(text []byte) error 
 
 // String implements the fmt.Stringer interface.
 func (e UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // GPS longitudinal offset encoding
@@ -13223,25 +10154,28 @@ const (
 	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_APPLIED_BY_SENSOR UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON = 1
 )
 
+var labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON = map[UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON]string{
+	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_NO_DATA:           "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_NO_DATA",
+	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_APPLIED_BY_SENSOR: "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_APPLIED_BY_SENSOR",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_NO_DATA:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_NO_DATA"), nil
-	case UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_APPLIED_BY_SENSOR:
-		return []byte("UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_APPLIED_BY_SENSOR"), nil
+	if l, ok := labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON = map[string]UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON{
+	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_NO_DATA":           UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_NO_DATA,
+	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_APPLIED_BY_SENSOR": UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_APPLIED_BY_SENSOR,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_NO_DATA":
-		*e = UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_NO_DATA
-		return nil
-	case "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_APPLIED_BY_SENSOR":
-		*e = UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_APPLIED_BY_SENSOR
+	if rl, ok := reverseLabels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -13249,11 +10183,10 @@ func (e *UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON) UnmarshalText(text []byte) error 
 
 // String implements the fmt.Stringer interface.
 func (e UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Status for ADS-B transponder dynamic input
@@ -13274,45 +10207,36 @@ const (
 	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_RTK UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = 5
 )
 
+var labels_UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = map[UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX]string{
+	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_0: "UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_0",
+	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_1: "UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_1",
+	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_2D:     "UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_2D",
+	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_3D:     "UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_3D",
+	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_DGPS:   "UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_DGPS",
+	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_RTK:    "UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_RTK",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_0:
-		return []byte("UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_0"), nil
-	case UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_1:
-		return []byte("UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_1"), nil
-	case UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_2D:
-		return []byte("UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_2D"), nil
-	case UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_3D:
-		return []byte("UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_3D"), nil
-	case UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_DGPS:
-		return []byte("UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_DGPS"), nil
-	case UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_RTK:
-		return []byte("UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_RTK"), nil
+	if l, ok := labels_UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = map[string]UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX{
+	"UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_0": UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_0,
+	"UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_1": UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_1,
+	"UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_2D":     UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_2D,
+	"UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_3D":     UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_3D,
+	"UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_DGPS":   UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_DGPS,
+	"UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_RTK":    UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_RTK,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_0":
-		*e = UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_0
-		return nil
-	case "UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_1":
-		*e = UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_1
-		return nil
-	case "UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_2D":
-		*e = UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_2D
-		return nil
-	case "UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_3D":
-		*e = UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_3D
-		return nil
-	case "UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_DGPS":
-		*e = UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_DGPS
-		return nil
-	case "UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_RTK":
-		*e = UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_RTK
+	if rl, ok := reverseLabels_UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -13320,11 +10244,10 @@ func (e *UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // State flags for ADS-B transponder dynamic report
@@ -13343,40 +10266,34 @@ const (
 	UAVIONIX_ADSB_OUT_DYNAMIC_STATE_IDENT UAVIONIX_ADSB_OUT_DYNAMIC_STATE = 16
 )
 
+var labels_UAVIONIX_ADSB_OUT_DYNAMIC_STATE = map[UAVIONIX_ADSB_OUT_DYNAMIC_STATE]string{
+	UAVIONIX_ADSB_OUT_DYNAMIC_STATE_INTENT_CHANGE:        "UAVIONIX_ADSB_OUT_DYNAMIC_STATE_INTENT_CHANGE",
+	UAVIONIX_ADSB_OUT_DYNAMIC_STATE_AUTOPILOT_ENABLED:    "UAVIONIX_ADSB_OUT_DYNAMIC_STATE_AUTOPILOT_ENABLED",
+	UAVIONIX_ADSB_OUT_DYNAMIC_STATE_NICBARO_CROSSCHECKED: "UAVIONIX_ADSB_OUT_DYNAMIC_STATE_NICBARO_CROSSCHECKED",
+	UAVIONIX_ADSB_OUT_DYNAMIC_STATE_ON_GROUND:            "UAVIONIX_ADSB_OUT_DYNAMIC_STATE_ON_GROUND",
+	UAVIONIX_ADSB_OUT_DYNAMIC_STATE_IDENT:                "UAVIONIX_ADSB_OUT_DYNAMIC_STATE_IDENT",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_OUT_DYNAMIC_STATE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case UAVIONIX_ADSB_OUT_DYNAMIC_STATE_INTENT_CHANGE:
-		return []byte("UAVIONIX_ADSB_OUT_DYNAMIC_STATE_INTENT_CHANGE"), nil
-	case UAVIONIX_ADSB_OUT_DYNAMIC_STATE_AUTOPILOT_ENABLED:
-		return []byte("UAVIONIX_ADSB_OUT_DYNAMIC_STATE_AUTOPILOT_ENABLED"), nil
-	case UAVIONIX_ADSB_OUT_DYNAMIC_STATE_NICBARO_CROSSCHECKED:
-		return []byte("UAVIONIX_ADSB_OUT_DYNAMIC_STATE_NICBARO_CROSSCHECKED"), nil
-	case UAVIONIX_ADSB_OUT_DYNAMIC_STATE_ON_GROUND:
-		return []byte("UAVIONIX_ADSB_OUT_DYNAMIC_STATE_ON_GROUND"), nil
-	case UAVIONIX_ADSB_OUT_DYNAMIC_STATE_IDENT:
-		return []byte("UAVIONIX_ADSB_OUT_DYNAMIC_STATE_IDENT"), nil
+	if l, ok := labels_UAVIONIX_ADSB_OUT_DYNAMIC_STATE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_UAVIONIX_ADSB_OUT_DYNAMIC_STATE = map[string]UAVIONIX_ADSB_OUT_DYNAMIC_STATE{
+	"UAVIONIX_ADSB_OUT_DYNAMIC_STATE_INTENT_CHANGE":        UAVIONIX_ADSB_OUT_DYNAMIC_STATE_INTENT_CHANGE,
+	"UAVIONIX_ADSB_OUT_DYNAMIC_STATE_AUTOPILOT_ENABLED":    UAVIONIX_ADSB_OUT_DYNAMIC_STATE_AUTOPILOT_ENABLED,
+	"UAVIONIX_ADSB_OUT_DYNAMIC_STATE_NICBARO_CROSSCHECKED": UAVIONIX_ADSB_OUT_DYNAMIC_STATE_NICBARO_CROSSCHECKED,
+	"UAVIONIX_ADSB_OUT_DYNAMIC_STATE_ON_GROUND":            UAVIONIX_ADSB_OUT_DYNAMIC_STATE_ON_GROUND,
+	"UAVIONIX_ADSB_OUT_DYNAMIC_STATE_IDENT":                UAVIONIX_ADSB_OUT_DYNAMIC_STATE_IDENT,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_OUT_DYNAMIC_STATE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "UAVIONIX_ADSB_OUT_DYNAMIC_STATE_INTENT_CHANGE":
-		*e = UAVIONIX_ADSB_OUT_DYNAMIC_STATE_INTENT_CHANGE
-		return nil
-	case "UAVIONIX_ADSB_OUT_DYNAMIC_STATE_AUTOPILOT_ENABLED":
-		*e = UAVIONIX_ADSB_OUT_DYNAMIC_STATE_AUTOPILOT_ENABLED
-		return nil
-	case "UAVIONIX_ADSB_OUT_DYNAMIC_STATE_NICBARO_CROSSCHECKED":
-		*e = UAVIONIX_ADSB_OUT_DYNAMIC_STATE_NICBARO_CROSSCHECKED
-		return nil
-	case "UAVIONIX_ADSB_OUT_DYNAMIC_STATE_ON_GROUND":
-		*e = UAVIONIX_ADSB_OUT_DYNAMIC_STATE_ON_GROUND
-		return nil
-	case "UAVIONIX_ADSB_OUT_DYNAMIC_STATE_IDENT":
-		*e = UAVIONIX_ADSB_OUT_DYNAMIC_STATE_IDENT
+	if rl, ok := reverseLabels_UAVIONIX_ADSB_OUT_DYNAMIC_STATE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -13384,11 +10301,10 @@ func (e *UAVIONIX_ADSB_OUT_DYNAMIC_STATE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e UAVIONIX_ADSB_OUT_DYNAMIC_STATE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_UAVIONIX_ADSB_OUT_DYNAMIC_STATE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Transceiver RF control flags for ADS-B transponder dynamic reports
@@ -13403,30 +10319,30 @@ const (
 	UAVIONIX_ADSB_OUT_RF_SELECT_TX_ENABLED UAVIONIX_ADSB_OUT_RF_SELECT = 2
 )
 
+var labels_UAVIONIX_ADSB_OUT_RF_SELECT = map[UAVIONIX_ADSB_OUT_RF_SELECT]string{
+	UAVIONIX_ADSB_OUT_RF_SELECT_STANDBY:    "UAVIONIX_ADSB_OUT_RF_SELECT_STANDBY",
+	UAVIONIX_ADSB_OUT_RF_SELECT_RX_ENABLED: "UAVIONIX_ADSB_OUT_RF_SELECT_RX_ENABLED",
+	UAVIONIX_ADSB_OUT_RF_SELECT_TX_ENABLED: "UAVIONIX_ADSB_OUT_RF_SELECT_TX_ENABLED",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_OUT_RF_SELECT) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case UAVIONIX_ADSB_OUT_RF_SELECT_STANDBY:
-		return []byte("UAVIONIX_ADSB_OUT_RF_SELECT_STANDBY"), nil
-	case UAVIONIX_ADSB_OUT_RF_SELECT_RX_ENABLED:
-		return []byte("UAVIONIX_ADSB_OUT_RF_SELECT_RX_ENABLED"), nil
-	case UAVIONIX_ADSB_OUT_RF_SELECT_TX_ENABLED:
-		return []byte("UAVIONIX_ADSB_OUT_RF_SELECT_TX_ENABLED"), nil
+	if l, ok := labels_UAVIONIX_ADSB_OUT_RF_SELECT[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_UAVIONIX_ADSB_OUT_RF_SELECT = map[string]UAVIONIX_ADSB_OUT_RF_SELECT{
+	"UAVIONIX_ADSB_OUT_RF_SELECT_STANDBY":    UAVIONIX_ADSB_OUT_RF_SELECT_STANDBY,
+	"UAVIONIX_ADSB_OUT_RF_SELECT_RX_ENABLED": UAVIONIX_ADSB_OUT_RF_SELECT_RX_ENABLED,
+	"UAVIONIX_ADSB_OUT_RF_SELECT_TX_ENABLED": UAVIONIX_ADSB_OUT_RF_SELECT_TX_ENABLED,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_OUT_RF_SELECT) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "UAVIONIX_ADSB_OUT_RF_SELECT_STANDBY":
-		*e = UAVIONIX_ADSB_OUT_RF_SELECT_STANDBY
-		return nil
-	case "UAVIONIX_ADSB_OUT_RF_SELECT_RX_ENABLED":
-		*e = UAVIONIX_ADSB_OUT_RF_SELECT_RX_ENABLED
-		return nil
-	case "UAVIONIX_ADSB_OUT_RF_SELECT_TX_ENABLED":
-		*e = UAVIONIX_ADSB_OUT_RF_SELECT_TX_ENABLED
+	if rl, ok := reverseLabels_UAVIONIX_ADSB_OUT_RF_SELECT[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -13434,11 +10350,10 @@ func (e *UAVIONIX_ADSB_OUT_RF_SELECT) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e UAVIONIX_ADSB_OUT_RF_SELECT) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_UAVIONIX_ADSB_OUT_RF_SELECT[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Status flags for ADS-B transponder dynamic output
@@ -13455,35 +10370,32 @@ const (
 	UAVIONIX_ADSB_RF_HEALTH_FAIL_RX UAVIONIX_ADSB_RF_HEALTH = 16
 )
 
+var labels_UAVIONIX_ADSB_RF_HEALTH = map[UAVIONIX_ADSB_RF_HEALTH]string{
+	UAVIONIX_ADSB_RF_HEALTH_INITIALIZING: "UAVIONIX_ADSB_RF_HEALTH_INITIALIZING",
+	UAVIONIX_ADSB_RF_HEALTH_OK:           "UAVIONIX_ADSB_RF_HEALTH_OK",
+	UAVIONIX_ADSB_RF_HEALTH_FAIL_TX:      "UAVIONIX_ADSB_RF_HEALTH_FAIL_TX",
+	UAVIONIX_ADSB_RF_HEALTH_FAIL_RX:      "UAVIONIX_ADSB_RF_HEALTH_FAIL_RX",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_RF_HEALTH) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case UAVIONIX_ADSB_RF_HEALTH_INITIALIZING:
-		return []byte("UAVIONIX_ADSB_RF_HEALTH_INITIALIZING"), nil
-	case UAVIONIX_ADSB_RF_HEALTH_OK:
-		return []byte("UAVIONIX_ADSB_RF_HEALTH_OK"), nil
-	case UAVIONIX_ADSB_RF_HEALTH_FAIL_TX:
-		return []byte("UAVIONIX_ADSB_RF_HEALTH_FAIL_TX"), nil
-	case UAVIONIX_ADSB_RF_HEALTH_FAIL_RX:
-		return []byte("UAVIONIX_ADSB_RF_HEALTH_FAIL_RX"), nil
+	if l, ok := labels_UAVIONIX_ADSB_RF_HEALTH[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_UAVIONIX_ADSB_RF_HEALTH = map[string]UAVIONIX_ADSB_RF_HEALTH{
+	"UAVIONIX_ADSB_RF_HEALTH_INITIALIZING": UAVIONIX_ADSB_RF_HEALTH_INITIALIZING,
+	"UAVIONIX_ADSB_RF_HEALTH_OK":           UAVIONIX_ADSB_RF_HEALTH_OK,
+	"UAVIONIX_ADSB_RF_HEALTH_FAIL_TX":      UAVIONIX_ADSB_RF_HEALTH_FAIL_TX,
+	"UAVIONIX_ADSB_RF_HEALTH_FAIL_RX":      UAVIONIX_ADSB_RF_HEALTH_FAIL_RX,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_RF_HEALTH) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "UAVIONIX_ADSB_RF_HEALTH_INITIALIZING":
-		*e = UAVIONIX_ADSB_RF_HEALTH_INITIALIZING
-		return nil
-	case "UAVIONIX_ADSB_RF_HEALTH_OK":
-		*e = UAVIONIX_ADSB_RF_HEALTH_OK
-		return nil
-	case "UAVIONIX_ADSB_RF_HEALTH_FAIL_TX":
-		*e = UAVIONIX_ADSB_RF_HEALTH_FAIL_TX
-		return nil
-	case "UAVIONIX_ADSB_RF_HEALTH_FAIL_RX":
-		*e = UAVIONIX_ADSB_RF_HEALTH_FAIL_RX
+	if rl, ok := reverseLabels_UAVIONIX_ADSB_RF_HEALTH[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -13491,11 +10403,10 @@ func (e *UAVIONIX_ADSB_RF_HEALTH) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e UAVIONIX_ADSB_RF_HEALTH) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_UAVIONIX_ADSB_RF_HEALTH[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Flags for the global position report.
@@ -13520,55 +10431,40 @@ const (
 	UTM_DATA_AVAIL_FLAGS_NEXT_WAYPOINT_AVAILABLE UTM_DATA_AVAIL_FLAGS = 128
 )
 
+var labels_UTM_DATA_AVAIL_FLAGS = map[UTM_DATA_AVAIL_FLAGS]string{
+	UTM_DATA_AVAIL_FLAGS_TIME_VALID:                  "UTM_DATA_AVAIL_FLAGS_TIME_VALID",
+	UTM_DATA_AVAIL_FLAGS_UAS_ID_AVAILABLE:            "UTM_DATA_AVAIL_FLAGS_UAS_ID_AVAILABLE",
+	UTM_DATA_AVAIL_FLAGS_POSITION_AVAILABLE:          "UTM_DATA_AVAIL_FLAGS_POSITION_AVAILABLE",
+	UTM_DATA_AVAIL_FLAGS_ALTITUDE_AVAILABLE:          "UTM_DATA_AVAIL_FLAGS_ALTITUDE_AVAILABLE",
+	UTM_DATA_AVAIL_FLAGS_RELATIVE_ALTITUDE_AVAILABLE: "UTM_DATA_AVAIL_FLAGS_RELATIVE_ALTITUDE_AVAILABLE",
+	UTM_DATA_AVAIL_FLAGS_HORIZONTAL_VELO_AVAILABLE:   "UTM_DATA_AVAIL_FLAGS_HORIZONTAL_VELO_AVAILABLE",
+	UTM_DATA_AVAIL_FLAGS_VERTICAL_VELO_AVAILABLE:     "UTM_DATA_AVAIL_FLAGS_VERTICAL_VELO_AVAILABLE",
+	UTM_DATA_AVAIL_FLAGS_NEXT_WAYPOINT_AVAILABLE:     "UTM_DATA_AVAIL_FLAGS_NEXT_WAYPOINT_AVAILABLE",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UTM_DATA_AVAIL_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case UTM_DATA_AVAIL_FLAGS_TIME_VALID:
-		return []byte("UTM_DATA_AVAIL_FLAGS_TIME_VALID"), nil
-	case UTM_DATA_AVAIL_FLAGS_UAS_ID_AVAILABLE:
-		return []byte("UTM_DATA_AVAIL_FLAGS_UAS_ID_AVAILABLE"), nil
-	case UTM_DATA_AVAIL_FLAGS_POSITION_AVAILABLE:
-		return []byte("UTM_DATA_AVAIL_FLAGS_POSITION_AVAILABLE"), nil
-	case UTM_DATA_AVAIL_FLAGS_ALTITUDE_AVAILABLE:
-		return []byte("UTM_DATA_AVAIL_FLAGS_ALTITUDE_AVAILABLE"), nil
-	case UTM_DATA_AVAIL_FLAGS_RELATIVE_ALTITUDE_AVAILABLE:
-		return []byte("UTM_DATA_AVAIL_FLAGS_RELATIVE_ALTITUDE_AVAILABLE"), nil
-	case UTM_DATA_AVAIL_FLAGS_HORIZONTAL_VELO_AVAILABLE:
-		return []byte("UTM_DATA_AVAIL_FLAGS_HORIZONTAL_VELO_AVAILABLE"), nil
-	case UTM_DATA_AVAIL_FLAGS_VERTICAL_VELO_AVAILABLE:
-		return []byte("UTM_DATA_AVAIL_FLAGS_VERTICAL_VELO_AVAILABLE"), nil
-	case UTM_DATA_AVAIL_FLAGS_NEXT_WAYPOINT_AVAILABLE:
-		return []byte("UTM_DATA_AVAIL_FLAGS_NEXT_WAYPOINT_AVAILABLE"), nil
+	if l, ok := labels_UTM_DATA_AVAIL_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_UTM_DATA_AVAIL_FLAGS = map[string]UTM_DATA_AVAIL_FLAGS{
+	"UTM_DATA_AVAIL_FLAGS_TIME_VALID":                  UTM_DATA_AVAIL_FLAGS_TIME_VALID,
+	"UTM_DATA_AVAIL_FLAGS_UAS_ID_AVAILABLE":            UTM_DATA_AVAIL_FLAGS_UAS_ID_AVAILABLE,
+	"UTM_DATA_AVAIL_FLAGS_POSITION_AVAILABLE":          UTM_DATA_AVAIL_FLAGS_POSITION_AVAILABLE,
+	"UTM_DATA_AVAIL_FLAGS_ALTITUDE_AVAILABLE":          UTM_DATA_AVAIL_FLAGS_ALTITUDE_AVAILABLE,
+	"UTM_DATA_AVAIL_FLAGS_RELATIVE_ALTITUDE_AVAILABLE": UTM_DATA_AVAIL_FLAGS_RELATIVE_ALTITUDE_AVAILABLE,
+	"UTM_DATA_AVAIL_FLAGS_HORIZONTAL_VELO_AVAILABLE":   UTM_DATA_AVAIL_FLAGS_HORIZONTAL_VELO_AVAILABLE,
+	"UTM_DATA_AVAIL_FLAGS_VERTICAL_VELO_AVAILABLE":     UTM_DATA_AVAIL_FLAGS_VERTICAL_VELO_AVAILABLE,
+	"UTM_DATA_AVAIL_FLAGS_NEXT_WAYPOINT_AVAILABLE":     UTM_DATA_AVAIL_FLAGS_NEXT_WAYPOINT_AVAILABLE,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UTM_DATA_AVAIL_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "UTM_DATA_AVAIL_FLAGS_TIME_VALID":
-		*e = UTM_DATA_AVAIL_FLAGS_TIME_VALID
-		return nil
-	case "UTM_DATA_AVAIL_FLAGS_UAS_ID_AVAILABLE":
-		*e = UTM_DATA_AVAIL_FLAGS_UAS_ID_AVAILABLE
-		return nil
-	case "UTM_DATA_AVAIL_FLAGS_POSITION_AVAILABLE":
-		*e = UTM_DATA_AVAIL_FLAGS_POSITION_AVAILABLE
-		return nil
-	case "UTM_DATA_AVAIL_FLAGS_ALTITUDE_AVAILABLE":
-		*e = UTM_DATA_AVAIL_FLAGS_ALTITUDE_AVAILABLE
-		return nil
-	case "UTM_DATA_AVAIL_FLAGS_RELATIVE_ALTITUDE_AVAILABLE":
-		*e = UTM_DATA_AVAIL_FLAGS_RELATIVE_ALTITUDE_AVAILABLE
-		return nil
-	case "UTM_DATA_AVAIL_FLAGS_HORIZONTAL_VELO_AVAILABLE":
-		*e = UTM_DATA_AVAIL_FLAGS_HORIZONTAL_VELO_AVAILABLE
-		return nil
-	case "UTM_DATA_AVAIL_FLAGS_VERTICAL_VELO_AVAILABLE":
-		*e = UTM_DATA_AVAIL_FLAGS_VERTICAL_VELO_AVAILABLE
-		return nil
-	case "UTM_DATA_AVAIL_FLAGS_NEXT_WAYPOINT_AVAILABLE":
-		*e = UTM_DATA_AVAIL_FLAGS_NEXT_WAYPOINT_AVAILABLE
+	if rl, ok := reverseLabels_UTM_DATA_AVAIL_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -13576,11 +10472,10 @@ func (e *UTM_DATA_AVAIL_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e UTM_DATA_AVAIL_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_UTM_DATA_AVAIL_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Airborne status of UAS.
@@ -13599,40 +10494,34 @@ const (
 	UTM_FLIGHT_STATE_NOCTRL UTM_FLIGHT_STATE = 32
 )
 
+var labels_UTM_FLIGHT_STATE = map[UTM_FLIGHT_STATE]string{
+	UTM_FLIGHT_STATE_UNKNOWN:   "UTM_FLIGHT_STATE_UNKNOWN",
+	UTM_FLIGHT_STATE_GROUND:    "UTM_FLIGHT_STATE_GROUND",
+	UTM_FLIGHT_STATE_AIRBORNE:  "UTM_FLIGHT_STATE_AIRBORNE",
+	UTM_FLIGHT_STATE_EMERGENCY: "UTM_FLIGHT_STATE_EMERGENCY",
+	UTM_FLIGHT_STATE_NOCTRL:    "UTM_FLIGHT_STATE_NOCTRL",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UTM_FLIGHT_STATE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case UTM_FLIGHT_STATE_UNKNOWN:
-		return []byte("UTM_FLIGHT_STATE_UNKNOWN"), nil
-	case UTM_FLIGHT_STATE_GROUND:
-		return []byte("UTM_FLIGHT_STATE_GROUND"), nil
-	case UTM_FLIGHT_STATE_AIRBORNE:
-		return []byte("UTM_FLIGHT_STATE_AIRBORNE"), nil
-	case UTM_FLIGHT_STATE_EMERGENCY:
-		return []byte("UTM_FLIGHT_STATE_EMERGENCY"), nil
-	case UTM_FLIGHT_STATE_NOCTRL:
-		return []byte("UTM_FLIGHT_STATE_NOCTRL"), nil
+	if l, ok := labels_UTM_FLIGHT_STATE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_UTM_FLIGHT_STATE = map[string]UTM_FLIGHT_STATE{
+	"UTM_FLIGHT_STATE_UNKNOWN":   UTM_FLIGHT_STATE_UNKNOWN,
+	"UTM_FLIGHT_STATE_GROUND":    UTM_FLIGHT_STATE_GROUND,
+	"UTM_FLIGHT_STATE_AIRBORNE":  UTM_FLIGHT_STATE_AIRBORNE,
+	"UTM_FLIGHT_STATE_EMERGENCY": UTM_FLIGHT_STATE_EMERGENCY,
+	"UTM_FLIGHT_STATE_NOCTRL":    UTM_FLIGHT_STATE_NOCTRL,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UTM_FLIGHT_STATE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "UTM_FLIGHT_STATE_UNKNOWN":
-		*e = UTM_FLIGHT_STATE_UNKNOWN
-		return nil
-	case "UTM_FLIGHT_STATE_GROUND":
-		*e = UTM_FLIGHT_STATE_GROUND
-		return nil
-	case "UTM_FLIGHT_STATE_AIRBORNE":
-		*e = UTM_FLIGHT_STATE_AIRBORNE
-		return nil
-	case "UTM_FLIGHT_STATE_EMERGENCY":
-		*e = UTM_FLIGHT_STATE_EMERGENCY
-		return nil
-	case "UTM_FLIGHT_STATE_NOCTRL":
-		*e = UTM_FLIGHT_STATE_NOCTRL
+	if rl, ok := reverseLabels_UTM_FLIGHT_STATE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -13640,11 +10529,10 @@ func (e *UTM_FLIGHT_STATE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e UTM_FLIGHT_STATE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_UTM_FLIGHT_STATE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Stream status flags (Bitmap)
@@ -13657,25 +10545,28 @@ const (
 	VIDEO_STREAM_STATUS_FLAGS_THERMAL VIDEO_STREAM_STATUS_FLAGS = 2
 )
 
+var labels_VIDEO_STREAM_STATUS_FLAGS = map[VIDEO_STREAM_STATUS_FLAGS]string{
+	VIDEO_STREAM_STATUS_FLAGS_RUNNING: "VIDEO_STREAM_STATUS_FLAGS_RUNNING",
+	VIDEO_STREAM_STATUS_FLAGS_THERMAL: "VIDEO_STREAM_STATUS_FLAGS_THERMAL",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e VIDEO_STREAM_STATUS_FLAGS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case VIDEO_STREAM_STATUS_FLAGS_RUNNING:
-		return []byte("VIDEO_STREAM_STATUS_FLAGS_RUNNING"), nil
-	case VIDEO_STREAM_STATUS_FLAGS_THERMAL:
-		return []byte("VIDEO_STREAM_STATUS_FLAGS_THERMAL"), nil
+	if l, ok := labels_VIDEO_STREAM_STATUS_FLAGS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_VIDEO_STREAM_STATUS_FLAGS = map[string]VIDEO_STREAM_STATUS_FLAGS{
+	"VIDEO_STREAM_STATUS_FLAGS_RUNNING": VIDEO_STREAM_STATUS_FLAGS_RUNNING,
+	"VIDEO_STREAM_STATUS_FLAGS_THERMAL": VIDEO_STREAM_STATUS_FLAGS_THERMAL,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *VIDEO_STREAM_STATUS_FLAGS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "VIDEO_STREAM_STATUS_FLAGS_RUNNING":
-		*e = VIDEO_STREAM_STATUS_FLAGS_RUNNING
-		return nil
-	case "VIDEO_STREAM_STATUS_FLAGS_THERMAL":
-		*e = VIDEO_STREAM_STATUS_FLAGS_THERMAL
+	if rl, ok := reverseLabels_VIDEO_STREAM_STATUS_FLAGS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -13683,11 +10574,10 @@ func (e *VIDEO_STREAM_STATUS_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e VIDEO_STREAM_STATUS_FLAGS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_VIDEO_STREAM_STATUS_FLAGS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Video stream types
@@ -13704,35 +10594,32 @@ const (
 	VIDEO_STREAM_TYPE_MPEG_TS_H264 VIDEO_STREAM_TYPE = 3
 )
 
+var labels_VIDEO_STREAM_TYPE = map[VIDEO_STREAM_TYPE]string{
+	VIDEO_STREAM_TYPE_RTSP:         "VIDEO_STREAM_TYPE_RTSP",
+	VIDEO_STREAM_TYPE_RTPUDP:       "VIDEO_STREAM_TYPE_RTPUDP",
+	VIDEO_STREAM_TYPE_TCP_MPEG:     "VIDEO_STREAM_TYPE_TCP_MPEG",
+	VIDEO_STREAM_TYPE_MPEG_TS_H264: "VIDEO_STREAM_TYPE_MPEG_TS_H264",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e VIDEO_STREAM_TYPE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case VIDEO_STREAM_TYPE_RTSP:
-		return []byte("VIDEO_STREAM_TYPE_RTSP"), nil
-	case VIDEO_STREAM_TYPE_RTPUDP:
-		return []byte("VIDEO_STREAM_TYPE_RTPUDP"), nil
-	case VIDEO_STREAM_TYPE_TCP_MPEG:
-		return []byte("VIDEO_STREAM_TYPE_TCP_MPEG"), nil
-	case VIDEO_STREAM_TYPE_MPEG_TS_H264:
-		return []byte("VIDEO_STREAM_TYPE_MPEG_TS_H264"), nil
+	if l, ok := labels_VIDEO_STREAM_TYPE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_VIDEO_STREAM_TYPE = map[string]VIDEO_STREAM_TYPE{
+	"VIDEO_STREAM_TYPE_RTSP":         VIDEO_STREAM_TYPE_RTSP,
+	"VIDEO_STREAM_TYPE_RTPUDP":       VIDEO_STREAM_TYPE_RTPUDP,
+	"VIDEO_STREAM_TYPE_TCP_MPEG":     VIDEO_STREAM_TYPE_TCP_MPEG,
+	"VIDEO_STREAM_TYPE_MPEG_TS_H264": VIDEO_STREAM_TYPE_MPEG_TS_H264,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *VIDEO_STREAM_TYPE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "VIDEO_STREAM_TYPE_RTSP":
-		*e = VIDEO_STREAM_TYPE_RTSP
-		return nil
-	case "VIDEO_STREAM_TYPE_RTPUDP":
-		*e = VIDEO_STREAM_TYPE_RTPUDP
-		return nil
-	case "VIDEO_STREAM_TYPE_TCP_MPEG":
-		*e = VIDEO_STREAM_TYPE_TCP_MPEG
-		return nil
-	case "VIDEO_STREAM_TYPE_MPEG_TS_H264":
-		*e = VIDEO_STREAM_TYPE_MPEG_TS_H264
+	if rl, ok := reverseLabels_VIDEO_STREAM_TYPE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -13740,11 +10627,10 @@ func (e *VIDEO_STREAM_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e VIDEO_STREAM_TYPE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_VIDEO_STREAM_TYPE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Direction of VTOL transition
@@ -13763,40 +10649,34 @@ const (
 	VTOL_TRANSITION_HEADING_ANY VTOL_TRANSITION_HEADING = 4
 )
 
+var labels_VTOL_TRANSITION_HEADING = map[VTOL_TRANSITION_HEADING]string{
+	VTOL_TRANSITION_HEADING_VEHICLE_DEFAULT: "VTOL_TRANSITION_HEADING_VEHICLE_DEFAULT",
+	VTOL_TRANSITION_HEADING_NEXT_WAYPOINT:   "VTOL_TRANSITION_HEADING_NEXT_WAYPOINT",
+	VTOL_TRANSITION_HEADING_TAKEOFF:         "VTOL_TRANSITION_HEADING_TAKEOFF",
+	VTOL_TRANSITION_HEADING_SPECIFIED:       "VTOL_TRANSITION_HEADING_SPECIFIED",
+	VTOL_TRANSITION_HEADING_ANY:             "VTOL_TRANSITION_HEADING_ANY",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e VTOL_TRANSITION_HEADING) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case VTOL_TRANSITION_HEADING_VEHICLE_DEFAULT:
-		return []byte("VTOL_TRANSITION_HEADING_VEHICLE_DEFAULT"), nil
-	case VTOL_TRANSITION_HEADING_NEXT_WAYPOINT:
-		return []byte("VTOL_TRANSITION_HEADING_NEXT_WAYPOINT"), nil
-	case VTOL_TRANSITION_HEADING_TAKEOFF:
-		return []byte("VTOL_TRANSITION_HEADING_TAKEOFF"), nil
-	case VTOL_TRANSITION_HEADING_SPECIFIED:
-		return []byte("VTOL_TRANSITION_HEADING_SPECIFIED"), nil
-	case VTOL_TRANSITION_HEADING_ANY:
-		return []byte("VTOL_TRANSITION_HEADING_ANY"), nil
+	if l, ok := labels_VTOL_TRANSITION_HEADING[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_VTOL_TRANSITION_HEADING = map[string]VTOL_TRANSITION_HEADING{
+	"VTOL_TRANSITION_HEADING_VEHICLE_DEFAULT": VTOL_TRANSITION_HEADING_VEHICLE_DEFAULT,
+	"VTOL_TRANSITION_HEADING_NEXT_WAYPOINT":   VTOL_TRANSITION_HEADING_NEXT_WAYPOINT,
+	"VTOL_TRANSITION_HEADING_TAKEOFF":         VTOL_TRANSITION_HEADING_TAKEOFF,
+	"VTOL_TRANSITION_HEADING_SPECIFIED":       VTOL_TRANSITION_HEADING_SPECIFIED,
+	"VTOL_TRANSITION_HEADING_ANY":             VTOL_TRANSITION_HEADING_ANY,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *VTOL_TRANSITION_HEADING) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "VTOL_TRANSITION_HEADING_VEHICLE_DEFAULT":
-		*e = VTOL_TRANSITION_HEADING_VEHICLE_DEFAULT
-		return nil
-	case "VTOL_TRANSITION_HEADING_NEXT_WAYPOINT":
-		*e = VTOL_TRANSITION_HEADING_NEXT_WAYPOINT
-		return nil
-	case "VTOL_TRANSITION_HEADING_TAKEOFF":
-		*e = VTOL_TRANSITION_HEADING_TAKEOFF
-		return nil
-	case "VTOL_TRANSITION_HEADING_SPECIFIED":
-		*e = VTOL_TRANSITION_HEADING_SPECIFIED
-		return nil
-	case "VTOL_TRANSITION_HEADING_ANY":
-		*e = VTOL_TRANSITION_HEADING_ANY
+	if rl, ok := reverseLabels_VTOL_TRANSITION_HEADING[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -13804,11 +10684,10 @@ func (e *VTOL_TRANSITION_HEADING) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e VTOL_TRANSITION_HEADING) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_VTOL_TRANSITION_HEADING[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // WiFi Mode.
@@ -13825,35 +10704,32 @@ const (
 	WIFI_CONFIG_AP_MODE_DISABLED WIFI_CONFIG_AP_MODE = 3
 )
 
+var labels_WIFI_CONFIG_AP_MODE = map[WIFI_CONFIG_AP_MODE]string{
+	WIFI_CONFIG_AP_MODE_UNDEFINED: "WIFI_CONFIG_AP_MODE_UNDEFINED",
+	WIFI_CONFIG_AP_MODE_AP:        "WIFI_CONFIG_AP_MODE_AP",
+	WIFI_CONFIG_AP_MODE_STATION:   "WIFI_CONFIG_AP_MODE_STATION",
+	WIFI_CONFIG_AP_MODE_DISABLED:  "WIFI_CONFIG_AP_MODE_DISABLED",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e WIFI_CONFIG_AP_MODE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case WIFI_CONFIG_AP_MODE_UNDEFINED:
-		return []byte("WIFI_CONFIG_AP_MODE_UNDEFINED"), nil
-	case WIFI_CONFIG_AP_MODE_AP:
-		return []byte("WIFI_CONFIG_AP_MODE_AP"), nil
-	case WIFI_CONFIG_AP_MODE_STATION:
-		return []byte("WIFI_CONFIG_AP_MODE_STATION"), nil
-	case WIFI_CONFIG_AP_MODE_DISABLED:
-		return []byte("WIFI_CONFIG_AP_MODE_DISABLED"), nil
+	if l, ok := labels_WIFI_CONFIG_AP_MODE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_WIFI_CONFIG_AP_MODE = map[string]WIFI_CONFIG_AP_MODE{
+	"WIFI_CONFIG_AP_MODE_UNDEFINED": WIFI_CONFIG_AP_MODE_UNDEFINED,
+	"WIFI_CONFIG_AP_MODE_AP":        WIFI_CONFIG_AP_MODE_AP,
+	"WIFI_CONFIG_AP_MODE_STATION":   WIFI_CONFIG_AP_MODE_STATION,
+	"WIFI_CONFIG_AP_MODE_DISABLED":  WIFI_CONFIG_AP_MODE_DISABLED,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *WIFI_CONFIG_AP_MODE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "WIFI_CONFIG_AP_MODE_UNDEFINED":
-		*e = WIFI_CONFIG_AP_MODE_UNDEFINED
-		return nil
-	case "WIFI_CONFIG_AP_MODE_AP":
-		*e = WIFI_CONFIG_AP_MODE_AP
-		return nil
-	case "WIFI_CONFIG_AP_MODE_STATION":
-		*e = WIFI_CONFIG_AP_MODE_STATION
-		return nil
-	case "WIFI_CONFIG_AP_MODE_DISABLED":
-		*e = WIFI_CONFIG_AP_MODE_DISABLED
+	if rl, ok := reverseLabels_WIFI_CONFIG_AP_MODE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -13861,11 +10737,10 @@ func (e *WIFI_CONFIG_AP_MODE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e WIFI_CONFIG_AP_MODE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_WIFI_CONFIG_AP_MODE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Possible responses from a WIFI_CONFIG_AP message.
@@ -13886,45 +10761,36 @@ const (
 	WIFI_CONFIG_AP_RESPONSE_PASSWORD_ERROR WIFI_CONFIG_AP_RESPONSE = 5
 )
 
+var labels_WIFI_CONFIG_AP_RESPONSE = map[WIFI_CONFIG_AP_RESPONSE]string{
+	WIFI_CONFIG_AP_RESPONSE_UNDEFINED:      "WIFI_CONFIG_AP_RESPONSE_UNDEFINED",
+	WIFI_CONFIG_AP_RESPONSE_ACCEPTED:       "WIFI_CONFIG_AP_RESPONSE_ACCEPTED",
+	WIFI_CONFIG_AP_RESPONSE_REJECTED:       "WIFI_CONFIG_AP_RESPONSE_REJECTED",
+	WIFI_CONFIG_AP_RESPONSE_MODE_ERROR:     "WIFI_CONFIG_AP_RESPONSE_MODE_ERROR",
+	WIFI_CONFIG_AP_RESPONSE_SSID_ERROR:     "WIFI_CONFIG_AP_RESPONSE_SSID_ERROR",
+	WIFI_CONFIG_AP_RESPONSE_PASSWORD_ERROR: "WIFI_CONFIG_AP_RESPONSE_PASSWORD_ERROR",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e WIFI_CONFIG_AP_RESPONSE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case WIFI_CONFIG_AP_RESPONSE_UNDEFINED:
-		return []byte("WIFI_CONFIG_AP_RESPONSE_UNDEFINED"), nil
-	case WIFI_CONFIG_AP_RESPONSE_ACCEPTED:
-		return []byte("WIFI_CONFIG_AP_RESPONSE_ACCEPTED"), nil
-	case WIFI_CONFIG_AP_RESPONSE_REJECTED:
-		return []byte("WIFI_CONFIG_AP_RESPONSE_REJECTED"), nil
-	case WIFI_CONFIG_AP_RESPONSE_MODE_ERROR:
-		return []byte("WIFI_CONFIG_AP_RESPONSE_MODE_ERROR"), nil
-	case WIFI_CONFIG_AP_RESPONSE_SSID_ERROR:
-		return []byte("WIFI_CONFIG_AP_RESPONSE_SSID_ERROR"), nil
-	case WIFI_CONFIG_AP_RESPONSE_PASSWORD_ERROR:
-		return []byte("WIFI_CONFIG_AP_RESPONSE_PASSWORD_ERROR"), nil
+	if l, ok := labels_WIFI_CONFIG_AP_RESPONSE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_WIFI_CONFIG_AP_RESPONSE = map[string]WIFI_CONFIG_AP_RESPONSE{
+	"WIFI_CONFIG_AP_RESPONSE_UNDEFINED":      WIFI_CONFIG_AP_RESPONSE_UNDEFINED,
+	"WIFI_CONFIG_AP_RESPONSE_ACCEPTED":       WIFI_CONFIG_AP_RESPONSE_ACCEPTED,
+	"WIFI_CONFIG_AP_RESPONSE_REJECTED":       WIFI_CONFIG_AP_RESPONSE_REJECTED,
+	"WIFI_CONFIG_AP_RESPONSE_MODE_ERROR":     WIFI_CONFIG_AP_RESPONSE_MODE_ERROR,
+	"WIFI_CONFIG_AP_RESPONSE_SSID_ERROR":     WIFI_CONFIG_AP_RESPONSE_SSID_ERROR,
+	"WIFI_CONFIG_AP_RESPONSE_PASSWORD_ERROR": WIFI_CONFIG_AP_RESPONSE_PASSWORD_ERROR,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *WIFI_CONFIG_AP_RESPONSE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "WIFI_CONFIG_AP_RESPONSE_UNDEFINED":
-		*e = WIFI_CONFIG_AP_RESPONSE_UNDEFINED
-		return nil
-	case "WIFI_CONFIG_AP_RESPONSE_ACCEPTED":
-		*e = WIFI_CONFIG_AP_RESPONSE_ACCEPTED
-		return nil
-	case "WIFI_CONFIG_AP_RESPONSE_REJECTED":
-		*e = WIFI_CONFIG_AP_RESPONSE_REJECTED
-		return nil
-	case "WIFI_CONFIG_AP_RESPONSE_MODE_ERROR":
-		*e = WIFI_CONFIG_AP_RESPONSE_MODE_ERROR
-		return nil
-	case "WIFI_CONFIG_AP_RESPONSE_SSID_ERROR":
-		*e = WIFI_CONFIG_AP_RESPONSE_SSID_ERROR
-		return nil
-	case "WIFI_CONFIG_AP_RESPONSE_PASSWORD_ERROR":
-		*e = WIFI_CONFIG_AP_RESPONSE_PASSWORD_ERROR
+	if rl, ok := reverseLabels_WIFI_CONFIG_AP_RESPONSE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -13932,11 +10798,10 @@ func (e *WIFI_CONFIG_AP_RESPONSE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e WIFI_CONFIG_AP_RESPONSE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_WIFI_CONFIG_AP_RESPONSE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // Winch actions.
@@ -13951,30 +10816,30 @@ const (
 	WINCH_RATE_CONTROL WINCH_ACTIONS = 2
 )
 
+var labels_WINCH_ACTIONS = map[WINCH_ACTIONS]string{
+	WINCH_RELAXED:                 "WINCH_RELAXED",
+	WINCH_RELATIVE_LENGTH_CONTROL: "WINCH_RELATIVE_LENGTH_CONTROL",
+	WINCH_RATE_CONTROL:            "WINCH_RATE_CONTROL",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e WINCH_ACTIONS) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case WINCH_RELAXED:
-		return []byte("WINCH_RELAXED"), nil
-	case WINCH_RELATIVE_LENGTH_CONTROL:
-		return []byte("WINCH_RELATIVE_LENGTH_CONTROL"), nil
-	case WINCH_RATE_CONTROL:
-		return []byte("WINCH_RATE_CONTROL"), nil
+	if l, ok := labels_WINCH_ACTIONS[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_WINCH_ACTIONS = map[string]WINCH_ACTIONS{
+	"WINCH_RELAXED":                 WINCH_RELAXED,
+	"WINCH_RELATIVE_LENGTH_CONTROL": WINCH_RELATIVE_LENGTH_CONTROL,
+	"WINCH_RATE_CONTROL":            WINCH_RATE_CONTROL,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *WINCH_ACTIONS) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "WINCH_RELAXED":
-		*e = WINCH_RELAXED
-		return nil
-	case "WINCH_RELATIVE_LENGTH_CONTROL":
-		*e = WINCH_RELATIVE_LENGTH_CONTROL
-		return nil
-	case "WINCH_RATE_CONTROL":
-		*e = WINCH_RATE_CONTROL
+	if rl, ok := reverseLabels_WINCH_ACTIONS[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -13982,11 +10847,10 @@ func (e *WINCH_ACTIONS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e WINCH_ACTIONS) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_WINCH_ACTIONS[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // minimal.xml

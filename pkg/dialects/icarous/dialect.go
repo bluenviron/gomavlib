@@ -5,7 +5,6 @@ package icarous
 
 import (
 	"errors"
-	"strconv"
 
 	"github.com/aler9/gomavlib/pkg/dialect"
 	"github.com/aler9/gomavlib/pkg/msg"
@@ -39,45 +38,36 @@ const (
 	ICAROUS_FMS_STATE_LAND ICAROUS_FMS_STATE = 5
 )
 
+var labels_ICAROUS_FMS_STATE = map[ICAROUS_FMS_STATE]string{
+	ICAROUS_FMS_STATE_IDLE:     "ICAROUS_FMS_STATE_IDLE",
+	ICAROUS_FMS_STATE_TAKEOFF:  "ICAROUS_FMS_STATE_TAKEOFF",
+	ICAROUS_FMS_STATE_CLIMB:    "ICAROUS_FMS_STATE_CLIMB",
+	ICAROUS_FMS_STATE_CRUISE:   "ICAROUS_FMS_STATE_CRUISE",
+	ICAROUS_FMS_STATE_APPROACH: "ICAROUS_FMS_STATE_APPROACH",
+	ICAROUS_FMS_STATE_LAND:     "ICAROUS_FMS_STATE_LAND",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ICAROUS_FMS_STATE) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case ICAROUS_FMS_STATE_IDLE:
-		return []byte("ICAROUS_FMS_STATE_IDLE"), nil
-	case ICAROUS_FMS_STATE_TAKEOFF:
-		return []byte("ICAROUS_FMS_STATE_TAKEOFF"), nil
-	case ICAROUS_FMS_STATE_CLIMB:
-		return []byte("ICAROUS_FMS_STATE_CLIMB"), nil
-	case ICAROUS_FMS_STATE_CRUISE:
-		return []byte("ICAROUS_FMS_STATE_CRUISE"), nil
-	case ICAROUS_FMS_STATE_APPROACH:
-		return []byte("ICAROUS_FMS_STATE_APPROACH"), nil
-	case ICAROUS_FMS_STATE_LAND:
-		return []byte("ICAROUS_FMS_STATE_LAND"), nil
+	if l, ok := labels_ICAROUS_FMS_STATE[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_ICAROUS_FMS_STATE = map[string]ICAROUS_FMS_STATE{
+	"ICAROUS_FMS_STATE_IDLE":     ICAROUS_FMS_STATE_IDLE,
+	"ICAROUS_FMS_STATE_TAKEOFF":  ICAROUS_FMS_STATE_TAKEOFF,
+	"ICAROUS_FMS_STATE_CLIMB":    ICAROUS_FMS_STATE_CLIMB,
+	"ICAROUS_FMS_STATE_CRUISE":   ICAROUS_FMS_STATE_CRUISE,
+	"ICAROUS_FMS_STATE_APPROACH": ICAROUS_FMS_STATE_APPROACH,
+	"ICAROUS_FMS_STATE_LAND":     ICAROUS_FMS_STATE_LAND,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ICAROUS_FMS_STATE) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "ICAROUS_FMS_STATE_IDLE":
-		*e = ICAROUS_FMS_STATE_IDLE
-		return nil
-	case "ICAROUS_FMS_STATE_TAKEOFF":
-		*e = ICAROUS_FMS_STATE_TAKEOFF
-		return nil
-	case "ICAROUS_FMS_STATE_CLIMB":
-		*e = ICAROUS_FMS_STATE_CLIMB
-		return nil
-	case "ICAROUS_FMS_STATE_CRUISE":
-		*e = ICAROUS_FMS_STATE_CRUISE
-		return nil
-	case "ICAROUS_FMS_STATE_APPROACH":
-		*e = ICAROUS_FMS_STATE_APPROACH
-		return nil
-	case "ICAROUS_FMS_STATE_LAND":
-		*e = ICAROUS_FMS_STATE_LAND
+	if rl, ok := reverseLabels_ICAROUS_FMS_STATE[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -85,11 +75,10 @@ func (e *ICAROUS_FMS_STATE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e ICAROUS_FMS_STATE) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_ICAROUS_FMS_STATE[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 //
@@ -104,30 +93,30 @@ const (
 	ICAROUS_TRACK_BAND_TYPE_RECOVERY ICAROUS_TRACK_BAND_TYPES = 2
 )
 
+var labels_ICAROUS_TRACK_BAND_TYPES = map[ICAROUS_TRACK_BAND_TYPES]string{
+	ICAROUS_TRACK_BAND_TYPE_NONE:     "ICAROUS_TRACK_BAND_TYPE_NONE",
+	ICAROUS_TRACK_BAND_TYPE_NEAR:     "ICAROUS_TRACK_BAND_TYPE_NEAR",
+	ICAROUS_TRACK_BAND_TYPE_RECOVERY: "ICAROUS_TRACK_BAND_TYPE_RECOVERY",
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ICAROUS_TRACK_BAND_TYPES) MarshalText() ([]byte, error) {
-	switch e { //nolint:gocritic
-	case ICAROUS_TRACK_BAND_TYPE_NONE:
-		return []byte("ICAROUS_TRACK_BAND_TYPE_NONE"), nil
-	case ICAROUS_TRACK_BAND_TYPE_NEAR:
-		return []byte("ICAROUS_TRACK_BAND_TYPE_NEAR"), nil
-	case ICAROUS_TRACK_BAND_TYPE_RECOVERY:
-		return []byte("ICAROUS_TRACK_BAND_TYPE_RECOVERY"), nil
+	if l, ok := labels_ICAROUS_TRACK_BAND_TYPES[e]; ok {
+		return []byte(l), nil
 	}
 	return nil, errors.New("invalid value")
 }
 
+var reverseLabels_ICAROUS_TRACK_BAND_TYPES = map[string]ICAROUS_TRACK_BAND_TYPES{
+	"ICAROUS_TRACK_BAND_TYPE_NONE":     ICAROUS_TRACK_BAND_TYPE_NONE,
+	"ICAROUS_TRACK_BAND_TYPE_NEAR":     ICAROUS_TRACK_BAND_TYPE_NEAR,
+	"ICAROUS_TRACK_BAND_TYPE_RECOVERY": ICAROUS_TRACK_BAND_TYPE_RECOVERY,
+}
+
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ICAROUS_TRACK_BAND_TYPES) UnmarshalText(text []byte) error {
-	switch string(text) { //nolint:gocritic
-	case "ICAROUS_TRACK_BAND_TYPE_NONE":
-		*e = ICAROUS_TRACK_BAND_TYPE_NONE
-		return nil
-	case "ICAROUS_TRACK_BAND_TYPE_NEAR":
-		*e = ICAROUS_TRACK_BAND_TYPE_NEAR
-		return nil
-	case "ICAROUS_TRACK_BAND_TYPE_RECOVERY":
-		*e = ICAROUS_TRACK_BAND_TYPE_RECOVERY
+	if rl, ok := reverseLabels_ICAROUS_TRACK_BAND_TYPES[string(text)]; ok {
+		*e = rl
 		return nil
 	}
 	return errors.New("invalid value")
@@ -135,11 +124,10 @@ func (e *ICAROUS_TRACK_BAND_TYPES) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e ICAROUS_TRACK_BAND_TYPES) String() string {
-	byts, err := e.MarshalText()
-	if err == nil {
-		return string(byts)
+	if l, ok := labels_ICAROUS_TRACK_BAND_TYPES[e]; ok {
+		return l
 	}
-	return strconv.FormatInt(int64(e), 10)
+	return "invalid value"
 }
 
 // icarous.xml

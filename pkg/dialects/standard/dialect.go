@@ -5452,7 +5452,7 @@ const (
 	MAV_DATA_STREAM_RC_CHANNELS MAV_DATA_STREAM = 3
 	// Enable ATTITUDE_CONTROLLER_OUTPUT, POSITION_CONTROLLER_OUTPUT, NAV_CONTROLLER_OUTPUT.
 	MAV_DATA_STREAM_RAW_CONTROLLER MAV_DATA_STREAM = 4
-	// Enable LOCAL_POSITION, GLOBAL_POSITION/GLOBAL_POSITION_INT messages.
+	// Enable LOCAL_POSITION, GLOBAL_POSITION_INT messages.
 	MAV_DATA_STREAM_POSITION MAV_DATA_STREAM = 6
 	// Dependent on the autopilot
 	MAV_DATA_STREAM_EXTRA1 MAV_DATA_STREAM = 10
@@ -10612,7 +10612,7 @@ func (*MessageParamSet) GetID() uint32 {
 	return 23
 }
 
-// The global position, as returned by the Global Positioning System (GPS). This is                NOT the global position estimate of the system, but rather a RAW sensor value. See message GLOBAL_POSITION for the global position estimate.
+// The global position, as returned by the Global Positioning System (GPS). This is                NOT the global position estimate of the system, but rather a RAW sensor value. See message GLOBAL_POSITION_INT for the global position estimate.
 type MessageGpsRawInt struct {
 	// Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.
 	TimeUsec uint64
@@ -10653,7 +10653,7 @@ func (*MessageGpsRawInt) GetID() uint32 {
 	return 24
 }
 
-// The positioning status, as reported by GPS. This message is intended to display status information about each satellite visible to the receiver. See message GLOBAL_POSITION for the global position estimate. This message can contain information for up to 20 satellites.
+// The positioning status, as reported by GPS. This message is intended to display status information about each satellite visible to the receiver. See message GLOBAL_POSITION_INT for the global position estimate. This message can contain information for up to 20 satellites.
 type MessageGpsStatus struct {
 	// Number of satellites visible
 	SatellitesVisible uint8
@@ -12482,7 +12482,7 @@ func (*MessageCameraTrigger) GetID() uint32 {
 	return 112
 }
 
-// The global position, as returned by the Global Positioning System (GPS). This is                 NOT the global position estimate of the sytem, but rather a RAW sensor value. See message GLOBAL_POSITION for the global position estimate.
+// The global position, as returned by the Global Positioning System (GPS). This is                 NOT the global position estimate of the sytem, but rather a RAW sensor value. See message GLOBAL_POSITION_INT for the global position estimate.
 type MessageHilGps struct {
 	// Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.
 	TimeUsec uint64
@@ -13324,7 +13324,7 @@ type MessageAutopilotVersion struct {
 	MiddlewareSwVersion uint32
 	// Operating system version number
 	OsSwVersion uint32
-	// HW / board version (last 8 bytes should be silicon ID, if any)
+	// HW / board version (last 8 bits should be silicon ID, if any). The first 16 bits of this field specify https://github.com/PX4/PX4-Bootloader/blob/master/board_types.txt
 	BoardVersion uint32
 	// Custom version field, commonly the first 8 bytes of the git hash. This is not an unique identifier, but should allow to identify the commit using the main version number even for very large code bases.
 	FlightCustomVersion [8]uint8
@@ -15113,7 +15113,7 @@ func (*MessageIsbdLinkStatus) GetID() uint32 {
 	return 335
 }
 
-// Configure cellular modems. This message is re-emitted as an acknowledgement by the modem. The message may also be explicitly requested using MAV_CMD_REQUEST_MESSAGE.
+// Configure cellular modems.        This message is re-emitted as an acknowledgement by the modem.        The message may also be explicitly requested using MAV_CMD_REQUEST_MESSAGE.
 type MessageCellularConfig struct {
 	// Enable/disable LTE. 0: setting unchanged, 1: disabled, 2: enabled. Current setting when sent back as a response.
 	EnableLte uint8

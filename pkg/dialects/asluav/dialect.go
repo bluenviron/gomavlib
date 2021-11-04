@@ -15944,7 +15944,7 @@ type MessageCommandIntStamped struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageCommandIntStamped) GetID() uint32 {
-	return 78
+	return 223
 }
 
 // Send a command with up to seven parameters to the MAV and additional metadata
@@ -15979,7 +15979,7 @@ type MessageCommandLongStamped struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageCommandLongStamped) GetID() uint32 {
-	return 79
+	return 224
 }
 
 // Voltage and current sensor data
@@ -15996,7 +15996,7 @@ type MessageSensPower struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageSensPower) GetID() uint32 {
-	return 201
+	return 8002
 }
 
 // Maximum Power Point Tracker (MPPT) sensor data for solar module power performance tracking
@@ -16031,7 +16031,7 @@ type MessageSensMppt struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageSensMppt) GetID() uint32 {
-	return 202
+	return 8003
 }
 
 // ASL-fixed-wing controller data
@@ -16090,7 +16090,7 @@ type MessageAslctrlData struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageAslctrlData) GetID() uint32 {
-	return 203
+	return 8004
 }
 
 // ASL-fixed-wing controller debug data
@@ -16121,7 +16121,7 @@ type MessageAslctrlDebug struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageAslctrlDebug) GetID() uint32 {
-	return 204
+	return 8005
 }
 
 // Extended state information for ASLUAVs
@@ -16138,7 +16138,7 @@ type MessageAsluavStatus struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageAsluavStatus) GetID() uint32 {
-	return 205
+	return 8006
 }
 
 // Extended EKF state estimates for ASLUAVs
@@ -16161,7 +16161,7 @@ type MessageEkfExt struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageEkfExt) GetID() uint32 {
-	return 206
+	return 8007
 }
 
 // Off-board controls/commands for ASLUAVs
@@ -16186,7 +16186,7 @@ type MessageAslObctrl struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageAslObctrl) GetID() uint32 {
-	return 207
+	return 8008
 }
 
 // Atmospheric sensors (temperature, humidity, ...)
@@ -16201,7 +16201,7 @@ type MessageSensAtmos struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageSensAtmos) GetID() uint32 {
-	return 208
+	return 8009
 }
 
 // Battery pack monitoring data for Li-Ion batteries
@@ -16240,7 +16240,7 @@ type MessageSensBatmon struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageSensBatmon) GetID() uint32 {
-	return 209
+	return 8010
 }
 
 // Fixed-wing soaring (i.e. thermal seeking) data
@@ -16299,7 +16299,7 @@ type MessageFwSoaringData struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageFwSoaringData) GetID() uint32 {
-	return 210
+	return 8011
 }
 
 // Monitoring of sensorpod status
@@ -16324,7 +16324,7 @@ type MessageSensorpodStatus struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageSensorpodStatus) GetID() uint32 {
-	return 211
+	return 8012
 }
 
 // Monitoring of power board status
@@ -16357,7 +16357,7 @@ type MessageSensPowerBoard struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageSensPowerBoard) GetID() uint32 {
-	return 212
+	return 8013
 }
 
 // Status of GSM modem (connected to onboard computer)
@@ -16380,7 +16380,7 @@ type MessageGsmLinkStatus struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageGsmLinkStatus) GetID() uint32 {
-	return 213
+	return 8014
 }
 
 // Status of the SatCom link
@@ -16405,7 +16405,7 @@ type MessageSatcomLinkStatus struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageSatcomLinkStatus) GetID() uint32 {
-	return 214
+	return 8015
 }
 
 // Calibrated airflow angle measurements
@@ -16424,5 +16424,5 @@ type MessageSensorAirflowAngles struct {
 
 // GetID implements the msg.Message interface.
 func (*MessageSensorAirflowAngles) GetID() uint32 {
-	return 215
+	return 8016
 }

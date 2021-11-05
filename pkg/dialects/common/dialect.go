@@ -2681,7 +2681,7 @@ func (e GIMBAL_DEVICE_FLAGS) String() string {
 	return "invalid value"
 }
 
-// Gimbal manager high level capability flags (bitmap). The first 16 bits are identical to the GIMBAL_DEVICE_CAP_FLAGS which are identical with GIMBAL_DEVICE_FLAGS. However, the gimbal manager does not need to copy the flags from the gimbal but can also enhance the capabilities and thus add flags.
+// Gimbal manager high level capability flags (bitmap). The first 16 bits are identical to the GIMBAL_DEVICE_CAP_FLAGS. However, the gimbal manager does not need to copy the flags from the gimbal but can also enhance the capabilities and thus add flags.
 type GIMBAL_MANAGER_CAP_FLAGS int
 
 const (
@@ -2774,7 +2774,7 @@ func (e GIMBAL_MANAGER_CAP_FLAGS) String() string {
 	return "invalid value"
 }
 
-// Flags for high level gimbal manager operation The first 16 bytes are identical to the GIMBAL_DEVICE_FLAGS.
+// Flags for high level gimbal manager operation The first 16 bits are identical to the GIMBAL_DEVICE_FLAGS.
 type GIMBAL_MANAGER_FLAGS int
 
 const (
@@ -14585,7 +14585,7 @@ func (*MessageGimbalDeviceSetAttitude) GetID() uint32 {
 	return 284
 }
 
-// Message reporting the status of a gimbal device. This message should be broadcasted by a gimbal device component. The angles encoded in the quaternion are in the global frame (roll: positive is rolling to the right, pitch: positive is pitching up, yaw is turn to the right). This message should be broadcast at a low regular rate (e.g. 10Hz).
+// Message reporting the status of a gimbal device. This message should be broadcasted by a gimbal device component. The angles encoded in the quaternion are relative to absolute North if the flag GIMBAL_DEVICE_FLAGS_YAW_LOCK is set (roll: positive is rolling to the right, pitch: positive is pitching up, yaw is turn to the right) or relative to the vehicle heading if the flag is not set. This message should be broadcast at a low regular rate (e.g. 10Hz).
 type MessageGimbalDeviceAttitudeStatus struct {
 	// System ID
 	TargetSystem uint8

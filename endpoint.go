@@ -13,7 +13,6 @@ type EndpointConf interface {
 type Endpoint interface {
 	// Conf returns the configuration used to initialize the endpoint
 	Conf() EndpointConf
-
 	isEndpoint()
 }
 

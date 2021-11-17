@@ -9896,13 +9896,22 @@ const (
 	FOCUS_TYPE_RANGE SET_FOCUS_TYPE = 2
 	// Focus value in metres. Note that there is no message to get the valid focus range of the camera, so this can type can only be used for cameras where the range is known (implying that this cannot reliably be used in a GCS for an arbitrary camera).
 	FOCUS_TYPE_METERS SET_FOCUS_TYPE = 3
+	// Focus automatically.
+	FOCUS_TYPE_AUTO SET_FOCUS_TYPE = 4
+	// Single auto focus. Mainly used for still pictures. Usually abbreviated as AF-S.
+	FOCUS_TYPE_AUTO_SINGLE SET_FOCUS_TYPE = 5
+	// Continuous auto focus. Mainly used for dynamic scenes. Abbreviated as AF-C.
+	FOCUS_TYPE_AUTO_CONTINUOUS SET_FOCUS_TYPE = 6
 )
 
 var labels_SET_FOCUS_TYPE = map[SET_FOCUS_TYPE]string{
-	FOCUS_TYPE_STEP:       "FOCUS_TYPE_STEP",
-	FOCUS_TYPE_CONTINUOUS: "FOCUS_TYPE_CONTINUOUS",
-	FOCUS_TYPE_RANGE:      "FOCUS_TYPE_RANGE",
-	FOCUS_TYPE_METERS:     "FOCUS_TYPE_METERS",
+	FOCUS_TYPE_STEP:            "FOCUS_TYPE_STEP",
+	FOCUS_TYPE_CONTINUOUS:      "FOCUS_TYPE_CONTINUOUS",
+	FOCUS_TYPE_RANGE:           "FOCUS_TYPE_RANGE",
+	FOCUS_TYPE_METERS:          "FOCUS_TYPE_METERS",
+	FOCUS_TYPE_AUTO:            "FOCUS_TYPE_AUTO",
+	FOCUS_TYPE_AUTO_SINGLE:     "FOCUS_TYPE_AUTO_SINGLE",
+	FOCUS_TYPE_AUTO_CONTINUOUS: "FOCUS_TYPE_AUTO_CONTINUOUS",
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -9914,10 +9923,13 @@ func (e SET_FOCUS_TYPE) MarshalText() ([]byte, error) {
 }
 
 var reverseLabels_SET_FOCUS_TYPE = map[string]SET_FOCUS_TYPE{
-	"FOCUS_TYPE_STEP":       FOCUS_TYPE_STEP,
-	"FOCUS_TYPE_CONTINUOUS": FOCUS_TYPE_CONTINUOUS,
-	"FOCUS_TYPE_RANGE":      FOCUS_TYPE_RANGE,
-	"FOCUS_TYPE_METERS":     FOCUS_TYPE_METERS,
+	"FOCUS_TYPE_STEP":            FOCUS_TYPE_STEP,
+	"FOCUS_TYPE_CONTINUOUS":      FOCUS_TYPE_CONTINUOUS,
+	"FOCUS_TYPE_RANGE":           FOCUS_TYPE_RANGE,
+	"FOCUS_TYPE_METERS":          FOCUS_TYPE_METERS,
+	"FOCUS_TYPE_AUTO":            FOCUS_TYPE_AUTO,
+	"FOCUS_TYPE_AUTO_SINGLE":     FOCUS_TYPE_AUTO_SINGLE,
+	"FOCUS_TYPE_AUTO_CONTINUOUS": FOCUS_TYPE_AUTO_CONTINUOUS,
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.

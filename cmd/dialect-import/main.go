@@ -52,13 +52,17 @@ var dial = &dialect.Dialect{ {{.Version}}, []msg.Message{
 } }
 
 {{ range .Enums }}
-// {{ .Description }}
+{{- range .Description }}
+// {{ . }}
+{{- end }}
 type {{ .Name }} int
 
 const (
 {{- $pn := .Name }}
 {{- range .Values }}
-    // {{ .Description }}
+{{- range .Description }}
+    // {{ . }}
+{{- end }}
     {{ .Name }} {{ $pn }} = {{ .Value }}
 {{- end }}
 )
@@ -106,10 +110,14 @@ func (e {{ .Name }}) String() string {
 // {{ .Name }}
 
 {{ range .Messages }}
-// {{ .Description }}
+{{- range .Description }}
+// {{ . }}
+{{- end }}
 type Message{{ .Name }} struct {
 {{- range .Fields }}
-    // {{ .Description }}
+{{- range .Description }}
+    // {{ . }}
+{{- end }}
     {{ .Line }}
 {{- end }}
 }
@@ -155,30 +163,40 @@ func dialectMsgDefToGo(in string) string {
 	return strings.ToUpper(in[:1]) + in[1:]
 }
 
-func filterDesc(in string) string {
-	return strings.ReplaceAll(in, "\n", "")
+func parseDescription(in string) []string {
+	lines := strings.Split(in, "\n")
+
+	for i := range lines {
+		lines[i] = strings.Trim(lines[i], " ")
+	}
+
+	if lines[len(lines)-1] == "" {
+		lines = lines[:len(lines)-1]
+	}
+
+	return lines
 }
 
 type outEnumValue struct {
 	Value       string
 	Name        string
-	Description string
+	Description []string
 }
 
 type outEnum struct {
 	Name        string
-	Description string
+	Description []string
 	Values      []*outEnumValue
 }
 
 type outField struct {
-	Description string
+	Description []string
 	Line        string
 }
 
 type outMessage struct {
 	Name        string
-	Description string
+	Description []string
 	ID          int
 	Fields      []*outField
 }
@@ -245,13 +263,13 @@ func definitionProcess(
 	for _, enum := range def.Enums {
 		oute := &outEnum{
 			Name:        enum.Name,
-			Description: filterDesc(enum.Description),
+			Description: parseDescription(enum.Description),
 		}
 		for _, val := range enum.Values {
 			oute.Values = append(oute.Values, &outEnumValue{
 				Value:       val.Value,
 				Name:        val.Name,
-				Description: filterDesc(val.Description),
+				Description: parseDescription(val.Description),
 			})
 		}
 		outDef.Enums = append(outDef.Enums, oute)
@@ -311,7 +329,7 @@ func messageProcess(msg *definitionMessage) (*outMessage, error) {
 
 	outMsg := &outMessage{
 		Name:        dialectMsgDefToGo(msg.Name),
-		Description: filterDesc(msg.Description),
+		Description: parseDescription(msg.Description),
 		ID:          msg.ID,
 	}
 
@@ -328,7 +346,7 @@ func messageProcess(msg *definitionMessage) (*outMessage, error) {
 
 func fieldProcess(field *dialectField) (*outField, error) {
 	outF := &outField{
-		Description: filterDesc(field.Description),
+		Description: parseDescription(field.Description),
 	}
 	tags := make(map[string]string)
 

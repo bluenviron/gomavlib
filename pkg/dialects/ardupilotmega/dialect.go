@@ -307,26 +307,17 @@ var dial = &dialect.Dialect{3, []msg.Message{
 	&MessageMcuStatus{},
 }}
 
-//
 type ACCELCAL_VEHICLE_POS int
 
 const (
-	//
-	ACCELCAL_VEHICLE_POS_LEVEL ACCELCAL_VEHICLE_POS = 1
-	//
-	ACCELCAL_VEHICLE_POS_LEFT ACCELCAL_VEHICLE_POS = 2
-	//
-	ACCELCAL_VEHICLE_POS_RIGHT ACCELCAL_VEHICLE_POS = 3
-	//
+	ACCELCAL_VEHICLE_POS_LEVEL    ACCELCAL_VEHICLE_POS = 1
+	ACCELCAL_VEHICLE_POS_LEFT     ACCELCAL_VEHICLE_POS = 2
+	ACCELCAL_VEHICLE_POS_RIGHT    ACCELCAL_VEHICLE_POS = 3
 	ACCELCAL_VEHICLE_POS_NOSEDOWN ACCELCAL_VEHICLE_POS = 4
-	//
-	ACCELCAL_VEHICLE_POS_NOSEUP ACCELCAL_VEHICLE_POS = 5
-	//
-	ACCELCAL_VEHICLE_POS_BACK ACCELCAL_VEHICLE_POS = 6
-	//
-	ACCELCAL_VEHICLE_POS_SUCCESS ACCELCAL_VEHICLE_POS = 16777215
-	//
-	ACCELCAL_VEHICLE_POS_FAILED ACCELCAL_VEHICLE_POS = 16777216
+	ACCELCAL_VEHICLE_POS_NOSEUP   ACCELCAL_VEHICLE_POS = 5
+	ACCELCAL_VEHICLE_POS_BACK     ACCELCAL_VEHICLE_POS = 6
+	ACCELCAL_VEHICLE_POS_SUCCESS  ACCELCAL_VEHICLE_POS = 16777215
+	ACCELCAL_VEHICLE_POS_FAILED   ACCELCAL_VEHICLE_POS = 16777216
 )
 
 var labels_ACCELCAL_VEHICLE_POS = map[ACCELCAL_VEHICLE_POS]string{
@@ -655,46 +646,26 @@ func (e ADSB_ALTITUDE_TYPE) String() string {
 type ADSB_EMITTER_TYPE int
 
 const (
-	//
-	ADSB_EMITTER_TYPE_NO_INFO ADSB_EMITTER_TYPE = 0
-	//
-	ADSB_EMITTER_TYPE_LIGHT ADSB_EMITTER_TYPE = 1
-	//
-	ADSB_EMITTER_TYPE_SMALL ADSB_EMITTER_TYPE = 2
-	//
-	ADSB_EMITTER_TYPE_LARGE ADSB_EMITTER_TYPE = 3
-	//
+	ADSB_EMITTER_TYPE_NO_INFO           ADSB_EMITTER_TYPE = 0
+	ADSB_EMITTER_TYPE_LIGHT             ADSB_EMITTER_TYPE = 1
+	ADSB_EMITTER_TYPE_SMALL             ADSB_EMITTER_TYPE = 2
+	ADSB_EMITTER_TYPE_LARGE             ADSB_EMITTER_TYPE = 3
 	ADSB_EMITTER_TYPE_HIGH_VORTEX_LARGE ADSB_EMITTER_TYPE = 4
-	//
-	ADSB_EMITTER_TYPE_HEAVY ADSB_EMITTER_TYPE = 5
-	//
-	ADSB_EMITTER_TYPE_HIGHLY_MANUV ADSB_EMITTER_TYPE = 6
-	//
-	ADSB_EMITTER_TYPE_ROTOCRAFT ADSB_EMITTER_TYPE = 7
-	//
-	ADSB_EMITTER_TYPE_UNASSIGNED ADSB_EMITTER_TYPE = 8
-	//
-	ADSB_EMITTER_TYPE_GLIDER ADSB_EMITTER_TYPE = 9
-	//
-	ADSB_EMITTER_TYPE_LIGHTER_AIR ADSB_EMITTER_TYPE = 10
-	//
-	ADSB_EMITTER_TYPE_PARACHUTE ADSB_EMITTER_TYPE = 11
-	//
-	ADSB_EMITTER_TYPE_ULTRA_LIGHT ADSB_EMITTER_TYPE = 12
-	//
-	ADSB_EMITTER_TYPE_UNASSIGNED2 ADSB_EMITTER_TYPE = 13
-	//
-	ADSB_EMITTER_TYPE_UAV ADSB_EMITTER_TYPE = 14
-	//
-	ADSB_EMITTER_TYPE_SPACE ADSB_EMITTER_TYPE = 15
-	//
-	ADSB_EMITTER_TYPE_UNASSGINED3 ADSB_EMITTER_TYPE = 16
-	//
+	ADSB_EMITTER_TYPE_HEAVY             ADSB_EMITTER_TYPE = 5
+	ADSB_EMITTER_TYPE_HIGHLY_MANUV      ADSB_EMITTER_TYPE = 6
+	ADSB_EMITTER_TYPE_ROTOCRAFT         ADSB_EMITTER_TYPE = 7
+	ADSB_EMITTER_TYPE_UNASSIGNED        ADSB_EMITTER_TYPE = 8
+	ADSB_EMITTER_TYPE_GLIDER            ADSB_EMITTER_TYPE = 9
+	ADSB_EMITTER_TYPE_LIGHTER_AIR       ADSB_EMITTER_TYPE = 10
+	ADSB_EMITTER_TYPE_PARACHUTE         ADSB_EMITTER_TYPE = 11
+	ADSB_EMITTER_TYPE_ULTRA_LIGHT       ADSB_EMITTER_TYPE = 12
+	ADSB_EMITTER_TYPE_UNASSIGNED2       ADSB_EMITTER_TYPE = 13
+	ADSB_EMITTER_TYPE_UAV               ADSB_EMITTER_TYPE = 14
+	ADSB_EMITTER_TYPE_SPACE             ADSB_EMITTER_TYPE = 15
+	ADSB_EMITTER_TYPE_UNASSGINED3       ADSB_EMITTER_TYPE = 16
 	ADSB_EMITTER_TYPE_EMERGENCY_SURFACE ADSB_EMITTER_TYPE = 17
-	//
-	ADSB_EMITTER_TYPE_SERVICE_SURFACE ADSB_EMITTER_TYPE = 18
-	//
-	ADSB_EMITTER_TYPE_POINT_OBSTACLE ADSB_EMITTER_TYPE = 19
+	ADSB_EMITTER_TYPE_SERVICE_SURFACE   ADSB_EMITTER_TYPE = 18
+	ADSB_EMITTER_TYPE_POINT_OBSTACLE    ADSB_EMITTER_TYPE = 19
 )
 
 var labels_ADSB_EMITTER_TYPE = map[ADSB_EMITTER_TYPE]string{
@@ -772,26 +743,16 @@ func (e ADSB_EMITTER_TYPE) String() string {
 type ADSB_FLAGS int
 
 const (
-	//
-	ADSB_FLAGS_VALID_COORDS ADSB_FLAGS = 1
-	//
-	ADSB_FLAGS_VALID_ALTITUDE ADSB_FLAGS = 2
-	//
-	ADSB_FLAGS_VALID_HEADING ADSB_FLAGS = 4
-	//
-	ADSB_FLAGS_VALID_VELOCITY ADSB_FLAGS = 8
-	//
-	ADSB_FLAGS_VALID_CALLSIGN ADSB_FLAGS = 16
-	//
-	ADSB_FLAGS_VALID_SQUAWK ADSB_FLAGS = 32
-	//
-	ADSB_FLAGS_SIMULATED ADSB_FLAGS = 64
-	//
+	ADSB_FLAGS_VALID_COORDS            ADSB_FLAGS = 1
+	ADSB_FLAGS_VALID_ALTITUDE          ADSB_FLAGS = 2
+	ADSB_FLAGS_VALID_HEADING           ADSB_FLAGS = 4
+	ADSB_FLAGS_VALID_VELOCITY          ADSB_FLAGS = 8
+	ADSB_FLAGS_VALID_CALLSIGN          ADSB_FLAGS = 16
+	ADSB_FLAGS_VALID_SQUAWK            ADSB_FLAGS = 32
+	ADSB_FLAGS_SIMULATED               ADSB_FLAGS = 64
 	ADSB_FLAGS_VERTICAL_VELOCITY_VALID ADSB_FLAGS = 128
-	//
-	ADSB_FLAGS_BARO_VALID ADSB_FLAGS = 256
-	//
-	ADSB_FLAGS_SOURCE_UAT ADSB_FLAGS = 32768
+	ADSB_FLAGS_BARO_VALID              ADSB_FLAGS = 256
+	ADSB_FLAGS_SOURCE_UAT              ADSB_FLAGS = 32768
 )
 
 var labels_ADSB_FLAGS = map[ADSB_FLAGS]string{
@@ -851,18 +812,14 @@ type AIS_FLAGS int
 const (
 	// 1 = Position accuracy less than 10m, 0 = position accuracy greater than 10m.
 	AIS_FLAGS_POSITION_ACCURACY AIS_FLAGS = 1
-	//
-	AIS_FLAGS_VALID_COG AIS_FLAGS = 2
-	//
-	AIS_FLAGS_VALID_VELOCITY AIS_FLAGS = 4
+	AIS_FLAGS_VALID_COG         AIS_FLAGS = 2
+	AIS_FLAGS_VALID_VELOCITY    AIS_FLAGS = 4
 	// 1 = Velocity over 52.5765m/s (102.2 knots)
-	AIS_FLAGS_HIGH_VELOCITY AIS_FLAGS = 8
-	//
+	AIS_FLAGS_HIGH_VELOCITY   AIS_FLAGS = 8
 	AIS_FLAGS_VALID_TURN_RATE AIS_FLAGS = 16
 	// Only the sign of the returned turn rate value is valid, either greater than 5deg/30s or less than -5deg/30s
 	AIS_FLAGS_TURN_RATE_SIGN_ONLY AIS_FLAGS = 32
-	//
-	AIS_FLAGS_VALID_DIMENSIONS AIS_FLAGS = 64
+	AIS_FLAGS_VALID_DIMENSIONS    AIS_FLAGS = 64
 	// Distance to bow is larger than 511m
 	AIS_FLAGS_LARGE_BOW_DIMENSION AIS_FLAGS = 128
 	// Distance to stern is larger than 511m
@@ -871,10 +828,8 @@ const (
 	AIS_FLAGS_LARGE_PORT_DIMENSION AIS_FLAGS = 512
 	// Distance to starboard side is larger than 63m
 	AIS_FLAGS_LARGE_STARBOARD_DIMENSION AIS_FLAGS = 1024
-	//
-	AIS_FLAGS_VALID_CALLSIGN AIS_FLAGS = 2048
-	//
-	AIS_FLAGS_VALID_NAME AIS_FLAGS = 4096
+	AIS_FLAGS_VALID_CALLSIGN            AIS_FLAGS = 2048
+	AIS_FLAGS_VALID_NAME                AIS_FLAGS = 4096
 )
 
 var labels_AIS_FLAGS = map[AIS_FLAGS]string{
@@ -939,33 +894,20 @@ type AIS_NAV_STATUS int
 
 const (
 	// Under way using engine.
-	UNDER_WAY AIS_NAV_STATUS = 0
-	//
-	AIS_NAV_ANCHORED AIS_NAV_STATUS = 1
-	//
-	AIS_NAV_UN_COMMANDED AIS_NAV_STATUS = 2
-	//
+	UNDER_WAY                           AIS_NAV_STATUS = 0
+	AIS_NAV_ANCHORED                    AIS_NAV_STATUS = 1
+	AIS_NAV_UN_COMMANDED                AIS_NAV_STATUS = 2
 	AIS_NAV_RESTRICTED_MANOEUVERABILITY AIS_NAV_STATUS = 3
-	//
-	AIS_NAV_DRAUGHT_CONSTRAINED AIS_NAV_STATUS = 4
-	//
-	AIS_NAV_MOORED AIS_NAV_STATUS = 5
-	//
-	AIS_NAV_AGROUND AIS_NAV_STATUS = 6
-	//
-	AIS_NAV_FISHING AIS_NAV_STATUS = 7
-	//
-	AIS_NAV_SAILING AIS_NAV_STATUS = 8
-	//
-	AIS_NAV_RESERVED_HSC AIS_NAV_STATUS = 9
-	//
-	AIS_NAV_RESERVED_WIG AIS_NAV_STATUS = 10
-	//
-	AIS_NAV_RESERVED_1 AIS_NAV_STATUS = 11
-	//
-	AIS_NAV_RESERVED_2 AIS_NAV_STATUS = 12
-	//
-	AIS_NAV_RESERVED_3 AIS_NAV_STATUS = 13
+	AIS_NAV_DRAUGHT_CONSTRAINED         AIS_NAV_STATUS = 4
+	AIS_NAV_MOORED                      AIS_NAV_STATUS = 5
+	AIS_NAV_AGROUND                     AIS_NAV_STATUS = 6
+	AIS_NAV_FISHING                     AIS_NAV_STATUS = 7
+	AIS_NAV_SAILING                     AIS_NAV_STATUS = 8
+	AIS_NAV_RESERVED_HSC                AIS_NAV_STATUS = 9
+	AIS_NAV_RESERVED_WIG                AIS_NAV_STATUS = 10
+	AIS_NAV_RESERVED_1                  AIS_NAV_STATUS = 11
+	AIS_NAV_RESERVED_2                  AIS_NAV_STATUS = 12
+	AIS_NAV_RESERVED_3                  AIS_NAV_STATUS = 13
 	// Search And Rescue Transponder.
 	AIS_NAV_AIS_SART AIS_NAV_STATUS = 14
 	// Not available (default).
@@ -1040,205 +982,113 @@ type AIS_TYPE int
 
 const (
 	// Not available (default).
-	AIS_TYPE_UNKNOWN AIS_TYPE = 0
-	//
-	AIS_TYPE_RESERVED_1 AIS_TYPE = 1
-	//
-	AIS_TYPE_RESERVED_2 AIS_TYPE = 2
-	//
-	AIS_TYPE_RESERVED_3 AIS_TYPE = 3
-	//
-	AIS_TYPE_RESERVED_4 AIS_TYPE = 4
-	//
-	AIS_TYPE_RESERVED_5 AIS_TYPE = 5
-	//
-	AIS_TYPE_RESERVED_6 AIS_TYPE = 6
-	//
-	AIS_TYPE_RESERVED_7 AIS_TYPE = 7
-	//
-	AIS_TYPE_RESERVED_8 AIS_TYPE = 8
-	//
-	AIS_TYPE_RESERVED_9 AIS_TYPE = 9
-	//
+	AIS_TYPE_UNKNOWN     AIS_TYPE = 0
+	AIS_TYPE_RESERVED_1  AIS_TYPE = 1
+	AIS_TYPE_RESERVED_2  AIS_TYPE = 2
+	AIS_TYPE_RESERVED_3  AIS_TYPE = 3
+	AIS_TYPE_RESERVED_4  AIS_TYPE = 4
+	AIS_TYPE_RESERVED_5  AIS_TYPE = 5
+	AIS_TYPE_RESERVED_6  AIS_TYPE = 6
+	AIS_TYPE_RESERVED_7  AIS_TYPE = 7
+	AIS_TYPE_RESERVED_8  AIS_TYPE = 8
+	AIS_TYPE_RESERVED_9  AIS_TYPE = 9
 	AIS_TYPE_RESERVED_10 AIS_TYPE = 10
-	//
 	AIS_TYPE_RESERVED_11 AIS_TYPE = 11
-	//
 	AIS_TYPE_RESERVED_12 AIS_TYPE = 12
-	//
 	AIS_TYPE_RESERVED_13 AIS_TYPE = 13
-	//
 	AIS_TYPE_RESERVED_14 AIS_TYPE = 14
-	//
 	AIS_TYPE_RESERVED_15 AIS_TYPE = 15
-	//
 	AIS_TYPE_RESERVED_16 AIS_TYPE = 16
-	//
 	AIS_TYPE_RESERVED_17 AIS_TYPE = 17
-	//
 	AIS_TYPE_RESERVED_18 AIS_TYPE = 18
-	//
 	AIS_TYPE_RESERVED_19 AIS_TYPE = 19
 	// Wing In Ground effect.
-	AIS_TYPE_WIG AIS_TYPE = 20
-	//
+	AIS_TYPE_WIG             AIS_TYPE = 20
 	AIS_TYPE_WIG_HAZARDOUS_A AIS_TYPE = 21
-	//
 	AIS_TYPE_WIG_HAZARDOUS_B AIS_TYPE = 22
-	//
 	AIS_TYPE_WIG_HAZARDOUS_C AIS_TYPE = 23
-	//
 	AIS_TYPE_WIG_HAZARDOUS_D AIS_TYPE = 24
-	//
-	AIS_TYPE_WIG_RESERVED_1 AIS_TYPE = 25
-	//
-	AIS_TYPE_WIG_RESERVED_2 AIS_TYPE = 26
-	//
-	AIS_TYPE_WIG_RESERVED_3 AIS_TYPE = 27
-	//
-	AIS_TYPE_WIG_RESERVED_4 AIS_TYPE = 28
-	//
-	AIS_TYPE_WIG_RESERVED_5 AIS_TYPE = 29
-	//
-	AIS_TYPE_FISHING AIS_TYPE = 30
-	//
-	AIS_TYPE_TOWING AIS_TYPE = 31
+	AIS_TYPE_WIG_RESERVED_1  AIS_TYPE = 25
+	AIS_TYPE_WIG_RESERVED_2  AIS_TYPE = 26
+	AIS_TYPE_WIG_RESERVED_3  AIS_TYPE = 27
+	AIS_TYPE_WIG_RESERVED_4  AIS_TYPE = 28
+	AIS_TYPE_WIG_RESERVED_5  AIS_TYPE = 29
+	AIS_TYPE_FISHING         AIS_TYPE = 30
+	AIS_TYPE_TOWING          AIS_TYPE = 31
 	// Towing: length exceeds 200m or breadth exceeds 25m.
 	AIS_TYPE_TOWING_LARGE AIS_TYPE = 32
 	// Dredging or other underwater ops.
-	AIS_TYPE_DREDGING AIS_TYPE = 33
-	//
-	AIS_TYPE_DIVING AIS_TYPE = 34
-	//
-	AIS_TYPE_MILITARY AIS_TYPE = 35
-	//
-	AIS_TYPE_SAILING AIS_TYPE = 36
-	//
-	AIS_TYPE_PLEASURE AIS_TYPE = 37
-	//
+	AIS_TYPE_DREDGING    AIS_TYPE = 33
+	AIS_TYPE_DIVING      AIS_TYPE = 34
+	AIS_TYPE_MILITARY    AIS_TYPE = 35
+	AIS_TYPE_SAILING     AIS_TYPE = 36
+	AIS_TYPE_PLEASURE    AIS_TYPE = 37
 	AIS_TYPE_RESERVED_20 AIS_TYPE = 38
-	//
 	AIS_TYPE_RESERVED_21 AIS_TYPE = 39
 	// High Speed Craft.
-	AIS_TYPE_HSC AIS_TYPE = 40
-	//
+	AIS_TYPE_HSC             AIS_TYPE = 40
 	AIS_TYPE_HSC_HAZARDOUS_A AIS_TYPE = 41
-	//
 	AIS_TYPE_HSC_HAZARDOUS_B AIS_TYPE = 42
-	//
 	AIS_TYPE_HSC_HAZARDOUS_C AIS_TYPE = 43
-	//
 	AIS_TYPE_HSC_HAZARDOUS_D AIS_TYPE = 44
-	//
-	AIS_TYPE_HSC_RESERVED_1 AIS_TYPE = 45
-	//
-	AIS_TYPE_HSC_RESERVED_2 AIS_TYPE = 46
-	//
-	AIS_TYPE_HSC_RESERVED_3 AIS_TYPE = 47
-	//
-	AIS_TYPE_HSC_RESERVED_4 AIS_TYPE = 48
-	//
-	AIS_TYPE_HSC_UNKNOWN AIS_TYPE = 49
-	//
-	AIS_TYPE_PILOT AIS_TYPE = 50
+	AIS_TYPE_HSC_RESERVED_1  AIS_TYPE = 45
+	AIS_TYPE_HSC_RESERVED_2  AIS_TYPE = 46
+	AIS_TYPE_HSC_RESERVED_3  AIS_TYPE = 47
+	AIS_TYPE_HSC_RESERVED_4  AIS_TYPE = 48
+	AIS_TYPE_HSC_UNKNOWN     AIS_TYPE = 49
+	AIS_TYPE_PILOT           AIS_TYPE = 50
 	// Search And Rescue vessel.
-	AIS_TYPE_SAR AIS_TYPE = 51
-	//
-	AIS_TYPE_TUG AIS_TYPE = 52
-	//
+	AIS_TYPE_SAR         AIS_TYPE = 51
+	AIS_TYPE_TUG         AIS_TYPE = 52
 	AIS_TYPE_PORT_TENDER AIS_TYPE = 53
 	// Anti-pollution equipment.
-	AIS_TYPE_ANTI_POLLUTION AIS_TYPE = 54
-	//
-	AIS_TYPE_LAW_ENFORCEMENT AIS_TYPE = 55
-	//
-	AIS_TYPE_SPARE_LOCAL_1 AIS_TYPE = 56
-	//
-	AIS_TYPE_SPARE_LOCAL_2 AIS_TYPE = 57
-	//
+	AIS_TYPE_ANTI_POLLUTION    AIS_TYPE = 54
+	AIS_TYPE_LAW_ENFORCEMENT   AIS_TYPE = 55
+	AIS_TYPE_SPARE_LOCAL_1     AIS_TYPE = 56
+	AIS_TYPE_SPARE_LOCAL_2     AIS_TYPE = 57
 	AIS_TYPE_MEDICAL_TRANSPORT AIS_TYPE = 58
 	// Noncombatant ship according to RR Resolution No. 18.
-	AIS_TYPE_NONECOMBATANT AIS_TYPE = 59
-	//
-	AIS_TYPE_PASSENGER AIS_TYPE = 60
-	//
-	AIS_TYPE_PASSENGER_HAZARDOUS_A AIS_TYPE = 61
-	//
-	AIS_TYPE_PASSENGER_HAZARDOUS_B AIS_TYPE = 62
-	//
+	AIS_TYPE_NONECOMBATANT                  AIS_TYPE = 59
+	AIS_TYPE_PASSENGER                      AIS_TYPE = 60
+	AIS_TYPE_PASSENGER_HAZARDOUS_A          AIS_TYPE = 61
+	AIS_TYPE_PASSENGER_HAZARDOUS_B          AIS_TYPE = 62
 	AIS_TYPE_AIS_TYPE_PASSENGER_HAZARDOUS_C AIS_TYPE = 63
-	//
-	AIS_TYPE_PASSENGER_HAZARDOUS_D AIS_TYPE = 64
-	//
-	AIS_TYPE_PASSENGER_RESERVED_1 AIS_TYPE = 65
-	//
-	AIS_TYPE_PASSENGER_RESERVED_2 AIS_TYPE = 66
-	//
-	AIS_TYPE_PASSENGER_RESERVED_3 AIS_TYPE = 67
-	//
-	AIS_TYPE_AIS_TYPE_PASSENGER_RESERVED_4 AIS_TYPE = 68
-	//
-	AIS_TYPE_PASSENGER_UNKNOWN AIS_TYPE = 69
-	//
-	AIS_TYPE_CARGO AIS_TYPE = 70
-	//
-	AIS_TYPE_CARGO_HAZARDOUS_A AIS_TYPE = 71
-	//
-	AIS_TYPE_CARGO_HAZARDOUS_B AIS_TYPE = 72
-	//
-	AIS_TYPE_CARGO_HAZARDOUS_C AIS_TYPE = 73
-	//
-	AIS_TYPE_CARGO_HAZARDOUS_D AIS_TYPE = 74
-	//
-	AIS_TYPE_CARGO_RESERVED_1 AIS_TYPE = 75
-	//
-	AIS_TYPE_CARGO_RESERVED_2 AIS_TYPE = 76
-	//
-	AIS_TYPE_CARGO_RESERVED_3 AIS_TYPE = 77
-	//
-	AIS_TYPE_CARGO_RESERVED_4 AIS_TYPE = 78
-	//
-	AIS_TYPE_CARGO_UNKNOWN AIS_TYPE = 79
-	//
-	AIS_TYPE_TANKER AIS_TYPE = 80
-	//
-	AIS_TYPE_TANKER_HAZARDOUS_A AIS_TYPE = 81
-	//
-	AIS_TYPE_TANKER_HAZARDOUS_B AIS_TYPE = 82
-	//
-	AIS_TYPE_TANKER_HAZARDOUS_C AIS_TYPE = 83
-	//
-	AIS_TYPE_TANKER_HAZARDOUS_D AIS_TYPE = 84
-	//
-	AIS_TYPE_TANKER_RESERVED_1 AIS_TYPE = 85
-	//
-	AIS_TYPE_TANKER_RESERVED_2 AIS_TYPE = 86
-	//
-	AIS_TYPE_TANKER_RESERVED_3 AIS_TYPE = 87
-	//
-	AIS_TYPE_TANKER_RESERVED_4 AIS_TYPE = 88
-	//
-	AIS_TYPE_TANKER_UNKNOWN AIS_TYPE = 89
-	//
-	AIS_TYPE_OTHER AIS_TYPE = 90
-	//
-	AIS_TYPE_OTHER_HAZARDOUS_A AIS_TYPE = 91
-	//
-	AIS_TYPE_OTHER_HAZARDOUS_B AIS_TYPE = 92
-	//
-	AIS_TYPE_OTHER_HAZARDOUS_C AIS_TYPE = 93
-	//
-	AIS_TYPE_OTHER_HAZARDOUS_D AIS_TYPE = 94
-	//
-	AIS_TYPE_OTHER_RESERVED_1 AIS_TYPE = 95
-	//
-	AIS_TYPE_OTHER_RESERVED_2 AIS_TYPE = 96
-	//
-	AIS_TYPE_OTHER_RESERVED_3 AIS_TYPE = 97
-	//
-	AIS_TYPE_OTHER_RESERVED_4 AIS_TYPE = 98
-	//
-	AIS_TYPE_OTHER_UNKNOWN AIS_TYPE = 99
+	AIS_TYPE_PASSENGER_HAZARDOUS_D          AIS_TYPE = 64
+	AIS_TYPE_PASSENGER_RESERVED_1           AIS_TYPE = 65
+	AIS_TYPE_PASSENGER_RESERVED_2           AIS_TYPE = 66
+	AIS_TYPE_PASSENGER_RESERVED_3           AIS_TYPE = 67
+	AIS_TYPE_AIS_TYPE_PASSENGER_RESERVED_4  AIS_TYPE = 68
+	AIS_TYPE_PASSENGER_UNKNOWN              AIS_TYPE = 69
+	AIS_TYPE_CARGO                          AIS_TYPE = 70
+	AIS_TYPE_CARGO_HAZARDOUS_A              AIS_TYPE = 71
+	AIS_TYPE_CARGO_HAZARDOUS_B              AIS_TYPE = 72
+	AIS_TYPE_CARGO_HAZARDOUS_C              AIS_TYPE = 73
+	AIS_TYPE_CARGO_HAZARDOUS_D              AIS_TYPE = 74
+	AIS_TYPE_CARGO_RESERVED_1               AIS_TYPE = 75
+	AIS_TYPE_CARGO_RESERVED_2               AIS_TYPE = 76
+	AIS_TYPE_CARGO_RESERVED_3               AIS_TYPE = 77
+	AIS_TYPE_CARGO_RESERVED_4               AIS_TYPE = 78
+	AIS_TYPE_CARGO_UNKNOWN                  AIS_TYPE = 79
+	AIS_TYPE_TANKER                         AIS_TYPE = 80
+	AIS_TYPE_TANKER_HAZARDOUS_A             AIS_TYPE = 81
+	AIS_TYPE_TANKER_HAZARDOUS_B             AIS_TYPE = 82
+	AIS_TYPE_TANKER_HAZARDOUS_C             AIS_TYPE = 83
+	AIS_TYPE_TANKER_HAZARDOUS_D             AIS_TYPE = 84
+	AIS_TYPE_TANKER_RESERVED_1              AIS_TYPE = 85
+	AIS_TYPE_TANKER_RESERVED_2              AIS_TYPE = 86
+	AIS_TYPE_TANKER_RESERVED_3              AIS_TYPE = 87
+	AIS_TYPE_TANKER_RESERVED_4              AIS_TYPE = 88
+	AIS_TYPE_TANKER_UNKNOWN                 AIS_TYPE = 89
+	AIS_TYPE_OTHER                          AIS_TYPE = 90
+	AIS_TYPE_OTHER_HAZARDOUS_A              AIS_TYPE = 91
+	AIS_TYPE_OTHER_HAZARDOUS_B              AIS_TYPE = 92
+	AIS_TYPE_OTHER_HAZARDOUS_C              AIS_TYPE = 93
+	AIS_TYPE_OTHER_HAZARDOUS_D              AIS_TYPE = 94
+	AIS_TYPE_OTHER_RESERVED_1               AIS_TYPE = 95
+	AIS_TYPE_OTHER_RESERVED_2               AIS_TYPE = 96
+	AIS_TYPE_OTHER_RESERVED_3               AIS_TYPE = 97
+	AIS_TYPE_OTHER_RESERVED_4               AIS_TYPE = 98
+	AIS_TYPE_OTHER_UNKNOWN                  AIS_TYPE = 99
 )
 
 var labels_AIS_TYPE = map[AIS_TYPE]string{
@@ -1618,7 +1468,6 @@ func (e CAMERA_CAP_FLAGS) String() string {
 	return "invalid value"
 }
 
-//
 type CAMERA_FEEDBACK_FLAGS int
 
 const (
@@ -1724,7 +1573,6 @@ func (e CAMERA_MODE) String() string {
 	return "invalid value"
 }
 
-//
 type CAMERA_STATUS_TYPES int
 
 const (
@@ -2107,16 +1955,11 @@ func (e CELLULAR_NETWORK_FAILED_REASON) String() string {
 type CELLULAR_NETWORK_RADIO_TYPE int
 
 const (
-	//
-	CELLULAR_NETWORK_RADIO_TYPE_NONE CELLULAR_NETWORK_RADIO_TYPE = 0
-	//
-	CELLULAR_NETWORK_RADIO_TYPE_GSM CELLULAR_NETWORK_RADIO_TYPE = 1
-	//
-	CELLULAR_NETWORK_RADIO_TYPE_CDMA CELLULAR_NETWORK_RADIO_TYPE = 2
-	//
+	CELLULAR_NETWORK_RADIO_TYPE_NONE  CELLULAR_NETWORK_RADIO_TYPE = 0
+	CELLULAR_NETWORK_RADIO_TYPE_GSM   CELLULAR_NETWORK_RADIO_TYPE = 1
+	CELLULAR_NETWORK_RADIO_TYPE_CDMA  CELLULAR_NETWORK_RADIO_TYPE = 2
 	CELLULAR_NETWORK_RADIO_TYPE_WCDMA CELLULAR_NETWORK_RADIO_TYPE = 3
-	//
-	CELLULAR_NETWORK_RADIO_TYPE_LTE CELLULAR_NETWORK_RADIO_TYPE = 4
+	CELLULAR_NETWORK_RADIO_TYPE_LTE   CELLULAR_NETWORK_RADIO_TYPE = 4
 )
 
 var labels_CELLULAR_NETWORK_RADIO_TYPE = map[CELLULAR_NETWORK_RADIO_TYPE]string{
@@ -2359,56 +2202,31 @@ func (e COMP_METADATA_TYPE) String() string {
 type COPTER_MODE int
 
 const (
-	//
-	COPTER_MODE_STABILIZE COPTER_MODE = 0
-	//
-	COPTER_MODE_ACRO COPTER_MODE = 1
-	//
-	COPTER_MODE_ALT_HOLD COPTER_MODE = 2
-	//
-	COPTER_MODE_AUTO COPTER_MODE = 3
-	//
-	COPTER_MODE_GUIDED COPTER_MODE = 4
-	//
-	COPTER_MODE_LOITER COPTER_MODE = 5
-	//
-	COPTER_MODE_RTL COPTER_MODE = 6
-	//
-	COPTER_MODE_CIRCLE COPTER_MODE = 7
-	//
-	COPTER_MODE_LAND COPTER_MODE = 9
-	//
-	COPTER_MODE_DRIFT COPTER_MODE = 11
-	//
-	COPTER_MODE_SPORT COPTER_MODE = 13
-	//
-	COPTER_MODE_FLIP COPTER_MODE = 14
-	//
-	COPTER_MODE_AUTOTUNE COPTER_MODE = 15
-	//
-	COPTER_MODE_POSHOLD COPTER_MODE = 16
-	//
-	COPTER_MODE_BRAKE COPTER_MODE = 17
-	//
-	COPTER_MODE_THROW COPTER_MODE = 18
-	//
-	COPTER_MODE_AVOID_ADSB COPTER_MODE = 19
-	//
+	COPTER_MODE_STABILIZE    COPTER_MODE = 0
+	COPTER_MODE_ACRO         COPTER_MODE = 1
+	COPTER_MODE_ALT_HOLD     COPTER_MODE = 2
+	COPTER_MODE_AUTO         COPTER_MODE = 3
+	COPTER_MODE_GUIDED       COPTER_MODE = 4
+	COPTER_MODE_LOITER       COPTER_MODE = 5
+	COPTER_MODE_RTL          COPTER_MODE = 6
+	COPTER_MODE_CIRCLE       COPTER_MODE = 7
+	COPTER_MODE_LAND         COPTER_MODE = 9
+	COPTER_MODE_DRIFT        COPTER_MODE = 11
+	COPTER_MODE_SPORT        COPTER_MODE = 13
+	COPTER_MODE_FLIP         COPTER_MODE = 14
+	COPTER_MODE_AUTOTUNE     COPTER_MODE = 15
+	COPTER_MODE_POSHOLD      COPTER_MODE = 16
+	COPTER_MODE_BRAKE        COPTER_MODE = 17
+	COPTER_MODE_THROW        COPTER_MODE = 18
+	COPTER_MODE_AVOID_ADSB   COPTER_MODE = 19
 	COPTER_MODE_GUIDED_NOGPS COPTER_MODE = 20
-	//
-	COPTER_MODE_SMART_RTL COPTER_MODE = 21
-	//
-	COPTER_MODE_FLOWHOLD COPTER_MODE = 22
-	//
-	COPTER_MODE_FOLLOW COPTER_MODE = 23
-	//
-	COPTER_MODE_ZIGZAG COPTER_MODE = 24
-	//
-	COPTER_MODE_SYSTEMID COPTER_MODE = 25
-	//
-	COPTER_MODE_AUTOROTATE COPTER_MODE = 26
-	//
-	COPTER_MODE_AUTO_RTL COPTER_MODE = 27
+	COPTER_MODE_SMART_RTL    COPTER_MODE = 21
+	COPTER_MODE_FLOWHOLD     COPTER_MODE = 22
+	COPTER_MODE_FOLLOW       COPTER_MODE = 23
+	COPTER_MODE_ZIGZAG       COPTER_MODE = 24
+	COPTER_MODE_SYSTEMID     COPTER_MODE = 25
+	COPTER_MODE_AUTOROTATE   COPTER_MODE = 26
+	COPTER_MODE_AUTO_RTL     COPTER_MODE = 27
 )
 
 var labels_COPTER_MODE = map[COPTER_MODE]string{
@@ -2971,36 +2789,21 @@ func (e FAILURE_TYPE) String() string {
 type FAILURE_UNIT int
 
 const (
-	//
-	FAILURE_UNIT_SENSOR_GYRO FAILURE_UNIT = 0
-	//
-	FAILURE_UNIT_SENSOR_ACCEL FAILURE_UNIT = 1
-	//
-	FAILURE_UNIT_SENSOR_MAG FAILURE_UNIT = 2
-	//
-	FAILURE_UNIT_SENSOR_BARO FAILURE_UNIT = 3
-	//
-	FAILURE_UNIT_SENSOR_GPS FAILURE_UNIT = 4
-	//
-	FAILURE_UNIT_SENSOR_OPTICAL_FLOW FAILURE_UNIT = 5
-	//
-	FAILURE_UNIT_SENSOR_VIO FAILURE_UNIT = 6
-	//
+	FAILURE_UNIT_SENSOR_GYRO            FAILURE_UNIT = 0
+	FAILURE_UNIT_SENSOR_ACCEL           FAILURE_UNIT = 1
+	FAILURE_UNIT_SENSOR_MAG             FAILURE_UNIT = 2
+	FAILURE_UNIT_SENSOR_BARO            FAILURE_UNIT = 3
+	FAILURE_UNIT_SENSOR_GPS             FAILURE_UNIT = 4
+	FAILURE_UNIT_SENSOR_OPTICAL_FLOW    FAILURE_UNIT = 5
+	FAILURE_UNIT_SENSOR_VIO             FAILURE_UNIT = 6
 	FAILURE_UNIT_SENSOR_DISTANCE_SENSOR FAILURE_UNIT = 7
-	//
-	FAILURE_UNIT_SENSOR_AIRSPEED FAILURE_UNIT = 8
-	//
-	FAILURE_UNIT_SYSTEM_BATTERY FAILURE_UNIT = 100
-	//
-	FAILURE_UNIT_SYSTEM_MOTOR FAILURE_UNIT = 101
-	//
-	FAILURE_UNIT_SYSTEM_SERVO FAILURE_UNIT = 102
-	//
-	FAILURE_UNIT_SYSTEM_AVOIDANCE FAILURE_UNIT = 103
-	//
-	FAILURE_UNIT_SYSTEM_RC_SIGNAL FAILURE_UNIT = 104
-	//
-	FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL FAILURE_UNIT = 105
+	FAILURE_UNIT_SENSOR_AIRSPEED        FAILURE_UNIT = 8
+	FAILURE_UNIT_SYSTEM_BATTERY         FAILURE_UNIT = 100
+	FAILURE_UNIT_SYSTEM_MOTOR           FAILURE_UNIT = 101
+	FAILURE_UNIT_SYSTEM_SERVO           FAILURE_UNIT = 102
+	FAILURE_UNIT_SYSTEM_AVOIDANCE       FAILURE_UNIT = 103
+	FAILURE_UNIT_SYSTEM_RC_SIGNAL       FAILURE_UNIT = 104
+	FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL  FAILURE_UNIT = 105
 )
 
 var labels_FAILURE_UNIT = map[FAILURE_UNIT]string{
@@ -3133,7 +2936,6 @@ func (e FENCE_ACTION) String() string {
 	return "invalid value"
 }
 
-//
 type FENCE_BREACH int
 
 const (
@@ -3292,7 +3094,6 @@ func (e FIRMWARE_VERSION_TYPE) String() string {
 	return "invalid value"
 }
 
-//
 type GIMBAL_AXIS int
 
 const (
@@ -3341,7 +3142,6 @@ func (e GIMBAL_AXIS) String() string {
 	return "invalid value"
 }
 
-//
 type GIMBAL_AXIS_CALIBRATION_REQUIRED int
 
 const (
@@ -3390,7 +3190,6 @@ func (e GIMBAL_AXIS_CALIBRATION_REQUIRED) String() string {
 	return "invalid value"
 }
 
-//
 type GIMBAL_AXIS_CALIBRATION_STATUS int
 
 const (
@@ -3804,7 +3603,6 @@ func (e GIMBAL_MANAGER_FLAGS) String() string {
 	return "invalid value"
 }
 
-//
 type GOPRO_BURST_RATE int
 
 const (
@@ -3877,7 +3675,6 @@ func (e GOPRO_BURST_RATE) String() string {
 	return "invalid value"
 }
 
-//
 type GOPRO_CAPTURE_MODE int
 
 const (
@@ -3946,7 +3743,6 @@ func (e GOPRO_CAPTURE_MODE) String() string {
 	return "invalid value"
 }
 
-//
 type GOPRO_CHARGING int
 
 const (
@@ -3991,7 +3787,6 @@ func (e GOPRO_CHARGING) String() string {
 	return "invalid value"
 }
 
-//
 type GOPRO_COMMAND int
 
 const (
@@ -4096,7 +3891,6 @@ func (e GOPRO_COMMAND) String() string {
 	return "invalid value"
 }
 
-//
 type GOPRO_FIELD_OF_VIEW int
 
 const (
@@ -4145,7 +3939,6 @@ func (e GOPRO_FIELD_OF_VIEW) String() string {
 	return "invalid value"
 }
 
-//
 type GOPRO_FRAME_RATE int
 
 const (
@@ -4238,7 +4031,6 @@ func (e GOPRO_FRAME_RATE) String() string {
 	return "invalid value"
 }
 
-//
 type GOPRO_HEARTBEAT_FLAGS int
 
 const (
@@ -4279,7 +4071,6 @@ func (e GOPRO_HEARTBEAT_FLAGS) String() string {
 	return "invalid value"
 }
 
-//
 type GOPRO_HEARTBEAT_STATUS int
 
 const (
@@ -4332,7 +4123,6 @@ func (e GOPRO_HEARTBEAT_STATUS) String() string {
 	return "invalid value"
 }
 
-//
 type GOPRO_MODEL int
 
 const (
@@ -4389,7 +4179,6 @@ func (e GOPRO_MODEL) String() string {
 	return "invalid value"
 }
 
-//
 type GOPRO_PHOTO_RESOLUTION int
 
 const (
@@ -4446,7 +4235,6 @@ func (e GOPRO_PHOTO_RESOLUTION) String() string {
 	return "invalid value"
 }
 
-//
 type GOPRO_PROTUNE_COLOUR int
 
 const (
@@ -4491,7 +4279,6 @@ func (e GOPRO_PROTUNE_COLOUR) String() string {
 	return "invalid value"
 }
 
-//
 type GOPRO_PROTUNE_EXPOSURE int
 
 const (
@@ -4612,7 +4399,6 @@ func (e GOPRO_PROTUNE_EXPOSURE) String() string {
 	return "invalid value"
 }
 
-//
 type GOPRO_PROTUNE_GAIN int
 
 const (
@@ -4669,7 +4455,6 @@ func (e GOPRO_PROTUNE_GAIN) String() string {
 	return "invalid value"
 }
 
-//
 type GOPRO_PROTUNE_SHARPNESS int
 
 const (
@@ -4718,7 +4503,6 @@ func (e GOPRO_PROTUNE_SHARPNESS) String() string {
 	return "invalid value"
 }
 
-//
 type GOPRO_PROTUNE_WHITE_BALANCE int
 
 const (
@@ -4775,7 +4559,6 @@ func (e GOPRO_PROTUNE_WHITE_BALANCE) String() string {
 	return "invalid value"
 }
 
-//
 type GOPRO_REQUEST_STATUS int
 
 const (
@@ -4820,7 +4603,6 @@ func (e GOPRO_REQUEST_STATUS) String() string {
 	return "invalid value"
 }
 
-//
 type GOPRO_RESOLUTION int
 
 const (
@@ -4913,7 +4695,6 @@ func (e GOPRO_RESOLUTION) String() string {
 	return "invalid value"
 }
 
-//
 type GOPRO_VIDEO_SETTINGS_FLAGS int
 
 const (
@@ -5027,7 +4808,6 @@ func (e GPS_FIX_TYPE) String() string {
 	return "invalid value"
 }
 
-//
 type GPS_INPUT_IGNORE_FLAGS int
 
 const (
@@ -5141,14 +4921,11 @@ func (e GRIPPER_ACTIONS) String() string {
 	return "invalid value"
 }
 
-//
 type HEADING_TYPE int
 
 const (
-	//
 	HEADING_TYPE_COURSE_OVER_GROUND HEADING_TYPE = 0
-	//
-	HEADING_TYPE_HEADING HEADING_TYPE = 1
+	HEADING_TYPE_HEADING            HEADING_TYPE = 1
 )
 
 var labels_HEADING_TYPE = map[HEADING_TYPE]string{
@@ -5473,22 +5250,15 @@ func (e HL_FAILURE_FLAG) String() string {
 	return "invalid value"
 }
 
-//
 type ICAROUS_FMS_STATE int
 
 const (
-	//
-	ICAROUS_FMS_STATE_IDLE ICAROUS_FMS_STATE = 0
-	//
-	ICAROUS_FMS_STATE_TAKEOFF ICAROUS_FMS_STATE = 1
-	//
-	ICAROUS_FMS_STATE_CLIMB ICAROUS_FMS_STATE = 2
-	//
-	ICAROUS_FMS_STATE_CRUISE ICAROUS_FMS_STATE = 3
-	//
+	ICAROUS_FMS_STATE_IDLE     ICAROUS_FMS_STATE = 0
+	ICAROUS_FMS_STATE_TAKEOFF  ICAROUS_FMS_STATE = 1
+	ICAROUS_FMS_STATE_CLIMB    ICAROUS_FMS_STATE = 2
+	ICAROUS_FMS_STATE_CRUISE   ICAROUS_FMS_STATE = 3
 	ICAROUS_FMS_STATE_APPROACH ICAROUS_FMS_STATE = 4
-	//
-	ICAROUS_FMS_STATE_LAND ICAROUS_FMS_STATE = 5
+	ICAROUS_FMS_STATE_LAND     ICAROUS_FMS_STATE = 5
 )
 
 var labels_ICAROUS_FMS_STATE = map[ICAROUS_FMS_STATE]string{
@@ -5534,15 +5304,11 @@ func (e ICAROUS_FMS_STATE) String() string {
 	return "invalid value"
 }
 
-//
 type ICAROUS_TRACK_BAND_TYPES int
 
 const (
-	//
-	ICAROUS_TRACK_BAND_TYPE_NONE ICAROUS_TRACK_BAND_TYPES = 0
-	//
-	ICAROUS_TRACK_BAND_TYPE_NEAR ICAROUS_TRACK_BAND_TYPES = 1
-	//
+	ICAROUS_TRACK_BAND_TYPE_NONE     ICAROUS_TRACK_BAND_TYPES = 0
+	ICAROUS_TRACK_BAND_TYPE_NEAR     ICAROUS_TRACK_BAND_TYPES = 1
 	ICAROUS_TRACK_BAND_TYPE_RECOVERY ICAROUS_TRACK_BAND_TYPES = 2
 )
 
@@ -5636,7 +5402,6 @@ func (e LANDING_TARGET_TYPE) String() string {
 	return "invalid value"
 }
 
-//
 type LED_CONTROL_PATTERN int
 
 const (
@@ -5685,7 +5450,6 @@ func (e LED_CONTROL_PATTERN) String() string {
 	return "invalid value"
 }
 
-//
 type LIMITS_STATE int
 
 const (
@@ -5746,7 +5510,6 @@ func (e LIMITS_STATE) String() string {
 	return "invalid value"
 }
 
-//
 type LIMIT_MODULE int
 
 const (
@@ -5795,26 +5558,17 @@ func (e LIMIT_MODULE) String() string {
 	return "invalid value"
 }
 
-//
 type MAG_CAL_STATUS int
 
 const (
-	//
-	MAG_CAL_NOT_STARTED MAG_CAL_STATUS = 0
-	//
+	MAG_CAL_NOT_STARTED      MAG_CAL_STATUS = 0
 	MAG_CAL_WAITING_TO_START MAG_CAL_STATUS = 1
-	//
 	MAG_CAL_RUNNING_STEP_ONE MAG_CAL_STATUS = 2
-	//
 	MAG_CAL_RUNNING_STEP_TWO MAG_CAL_STATUS = 3
-	//
-	MAG_CAL_SUCCESS MAG_CAL_STATUS = 4
-	//
-	MAG_CAL_FAILED MAG_CAL_STATUS = 5
-	//
-	MAG_CAL_BAD_ORIENTATION MAG_CAL_STATUS = 6
-	//
-	MAG_CAL_BAD_RADIUS MAG_CAL_STATUS = 7
+	MAG_CAL_SUCCESS          MAG_CAL_STATUS = 4
+	MAG_CAL_FAILED           MAG_CAL_STATUS = 5
+	MAG_CAL_BAD_ORIENTATION  MAG_CAL_STATUS = 6
+	MAG_CAL_BAD_RADIUS       MAG_CAL_STATUS = 7
 )
 
 var labels_MAG_CAL_STATUS = map[MAG_CAL_STATUS]string{
@@ -5864,22 +5618,15 @@ func (e MAG_CAL_STATUS) String() string {
 	return "invalid value"
 }
 
-//
 type MAVLINK_DATA_STREAM_TYPE int
 
 const (
-	//
-	MAVLINK_DATA_STREAM_IMG_JPEG MAVLINK_DATA_STREAM_TYPE = 0
-	//
-	MAVLINK_DATA_STREAM_IMG_BMP MAVLINK_DATA_STREAM_TYPE = 1
-	//
-	MAVLINK_DATA_STREAM_IMG_RAW8U MAVLINK_DATA_STREAM_TYPE = 2
-	//
+	MAVLINK_DATA_STREAM_IMG_JPEG   MAVLINK_DATA_STREAM_TYPE = 0
+	MAVLINK_DATA_STREAM_IMG_BMP    MAVLINK_DATA_STREAM_TYPE = 1
+	MAVLINK_DATA_STREAM_IMG_RAW8U  MAVLINK_DATA_STREAM_TYPE = 2
 	MAVLINK_DATA_STREAM_IMG_RAW32U MAVLINK_DATA_STREAM_TYPE = 3
-	//
-	MAVLINK_DATA_STREAM_IMG_PGM MAVLINK_DATA_STREAM_TYPE = 4
-	//
-	MAVLINK_DATA_STREAM_IMG_PNG MAVLINK_DATA_STREAM_TYPE = 5
+	MAVLINK_DATA_STREAM_IMG_PGM    MAVLINK_DATA_STREAM_TYPE = 4
+	MAVLINK_DATA_STREAM_IMG_PNG    MAVLINK_DATA_STREAM_TYPE = 5
 )
 
 var labels_MAVLINK_DATA_STREAM_TYPE = map[MAVLINK_DATA_STREAM_TYPE]string{
@@ -5925,7 +5672,6 @@ func (e MAVLINK_DATA_STREAM_TYPE) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_ARM_AUTH_DENIED_REASON int
 
 const (
@@ -6622,7 +6368,11 @@ const (
 	MAV_CMD_SET_CAMERA_ZOOM MAV_CMD = 531
 	// Set camera focus. Camera must respond with a CAMERA_SETTINGS message (on success).
 	MAV_CMD_SET_CAMERA_FOCUS MAV_CMD = 532
-	// Set that a particular storage is the preferred location for saving photos, videos, and/or other media (e.g. to set that an SD card is used for storing videos).          There can only be one preferred save location for each particular media type: setting a media usage flag will clear/reset that same flag if set on any other storage.          If no flag is set the system should use its default storage.          A target system can choose to always use default storage, in which case it should ACK the command with MAV_RESULT_UNSUPPORTED.          A target system can choose to not allow a particular storage to be set as preferred storage, in which case it should ACK the command with MAV_RESULT_DENIED.
+	// Set that a particular storage is the preferred location for saving photos, videos, and/or other media (e.g. to set that an SD card is used for storing videos).
+	// There can only be one preferred save location for each particular media type: setting a media usage flag will clear/reset that same flag if set on any other storage.
+	// If no flag is set the system should use its default storage.
+	// A target system can choose to always use default storage, in which case it should ACK the command with MAV_RESULT_UNSUPPORTED.
+	// A target system can choose to not allow a particular storage to be set as preferred storage, in which case it should ACK the command with MAV_RESULT_DENIED.
 	MAV_CMD_SET_STORAGE_USAGE MAV_CMD = 533
 	// Tagged jump target. Can be jumped to with MAV_CMD_DO_JUMP_TAG.
 	MAV_CMD_JUMP_TAG MAV_CMD = 600
@@ -6661,8 +6411,7 @@ const (
 	// Request to start streaming logging data over MAVLink (see also LOGGING_DATA message)
 	MAV_CMD_LOGGING_START MAV_CMD = 2510
 	// Request to stop streaming log data over MAVLink
-	MAV_CMD_LOGGING_STOP MAV_CMD = 2511
-	//
+	MAV_CMD_LOGGING_STOP           MAV_CMD = 2511
 	MAV_CMD_AIRFRAME_CONFIGURATION MAV_CMD = 2520
 	// Request to start/stop transmitting over the high latency telemetry
 	MAV_CMD_CONTROL_HIGH_LATENCY MAV_CMD = 2600
@@ -6750,7 +6499,8 @@ const (
 	MAV_CMD_SOLO_BTN_FLY_HOLD MAV_CMD = 42002
 	// PAUSE button has been clicked.
 	MAV_CMD_SOLO_BTN_PAUSE_CLICK MAV_CMD = 42003
-	// Magnetometer calibration based on fixed position        in earth field given by inclination, declination and intensity.
+	// Magnetometer calibration based on fixed position
+	// in earth field given by inclination, declination and intensity.
 	MAV_CMD_FIXED_MAG_CAL MAV_CMD = 42004
 	// Magnetometer calibration based on fixed expected field values.
 	MAV_CMD_FIXED_MAG_CAL_FIELD MAV_CMD = 42005
@@ -7270,7 +7020,6 @@ func (e MAV_CMD_ACK) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL int
 
 const (
@@ -7478,7 +7227,9 @@ func (e MAV_COLLISION_THREAT_LEVEL) String() string {
 	return "invalid value"
 }
 
-// Component ids (values) for the different types and instances of onboard hardware/software that might make up a MAVLink system (autopilot, cameras, servos, GPS systems, avoidance systems etc.).      Components must use the appropriate ID in their source address when sending messages. Components can also use IDs to determine if they are the intended recipient of an incoming message. The MAV_COMP_ID_ALL value is used to indicate messages that must be processed by all components.      When creating new entries, components that can have multiple instances (e.g. cameras, servos etc.) should be allocated sequential values. An appropriate number of values should be left free after these components to allow the number of instances to be expanded.
+// Component ids (values) for the different types and instances of onboard hardware/software that might make up a MAVLink system (autopilot, cameras, servos, GPS systems, avoidance systems etc.).
+// Components must use the appropriate ID in their source address when sending messages. Components can also use IDs to determine if they are the intended recipient of an incoming message. The MAV_COMP_ID_ALL value is used to indicate messages that must be processed by all components.
+// When creating new entries, components that can have multiple instances (e.g. cameras, servos etc.) should be allocated sequential values. An appropriate number of values should be left free after these components to allow the number of instances to be expanded.
 type MAV_COMPONENT int
 
 const (
@@ -8047,7 +7798,9 @@ func (e MAV_COMPONENT) String() string {
 	return "invalid value"
 }
 
-// A data stream is not a fixed set of messages, but rather a     recommendation to the autopilot software. Individual autopilots may or may not obey     the recommended messages.
+// A data stream is not a fixed set of messages, but rather a
+// recommendation to the autopilot software. Individual autopilots may or may not obey
+// the recommended messages.
 type MAV_DATA_STREAM int
 
 const (
@@ -8373,7 +8126,21 @@ func (e MAV_EVENT_ERROR_REASON) String() string {
 	return "invalid value"
 }
 
-// Co-ordinate frames used by MAVLink. Not all frames are supported by all commands, messages, or vehicles.            Global frames use the following naming conventions:      - "GLOBAL": Global co-ordinate frame with WGS84 latitude/longitude and altitude positive over mean sea level (MSL) by default.         The following modifiers may be used with "GLOBAL":        - "RELATIVE_ALT": Altitude is relative to the vehicle home position rather than MSL.        - "TERRAIN_ALT": Altitude is relative to ground level rather than MSL.        - "INT": Latitude/longitude (in degrees) are scaled by multiplying by 1E7.      Local frames use the following naming conventions:      - "LOCAL": Origin of local frame is fixed relative to earth. Unless otherwise specified this origin is the origin of the vehicle position-estimator ("EKF").      - "BODY": Origin of local frame travels with the vehicle. NOTE, "BODY" does NOT indicate alignment of frame axis with vehicle attitude.      - "OFFSET": Deprecated synonym for "BODY" (origin travels with the vehicle). Not to be used for new frames.      Some deprecated frames do not follow these conventions (e.g. MAV_FRAME_BODY_NED and MAV_FRAME_BODY_OFFSET_NED).
+// Co-ordinate frames used by MAVLink. Not all frames are supported by all commands, messages, or vehicles.
+//
+// Global frames use the following naming conventions:
+// - "GLOBAL": Global co-ordinate frame with WGS84 latitude/longitude and altitude positive over mean sea level (MSL) by default.
+// The following modifiers may be used with "GLOBAL":
+// - "RELATIVE_ALT": Altitude is relative to the vehicle home position rather than MSL.
+// - "TERRAIN_ALT": Altitude is relative to ground level rather than MSL.
+// - "INT": Latitude/longitude (in degrees) are scaled by multiplying by 1E7.
+//
+// Local frames use the following naming conventions:
+// - "LOCAL": Origin of local frame is fixed relative to earth. Unless otherwise specified this origin is the origin of the vehicle position-estimator ("EKF").
+// - "BODY": Origin of local frame travels with the vehicle. NOTE, "BODY" does NOT indicate alignment of frame axis with vehicle attitude.
+// - "OFFSET": Deprecated synonym for "BODY" (origin travels with the vehicle). Not to be used for new frames.
+//
+// Some deprecated frames do not follow these conventions (e.g. MAV_FRAME_BODY_NED and MAV_FRAME_BODY_OFFSET_NED).
 type MAV_FRAME int
 
 const (
@@ -8891,7 +8658,8 @@ func (e MAV_MISSION_TYPE) String() string {
 	return "invalid value"
 }
 
-// These defines are predefined OR-combined mode flags. There is no need to use values from this enum, but it               simplifies the use of the mode flags. Note that manual input is enabled in all modes as a safety override.
+// These defines are predefined OR-combined mode flags. There is no need to use values from this enum, but it
+// simplifies the use of the mode flags. Note that manual input is enabled in all modes as a safety override.
 type MAV_MODE int
 
 const (
@@ -9110,7 +8878,6 @@ func (e MAV_MODE_FLAG_DECODE_POSITION) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_MODE_GIMBAL int
 
 const (
@@ -9240,7 +9007,6 @@ func (e MAV_MOUNT_MODE) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_ODID_AUTH_TYPE int
 
 const (
@@ -9301,7 +9067,6 @@ func (e MAV_ODID_AUTH_TYPE) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_ODID_CATEGORY_EU int
 
 const (
@@ -9354,7 +9119,6 @@ func (e MAV_ODID_CATEGORY_EU) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_ODID_CLASSIFICATION_TYPE int
 
 const (
@@ -9399,7 +9163,6 @@ func (e MAV_ODID_CLASSIFICATION_TYPE) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_ODID_CLASS_EU int
 
 const (
@@ -9468,7 +9231,6 @@ func (e MAV_ODID_CLASS_EU) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_ODID_DESC_TYPE int
 
 const (
@@ -9509,7 +9271,6 @@ func (e MAV_ODID_DESC_TYPE) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_ODID_HEIGHT_REF int
 
 const (
@@ -9554,7 +9315,6 @@ func (e MAV_ODID_HEIGHT_REF) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_ODID_HOR_ACC int
 
 const (
@@ -9643,7 +9403,6 @@ func (e MAV_ODID_HOR_ACC) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_ODID_ID_TYPE int
 
 const (
@@ -9700,7 +9459,6 @@ func (e MAV_ODID_ID_TYPE) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_ODID_OPERATOR_ID_TYPE int
 
 const (
@@ -9741,7 +9499,6 @@ func (e MAV_ODID_OPERATOR_ID_TYPE) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_ODID_OPERATOR_LOCATION_TYPE int
 
 const (
@@ -9790,7 +9547,6 @@ func (e MAV_ODID_OPERATOR_LOCATION_TYPE) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_ODID_SPEED_ACC int
 
 const (
@@ -9847,7 +9603,6 @@ func (e MAV_ODID_SPEED_ACC) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_ODID_STATUS int
 
 const (
@@ -9900,7 +9655,6 @@ func (e MAV_ODID_STATUS) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_ODID_TIME_ACC int
 
 const (
@@ -10001,7 +9755,6 @@ func (e MAV_ODID_TIME_ACC) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_ODID_UA_TYPE int
 
 const (
@@ -10102,7 +9855,6 @@ func (e MAV_ODID_UA_TYPE) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_ODID_VER_ACC int
 
 const (
@@ -10646,7 +10398,9 @@ func (e MAV_RESULT) String() string {
 	return "invalid value"
 }
 
-// The ROI (region of interest) for the vehicle. This can be                be used by the vehicle for camera/vehicle attitude alignment (see                MAV_CMD_NAV_ROI).
+// The ROI (region of interest) for the vehicle. This can be
+// be used by the vehicle for camera/vehicle attitude alignment (see
+// MAV_CMD_NAV_ROI).
 type MAV_ROI int
 
 const (
@@ -10977,7 +10731,6 @@ func (e MAV_SEVERITY) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_STATE int
 
 const (
@@ -11211,7 +10964,6 @@ func (e MAV_SYS_STATUS_SENSOR) String() string {
 	return "invalid value"
 }
 
-//
 type MAV_TUNNEL_PAYLOAD_TYPE int
 
 const (
@@ -11693,13 +11445,13 @@ func (e MOTOR_TEST_THROTTLE_TYPE) String() string {
 	return "invalid value"
 }
 
-//
 type NAV_VTOL_LAND_OPTIONS int
 
 const (
 	// Default autopilot landing behaviour.
 	NAV_VTOL_LAND_OPTIONS_DEFAULT NAV_VTOL_LAND_OPTIONS = 0
-	// Descend in fixed wing mode, transitioning to multicopter mode for vertical landing when close to the ground.          The fixed wing descent pattern is at the discretion of the vehicle (e.g. transition altitude, loiter direction, radius, and speed, etc.).
+	// Descend in fixed wing mode, transitioning to multicopter mode for vertical landing when close to the ground.
+	// The fixed wing descent pattern is at the discretion of the vehicle (e.g. transition altitude, loiter direction, radius, and speed, etc.).
 	NAV_VTOL_LAND_OPTIONS_FW_DESCENT NAV_VTOL_LAND_OPTIONS = 1
 	// Land in multicopter mode on reaching the landing co-ordinates (the whole landing is by "hover descent").
 	NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT NAV_VTOL_LAND_OPTIONS = 2
@@ -11803,14 +11555,10 @@ func (e ORBIT_YAW_BEHAVIOUR) String() string {
 type OSD_PARAM_CONFIG_ERROR int
 
 const (
-	//
-	OSD_PARAM_SUCCESS OSD_PARAM_CONFIG_ERROR = 0
-	//
-	OSD_PARAM_INVALID_SCREEN OSD_PARAM_CONFIG_ERROR = 1
-	//
+	OSD_PARAM_SUCCESS                 OSD_PARAM_CONFIG_ERROR = 0
+	OSD_PARAM_INVALID_SCREEN          OSD_PARAM_CONFIG_ERROR = 1
 	OSD_PARAM_INVALID_PARAMETER_INDEX OSD_PARAM_CONFIG_ERROR = 2
-	//
-	OSD_PARAM_INVALID_PARAMETER OSD_PARAM_CONFIG_ERROR = 3
+	OSD_PARAM_INVALID_PARAMETER       OSD_PARAM_CONFIG_ERROR = 3
 )
 
 var labels_OSD_PARAM_CONFIG_ERROR = map[OSD_PARAM_CONFIG_ERROR]string{
@@ -11856,24 +11604,15 @@ func (e OSD_PARAM_CONFIG_ERROR) String() string {
 type OSD_PARAM_CONFIG_TYPE int
 
 const (
-	//
-	OSD_PARAM_NONE OSD_PARAM_CONFIG_TYPE = 0
-	//
-	OSD_PARAM_SERIAL_PROTOCOL OSD_PARAM_CONFIG_TYPE = 1
-	//
-	OSD_PARAM_SERVO_FUNCTION OSD_PARAM_CONFIG_TYPE = 2
-	//
-	OSD_PARAM_AUX_FUNCTION OSD_PARAM_CONFIG_TYPE = 3
-	//
-	OSD_PARAM_FLIGHT_MODE OSD_PARAM_CONFIG_TYPE = 4
-	//
-	OSD_PARAM_FAILSAFE_ACTION OSD_PARAM_CONFIG_TYPE = 5
-	//
+	OSD_PARAM_NONE              OSD_PARAM_CONFIG_TYPE = 0
+	OSD_PARAM_SERIAL_PROTOCOL   OSD_PARAM_CONFIG_TYPE = 1
+	OSD_PARAM_SERVO_FUNCTION    OSD_PARAM_CONFIG_TYPE = 2
+	OSD_PARAM_AUX_FUNCTION      OSD_PARAM_CONFIG_TYPE = 3
+	OSD_PARAM_FLIGHT_MODE       OSD_PARAM_CONFIG_TYPE = 4
+	OSD_PARAM_FAILSAFE_ACTION   OSD_PARAM_CONFIG_TYPE = 5
 	OSD_PARAM_FAILSAFE_ACTION_1 OSD_PARAM_CONFIG_TYPE = 6
-	//
 	OSD_PARAM_FAILSAFE_ACTION_2 OSD_PARAM_CONFIG_TYPE = 7
-	//
-	OSD_PARAM_NUM_TYPES OSD_PARAM_CONFIG_TYPE = 8
+	OSD_PARAM_NUM_TYPES         OSD_PARAM_CONFIG_TYPE = 8
 )
 
 var labels_OSD_PARAM_CONFIG_TYPE = map[OSD_PARAM_CONFIG_TYPE]string{
@@ -12027,21 +11766,14 @@ func (e PARAM_ACK) String() string {
 	return "invalid value"
 }
 
-//
 type PID_TUNING_AXIS int
 
 const (
-	//
-	PID_TUNING_ROLL PID_TUNING_AXIS = 1
-	//
-	PID_TUNING_PITCH PID_TUNING_AXIS = 2
-	//
-	PID_TUNING_YAW PID_TUNING_AXIS = 3
-	//
-	PID_TUNING_ACCZ PID_TUNING_AXIS = 4
-	//
-	PID_TUNING_STEER PID_TUNING_AXIS = 5
-	//
+	PID_TUNING_ROLL    PID_TUNING_AXIS = 1
+	PID_TUNING_PITCH   PID_TUNING_AXIS = 2
+	PID_TUNING_YAW     PID_TUNING_AXIS = 3
+	PID_TUNING_ACCZ    PID_TUNING_AXIS = 4
+	PID_TUNING_STEER   PID_TUNING_AXIS = 5
 	PID_TUNING_LANDING PID_TUNING_AXIS = 6
 )
 
@@ -12092,54 +11824,30 @@ func (e PID_TUNING_AXIS) String() string {
 type PLANE_MODE int
 
 const (
-	//
-	PLANE_MODE_MANUAL PLANE_MODE = 0
-	//
-	PLANE_MODE_CIRCLE PLANE_MODE = 1
-	//
-	PLANE_MODE_STABILIZE PLANE_MODE = 2
-	//
-	PLANE_MODE_TRAINING PLANE_MODE = 3
-	//
-	PLANE_MODE_ACRO PLANE_MODE = 4
-	//
+	PLANE_MODE_MANUAL        PLANE_MODE = 0
+	PLANE_MODE_CIRCLE        PLANE_MODE = 1
+	PLANE_MODE_STABILIZE     PLANE_MODE = 2
+	PLANE_MODE_TRAINING      PLANE_MODE = 3
+	PLANE_MODE_ACRO          PLANE_MODE = 4
 	PLANE_MODE_FLY_BY_WIRE_A PLANE_MODE = 5
-	//
 	PLANE_MODE_FLY_BY_WIRE_B PLANE_MODE = 6
-	//
-	PLANE_MODE_CRUISE PLANE_MODE = 7
-	//
-	PLANE_MODE_AUTOTUNE PLANE_MODE = 8
-	//
-	PLANE_MODE_AUTO PLANE_MODE = 10
-	//
-	PLANE_MODE_RTL PLANE_MODE = 11
-	//
-	PLANE_MODE_LOITER PLANE_MODE = 12
-	//
-	PLANE_MODE_TAKEOFF PLANE_MODE = 13
-	//
-	PLANE_MODE_AVOID_ADSB PLANE_MODE = 14
-	//
-	PLANE_MODE_GUIDED PLANE_MODE = 15
-	//
-	PLANE_MODE_INITIALIZING PLANE_MODE = 16
-	//
-	PLANE_MODE_QSTABILIZE PLANE_MODE = 17
-	//
-	PLANE_MODE_QHOVER PLANE_MODE = 18
-	//
-	PLANE_MODE_QLOITER PLANE_MODE = 19
-	//
-	PLANE_MODE_QLAND PLANE_MODE = 20
-	//
-	PLANE_MODE_QRTL PLANE_MODE = 21
-	//
-	PLANE_MODE_QAUTOTUNE PLANE_MODE = 22
-	//
-	PLANE_MODE_QACRO PLANE_MODE = 23
-	//
-	PLANE_MODE_THERMAL PLANE_MODE = 24
+	PLANE_MODE_CRUISE        PLANE_MODE = 7
+	PLANE_MODE_AUTOTUNE      PLANE_MODE = 8
+	PLANE_MODE_AUTO          PLANE_MODE = 10
+	PLANE_MODE_RTL           PLANE_MODE = 11
+	PLANE_MODE_LOITER        PLANE_MODE = 12
+	PLANE_MODE_TAKEOFF       PLANE_MODE = 13
+	PLANE_MODE_AVOID_ADSB    PLANE_MODE = 14
+	PLANE_MODE_GUIDED        PLANE_MODE = 15
+	PLANE_MODE_INITIALIZING  PLANE_MODE = 16
+	PLANE_MODE_QSTABILIZE    PLANE_MODE = 17
+	PLANE_MODE_QHOVER        PLANE_MODE = 18
+	PLANE_MODE_QLOITER       PLANE_MODE = 19
+	PLANE_MODE_QLAND         PLANE_MODE = 20
+	PLANE_MODE_QRTL          PLANE_MODE = 21
+	PLANE_MODE_QAUTOTUNE     PLANE_MODE = 22
+	PLANE_MODE_QACRO         PLANE_MODE = 23
+	PLANE_MODE_THERMAL       PLANE_MODE = 24
 )
 
 var labels_PLANE_MODE = map[PLANE_MODE]string{
@@ -12449,29 +12157,17 @@ func (e RC_TYPE) String() string {
 type ROVER_MODE int
 
 const (
-	//
-	ROVER_MODE_MANUAL ROVER_MODE = 0
-	//
-	ROVER_MODE_ACRO ROVER_MODE = 1
-	//
-	ROVER_MODE_STEERING ROVER_MODE = 3
-	//
-	ROVER_MODE_HOLD ROVER_MODE = 4
-	//
-	ROVER_MODE_LOITER ROVER_MODE = 5
-	//
-	ROVER_MODE_FOLLOW ROVER_MODE = 6
-	//
-	ROVER_MODE_SIMPLE ROVER_MODE = 7
-	//
-	ROVER_MODE_AUTO ROVER_MODE = 10
-	//
-	ROVER_MODE_RTL ROVER_MODE = 11
-	//
-	ROVER_MODE_SMART_RTL ROVER_MODE = 12
-	//
-	ROVER_MODE_GUIDED ROVER_MODE = 15
-	//
+	ROVER_MODE_MANUAL       ROVER_MODE = 0
+	ROVER_MODE_ACRO         ROVER_MODE = 1
+	ROVER_MODE_STEERING     ROVER_MODE = 3
+	ROVER_MODE_HOLD         ROVER_MODE = 4
+	ROVER_MODE_LOITER       ROVER_MODE = 5
+	ROVER_MODE_FOLLOW       ROVER_MODE = 6
+	ROVER_MODE_SIMPLE       ROVER_MODE = 7
+	ROVER_MODE_AUTO         ROVER_MODE = 10
+	ROVER_MODE_RTL          ROVER_MODE = 11
+	ROVER_MODE_SMART_RTL    ROVER_MODE = 12
+	ROVER_MODE_GUIDED       ROVER_MODE = 15
 	ROVER_MODE_INITIALIZING ROVER_MODE = 16
 )
 
@@ -12575,7 +12271,6 @@ func (e RTK_BASELINE_COORDINATE_SYSTEM) String() string {
 	return "invalid value"
 }
 
-//
 type SCRIPTING_CMD int
 
 const (
@@ -12839,13 +12534,10 @@ func (e SET_FOCUS_TYPE) String() string {
 	return "invalid value"
 }
 
-//
 type SPEED_TYPE int
 
 const (
-	//
-	SPEED_TYPE_AIRSPEED SPEED_TYPE = 0
-	//
+	SPEED_TYPE_AIRSPEED    SPEED_TYPE = 0
 	SPEED_TYPE_GROUNDSPEED SPEED_TYPE = 1
 )
 
@@ -13067,24 +12759,15 @@ func (e STORAGE_USAGE_FLAG) String() string {
 type SUB_MODE int
 
 const (
-	//
 	SUB_MODE_STABILIZE SUB_MODE = 0
-	//
-	SUB_MODE_ACRO SUB_MODE = 1
-	//
-	SUB_MODE_ALT_HOLD SUB_MODE = 2
-	//
-	SUB_MODE_AUTO SUB_MODE = 3
-	//
-	SUB_MODE_GUIDED SUB_MODE = 4
-	//
-	SUB_MODE_CIRCLE SUB_MODE = 7
-	//
-	SUB_MODE_SURFACE SUB_MODE = 9
-	//
-	SUB_MODE_POSHOLD SUB_MODE = 16
-	//
-	SUB_MODE_MANUAL SUB_MODE = 19
+	SUB_MODE_ACRO      SUB_MODE = 1
+	SUB_MODE_ALT_HOLD  SUB_MODE = 2
+	SUB_MODE_AUTO      SUB_MODE = 3
+	SUB_MODE_GUIDED    SUB_MODE = 4
+	SUB_MODE_CIRCLE    SUB_MODE = 7
+	SUB_MODE_SURFACE   SUB_MODE = 9
+	SUB_MODE_POSHOLD   SUB_MODE = 16
+	SUB_MODE_MANUAL    SUB_MODE = 19
 )
 
 var labels_SUB_MODE = map[SUB_MODE]string{
@@ -13140,17 +12823,11 @@ func (e SUB_MODE) String() string {
 type TRACKER_MODE int
 
 const (
-	//
-	TRACKER_MODE_MANUAL TRACKER_MODE = 0
-	//
-	TRACKER_MODE_STOP TRACKER_MODE = 1
-	//
-	TRACKER_MODE_SCAN TRACKER_MODE = 2
-	//
-	TRACKER_MODE_SERVO_TEST TRACKER_MODE = 3
-	//
-	TRACKER_MODE_AUTO TRACKER_MODE = 10
-	//
+	TRACKER_MODE_MANUAL       TRACKER_MODE = 0
+	TRACKER_MODE_STOP         TRACKER_MODE = 1
+	TRACKER_MODE_SCAN         TRACKER_MODE = 2
+	TRACKER_MODE_SERVO_TEST   TRACKER_MODE = 3
+	TRACKER_MODE_AUTO         TRACKER_MODE = 10
 	TRACKER_MODE_INITIALIZING TRACKER_MODE = 16
 )
 
@@ -13356,22 +13033,14 @@ func (e UAVCAN_NODE_MODE) String() string {
 type UAVIONIX_ADSB_EMERGENCY_STATUS int
 
 const (
-	//
-	UAVIONIX_ADSB_OUT_NO_EMERGENCY UAVIONIX_ADSB_EMERGENCY_STATUS = 0
-	//
-	UAVIONIX_ADSB_OUT_GENERAL_EMERGENCY UAVIONIX_ADSB_EMERGENCY_STATUS = 1
-	//
-	UAVIONIX_ADSB_OUT_LIFEGUARD_EMERGENCY UAVIONIX_ADSB_EMERGENCY_STATUS = 2
-	//
-	UAVIONIX_ADSB_OUT_MINIMUM_FUEL_EMERGENCY UAVIONIX_ADSB_EMERGENCY_STATUS = 3
-	//
-	UAVIONIX_ADSB_OUT_NO_COMM_EMERGENCY UAVIONIX_ADSB_EMERGENCY_STATUS = 4
-	//
+	UAVIONIX_ADSB_OUT_NO_EMERGENCY                    UAVIONIX_ADSB_EMERGENCY_STATUS = 0
+	UAVIONIX_ADSB_OUT_GENERAL_EMERGENCY               UAVIONIX_ADSB_EMERGENCY_STATUS = 1
+	UAVIONIX_ADSB_OUT_LIFEGUARD_EMERGENCY             UAVIONIX_ADSB_EMERGENCY_STATUS = 2
+	UAVIONIX_ADSB_OUT_MINIMUM_FUEL_EMERGENCY          UAVIONIX_ADSB_EMERGENCY_STATUS = 3
+	UAVIONIX_ADSB_OUT_NO_COMM_EMERGENCY               UAVIONIX_ADSB_EMERGENCY_STATUS = 4
 	UAVIONIX_ADSB_OUT_UNLAWFUL_INTERFERANCE_EMERGENCY UAVIONIX_ADSB_EMERGENCY_STATUS = 5
-	//
-	UAVIONIX_ADSB_OUT_DOWNED_AIRCRAFT_EMERGENCY UAVIONIX_ADSB_EMERGENCY_STATUS = 6
-	//
-	UAVIONIX_ADSB_OUT_RESERVED UAVIONIX_ADSB_EMERGENCY_STATUS = 7
+	UAVIONIX_ADSB_OUT_DOWNED_AIRCRAFT_EMERGENCY       UAVIONIX_ADSB_EMERGENCY_STATUS = 6
+	UAVIONIX_ADSB_OUT_RESERVED                        UAVIONIX_ADSB_EMERGENCY_STATUS = 7
 )
 
 var labels_UAVIONIX_ADSB_EMERGENCY_STATUS = map[UAVIONIX_ADSB_EMERGENCY_STATUS]string{
@@ -13425,38 +13094,22 @@ func (e UAVIONIX_ADSB_EMERGENCY_STATUS) String() string {
 type UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE int
 
 const (
-	//
-	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_NO_DATA UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 0
-	//
-	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L15M_W23M UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 1
-	//
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_NO_DATA     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 0
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L15M_W23M   UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 1
 	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25M_W28P5M UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 2
-	//
-	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25_34M UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 3
-	//
-	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_33M UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 4
-	//
-	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_38M UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 5
-	//
-	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_39P5M UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 6
-	//
-	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_45M UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 7
-	//
-	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_45M UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 8
-	//
-	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_52M UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 9
-	//
-	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_59P5M UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 10
-	//
-	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_67M UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 11
-	//
-	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W72P5M UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 12
-	//
-	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W80M UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 13
-	//
-	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W80M UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 14
-	//
-	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W90M UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 15
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25_34M     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 3
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_33M     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 4
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_38M     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 5
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_39P5M   UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 6
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_45M     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 7
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_45M     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 8
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_52M     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 9
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_59P5M   UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 10
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_67M     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 11
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W72P5M  UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 12
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W80M    UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 13
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W80M    UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 14
+	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W90M    UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = 15
 )
 
 var labels_UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = map[UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE]string{
@@ -13526,21 +13179,13 @@ func (e UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE) String() string {
 type UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT int
 
 const (
-	//
-	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_NO_DATA UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT = 0
-	//
-	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_2M UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT = 1
-	//
-	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_4M UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT = 2
-	//
-	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_6M UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT = 3
-	//
+	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_NO_DATA  UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT = 0
+	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_2M  UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT = 1
+	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_4M  UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT = 2
+	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_6M  UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT = 3
 	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_0M UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT = 4
-	//
 	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_2M UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT = 5
-	//
 	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_4M UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT = 6
-	//
 	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_6M UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT = 7
 )
 
@@ -13595,9 +13240,7 @@ func (e UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT) String() string {
 type UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON int
 
 const (
-	//
-	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_NO_DATA UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON = 0
-	//
+	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_NO_DATA           UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON = 0
 	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_APPLIED_BY_SENSOR UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON = 1
 )
 
@@ -13640,18 +13283,12 @@ func (e UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON) String() string {
 type UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX int
 
 const (
-	//
 	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_0 UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = 0
-	//
 	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_1 UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = 1
-	//
-	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_2D UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = 2
-	//
-	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_3D UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = 3
-	//
-	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_DGPS UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = 4
-	//
-	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_RTK UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = 5
+	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_2D     UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = 2
+	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_3D     UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = 3
+	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_DGPS   UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = 4
+	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_RTK    UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = 5
 )
 
 var labels_UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = map[UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX]string{
@@ -13701,16 +13338,11 @@ func (e UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX) String() string {
 type UAVIONIX_ADSB_OUT_DYNAMIC_STATE int
 
 const (
-	//
-	UAVIONIX_ADSB_OUT_DYNAMIC_STATE_INTENT_CHANGE UAVIONIX_ADSB_OUT_DYNAMIC_STATE = 1
-	//
-	UAVIONIX_ADSB_OUT_DYNAMIC_STATE_AUTOPILOT_ENABLED UAVIONIX_ADSB_OUT_DYNAMIC_STATE = 2
-	//
+	UAVIONIX_ADSB_OUT_DYNAMIC_STATE_INTENT_CHANGE        UAVIONIX_ADSB_OUT_DYNAMIC_STATE = 1
+	UAVIONIX_ADSB_OUT_DYNAMIC_STATE_AUTOPILOT_ENABLED    UAVIONIX_ADSB_OUT_DYNAMIC_STATE = 2
 	UAVIONIX_ADSB_OUT_DYNAMIC_STATE_NICBARO_CROSSCHECKED UAVIONIX_ADSB_OUT_DYNAMIC_STATE = 4
-	//
-	UAVIONIX_ADSB_OUT_DYNAMIC_STATE_ON_GROUND UAVIONIX_ADSB_OUT_DYNAMIC_STATE = 8
-	//
-	UAVIONIX_ADSB_OUT_DYNAMIC_STATE_IDENT UAVIONIX_ADSB_OUT_DYNAMIC_STATE = 16
+	UAVIONIX_ADSB_OUT_DYNAMIC_STATE_ON_GROUND            UAVIONIX_ADSB_OUT_DYNAMIC_STATE = 8
+	UAVIONIX_ADSB_OUT_DYNAMIC_STATE_IDENT                UAVIONIX_ADSB_OUT_DYNAMIC_STATE = 16
 )
 
 var labels_UAVIONIX_ADSB_OUT_DYNAMIC_STATE = map[UAVIONIX_ADSB_OUT_DYNAMIC_STATE]string{
@@ -13758,11 +13390,8 @@ func (e UAVIONIX_ADSB_OUT_DYNAMIC_STATE) String() string {
 type UAVIONIX_ADSB_OUT_RF_SELECT int
 
 const (
-	//
-	UAVIONIX_ADSB_OUT_RF_SELECT_STANDBY UAVIONIX_ADSB_OUT_RF_SELECT = 0
-	//
+	UAVIONIX_ADSB_OUT_RF_SELECT_STANDBY    UAVIONIX_ADSB_OUT_RF_SELECT = 0
 	UAVIONIX_ADSB_OUT_RF_SELECT_RX_ENABLED UAVIONIX_ADSB_OUT_RF_SELECT = 1
-	//
 	UAVIONIX_ADSB_OUT_RF_SELECT_TX_ENABLED UAVIONIX_ADSB_OUT_RF_SELECT = 2
 )
 
@@ -13807,14 +13436,10 @@ func (e UAVIONIX_ADSB_OUT_RF_SELECT) String() string {
 type UAVIONIX_ADSB_RF_HEALTH int
 
 const (
-	//
 	UAVIONIX_ADSB_RF_HEALTH_INITIALIZING UAVIONIX_ADSB_RF_HEALTH = 0
-	//
-	UAVIONIX_ADSB_RF_HEALTH_OK UAVIONIX_ADSB_RF_HEALTH = 1
-	//
-	UAVIONIX_ADSB_RF_HEALTH_FAIL_TX UAVIONIX_ADSB_RF_HEALTH = 2
-	//
-	UAVIONIX_ADSB_RF_HEALTH_FAIL_RX UAVIONIX_ADSB_RF_HEALTH = 16
+	UAVIONIX_ADSB_RF_HEALTH_OK           UAVIONIX_ADSB_RF_HEALTH = 1
+	UAVIONIX_ADSB_RF_HEALTH_FAIL_TX      UAVIONIX_ADSB_RF_HEALTH = 2
+	UAVIONIX_ADSB_RF_HEALTH_FAIL_RX      UAVIONIX_ADSB_RF_HEALTH = 16
 )
 
 var labels_UAVIONIX_ADSB_RF_HEALTH = map[UAVIONIX_ADSB_RF_HEALTH]string{
@@ -14547,7 +14172,9 @@ func (*MessageParamValue) GetID() uint32 {
 	return 22
 }
 
-// Set a parameter value (write new value to permanent storage).        The receiving component should acknowledge the new parameter value by broadcasting a PARAM_VALUE message (broadcasting ensures that multiple GCS all have an up-to-date list of all parameters). If the sending GCS did not receive a PARAM_VALUE within its timeout time, it should re-send the PARAM_SET message. The parameter microservice is documented at https://mavlink.io/en/services/parameter.html.        PARAM_SET may also be called within the context of a transaction (started with MAV_CMD_PARAM_TRANSACTION). Within a transaction the receiving component should respond with PARAM_ACK_TRANSACTION to the setter component (instead of broadcasting PARAM_VALUE), and PARAM_SET should be re-sent if this is ACK not received.
+// Set a parameter value (write new value to permanent storage).
+// The receiving component should acknowledge the new parameter value by broadcasting a PARAM_VALUE message (broadcasting ensures that multiple GCS all have an up-to-date list of all parameters). If the sending GCS did not receive a PARAM_VALUE within its timeout time, it should re-send the PARAM_SET message. The parameter microservice is documented at https://mavlink.io/en/services/parameter.html.
+// PARAM_SET may also be called within the context of a transaction (started with MAV_CMD_PARAM_TRANSACTION). Within a transaction the receiving component should respond with PARAM_ACK_TRANSACTION to the setter component (instead of broadcasting PARAM_VALUE), and PARAM_SET should be re-sent if this is ACK not received.
 type MessageParamSet struct {
 	// System ID
 	TargetSystem uint8
@@ -14566,7 +14193,8 @@ func (*MessageParamSet) GetID() uint32 {
 	return 23
 }
 
-// The global position, as returned by the Global Positioning System (GPS). This is                NOT the global position estimate of the system, but rather a RAW sensor value. See message GLOBAL_POSITION_INT for the global position estimate.
+// The global position, as returned by the Global Positioning System (GPS). This is
+// NOT the global position estimate of the system, but rather a RAW sensor value. See message GLOBAL_POSITION_INT for the global position estimate.
 type MessageGpsRawInt struct {
 	// Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.
 	TimeUsec uint64
@@ -14803,7 +14431,8 @@ func (*MessageLocalPositionNed) GetID() uint32 {
 	return 32
 }
 
-// The filtered global position (e.g. fused GPS and accelerometers). The position is in GPS-frame (right-handed, Z-up). It               is designed as scaled integer message since the resolution of float is not sufficient.
+// The filtered global position (e.g. fused GPS and accelerometers). The position is in GPS-frame (right-handed, Z-up). It
+// is designed as scaled integer message since the resolution of float is not sufficient.
 type MessageGlobalPositionInt struct {
 	// Timestamp (time since system boot).
 	TimeBootMs uint32
@@ -14975,7 +14604,8 @@ func (*MessageMissionWritePartialList) GetID() uint32 {
 	return 38
 }
 
-// Message encoding a mission item. This message is emitted to announce                the presence of a mission item and to set a mission item on the system. The mission item can be either in x, y, z meters (type: LOCAL) or x:lat, y:lon, z:altitude. Local frame is Z-down, right handed (NED), global frame is Z-up, right handed (ENU). NaN may be used to indicate an optional/default value (e.g. to use the system's current latitude or yaw rather than a specific value). See also https://mavlink.io/en/services/mission.html.
+// Message encoding a mission item. This message is emitted to announce
+// the presence of a mission item and to set a mission item on the system. The mission item can be either in x, y, z meters (type: LOCAL) or x:lat, y:lon, z:altitude. Local frame is Z-down, right handed (NED), global frame is Z-up, right handed (ENU). NaN may be used to indicate an optional/default value (e.g. to use the system's current latitude or yaw rather than a specific value). See also https://mavlink.io/en/services/mission.html.
 type MessageMissionItem struct {
 	// System ID
 	TargetSystem uint8
@@ -15533,7 +15163,8 @@ func (*MessageRcChannelsOverride) GetID() uint32 {
 	return 70
 }
 
-// Message encoding a mission item. This message is emitted to announce                the presence of a mission item and to set a mission item on the system. The mission item can be either in x, y, z meters (type: LOCAL) or x:lat, y:lon, z:altitude. Local frame is Z-down, right handed (NED), global frame is Z-up, right handed (ENU). NaN or INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current latitude, yaw rather than a specific value). See also https://mavlink.io/en/services/mission.html.
+// Message encoding a mission item. This message is emitted to announce
+// the presence of a mission item and to set a mission item on the system. The mission item can be either in x, y, z meters (type: LOCAL) or x:lat, y:lon, z:altitude. Local frame is Z-down, right handed (NED), global frame is Z-up, right handed (ENU). NaN or INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current latitude, yaw rather than a specific value). See also https://mavlink.io/en/services/mission.html.
 type MessageMissionItemInt struct {
 	// System ID
 	TargetSystem uint8
@@ -16436,7 +16067,8 @@ func (*MessageCameraTrigger) GetID() uint32 {
 	return 112
 }
 
-// The global position, as returned by the Global Positioning System (GPS). This is                 NOT the global position estimate of the sytem, but rather a RAW sensor value. See message GLOBAL_POSITION_INT for the global position estimate.
+// The global position, as returned by the Global Positioning System (GPS). This is
+// NOT the global position estimate of the sytem, but rather a RAW sensor value. See message GLOBAL_POSITION_INT for the global position estimate.
 type MessageHilGps struct {
 	// Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.
 	TimeUsec uint64
@@ -18096,7 +17728,10 @@ type MessageStorageInformation struct {
 	Type STORAGE_TYPE `mavenum:"uint8" mavext:"true"`
 	// Textual storage name to be used in UI (microSD 1, Internal Memory, etc.) This is a NULL terminated string. If it is exactly 32 characters long, add a terminating NULL. If this string is empty, the generic type is shown to the user.
 	Name string `mavext:"true" mavlen:"32"`
-	// Flags indicating whether this instance is preferred storage for photos, videos, etc.        Note: Implementations should initially set the flags on the system-default storage id used for saving media (if possible/supported).        This setting can then be overridden using MAV_CMD_SET_STORAGE_USAGE.        If the media usage flags are not set, a GCS may assume storage ID 1 is the default storage for all media types.
+	// Flags indicating whether this instance is preferred storage for photos, videos, etc.
+	// Note: Implementations should initially set the flags on the system-default storage id used for saving media (if possible/supported).
+	// This setting can then be overridden using MAV_CMD_SET_STORAGE_USAGE.
+	// If the media usage flags are not set, a GCS may assume storage ID 1 is the default storage for all media types.
 	StorageUsage STORAGE_USAGE_FLAG `mavenum:"uint8" mavext:"true"`
 }
 
@@ -18128,7 +17763,13 @@ func (*MessageCameraCaptureStatus) GetID() uint32 {
 	return 262
 }
 
-// Information about a captured image. This is emitted every time a message is captured.        MAV_CMD_REQUEST_MESSAGE can be used to (re)request this message for a specific sequence number or range of sequence numbers:        MAV_CMD_REQUEST_MESSAGE.param2 indicates the sequence number the first image to send, or set to -1 to send the message for all sequence numbers.        MAV_CMD_REQUEST_MESSAGE.param3 is used to specify a range of messages to send:        set to 0 (default) to send just the the message for the sequence number in param 2,        set to -1 to send the message for the sequence number in param 2 and all the following sequence numbers,         set to the sequence number of the final message in the range.
+// Information about a captured image. This is emitted every time a message is captured.
+// MAV_CMD_REQUEST_MESSAGE can be used to (re)request this message for a specific sequence number or range of sequence numbers:
+// MAV_CMD_REQUEST_MESSAGE.param2 indicates the sequence number the first image to send, or set to -1 to send the message for all sequence numbers.
+// MAV_CMD_REQUEST_MESSAGE.param3 is used to specify a range of messages to send:
+// set to 0 (default) to send just the the message for the sequence number in param 2,
+// set to -1 to send the message for the sequence number in param 2 and all the following sequence numbers,
+// set to the sequence number of the final message in the range.
 type MessageCameraImageCaptured struct {
 	// Timestamp (time since system boot).
 	TimeBootMs uint32
@@ -19067,7 +18708,9 @@ func (*MessageIsbdLinkStatus) GetID() uint32 {
 	return 335
 }
 
-// Configure cellular modems.        This message is re-emitted as an acknowledgement by the modem.        The message may also be explicitly requested using MAV_CMD_REQUEST_MESSAGE.
+// Configure cellular modems.
+// This message is re-emitted as an acknowledgement by the modem.
+// The message may also be explicitly requested using MAV_CMD_REQUEST_MESSAGE.
 type MessageCellularConfig struct {
 	// Enable/disable LTE. 0: setting unchanged, 1: disabled, 2: enabled. Current setting when sent back as a response.
 	EnableLte uint8
@@ -21194,13 +20837,13 @@ type MessageObstacleDistance_3d struct {
 	SensorType MAV_DISTANCE_SENSOR `mavenum:"uint8"`
 	// Coordinate frame of reference.
 	Frame MAV_FRAME `mavenum:"uint8"`
-	//  Unique ID given to each obstacle so that its movement can be tracked. Use UINT16_MAX if object ID is unknown or cannot be determined.
+	// Unique ID given to each obstacle so that its movement can be tracked. Use UINT16_MAX if object ID is unknown or cannot be determined.
 	ObstacleId uint16
-	//  X position of the obstacle.
+	// X position of the obstacle.
 	X float32
-	//  Y position of the obstacle.
+	// Y position of the obstacle.
 	Y float32
-	//  Z position of the obstacle.
+	// Z position of the obstacle.
 	Z float32
 	// Minimum distance the sensor can measure.
 	MinDistance float32

@@ -8773,6 +8773,14 @@ const (
 	MAV_TYPE_BATTERY MAV_TYPE = 36
 	// Parachute
 	MAV_TYPE_PARACHUTE MAV_TYPE = 37
+	// Log
+	MAV_TYPE_LOG MAV_TYPE = 38
+	// OSD
+	MAV_TYPE_OSD MAV_TYPE = 39
+	// IMU
+	MAV_TYPE_IMU MAV_TYPE = 40
+	// GPS
+	MAV_TYPE_GPS MAV_TYPE = 41
 )
 
 var labels_MAV_TYPE = map[MAV_TYPE]string{
@@ -8814,6 +8822,10 @@ var labels_MAV_TYPE = map[MAV_TYPE]string{
 	MAV_TYPE_DECAROTOR:          "MAV_TYPE_DECAROTOR",
 	MAV_TYPE_BATTERY:            "MAV_TYPE_BATTERY",
 	MAV_TYPE_PARACHUTE:          "MAV_TYPE_PARACHUTE",
+	MAV_TYPE_LOG:                "MAV_TYPE_LOG",
+	MAV_TYPE_OSD:                "MAV_TYPE_OSD",
+	MAV_TYPE_IMU:                "MAV_TYPE_IMU",
+	MAV_TYPE_GPS:                "MAV_TYPE_GPS",
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -8863,6 +8875,10 @@ var reverseLabels_MAV_TYPE = map[string]MAV_TYPE{
 	"MAV_TYPE_DECAROTOR":          MAV_TYPE_DECAROTOR,
 	"MAV_TYPE_BATTERY":            MAV_TYPE_BATTERY,
 	"MAV_TYPE_PARACHUTE":          MAV_TYPE_PARACHUTE,
+	"MAV_TYPE_LOG":                MAV_TYPE_LOG,
+	"MAV_TYPE_OSD":                MAV_TYPE_OSD,
+	"MAV_TYPE_IMU":                MAV_TYPE_IMU,
+	"MAV_TYPE_GPS":                MAV_TYPE_GPS,
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.

@@ -1839,51 +1839,6 @@ func (e CELLULAR_STATUS_FLAG) String() string {
 	return "invalid value"
 }
 
-// Component capability flags (Bitmap)
-type COMPONENT_CAP_FLAGS int
-
-const (
-	// Component has parameters, and supports the parameter protocol (PARAM messages).
-	COMPONENT_CAP_FLAGS_PARAM COMPONENT_CAP_FLAGS = 1
-	// Component has parameters, and supports the extended parameter protocol (PARAM_EXT messages).
-	COMPONENT_CAP_FLAGS_PARAM_EXT COMPONENT_CAP_FLAGS = 2
-)
-
-var labels_COMPONENT_CAP_FLAGS = map[COMPONENT_CAP_FLAGS]string{
-	COMPONENT_CAP_FLAGS_PARAM:     "COMPONENT_CAP_FLAGS_PARAM",
-	COMPONENT_CAP_FLAGS_PARAM_EXT: "COMPONENT_CAP_FLAGS_PARAM_EXT",
-}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e COMPONENT_CAP_FLAGS) MarshalText() ([]byte, error) {
-	if l, ok := labels_COMPONENT_CAP_FLAGS[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_COMPONENT_CAP_FLAGS = map[string]COMPONENT_CAP_FLAGS{
-	"COMPONENT_CAP_FLAGS_PARAM":     COMPONENT_CAP_FLAGS_PARAM,
-	"COMPONENT_CAP_FLAGS_PARAM_EXT": COMPONENT_CAP_FLAGS_PARAM_EXT,
-}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *COMPONENT_CAP_FLAGS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_COMPONENT_CAP_FLAGS[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e COMPONENT_CAP_FLAGS) String() string {
-	if l, ok := labels_COMPONENT_CAP_FLAGS[e]; ok {
-		return l
-	}
-	return "invalid value"
-}
-
 // Supported component metadata types. These are used in the "general" metadata file returned by COMPONENT_INFORMATION to provide information about supported metadata types. The types are not used directly in MAVLink messages.
 type COMP_METADATA_TYPE int
 

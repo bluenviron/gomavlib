@@ -77,11 +77,12 @@ func processDialect(commit string, name string) error {
 
 	os.Mkdir(filepath.Join("pkg", "dialects", pkgName), 0o755)
 
-	err := shellCommand(fmt.Sprintf("go run ./cmd/dialect-import --package=%s --comment=\"%s\" %s > %s",
+	err := shellCommand(fmt.Sprintf("go run ./cmd/dialect-import --pwd=%s --package=%s --comment=\"%s\" %s",
+		filepath.Join("pkg", "dialects", pkgName),
 		pkgName,
 		"Package "+pkgName+" contains the "+name+" dialect.",
 		"https://raw.githubusercontent.com/mavlink/mavlink/"+commit+"/message_definitions/v1.0/"+name+".xml",
-		filepath.Join("pkg", "dialects", pkgName, "dialect.go")))
+	))
 	if err != nil {
 		return err
 	}

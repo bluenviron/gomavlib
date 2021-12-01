@@ -81,7 +81,7 @@ Standard dialects are provided in the `pkg/dialects/` folder, but it's also poss
 
 ```
 go get github.com/aler9/gomavlib/cmd/dialect-import
-dialect-import my_dialect.xml > dialect.go
+dialect-import my_dialect.xml
 ```
 
 ## Testing

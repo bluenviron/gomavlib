@@ -70,13 +70,10 @@ func NewWriter(conf WriterConf) (*Writer, error) {
 // WriteMessage writes a Message.
 // It must not be called by multiple routines in parallel.
 func (w *Writer) WriteMessage(m msg.Message) error {
-	var fr frame.Frame
 	if w.conf.OutVersion == V1 {
-		fr = &frame.V1Frame{Message: m}
-	} else {
-		fr = &frame.V2Frame{Message: m}
+		return w.writeFrameAndFill(&frame.V1Frame{Message: m})
 	}
-	return w.writeFrameAndFill(fr)
+	return w.writeFrameAndFill(&frame.V2Frame{Message: m})
 }
 
 func (w *Writer) writeFrameAndFill(fr frame.Frame) error {

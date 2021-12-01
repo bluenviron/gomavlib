@@ -19,9 +19,8 @@ type WriterConf struct {
 	// If not provided, messages are decoded in the MessageRaw struct.
 	DialectDE *dialect.DecEncoder
 
-	// Mavlink version used to encode messages. See Version
-	// for the available options.
-	OutVersion Version
+	// Mavlink version used to encode messages.
+	OutVersion WriterOutVersion
 	// the system id, added to every outgoing frame and used to identify this
 	// node in the network.
 	OutSystemID byte

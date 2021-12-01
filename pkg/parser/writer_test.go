@@ -40,7 +40,7 @@ func TestWriterWriteMessage(t *testing.T) {
 
 	for _, c := range []struct {
 		name string
-		ver  Version
+		ver  WriterOutVersion
 		key  *frame.V2Key
 		msg  msg.Message
 		raw  []byte

@@ -47,7 +47,7 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Cha
 		Writer:      rwc,
 		DialectDE:   n.dialectDE,
 		OutSystemID: n.conf.OutSystemID,
-		OutVersion: func() parser.Version {
+		OutVersion: func() parser.WriterOutVersion {
 			if n.conf.OutVersion == V2 {
 				return parser.V2
 			}

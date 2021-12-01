@@ -63,7 +63,7 @@ Features:
   * [events](examples/events/main.go)
   * [router](examples/router/main.go)
   * [stream-requests](examples/stream-requests/main.go)
-  * [transceiver](examples/transceiver/main.go)
+  * [parser](examples/parser/main.go)
 
 4. Compile and run
 

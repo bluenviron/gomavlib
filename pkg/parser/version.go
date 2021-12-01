@@ -1,4 +1,4 @@
-package transceiver
+package parser
 
 // Version is a Mavlink version.
 type Version int

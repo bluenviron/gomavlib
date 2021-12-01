@@ -6,11 +6,11 @@ import (
 
 	"github.com/aler9/gomavlib/pkg/dialect"
 	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
-	"github.com/aler9/gomavlib/pkg/transceiver"
+	"github.com/aler9/gomavlib/pkg/parser"
 )
 
-// if NewNode() is not flexible enough, the library provides a low-level Mavlink
-// frame parser, that can be allocated with transceiver.New().
+// if NewNode() is not flexible enough, the library provides a low-level
+// Mavlink reader and writer, that can be used with any kind of byte stream.
 
 func main() {
 	inBuf := bytes.NewBuffer(
@@ -22,11 +22,18 @@ func main() {
 		panic(err)
 	}
 
-	parser, err := transceiver.New(transceiver.Conf{
-		Reader:      inBuf,
+	reader, err := parser.NewReader(parser.ReaderConf{
+		Reader:    inBuf,
+		DialectDE: dialectDE,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	writer, err := parser.NewWriter(parser.WriterConf{
 		Writer:      outBuf,
 		DialectDE:   dialectDE,
-		OutVersion:  transceiver.V2, // change to V1 if you're unable to communicate with the target
+		OutVersion:  parser.V2, // change to V1 if you're unable to communicate with the target
 		OutSystemID: 10,
 	})
 	if err != nil {
@@ -34,7 +41,7 @@ func main() {
 	}
 
 	// read a message, encapsulated in a frame
-	frame, err := parser.Read()
+	frame, err := reader.Read()
 	if err != nil {
 		panic(err)
 	}
@@ -42,7 +49,7 @@ func main() {
 	fmt.Printf("decoded: %+v\n", frame)
 
 	// write a message
-	err = parser.WriteMessage(&ardupilotmega.MessageParamValue{
+	err = writer.WriteMessage(&ardupilotmega.MessageParamValue{
 		ParamId:    "test_parameter",
 		ParamValue: 123456,
 		ParamType:  ardupilotmega.MAV_PARAM_TYPE_UINT32,

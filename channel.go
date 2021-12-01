@@ -6,7 +6,7 @@ import (
 
 	"github.com/aler9/gomavlib/pkg/frame"
 	"github.com/aler9/gomavlib/pkg/msg"
-	"github.com/aler9/gomavlib/pkg/transceiver"
+	"github.com/aler9/gomavlib/pkg/parser"
 )
 
 func randomByte() byte {
@@ -20,12 +20,13 @@ func randomByte() byte {
 // For instance, a TCP client endpoint creates a single channel, while a TCP
 // server endpoint creates a channel for each incoming connection.
 type Channel struct {
-	e           Endpoint
-	label       string
-	rwc         io.ReadWriteCloser
-	n           *Node
-	transceiver *transceiver.Transceiver
-	running     bool
+	e       Endpoint
+	label   string
+	rwc     io.ReadWriteCloser
+	n       *Node
+	reader  *parser.Reader
+	writer  *parser.Writer
+	running bool
 
 	// in
 	write     chan interface{}
@@ -33,17 +34,24 @@ type Channel struct {
 }
 
 func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Channel, error) {
-	transceiver, err := transceiver.New(transceiver.Conf{
-		Reader:      rwc,
+	reader, err := parser.NewReader(parser.ReaderConf{
+		Reader:    rwc,
+		DialectDE: n.dialectDE,
+		InKey:     n.conf.InKey,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	writer, err := parser.NewWriter(parser.WriterConf{
 		Writer:      rwc,
 		DialectDE:   n.dialectDE,
-		InKey:       n.conf.InKey,
 		OutSystemID: n.conf.OutSystemID,
-		OutVersion: func() transceiver.Version {
+		OutVersion: func() parser.Version {
 			if n.conf.OutVersion == V2 {
-				return transceiver.V2
+				return parser.V2
 			}
-			return transceiver.V1
+			return parser.V1
 		}(),
 		OutComponentID:     n.conf.OutComponentID,
 		OutSignatureLinkID: randomByte(),
@@ -54,13 +62,14 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Cha
 	}
 
 	return &Channel{
-		e:           e,
-		label:       label,
-		rwc:         rwc,
-		n:           n,
-		transceiver: transceiver,
-		write:       make(chan interface{}),
-		terminate:   make(chan struct{}),
+		e:         e,
+		label:     label,
+		rwc:       rwc,
+		n:         n,
+		reader:    reader,
+		writer:    writer,
+		write:     make(chan interface{}),
+		terminate: make(chan struct{}),
 	}, nil
 }
 
@@ -90,10 +99,10 @@ func (ch *Channel) run() {
 		ch.n.events <- &EventChannelOpen{ch}
 
 		for {
-			frame, err := ch.transceiver.Read()
+			frame, err := ch.reader.Read()
 			if err != nil {
 				// continue in case of parse errors
-				if _, ok := err.(*transceiver.Error); ok {
+				if _, ok := err.(*parser.ReadError); ok {
 					ch.n.events <- &EventParseError{err, ch}
 					continue
 				}
@@ -117,10 +126,10 @@ func (ch *Channel) run() {
 		for what := range ch.write {
 			switch wh := what.(type) {
 			case msg.Message:
-				ch.transceiver.WriteMessage(wh)
+				ch.writer.WriteMessage(wh)
 
 			case frame.Frame:
-				ch.transceiver.WriteFrame(wh)
+				ch.writer.WriteFrame(wh)
 			}
 		}
 	}()

@@ -15,7 +15,7 @@ jobs:
       with:
         go-version: "1.17"
 
-    - run: cd / && GO111MODULE=on go get mvdan.cc/gofumpt@v0.2.0
+    - run: cd / && go install mvdan.cc/gofumpt@v0.2.0
 
     - run: make dialects-nodocker
 

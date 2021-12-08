@@ -115,9 +115,9 @@ func (c *conn) Read(byt []byte) (int, error) {
 		return 0, errTerminated
 	}
 
-	copy(byt, buf)
-	c.listener.readDone <- struct{}{}
-	return len(buf), nil
+	n := copy(byt, buf)
+	c.listener.readDone <- n
+	return n, nil
 }
 
 // Write implements the net.Conn interface.
@@ -162,7 +162,7 @@ type Listener struct {
 	closed     bool
 
 	accept   chan net.Conn
-	readDone chan struct{}
+	readDone chan int
 }
 
 // New allocates a Listener.
@@ -176,10 +176,10 @@ func New(network, address string) (net.Listener, error) {
 		pc:       pc,
 		conns:    make(map[connIndex]*conn),
 		accept:   make(chan net.Conn),
-		readDone: make(chan struct{}),
+		readDone: make(chan int),
 	}
 
-	go l.reader()
+	go l.runReader()
 
 	return l, nil
 }
@@ -211,7 +211,7 @@ func (l *Listener) Addr() net.Addr {
 	return l.pc.LocalAddr()
 }
 
-func (l *Listener) reader() {
+func (l *Listener) runReader() {
 	buf := make([]byte, bufferSize)
 
 	for {
@@ -235,7 +235,7 @@ func (l *Listener) reader() {
 			conn, preExisting := l.conns[connIndex]
 
 			if !preExisting && l.closed {
-				// listener is closed, ignore new connection
+				// listener is closed, ignore new connections
 			} else {
 				if !preExisting {
 					conn = newConn(l, connIndex, uaddr)
@@ -243,11 +243,16 @@ func (l *Listener) reader() {
 					l.accept <- conn
 				}
 
-				// route buffer to connection
-				conn.read <- buf[:n]
+				start := 0
+				for n > 0 {
+					// route buffer to connection
+					conn.read <- buf[start : start+n]
 
-				// wait copy since buffer is shared
-				<-l.readDone
+					// wait copy since buffer is shared
+					read := <-l.readDone
+					n -= read
+					start += read
+				}
 			}
 		}()
 	}

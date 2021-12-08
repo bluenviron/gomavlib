@@ -1,6 +1,7 @@
 package udplistener
 
 import (
+	"bytes"
 	"net"
 	"sync"
 	"testing"
@@ -9,12 +10,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestUdpListener(t *testing.T) {
+func TestMain(t *testing.T) {
 	testBuf1 := []byte("testing testing 1 2 3")
 	testBuf2 := []byte("second part")
 
 	l, err := New("udp4", "127.0.0.1:18456")
 	require.NoError(t, err)
+	defer l.Close()
 
 	var wg sync.WaitGroup
 	wg.Add(5)
@@ -64,12 +66,46 @@ func TestUdpListener(t *testing.T) {
 	}
 
 	wg.Wait()
-	l.Close()
 }
 
-func TestUdpListenerDeadline(t *testing.T) {
+func TestSamePacketMultipleReads(t *testing.T) {
 	l, err := New("udp4", "127.0.0.1:18456")
 	require.NoError(t, err)
+	defer l.Close()
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	go func() {
+		defer wg.Done()
+
+		conn, err := l.Accept()
+		require.NoError(t, err)
+		defer conn.Close()
+
+		buf := make([]byte, 256)
+
+		for i := 0; i < 4; i++ {
+			n, err := conn.Read(buf)
+			require.NoError(t, err)
+			require.Equal(t, 256, n)
+		}
+	}()
+
+	conn, err := net.Dial("udp4", "127.0.0.1:18456")
+	require.NoError(t, err)
+	defer conn.Close()
+
+	_, err = conn.Write(bytes.Repeat([]byte{0x01, 0x02, 0x03, 0x04}, 1024/4))
+	require.NoError(t, err)
+
+	wg.Wait()
+}
+
+func TestDeadline(t *testing.T) {
+	l, err := New("udp4", "127.0.0.1:18456")
+	require.NoError(t, err)
+	defer l.Close()
 
 	var wg sync.WaitGroup
 	wg.Add(2)
@@ -78,7 +114,6 @@ func TestUdpListenerDeadline(t *testing.T) {
 
 	go func() {
 		defer wg.Done()
-		defer l.Close()
 
 		conn, err := l.Accept()
 		require.NoError(t, err)
@@ -122,7 +157,7 @@ func TestUdpListenerDeadline(t *testing.T) {
 	require.NoError(t, err2)
 }
 
-func TestUdpListenerDoubleClose(t *testing.T) {
+func TestDoubleClose(t *testing.T) {
 	l, err := New("udp4", "127.0.0.1:18456")
 	require.NoError(t, err)
 	l.Close()

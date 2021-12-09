@@ -72,6 +72,8 @@ const (
 	MAV_SYS_STATUS_OBSTACLE_AVOIDANCE MAV_SYS_STATUS_SENSOR = 536870912
 	// 0x40000000 propulsion (actuator, esc, motor or propellor)
 	MAV_SYS_STATUS_SENSOR_PROPULSION MAV_SYS_STATUS_SENSOR = 1073741824
+	// 0x80000000 Extended bit-field are used for further sensor status bits (needs to be set in onboard_control_sensors_present only)
+	MAV_SYS_STATUS_EXTENSION_USED MAV_SYS_STATUS_SENSOR = 2147483648
 )
 
 var labels_MAV_SYS_STATUS_SENSOR = map[MAV_SYS_STATUS_SENSOR]string{}

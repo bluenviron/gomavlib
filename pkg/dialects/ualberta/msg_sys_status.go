@@ -30,6 +30,12 @@ type MessageSysStatus struct {
 	ErrorsCount3 uint16
 	// Autopilot-specific errors
 	ErrorsCount4 uint16
+	// Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.
+	OnboardControlSensorsPresentExtended MAV_SYS_STATUS_SENSOR_EXTENDED `mavenum:"uint32" mavext:"true"`
+	// Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.
+	OnboardControlSensorsEnabledExtended MAV_SYS_STATUS_SENSOR_EXTENDED `mavenum:"uint32" mavext:"true"`
+	// Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.
+	OnboardControlSensorsHealthExtended MAV_SYS_STATUS_SENSOR_EXTENDED `mavenum:"uint32" mavext:"true"`
 }
 
 // GetID implements the msg.Message interface.

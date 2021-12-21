@@ -9,10 +9,10 @@ import (
 )
 
 type (
-	MAV_TYPE      int //nolint:golint
-	MAV_AUTOPILOT int //nolint:golint
-	MAV_MODE_FLAG int //nolint:golint
-	MAV_STATE     int //nolint:golint
+	MAV_TYPE      int //nolint:revive
+	MAV_AUTOPILOT int //nolint:revive
+	MAV_MODE_FLAG int //nolint:revive
+	MAV_STATE     int //nolint:revive
 )
 
 type MessageHeartbeat struct {

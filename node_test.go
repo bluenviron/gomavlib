@@ -17,10 +17,10 @@ import (
 )
 
 type (
-	MAV_TYPE      int //nolint:golint
-	MAV_AUTOPILOT int //nolint:golint
-	MAV_MODE_FLAG int //nolint:golint
-	MAV_STATE     int //nolint:golint
+	MAV_TYPE      int //nolint:revive
+	MAV_AUTOPILOT int //nolint:revive
+	MAV_MODE_FLAG int //nolint:revive
+	MAV_STATE     int //nolint:revive
 )
 
 type MessageHeartbeat struct {
@@ -39,7 +39,7 @@ func (*MessageHeartbeat) GetID() uint32 {
 type MessageRequestDataStream struct {
 	TargetSystem    uint8
 	TargetComponent uint8
-	ReqStreamId     uint8 //nolint:golint
+	ReqStreamId     uint8 //nolint:revive
 	ReqMessageRate  uint16
 	StartStop       uint8
 }
@@ -94,7 +94,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 	node2, err := NewNode(NodeConf{
 		Dialect:          &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:       V2,
-		OutSystemID:      11, //nolint:golint
+		OutSystemID:      11, //nolint:revive
 		Endpoints:        []EndpointConf{t2},
 		HeartbeatDisable: true,
 	})

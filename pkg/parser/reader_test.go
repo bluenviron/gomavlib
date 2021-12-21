@@ -13,10 +13,10 @@ import (
 )
 
 type (
-	MAV_TYPE      int //nolint:golint
-	MAV_AUTOPILOT int //nolint:golint
-	MAV_MODE_FLAG int //nolint:golint
-	MAV_STATE     int //nolint:golint
+	MAV_TYPE      int //nolint:revive
+	MAV_AUTOPILOT int //nolint:revive
+	MAV_MODE_FLAG int //nolint:revive
+	MAV_STATE     int //nolint:revive
 )
 
 type MessageTest5 struct {
@@ -61,7 +61,7 @@ func (*MessageHeartbeat) GetID() uint32 {
 
 type MessageOpticalFlow struct {
 	TimeUsec       uint64
-	SensorId       uint8 //nolint:golint
+	SensorId       uint8 //nolint:revive
 	FlowX          int16
 	FlowY          int16
 	FlowCompMX     float32

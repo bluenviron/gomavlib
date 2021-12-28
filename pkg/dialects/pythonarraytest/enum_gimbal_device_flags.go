@@ -12,7 +12,7 @@ type GIMBAL_DEVICE_FLAGS int
 const (
 	// Set to retracted safe position (no stabilization), takes presedence over all other flags.
 	GIMBAL_DEVICE_FLAGS_RETRACT GIMBAL_DEVICE_FLAGS = 1
-	// Set to neutral position (horizontal, forward looking, with stabiliziation), takes presedence over all other flags except RETRACT.
+	// Set to neutral/default position, taking precedence over all other flags except RETRACT. Neutral is commonly forward-facing and horizontal (pitch=yaw=0) but may be any orientation.
 	GIMBAL_DEVICE_FLAGS_NEUTRAL GIMBAL_DEVICE_FLAGS = 2
 	// Lock roll angle to absolute angle relative to horizon (not relative to drone). This is generally the default with a stabilizing gimbal.
 	GIMBAL_DEVICE_FLAGS_ROLL_LOCK GIMBAL_DEVICE_FLAGS = 4

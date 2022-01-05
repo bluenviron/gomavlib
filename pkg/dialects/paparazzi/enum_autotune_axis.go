@@ -17,7 +17,7 @@ const (
 	// Autotune pitch axis.
 	AUTOTUNE_AXIS_PITCH AUTOTUNE_AXIS = 2
 	// Autotune yaw axis.
-	AUTOTUNE_AXIS_YAW AUTOTUNE_AXIS = 3
+	AUTOTUNE_AXIS_YAW AUTOTUNE_AXIS = 4
 )
 
 var labels_AUTOTUNE_AXIS = map[AUTOTUNE_AXIS]string{}

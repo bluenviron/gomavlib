@@ -12,12 +12,26 @@ type MAV_WINCH_STATUS_FLAG int
 const (
 	// Winch is healthy
 	MAV_WINCH_STATUS_HEALTHY MAV_WINCH_STATUS_FLAG = 1
-	// Winch thread is fully retracted
+	// Winch line is fully retracted
 	MAV_WINCH_STATUS_FULLY_RETRACTED MAV_WINCH_STATUS_FLAG = 2
 	// Winch motor is moving
 	MAV_WINCH_STATUS_MOVING MAV_WINCH_STATUS_FLAG = 4
-	// Winch clutch is engaged allowing motor to move freely
+	// Winch clutch is engaged. Motor is active.
 	MAV_WINCH_STATUS_CLUTCH_ENGAGED MAV_WINCH_STATUS_FLAG = 8
+	// Winch is locked by locking mechanism.
+	MAV_WINCH_STATUS_LOCKED MAV_WINCH_STATUS_FLAG = 16
+	// Winch is gravity dropping payload.
+	MAV_WINCH_STATUS_DROPPING MAV_WINCH_STATUS_FLAG = 32
+	// Winch is arresting payload descent.
+	MAV_WINCH_STATUS_ARRESTING MAV_WINCH_STATUS_FLAG = 64
+	// Winch is using torque measurements to sense the ground.
+	MAV_WINCH_STATUS_GROUND_SENSE MAV_WINCH_STATUS_FLAG = 128
+	// Winch is returning to the fully retracted position.
+	MAV_WINCH_STATUS_RETRACTING MAV_WINCH_STATUS_FLAG = 256
+	// Winch is redelivering the payload. This is a failover state if the line tension goes above a threshold during RETRACTING.
+	MAV_WINCH_STATUS_REDELIVER MAV_WINCH_STATUS_FLAG = 512
+	// Winch is abandoning the line and possibly payload. Winch unspools the entire calculated line length. This is a failover state from REDELIVER if the number of attemps exceeds a threshold.
+	MAV_WINCH_STATUS_ABANDON_LINE MAV_WINCH_STATUS_FLAG = 1024
 )
 
 var labels_MAV_WINCH_STATUS_FLAG = map[MAV_WINCH_STATUS_FLAG]string{}

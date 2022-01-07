@@ -16,7 +16,7 @@ const (
 	MAV_WINCH_STATUS_FULLY_RETRACTED MAV_WINCH_STATUS_FLAG = 2
 	// Winch motor is moving
 	MAV_WINCH_STATUS_MOVING MAV_WINCH_STATUS_FLAG = 4
-	// Winch clutch is engaged. Motor is active.
+	// Winch clutch is engaged allowing motor to move freely.
 	MAV_WINCH_STATUS_CLUTCH_ENGAGED MAV_WINCH_STATUS_FLAG = 8
 	// Winch is locked by locking mechanism.
 	MAV_WINCH_STATUS_LOCKED MAV_WINCH_STATUS_FLAG = 16

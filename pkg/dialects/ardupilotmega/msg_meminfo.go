@@ -2,7 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package ardupilotmega
 
-// State of APM memory.
+// State of autopilot RAM.
 type MessageMeminfo struct {
 	// Heap top.
 	Brkval uint16

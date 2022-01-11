@@ -13,6 +13,10 @@ const (
 	SCRIPTING_CMD_REPL_START SCRIPTING_CMD = 0
 	// End a REPL session.
 	SCRIPTING_CMD_REPL_STOP SCRIPTING_CMD = 1
+	// Stop execution of scripts.
+	SCRIPTING_CMD_STOP SCRIPTING_CMD = 2
+	// Stop execution of scripts and restart.
+	SCRIPTING_CMD_STOP_AND_RESTART SCRIPTING_CMD = 3
 )
 
 var labels_SCRIPTING_CMD = map[SCRIPTING_CMD]string{}

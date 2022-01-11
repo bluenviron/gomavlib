@@ -2,7 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package ardupilotmega
 
-// Message with some status from APM to GCS about camera or antenna mount.
+// Message with some status from autopilot to GCS about camera or antenna mount.
 type MessageMountStatus struct {
 	// System ID.
 	TargetSystem uint8
@@ -14,6 +14,8 @@ type MessageMountStatus struct {
 	PointingB int32
 	// Yaw.
 	PointingC int32
+	// Mount operating mode.
+	MountMode MAV_MOUNT_MODE `mavenum:"uint8" mavext:"true"`
 }
 
 // GetID implements the msg.Message interface.

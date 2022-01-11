@@ -382,6 +382,8 @@ const (
 	MAV_CMD_DEBUG_TRAP MAV_CMD = 42700
 	// Control onboard scripting.
 	MAV_CMD_SCRIPTING MAV_CMD = 42701
+	// Scripting command as NAV command with wait for completion.
+	MAV_CMD_NAV_SCRIPT_TIME MAV_CMD = 42702
 	// Change flight speed at a given rate. This slews the vehicle at a controllable rate between it's previous speed and the new one. (affects GUIDED only. Outside GUIDED, aircraft ignores these commands. Designed for onboard companion-computer command-and-control, not normally operator/GCS control.)
 	MAV_CMD_GUIDED_CHANGE_SPEED MAV_CMD = 43000
 	// Change target altitude at a given rate. This slews the vehicle at a controllable rate between it's previous altitude and the new one. (affects GUIDED only. Outside GUIDED, aircraft ignores these commands. Designed for onboard companion-computer command-and-control, not normally operator/GCS control.)

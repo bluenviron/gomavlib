@@ -240,14 +240,6 @@ func processDefinition(
 
 	var outDefs []*outDefinition
 
-	// version
-	if def.Version != "" {
-		if *version != "" && *version != def.Version {
-			return nil, fmt.Errorf("version defined twice (%s and %s)", def.Version, *version)
-		}
-		*version = def.Version
-	}
-
 	// includes
 	for _, inc := range def.Includes {
 		// prepend url to remote address
@@ -259,6 +251,11 @@ func processDefinition(
 			return nil, err
 		}
 		outDefs = append(outDefs, subDefs...)
+	}
+
+	// version (process it after includes, in order to allow overriding it)
+	if def.Version != "" {
+		*version = def.Version
 	}
 
 	outDef := &outDefinition{

@@ -122,11 +122,6 @@ func run() error {
 		}
 		name := f.Name[:len(f.Name)-len(".xml")]
 
-		// exclude dialects which define the version twice
-		if name == "all" || name == "development" {
-			continue
-		}
-
 		err = processDialect(res.Sha, name)
 		if err != nil {
 			return err

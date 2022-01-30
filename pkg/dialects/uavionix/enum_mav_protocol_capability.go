@@ -10,16 +10,18 @@ import (
 type MAV_PROTOCOL_CAPABILITY int
 
 const (
-	// Autopilot supports MISSION float message type.
+	// Autopilot supports the MISSION_ITEM float message type.
+	// Note that MISSION_ITEM is deprecated, and autopilots should use MISSION_INT instead.
 	MAV_PROTOCOL_CAPABILITY_MISSION_FLOAT MAV_PROTOCOL_CAPABILITY = 1
 	// Autopilot supports the new param float message type.
 	MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT MAV_PROTOCOL_CAPABILITY = 2
 	// Autopilot supports MISSION_ITEM_INT scaled integer message type.
+	// Note that this flag must always be set if missions are supported, because missions must always use MISSION_ITEM_INT (rather than MISSION_ITEM, which is deprecated).
 	MAV_PROTOCOL_CAPABILITY_MISSION_INT MAV_PROTOCOL_CAPABILITY = 4
 	// Autopilot supports COMMAND_INT scaled integer message type.
 	MAV_PROTOCOL_CAPABILITY_COMMAND_INT MAV_PROTOCOL_CAPABILITY = 8
-	// Autopilot supports the new param union message type.
-	MAV_PROTOCOL_CAPABILITY_PARAM_UNION MAV_PROTOCOL_CAPABILITY = 16
+	// Reserved for future use.
+	MAV_PROTOCOL_CAPABILITY_RESERVED1 MAV_PROTOCOL_CAPABILITY = 16
 	// Autopilot supports the new FILE_TRANSFER_PROTOCOL message type.
 	MAV_PROTOCOL_CAPABILITY_FTP MAV_PROTOCOL_CAPABILITY = 32
 	// Autopilot supports commanding attitude offboard.
@@ -42,8 +44,8 @@ const (
 	MAV_PROTOCOL_CAPABILITY_MISSION_FENCE MAV_PROTOCOL_CAPABILITY = 16384
 	// Autopilot supports mission rally point protocol.
 	MAV_PROTOCOL_CAPABILITY_MISSION_RALLY MAV_PROTOCOL_CAPABILITY = 32768
-	// Autopilot supports the flight information protocol.
-	MAV_PROTOCOL_CAPABILITY_FLIGHT_INFORMATION MAV_PROTOCOL_CAPABILITY = 65536
+	// Reserved for future use.
+	MAV_PROTOCOL_CAPABILITY_RESERVED2 MAV_PROTOCOL_CAPABILITY = 65536
 )
 
 var labels_MAV_PROTOCOL_CAPABILITY = map[MAV_PROTOCOL_CAPABILITY]string{}

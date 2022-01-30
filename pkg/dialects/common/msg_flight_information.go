@@ -3,6 +3,7 @@
 package common
 
 // Information about flight since last arming.
+// This can be requested using MAV_CMD_REQUEST_MESSAGE.
 type MessageFlightInformation struct {
 	// Timestamp (time since system boot).
 	TimeBootMs uint32

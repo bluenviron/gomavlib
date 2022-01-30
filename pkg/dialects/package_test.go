@@ -8,15 +8,19 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/aler9/gomavlib/pkg/dialect"
+	"github.com/aler9/gomavlib/pkg/dialects/all"
 	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
 	"github.com/aler9/gomavlib/pkg/dialects/asluav"
+	"github.com/aler9/gomavlib/pkg/dialects/avssuas"
 	"github.com/aler9/gomavlib/pkg/dialects/common"
+	"github.com/aler9/gomavlib/pkg/dialects/development"
 	"github.com/aler9/gomavlib/pkg/dialects/icarous"
 	"github.com/aler9/gomavlib/pkg/dialects/matrixpilot"
 	"github.com/aler9/gomavlib/pkg/dialects/minimal"
 	"github.com/aler9/gomavlib/pkg/dialects/paparazzi"
 	"github.com/aler9/gomavlib/pkg/dialects/pythonarraytest"
 	"github.com/aler9/gomavlib/pkg/dialects/standard"
+	"github.com/aler9/gomavlib/pkg/dialects/storm32"
 	"github.com/aler9/gomavlib/pkg/dialects/test"
 	"github.com/aler9/gomavlib/pkg/dialects/ualberta"
 	"github.com/aler9/gomavlib/pkg/dialects/uavionix"
@@ -28,11 +32,23 @@ func TestDialects(t *testing.T) {
 		require.NoError(t, err)
 	}()
 	func() {
+		_, err := dialect.NewDecEncoder(avssuas.Dialect)
+		require.NoError(t, err)
+	}()
+	func() {
+		_, err := dialect.NewDecEncoder(all.Dialect)
+		require.NoError(t, err)
+	}()
+	func() {
 		_, err := dialect.NewDecEncoder(ardupilotmega.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {
 		_, err := dialect.NewDecEncoder(common.Dialect)
+		require.NoError(t, err)
+	}()
+	func() {
+		_, err := dialect.NewDecEncoder(development.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {
@@ -57,6 +73,10 @@ func TestDialects(t *testing.T) {
 	}()
 	func() {
 		_, err := dialect.NewDecEncoder(standard.Dialect)
+		require.NoError(t, err)
+	}()
+	func() {
+		_, err := dialect.NewDecEncoder(storm32.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {

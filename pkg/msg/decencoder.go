@@ -380,7 +380,7 @@ func valueDecode(target reflect.Value, buf []byte, f *decEncoderField) int {
 			return 4
 
 		case typeUint64:
-			target.SetUint(uint64(binary.LittleEndian.Uint64(buf)))
+			target.SetUint(binary.LittleEndian.Uint64(buf))
 			return 8
 
 		default:
@@ -467,7 +467,7 @@ func valueEncode(buf []byte, target reflect.Value, f *decEncoderField) int {
 			return 4
 
 		case typeUint64:
-			binary.LittleEndian.PutUint64(buf, uint64(target.Uint()))
+			binary.LittleEndian.PutUint64(buf, target.Uint())
 			return 8
 
 		default:

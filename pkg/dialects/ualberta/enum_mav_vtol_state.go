@@ -7,7 +7,7 @@ import (
 )
 
 // Enumeration of VTOL states
-type MAV_VTOL_STATE int
+type MAV_VTOL_STATE uint32
 
 const (
 	// MAV is not configured as VTOL

@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAG_CAL_STATUS int
+type MAG_CAL_STATUS uint32
 
 const (
 	MAG_CAL_NOT_STARTED      MAG_CAL_STATUS = 0

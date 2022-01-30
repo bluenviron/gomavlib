@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_ODID_SPEED_ACC int
+type MAV_ODID_SPEED_ACC uint32
 
 const (
 	// The speed accuracy is unknown.

@@ -8,7 +8,7 @@ import (
 
 // These defines are predefined OR-combined mode flags. There is no need to use values from this enum, but it
 // simplifies the use of the mode flags. Note that manual input is enabled in all modes as a safety override.
-type MAV_MODE int
+type MAV_MODE uint32
 
 const (
 	// System is not ready to fly, booting, calibrating, etc. No flag is set.

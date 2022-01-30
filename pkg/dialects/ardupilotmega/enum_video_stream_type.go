@@ -7,7 +7,7 @@ import (
 )
 
 // Video stream types
-type VIDEO_STREAM_TYPE int
+type VIDEO_STREAM_TYPE uint32
 
 const (
 	// Stream is RTSP

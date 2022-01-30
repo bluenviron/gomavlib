@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_TUNNEL_PAYLOAD_TYPE int
+type MAV_TUNNEL_PAYLOAD_TYPE uint32
 
 const (
 	// Encoding of payload unknown.

@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL int
+type MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL uint32
 
 const (
 	// Switch Low.

@@ -7,7 +7,7 @@ import (
 )
 
 // Flags for the global position report.
-type UTM_DATA_AVAIL_FLAGS int
+type UTM_DATA_AVAIL_FLAGS uint32
 
 const (
 	// The field time contains valid data.

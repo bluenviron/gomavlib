@@ -7,7 +7,7 @@ import (
 )
 
 // Cellular network radio type
-type CELLULAR_NETWORK_RADIO_TYPE int
+type CELLULAR_NETWORK_RADIO_TYPE uint32
 
 const (
 	CELLULAR_NETWORK_RADIO_TYPE_NONE  CELLULAR_NETWORK_RADIO_TYPE = 0

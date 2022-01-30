@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GOPRO_FIELD_OF_VIEW int
+type GOPRO_FIELD_OF_VIEW uint32
 
 const (
 	// 0x00: Wide.

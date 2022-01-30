@@ -7,7 +7,7 @@ import (
 )
 
 // State flags for ADS-B transponder dynamic report
-type UAVIONIX_ADSB_OUT_DYNAMIC_STATE int
+type UAVIONIX_ADSB_OUT_DYNAMIC_STATE uint32
 
 const (
 	UAVIONIX_ADSB_OUT_DYNAMIC_STATE_INTENT_CHANGE        UAVIONIX_ADSB_OUT_DYNAMIC_STATE = 1

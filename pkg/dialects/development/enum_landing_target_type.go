@@ -7,7 +7,7 @@ import (
 )
 
 // Type of landing target
-type LANDING_TARGET_TYPE int
+type LANDING_TARGET_TYPE uint32
 
 const (
 	// Landing target signaled by light beacon (ex: IR-LOCK)

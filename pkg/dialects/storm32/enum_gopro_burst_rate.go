@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GOPRO_BURST_RATE int
+type GOPRO_BURST_RATE uint32
 
 const (
 	// 3 Shots / 1 Second.

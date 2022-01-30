@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_MODE_GIMBAL int
+type MAV_MODE_GIMBAL uint32
 
 const (
 	// Gimbal is powered on but has not started initializing yet.

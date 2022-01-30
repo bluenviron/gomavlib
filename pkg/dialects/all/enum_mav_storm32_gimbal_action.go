@@ -7,7 +7,7 @@ import (
 )
 
 // Gimbal actions.
-type MAV_STORM32_GIMBAL_ACTION int
+type MAV_STORM32_GIMBAL_ACTION uint32
 
 const (
 	// Trigger the gimbal device to recenter the gimbal.

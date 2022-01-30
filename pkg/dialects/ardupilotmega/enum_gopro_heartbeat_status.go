@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GOPRO_HEARTBEAT_STATUS int
+type GOPRO_HEARTBEAT_STATUS uint32
 
 const (
 	// No GoPro connected.

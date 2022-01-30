@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type CAMERA_STATUS_TYPES int
+type CAMERA_STATUS_TYPES uint32
 
 const (
 	// Camera heartbeat, announce camera component ID at 1Hz.

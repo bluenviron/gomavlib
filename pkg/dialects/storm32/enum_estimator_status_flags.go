@@ -7,7 +7,7 @@ import (
 )
 
 // Flags in ESTIMATOR_STATUS message
-type ESTIMATOR_STATUS_FLAGS int
+type ESTIMATOR_STATUS_FLAGS uint32
 
 const (
 	// True if the attitude estimate is good

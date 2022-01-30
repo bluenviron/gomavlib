@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_ODID_OPERATOR_LOCATION_TYPE int
+type MAV_ODID_OPERATOR_LOCATION_TYPE uint32
 
 const (
 	// The location of the operator is the same as the take-off location.

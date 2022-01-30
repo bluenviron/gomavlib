@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GIMBAL_AXIS int
+type GIMBAL_AXIS uint32
 
 const (
 	// Gimbal yaw axis.

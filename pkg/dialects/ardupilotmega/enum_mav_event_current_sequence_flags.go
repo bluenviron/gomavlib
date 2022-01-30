@@ -7,7 +7,7 @@ import (
 )
 
 // Flags for CURRENT_EVENT_SEQUENCE.
-type MAV_EVENT_CURRENT_SEQUENCE_FLAGS int
+type MAV_EVENT_CURRENT_SEQUENCE_FLAGS uint32
 
 const (
 	// A sequence reset has happened (e.g. vehicle reboot).

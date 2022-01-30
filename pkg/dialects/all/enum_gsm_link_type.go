@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GSM_LINK_TYPE int
+type GSM_LINK_TYPE uint32
 
 const (
 	// no service

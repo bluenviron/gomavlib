@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GIMBAL_AXIS_CALIBRATION_STATUS int
+type GIMBAL_AXIS_CALIBRATION_STATUS uint32
 
 const (
 	// Axis calibration is in progress.

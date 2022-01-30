@@ -7,7 +7,7 @@ import (
 )
 
 // Camera tracking modes
-type CAMERA_TRACKING_MODE int
+type CAMERA_TRACKING_MODE uint32
 
 const (
 	// Not tracking

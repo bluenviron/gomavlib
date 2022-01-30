@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GOPRO_PROTUNE_COLOUR int
+type GOPRO_PROTUNE_COLOUR uint32
 
 const (
 	// Auto.

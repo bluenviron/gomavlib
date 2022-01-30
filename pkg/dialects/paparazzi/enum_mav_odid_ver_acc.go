@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_ODID_VER_ACC int
+type MAV_ODID_VER_ACC uint32
 
 const (
 	// The vertical accuracy is unknown.

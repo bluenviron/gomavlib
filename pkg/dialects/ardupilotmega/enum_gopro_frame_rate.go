@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GOPRO_FRAME_RATE int
+type GOPRO_FRAME_RATE uint32
 
 const (
 	// 12 FPS.

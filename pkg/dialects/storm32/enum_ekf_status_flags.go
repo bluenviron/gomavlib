@@ -7,7 +7,7 @@ import (
 )
 
 // Flags in EKF_STATUS message.
-type EKF_STATUS_FLAGS int
+type EKF_STATUS_FLAGS uint32
 
 const (
 	// Set if EKF's attitude estimate is good.

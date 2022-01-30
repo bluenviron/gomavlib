@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
+	"math"
 	"net/http"
 	"net/url"
 	"os"
@@ -63,7 +64,7 @@ import (
 {{- range .Enum.Description }}
 // {{ . }}
 {{- end }}
-type {{ .Enum.Name }} int
+type {{ .Enum.Name }} uint32
 
 const (
 {{- $pn := .Enum.Name }}
@@ -183,7 +184,7 @@ func parseDescription(in string) []string {
 }
 
 type outEnumValue struct {
-	Value       string
+	Value       *uint32
 	Name        string
 	Description []string
 }
@@ -270,8 +271,17 @@ func processDefinition(
 		}
 
 		for _, val := range enum.Values {
+			tmp, err := strconv.ParseInt(val.Value, 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			if tmp < 0 || tmp > int64(math.Pow(2, 32)) {
+				return nil, fmt.Errorf("enum values that overflow an uint32 are not supported")
+			}
+
+			v := uint32(tmp)
 			oute.Values = append(oute.Values, &outEnumValue{
-				Value:       val.Value,
+				Value:       &v,
 				Name:        val.Name,
 				Description: parseDescription(val.Description),
 			})
@@ -522,13 +532,13 @@ func run() error {
 
 	// fill enum missing values
 	for _, enum := range enums {
-		nextVal := 0
+		nextVal := uint32(0)
 		for _, v := range enum.Values {
-			if v.Value != "" {
-				nextVal, _ = strconv.Atoi(v.Value)
-				nextVal++
+			if v.Value != nil {
+				nextVal = *v.Value + 1
 			} else {
-				v.Value = strconv.Itoa(nextVal)
+				n := nextVal
+				v.Value = &n
 				nextVal++
 			}
 		}

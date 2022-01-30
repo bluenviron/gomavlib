@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GOPRO_PROTUNE_WHITE_BALANCE int
+type GOPRO_PROTUNE_WHITE_BALANCE uint32
 
 const (
 	// Auto.

@@ -7,7 +7,7 @@ import (
 )
 
 // Possible responses from a CELLULAR_CONFIG message.
-type CELLULAR_CONFIG_RESPONSE int
+type CELLULAR_CONFIG_RESPONSE uint32
 
 const (
 	// Changes accepted.

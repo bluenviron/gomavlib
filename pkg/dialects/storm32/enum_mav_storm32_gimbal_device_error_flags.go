@@ -7,7 +7,7 @@ import (
 )
 
 // Gimbal device error and condition flags (0 means no error or other condition).
-type MAV_STORM32_GIMBAL_DEVICE_ERROR_FLAGS int
+type MAV_STORM32_GIMBAL_DEVICE_ERROR_FLAGS uint32
 
 const (
 	// Gimbal device is limited by hardware roll limit.

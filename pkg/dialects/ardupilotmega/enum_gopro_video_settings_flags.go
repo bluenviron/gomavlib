@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GOPRO_VIDEO_SETTINGS_FLAGS int
+type GOPRO_VIDEO_SETTINGS_FLAGS uint32
 
 const (
 	// 0=NTSC, 1=PAL.

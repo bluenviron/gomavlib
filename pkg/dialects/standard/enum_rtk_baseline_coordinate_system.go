@@ -7,7 +7,7 @@ import (
 )
 
 // RTK GPS baseline coordinate system, used for RTK corrections
-type RTK_BASELINE_COORDINATE_SYSTEM int
+type RTK_BASELINE_COORDINATE_SYSTEM uint32
 
 const (
 	// Earth-centered, Earth-fixed

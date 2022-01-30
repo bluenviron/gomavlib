@@ -7,7 +7,7 @@ import (
 )
 
 // Type of AIS vessel, enum duplicated from AIS standard, https://gpsd.gitlab.io/gpsd/AIVDM.html
-type AIS_TYPE int
+type AIS_TYPE uint32
 
 const (
 	// Not available (default).

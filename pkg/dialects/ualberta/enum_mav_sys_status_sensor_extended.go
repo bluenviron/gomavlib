@@ -7,7 +7,7 @@ import (
 )
 
 // These encode the sensors whose status is sent as part of the SYS_STATUS message in the extended fields.
-type MAV_SYS_STATUS_SENSOR_EXTENDED int
+type MAV_SYS_STATUS_SENSOR_EXTENDED uint32
 
 const (
 	// 0x01 Recovery system (parachute, balloon, retracts etc)

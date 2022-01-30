@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_ODID_AUTH_TYPE int
+type MAV_ODID_AUTH_TYPE uint32
 
 const (
 	// No authentication type is specified.

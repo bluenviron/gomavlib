@@ -7,7 +7,7 @@ import (
 )
 
 // These flags indicate status such as data validity of each data source. Set = data valid
-type ADSB_FLAGS int
+type ADSB_FLAGS uint32
 
 const (
 	ADSB_FLAGS_VALID_COORDS            ADSB_FLAGS = 1

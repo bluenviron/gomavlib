@@ -7,7 +7,7 @@ import (
 )
 
 // Flags in the HIGHRES_IMU message indicate which fields have updated since the last message
-type HIGHRES_IMU_UPDATED_FLAGS int
+type HIGHRES_IMU_UPDATED_FLAGS uint32
 
 const (
 	// None of the fields in HIGHRES_IMU have been updated

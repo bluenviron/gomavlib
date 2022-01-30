@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type HEADING_TYPE int
+type HEADING_TYPE uint32
 
 const (
 	HEADING_TYPE_COURSE_OVER_GROUND HEADING_TYPE = 0

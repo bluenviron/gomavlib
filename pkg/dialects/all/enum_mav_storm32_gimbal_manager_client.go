@@ -7,7 +7,7 @@ import (
 )
 
 // Gimbal manager client ID. In a prioritizing profile, the priorities are determined by the implementation; they could e.g. be custom1 > onboard > GCS > autopilot/camera > GCS2 > custom2.
-type MAV_STORM32_GIMBAL_MANAGER_CLIENT int
+type MAV_STORM32_GIMBAL_MANAGER_CLIENT uint32
 
 const (
 	// For convenience.

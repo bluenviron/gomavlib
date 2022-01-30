@@ -7,7 +7,7 @@ import (
 )
 
 // Indicates the ESC connection type.
-type ESC_CONNECTION_TYPE int
+type ESC_CONNECTION_TYPE uint32
 
 const (
 	// Traditional PPM ESC.

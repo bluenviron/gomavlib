@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GIMBAL_AXIS_CALIBRATION_REQUIRED int
+type GIMBAL_AXIS_CALIBRATION_REQUIRED uint32
 
 const (
 	// Whether or not this axis requires calibration is unknown at this time.

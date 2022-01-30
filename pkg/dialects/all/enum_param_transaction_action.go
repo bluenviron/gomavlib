@@ -7,7 +7,7 @@ import (
 )
 
 // Possible parameter transaction actions.
-type PARAM_TRANSACTION_ACTION int
+type PARAM_TRANSACTION_ACTION uint32
 
 const (
 	// Commit the current parameter transaction.

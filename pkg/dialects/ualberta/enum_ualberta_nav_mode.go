@@ -7,7 +7,7 @@ import (
 )
 
 // Navigation filter mode
-type UALBERTA_NAV_MODE int
+type UALBERTA_NAV_MODE uint32
 
 const (
 	NAV_AHRS_INIT UALBERTA_NAV_MODE = 1

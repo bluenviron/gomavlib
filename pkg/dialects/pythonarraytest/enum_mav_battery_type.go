@@ -7,7 +7,7 @@ import (
 )
 
 // Enumeration of battery types
-type MAV_BATTERY_TYPE int
+type MAV_BATTERY_TYPE uint32
 
 const (
 	// Not specified.

@@ -7,7 +7,7 @@ import (
 )
 
 // Enumeration of landed detector states
-type MAV_LANDED_STATE int
+type MAV_LANDED_STATE uint32
 
 const (
 	// MAV landed state is unknown

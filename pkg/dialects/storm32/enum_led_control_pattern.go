@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type LED_CONTROL_PATTERN int
+type LED_CONTROL_PATTERN uint32
 
 const (
 	// LED patterns off (return control to regular vehicle control).

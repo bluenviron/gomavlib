@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GOPRO_HEARTBEAT_FLAGS int
+type GOPRO_HEARTBEAT_FLAGS uint32
 
 const (
 	// GoPro is currently recording.

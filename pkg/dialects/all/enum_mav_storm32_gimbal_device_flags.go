@@ -7,7 +7,7 @@ import (
 )
 
 // Flags for gimbal device operation. Used for setting and reporting, unless specified otherwise. Settings which are in violation of the capability flags are ignored by the gimbal device.
-type MAV_STORM32_GIMBAL_DEVICE_FLAGS int
+type MAV_STORM32_GIMBAL_DEVICE_FLAGS uint32
 
 const (
 	// Retracted safe position (no stabilization), takes presedence over NEUTRAL flag. If supported by the gimbal, the angles in the retracted position can be set in addition.

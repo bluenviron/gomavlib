@@ -7,7 +7,7 @@ import (
 )
 
 // Type of mission items being requested/sent in mission protocol.
-type MAV_MISSION_TYPE int
+type MAV_MISSION_TYPE uint32
 
 const (
 	// Items are mission commands for main mission.

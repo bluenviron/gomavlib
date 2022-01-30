@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GOPRO_REQUEST_STATUS int
+type GOPRO_REQUEST_STATUS uint32
 
 const (
 	// The write message with ID indicated succeeded.

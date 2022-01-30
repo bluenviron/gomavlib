@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type FENCE_BREACH int
+type FENCE_BREACH uint32
 
 const (
 	// No last fence breach

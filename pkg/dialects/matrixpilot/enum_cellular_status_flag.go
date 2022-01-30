@@ -7,7 +7,7 @@ import (
 )
 
 // These flags encode the cellular network status
-type CELLULAR_STATUS_FLAG int
+type CELLULAR_STATUS_FLAG uint32
 
 const (
 	// State unknown or not reportable.

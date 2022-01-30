@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type ACCELCAL_VEHICLE_POS int
+type ACCELCAL_VEHICLE_POS uint32
 
 const (
 	ACCELCAL_VEHICLE_POS_LEVEL    ACCELCAL_VEHICLE_POS = 1

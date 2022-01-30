@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_ODID_ID_TYPE int
+type MAV_ODID_ID_TYPE uint32
 
 const (
 	// No type defined.

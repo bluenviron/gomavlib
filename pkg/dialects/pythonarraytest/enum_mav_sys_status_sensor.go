@@ -7,7 +7,7 @@ import (
 )
 
 // These encode the sensors whose status is sent as part of the SYS_STATUS message.
-type MAV_SYS_STATUS_SENSOR int
+type MAV_SYS_STATUS_SENSOR uint32
 
 const (
 	// 0x01 3D gyro

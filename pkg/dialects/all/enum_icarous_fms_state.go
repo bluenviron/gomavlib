@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type ICAROUS_FMS_STATE int
+type ICAROUS_FMS_STATE uint32
 
 const (
 	ICAROUS_FMS_STATE_IDLE     ICAROUS_FMS_STATE = 0

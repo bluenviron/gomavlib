@@ -7,7 +7,7 @@ import (
 )
 
 // Tune formats (used for vehicle buzzer/tone generation).
-type TUNE_FORMAT int
+type TUNE_FORMAT uint32
 
 const (
 	// Format is QBasic 1.1 Play: https://www.qbasic.net/en/reference/qb11/Statement/PLAY-006.htm.

@@ -7,7 +7,7 @@ import (
 )
 
 // WiFi wireless security protocols.
-type WIFI_NETWORK_SECURITY int
+type WIFI_NETWORK_SECURITY uint32
 
 const (
 	// Undefined or unknown security protocol.

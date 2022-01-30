@@ -7,7 +7,7 @@ import (
 )
 
 // Flags to indicate the type of storage.
-type STORAGE_TYPE int
+type STORAGE_TYPE uint32
 
 const (
 	// Storage type is not known.

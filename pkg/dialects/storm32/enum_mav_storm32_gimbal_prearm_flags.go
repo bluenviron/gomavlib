@@ -7,7 +7,7 @@ import (
 )
 
 // STorM32 gimbal prearm check flags.
-type MAV_STORM32_GIMBAL_PREARM_FLAGS int
+type MAV_STORM32_GIMBAL_PREARM_FLAGS uint32
 
 const (
 	// STorM32 gimbal is in normal state.

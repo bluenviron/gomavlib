@@ -7,7 +7,7 @@ import (
 )
 
 // MAVLINK component type reported in HEARTBEAT message. Flight controllers must report the type of the vehicle on which they are mounted (e.g. MAV_TYPE_OCTOROTOR). All other components must report a value appropriate for their type (e.g. a camera must use MAV_TYPE_CAMERA).
-type MAV_TYPE int
+type MAV_TYPE uint32
 
 const (
 	// Generic micro air vehicle

@@ -7,7 +7,7 @@ import (
 )
 
 // Micro air vehicle / autopilot classes. This identifies the individual model.
-type MAV_AUTOPILOT int
+type MAV_AUTOPILOT uint32
 
 const (
 	// Generic autopilot, full support for everything

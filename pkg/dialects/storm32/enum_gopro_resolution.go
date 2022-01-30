@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GOPRO_RESOLUTION int
+type GOPRO_RESOLUTION uint32
 
 const (
 	// 848 x 480 (480p).

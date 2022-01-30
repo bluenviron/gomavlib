@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type PID_TUNING_AXIS int
+type PID_TUNING_AXIS uint32
 
 const (
 	PID_TUNING_ROLL    PID_TUNING_AXIS = 1

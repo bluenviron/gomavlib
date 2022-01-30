@@ -7,7 +7,7 @@ import (
 )
 
 // These flags are used to diagnose the failure state of CELLULAR_STATUS
-type CELLULAR_NETWORK_FAILED_REASON int
+type CELLULAR_NETWORK_FAILED_REASON uint32
 
 const (
 	// No error

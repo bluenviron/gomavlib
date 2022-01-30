@@ -124,7 +124,7 @@ func (sr *nodeStreamRequest) run() {
 func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 	// message must be heartbeat and sender must be an ardupilot device
 	if evt.Message().GetID() != 0 ||
-		reflect.ValueOf(evt.Message()).Elem().FieldByName("Autopilot").Int() != 3 {
+		reflect.ValueOf(evt.Message()).Elem().FieldByName("Autopilot").Uint() != 3 {
 		return
 	}
 

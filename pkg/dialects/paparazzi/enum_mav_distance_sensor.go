@@ -7,7 +7,7 @@ import (
 )
 
 // Enumeration of distance sensor types
-type MAV_DISTANCE_SENSOR int
+type MAV_DISTANCE_SENSOR uint32
 
 const (
 	// Laser rangefinder, e.g. LightWare SF02/F or PulsedLight units

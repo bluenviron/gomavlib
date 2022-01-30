@@ -7,7 +7,7 @@ import (
 )
 
 // Possible transport layers to set and get parameters via mavlink during a parameter transaction.
-type PARAM_TRANSACTION_TRANSPORT int
+type PARAM_TRANSACTION_TRANSPORT uint32
 
 const (
 	// Transaction over param transport.

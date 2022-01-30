@@ -7,7 +7,7 @@ import (
 )
 
 // Flags for gimbal device (lower level) operation.
-type GIMBAL_DEVICE_FLAGS int
+type GIMBAL_DEVICE_FLAGS uint32
 
 const (
 	// Set to retracted safe position (no stabilization), takes presedence over all other flags.

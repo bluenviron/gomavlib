@@ -7,7 +7,7 @@ import (
 )
 
 // Gimbal device (low level) error flags (bitmap, 0 means no error)
-type GIMBAL_DEVICE_ERROR_FLAGS int
+type GIMBAL_DEVICE_ERROR_FLAGS uint32
 
 const (
 	// Gimbal device is limited by hardware roll limit.

@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_ODID_HEIGHT_REF int
+type MAV_ODID_HEIGHT_REF uint32
 
 const (
 	// The height field is relative to the take-off location.

@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type LIMITS_STATE int
+type LIMITS_STATE uint32
 
 const (
 	// Pre-initialization.

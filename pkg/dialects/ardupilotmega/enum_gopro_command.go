@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GOPRO_COMMAND int
+type GOPRO_COMMAND uint32
 
 const (
 	// (Get/Set).

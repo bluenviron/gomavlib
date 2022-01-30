@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_ODID_OPERATOR_ID_TYPE int
+type MAV_ODID_OPERATOR_ID_TYPE uint32
 
 const (
 	// CAA (Civil Aviation Authority) registered operator ID.

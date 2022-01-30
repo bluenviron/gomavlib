@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_ODID_STATUS int
+type MAV_ODID_STATUS uint32
 
 const (
 	// The status of the (UA) Unmanned Aircraft is undefined.

@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_ODID_CATEGORY_EU int
+type MAV_ODID_CATEGORY_EU uint32
 
 const (
 	// The category for the UA, according to the EU specification, is undeclared.

@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GOPRO_PROTUNE_GAIN int
+type GOPRO_PROTUNE_GAIN uint32
 
 const (
 	// ISO 400.

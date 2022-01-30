@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_ODID_DESC_TYPE int
+type MAV_ODID_DESC_TYPE uint32
 
 const (
 	// Free-form text description of the purpose of the flight.

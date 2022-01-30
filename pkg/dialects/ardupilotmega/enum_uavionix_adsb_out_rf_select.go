@@ -7,7 +7,7 @@ import (
 )
 
 // Transceiver RF control flags for ADS-B transponder dynamic reports
-type UAVIONIX_ADSB_OUT_RF_SELECT int
+type UAVIONIX_ADSB_OUT_RF_SELECT uint32
 
 const (
 	UAVIONIX_ADSB_OUT_RF_SELECT_STANDBY    UAVIONIX_ADSB_OUT_RF_SELECT = 0

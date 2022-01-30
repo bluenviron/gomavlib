@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_STORM32_TUNNEL_PAYLOAD_TYPE int
+type MAV_STORM32_TUNNEL_PAYLOAD_TYPE uint32
 
 const (
 	// Registered for STorM32 gimbal controller.

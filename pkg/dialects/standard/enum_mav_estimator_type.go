@@ -7,7 +7,7 @@ import (
 )
 
 // Enumeration of estimator types
-type MAV_ESTIMATOR_TYPE int
+type MAV_ESTIMATOR_TYPE uint32
 
 const (
 	// Unknown type of the estimator.

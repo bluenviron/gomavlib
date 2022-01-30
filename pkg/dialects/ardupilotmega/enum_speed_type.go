@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type SPEED_TYPE int
+type SPEED_TYPE uint32
 
 const (
 	SPEED_TYPE_AIRSPEED    SPEED_TYPE = 0

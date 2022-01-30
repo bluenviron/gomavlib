@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GSM_MODEM_TYPE int
+type GSM_MODEM_TYPE uint32
 
 const (
 	// not specified

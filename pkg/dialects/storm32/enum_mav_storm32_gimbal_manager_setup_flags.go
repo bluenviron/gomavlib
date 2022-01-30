@@ -7,7 +7,7 @@ import (
 )
 
 // Flags for gimbal manager set up. Used for setting and reporting, unless specified otherwise.
-type MAV_STORM32_GIMBAL_MANAGER_SETUP_FLAGS int
+type MAV_STORM32_GIMBAL_MANAGER_SETUP_FLAGS uint32
 
 const (
 	// Enable gimbal manager. This flag is only for setting, is not reported.

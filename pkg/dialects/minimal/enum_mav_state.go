@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_STATE int
+type MAV_STATE uint32
 
 const (
 	// Uninitialized system, state is unknown.

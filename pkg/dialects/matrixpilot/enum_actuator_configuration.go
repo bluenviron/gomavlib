@@ -7,7 +7,7 @@ import (
 )
 
 // Actuator configuration, used to change a setting on an actuator. Component information metadata can be used to know which outputs support which commands.
-type ACTUATOR_CONFIGURATION int
+type ACTUATOR_CONFIGURATION uint32
 
 const (
 	// Do nothing.

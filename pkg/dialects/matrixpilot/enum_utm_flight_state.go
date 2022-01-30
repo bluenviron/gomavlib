@@ -7,7 +7,7 @@ import (
 )
 
 // Airborne status of UAS.
-type UTM_FLIGHT_STATE int
+type UTM_FLIGHT_STATE uint32
 
 const (
 	// The flight state can't be determined.

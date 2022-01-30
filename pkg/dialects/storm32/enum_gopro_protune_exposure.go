@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GOPRO_PROTUNE_EXPOSURE int
+type GOPRO_PROTUNE_EXPOSURE uint32
 
 const (
 	// -5.0 EV (Hero 3+ Only).

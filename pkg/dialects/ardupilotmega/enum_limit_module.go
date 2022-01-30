@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type LIMIT_MODULE int
+type LIMIT_MODULE uint32
 
 const (
 	// Pre-initialization.

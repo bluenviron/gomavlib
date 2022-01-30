@@ -7,7 +7,7 @@ import (
 )
 
 // Gimbal device capability flags.
-type MAV_STORM32_GIMBAL_DEVICE_CAP_FLAGS int
+type MAV_STORM32_GIMBAL_DEVICE_CAP_FLAGS uint32
 
 const (
 	// Gimbal device supports a retracted position.

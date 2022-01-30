@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GOPRO_CHARGING int
+type GOPRO_CHARGING uint32
 
 const (
 	// Charging disabled.

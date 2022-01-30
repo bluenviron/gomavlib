@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_ARM_AUTH_DENIED_REASON int
+type MAV_ARM_AUTH_DENIED_REASON uint32
 
 const (
 	// Not a specific reason

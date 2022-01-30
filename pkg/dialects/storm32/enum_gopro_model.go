@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GOPRO_MODEL int
+type GOPRO_MODEL uint32
 
 const (
 	// Unknown gopro model.

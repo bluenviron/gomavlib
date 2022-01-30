@@ -7,7 +7,7 @@ import (
 )
 
 // Zoom types for MAV_CMD_SET_CAMERA_ZOOM
-type CAMERA_ZOOM_TYPE int
+type CAMERA_ZOOM_TYPE uint32
 
 const (
 	// Zoom one step increment (-1 for wide, 1 for tele)

@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_AVSS_COMMAND_FAILURE_REASON int
+type MAV_AVSS_COMMAND_FAILURE_REASON uint32
 
 const (
 	// AVSS defined command failure reason. PRS not steady.

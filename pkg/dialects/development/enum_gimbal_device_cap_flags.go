@@ -7,7 +7,7 @@ import (
 )
 
 // Gimbal device (low level) capability flags (bitmap)
-type GIMBAL_DEVICE_CAP_FLAGS int
+type GIMBAL_DEVICE_CAP_FLAGS uint32
 
 const (
 	// Gimbal device supports a retracted position

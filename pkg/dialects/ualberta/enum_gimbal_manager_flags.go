@@ -7,7 +7,7 @@ import (
 )
 
 // Flags for high level gimbal manager operation The first 16 bits are identical to the GIMBAL_DEVICE_FLAGS.
-type GIMBAL_MANAGER_FLAGS int
+type GIMBAL_MANAGER_FLAGS uint32
 
 const (
 	// Based on GIMBAL_DEVICE_FLAGS_RETRACT

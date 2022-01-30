@@ -7,7 +7,7 @@ import (
 )
 
 // Parachute actions. Trigger release and enable/disable auto-release.
-type PARACHUTE_ACTION int
+type PARACHUTE_ACTION uint32
 
 const (
 	// Disable auto-release of parachute (i.e. release triggered by crash detectors).

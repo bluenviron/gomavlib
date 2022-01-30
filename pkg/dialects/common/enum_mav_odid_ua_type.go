@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_ODID_UA_TYPE int
+type MAV_ODID_UA_TYPE uint32
 
 const (
 	// No UA (Unmanned Aircraft) type defined.

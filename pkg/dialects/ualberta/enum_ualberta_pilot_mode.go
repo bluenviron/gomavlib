@@ -7,7 +7,7 @@ import (
 )
 
 // Mode currently commanded by pilot
-type UALBERTA_PILOT_MODE int
+type UALBERTA_PILOT_MODE uint32
 
 const (
 	// sdf

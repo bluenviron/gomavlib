@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GOPRO_PHOTO_RESOLUTION int
+type GOPRO_PHOTO_RESOLUTION uint32
 
 const (
 	// 5MP Medium.

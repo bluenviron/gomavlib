@@ -134,8 +134,8 @@ func NewDecEncoder(msg Message) (*DecEncoder, error) {
 		if field.Tag.Get("mavenum") != "" {
 			isEnum = true
 
-			if goType.Kind() != reflect.Int {
-				return nil, fmt.Errorf("an enum must be an int")
+			if goType.Kind() != reflect.Uint32 {
+				return nil, fmt.Errorf("an enum must be an uint32")
 			}
 
 			tagEnum := field.Tag.Get("mavenum")
@@ -360,27 +360,27 @@ func valueDecode(target reflect.Value, buf []byte, f *decEncoderField) int {
 	if f.isEnum {
 		switch f.ftype {
 		case typeUint8:
-			target.SetInt(int64(buf[0]))
+			target.SetUint(uint64(buf[0]))
 			return 1
 
 		case typeInt8:
-			target.SetInt(int64(buf[0]))
+			target.SetUint(uint64(buf[0]))
 			return 1
 
 		case typeUint16:
-			target.SetInt(int64(binary.LittleEndian.Uint16(buf)))
+			target.SetUint(uint64(binary.LittleEndian.Uint16(buf)))
 			return 2
 
 		case typeUint32:
-			target.SetInt(int64(binary.LittleEndian.Uint32(buf)))
+			target.SetUint(uint64(binary.LittleEndian.Uint32(buf)))
 			return 4
 
 		case typeInt32:
-			target.SetInt(int64(binary.LittleEndian.Uint32(buf)))
+			target.SetUint(uint64(binary.LittleEndian.Uint32(buf)))
 			return 4
 
 		case typeUint64:
-			target.SetInt(int64(binary.LittleEndian.Uint64(buf)))
+			target.SetUint(uint64(binary.LittleEndian.Uint64(buf)))
 			return 8
 
 		default:
@@ -447,27 +447,27 @@ func valueEncode(buf []byte, target reflect.Value, f *decEncoderField) int {
 	if f.isEnum {
 		switch f.ftype {
 		case typeUint8:
-			buf[0] = byte(target.Int())
+			buf[0] = byte(target.Uint())
 			return 1
 
 		case typeInt8:
-			buf[0] = byte(target.Int())
+			buf[0] = byte(target.Uint())
 			return 1
 
 		case typeUint16:
-			binary.LittleEndian.PutUint16(buf, uint16(target.Int()))
+			binary.LittleEndian.PutUint16(buf, uint16(target.Uint()))
 			return 2
 
 		case typeUint32:
-			binary.LittleEndian.PutUint32(buf, uint32(target.Int()))
+			binary.LittleEndian.PutUint32(buf, uint32(target.Uint()))
 			return 4
 
 		case typeInt32:
-			binary.LittleEndian.PutUint32(buf, uint32(target.Int()))
+			binary.LittleEndian.PutUint32(buf, uint32(target.Uint()))
 			return 4
 
 		case typeUint64:
-			binary.LittleEndian.PutUint64(buf, uint64(target.Int()))
+			binary.LittleEndian.PutUint64(buf, uint64(target.Uint()))
 			return 8
 
 		default:

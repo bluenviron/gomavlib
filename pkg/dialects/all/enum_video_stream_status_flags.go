@@ -7,7 +7,7 @@ import (
 )
 
 // Stream status flags (Bitmap)
-type VIDEO_STREAM_STATUS_FLAGS int
+type VIDEO_STREAM_STATUS_FLAGS uint32
 
 const (
 	// Stream is active (running)

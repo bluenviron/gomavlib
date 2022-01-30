@@ -7,7 +7,7 @@ import (
 )
 
 // SERIAL_CONTROL flags (bitmask)
-type SERIAL_CONTROL_FLAG int
+type SERIAL_CONTROL_FLAG uint32
 
 const (
 	// Set if this is a reply

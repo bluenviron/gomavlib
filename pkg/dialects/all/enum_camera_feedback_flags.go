@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type CAMERA_FEEDBACK_FLAGS int
+type CAMERA_FEEDBACK_FLAGS uint32
 
 const (
 	// Shooting photos, not video.

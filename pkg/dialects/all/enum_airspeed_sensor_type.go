@@ -7,7 +7,7 @@ import (
 )
 
 // Types of airspeed sensor/data. May be be used in AIRSPEED message to estimate accuracy of indicated speed.
-type AIRSPEED_SENSOR_TYPE int
+type AIRSPEED_SENSOR_TYPE uint32
 
 const (
 	// Airspeed sensor type unknown/not supplied.

@@ -7,7 +7,7 @@ import (
 )
 
 // Reason for an event error response.
-type MAV_EVENT_ERROR_REASON int
+type MAV_EVENT_ERROR_REASON uint32
 
 const (
 	// The requested event is not available (anymore).

@@ -7,7 +7,7 @@ import (
 )
 
 // A mapping of antenna tracker flight modes for custom_mode field of heartbeat.
-type TRACKER_MODE int
+type TRACKER_MODE uint32
 
 const (
 	TRACKER_MODE_MANUAL       TRACKER_MODE = 0

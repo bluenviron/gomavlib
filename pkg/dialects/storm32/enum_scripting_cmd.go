@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type SCRIPTING_CMD int
+type SCRIPTING_CMD uint32
 
 const (
 	// Start a REPL session.

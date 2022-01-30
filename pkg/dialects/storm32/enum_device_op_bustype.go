@@ -7,7 +7,7 @@ import (
 )
 
 // Bus types for device operations.
-type DEVICE_OP_BUSTYPE int
+type DEVICE_OP_BUSTYPE uint32
 
 const (
 	// I2C Device operation.

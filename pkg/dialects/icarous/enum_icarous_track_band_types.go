@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type ICAROUS_TRACK_BAND_TYPES int
+type ICAROUS_TRACK_BAND_TYPES uint32
 
 const (
 	ICAROUS_TRACK_BAND_TYPE_NONE     ICAROUS_TRACK_BAND_TYPES = 0

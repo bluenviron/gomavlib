@@ -7,7 +7,7 @@ import (
 )
 
 // ACK / NACK / ERROR values as a result of MAV_CMDs and for mission item transmission.
-type MAV_CMD_ACK int
+type MAV_CMD_ACK uint32
 
 const (
 	// Command / mission item is ok.

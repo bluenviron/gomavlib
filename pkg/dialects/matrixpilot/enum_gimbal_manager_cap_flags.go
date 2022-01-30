@@ -7,7 +7,7 @@ import (
 )
 
 // Gimbal manager high level capability flags (bitmap). The first 16 bits are identical to the GIMBAL_DEVICE_CAP_FLAGS. However, the gimbal manager does not need to copy the flags from the gimbal but can also enhance the capabilities and thus add flags.
-type GIMBAL_MANAGER_CAP_FLAGS int
+type GIMBAL_MANAGER_CAP_FLAGS uint32
 
 const (
 	// Based on GIMBAL_DEVICE_CAP_FLAGS_HAS_RETRACT.

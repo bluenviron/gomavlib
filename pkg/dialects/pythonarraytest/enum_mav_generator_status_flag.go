@@ -7,7 +7,7 @@ import (
 )
 
 // Flags to report status/failure cases for a power generator (used in GENERATOR_STATUS). Note that FAULTS are conditions that cause the generator to fail. Warnings are conditions that require attention before the next use (they indicate the system is not operating properly).
-type MAV_GENERATOR_STATUS_FLAG int
+type MAV_GENERATOR_STATUS_FLAG uint32
 
 const (
 	// Generator is off.

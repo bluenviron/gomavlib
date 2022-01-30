@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type NAV_VTOL_LAND_OPTIONS int
+type NAV_VTOL_LAND_OPTIONS uint32
 
 const (
 	// Default autopilot landing behaviour.

@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GOPRO_PROTUNE_SHARPNESS int
+type GOPRO_PROTUNE_SHARPNESS uint32
 
 const (
 	// Low Sharpness.

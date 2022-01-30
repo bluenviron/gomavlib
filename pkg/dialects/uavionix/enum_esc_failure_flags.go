@@ -7,7 +7,7 @@ import (
 )
 
 // Flags to report ESC failures.
-type ESC_FAILURE_FLAGS int
+type ESC_FAILURE_FLAGS uint32
 
 const (
 	// No ESC failure.

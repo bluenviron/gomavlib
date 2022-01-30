@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type GOPRO_CAPTURE_MODE int
+type GOPRO_CAPTURE_MODE uint32
 
 const (
 	// Video mode.

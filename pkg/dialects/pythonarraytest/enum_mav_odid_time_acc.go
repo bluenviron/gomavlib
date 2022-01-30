@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type MAV_ODID_TIME_ACC int
+type MAV_ODID_TIME_ACC uint32
 
 const (
 	// The timestamp accuracy is unknown.

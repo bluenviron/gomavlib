@@ -7,7 +7,7 @@ import (
 )
 
 // Bitmap to indicate which dimensions should be ignored by the vehicle: a value of 0b00000000 indicates that none of the setpoint dimensions should be ignored.
-type ATTITUDE_TARGET_TYPEMASK int
+type ATTITUDE_TARGET_TYPEMASK uint32
 
 const (
 	// Ignore body roll rate

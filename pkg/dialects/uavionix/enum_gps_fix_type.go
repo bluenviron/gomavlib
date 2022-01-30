@@ -7,7 +7,7 @@ import (
 )
 
 // Type of GPS fix
-type GPS_FIX_TYPE int
+type GPS_FIX_TYPE uint32
 
 const (
 	// No GPS connected

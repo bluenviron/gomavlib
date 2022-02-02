@@ -94,6 +94,8 @@ const (
 	MAV_TYPE_IMU MAV_TYPE = 40
 	// GPS
 	MAV_TYPE_GPS MAV_TYPE = 41
+	// Winch
+	MAV_TYPE_WINCH MAV_TYPE = 42
 )
 
 var labels_MAV_TYPE = map[MAV_TYPE]string{}

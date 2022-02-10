@@ -115,7 +115,6 @@ Other non-Go libraries
 
 * [C] https://github.com/mavlink/c_library_v2
 * [Python] https://github.com/ArduPilot/pymavlink
-* [Java] https://github.com/DrTon/jMAVlib
 * [C#] https://github.com/asvol/mavlink.net
 * [Rust] https://github.com/3drobotics/rust-mavlink
 * [JS] https://github.com/omcaree/node-mavlink

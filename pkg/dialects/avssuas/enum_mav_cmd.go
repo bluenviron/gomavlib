@@ -329,6 +329,8 @@ const (
 	MAV_CMD_USER_4 MAV_CMD = 31013
 	// User defined command. Ground Station will not show the Vehicle as flying through this item. Example: MAV_CMD_DO_SET_PARAMETER item.
 	MAV_CMD_USER_5 MAV_CMD = 31014
+	// Request forwarding of CAN packets from the given CAN bus to this component. CAN Frames are sent using CAN_FRAME and CANFD_FRAME messages
+	MAV_CMD_CAN_FORWARD MAV_CMD = 32000
 	// AVSS defined command. Set PRS arm statuses.
 	MAV_CMD_PRS_SET_ARM MAV_CMD = 60050
 	// AVSS defined command. Gets PRS arm statuses

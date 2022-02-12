@@ -236,6 +236,8 @@ const (
 	MAV_COMP_ID_BATTERY MAV_COMPONENT = 180
 	// Battery #2.
 	MAV_COMP_ID_BATTERY2 MAV_COMPONENT = 181
+	// CAN over MAVLink client.
+	MAV_COMP_ID_MAVCAN MAV_COMPONENT = 189
 	// Component that can generate/supply a mission flight plan (e.g. GCS or developer API).
 	MAV_COMP_ID_MISSIONPLANNER MAV_COMPONENT = 190
 	// Component that lives on the onboard computer (companion computer) and has some generic functionalities, such as settings system parameters and monitoring the status of some processes that don't directly speak mavlink and so on.

@@ -12,7 +12,7 @@ var Dialect = dial
 
 // dial is not exposed directly in order not to display it in godoc.
 var dial = &dialect.Dialect{
-	Version: 1,
+	Version: 2,
 	Messages: []msg.Message{
 		// minimal.xml
 		&MessageHeartbeat{},
@@ -236,5 +236,8 @@ var dial = &dialect.Dialect{
 		&MessageHygrometerSensor{},
 		// AVSSUAS.xml
 		&MessageAvssPrsSysStatus{},
+		&MessageAvssDronePosition{},
+		&MessageAvssDroneImu{},
+		&MessageAvssDroneOperationMode{},
 	},
 }

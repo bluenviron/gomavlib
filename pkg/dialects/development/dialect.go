@@ -244,5 +244,7 @@ var dial = &dialect.Dialect{
 		&MessageComponentInformationBasic{},
 		&MessageGroupStart{},
 		&MessageGroupEnd{},
+		&MessageAvailableModes{},
+		&MessageCurrentMode{},
 	},
 }

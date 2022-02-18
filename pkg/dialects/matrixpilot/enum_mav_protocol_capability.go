@@ -20,8 +20,8 @@ const (
 	MAV_PROTOCOL_CAPABILITY_MISSION_INT MAV_PROTOCOL_CAPABILITY = 4
 	// Autopilot supports COMMAND_INT scaled integer message type.
 	MAV_PROTOCOL_CAPABILITY_COMMAND_INT MAV_PROTOCOL_CAPABILITY = 8
-	// Reserved for future use.
-	MAV_PROTOCOL_CAPABILITY_RESERVED1 MAV_PROTOCOL_CAPABILITY = 16
+	// Autopilot supports the new param union message type.
+	MAV_PROTOCOL_CAPABILITY_PARAM_UNION MAV_PROTOCOL_CAPABILITY = 16
 	// Autopilot supports the new FILE_TRANSFER_PROTOCOL message type.
 	MAV_PROTOCOL_CAPABILITY_FTP MAV_PROTOCOL_CAPABILITY = 32
 	// Autopilot supports commanding attitude offboard.

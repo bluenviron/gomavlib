@@ -355,6 +355,9 @@ const (
 	// Group ids are expected, but not required, to iterate sequentially.
 	// Groups can be nested.
 	MAV_CMD_GROUP_END MAV_CMD = 302
+	// Enable the specified standard MAVLink mode.
+	// If the mode is not supported the vehicle should ACK with MAV_RESULT_FAILED.
+	MAV_CMD_DO_SET_STANDARD_MODE MAV_CMD = 262
 )
 
 var labels_MAV_CMD = map[MAV_CMD]string{}

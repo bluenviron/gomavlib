@@ -345,18 +345,6 @@ const (
 	MAV_CMD_PRS_GET_ARM_ALTI MAV_CMD = 60071
 	// AVSS defined command. Shuts down the PRS system.
 	MAV_CMD_PRS_SHUTDOWN MAV_CMD = 60072
-	// AVSS defined command. Set the threshold to charge from outside in millivolts
-	MAV_CMD_PRS_SET_CHARGE_MV MAV_CMD = 60073
-	// AVSS defined command. Get the threshold to charge from outside in millivolts.
-	MAV_CMD_PRS_GET_CHARGE_MV MAV_CMD = 60074
-	// AVSS defined command. Set the timeout between FTS request and deploying the chute.
-	MAV_CMD_PRS_SET_TIMEOUT MAV_CMD = 60075
-	// AVSS defined command. Get the timeout between FTS request and deploying the chute.
-	MAV_CMD_PRS_GET_TIMEOUT MAV_CMD = 60076
-	// AVSS defined command. Set up the PRS to connect to the drone..
-	MAV_CMD_PRS_SET_FTS_CONNECT MAV_CMD = 60077
-	// AVSS defined command. Get the connection status of PRS and drone.
-	MAV_CMD_PRS_GET_FTS_CONNECT MAV_CMD = 60078
 )
 
 var labels_MAV_CMD = map[MAV_CMD]string{}

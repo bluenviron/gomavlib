@@ -4,16 +4,16 @@ package avssuas
 
 // AVSS PRS system status.
 type MessageAvssPrsSysStatus struct {
-	// PRS arm statuses
-	ArmStatus uint8
-	// Estimated battery run-time without a remote connection and PRS battery voltage
-	BatteryStatus uint16
+	// Timestamp (time since PRS boot).
+	TimeBootMs uint32
 	// PRS error statuses
 	ErrorStatus uint32
-	// PRS battery change statuses
-	ChangeStatus uint8
-	// Time since PRS system boot
-	TimeBootMs uint32
+	// Estimated battery run-time without a remote connection and PRS battery voltage
+	BatteryStatus uint32
+	// PRS arm statuses
+	ArmStatus uint8
+	// PRS battery charge statuses
+	ChargeStatus uint8
 }
 
 // GetID implements the msg.Message interface.

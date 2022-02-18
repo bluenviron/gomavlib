@@ -420,6 +420,9 @@ const (
 	// Group ids are expected, but not required, to iterate sequentially.
 	// Groups can be nested.
 	MAV_CMD_GROUP_END MAV_CMD = 302
+	// Enable the specified standard MAVLink mode.
+	// If the mode is not supported the vehicle should ACK with MAV_RESULT_FAILED.
+	MAV_CMD_DO_SET_STANDARD_MODE MAV_CMD = 262
 	// Command to a gimbal manager to control the gimbal tilt and pan angles. It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. A gimbal device is never to react to this command.
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW MAV_CMD = 60002
 	// Command to configure a gimbal manager. A gimbal device is never to react to this command. The selected profile is reported in the STORM32_GIMBAL_MANAGER_STATUS message.
@@ -442,18 +445,6 @@ const (
 	MAV_CMD_PRS_GET_ARM_ALTI MAV_CMD = 60071
 	// AVSS defined command. Shuts down the PRS system.
 	MAV_CMD_PRS_SHUTDOWN MAV_CMD = 60072
-	// AVSS defined command. Set the threshold to charge from outside in millivolts
-	MAV_CMD_PRS_SET_CHARGE_MV MAV_CMD = 60073
-	// AVSS defined command. Get the threshold to charge from outside in millivolts.
-	MAV_CMD_PRS_GET_CHARGE_MV MAV_CMD = 60074
-	// AVSS defined command. Set the timeout between FTS request and deploying the chute.
-	MAV_CMD_PRS_SET_TIMEOUT MAV_CMD = 60075
-	// AVSS defined command. Get the timeout between FTS request and deploying the chute.
-	MAV_CMD_PRS_GET_TIMEOUT MAV_CMD = 60076
-	// AVSS defined command. Set up the PRS to connect to the drone..
-	MAV_CMD_PRS_SET_FTS_CONNECT MAV_CMD = 60077
-	// AVSS defined command. Get the connection status of PRS and drone.
-	MAV_CMD_PRS_GET_FTS_CONNECT MAV_CMD = 60078
 )
 
 var labels_MAV_CMD = map[MAV_CMD]string{}

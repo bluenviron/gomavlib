@@ -2,7 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package avssuas
 
-// File transfer message
+// File transfer protocol message: https://mavlink.io/en/services/ftp.html.
 type MessageFileTransferProtocol struct {
 	// Network ID (0 for broadcast)
 	TargetNetwork uint8
@@ -10,7 +10,7 @@ type MessageFileTransferProtocol struct {
 	TargetSystem uint8
 	// Component ID (0 for broadcast)
 	TargetComponent uint8
-	// Variable length payload. The length is defined by the remaining message length when subtracting the header and other fields.  The entire content of this block is opaque unless you understand any the encoding message_type.  The particular encoding used can be extension specific and might not always be documented as part of the mavlink specification.
+	// Variable length payload. The length is defined by the remaining message length when subtracting the header and other fields. The content/format of this block is defined in https://mavlink.io/en/services/ftp.html.
 	Payload [251]uint8
 }
 

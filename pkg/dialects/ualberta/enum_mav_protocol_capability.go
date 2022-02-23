@@ -22,7 +22,7 @@ const (
 	MAV_PROTOCOL_CAPABILITY_COMMAND_INT MAV_PROTOCOL_CAPABILITY = 8
 	// Autopilot supports the new param union message type.
 	MAV_PROTOCOL_CAPABILITY_PARAM_UNION MAV_PROTOCOL_CAPABILITY = 16
-	// Autopilot supports the new FILE_TRANSFER_PROTOCOL message type.
+	// Autopilot supports the File Transfer Protocol v1: https://mavlink.io/en/services/ftp.html.
 	MAV_PROTOCOL_CAPABILITY_FTP MAV_PROTOCOL_CAPABILITY = 32
 	// Autopilot supports commanding attitude offboard.
 	MAV_PROTOCOL_CAPABILITY_SET_ATTITUDE_TARGET MAV_PROTOCOL_CAPABILITY = 64
@@ -34,7 +34,7 @@ const (
 	MAV_PROTOCOL_CAPABILITY_TERRAIN MAV_PROTOCOL_CAPABILITY = 512
 	// Autopilot supports direct actuator control.
 	MAV_PROTOCOL_CAPABILITY_SET_ACTUATOR_TARGET MAV_PROTOCOL_CAPABILITY = 1024
-	// Autopilot supports the flight termination command.
+	// Autopilot supports the MAV_CMD_DO_FLIGHTTERMINATION command (flight termination).
 	MAV_PROTOCOL_CAPABILITY_FLIGHT_TERMINATION MAV_PROTOCOL_CAPABILITY = 2048
 	// Autopilot supports onboard compass calibration.
 	MAV_PROTOCOL_CAPABILITY_COMPASS_CALIBRATION MAV_PROTOCOL_CAPABILITY = 4096

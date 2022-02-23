@@ -10,7 +10,7 @@ import (
 type COMP_METADATA_TYPE uint32
 
 const (
-	// General information about the component. General metadata includes information about other COMP_METADATA_TYPEs supported by the component. This type must be supported and must be downloadable from vehicle.
+	// General information about the component. General metadata includes information about other metadata types supported by the component. Files of this type must be supported, and must be downloadable from vehicle using a MAVLink FTP URI.
 	COMP_METADATA_TYPE_GENERAL COMP_METADATA_TYPE = 0
 	// Parameter meta data.
 	COMP_METADATA_TYPE_PARAMETER COMP_METADATA_TYPE = 1

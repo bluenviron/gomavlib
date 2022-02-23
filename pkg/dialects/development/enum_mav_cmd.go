@@ -86,7 +86,13 @@ const (
 	MAV_CMD_DO_SET_SERVO MAV_CMD = 183
 	// Cycle a between its nominal setting and a desired PWM for a desired number of cycles with a desired period.
 	MAV_CMD_DO_REPEAT_SERVO MAV_CMD = 184
-	// Terminate flight immediately
+	// Terminate flight immediately.
+	// Flight termination immediately and irreversably terminates the current flight, returning the vehicle to ground.
+	// The vehicle will ignore RC or other input until it has been power-cycled.
+	// Termination may trigger safety measures, including: disabling motors and deployment of parachute on multicopters, and setting flight surfaces to initiate a landing pattern on fixed-wing).
+	// On multicopters without a parachute it may trigger a crash landing.
+	// Support for this command can be tested using the protocol bit: MAV_PROTOCOL_CAPABILITY_FLIGHT_TERMINATION.
+	// Support for this command can also be tested by sending the command with param1=0 (< 0.5); the ACK should be either MAV_RESULT_FAILED or MAV_RESULT_UNSUPPORTED.
 	MAV_CMD_DO_FLIGHTTERMINATION MAV_CMD = 185
 	// Change altitude set point.
 	MAV_CMD_DO_CHANGE_ALTITUDE MAV_CMD = 186

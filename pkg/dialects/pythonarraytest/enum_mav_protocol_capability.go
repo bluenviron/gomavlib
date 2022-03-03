@@ -13,15 +13,17 @@ const (
 	// Autopilot supports the MISSION_ITEM float message type.
 	// Note that MISSION_ITEM is deprecated, and autopilots should use MISSION_INT instead.
 	MAV_PROTOCOL_CAPABILITY_MISSION_FLOAT MAV_PROTOCOL_CAPABILITY = 1
-	// Autopilot supports the new param float message type.
-	MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT MAV_PROTOCOL_CAPABILITY = 2
+	// Parameter protocol uses C-cast of parameter values to set the param_value (float) fields: https://mavlink.io/en/services/parameter.html#parameter-encoding.
+	// Note that either this flag or MAV_PROTOCOL_CAPABILITY_PARAM_ENCODE_BYTEWISE should be set if the parameter protocol is supported.
+	MAV_PROTOCOL_CAPABILITY_PARAM_ENCODE_C_CAST MAV_PROTOCOL_CAPABILITY = 2
 	// Autopilot supports MISSION_ITEM_INT scaled integer message type.
 	// Note that this flag must always be set if missions are supported, because missions must always use MISSION_ITEM_INT (rather than MISSION_ITEM, which is deprecated).
 	MAV_PROTOCOL_CAPABILITY_MISSION_INT MAV_PROTOCOL_CAPABILITY = 4
 	// Autopilot supports COMMAND_INT scaled integer message type.
 	MAV_PROTOCOL_CAPABILITY_COMMAND_INT MAV_PROTOCOL_CAPABILITY = 8
-	// Autopilot supports the new param union message type.
-	MAV_PROTOCOL_CAPABILITY_PARAM_UNION MAV_PROTOCOL_CAPABILITY = 16
+	// Parameter protocol uses byte-wise encoding of parameter values into param_value (float) fields: https://mavlink.io/en/services/parameter.html#parameter-encoding.
+	// Note that either this flag or MAV_PROTOCOL_CAPABILITY_PARAM_ENCODE_BYTEWISE should be set if the parameter protocol is supported.
+	MAV_PROTOCOL_CAPABILITY_PARAM_ENCODE_BYTEWISE MAV_PROTOCOL_CAPABILITY = 16
 	// Autopilot supports the File Transfer Protocol v1: https://mavlink.io/en/services/ftp.html.
 	MAV_PROTOCOL_CAPABILITY_FTP MAV_PROTOCOL_CAPABILITY = 32
 	// Autopilot supports commanding attitude offboard.

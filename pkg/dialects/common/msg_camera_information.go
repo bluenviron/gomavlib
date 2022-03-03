@@ -28,7 +28,7 @@ type MessageCameraInformation struct {
 	Flags CAMERA_CAP_FLAGS `mavenum:"uint32"`
 	// Camera definition version (iteration)
 	CamDefinitionVersion uint16
-	// Camera definition URI (if any, otherwise only basic functions will be available). HTTP- (http://) and MAVLink FTP- (mavlinkftp://) formatted URIs are allowed (and both must be supported by any GCS that implements the Camera Protocol). The definition file may be xz compressed, which will be indicated by the file extension .xml.xz (a GCS that implements the protocol must support decompressing the file).
+	// Camera definition URI (if any, otherwise only basic functions will be available). HTTP- (http://) and MAVLink FTP- (mavlinkftp://) formatted URIs are allowed (and both must be supported by any GCS that implements the Camera Protocol). The definition file may be xz compressed, which will be indicated by the file extension .xml.xz (a GCS that implements the protocol must support decompressing the file). The string needs to be zero terminated.
 	CamDefinitionUri string `mavlen:"140"`
 }
 

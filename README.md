@@ -110,6 +110,7 @@ Other Go libraries
 * https://github.com/liamstask/go-mavlink
 * https://github.com/ungerik/go-mavlink
 * https://github.com/SpaceLeap/go-mavlink
+* https://github.com/mavlink/MAVSDK-Go
 
 Other non-Go libraries
 

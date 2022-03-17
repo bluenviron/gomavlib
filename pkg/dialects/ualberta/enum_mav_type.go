@@ -48,16 +48,16 @@ const (
 	MAV_TYPE_KITE MAV_TYPE = 17
 	// Onboard companion controller
 	MAV_TYPE_ONBOARD_CONTROLLER MAV_TYPE = 18
-	// Two-rotor VTOL using control surfaces in vertical operation in addition. Tailsitter.
+	// Two-rotor Tailsitter VTOL that additionally uses control surfaces in vertical operation. Note: should be named MAV_TYPE_VTOL_TAILSITTER_DUOROTOR.
 	MAV_TYPE_VTOL_DUOROTOR MAV_TYPE = 19
-	// Quad-rotor VTOL using a V-shaped quad config in vertical operation. Tailsitter.
+	// Quad-rotor Tailsitter VTOL using a V-shaped quad config in vertical operation. Note: should be named MAV_TYPE_VTOL_TAILSITTER_QUADROTOR.
 	MAV_TYPE_VTOL_QUADROTOR MAV_TYPE = 20
-	// Tiltrotor VTOL
+	// Tiltrotor VTOL. Fuselage and wings stay (nominally) horizontal in all flight phases. It able to tilt (some) rotors to provide thrust in cruise flight.
 	MAV_TYPE_VTOL_TILTROTOR MAV_TYPE = 21
-	// VTOL reserved 2
-	MAV_TYPE_VTOL_RESERVED2 MAV_TYPE = 22
-	// VTOL reserved 3
-	MAV_TYPE_VTOL_RESERVED3 MAV_TYPE = 23
+	// VTOL with separate fixed rotors for hover and cruise flight. Fuselage and wings stay (nominally) horizontal in all flight phases.
+	MAV_TYPE_VTOL_FIXEDROTOR MAV_TYPE = 22
+	// Tailsitter VTOL. Fuselage and wings orientation changes depending on flight phase: vertical for hover, horizontal for cruise. Use more specific VTOL MAV_TYPE_VTOL_DUOROTOR or MAV_TYPE_VTOL_QUADROTOR if appropriate.
+	MAV_TYPE_VTOL_TAILSITTER MAV_TYPE = 23
 	// VTOL reserved 4
 	MAV_TYPE_VTOL_RESERVED4 MAV_TYPE = 24
 	// VTOL reserved 5

@@ -17,6 +17,8 @@ const (
 	MAV_ODID_STATUS_AIRBORNE MAV_ODID_STATUS = 2
 	// The UA is having an emergency.
 	MAV_ODID_STATUS_EMERGENCY MAV_ODID_STATUS = 3
+	// The remote ID system is failing or unreliable in some way.
+	MAV_ODID_STATUS_REMOTE_ID_SYSTEM_FAILURE MAV_ODID_STATUS = 4
 )
 
 var labels_MAV_ODID_STATUS = map[MAV_ODID_STATUS]string{}

@@ -9,11 +9,11 @@ import (
 type MAV_ODID_OPERATOR_LOCATION_TYPE uint32
 
 const (
-	// The location of the operator is the same as the take-off location.
+	// The location/altitude of the operator is the same as the take-off location.
 	MAV_ODID_OPERATOR_LOCATION_TYPE_TAKEOFF MAV_ODID_OPERATOR_LOCATION_TYPE = 0
-	// The location of the operator is based on live GNSS data.
+	// The location/altitude of the operator is dynamic. E.g. based on live GNSS data.
 	MAV_ODID_OPERATOR_LOCATION_TYPE_LIVE_GNSS MAV_ODID_OPERATOR_LOCATION_TYPE = 1
-	// The location of the operator is a fixed location.
+	// The location/altitude of the operator are fixed values.
 	MAV_ODID_OPERATOR_LOCATION_TYPE_FIXED MAV_ODID_OPERATOR_LOCATION_TYPE = 2
 )
 

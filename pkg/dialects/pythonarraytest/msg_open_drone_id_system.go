@@ -2,7 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package pythonarraytest
 
-// Data for filling the OpenDroneID System message. The System Message contains general system information including the operator location and possible aircraft group information.
+// Data for filling the OpenDroneID System message. The System Message contains general system information including the operator location/altitude and possible aircraft group and/or category/class information.
 type MessageOpenDroneIdSystem struct {
 	// System ID (0 for broadcast).
 	TargetSystem uint8
@@ -32,6 +32,8 @@ type MessageOpenDroneIdSystem struct {
 	ClassEu MAV_ODID_CLASS_EU `mavenum:"uint8"`
 	// Geodetic altitude of the operator relative to WGS84. If unknown: -1000 m.
 	OperatorAltitudeGeo float32
+	// 32 bit Unix Timestamp in seconds since 00:00:00 01/01/2019.
+	Timestamp uint32
 }
 
 // GetID implements the msg.Message interface.

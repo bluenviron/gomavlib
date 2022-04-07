@@ -218,7 +218,8 @@ func processDefinition(
 	version *string,
 	defsProcessed map[string]struct{},
 	isRemote bool,
-	defAddr string) ([]*outDefinition, error) {
+	defAddr string,
+) ([]*outDefinition, error) {
 	// skip already processed
 	if _, ok := defsProcessed[defAddr]; ok {
 		return nil, nil
@@ -454,7 +455,8 @@ func writeDialect(
 
 func writeEnum(
 	pkgName string,
-	enum *outEnum) error {
+	enum *outEnum,
+) error {
 	var buf bytes.Buffer
 	err := tplEnum.Execute(&buf, map[string]interface{}{
 		"PkgName": pkgName,
@@ -469,7 +471,8 @@ func writeEnum(
 
 func writeMessage(
 	pkgName string,
-	msg *outMessage) error {
+	msg *outMessage,
+) error {
 	var buf bytes.Buffer
 	err := tplMessage.Execute(&buf, map[string]interface{}{
 		"PkgName": pkgName,

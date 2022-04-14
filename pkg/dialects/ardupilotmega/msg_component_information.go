@@ -4,13 +4,6 @@ package ardupilotmega
 
 //
 // Component information message, which may be requested using MAV_CMD_REQUEST_MESSAGE.
-//
-// This contains MAVLink FTP URIs for the component's general and peripherals metadata files along with their CRCs (which can be used for file caching).
-// The files must be hosted on the component, and may be xz compressed.
-// The general metadata file can be read to get the locations of additional metadata files (COMP_METADATA_TYPE), which may be hosted either on the vehicle or the Internet.
-// For more information see: https://mavlink.io/en/services/component_information.html.
-//
-// Note: Camera components should use CAMERA_INFORMATION instead, and autopilots may use both this message and AUTOPILOT_VERSION.
 type MessageComponentInformation struct {
 	// Timestamp (time since system boot).
 	TimeBootMs uint32

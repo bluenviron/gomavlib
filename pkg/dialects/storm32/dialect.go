@@ -216,6 +216,7 @@ var dial = &dialect.Dialect{
 		&MessageCanFrame{},
 		&MessageOnboardComputerStatus{},
 		&MessageComponentInformation{},
+		&MessageComponentMetadata{},
 		&MessagePlayTuneV2{},
 		&MessageSupportedTunes{},
 		&MessageEvent{},

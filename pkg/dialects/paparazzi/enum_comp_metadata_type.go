@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-// Supported component metadata types. These are used in the "general" metadata file returned by COMPONENT_INFORMATION to provide information about supported metadata types. The types are not used directly in MAVLink messages.
+// Supported component metadata types. These are used in the "general" metadata file returned by COMPONENT_METADATA to provide information about supported metadata types. The types are not used directly in MAVLink messages.
 type COMP_METADATA_TYPE uint32
 
 const (

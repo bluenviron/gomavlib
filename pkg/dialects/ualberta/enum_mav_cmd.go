@@ -192,7 +192,9 @@ const (
 	MAV_CMD_INJECT_FAILURE MAV_CMD = 420
 	// Starts receiver pairing.
 	MAV_CMD_START_RX_PAIR MAV_CMD = 500
-	// Request the interval between messages for a particular MAVLink message ID. The receiver should ACK the command and then emit its response in a MESSAGE_INTERVAL message.
+	//
+	// Request the interval between messages for a particular MAVLink message ID.
+	// The receiver should ACK the command and then emit its response in a MESSAGE_INTERVAL message.
 	MAV_CMD_GET_MESSAGE_INTERVAL MAV_CMD = 510
 	// Set the interval between messages for a particular MAVLink message ID. This interface replaces REQUEST_DATA_STREAM.
 	MAV_CMD_SET_MESSAGE_INTERVAL MAV_CMD = 511

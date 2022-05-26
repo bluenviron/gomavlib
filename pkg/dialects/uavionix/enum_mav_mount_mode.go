@@ -22,7 +22,7 @@ const (
 	MAV_MOUNT_MODE_GPS_POINT MAV_MOUNT_MODE = 4
 	// Gimbal tracks system with specified system ID
 	MAV_MOUNT_MODE_SYSID_TARGET MAV_MOUNT_MODE = 5
-	// Gimbal tracks home location
+	// Gimbal tracks home position
 	MAV_MOUNT_MODE_HOME_LOCATION MAV_MOUNT_MODE = 6
 )
 

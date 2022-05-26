@@ -74,7 +74,11 @@ const (
 	MAV_CMD_DO_JUMP MAV_CMD = 177
 	// Change speed and/or throttle set points.
 	MAV_CMD_DO_CHANGE_SPEED MAV_CMD = 178
-	// Changes the home location either to the current location or a specified location.
+	//
+	// Sets the home position to either to the current position or a specified position.
+	// The home position is the default position that the system will return to and land on.
+	// The position is set automatically by the system during the takeoff (and may also be set using this command).
+	// Note: the current home position may be emitted in a HOME_POSITION message on request (using MAV_CMD_REQUEST_MESSAGE with param1=242).
 	MAV_CMD_DO_SET_HOME MAV_CMD = 179
 	// Set a system parameter.  Caution!  Use of this command requires knowledge of the numeric enumeration value of the parameter.
 	MAV_CMD_DO_SET_PARAMETER MAV_CMD = 180
@@ -187,6 +191,7 @@ const (
 	// Turns illuminators ON/OFF. An illuminator is a light source that is used for lighting up dark areas external to the sytstem: e.g. a torch or searchlight (as opposed to a light source for illuminating the system itself, e.g. an indicator light).
 	MAV_CMD_ILLUMINATOR_ON_OFF MAV_CMD = 405
 	// Request the home position from the vehicle.
+	// 	  The vehicle will ACK the command and then emit the HOME_POSITION message.
 	MAV_CMD_GET_HOME_POSITION MAV_CMD = 410
 	// Inject artificial failure for testing purposes. Note that autopilots should implement an additional protection before accepting this command such as a specific param setting.
 	MAV_CMD_INJECT_FAILURE MAV_CMD = 420

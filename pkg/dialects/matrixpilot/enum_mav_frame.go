@@ -30,13 +30,17 @@ const (
 	MAV_FRAME_LOCAL_NED MAV_FRAME = 1
 	// NOT a coordinate frame, indicates a mission command.
 	MAV_FRAME_MISSION MAV_FRAME = 2
-	// Global (WGS84) coordinate frame + altitude relative to the home position. First value / x: latitude, second value / y: longitude, third value / z: positive altitude with 0 being at the altitude of the home location.
+	//
+	// Global (WGS84) coordinate frame + altitude relative to the home position.
+	// First value / x: latitude, second value / y: longitude, third value / z: positive altitude with 0 being at the altitude of the home position.
 	MAV_FRAME_GLOBAL_RELATIVE_ALT MAV_FRAME = 3
 	// ENU local tangent frame (x: East, y: North, z: Up) with origin fixed relative to earth.
 	MAV_FRAME_LOCAL_ENU MAV_FRAME = 4
 	// Global (WGS84) coordinate frame (scaled) + MSL altitude. First value / x: latitude in degrees*1E7, second value / y: longitude in degrees*1E7, third value / z: positive altitude over mean sea level (MSL).
 	MAV_FRAME_GLOBAL_INT MAV_FRAME = 5
-	// Global (WGS84) coordinate frame (scaled) + altitude relative to the home position. First value / x: latitude in degrees*1E7, second value / y: longitude in degrees*1E7, third value / z: positive altitude with 0 being at the altitude of the home location.
+	//
+	// Global (WGS84) coordinate frame (scaled) + altitude relative to the home position.
+	// First value / x: latitude in degrees*1E7, second value / y: longitude in degrees*1E7, third value / z: positive altitude with 0 being at the altitude of the home position.
 	MAV_FRAME_GLOBAL_RELATIVE_ALT_INT MAV_FRAME = 6
 	// NED local tangent frame (x: North, y: East, z: Down) with origin that travels with the vehicle.
 	MAV_FRAME_LOCAL_OFFSET_NED MAV_FRAME = 7

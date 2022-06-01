@@ -98,12 +98,6 @@ Related projects
 
 * https://github.com/aler9/mavp2p
 
-Protocol documentation
-
-* main website https://mavlink.io/en/
-* packet format https://mavlink.io/en/guide/serialization.html
-* common dialect https://github.com/mavlink/mavlink/blob/master/message_definitions/v1.0/common.xml
-
 Other Go libraries
 
 * https://github.com/hybridgroup/gobot/tree/master/platforms/mavlink
@@ -120,6 +114,11 @@ Other non-Go libraries
 * [Rust] https://github.com/3drobotics/rust-mavlink
 * [JS] https://github.com/omcaree/node-mavlink
 
-Conventions
+Standards
 
-* https://github.com/golang-standards/project-layout
+* Mavlink
+  * main website https://mavlink.io/en/
+  * packet format https://mavlink.io/en/guide/serialization.html
+  * common dialect https://github.com/mavlink/mavlink/blob/master/message_definitions/v1.0/common.xml
+
+* Golang project layout https://github.com/golang-standards/project-layout

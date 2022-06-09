@@ -38,6 +38,8 @@ type MessageEfiStatus struct {
 	ThrottleOut float32
 	// Pressure/temperature compensation
 	PtCompensation float32
+	// Supply voltage to EFI sparking system.  Zero in this value means "unknown", so if the supply voltage really is zero volts use 0.0001 instead.
+	IgnitionVoltage float32 `mavext:"true"`
 }
 
 // GetID implements the msg.Message interface.

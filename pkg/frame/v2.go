@@ -103,18 +103,16 @@ func (f *V2Frame) GetMessage() message.Message {
 	return f.Message
 }
 
-// GetChecksum implements the Frame interface.
-func (f *V2Frame) GetChecksum() uint16 {
-	return f.Checksum
-}
-
 // IsSigned checks whether the frame contains a signature. It does not validate the signature.
 func (f *V2Frame) IsSigned() bool {
 	return (f.IncompatibilityFlag & V2FlagSigned) != 0
 }
 
-// Decode implements the Frame interface.
-func (f *V2Frame) Decode(br *bufio.Reader) error {
+func (f *V2Frame) getChecksum() uint16 {
+	return f.Checksum
+}
+
+func (f *V2Frame) decode(br *bufio.Reader) error {
 	// header
 	buf, err := br.Peek(9)
 	if err != nil {
@@ -172,8 +170,7 @@ func (f *V2Frame) Decode(br *bufio.Reader) error {
 	return nil
 }
 
-// Encode implements the Frame interface.
-func (f *V2Frame) Encode(buf []byte, msgEncoded []byte) ([]byte, error) {
+func (f *V2Frame) encode(buf []byte, msgEncoded []byte) ([]byte, error) {
 	msgLen := len(msgEncoded)
 	bufLen := 10 + msgLen + 2
 	if f.IsSigned() {
@@ -209,8 +206,7 @@ func (f *V2Frame) Encode(buf []byte, msgEncoded []byte) ([]byte, error) {
 	return buf, nil
 }
 
-// GenChecksum implements the Frame interface.
-func (f *V2Frame) GenChecksum(crcExtra byte) uint16 {
+func (f *V2Frame) genChecksum(crcExtra byte) uint16 {
 	msg := f.GetMessage().(*message.MessageRaw)
 	h := x25.New()
 
@@ -229,8 +225,7 @@ func (f *V2Frame) GenChecksum(crcExtra byte) uint16 {
 	return h.Sum16()
 }
 
-// GenSignature generates a signature with the given key.
-func (f *V2Frame) GenSignature(key *V2Key) *V2Signature {
+func (f *V2Frame) genSignature(key *V2Key) *V2Signature {
 	msg := f.GetMessage().(*message.MessageRaw)
 	h := sha256.New()
 

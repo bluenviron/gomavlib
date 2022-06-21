@@ -88,7 +88,7 @@ func (r *Reader) Read() (Frame, error) {
 		return nil, err
 	}
 
-	err = f.Decode(r.readBuffer)
+	err = f.decode(r.readBuffer)
 	if err != nil {
 		return nil, newError(err.Error())
 	}
@@ -99,7 +99,7 @@ func (r *Reader) Read() (Frame, error) {
 			return nil, newError("signature required but packet is not v2")
 		}
 
-		if sig := ff.GenSignature(r.conf.InKey); *sig != *ff.Signature {
+		if sig := ff.genSignature(r.conf.InKey); *sig != *ff.Signature {
 			return nil, newError("wrong signature")
 		}
 
@@ -118,9 +118,9 @@ func (r *Reader) Read() (Frame, error) {
 	// decode message if in dialect and validate checksum
 	if r.conf.DialectDE != nil {
 		if mp, ok := r.conf.DialectDE.MessageDEs[f.GetMessage().GetID()]; ok {
-			if sum := f.GenChecksum(r.conf.DialectDE.MessageDEs[f.GetMessage().GetID()].CRCExtra()); sum != f.GetChecksum() {
+			if sum := f.genChecksum(r.conf.DialectDE.MessageDEs[f.GetMessage().GetID()].CRCExtra()); sum != f.getChecksum() {
 				return nil, newError("wrong checksum (expected %.4x, got %.4x, id=%d)",
-					sum, f.GetChecksum(), f.GetMessage().GetID())
+					sum, f.getChecksum(), f.GetMessage().GetID())
 			}
 
 			_, isV2 := f.(*V2Frame)

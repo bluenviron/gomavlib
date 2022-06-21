@@ -155,9 +155,9 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 		// fill checksum
 		switch ff := fr.(type) {
 		case *V1Frame:
-			ff.Checksum = ff.GenChecksum(w.conf.DialectDE.MessageDEs[ff.GetMessage().GetID()].CRCExtra())
+			ff.Checksum = ff.genChecksum(w.conf.DialectDE.MessageDEs[ff.GetMessage().GetID()].CRCExtra())
 		case *V2Frame:
-			ff.Checksum = ff.GenChecksum(w.conf.DialectDE.MessageDEs[ff.GetMessage().GetID()].CRCExtra())
+			ff.Checksum = ff.genChecksum(w.conf.DialectDE.MessageDEs[ff.GetMessage().GetID()].CRCExtra())
 		}
 	}
 
@@ -166,13 +166,13 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 		ff.SignatureLinkID = w.conf.OutSignatureLinkID
 		// Timestamp in 10 microsecond units since 1st January 2015 GMT time
 		ff.SignatureTimestamp = uint64(time.Since(signatureReferenceDate)) / 10000
-		ff.Signature = ff.GenSignature(w.conf.OutKey)
+		ff.Signature = ff.genSignature(w.conf.OutKey)
 	}
 
 	return w.WriteFrame(fr)
 }
 
-// WriteFrame writes a
+// WriteFrame writes a Frame.
 // It must not be called by multiple routines in parallel.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
@@ -204,7 +204,7 @@ func (w *Writer) WriteFrame(fr Frame) error {
 		m = &message.MessageRaw{m.GetID(), byt} //nolint:govet
 	}
 
-	buf, err := fr.Encode(w.writeBuffer, m.(*message.MessageRaw).Content)
+	buf, err := fr.encode(w.writeBuffer, m.(*message.MessageRaw).Content)
 	if err != nil {
 		return err
 	}

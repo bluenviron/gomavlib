@@ -50,13 +50,11 @@ func (f *V1Frame) GetMessage() message.Message {
 	return f.Message
 }
 
-// GetChecksum implements the Frame interface.
-func (f *V1Frame) GetChecksum() uint16 {
+func (f *V1Frame) getChecksum() uint16 {
 	return f.Checksum
 }
 
-// Decode implements the Frame interface.
-func (f *V1Frame) Decode(br *bufio.Reader) error {
+func (f *V1Frame) decode(br *bufio.Reader) error {
 	// header
 	buf, err := br.Peek(5)
 	if err != nil {
@@ -94,8 +92,7 @@ func (f *V1Frame) Decode(br *bufio.Reader) error {
 	return nil
 }
 
-// Encode implements the Frame interface.
-func (f *V1Frame) Encode(buf []byte, msgEncoded []byte) ([]byte, error) {
+func (f *V1Frame) encode(buf []byte, msgEncoded []byte) ([]byte, error) {
 	if f.Message.GetID() > 0xFF {
 		return nil, fmt.Errorf("cannot send a message with an id > 0xFF inside a V1 frame")
 	}
@@ -123,8 +120,8 @@ func (f *V1Frame) Encode(buf []byte, msgEncoded []byte) ([]byte, error) {
 	return buf, nil
 }
 
-// GenChecksum implements the Frame interface.
-func (f *V1Frame) GenChecksum(crcExtra byte) uint16 {
+// genChecksum implements the Frame interface.
+func (f *V1Frame) genChecksum(crcExtra byte) uint16 {
 	msg := f.GetMessage().(*message.MessageRaw)
 	h := x25.New()
 

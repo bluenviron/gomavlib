@@ -9,27 +9,20 @@ import (
 
 // Frame is the interface implemented by frames of every supported version.
 type Frame interface {
-	// the system id of the author of the frame.
-	GetSystemID() byte
-
-	// the component id of the author of the frame.
-	GetComponentID() byte
-
-	// the message encapsuled in the frame.
-	GetMessage() message.Message
-
-	// the frame checksum.
-	GetChecksum() uint16
-
-	// generate a clone of the frame
+	// generates a clone of the frame.
 	Clone() Frame
 
-	// decode the frame
-	Decode(*bufio.Reader) error
+	// returns the system id of the author of the frame.
+	GetSystemID() byte
 
-	// encode the frame
-	Encode([]byte, []byte) ([]byte, error)
+	// returns the component id of the author of the frame.
+	GetComponentID() byte
 
-	// generate the checksum
-	GenChecksum(byte) uint16
+	// returns the message encapsuled in the frame.
+	GetMessage() message.Message
+
+	getChecksum() uint16
+	decode(*bufio.Reader) error
+	encode([]byte, []byte) ([]byte, error)
+	genChecksum(byte) uint16
 }

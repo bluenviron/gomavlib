@@ -23,8 +23,7 @@ type Channel struct {
 	label   string
 	rwc     io.ReadWriteCloser
 	n       *Node
-	reader  *frame.Reader
-	writer  *frame.Writer
+	frw     *frame.ReadWriter
 	running bool
 
 	// in
@@ -33,29 +32,26 @@ type Channel struct {
 }
 
 func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Channel, error) {
-	reader, err := frame.NewReader(frame.ReaderConf{
-		Reader:    rwc,
-		DialectDE: n.dialectDE,
-		InKey:     n.conf.InKey,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	writer, err := frame.NewWriter(frame.WriterConf{
-		Writer:      rwc,
-		DialectDE:   n.dialectDE,
-		OutSystemID: n.conf.OutSystemID,
-		OutVersion: func() frame.WriterOutVersion {
-			if n.conf.OutVersion == V2 {
-				return frame.V2
-			}
-			return frame.V1
-		}(),
-		OutComponentID:     n.conf.OutComponentID,
-		OutSignatureLinkID: randomByte(),
-		OutKey:             n.conf.OutKey,
-	})
+	frw, err := frame.NewReadWriter(
+		frame.ReaderConf{
+			Reader:    rwc,
+			DialectDE: n.dialectDE,
+			InKey:     n.conf.InKey,
+		},
+		frame.WriterConf{
+			Writer:      rwc,
+			DialectDE:   n.dialectDE,
+			OutSystemID: n.conf.OutSystemID,
+			OutVersion: func() frame.WriterOutVersion {
+				if n.conf.OutVersion == V2 {
+					return frame.V2
+				}
+				return frame.V1
+			}(),
+			OutComponentID:     n.conf.OutComponentID,
+			OutSignatureLinkID: randomByte(),
+			OutKey:             n.conf.OutKey,
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -65,8 +61,7 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Cha
 		label:     label,
 		rwc:       rwc,
 		n:         n,
-		reader:    reader,
-		writer:    writer,
+		frw:       frw,
 		write:     make(chan interface{}),
 		terminate: make(chan struct{}),
 	}, nil
@@ -98,7 +93,7 @@ func (ch *Channel) run() {
 		ch.n.events <- &EventChannelOpen{ch}
 
 		for {
-			fr, err := ch.reader.Read()
+			fr, err := ch.frw.Read()
 			if err != nil {
 				// ignore parse errors
 				if _, ok := err.(*frame.ReadError); ok {
@@ -125,10 +120,10 @@ func (ch *Channel) run() {
 		for what := range ch.write {
 			switch wh := what.(type) {
 			case message.Message:
-				ch.writer.WriteMessage(wh)
+				ch.frw.WriteMessage(wh)
 
 			case frame.Frame:
-				ch.writer.WriteFrame(wh)
+				ch.frw.WriteFrame(wh)
 			}
 		}
 	}()

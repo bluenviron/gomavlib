@@ -22,26 +22,23 @@ func main() {
 		panic(err)
 	}
 
-	reader, err := frame.NewReader(frame.ReaderConf{
-		Reader:    inBuf,
-		DialectDE: dialectDE,
-	})
+	rw, err := frame.NewReadWriter(
+		frame.ReaderConf{
+			Reader:    inBuf,
+			DialectDE: dialectDE,
+		},
+		frame.WriterConf{
+			Writer:      outBuf,
+			DialectDE:   dialectDE,
+			OutVersion:  frame.V2, // change to V1 if you're unable to communicate with the target
+			OutSystemID: 10,
+		})
 	if err != nil {
 		panic(err)
 	}
 
-	writer, err := frame.NewWriter(frame.WriterConf{
-		Writer:      outBuf,
-		DialectDE:   dialectDE,
-		OutVersion:  frame.V2, // change to V1 if you're unable to communicate with the target
-		OutSystemID: 10,
-	})
-	if err != nil {
-		panic(err)
-	}
-
-	// read a message, encapsulated in a frame
-	frame, err := reader.Read()
+	// read a message (wrapped in a frame)
+	frame, err := rw.Read()
 	if err != nil {
 		panic(err)
 	}
@@ -49,7 +46,7 @@ func main() {
 	fmt.Printf("decoded: %+v\n", frame)
 
 	// write a message
-	err = writer.WriteMessage(&ardupilotmega.MessageParamValue{
+	err = rw.WriteMessage(&ardupilotmega.MessageParamValue{
 		ParamId:    "test_parameter",
 		ParamValue: 123456,
 		ParamType:  ardupilotmega.MAV_PARAM_TYPE_UINT32,

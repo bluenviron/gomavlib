@@ -6,7 +6,6 @@ import (
 
 	"github.com/aler9/gomavlib/pkg/frame"
 	"github.com/aler9/gomavlib/pkg/msg"
-	"github.com/aler9/gomavlib/pkg/parser"
 )
 
 func randomByte() byte {
@@ -24,8 +23,8 @@ type Channel struct {
 	label   string
 	rwc     io.ReadWriteCloser
 	n       *Node
-	reader  *parser.Reader
-	writer  *parser.Writer
+	reader  *frame.Reader
+	writer  *frame.Writer
 	running bool
 
 	// in
@@ -34,7 +33,7 @@ type Channel struct {
 }
 
 func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Channel, error) {
-	reader, err := parser.NewReader(parser.ReaderConf{
+	reader, err := frame.NewReader(frame.ReaderConf{
 		Reader:    rwc,
 		DialectDE: n.dialectDE,
 		InKey:     n.conf.InKey,
@@ -43,15 +42,15 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Cha
 		return nil, err
 	}
 
-	writer, err := parser.NewWriter(parser.WriterConf{
+	writer, err := frame.NewWriter(frame.WriterConf{
 		Writer:      rwc,
 		DialectDE:   n.dialectDE,
 		OutSystemID: n.conf.OutSystemID,
-		OutVersion: func() parser.WriterOutVersion {
+		OutVersion: func() frame.WriterOutVersion {
 			if n.conf.OutVersion == V2 {
-				return parser.V2
+				return frame.V2
 			}
-			return parser.V1
+			return frame.V1
 		}(),
 		OutComponentID:     n.conf.OutComponentID,
 		OutSignatureLinkID: randomByte(),
@@ -99,17 +98,17 @@ func (ch *Channel) run() {
 		ch.n.events <- &EventChannelOpen{ch}
 
 		for {
-			frame, err := ch.reader.Read()
+			fr, err := ch.reader.Read()
 			if err != nil {
-				// continue in case of parse errors
-				if _, ok := err.(*parser.ReadError); ok {
+				// ignore parse errors
+				if _, ok := err.(*frame.ReadError); ok {
 					ch.n.events <- &EventParseError{err, ch}
 					continue
 				}
 				return
 			}
 
-			evt := &EventFrame{frame, ch}
+			evt := &EventFrame{fr, ch}
 
 			if ch.n.nodeStreamRequest != nil {
 				ch.n.nodeStreamRequest.onEventFrame(evt)

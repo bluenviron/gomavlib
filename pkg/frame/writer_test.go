@@ -1,4 +1,4 @@
-package parser
+package frame
 
 import (
 	"bytes"
@@ -10,7 +10,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/aler9/gomavlib/pkg/dialect"
-	"github.com/aler9/gomavlib/pkg/frame"
 	"github.com/aler9/gomavlib/pkg/msg"
 )
 
@@ -41,7 +40,7 @@ func TestWriterWriteMessage(t *testing.T) {
 	for _, c := range []struct {
 		name string
 		ver  WriterOutVersion
-		key  *frame.V2Key
+		key  *V2Key
 		msg  msg.Message
 		raw  []byte
 	}{
@@ -58,7 +57,7 @@ func TestWriterWriteMessage(t *testing.T) {
 		{
 			"v2 frame, signed",
 			V2,
-			frame.NewV2Key(bytes.Repeat([]byte("\x4F"), 32)),
+			NewV2Key(bytes.Repeat([]byte("\x4F"), 32)),
 			&MessageHeartbeat{
 				Type:           1,
 				Autopilot:      2,
@@ -102,7 +101,7 @@ func TestWriterWriteFrameNilMsg(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	f := &frame.V1Frame{Message: nil}
+	f := &V1Frame{Message: nil}
 	err = writer.WriteFrame(f)
 	require.Error(t, err)
 }
@@ -118,11 +117,11 @@ func TestWriterWriteFrameIsConst(t *testing.T) {
 		DialectDE:   dialectDE,
 		OutVersion:  V2,
 		OutSystemID: 1,
-		OutKey:      frame.NewV2Key(bytes.Repeat([]byte("\x7C"), 32)),
+		OutKey:      NewV2Key(bytes.Repeat([]byte("\x7C"), 32)),
 	})
 	require.NoError(t, err)
 
-	f := &frame.V2Frame{
+	f := &V2Frame{
 		Message: &MessageHeartbeat{
 			Type:           1,
 			Autopilot:      2,

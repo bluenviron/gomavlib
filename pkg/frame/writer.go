@@ -1,4 +1,4 @@
-package parser
+package frame
 
 import (
 	"fmt"
@@ -6,9 +6,27 @@ import (
 	"time"
 
 	"github.com/aler9/gomavlib/pkg/dialect"
-	"github.com/aler9/gomavlib/pkg/frame"
 	"github.com/aler9/gomavlib/pkg/msg"
 )
+
+// WriterOutVersion is a Mavlink version.
+type WriterOutVersion int
+
+const (
+	// V1 is Mavlink 1.0
+	V1 WriterOutVersion = 1
+
+	// V2 is Mavlink 2.0
+	V2 WriterOutVersion = 2
+)
+
+// String implements fmt.Stringer.
+func (v WriterOutVersion) String() string {
+	if v == V1 {
+		return "V1"
+	}
+	return "V2"
+}
 
 // WriterConf is the configuration of a Writer.
 type WriterConf struct {
@@ -31,17 +49,17 @@ type WriterConf struct {
 	OutSignatureLinkID byte
 	// (optional) the secret key used to sign outgoing frames.
 	// This feature requires v2 frames.
-	OutKey *frame.V2Key
+	OutKey *V2Key
 }
 
-// Writer is a Mavlink writer.
+// Writer is a Frame writer.
 type Writer struct {
 	conf               WriterConf
 	writeBuffer        []byte
 	curWriteSequenceID byte
 }
 
-// NewWriter allocates a writer.
+// NewWriter allocates a Writer.
 func NewWriter(conf WriterConf) (*Writer, error) {
 	if conf.Writer == nil {
 		return nil, fmt.Errorf("Writer not provided")
@@ -70,27 +88,27 @@ func NewWriter(conf WriterConf) (*Writer, error) {
 // It must not be called by multiple routines in parallel.
 func (w *Writer) WriteMessage(m msg.Message) error {
 	if w.conf.OutVersion == V1 {
-		return w.writeFrameAndFill(&frame.V1Frame{Message: m})
+		return w.writeFrameAndFill(&V1Frame{Message: m})
 	}
-	return w.writeFrameAndFill(&frame.V2Frame{Message: m})
+	return w.writeFrameAndFill(&V2Frame{Message: m})
 }
 
-func (w *Writer) writeFrameAndFill(fr frame.Frame) error {
-	if fr.GetMessage() == nil {
+func (w *Writer) writeFrameAndFill(frame Frame) error {
+	if frame.GetMessage() == nil {
 		return fmt.Errorf("message is nil")
 	}
 
 	// do not touch the original frame, but work with a separate object
 	// in such way that the frame can be encoded by other parsers in parallel
-	safeFrame := fr.Clone()
+	frame = frame.Clone()
 
 	// fill SequenceID, SystemID, ComponentID
-	switch ff := safeFrame.(type) {
-	case *frame.V1Frame:
+	switch ff := frame.(type) {
+	case *V1Frame:
 		ff.SequenceID = w.curWriteSequenceID
 		ff.SystemID = w.conf.OutSystemID
 		ff.ComponentID = w.conf.OutComponentID
-	case *frame.V2Frame:
+	case *V2Frame:
 		ff.SequenceID = w.curWriteSequenceID
 		ff.SystemID = w.conf.OutSystemID
 		ff.ComponentID = w.conf.OutComponentID
@@ -98,65 +116,68 @@ func (w *Writer) writeFrameAndFill(fr frame.Frame) error {
 	w.curWriteSequenceID++
 
 	// fill CompatibilityFlag, IncompatibilityFlag if v2
-	if ff, ok := safeFrame.(*frame.V2Frame); ok {
+	if ff, ok := frame.(*V2Frame); ok {
 		ff.CompatibilityFlag = 0
 		ff.IncompatibilityFlag = 0
 
 		if w.conf.OutKey != nil {
-			ff.IncompatibilityFlag |= frame.V2FlagSigned
+			ff.IncompatibilityFlag |= V2FlagSigned
 		}
 	}
 
 	// encode message if it is not already encoded
-	if _, ok := safeFrame.GetMessage().(*msg.MessageRaw); !ok {
+	if _, ok := frame.GetMessage().(*msg.MessageRaw); !ok {
 		if w.conf.DialectDE == nil {
 			return fmt.Errorf("message cannot be encoded since dialect is nil")
 		}
 
-		mp, ok := w.conf.DialectDE.MessageDEs[safeFrame.GetMessage().GetID()]
+		mp, ok := w.conf.DialectDE.MessageDEs[frame.GetMessage().GetID()]
 		if !ok {
 			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
 		}
 
-		_, isV2 := safeFrame.(*frame.V2Frame)
-		byt, err := mp.Encode(safeFrame.GetMessage(), isV2)
+		_, isV2 := frame.(*V2Frame)
+		byt, err := mp.Encode(frame.GetMessage(), isV2)
 		if err != nil {
 			return err
 		}
 
-		msgRaw := &msg.MessageRaw{safeFrame.GetMessage().GetID(), byt} //nolint:govet
-		switch ff := safeFrame.(type) {
-		case *frame.V1Frame:
+		msgRaw := &msg.MessageRaw{
+			ID:      frame.GetMessage().GetID(),
+			Content: byt,
+		}
+		switch ff := frame.(type) {
+		case *V1Frame:
 			ff.Message = msgRaw
-		case *frame.V2Frame:
+		case *V2Frame:
 			ff.Message = msgRaw
 		}
 
 		// fill checksum
-		switch ff := safeFrame.(type) {
-		case *frame.V1Frame:
+		switch ff := frame.(type) {
+		case *V1Frame:
 			ff.Checksum = ff.GenChecksum(w.conf.DialectDE.MessageDEs[ff.GetMessage().GetID()].CRCExtra())
-		case *frame.V2Frame:
+		case *V2Frame:
 			ff.Checksum = ff.GenChecksum(w.conf.DialectDE.MessageDEs[ff.GetMessage().GetID()].CRCExtra())
 		}
 	}
 
 	// fill SignatureLinkID, SignatureTimestamp, Signature if v2
-	if ff, ok := safeFrame.(*frame.V2Frame); ok && w.conf.OutKey != nil {
+	if ff, ok := frame.(*V2Frame); ok && w.conf.OutKey != nil {
 		ff.SignatureLinkID = w.conf.OutSignatureLinkID
 		// Timestamp in 10 microsecond units since 1st January 2015 GMT time
 		ff.SignatureTimestamp = uint64(time.Since(signatureReferenceDate)) / 10000
 		ff.Signature = ff.GenSignature(w.conf.OutKey)
 	}
 
-	return w.WriteFrame(safeFrame)
+	return w.WriteFrame(frame)
 }
 
-// WriteFrame writes a Frame.
+// WriteFrame writes a
 // It must not be called by multiple routines in parallel.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
-func (w *Writer) WriteFrame(fr frame.Frame) error {
+func (w *Writer) WriteFrame(fr Frame) error {
 	m := fr.GetMessage()
 	if m == nil {
 		return fmt.Errorf("message is nil")
@@ -173,13 +194,13 @@ func (w *Writer) WriteFrame(fr frame.Frame) error {
 			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
 		}
 
-		_, isV2 := fr.(*frame.V2Frame)
+		_, isV2 := fr.(*V2Frame)
 		byt, err := mp.Encode(m, isV2)
 		if err != nil {
 			return err
 		}
 
-		// do not touch frame.Message
+		// do not touch Message
 		// in such way that the frame can be encoded by other parsers in parallel
 		m = &msg.MessageRaw{m.GetID(), byt} //nolint:govet
 	}

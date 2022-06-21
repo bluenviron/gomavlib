@@ -6,11 +6,11 @@ import (
 
 	"github.com/aler9/gomavlib/pkg/dialect"
 	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
-	"github.com/aler9/gomavlib/pkg/parser"
+	"github.com/aler9/gomavlib/pkg/frame"
 )
 
 // if NewNode() is not flexible enough, the library provides a low-level
-// Mavlink reader and writer, that can be used with any kind of byte stream.
+// frame reader and writer, that can be used with any kind of byte stream.
 
 func main() {
 	inBuf := bytes.NewBuffer(
@@ -22,7 +22,7 @@ func main() {
 		panic(err)
 	}
 
-	reader, err := parser.NewReader(parser.ReaderConf{
+	reader, err := frame.NewReader(frame.ReaderConf{
 		Reader:    inBuf,
 		DialectDE: dialectDE,
 	})
@@ -30,10 +30,10 @@ func main() {
 		panic(err)
 	}
 
-	writer, err := parser.NewWriter(parser.WriterConf{
+	writer, err := frame.NewWriter(frame.WriterConf{
 		Writer:      outBuf,
 		DialectDE:   dialectDE,
-		OutVersion:  parser.V2, // change to V1 if you're unable to communicate with the target
+		OutVersion:  frame.V2, // change to V1 if you're unable to communicate with the target
 		OutSystemID: 10,
 	})
 	if err != nil {

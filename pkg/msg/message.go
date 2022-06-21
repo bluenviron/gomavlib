@@ -1,5 +1,4 @@
-// Package msg contains the Message definition and utilities to encode and
-// decode messages.
+// Package msg contains the message definition and parser.
 package msg
 
 // Message is the interface that must be implemented by all Mavlink messages.

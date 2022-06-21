@@ -1,4 +1,4 @@
-package parser
+package frame
 
 import (
 	"bytes"
@@ -8,7 +8,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/aler9/gomavlib/pkg/dialect"
-	"github.com/aler9/gomavlib/pkg/frame"
 	"github.com/aler9/gomavlib/pkg/msg"
 )
 
@@ -94,15 +93,15 @@ var testDialectDE = func() *dialect.DecEncoder {
 var casesReadWrite = []struct {
 	name      string
 	dialectDE *dialect.DecEncoder
-	key       *frame.V2Key
-	frame     frame.Frame
+	key       *V2Key
+	frame     Frame
 	raw       []byte
 }{
 	{
 		"v1 frame with nil content",
 		nil,
 		nil,
-		&frame.V1Frame{
+		&V1Frame{
 			SequenceID:  0x01,
 			SystemID:    0x02,
 			ComponentID: 0x03,
@@ -118,7 +117,7 @@ var casesReadWrite = []struct {
 		"v1 frame with encoded message",
 		nil,
 		nil,
-		&frame.V1Frame{
+		&V1Frame{
 			SequenceID:  0x27,
 			SystemID:    0x01,
 			ComponentID: 0x02,
@@ -134,7 +133,7 @@ var casesReadWrite = []struct {
 		"v1 frame with decoded message",
 		testDialectDE,
 		nil,
-		&frame.V1Frame{
+		&V1Frame{
 			SequenceID:  0x27,
 			SystemID:    0x01,
 			ComponentID: 0x02,
@@ -150,7 +149,7 @@ var casesReadWrite = []struct {
 		"v2 frame with nil content",
 		testDialectDE,
 		nil,
-		&frame.V2Frame{
+		&V2Frame{
 			IncompatibilityFlag: 0,
 			CompatibilityFlag:   0,
 			SequenceID:          3,
@@ -168,7 +167,7 @@ var casesReadWrite = []struct {
 		"v2 frame with encoded message",
 		nil,
 		nil,
-		&frame.V2Frame{
+		&V2Frame{
 			IncompatibilityFlag: 0x00,
 			CompatibilityFlag:   0x00,
 			SequenceID:          0x8F,
@@ -186,7 +185,7 @@ var casesReadWrite = []struct {
 		"v2 frame with decoded message",
 		testDialectDE,
 		nil,
-		&frame.V2Frame{
+		&V2Frame{
 			IncompatibilityFlag: 0x00,
 			CompatibilityFlag:   0x00,
 			SequenceID:          0x8F,
@@ -203,8 +202,8 @@ var casesReadWrite = []struct {
 	{
 		"v2 frame with decoded message, signed",
 		testDialectDE,
-		frame.NewV2Key(bytes.Repeat([]byte("\x4F"), 32)),
-		&frame.V2Frame{
+		NewV2Key(bytes.Repeat([]byte("\x4F"), 32)),
+		&V2Frame{
 			IncompatibilityFlag: 0x01,
 			CompatibilityFlag:   0x00,
 			SequenceID:          0x00,
@@ -221,7 +220,7 @@ var casesReadWrite = []struct {
 			Checksum:           0xd1d9,
 			SignatureLinkID:    1,
 			SignatureTimestamp: 2,
-			Signature:          &frame.V2Signature{0x0e, 0x47, 0x04, 0x0c, 0xef, 0x9b},
+			Signature:          &V2Signature{0x0e, 0x47, 0x04, 0x0c, 0xef, 0x9b},
 		},
 		[]byte("\xFD\x09\x01\x00\x00\x00\x00\x00" +
 			"\x00\x00\x04\x00\x00\x00\x01\x02" +
@@ -231,8 +230,8 @@ var casesReadWrite = []struct {
 	{
 		"v2 frame with decoded message, signed",
 		testDialectDE,
-		frame.NewV2Key(bytes.Repeat([]byte("\x4F"), 32)),
-		&frame.V2Frame{
+		NewV2Key(bytes.Repeat([]byte("\x4F"), 32)),
+		&V2Frame{
 			IncompatibilityFlag: 0x01,
 			CompatibilityFlag:   0x00,
 			SequenceID:          0x00,
@@ -252,7 +251,7 @@ var casesReadWrite = []struct {
 			Checksum:           0xfb77,
 			SignatureLinkID:    3,
 			SignatureTimestamp: 4,
-			Signature:          &frame.V2Signature{0xa8, 0x88, 0x9, 0x39, 0xb2, 0x60},
+			Signature:          &V2Signature{0xa8, 0x88, 0x9, 0x39, 0xb2, 0x60},
 		},
 		[]byte("\xFD\x22\x01\x00\x00\x00\x00\x64" +
 			"\x00\x00\x01\x00\x00\x00\x00\x00\x00" +

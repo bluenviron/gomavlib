@@ -1,5 +1,4 @@
-// Package frame contains frames and utilities to encode and
-// decode them.
+// Package frame contains frame definitions and parsers.
 package frame
 
 import (

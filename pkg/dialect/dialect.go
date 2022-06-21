@@ -1,5 +1,4 @@
-// Package dialect contains the Dialect definition and utilities to encode and
-// decode dialects.
+// Package dialect contains the dialect definition and parser.
 package dialect
 
 import (

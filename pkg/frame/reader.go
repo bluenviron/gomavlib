@@ -1,4 +1,4 @@
-package parser
+package frame
 
 import (
 	"bufio"
@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/aler9/gomavlib/pkg/dialect"
-	"github.com/aler9/gomavlib/pkg/frame"
 	"github.com/aler9/gomavlib/pkg/msg"
 )
 
@@ -17,6 +16,21 @@ const (
 
 // 1st January 2015 GMT
 var signatureReferenceDate = time.Date(2015, 0o1, 0o1, 0, 0, 0, 0, time.UTC)
+
+// ReadError is the error returned in case of non-fatal parsing errors.
+type ReadError struct {
+	str string
+}
+
+func (e *ReadError) Error() string {
+	return e.str
+}
+
+func newError(format string, args ...interface{}) *ReadError {
+	return &ReadError{
+		str: fmt.Sprintf(format, args...),
+	}
+}
 
 // ReaderConf is the configuration of a Reader.
 type ReaderConf struct {
@@ -29,10 +43,10 @@ type ReaderConf struct {
 
 	// (optional) the secret key used to validate incoming frames.
 	// Non-signed frames are discarded. This feature requires v2 frames.
-	InKey *frame.V2Key
+	InKey *V2Key
 }
 
-// Reader is a Malink reader.
+// Reader is a Frame reader.
 type Reader struct {
 	conf                 ReaderConf
 	readBuffer           *bufio.Reader
@@ -53,19 +67,19 @@ func NewReader(conf ReaderConf) (*Reader, error) {
 
 // Read reads a Frame from the reader.
 // It must not be called by multiple routines in parallel.
-func (r *Reader) Read() (frame.Frame, error) {
+func (r *Reader) Read() (Frame, error) {
 	magicByte, err := r.readBuffer.ReadByte()
 	if err != nil {
 		return nil, err
 	}
 
-	f, err := func() (frame.Frame, error) {
+	f, err := func() (Frame, error) {
 		switch magicByte {
-		case frame.V1MagicByte:
-			return &frame.V1Frame{}, nil
+		case V1MagicByte:
+			return &V1Frame{}, nil
 
-		case frame.V2MagicByte:
-			return &frame.V2Frame{}, nil
+		case V2MagicByte:
+			return &V2Frame{}, nil
 		}
 
 		return nil, newError("invalid magic byte: %x", magicByte)
@@ -80,7 +94,7 @@ func (r *Reader) Read() (frame.Frame, error) {
 	}
 
 	if r.conf.InKey != nil {
-		ff, ok := f.(*frame.V2Frame)
+		ff, ok := f.(*V2Frame)
 		if !ok {
 			return nil, newError("signature required but packet is not v2")
 		}
@@ -90,7 +104,7 @@ func (r *Reader) Read() (frame.Frame, error) {
 		}
 
 		// in UDP, packet order is not guaranteed. Therefore, we accept frames
-		// with a timestamp within 10 seconds with respect to the previous frame.
+		// with a timestamp within 10 seconds with respect to the previous
 		if r.curReadSignatureTime > 0 &&
 			ff.SignatureTimestamp < (r.curReadSignatureTime-(10*100000)) {
 			return nil, newError("signature timestamp is too old")
@@ -109,16 +123,16 @@ func (r *Reader) Read() (frame.Frame, error) {
 					sum, f.GetChecksum(), f.GetMessage().GetID())
 			}
 
-			_, isV2 := f.(*frame.V2Frame)
+			_, isV2 := f.(*V2Frame)
 			msg, err := mp.Decode(f.GetMessage().(*msg.MessageRaw).Content, isV2)
 			if err != nil {
 				return nil, newError(err.Error())
 			}
 
 			switch ff := f.(type) {
-			case *frame.V1Frame:
+			case *V1Frame:
 				ff.Message = msg
-			case *frame.V2Frame:
+			case *V2Frame:
 				ff.Message = msg
 			}
 		}

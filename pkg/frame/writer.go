@@ -143,7 +143,7 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 
 		msgRaw := &message.MessageRaw{
 			ID:      fr.GetMessage().GetID(),
-			Content: byt,
+			Payload: byt,
 		}
 		switch ff := fr.(type) {
 		case *V1Frame:
@@ -204,7 +204,7 @@ func (w *Writer) WriteFrame(fr Frame) error {
 		m = &message.MessageRaw{m.GetID(), byt} //nolint:govet
 	}
 
-	buf, err := fr.encode(w.writeBuffer, m.(*message.MessageRaw).Content)
+	buf, err := fr.encode(w.writeBuffer, m.(*message.MessageRaw).Payload)
 	if err != nil {
 		return err
 	}

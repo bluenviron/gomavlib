@@ -124,7 +124,7 @@ func (r *Reader) Read() (Frame, error) {
 			}
 
 			_, isV2 := f.(*V2Frame)
-			msg, err := mp.Decode(f.GetMessage().(*message.MessageRaw).Content, isV2)
+			msg, err := mp.Decode(f.GetMessage().(*message.MessageRaw).Payload, isV2)
 			if err != nil {
 				return nil, newError(err.Error())
 			}

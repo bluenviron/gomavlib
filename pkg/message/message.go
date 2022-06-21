@@ -16,7 +16,7 @@ type Message interface {
 //
 type MessageRaw struct { //nolint:revive
 	ID      uint32
-	Content []byte
+	Payload []byte
 }
 
 // GetID implements the Message interface.

@@ -143,7 +143,7 @@ func (f *V2Frame) decode(br *bufio.Reader) error {
 	}
 	f.Message = &message.MessageRaw{
 		ID:      msgID,
-		Content: msgEncoded,
+		Payload: msgEncoded,
 	}
 
 	// checksum
@@ -211,14 +211,14 @@ func (f *V2Frame) genChecksum(crcExtra byte) uint16 {
 	h := x25.New()
 
 	buf := make([]byte, 3)
-	h.Write([]byte{byte(len(msg.Content))})
+	h.Write([]byte{byte(len(msg.Payload))})
 	h.Write([]byte{f.IncompatibilityFlag})
 	h.Write([]byte{f.CompatibilityFlag})
 	h.Write([]byte{f.SequenceID})
 	h.Write([]byte{f.SystemID})
 	h.Write([]byte{f.ComponentID})
 	h.Write(uint24Encode(buf, msg.ID))
-	h.Write(msg.Content)
+	h.Write(msg.Payload)
 
 	h.Write([]byte{crcExtra})
 
@@ -235,14 +235,14 @@ func (f *V2Frame) genSignature(key *V2Key) *V2Signature {
 	// the signature covers the whole message, excluding the signature itself
 	buf := make([]byte, 6)
 	h.Write([]byte{V2MagicByte})
-	h.Write([]byte{byte(len(msg.Content))})
+	h.Write([]byte{byte(len(msg.Payload))})
 	h.Write([]byte{f.IncompatibilityFlag})
 	h.Write([]byte{f.CompatibilityFlag})
 	h.Write([]byte{f.SequenceID})
 	h.Write([]byte{f.SystemID})
 	h.Write([]byte{f.ComponentID})
 	h.Write(uint24Encode(buf, msg.GetID()))
-	h.Write(msg.Content)
+	h.Write(msg.Payload)
 	binary.LittleEndian.PutUint16(buf, f.Checksum)
 	h.Write(buf[:2])
 	h.Write([]byte{f.SignatureLinkID})

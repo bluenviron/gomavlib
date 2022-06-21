@@ -107,7 +107,7 @@ var casesReadWrite = []struct {
 			ComponentID: 0x03,
 			Message: &message.MessageRaw{
 				ID:      4,
-				Content: nil,
+				Payload: nil,
 			},
 			Checksum: 0x0807,
 		},

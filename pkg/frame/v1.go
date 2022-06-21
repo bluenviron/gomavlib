@@ -78,7 +78,7 @@ func (f *V1Frame) decode(br *bufio.Reader) error {
 	}
 	f.Message = &message.MessageRaw{
 		ID:      uint32(msgID),
-		Content: msgEncoded,
+		Payload: msgEncoded,
 	}
 
 	// checksum
@@ -125,12 +125,12 @@ func (f *V1Frame) genChecksum(crcExtra byte) uint16 {
 	msg := f.GetMessage().(*message.MessageRaw)
 	h := x25.New()
 
-	h.Write([]byte{byte(len(msg.Content))})
+	h.Write([]byte{byte(len(msg.Payload))})
 	h.Write([]byte{f.SequenceID})
 	h.Write([]byte{f.SystemID})
 	h.Write([]byte{f.ComponentID})
 	h.Write([]byte{byte(msg.ID)})
-	h.Write(msg.Content)
+	h.Write(msg.Payload)
 
 	h.Write([]byte{crcExtra})
 

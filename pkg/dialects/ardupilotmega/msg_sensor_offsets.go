@@ -30,7 +30,7 @@ type MessageSensorOffsets struct {
 	AccelCalZ float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSensorOffsets) GetID() uint32 {
 	return 150
 }

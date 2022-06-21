@@ -16,7 +16,7 @@ type MessageTerrainData struct {
 	Data [16]int16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageTerrainData) GetID() uint32 {
 	return 134
 }

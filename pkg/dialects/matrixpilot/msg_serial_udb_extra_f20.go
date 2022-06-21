@@ -32,7 +32,7 @@ type MessageSerialUdbExtraF20 struct {
 	SueTrimValueInput_12 int16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSerialUdbExtraF20) GetID() uint32 {
 	return 186
 }

@@ -18,7 +18,7 @@ type MessageAttPosMocap struct {
 	Covariance [21]float32 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAttPosMocap) GetID() uint32 {
 	return 138
 }

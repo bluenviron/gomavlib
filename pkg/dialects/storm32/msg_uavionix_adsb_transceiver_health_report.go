@@ -8,7 +8,7 @@ type MessageUavionixAdsbTransceiverHealthReport struct {
 	Rfhealth UAVIONIX_ADSB_RF_HEALTH `mavenum:"uint8" mavname:"rfHealth"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageUavionixAdsbTransceiverHealthReport) GetID() uint32 {
 	return 10003
 }

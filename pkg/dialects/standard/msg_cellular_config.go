@@ -24,7 +24,7 @@ type MessageCellularConfig struct {
 	Response CELLULAR_CONFIG_RESPONSE `mavenum:"uint8"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageCellularConfig) GetID() uint32 {
 	return 336
 }

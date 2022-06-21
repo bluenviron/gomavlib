@@ -16,7 +16,7 @@ type MessageLogRequestData struct {
 	Count uint32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageLogRequestData) GetID() uint32 {
 	return 119
 }

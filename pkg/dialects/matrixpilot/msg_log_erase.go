@@ -10,7 +10,7 @@ type MessageLogErase struct {
 	TargetComponent uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageLogErase) GetID() uint32 {
 	return 121
 }

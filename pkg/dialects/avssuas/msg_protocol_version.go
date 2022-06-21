@@ -16,7 +16,7 @@ type MessageProtocolVersion struct {
 	LibraryVersionHash [8]uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageProtocolVersion) GetID() uint32 {
 	return 300
 }

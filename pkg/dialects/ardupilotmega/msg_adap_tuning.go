@@ -32,7 +32,7 @@ type MessageAdapTuning struct {
 	U float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAdapTuning) GetID() uint32 {
 	return 11010
 }

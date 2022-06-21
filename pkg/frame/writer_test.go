@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/aler9/gomavlib/pkg/dialect"
-	"github.com/aler9/gomavlib/pkg/msg"
+	"github.com/aler9/gomavlib/pkg/message"
 )
 
 func TestWriterWriteFrame(t *testing.T) {
@@ -41,7 +41,7 @@ func TestWriterWriteMessage(t *testing.T) {
 		name string
 		ver  WriterOutVersion
 		key  *V2Key
-		msg  msg.Message
+		msg  message.Message
 		raw  []byte
 	}{
 		{
@@ -109,7 +109,7 @@ func TestWriterWriteFrameNilMsg(t *testing.T) {
 // ensure that the Frame is left untouched by WriteFrame()
 // and therefore the function can be called by multiple routines in parallel
 func TestWriterWriteFrameIsConst(t *testing.T) {
-	dialectDE, err := dialect.NewDecEncoder(&dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}) //nolint:govet
+	dialectDE, err := dialect.NewDecEncoder(&dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}) //nolint:govet
 	require.NoError(t, err)
 
 	writer, err := NewWriter(WriterConf{

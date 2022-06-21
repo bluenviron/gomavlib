@@ -38,7 +38,7 @@ type MessageIcarousKinematicBands struct {
 	Max5 float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageIcarousKinematicBands) GetID() uint32 {
 	return 42001
 }

@@ -17,7 +17,7 @@ type MessageComponentInformation struct {
 	PeripheralsMetadataUri string `mavlen:"100"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageComponentInformation) GetID() uint32 {
 	return 395
 }

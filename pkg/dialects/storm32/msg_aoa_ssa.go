@@ -12,7 +12,7 @@ type MessageAoaSsa struct {
 	Ssa float32 `mavname:"SSA"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAoaSsa) GetID() uint32 {
 	return 11020
 }

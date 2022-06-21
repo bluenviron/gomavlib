@@ -20,7 +20,7 @@ type MessageAirspeed struct {
 	Type AIRSPEED_SENSOR_TYPE `mavenum:"uint8"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAirspeed) GetID() uint32 {
 	return 295
 }

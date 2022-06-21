@@ -8,7 +8,7 @@ type MessageAuthKey struct {
 	Key string `mavlen:"32"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAuthKey) GetID() uint32 {
 	return 7
 }

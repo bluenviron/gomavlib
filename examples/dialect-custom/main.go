@@ -5,11 +5,11 @@ import (
 
 	"github.com/aler9/gomavlib"
 	"github.com/aler9/gomavlib/pkg/dialect"
-	"github.com/aler9/gomavlib/pkg/msg"
+	"github.com/aler9/gomavlib/pkg/message"
 )
 
 // this is a custom message.
-// It must be prefixed with "Message" and implement the msg.Message interface.
+// It must be prefixed with "Message" and implement the message.Message interface.
 type MessageCustom struct {
 	Param1 uint8
 	Param2 uint8
@@ -22,7 +22,7 @@ func (*MessageCustom) GetID() uint32 {
 
 func main() {
 	// create a custom dialect from messages
-	dialect := &dialect.Dialect{3, []msg.Message{
+	dialect := &dialect.Dialect{3, []message.Message{
 		&MessageCustom{},
 	}}
 

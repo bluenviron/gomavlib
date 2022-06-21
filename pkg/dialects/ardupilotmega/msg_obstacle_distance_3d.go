@@ -24,7 +24,7 @@ type MessageObstacleDistance_3d struct {
 	MaxDistance float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageObstacleDistance_3d) GetID() uint32 {
 	return 11037
 }

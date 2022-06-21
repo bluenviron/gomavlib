@@ -18,7 +18,7 @@ type MessageFlexifunctionDirectoryAck struct {
 	Result uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageFlexifunctionDirectoryAck) GetID() uint32 {
 	return 156
 }

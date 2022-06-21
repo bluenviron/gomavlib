@@ -16,7 +16,7 @@ type MessageMissionWritePartialList struct {
 	MissionType MAV_MISSION_TYPE `mavenum:"uint8" mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageMissionWritePartialList) GetID() uint32 {
 	return 38
 }

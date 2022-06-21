@@ -37,7 +37,7 @@ type MessageSetHomePosition struct {
 	TimeUsec uint64 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSetHomePosition) GetID() uint32 {
 	return 243
 }

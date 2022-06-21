@@ -42,7 +42,7 @@ type MessageServoOutputRaw struct {
 	Servo16Raw uint16 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageServoOutputRaw) GetID() uint32 {
 	return 36
 }

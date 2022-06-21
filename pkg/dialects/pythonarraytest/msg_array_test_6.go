@@ -30,7 +30,7 @@ type MessageArrayTest_6 struct {
 	ArF [2]float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageArrayTest_6) GetID() uint32 {
 	return 17156
 }

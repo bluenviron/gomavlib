@@ -46,7 +46,7 @@ type MessageOnboardComputerStatus struct {
 	LinkRxMax [6]uint32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageOnboardComputerStatus) GetID() uint32 {
 	return 390
 }

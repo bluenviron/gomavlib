@@ -14,7 +14,7 @@ type MessageParamExtRequestRead struct {
 	ParamIndex int16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageParamExtRequestRead) GetID() uint32 {
 	return 320
 }

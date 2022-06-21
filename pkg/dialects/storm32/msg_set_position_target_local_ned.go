@@ -38,7 +38,7 @@ type MessageSetPositionTargetLocalNed struct {
 	YawRate float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSetPositionTargetLocalNed) GetID() uint32 {
 	return 84
 }

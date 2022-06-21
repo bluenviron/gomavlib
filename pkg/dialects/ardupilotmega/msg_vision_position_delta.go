@@ -16,7 +16,7 @@ type MessageVisionPositionDelta struct {
 	Confidence float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageVisionPositionDelta) GetID() uint32 {
 	return 11011
 }

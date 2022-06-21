@@ -26,7 +26,7 @@ type MessageDeepstall struct {
 	Stage DEEPSTALL_STAGE `mavenum:"uint8"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageDeepstall) GetID() uint32 {
 	return 195
 }

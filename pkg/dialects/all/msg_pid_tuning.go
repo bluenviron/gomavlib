@@ -24,7 +24,7 @@ type MessagePidTuning struct {
 	Pdmod float32 `mavext:"true" mavname:"PDmod"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessagePidTuning) GetID() uint32 {
 	return 194
 }

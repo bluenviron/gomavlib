@@ -30,7 +30,7 @@ type MessageGimbalReport struct {
 	JointAz float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageGimbalReport) GetID() uint32 {
 	return 200
 }

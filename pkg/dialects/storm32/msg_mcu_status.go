@@ -16,7 +16,7 @@ type MessageMcuStatus struct {
 	McuVoltageMax uint16 `mavname:"MCU_voltage_max"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageMcuStatus) GetID() uint32 {
 	return 11039
 }

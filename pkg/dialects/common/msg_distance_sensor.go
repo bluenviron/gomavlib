@@ -30,7 +30,7 @@ type MessageDistanceSensor struct {
 	SignalQuality uint8 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageDistanceSensor) GetID() uint32 {
 	return 132
 }

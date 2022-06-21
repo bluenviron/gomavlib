@@ -14,7 +14,7 @@ type MessageHilActuatorControls struct {
 	Flags uint64
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageHilActuatorControls) GetID() uint32 {
 	return 93
 }

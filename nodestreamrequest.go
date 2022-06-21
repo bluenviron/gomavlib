@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aler9/gomavlib/pkg/msg"
+	"github.com/aler9/gomavlib/pkg/message"
 )
 
 const (
@@ -20,8 +20,8 @@ type streamNode struct {
 
 type nodeStreamRequest struct {
 	n                    *Node
-	msgHeartbeat         msg.Message
-	msgRequestDataStream msg.Message
+	msgHeartbeat         message.Message
+	msgRequestDataStream message.Message
 	lastRequestsMutex    sync.Mutex
 	lastRequests         map[streamNode]time.Time
 
@@ -44,7 +44,7 @@ func newNodeStreamRequest(n *Node) *nodeStreamRequest {
 	}
 
 	// heartbeat message must exist in dialect and correspond to standard
-	msgHeartbeat := func() msg.Message {
+	msgHeartbeat := func() message.Message {
 		for _, m := range n.conf.Dialect.Messages {
 			if m.GetID() == 0 {
 				return m
@@ -55,13 +55,13 @@ func newNodeStreamRequest(n *Node) *nodeStreamRequest {
 	if msgHeartbeat == nil {
 		return nil
 	}
-	mde, err := msg.NewDecEncoder(msgHeartbeat)
+	mde, err := message.NewDecEncoder(msgHeartbeat)
 	if err != nil || mde.CRCExtra() != 50 {
 		return nil
 	}
 
 	// request data stream message must exist in dialect and correspond to standard
-	msgRequestDataStream := func() msg.Message {
+	msgRequestDataStream := func() message.Message {
 		for _, m := range n.conf.Dialect.Messages {
 			if m.GetID() == 66 {
 				return m
@@ -72,7 +72,7 @@ func newNodeStreamRequest(n *Node) *nodeStreamRequest {
 	if msgRequestDataStream == nil {
 		return nil
 	}
-	mde, err = msg.NewDecEncoder(msgRequestDataStream)
+	mde, err = message.NewDecEncoder(msgRequestDataStream)
 	if err != nil || mde.CRCExtra() != 148 {
 		return nil
 	}
@@ -171,7 +171,7 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 			m.Elem().FieldByName("ReqStreamId").SetUint(uint64(stream))
 			m.Elem().FieldByName("ReqMessageRate").SetUint(uint64(sr.n.conf.StreamRequestFrequency))
 			m.Elem().FieldByName("StartStop").SetUint(uint64(1))
-			sr.n.WriteMessageTo(evt.Channel, m.Interface().(msg.Message))
+			sr.n.WriteMessageTo(evt.Channel, m.Interface().(message.Message))
 		}
 
 		sr.n.events <- &EventStreamRequested{

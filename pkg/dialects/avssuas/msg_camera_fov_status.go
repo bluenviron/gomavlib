@@ -26,7 +26,7 @@ type MessageCameraFovStatus struct {
 	Vfov float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageCameraFovStatus) GetID() uint32 {
 	return 271
 }

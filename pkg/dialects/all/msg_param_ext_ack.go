@@ -14,7 +14,7 @@ type MessageParamExtAck struct {
 	ParamResult PARAM_ACK `mavenum:"uint8"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageParamExtAck) GetID() uint32 {
 	return 324
 }

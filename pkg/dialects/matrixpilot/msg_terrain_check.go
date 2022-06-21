@@ -10,7 +10,7 @@ type MessageTerrainCheck struct {
 	Lon int32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageTerrainCheck) GetID() uint32 {
 	return 135
 }

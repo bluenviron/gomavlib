@@ -24,7 +24,7 @@ type MessageObstacleDistance struct {
 	Frame MAV_FRAME `mavenum:"uint8" mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageObstacleDistance) GetID() uint32 {
 	return 330
 }

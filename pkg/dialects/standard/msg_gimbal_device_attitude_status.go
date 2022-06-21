@@ -24,7 +24,7 @@ type MessageGimbalDeviceAttitudeStatus struct {
 	FailureFlags GIMBAL_DEVICE_ERROR_FLAGS `mavenum:"uint32"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageGimbalDeviceAttitudeStatus) GetID() uint32 {
 	return 285
 }

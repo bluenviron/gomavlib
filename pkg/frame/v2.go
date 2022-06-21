@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/aler9/gomavlib/pkg/msg"
+	"github.com/aler9/gomavlib/pkg/message"
 	"github.com/aler9/gomavlib/pkg/x25"
 )
 
@@ -65,7 +65,7 @@ type V2Frame struct {
 	SequenceID          byte
 	SystemID            byte
 	ComponentID         byte
-	Message             msg.Message
+	Message             message.Message
 	Checksum            uint16
 	SignatureLinkID     byte
 	SignatureTimestamp  uint64
@@ -99,7 +99,7 @@ func (f *V2Frame) GetComponentID() byte {
 }
 
 // GetMessage implements the Frame interface.
-func (f *V2Frame) GetMessage() msg.Message {
+func (f *V2Frame) GetMessage() message.Message {
 	return f.Message
 }
 
@@ -143,7 +143,7 @@ func (f *V2Frame) Decode(br *bufio.Reader) error {
 			return err
 		}
 	}
-	f.Message = &msg.MessageRaw{
+	f.Message = &message.MessageRaw{
 		ID:      msgID,
 		Content: msgEncoded,
 	}
@@ -211,7 +211,7 @@ func (f *V2Frame) Encode(buf []byte, msgEncoded []byte) ([]byte, error) {
 
 // GenChecksum implements the Frame interface.
 func (f *V2Frame) GenChecksum(crcExtra byte) uint16 {
-	msg := f.GetMessage().(*msg.MessageRaw)
+	msg := f.GetMessage().(*message.MessageRaw)
 	h := x25.New()
 
 	buf := make([]byte, 3)
@@ -231,7 +231,7 @@ func (f *V2Frame) GenChecksum(crcExtra byte) uint16 {
 
 // GenSignature generates a signature with the given key.
 func (f *V2Frame) GenSignature(key *V2Key) *V2Signature {
-	msg := f.GetMessage().(*msg.MessageRaw)
+	msg := f.GetMessage().(*message.MessageRaw)
 	h := sha256.New()
 
 	// secret key
@@ -246,7 +246,7 @@ func (f *V2Frame) GenSignature(key *V2Key) *V2Signature {
 	h.Write([]byte{f.SequenceID})
 	h.Write([]byte{f.SystemID})
 	h.Write([]byte{f.ComponentID})
-	h.Write(uint24Encode(buf, f.Message.GetID()))
+	h.Write(uint24Encode(buf, msg.GetID()))
 	h.Write(msg.Content)
 	binary.LittleEndian.PutUint16(buf, f.Checksum)
 	h.Write(buf[:2])

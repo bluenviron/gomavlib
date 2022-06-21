@@ -16,7 +16,7 @@ type MessageArrayTest_0 struct {
 	ArU32 [4]uint32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageArrayTest_0) GetID() uint32 {
 	return 17150
 }

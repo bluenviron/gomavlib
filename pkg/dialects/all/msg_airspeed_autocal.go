@@ -30,7 +30,7 @@ type MessageAirspeedAutocal struct {
 	Pcz float32 `mavname:"Pcz"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAirspeedAutocal) GetID() uint32 {
 	return 174
 }

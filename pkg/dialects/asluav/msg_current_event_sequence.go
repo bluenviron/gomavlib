@@ -10,7 +10,7 @@ type MessageCurrentEventSequence struct {
 	Flags MAV_EVENT_CURRENT_SEQUENCE_FLAGS `mavenum:"uint8"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageCurrentEventSequence) GetID() uint32 {
 	return 411
 }

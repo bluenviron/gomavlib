@@ -14,7 +14,7 @@ type MessageScriptItem struct {
 	Name string `mavlen:"50"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageScriptItem) GetID() uint32 {
 	return 180
 }

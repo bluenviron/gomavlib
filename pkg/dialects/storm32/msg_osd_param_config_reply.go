@@ -10,7 +10,7 @@ type MessageOsdParamConfigReply struct {
 	Result OSD_PARAM_CONFIG_ERROR `mavenum:"uint8"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageOsdParamConfigReply) GetID() uint32 {
 	return 11034
 }

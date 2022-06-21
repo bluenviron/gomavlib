@@ -16,7 +16,7 @@ type MessageOpenDroneIdSelfId struct {
 	Description string `mavlen:"23"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageOpenDroneIdSelfId) GetID() uint32 {
 	return 12903
 }

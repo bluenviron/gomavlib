@@ -1,4 +1,4 @@
-package msg
+package message
 
 import (
 	"bytes"
@@ -263,7 +263,7 @@ func (mde *DecEncoder) CRCExtra() byte {
 
 // Decode decodes a Message.
 func (mde *DecEncoder) Decode(buf []byte, isV2 bool) (Message, error) {
-	msg := reflect.New(mde.elemType)
+	rmsg := reflect.New(mde.elemType)
 
 	if isV2 {
 		// in V2 buffer length can be > message or < message
@@ -286,7 +286,7 @@ func (mde *DecEncoder) Decode(buf []byte, isV2 bool) (Message, error) {
 			continue
 		}
 
-		target := msg.Elem().Field(f.index)
+		target := rmsg.Elem().Field(f.index)
 
 		switch target.Kind() {
 		case reflect.Array:
@@ -302,7 +302,7 @@ func (mde *DecEncoder) Decode(buf []byte, isV2 bool) (Message, error) {
 		}
 	}
 
-	return msg.Interface().(Message), nil
+	return rmsg.Interface().(Message), nil
 }
 
 // Encode encodes a message.

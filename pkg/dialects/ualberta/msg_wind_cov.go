@@ -24,7 +24,7 @@ type MessageWindCov struct {
 	VertAccuracy float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageWindCov) GetID() uint32 {
 	return 231
 }

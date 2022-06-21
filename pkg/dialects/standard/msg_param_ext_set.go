@@ -16,7 +16,7 @@ type MessageParamExtSet struct {
 	ParamType MAV_PARAM_EXT_TYPE `mavenum:"uint8"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageParamExtSet) GetID() uint32 {
 	return 323
 }

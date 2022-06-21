@@ -14,7 +14,7 @@ type MessageMemoryVect struct {
 	Value [32]int8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageMemoryVect) GetID() uint32 {
 	return 249
 }

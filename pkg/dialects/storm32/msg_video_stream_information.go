@@ -30,7 +30,7 @@ type MessageVideoStreamInformation struct {
 	Uri string `mavlen:"160"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageVideoStreamInformation) GetID() uint32 {
 	return 269
 }

@@ -20,7 +20,7 @@ type MessageSerialUdbExtraF8 struct {
 	SueAltHoldPitchHigh float32 `mavname:"sue_ALT_HOLD_PITCH_HIGH"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSerialUdbExtraF8) GetID() uint32 {
 	return 176
 }

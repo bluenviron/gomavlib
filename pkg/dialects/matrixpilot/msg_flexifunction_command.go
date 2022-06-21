@@ -12,7 +12,7 @@ type MessageFlexifunctionCommand struct {
 	CommandType uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageFlexifunctionCommand) GetID() uint32 {
 	return 157
 }

@@ -25,7 +25,7 @@ type MessageGlobalPositionInt struct {
 	Hdg uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageGlobalPositionInt) GetID() uint32 {
 	return 33
 }

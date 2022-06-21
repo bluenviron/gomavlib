@@ -33,7 +33,7 @@ type MessageStorageInformation struct {
 	StorageUsage STORAGE_USAGE_FLAG `mavenum:"uint8" mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageStorageInformation) GetID() uint32 {
 	return 261
 }

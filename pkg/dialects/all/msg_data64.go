@@ -12,7 +12,7 @@ type MessageData64 struct {
 	Data [64]uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageData64) GetID() uint32 {
 	return 171
 }

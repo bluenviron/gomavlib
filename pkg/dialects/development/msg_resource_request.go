@@ -16,7 +16,7 @@ type MessageResourceRequest struct {
 	Storage [120]uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageResourceRequest) GetID() uint32 {
 	return 142
 }

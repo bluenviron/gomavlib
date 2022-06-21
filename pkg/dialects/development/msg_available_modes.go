@@ -22,7 +22,7 @@ type MessageAvailableModes struct {
 	ModeName string `mavlen:"50"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAvailableModes) GetID() uint32 {
 	return 435
 }

@@ -30,7 +30,7 @@ type MessageRawImu struct {
 	Temperature int16 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageRawImu) GetID() uint32 {
 	return 27
 }

@@ -10,7 +10,7 @@ type MessageQshotStatus struct {
 	ShotState uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageQshotStatus) GetID() uint32 {
 	return 60020
 }

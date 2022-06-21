@@ -16,7 +16,7 @@ type MessageTimeEstimateToTarget struct {
 	CommandedAction int32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageTimeEstimateToTarget) GetID() uint32 {
 	return 380
 }

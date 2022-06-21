@@ -10,7 +10,7 @@ type MessageGoproSetResponse struct {
 	Status GOPRO_REQUEST_STATUS `mavenum:"uint8"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageGoproSetResponse) GetID() uint32 {
 	return 219
 }

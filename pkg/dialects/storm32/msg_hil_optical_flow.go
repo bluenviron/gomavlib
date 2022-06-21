@@ -30,7 +30,7 @@ type MessageHilOpticalFlow struct {
 	Distance float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageHilOpticalFlow) GetID() uint32 {
 	return 114
 }

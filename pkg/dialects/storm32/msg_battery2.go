@@ -10,7 +10,7 @@ type MessageBattery2 struct {
 	CurrentBattery int16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageBattery2) GetID() uint32 {
 	return 181
 }

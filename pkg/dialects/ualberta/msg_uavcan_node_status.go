@@ -18,7 +18,7 @@ type MessageUavcanNodeStatus struct {
 	VendorSpecificStatusCode uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageUavcanNodeStatus) GetID() uint32 {
 	return 310
 }

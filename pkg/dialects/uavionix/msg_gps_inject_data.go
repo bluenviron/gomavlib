@@ -14,7 +14,7 @@ type MessageGpsInjectData struct {
 	Data [110]uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageGpsInjectData) GetID() uint32 {
 	return 123
 }

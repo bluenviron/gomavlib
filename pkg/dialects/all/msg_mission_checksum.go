@@ -18,7 +18,7 @@ type MessageMissionChecksum struct {
 	Checksum uint32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageMissionChecksum) GetID() uint32 {
 	return 53
 }

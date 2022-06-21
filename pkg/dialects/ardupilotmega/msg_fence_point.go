@@ -18,7 +18,7 @@ type MessageFencePoint struct {
 	Lng float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageFencePoint) GetID() uint32 {
 	return 160
 }

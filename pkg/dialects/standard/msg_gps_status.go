@@ -18,7 +18,7 @@ type MessageGpsStatus struct {
 	SatelliteSnr [20]uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageGpsStatus) GetID() uint32 {
 	return 25
 }

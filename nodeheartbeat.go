@@ -4,12 +4,12 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/aler9/gomavlib/pkg/msg"
+	"github.com/aler9/gomavlib/pkg/message"
 )
 
 type nodeHeartbeat struct {
 	n            *Node
-	msgHeartbeat msg.Message
+	msgHeartbeat message.Message
 
 	// in
 	terminate chan struct{}
@@ -30,7 +30,7 @@ func newNodeHeartbeat(n *Node) *nodeHeartbeat {
 	}
 
 	// heartbeat message must exist in dialect and correspond to standard
-	msgHeartbeat := func() msg.Message {
+	msgHeartbeat := func() message.Message {
 		for _, m := range n.conf.Dialect.Messages {
 			if m.GetID() == 0 {
 				return m
@@ -41,7 +41,7 @@ func newNodeHeartbeat(n *Node) *nodeHeartbeat {
 	if msgHeartbeat == nil {
 		return nil
 	}
-	mde, err := msg.NewDecEncoder(msgHeartbeat)
+	mde, err := message.NewDecEncoder(msgHeartbeat)
 	if err != nil || mde.CRCExtra() != 50 {
 		return nil
 	}
@@ -77,7 +77,7 @@ func (h *nodeHeartbeat) run() {
 			m.Elem().FieldByName("CustomMode").SetUint(0)
 			m.Elem().FieldByName("SystemStatus").SetUint(4) // MAV_STATE_ACTIVE
 			m.Elem().FieldByName("MavlinkVersion").SetUint(uint64(h.n.conf.Dialect.Version))
-			h.n.WriteMessageAll(m.Interface().(msg.Message))
+			h.n.WriteMessageAll(m.Interface().(message.Message))
 
 		case <-h.terminate:
 			return

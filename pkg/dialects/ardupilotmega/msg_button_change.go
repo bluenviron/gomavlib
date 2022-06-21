@@ -12,7 +12,7 @@ type MessageButtonChange struct {
 	State uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageButtonChange) GetID() uint32 {
 	return 257
 }

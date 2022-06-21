@@ -24,7 +24,7 @@ type MessageUavcanNodeInfo struct {
 	SwVcsCommit uint32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageUavcanNodeInfo) GetID() uint32 {
 	return 311
 }

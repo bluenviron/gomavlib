@@ -10,7 +10,7 @@ type MessageFlexifunctionSet struct {
 	TargetComponent uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageFlexifunctionSet) GetID() uint32 {
 	return 150
 }

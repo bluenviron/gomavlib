@@ -10,7 +10,7 @@ type MessageTimesync struct {
 	Ts1 int64
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageTimesync) GetID() uint32 {
 	return 111
 }

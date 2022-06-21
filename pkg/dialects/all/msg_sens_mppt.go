@@ -32,7 +32,7 @@ type MessageSensMppt struct {
 	Mppt3Status uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSensMppt) GetID() uint32 {
 	return 8003
 }

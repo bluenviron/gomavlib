@@ -26,7 +26,7 @@ type MessageStorm32GimbalManagerControl struct {
 	AngularVelocityZ float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageStorm32GimbalManagerControl) GetID() uint32 {
 	return 60012
 }

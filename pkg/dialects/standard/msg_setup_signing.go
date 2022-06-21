@@ -14,7 +14,7 @@ type MessageSetupSigning struct {
 	InitialTimestamp uint64
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSetupSigning) GetID() uint32 {
 	return 256
 }

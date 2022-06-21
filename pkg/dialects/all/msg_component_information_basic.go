@@ -18,7 +18,7 @@ type MessageComponentInformationBasic struct {
 	Capabilities MAV_PROTOCOL_CAPABILITY `mavenum:"uint64"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageComponentInformationBasic) GetID() uint32 {
 	return 396
 }

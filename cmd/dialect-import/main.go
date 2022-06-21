@@ -31,7 +31,7 @@ var tplDialect = template.Must(template.New("").Parse(
 package {{ .PkgName }}
 
 import (
-    "github.com/aler9/gomavlib/pkg/msg"
+    "github.com/aler9/gomavlib/pkg/message"
     "github.com/aler9/gomavlib/pkg/dialect"
 )
 
@@ -41,7 +41,7 @@ var Dialect = dial
 // dial is not exposed directly in order not to display it in godoc.
 var dial = &dialect.Dialect{
     Version: {{.Version}},
-	Messages: []msg.Message{
+	Messages: []message.Message{
 {{- range .Defs }}
         // {{ .Name }}
 {{- range .Messages }}
@@ -134,7 +134,7 @@ type Message{{ .Msg.Name }} struct {
 {{- end }}
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*Message{{ .Msg.Name }}) GetID() uint32 {
     return {{ .Msg.ID }}
 }
@@ -338,19 +338,19 @@ func download(addr string) ([]byte, error) {
 	return byt, nil
 }
 
-func processMessage(msg *definitionMessage) (*outMessage, error) {
-	if m := reMsgName.FindStringSubmatch(msg.Name); m == nil {
-		return nil, fmt.Errorf("unsupported message name: %s", msg.Name)
+func processMessage(msgDef *definitionMessage) (*outMessage, error) {
+	if m := reMsgName.FindStringSubmatch(msgDef.Name); m == nil {
+		return nil, fmt.Errorf("unsupported message name: %s", msgDef.Name)
 	}
 
 	outMsg := &outMessage{
-		OrigName:    msg.Name,
-		Name:        dialectNameDefToGo(msg.Name),
-		Description: parseDescription(msg.Description),
-		ID:          msg.ID,
+		OrigName:    msgDef.Name,
+		Name:        dialectNameDefToGo(msgDef.Name),
+		Description: parseDescription(msgDef.Description),
+		ID:          msgDef.ID,
 	}
 
-	for _, f := range msg.Fields {
+	for _, f := range msgDef.Fields {
 		outField, err := processField(f)
 		if err != nil {
 			return nil, err
@@ -361,22 +361,22 @@ func processMessage(msg *definitionMessage) (*outMessage, error) {
 	return outMsg, nil
 }
 
-func processField(field *dialectField) (*outField, error) {
+func processField(fieldDef *dialectField) (*outField, error) {
 	outF := &outField{
-		Description: parseDescription(field.Description),
+		Description: parseDescription(fieldDef.Description),
 	}
 	tags := make(map[string]string)
 
-	newname := dialectNameDefToGo(field.Name)
+	newname := dialectNameDefToGo(fieldDef.Name)
 
 	// name conversion is not univoque: add tag
-	if dialectNameGoToDef(newname) != field.Name {
-		tags["mavname"] = field.Name
+	if dialectNameGoToDef(newname) != fieldDef.Name {
+		tags["mavname"] = fieldDef.Name
 	}
 
 	outF.Line += newname
 
-	typ := field.Type
+	typ := fieldDef.Type
 	arrayLen := ""
 
 	if typ == "uint8_t_mavlink_version" {
@@ -397,7 +397,7 @@ func processField(field *dialectField) (*outField, error) {
 	}
 
 	// extension
-	if field.Extension {
+	if fieldDef.Extension {
 		tags["mavext"] = "true"
 	}
 
@@ -410,8 +410,8 @@ func processField(field *dialectField) (*outField, error) {
 	if arrayLen != "" {
 		outF.Line += "[" + arrayLen + "]"
 	}
-	if field.Enum != "" {
-		outF.Line += field.Enum
+	if fieldDef.Enum != "" {
+		outF.Line += fieldDef.Enum
 		tags["mavenum"] = typ
 	} else {
 		outF.Line += typ
@@ -469,20 +469,17 @@ func writeEnum(
 	return ioutil.WriteFile("enum_"+strings.ToLower(enum.Name)+".go", buf.Bytes(), 0o644)
 }
 
-func writeMessage(
-	pkgName string,
-	msg *outMessage,
-) error {
+func writeMessage(pkgName string, outMsg *outMessage) error {
 	var buf bytes.Buffer
 	err := tplMessage.Execute(&buf, map[string]interface{}{
 		"PkgName": pkgName,
-		"Msg":     msg,
+		"Msg":     outMsg,
 	})
 	if err != nil {
 		return err
 	}
 
-	return ioutil.WriteFile("msg_"+strings.ToLower(msg.OrigName)+".go", buf.Bytes(), 0o644)
+	return ioutil.WriteFile("msg_"+strings.ToLower(outMsg.OrigName)+".go", buf.Bytes(), 0o644)
 }
 
 func run() error {

@@ -32,7 +32,7 @@ type MessageCommandInt struct {
 	Z float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageCommandInt) GetID() uint32 {
 	return 75
 }

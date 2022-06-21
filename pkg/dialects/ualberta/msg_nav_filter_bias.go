@@ -20,7 +20,7 @@ type MessageNavFilterBias struct {
 	Gyro_2 float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageNavFilterBias) GetID() uint32 {
 	return 220
 }

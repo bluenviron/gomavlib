@@ -16,7 +16,7 @@ type MessageRequestDataStream struct {
 	StartStop uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageRequestDataStream) GetID() uint32 {
 	return 66
 }

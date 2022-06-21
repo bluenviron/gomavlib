@@ -22,7 +22,7 @@ type MessageWinchStatus struct {
 	Status MAV_WINCH_STATUS_FLAG `mavenum:"uint32"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageWinchStatus) GetID() uint32 {
 	return 9005
 }

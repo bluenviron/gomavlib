@@ -16,7 +16,7 @@ type MessageEscStatus struct {
 	Current [4]float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageEscStatus) GetID() uint32 {
 	return 291
 }

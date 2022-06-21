@@ -14,7 +14,7 @@ type MessageRemoteLogBlockStatus struct {
 	Status MAV_REMOTE_LOG_DATA_BLOCK_STATUSES `mavenum:"uint8"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageRemoteLogBlockStatus) GetID() uint32 {
 	return 185
 }

@@ -54,7 +54,7 @@ type MessageHighLatency struct {
 	WpDistance uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageHighLatency) GetID() uint32 {
 	return 234
 }

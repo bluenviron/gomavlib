@@ -38,7 +38,7 @@ type MessageHighresImu struct {
 	Id uint8 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageHighresImu) GetID() uint32 {
 	return 105
 }

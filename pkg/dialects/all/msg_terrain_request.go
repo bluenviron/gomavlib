@@ -14,7 +14,7 @@ type MessageTerrainRequest struct {
 	Mask uint64
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageTerrainRequest) GetID() uint32 {
 	return 133
 }

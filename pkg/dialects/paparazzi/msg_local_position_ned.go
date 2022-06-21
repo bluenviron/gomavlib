@@ -20,7 +20,7 @@ type MessageLocalPositionNed struct {
 	Vz float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageLocalPositionNed) GetID() uint32 {
 	return 32
 }

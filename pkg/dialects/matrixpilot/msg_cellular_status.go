@@ -20,7 +20,7 @@ type MessageCellularStatus struct {
 	Lac uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageCellularStatus) GetID() uint32 {
 	return 334
 }

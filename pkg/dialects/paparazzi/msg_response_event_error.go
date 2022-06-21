@@ -16,7 +16,7 @@ type MessageResponseEventError struct {
 	Reason MAV_EVENT_ERROR_REASON `mavenum:"uint8"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageResponseEventError) GetID() uint32 {
 	return 413
 }

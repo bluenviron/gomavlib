@@ -22,7 +22,7 @@ type MessageSerialUdbExtraF19 struct {
 	SueRudderReversed uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSerialUdbExtraF19) GetID() uint32 {
 	return 185
 }

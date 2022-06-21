@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/aler9/gomavlib/pkg/msg"
+	"github.com/aler9/gomavlib/pkg/message"
 )
 
 type (
@@ -29,6 +29,6 @@ func (*MessageHeartbeat) GetID() uint32 {
 }
 
 func TestDecEncoder(t *testing.T) {
-	_, err := NewDecEncoder(&Dialect{3, []msg.Message{&MessageHeartbeat{}}})
+	_, err := NewDecEncoder(&Dialect{3, []message.Message{&MessageHeartbeat{}}})
 	require.NoError(t, err)
 }

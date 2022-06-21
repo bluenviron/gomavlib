@@ -42,7 +42,7 @@ type MessageEfiStatus struct {
 	IgnitionVoltage float32 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageEfiStatus) GetID() uint32 {
 	return 225
 }

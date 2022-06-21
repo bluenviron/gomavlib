@@ -20,7 +20,7 @@ type MessageCollision struct {
 	HorizontalMinimumDelta float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageCollision) GetID() uint32 {
 	return 247
 }

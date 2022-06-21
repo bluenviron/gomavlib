@@ -18,7 +18,7 @@ type MessageFlexifunctionDirectory struct {
 	DirectoryData [48]int8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageFlexifunctionDirectory) GetID() uint32 {
 	return 155
 }

@@ -10,7 +10,7 @@ type MessageCameraTrigger struct {
 	Seq uint32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageCameraTrigger) GetID() uint32 {
 	return 112
 }

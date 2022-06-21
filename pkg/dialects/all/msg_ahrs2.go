@@ -18,7 +18,7 @@ type MessageAhrs2 struct {
 	Lng int32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAhrs2) GetID() uint32 {
 	return 178
 }

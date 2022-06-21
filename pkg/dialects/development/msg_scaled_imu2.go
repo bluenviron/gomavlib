@@ -28,7 +28,7 @@ type MessageScaledImu2 struct {
 	Temperature int16 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageScaledImu2) GetID() uint32 {
 	return 116
 }

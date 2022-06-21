@@ -18,7 +18,7 @@ type MessageCanFilterModify struct {
 	Ids [16]uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageCanFilterModify) GetID() uint32 {
 	return 388
 }

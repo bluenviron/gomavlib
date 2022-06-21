@@ -10,7 +10,7 @@ type MessageHwstatus struct {
 	I2cerr uint8 `mavname:"I2Cerr"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageHwstatus) GetID() uint32 {
 	return 165
 }

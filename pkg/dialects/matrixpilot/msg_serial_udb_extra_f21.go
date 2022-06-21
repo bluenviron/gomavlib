@@ -18,7 +18,7 @@ type MessageSerialUdbExtraF21 struct {
 	SueGyroZOffset int16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSerialUdbExtraF21) GetID() uint32 {
 	return 187
 }

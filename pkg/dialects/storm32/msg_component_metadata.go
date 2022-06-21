@@ -22,7 +22,7 @@ type MessageComponentMetadata struct {
 	Uri string `mavlen:"100"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageComponentMetadata) GetID() uint32 {
 	return 397
 }

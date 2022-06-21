@@ -20,7 +20,7 @@ type MessageAttitudeTarget struct {
 	Thrust float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAttitudeTarget) GetID() uint32 {
 	return 83
 }

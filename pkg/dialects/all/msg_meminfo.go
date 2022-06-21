@@ -12,7 +12,7 @@ type MessageMeminfo struct {
 	Freemem32 uint32 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageMeminfo) GetID() uint32 {
 	return 152
 }

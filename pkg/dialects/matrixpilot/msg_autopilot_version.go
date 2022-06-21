@@ -30,7 +30,7 @@ type MessageAutopilotVersion struct {
 	Uid2 [18]uint8 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAutopilotVersion) GetID() uint32 {
 	return 148
 }

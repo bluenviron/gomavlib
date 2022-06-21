@@ -12,7 +12,7 @@ type MessageScriptCount struct {
 	Count uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageScriptCount) GetID() uint32 {
 	return 183
 }

@@ -14,7 +14,7 @@ type MessageLogRequestList struct {
 	End uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageLogRequestList) GetID() uint32 {
 	return 117
 }

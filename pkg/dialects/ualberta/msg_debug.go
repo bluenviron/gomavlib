@@ -12,7 +12,7 @@ type MessageDebug struct {
 	Value float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageDebug) GetID() uint32 {
 	return 254
 }

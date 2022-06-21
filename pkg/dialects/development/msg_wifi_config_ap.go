@@ -14,7 +14,7 @@ type MessageWifiConfigAp struct {
 	Response WIFI_CONFIG_AP_RESPONSE `mavenum:"int8" mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageWifiConfigAp) GetID() uint32 {
 	return 299
 }

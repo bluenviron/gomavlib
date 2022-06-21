@@ -32,7 +32,7 @@ type MessageCommandLongStamped struct {
 	Param7 float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageCommandLongStamped) GetID() uint32 {
 	return 224
 }

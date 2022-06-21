@@ -26,7 +26,7 @@ type MessageOsdParamConfig struct {
 	Increment float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageOsdParamConfig) GetID() uint32 {
 	return 11033
 }

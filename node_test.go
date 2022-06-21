@@ -13,7 +13,7 @@ import (
 
 	"github.com/aler9/gomavlib/pkg/dialect"
 	"github.com/aler9/gomavlib/pkg/frame"
-	"github.com/aler9/gomavlib/pkg/msg"
+	"github.com/aler9/gomavlib/pkg/message"
 )
 
 type (
@@ -83,7 +83,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 	}
 
 	node1, err := NewNode(NodeConf{
-		Dialect:          &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect:          &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:       V2,
 		OutSystemID:      10,
 		Endpoints:        []EndpointConf{t1},
@@ -92,7 +92,7 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect:          &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect:          &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:       V2,
 		OutSystemID:      11, //nolint:revive
 		Endpoints:        []EndpointConf{t2},
@@ -228,7 +228,7 @@ func TestNodeCustomCustom(t *testing.T) {
 
 func TestNodeError(t *testing.T) {
 	_, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:  V2,
 		OutSystemID: 11,
 		Endpoints: []EndpointConf{
@@ -242,7 +242,7 @@ func TestNodeError(t *testing.T) {
 
 func TestNodeCloseInLoop(t *testing.T) {
 	node1, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:  V2,
 		OutSystemID: 11,
 		Endpoints: []EndpointConf{
@@ -253,7 +253,7 @@ func TestNodeCloseInLoop(t *testing.T) {
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:  V2,
 		OutSystemID: 11,
 		Endpoints: []EndpointConf{
@@ -288,7 +288,7 @@ func TestNodeCloseInLoop(t *testing.T) {
 
 func TestNodeWriteMultipleInLoop(t *testing.T) {
 	node1, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:  V2,
 		OutSystemID: 11,
 		Endpoints: []EndpointConf{
@@ -299,7 +299,7 @@ func TestNodeWriteMultipleInLoop(t *testing.T) {
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:  V2,
 		OutSystemID: 11,
 		Endpoints: []EndpointConf{
@@ -356,7 +356,7 @@ func TestNodeSignature(t *testing.T) {
 	}
 
 	node1, err := NewNode(NodeConf{
-		Dialect: &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect: &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
 		Endpoints: []EndpointConf{
 			EndpointUDPServer{"127.0.0.1:5600"},
 		},
@@ -369,7 +369,7 @@ func TestNodeSignature(t *testing.T) {
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect: &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect: &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
 		Endpoints: []EndpointConf{
 			EndpointUDPClient{"127.0.0.1:5600"},
 		},
@@ -415,7 +415,7 @@ func TestNodeRouting(t *testing.T) {
 	}
 
 	node1, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:  V2,
 		OutSystemID: 10,
 		Endpoints: []EndpointConf{
@@ -426,7 +426,7 @@ func TestNodeRouting(t *testing.T) {
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:  V2,
 		OutSystemID: 11,
 		Endpoints: []EndpointConf{
@@ -438,7 +438,7 @@ func TestNodeRouting(t *testing.T) {
 	require.NoError(t, err)
 
 	node3, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
 		OutVersion:  V2,
 		OutSystemID: 12,
 		Endpoints: []EndpointConf{
@@ -495,7 +495,7 @@ func TestNodeRouting(t *testing.T) {
 func TestNodeHeartbeat(t *testing.T) {
 	func() {
 		node1, err := NewNode(NodeConf{
-			Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
+			Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
 			OutVersion:  V2,
 			OutSystemID: 10,
 			Endpoints: []EndpointConf{
@@ -507,7 +507,7 @@ func TestNodeHeartbeat(t *testing.T) {
 		defer node1.Close()
 
 		node2, err := NewNode(NodeConf{
-			Dialect:     &dialect.Dialect{3, []msg.Message{&MessageHeartbeat{}}}, //nolint:govet
+			Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
 			OutVersion:  V2,
 			OutSystemID: 11,
 			Endpoints: []EndpointConf{
@@ -532,7 +532,7 @@ func TestNodeHeartbeat(t *testing.T) {
 func TestNodeStreamRequest(t *testing.T) {
 	func() {
 		node1, err := NewNode(NodeConf{
-			Dialect: &dialect.Dialect{3, []msg.Message{ //nolint:govet
+			Dialect: &dialect.Dialect{3, []message.Message{ //nolint:govet
 				&MessageHeartbeat{},
 				&MessageRequestDataStream{},
 			}},
@@ -548,7 +548,7 @@ func TestNodeStreamRequest(t *testing.T) {
 		defer node1.Close()
 
 		node2, err := NewNode(NodeConf{
-			Dialect: &dialect.Dialect{3, []msg.Message{ //nolint:govet
+			Dialect: &dialect.Dialect{3, []message.Message{ //nolint:govet
 				&MessageHeartbeat{},
 				&MessageRequestDataStream{},
 			}},

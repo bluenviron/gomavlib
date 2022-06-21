@@ -16,7 +16,7 @@ type MessageOsdParamShowConfig struct {
 	OsdIndex uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageOsdParamShowConfig) GetID() uint32 {
 	return 11035
 }

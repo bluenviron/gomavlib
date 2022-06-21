@@ -24,7 +24,7 @@ type MessageStorm32GimbalManagerInformation struct {
 	YawMax float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageStorm32GimbalManagerInformation) GetID() uint32 {
 	return 60010
 }

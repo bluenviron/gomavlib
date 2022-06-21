@@ -1,5 +1,5 @@
-// Package msg contains the message definition and parser.
-package msg
+// Package message contains the message definition and its parser.
+package message
 
 // Message is the interface that must be implemented by all Mavlink messages.
 // Furthermore, any message must be labeled "MessageNameOfMessage".
@@ -14,7 +14,7 @@ type Message interface {
 //
 // * when the parser receives an unknown message
 //
-type MessageRaw struct {
+type MessageRaw struct { //nolint:revive
 	ID      uint32
 	Content []byte
 }

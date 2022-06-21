@@ -8,7 +8,7 @@ type MessageIcarousHeartbeat struct {
 	Status ICAROUS_FMS_STATE `mavenum:"uint8"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageIcarousHeartbeat) GetID() uint32 {
 	return 42000
 }

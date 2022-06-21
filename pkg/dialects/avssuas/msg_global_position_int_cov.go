@@ -26,7 +26,7 @@ type MessageGlobalPositionIntCov struct {
 	Covariance [36]float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageGlobalPositionIntCov) GetID() uint32 {
 	return 63
 }

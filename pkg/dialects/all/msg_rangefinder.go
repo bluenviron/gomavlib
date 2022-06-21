@@ -10,7 +10,7 @@ type MessageRangefinder struct {
 	Voltage float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageRangefinder) GetID() uint32 {
 	return 173
 }

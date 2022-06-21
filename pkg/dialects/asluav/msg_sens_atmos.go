@@ -12,7 +12,7 @@ type MessageSensAtmos struct {
 	Humidity float32 `mavname:"Humidity"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSensAtmos) GetID() uint32 {
 	return 8009
 }

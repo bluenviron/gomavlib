@@ -26,7 +26,7 @@ type MessageSetAttitudeTarget struct {
 	ThrustBody [3]float32 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSetAttitudeTarget) GetID() uint32 {
 	return 82
 }

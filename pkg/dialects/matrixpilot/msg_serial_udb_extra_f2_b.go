@@ -106,7 +106,7 @@ type MessageSerialUdbExtraF2B struct {
 	SueMemoryStackFree int16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSerialUdbExtraF2B) GetID() uint32 {
 	return 171
 }

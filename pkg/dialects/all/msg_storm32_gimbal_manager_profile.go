@@ -22,7 +22,7 @@ type MessageStorm32GimbalManagerProfile struct {
 	Timeouts [8]uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageStorm32GimbalManagerProfile) GetID() uint32 {
 	return 60015
 }

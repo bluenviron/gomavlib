@@ -18,7 +18,7 @@ type MessageMountStatus struct {
 	MountMode MAV_MOUNT_MODE `mavenum:"uint8" mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageMountStatus) GetID() uint32 {
 	return 158
 }

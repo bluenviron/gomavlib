@@ -16,7 +16,7 @@ type MessageStorm32GimbalManagerStatus struct {
 	Profile MAV_STORM32_GIMBAL_MANAGER_PROFILE `mavenum:"uint8"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageStorm32GimbalManagerStatus) GetID() uint32 {
 	return 60011
 }

@@ -14,7 +14,7 @@ type MessageGoproSetRequest struct {
 	Value [4]uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageGoproSetRequest) GetID() uint32 {
 	return 218
 }

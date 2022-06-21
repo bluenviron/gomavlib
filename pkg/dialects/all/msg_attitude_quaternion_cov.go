@@ -18,7 +18,7 @@ type MessageAttitudeQuaternionCov struct {
 	Covariance [9]float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAttitudeQuaternionCov) GetID() uint32 {
 	return 61
 }

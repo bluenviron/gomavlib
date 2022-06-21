@@ -38,7 +38,7 @@ type MessageUavionixAdsbOutDynamic struct {
 	Squawk uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageUavionixAdsbOutDynamic) GetID() uint32 {
 	return 10002
 }

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/aler9/gomavlib/pkg/dialect"
-	"github.com/aler9/gomavlib/pkg/msg"
+	"github.com/aler9/gomavlib/pkg/message"
 )
 
 const (
@@ -37,8 +37,8 @@ type ReaderConf struct {
 	// the underlying bytes reader.
 	Reader io.Reader
 
-	// (optional) the dialect which contains the messages that will be encoded and decoded.
-	// If not provided, messages are decoded in the MessageRaw struct.
+	// (optional) the dialect which contains the messages that will be read.
+	// If not provided, messages are decoded into the MessageRaw struct.
 	DialectDE *dialect.DecEncoder
 
 	// (optional) the secret key used to validate incoming frames.
@@ -124,7 +124,7 @@ func (r *Reader) Read() (Frame, error) {
 			}
 
 			_, isV2 := f.(*V2Frame)
-			msg, err := mp.Decode(f.GetMessage().(*msg.MessageRaw).Content, isV2)
+			msg, err := mp.Decode(f.GetMessage().(*message.MessageRaw).Content, isV2)
 			if err != nil {
 				return nil, newError(err.Error())
 			}

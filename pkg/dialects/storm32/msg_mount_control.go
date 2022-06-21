@@ -18,7 +18,7 @@ type MessageMountControl struct {
 	SavePosition uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageMountControl) GetID() uint32 {
 	return 157
 }

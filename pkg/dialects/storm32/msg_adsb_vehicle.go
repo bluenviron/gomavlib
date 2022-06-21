@@ -32,7 +32,7 @@ type MessageAdsbVehicle struct {
 	Squawk uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAdsbVehicle) GetID() uint32 {
 	return 246
 }

@@ -34,7 +34,7 @@ type MessageCameraImageCaptured struct {
 	FileUrl string `mavlen:"205"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageCameraImageCaptured) GetID() uint32 {
 	return 263
 }

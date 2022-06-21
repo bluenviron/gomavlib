@@ -10,7 +10,7 @@ type MessageEncapsulatedData struct {
 	Data [253]uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageEncapsulatedData) GetID() uint32 {
 	return 131
 }

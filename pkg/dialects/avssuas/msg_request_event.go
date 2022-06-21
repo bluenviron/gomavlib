@@ -14,7 +14,7 @@ type MessageRequestEvent struct {
 	LastSequence uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageRequestEvent) GetID() uint32 {
 	return 412
 }

@@ -38,7 +38,7 @@ type MessageSysStatus struct {
 	OnboardControlSensorsHealthExtended MAV_SYS_STATUS_SENSOR_EXTENDED `mavenum:"uint32" mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSysStatus) GetID() uint32 {
 	return 1
 }

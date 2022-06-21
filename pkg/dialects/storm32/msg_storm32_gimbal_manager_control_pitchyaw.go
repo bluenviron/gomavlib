@@ -26,7 +26,7 @@ type MessageStorm32GimbalManagerControlPitchyaw struct {
 	YawRate float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageStorm32GimbalManagerControlPitchyaw) GetID() uint32 {
 	return 60013
 }

@@ -32,7 +32,7 @@ type MessageCameraTrackingGeoStatus struct {
 	HdgAcc float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageCameraTrackingGeoStatus) GetID() uint32 {
 	return 276
 }

@@ -8,7 +8,7 @@ type MessageScriptCurrent struct {
 	Seq uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageScriptCurrent) GetID() uint32 {
 	return 184
 }

@@ -16,7 +16,7 @@ type MessageSetGpsGlobalOrigin struct {
 	TimeUsec uint64 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSetGpsGlobalOrigin) GetID() uint32 {
 	return 48
 }

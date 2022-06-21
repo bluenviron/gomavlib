@@ -12,7 +12,7 @@ type MessageWheelDistance struct {
 	Distance [16]float64
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageWheelDistance) GetID() uint32 {
 	return 9000
 }

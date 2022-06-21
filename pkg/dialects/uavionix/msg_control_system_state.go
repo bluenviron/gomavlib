@@ -40,7 +40,7 @@ type MessageControlSystemState struct {
 	YawRate float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageControlSystemState) GetID() uint32 {
 	return 146
 }

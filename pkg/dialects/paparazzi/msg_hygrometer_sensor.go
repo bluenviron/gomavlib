@@ -12,7 +12,7 @@ type MessageHygrometerSensor struct {
 	Humidity uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageHygrometerSensor) GetID() uint32 {
 	return 12920
 }

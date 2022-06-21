@@ -50,7 +50,7 @@ type MessageTestTypes struct {
 	DArray [3]float64
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageTestTypes) GetID() uint32 {
 	return 17000
 }

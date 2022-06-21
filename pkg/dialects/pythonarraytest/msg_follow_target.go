@@ -28,7 +28,7 @@ type MessageFollowTarget struct {
 	CustomState uint64
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageFollowTarget) GetID() uint32 {
 	return 144
 }

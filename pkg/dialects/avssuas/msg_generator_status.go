@@ -28,7 +28,7 @@ type MessageGeneratorStatus struct {
 	TimeUntilMaintenance int32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageGeneratorStatus) GetID() uint32 {
 	return 373
 }

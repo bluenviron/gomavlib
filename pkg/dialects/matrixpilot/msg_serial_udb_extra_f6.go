@@ -16,7 +16,7 @@ type MessageSerialUdbExtraF6 struct {
 	SueElevatorBoost float32 `mavname:"sue_ELEVATOR_BOOST"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSerialUdbExtraF6) GetID() uint32 {
 	return 174
 }

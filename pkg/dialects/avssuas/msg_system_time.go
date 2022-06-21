@@ -10,7 +10,7 @@ type MessageSystemTime struct {
 	TimeBootMs uint32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSystemTime) GetID() uint32 {
 	return 2
 }

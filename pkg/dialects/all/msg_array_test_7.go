@@ -24,7 +24,7 @@ type MessageArrayTest_7 struct {
 	ArC string `mavlen:"32"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageArrayTest_7) GetID() uint32 {
 	return 17157
 }

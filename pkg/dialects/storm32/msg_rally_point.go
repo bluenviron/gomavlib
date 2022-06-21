@@ -26,7 +26,7 @@ type MessageRallyPoint struct {
 	Flags RALLY_FLAGS `mavenum:"uint8"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageRallyPoint) GetID() uint32 {
 	return 175
 }

@@ -18,7 +18,7 @@ type MessageSerialUdbExtraF7 struct {
 	SueRtlPitchDown float32 `mavname:"sue_RTL_PITCH_DOWN"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSerialUdbExtraF7) GetID() uint32 {
 	return 175
 }

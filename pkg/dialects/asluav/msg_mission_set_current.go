@@ -12,7 +12,7 @@ type MessageMissionSetCurrent struct {
 	Seq uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageMissionSetCurrent) GetID() uint32 {
 	return 41
 }

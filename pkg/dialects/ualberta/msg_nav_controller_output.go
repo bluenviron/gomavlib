@@ -22,7 +22,7 @@ type MessageNavControllerOutput struct {
 	XtrackError float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageNavControllerOutput) GetID() uint32 {
 	return 62
 }

@@ -24,7 +24,7 @@ type MessageGlobalVisionPositionEstimate struct {
 	ResetCounter uint8 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageGlobalVisionPositionEstimate) GetID() uint32 {
 	return 101
 }

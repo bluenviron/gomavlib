@@ -41,7 +41,7 @@ type MessageAslctrlData struct {
 	Urud         float32 `mavname:"uRud"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAslctrlData) GetID() uint32 {
 	return 8004
 }

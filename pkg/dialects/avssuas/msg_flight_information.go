@@ -15,7 +15,7 @@ type MessageFlightInformation struct {
 	FlightUuid uint64
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageFlightInformation) GetID() uint32 {
 	return 264
 }

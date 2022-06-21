@@ -14,7 +14,7 @@ type MessageFileTransferProtocol struct {
 	Payload [251]uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageFileTransferProtocol) GetID() uint32 {
 	return 110
 }

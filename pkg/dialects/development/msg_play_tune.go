@@ -14,7 +14,7 @@ type MessagePlayTune struct {
 	Tune2 string `mavext:"true" mavlen:"200"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessagePlayTune) GetID() uint32 {
 	return 258
 }

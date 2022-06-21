@@ -16,7 +16,7 @@ type MessageFenceStatus struct {
 	BreachMitigation FENCE_MITIGATE `mavenum:"uint8" mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageFenceStatus) GetID() uint32 {
 	return 162
 }

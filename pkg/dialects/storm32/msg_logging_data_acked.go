@@ -18,7 +18,7 @@ type MessageLoggingDataAcked struct {
 	Data [249]uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageLoggingDataAcked) GetID() uint32 {
 	return 267
 }

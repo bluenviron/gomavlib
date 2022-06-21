@@ -14,7 +14,7 @@ type MessageDebugFloatArray struct {
 	Data [58]float32 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageDebugFloatArray) GetID() uint32 {
 	return 350
 }

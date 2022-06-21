@@ -20,7 +20,7 @@ type MessageEvent struct {
 	Arguments [40]uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageEvent) GetID() uint32 {
 	return 410
 }

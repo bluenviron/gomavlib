@@ -38,7 +38,7 @@ type MessageHilState struct {
 	Zacc int16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageHilState) GetID() uint32 {
 	return 90
 }

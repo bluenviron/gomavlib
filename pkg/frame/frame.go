@@ -1,10 +1,10 @@
-// Package frame contains frame definitions and parsers.
+// Package frame contains frame definitions and a frame parser.
 package frame
 
 import (
 	"bufio"
 
-	"github.com/aler9/gomavlib/pkg/msg"
+	"github.com/aler9/gomavlib/pkg/message"
 )
 
 // Frame is the interface implemented by frames of every supported version.
@@ -16,7 +16,7 @@ type Frame interface {
 	GetComponentID() byte
 
 	// the message encapsuled in the frame.
-	GetMessage() msg.Message
+	GetMessage() message.Message
 
 	// the frame checksum.
 	GetChecksum() uint16

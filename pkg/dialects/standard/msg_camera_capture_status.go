@@ -20,7 +20,7 @@ type MessageCameraCaptureStatus struct {
 	ImageCount int32 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageCameraCaptureStatus) GetID() uint32 {
 	return 262
 }

@@ -16,7 +16,7 @@ type MessageWifiNetworkInfo struct {
 	Security WIFI_NETWORK_SECURITY `mavenum:"uint8"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageWifiNetworkInfo) GetID() uint32 {
 	return 298
 }

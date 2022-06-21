@@ -16,7 +16,7 @@ type MessageTunnel struct {
 	Payload [128]uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageTunnel) GetID() uint32 {
 	return 385
 }

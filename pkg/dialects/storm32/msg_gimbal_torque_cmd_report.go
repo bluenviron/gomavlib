@@ -16,7 +16,7 @@ type MessageGimbalTorqueCmdReport struct {
 	AzTorqueCmd int16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageGimbalTorqueCmdReport) GetID() uint32 {
 	return 214
 }

@@ -16,7 +16,7 @@ type MessageAvssPrsSysStatus struct {
 	ChargeStatus uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAvssPrsSysStatus) GetID() uint32 {
 	return 60050
 }

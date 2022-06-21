@@ -42,7 +42,7 @@ type MessageGps2Raw struct {
 	HdgAcc uint32 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageGps2Raw) GetID() uint32 {
 	return 124
 }

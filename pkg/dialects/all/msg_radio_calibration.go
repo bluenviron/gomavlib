@@ -18,7 +18,7 @@ type MessageRadioCalibration struct {
 	Throttle [5]uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageRadioCalibration) GetID() uint32 {
 	return 221
 }

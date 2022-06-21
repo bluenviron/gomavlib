@@ -10,7 +10,7 @@ type MessageRawRpm struct {
 	Frequency float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageRawRpm) GetID() uint32 {
 	return 339
 }

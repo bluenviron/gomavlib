@@ -26,7 +26,7 @@ type MessageDeviceOpRead struct {
 	Bank uint8 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageDeviceOpRead) GetID() uint32 {
 	return 11000
 }

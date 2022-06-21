@@ -18,7 +18,7 @@ type MessageVisionSpeedEstimate struct {
 	ResetCounter uint8 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageVisionSpeedEstimate) GetID() uint32 {
 	return 103
 }

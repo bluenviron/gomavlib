@@ -32,7 +32,7 @@ type MessageGps2Rtk struct {
 	IarNumHypotheses int32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageGps2Rtk) GetID() uint32 {
 	return 128
 }

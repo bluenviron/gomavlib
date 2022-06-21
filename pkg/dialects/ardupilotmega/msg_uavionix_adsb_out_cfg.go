@@ -22,7 +22,7 @@ type MessageUavionixAdsbOutCfg struct {
 	Rfselect UAVIONIX_ADSB_OUT_RF_SELECT `mavenum:"uint8" mavname:"rfSelect"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageUavionixAdsbOutCfg) GetID() uint32 {
 	return 10001
 }

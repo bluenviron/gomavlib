@@ -36,7 +36,7 @@ type MessageSensBatmon struct {
 	Cellvoltage6 uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSensBatmon) GetID() uint32 {
 	return 8010
 }

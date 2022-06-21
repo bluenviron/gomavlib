@@ -16,7 +16,7 @@ type MessageDebugVect struct {
 	Z float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageDebugVect) GetID() uint32 {
 	return 250
 }

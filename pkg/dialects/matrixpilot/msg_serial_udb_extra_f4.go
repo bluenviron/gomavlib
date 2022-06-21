@@ -26,7 +26,7 @@ type MessageSerialUdbExtraF4 struct {
 	SueRacingMode uint8 `mavname:"sue_RACING_MODE"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSerialUdbExtraF4) GetID() uint32 {
 	return 172
 }

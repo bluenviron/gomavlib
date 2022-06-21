@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/aler9/gomavlib/pkg/dialect"
-	"github.com/aler9/gomavlib/pkg/msg"
+	"github.com/aler9/gomavlib/pkg/message"
 )
 
 // WriterOutVersion is a Mavlink version.
@@ -33,8 +33,7 @@ type WriterConf struct {
 	// the underlying bytes writer.
 	Writer io.Writer
 
-	// (optional) the dialect which contains the messages that will be encoded and decoded.
-	// If not provided, messages are decoded in the MessageRaw struct.
+	// (optional) the dialect which contains the messages that will be written.
 	DialectDE *dialect.DecEncoder
 
 	// Mavlink version used to encode messages.
@@ -86,24 +85,24 @@ func NewWriter(conf WriterConf) (*Writer, error) {
 
 // WriteMessage writes a Message.
 // It must not be called by multiple routines in parallel.
-func (w *Writer) WriteMessage(m msg.Message) error {
+func (w *Writer) WriteMessage(m message.Message) error {
 	if w.conf.OutVersion == V1 {
 		return w.writeFrameAndFill(&V1Frame{Message: m})
 	}
 	return w.writeFrameAndFill(&V2Frame{Message: m})
 }
 
-func (w *Writer) writeFrameAndFill(frame Frame) error {
-	if frame.GetMessage() == nil {
+func (w *Writer) writeFrameAndFill(fr Frame) error {
+	if fr.GetMessage() == nil {
 		return fmt.Errorf("message is nil")
 	}
 
 	// do not touch the original frame, but work with a separate object
 	// in such way that the frame can be encoded by other parsers in parallel
-	frame = frame.Clone()
+	fr = fr.Clone()
 
 	// fill SequenceID, SystemID, ComponentID
-	switch ff := frame.(type) {
+	switch ff := fr.(type) {
 	case *V1Frame:
 		ff.SequenceID = w.curWriteSequenceID
 		ff.SystemID = w.conf.OutSystemID
@@ -116,7 +115,7 @@ func (w *Writer) writeFrameAndFill(frame Frame) error {
 	w.curWriteSequenceID++
 
 	// fill CompatibilityFlag, IncompatibilityFlag if v2
-	if ff, ok := frame.(*V2Frame); ok {
+	if ff, ok := fr.(*V2Frame); ok {
 		ff.CompatibilityFlag = 0
 		ff.IncompatibilityFlag = 0
 
@@ -126,27 +125,27 @@ func (w *Writer) writeFrameAndFill(frame Frame) error {
 	}
 
 	// encode message if it is not already encoded
-	if _, ok := frame.GetMessage().(*msg.MessageRaw); !ok {
+	if _, ok := fr.GetMessage().(*message.MessageRaw); !ok {
 		if w.conf.DialectDE == nil {
 			return fmt.Errorf("message cannot be encoded since dialect is nil")
 		}
 
-		mp, ok := w.conf.DialectDE.MessageDEs[frame.GetMessage().GetID()]
+		mp, ok := w.conf.DialectDE.MessageDEs[fr.GetMessage().GetID()]
 		if !ok {
 			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
 		}
 
-		_, isV2 := frame.(*V2Frame)
-		byt, err := mp.Encode(frame.GetMessage(), isV2)
+		_, isV2 := fr.(*V2Frame)
+		byt, err := mp.Encode(fr.GetMessage(), isV2)
 		if err != nil {
 			return err
 		}
 
-		msgRaw := &msg.MessageRaw{
-			ID:      frame.GetMessage().GetID(),
+		msgRaw := &message.MessageRaw{
+			ID:      fr.GetMessage().GetID(),
 			Content: byt,
 		}
-		switch ff := frame.(type) {
+		switch ff := fr.(type) {
 		case *V1Frame:
 			ff.Message = msgRaw
 		case *V2Frame:
@@ -154,7 +153,7 @@ func (w *Writer) writeFrameAndFill(frame Frame) error {
 		}
 
 		// fill checksum
-		switch ff := frame.(type) {
+		switch ff := fr.(type) {
 		case *V1Frame:
 			ff.Checksum = ff.GenChecksum(w.conf.DialectDE.MessageDEs[ff.GetMessage().GetID()].CRCExtra())
 		case *V2Frame:
@@ -163,14 +162,14 @@ func (w *Writer) writeFrameAndFill(frame Frame) error {
 	}
 
 	// fill SignatureLinkID, SignatureTimestamp, Signature if v2
-	if ff, ok := frame.(*V2Frame); ok && w.conf.OutKey != nil {
+	if ff, ok := fr.(*V2Frame); ok && w.conf.OutKey != nil {
 		ff.SignatureLinkID = w.conf.OutSignatureLinkID
 		// Timestamp in 10 microsecond units since 1st January 2015 GMT time
 		ff.SignatureTimestamp = uint64(time.Since(signatureReferenceDate)) / 10000
 		ff.Signature = ff.GenSignature(w.conf.OutKey)
 	}
 
-	return w.WriteFrame(frame)
+	return w.WriteFrame(fr)
 }
 
 // WriteFrame writes a
@@ -184,7 +183,7 @@ func (w *Writer) WriteFrame(fr Frame) error {
 	}
 
 	// encode message if it is not already encoded
-	if _, ok := m.(*msg.MessageRaw); !ok {
+	if _, ok := m.(*message.MessageRaw); !ok {
 		if w.conf.DialectDE == nil {
 			return fmt.Errorf("message cannot be encoded since dialect is nil")
 		}
@@ -202,10 +201,10 @@ func (w *Writer) WriteFrame(fr Frame) error {
 
 		// do not touch Message
 		// in such way that the frame can be encoded by other parsers in parallel
-		m = &msg.MessageRaw{m.GetID(), byt} //nolint:govet
+		m = &message.MessageRaw{m.GetID(), byt} //nolint:govet
 	}
 
-	buf, err := fr.Encode(w.writeBuffer, m.(*msg.MessageRaw).Content)
+	buf, err := fr.Encode(w.writeBuffer, m.(*message.MessageRaw).Content)
 	if err != nil {
 		return err
 	}

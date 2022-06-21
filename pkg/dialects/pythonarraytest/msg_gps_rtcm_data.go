@@ -12,7 +12,7 @@ type MessageGpsRtcmData struct {
 	Data [180]uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageGpsRtcmData) GetID() uint32 {
 	return 233
 }

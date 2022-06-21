@@ -18,7 +18,7 @@ type MessageOpenDroneIdMessagePack struct {
 	Messages [225]uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageOpenDroneIdMessagePack) GetID() uint32 {
 	return 12915
 }

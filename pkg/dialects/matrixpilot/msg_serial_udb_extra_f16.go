@@ -10,7 +10,7 @@ type MessageSerialUdbExtraF16 struct {
 	SueIdDiyDronesUrl [70]uint8 `mavname:"sue_ID_DIY_DRONES_URL"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSerialUdbExtraF16) GetID() uint32 {
 	return 180
 }

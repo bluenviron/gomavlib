@@ -14,7 +14,7 @@ type MessageSensPower struct {
 	Adc121Cs2Amp float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSensPower) GetID() uint32 {
 	return 8002
 }

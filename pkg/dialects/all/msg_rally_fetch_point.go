@@ -12,7 +12,7 @@ type MessageRallyFetchPoint struct {
 	Idx uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageRallyFetchPoint) GetID() uint32 {
 	return 176
 }

@@ -12,7 +12,7 @@ type MessageNamedValueInt struct {
 	Value int32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageNamedValueInt) GetID() uint32 {
 	return 252
 }

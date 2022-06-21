@@ -20,7 +20,7 @@ type MessageAirspeeds struct {
 	Aoy int16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAirspeeds) GetID() uint32 {
 	return 182
 }

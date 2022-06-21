@@ -24,7 +24,7 @@ type MessageEscInfo struct {
 	Temperature [4]int16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageEscInfo) GetID() uint32 {
 	return 290
 }

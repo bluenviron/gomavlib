@@ -34,7 +34,7 @@ type MessageBatteryStatus struct {
 	FaultBitmask MAV_BATTERY_FAULT `mavenum:"uint32" mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageBatteryStatus) GetID() uint32 {
 	return 147
 }

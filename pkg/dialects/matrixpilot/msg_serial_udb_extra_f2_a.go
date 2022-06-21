@@ -60,7 +60,7 @@ type MessageSerialUdbExtraF2A struct {
 	SueHdop int16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSerialUdbExtraF2A) GetID() uint32 {
 	return 170
 }

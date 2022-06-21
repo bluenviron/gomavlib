@@ -20,7 +20,7 @@ type MessageRadioStatus struct {
 	Fixed uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageRadioStatus) GetID() uint32 {
 	return 109
 }

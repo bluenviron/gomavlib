@@ -38,7 +38,7 @@ type MessageHilStateQuaternion struct {
 	Zacc int16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageHilStateQuaternion) GetID() uint32 {
 	return 115
 }

@@ -60,7 +60,7 @@ type MessageHighLatency2 struct {
 	Custom2 int8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageHighLatency2) GetID() uint32 {
 	return 235
 }

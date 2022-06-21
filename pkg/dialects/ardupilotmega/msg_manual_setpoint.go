@@ -20,7 +20,7 @@ type MessageManualSetpoint struct {
 	ManualOverrideSwitch uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageManualSetpoint) GetID() uint32 {
 	return 81
 }

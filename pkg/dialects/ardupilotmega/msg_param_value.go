@@ -16,7 +16,7 @@ type MessageParamValue struct {
 	ParamIndex uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageParamValue) GetID() uint32 {
 	return 22
 }

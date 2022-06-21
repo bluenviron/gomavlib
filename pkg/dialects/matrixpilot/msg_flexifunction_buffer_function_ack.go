@@ -14,7 +14,7 @@ type MessageFlexifunctionBufferFunctionAck struct {
 	Result uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageFlexifunctionBufferFunctionAck) GetID() uint32 {
 	return 153
 }

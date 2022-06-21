@@ -20,7 +20,7 @@ type MessageSafetyAllowedArea struct {
 	P2z float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSafetyAllowedArea) GetID() uint32 {
 	return 55
 }

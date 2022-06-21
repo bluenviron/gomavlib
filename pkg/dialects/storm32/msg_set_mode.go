@@ -12,7 +12,7 @@ type MessageSetMode struct {
 	CustomMode uint32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSetMode) GetID() uint32 {
 	return 11
 }

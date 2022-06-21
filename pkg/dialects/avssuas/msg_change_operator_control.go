@@ -14,7 +14,7 @@ type MessageChangeOperatorControl struct {
 	Passkey string `mavlen:"25"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageChangeOperatorControl) GetID() uint32 {
 	return 5
 }

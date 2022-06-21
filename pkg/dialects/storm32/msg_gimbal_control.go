@@ -16,7 +16,7 @@ type MessageGimbalControl struct {
 	DemandedRateZ float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageGimbalControl) GetID() uint32 {
 	return 201
 }

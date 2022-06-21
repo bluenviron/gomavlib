@@ -14,7 +14,7 @@ type MessageFlexifunctionReadReq struct {
 	DataIndex int16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageFlexifunctionReadReq) GetID() uint32 {
 	return 151
 }

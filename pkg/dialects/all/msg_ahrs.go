@@ -20,7 +20,7 @@ type MessageAhrs struct {
 	ErrorYaw float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAhrs) GetID() uint32 {
 	return 163
 }

@@ -34,7 +34,7 @@ type MessagePositionTargetGlobalInt struct {
 	YawRate float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessagePositionTargetGlobalInt) GetID() uint32 {
 	return 87
 }

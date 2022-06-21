@@ -18,7 +18,7 @@ type MessageOrbitExecutionStatus struct {
 	Z float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageOrbitExecutionStatus) GetID() uint32 {
 	return 360
 }

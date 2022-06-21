@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/aler9/gomavlib/pkg/msg"
+	"github.com/aler9/gomavlib/pkg/message"
 	"github.com/aler9/gomavlib/pkg/x25"
 )
 
@@ -20,7 +20,7 @@ type V1Frame struct {
 	SequenceID  byte
 	SystemID    byte
 	ComponentID byte
-	Message     msg.Message
+	Message     message.Message
 	Checksum    uint16
 }
 
@@ -46,7 +46,7 @@ func (f *V1Frame) GetComponentID() byte {
 }
 
 // GetMessage implements the Frame interface.
-func (f *V1Frame) GetMessage() msg.Message {
+func (f *V1Frame) GetMessage() message.Message {
 	return f.Message
 }
 
@@ -78,7 +78,7 @@ func (f *V1Frame) Decode(br *bufio.Reader) error {
 			return err
 		}
 	}
-	f.Message = &msg.MessageRaw{
+	f.Message = &message.MessageRaw{
 		ID:      uint32(msgID),
 		Content: msgEncoded,
 	}
@@ -125,7 +125,7 @@ func (f *V1Frame) Encode(buf []byte, msgEncoded []byte) ([]byte, error) {
 
 // GenChecksum implements the Frame interface.
 func (f *V1Frame) GenChecksum(crcExtra byte) uint16 {
-	msg := f.GetMessage().(*msg.MessageRaw)
+	msg := f.GetMessage().(*message.MessageRaw)
 	h := x25.New()
 
 	h.Write([]byte{byte(len(msg.Content))})

@@ -12,7 +12,7 @@ type MessageActuatorControlTarget struct {
 	Controls [8]float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageActuatorControlTarget) GetID() uint32 {
 	return 140
 }

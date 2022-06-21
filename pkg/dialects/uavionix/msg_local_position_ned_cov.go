@@ -30,7 +30,7 @@ type MessageLocalPositionNedCov struct {
 	Covariance [45]float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageLocalPositionNedCov) GetID() uint32 {
 	return 64
 }

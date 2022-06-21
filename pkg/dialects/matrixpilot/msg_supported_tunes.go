@@ -12,7 +12,7 @@ type MessageSupportedTunes struct {
 	Format TUNE_FORMAT `mavenum:"uint32"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSupportedTunes) GetID() uint32 {
 	return 401
 }

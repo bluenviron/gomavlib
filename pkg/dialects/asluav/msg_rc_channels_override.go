@@ -46,7 +46,7 @@ type MessageRcChannelsOverride struct {
 	Chan18Raw uint16 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageRcChannelsOverride) GetID() uint32 {
 	return 70
 }

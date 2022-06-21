@@ -10,7 +10,7 @@ type MessageArrayTest_5 struct {
 	C2 string `mavlen:"5"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageArrayTest_5) GetID() uint32 {
 	return 17155
 }

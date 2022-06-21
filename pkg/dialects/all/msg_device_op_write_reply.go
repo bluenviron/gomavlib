@@ -10,7 +10,7 @@ type MessageDeviceOpWriteReply struct {
 	Result uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageDeviceOpWriteReply) GetID() uint32 {
 	return 11003
 }

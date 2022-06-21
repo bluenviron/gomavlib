@@ -28,7 +28,7 @@ type MessageRcChannelsScaled struct {
 	Rssi uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageRcChannelsScaled) GetID() uint32 {
 	return 34
 }

@@ -20,7 +20,7 @@ type MessageAltitude struct {
 	BottomClearance float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAltitude) GetID() uint32 {
 	return 141
 }

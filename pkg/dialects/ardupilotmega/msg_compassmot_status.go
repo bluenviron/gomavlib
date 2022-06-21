@@ -18,7 +18,7 @@ type MessageCompassmotStatus struct {
 	Compensationz float32 `mavname:"CompensationZ"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageCompassmotStatus) GetID() uint32 {
 	return 177
 }

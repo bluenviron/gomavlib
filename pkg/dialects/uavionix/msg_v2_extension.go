@@ -16,7 +16,7 @@ type MessageV2Extension struct {
 	Payload [249]uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageV2Extension) GetID() uint32 {
 	return 248
 }

@@ -40,7 +40,7 @@ type MessageSmartBatteryInfo struct {
 	ManufactureDate string `mavext:"true" mavlen:"11"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSmartBatteryInfo) GetID() uint32 {
 	return 370
 }

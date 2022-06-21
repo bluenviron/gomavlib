@@ -42,7 +42,7 @@ type MessageUtmGlobalPosition struct {
 	Flags UTM_DATA_AVAIL_FLAGS `mavenum:"uint8"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageUtmGlobalPosition) GetID() uint32 {
 	return 340
 }

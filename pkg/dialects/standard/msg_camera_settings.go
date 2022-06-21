@@ -14,7 +14,7 @@ type MessageCameraSettings struct {
 	Focuslevel float32 `mavext:"true" mavname:"focusLevel"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageCameraSettings) GetID() uint32 {
 	return 260
 }

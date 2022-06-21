@@ -30,7 +30,7 @@ type MessageOpticalFlowRad struct {
 	Distance float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageOpticalFlowRad) GetID() uint32 {
 	return 106
 }

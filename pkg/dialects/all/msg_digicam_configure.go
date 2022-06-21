@@ -28,7 +28,7 @@ type MessageDigicamConfigure struct {
 	ExtraValue float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageDigicamConfigure) GetID() uint32 {
 	return 154
 }

@@ -12,7 +12,7 @@ type MessageCommandCancel struct {
 	Command MAV_CMD `mavenum:"uint16"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageCommandCancel) GetID() uint32 {
 	return 80
 }

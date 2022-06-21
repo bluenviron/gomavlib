@@ -14,7 +14,7 @@ type MessageAsluavStatus struct {
 	MotorRpm float32 `mavname:"Motor_rpm"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAsluavStatus) GetID() uint32 {
 	return 8006
 }

@@ -22,7 +22,7 @@ type MessageSensorpodStatus struct {
 	FreeSpace uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSensorpodStatus) GetID() uint32 {
 	return 8012
 }

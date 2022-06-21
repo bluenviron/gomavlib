@@ -26,7 +26,7 @@ type MessageAhrs3 struct {
 	V4 float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAhrs3) GetID() uint32 {
 	return 182
 }

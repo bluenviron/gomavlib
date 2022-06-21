@@ -18,7 +18,7 @@ type MessageEscTelemetry_9To_12 struct {
 	Count [4]uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageEscTelemetry_9To_12) GetID() uint32 {
 	return 11032
 }

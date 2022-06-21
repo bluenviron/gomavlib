@@ -16,7 +16,7 @@ type MessageRawPressure struct {
 	Temperature int16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageRawPressure) GetID() uint32 {
 	return 28
 }

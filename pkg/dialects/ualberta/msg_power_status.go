@@ -12,7 +12,7 @@ type MessagePowerStatus struct {
 	Flags MAV_POWER_STATUS `mavenum:"uint16"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessagePowerStatus) GetID() uint32 {
 	return 125
 }

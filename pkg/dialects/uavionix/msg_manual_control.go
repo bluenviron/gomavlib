@@ -26,7 +26,7 @@ type MessageManualControl struct {
 	T int16 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageManualControl) GetID() uint32 {
 	return 69
 }

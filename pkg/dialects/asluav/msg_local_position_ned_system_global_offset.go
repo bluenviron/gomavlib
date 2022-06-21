@@ -20,7 +20,7 @@ type MessageLocalPositionNedSystemGlobalOffset struct {
 	Yaw float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageLocalPositionNedSystemGlobalOffset) GetID() uint32 {
 	return 89
 }

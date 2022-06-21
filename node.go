@@ -50,7 +50,7 @@ import (
 
 	"github.com/aler9/gomavlib/pkg/dialect"
 	"github.com/aler9/gomavlib/pkg/frame"
-	"github.com/aler9/gomavlib/pkg/msg"
+	"github.com/aler9/gomavlib/pkg/message"
 )
 
 const (
@@ -385,17 +385,17 @@ func (n *Node) Events() chan Event {
 }
 
 // WriteMessageTo writes a message to given channel.
-func (n *Node) WriteMessageTo(channel *Channel, m msg.Message) {
+func (n *Node) WriteMessageTo(channel *Channel, m message.Message) {
 	n.writeTo <- writeToReq{channel, m}
 }
 
 // WriteMessageAll writes a message to all channels.
-func (n *Node) WriteMessageAll(m msg.Message) {
+func (n *Node) WriteMessageAll(m message.Message) {
 	n.writeAll <- m
 }
 
 // WriteMessageExcept writes a message to all channels except specified channel.
-func (n *Node) WriteMessageExcept(exceptChannel *Channel, m msg.Message) {
+func (n *Node) WriteMessageExcept(exceptChannel *Channel, m message.Message) {
 	n.writeExcept <- writeExceptReq{exceptChannel, m}
 }
 

@@ -16,7 +16,7 @@ type MessageSensorAirflowAngles struct {
 	SideslipValid uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSensorAirflowAngles) GetID() uint32 {
 	return 8016
 }

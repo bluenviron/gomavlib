@@ -18,7 +18,7 @@ type MessageHeartbeat struct {
 	MavlinkVersion uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageHeartbeat) GetID() uint32 {
 	return 0
 }

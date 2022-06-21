@@ -42,7 +42,7 @@ type MessageMagCalReport struct {
 	ScaleFactor float32 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageMagCalReport) GetID() uint32 {
 	return 192
 }

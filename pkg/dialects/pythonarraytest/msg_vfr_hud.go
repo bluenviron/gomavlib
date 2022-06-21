@@ -18,7 +18,7 @@ type MessageVfrHud struct {
 	Climb float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageVfrHud) GetID() uint32 {
 	return 74
 }

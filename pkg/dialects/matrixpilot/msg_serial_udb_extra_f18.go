@@ -16,7 +16,7 @@ type MessageSerialUdbExtraF18 struct {
 	ReferenceSpeed float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSerialUdbExtraF18) GetID() uint32 {
 	return 184
 }

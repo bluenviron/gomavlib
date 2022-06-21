@@ -13,7 +13,7 @@ type MessageGroupStart struct {
 	TimeUsec uint64
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageGroupStart) GetID() uint32 {
 	return 414
 }

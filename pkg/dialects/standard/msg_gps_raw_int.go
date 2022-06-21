@@ -39,7 +39,7 @@ type MessageGpsRawInt struct {
 	Yaw uint16 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageGpsRawInt) GetID() uint32 {
 	return 24
 }

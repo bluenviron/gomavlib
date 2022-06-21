@@ -34,7 +34,7 @@ type MessageTrajectoryRepresentationWaypoints struct {
 	Command [5]MAV_CMD `mavenum:"uint16"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageTrajectoryRepresentationWaypoints) GetID() uint32 {
 	return 332
 }

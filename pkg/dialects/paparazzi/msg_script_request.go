@@ -12,7 +12,7 @@ type MessageScriptRequest struct {
 	Seq uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageScriptRequest) GetID() uint32 {
 	return 181
 }

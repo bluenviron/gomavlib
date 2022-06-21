@@ -24,7 +24,7 @@ type MessageAttitudeQuaternion struct {
 	ReprOffsetQ [4]float32 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAttitudeQuaternion) GetID() uint32 {
 	return 31
 }

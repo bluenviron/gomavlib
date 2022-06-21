@@ -10,7 +10,7 @@ type MessageParamRequestList struct {
 	TargetComponent uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageParamRequestList) GetID() uint32 {
 	return 21
 }

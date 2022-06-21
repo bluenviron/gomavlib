@@ -34,7 +34,7 @@ type MessageLandingTarget struct {
 	PositionValid uint8 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageLandingTarget) GetID() uint32 {
 	return 149
 }

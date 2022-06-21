@@ -14,7 +14,7 @@ type MessageComponentPrearmStatus struct {
 	FailFlags uint32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageComponentPrearmStatus) GetID() uint32 {
 	return 60025
 }

@@ -10,7 +10,7 @@ type MessageScriptRequestList struct {
 	TargetComponent uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageScriptRequestList) GetID() uint32 {
 	return 182
 }

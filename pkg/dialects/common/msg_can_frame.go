@@ -18,7 +18,7 @@ type MessageCanFrame struct {
 	Data [8]uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageCanFrame) GetID() uint32 {
 	return 386
 }

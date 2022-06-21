@@ -44,7 +44,7 @@ type MessageOpenDroneIdLocation struct {
 	TimestampAccuracy MAV_ODID_TIME_ACC `mavenum:"uint8"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageOpenDroneIdLocation) GetID() uint32 {
 	return 12901
 }

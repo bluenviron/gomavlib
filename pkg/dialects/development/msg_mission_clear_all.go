@@ -12,7 +12,7 @@ type MessageMissionClearAll struct {
 	MissionType MAV_MISSION_TYPE `mavenum:"uint8" mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageMissionClearAll) GetID() uint32 {
 	return 45
 }

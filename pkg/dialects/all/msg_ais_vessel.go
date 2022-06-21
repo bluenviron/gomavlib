@@ -40,7 +40,7 @@ type MessageAisVessel struct {
 	Flags AIS_FLAGS `mavenum:"uint16"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAisVessel) GetID() uint32 {
 	return 301
 }

@@ -34,7 +34,7 @@ type MessageCameraFeedback struct {
 	CompletedCaptures uint16 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageCameraFeedback) GetID() uint32 {
 	return 180
 }

@@ -20,7 +20,7 @@ type MessageEkfStatusReport struct {
 	AirspeedVariance float32 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageEkfStatusReport) GetID() uint32 {
 	return 193
 }

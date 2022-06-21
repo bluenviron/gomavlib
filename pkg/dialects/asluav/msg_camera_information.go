@@ -32,7 +32,7 @@ type MessageCameraInformation struct {
 	CamDefinitionUri string `mavlen:"140"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageCameraInformation) GetID() uint32 {
 	return 259
 }

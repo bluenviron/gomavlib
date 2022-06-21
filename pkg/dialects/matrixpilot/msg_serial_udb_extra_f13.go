@@ -14,7 +14,7 @@ type MessageSerialUdbExtraF13 struct {
 	SueAltOrigin int32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSerialUdbExtraF13) GetID() uint32 {
 	return 177
 }

@@ -14,7 +14,7 @@ type MessageSerialUdbExtraF5 struct {
 	SueRollkd float32 `mavname:"sue_ROLLKD"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSerialUdbExtraF5) GetID() uint32 {
 	return 173
 }

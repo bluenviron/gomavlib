@@ -20,7 +20,7 @@ type MessageAttitude struct {
 	Yawspeed float32
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAttitude) GetID() uint32 {
 	return 30
 }

@@ -16,7 +16,7 @@ type MessageSetMagOffsets struct {
 	MagOfsZ int16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSetMagOffsets) GetID() uint32 {
 	return 151
 }

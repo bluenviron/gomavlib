@@ -40,7 +40,7 @@ type MessageOdometry struct {
 	EstimatorType MAV_ESTIMATOR_TYPE `mavenum:"uint8" mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageOdometry) GetID() uint32 {
 	return 331
 }

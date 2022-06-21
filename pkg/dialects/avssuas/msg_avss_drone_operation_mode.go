@@ -12,7 +12,7 @@ type MessageAvssDroneOperationMode struct {
 	HorseflyOperationMode uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAvssDroneOperationMode) GetID() uint32 {
 	return 60053
 }

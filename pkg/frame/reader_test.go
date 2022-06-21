@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/aler9/gomavlib/pkg/dialect"
-	"github.com/aler9/gomavlib/pkg/msg"
+	"github.com/aler9/gomavlib/pkg/message"
 )
 
 type (
@@ -76,7 +76,7 @@ func (*MessageOpticalFlow) GetID() uint32 {
 }
 
 var testDialectDE = func() *dialect.DecEncoder {
-	d := &dialect.Dialect{3, []msg.Message{ //nolint:govet
+	d := &dialect.Dialect{3, []message.Message{ //nolint:govet
 		&MessageTest5{},
 		&MessageTest6{},
 		&MessageTest8{},
@@ -105,7 +105,7 @@ var casesReadWrite = []struct {
 			SequenceID:  0x01,
 			SystemID:    0x02,
 			ComponentID: 0x03,
-			Message: &msg.MessageRaw{
+			Message: &message.MessageRaw{
 				ID:      4,
 				Content: nil,
 			},
@@ -121,7 +121,7 @@ var casesReadWrite = []struct {
 			SequenceID:  0x27,
 			SystemID:    0x01,
 			ComponentID: 0x02,
-			Message: &msg.MessageRaw{ //nolint:govet
+			Message: &message.MessageRaw{ //nolint:govet
 				8,
 				[]byte("\x10\x10\x10\x10\x10"),
 			},
@@ -155,7 +155,7 @@ var casesReadWrite = []struct {
 			SequenceID:          3,
 			SystemID:            4,
 			ComponentID:         5,
-			Message: &msg.MessageRaw{ //nolint:govet
+			Message: &message.MessageRaw{ //nolint:govet
 				4,
 				nil,
 			},
@@ -173,7 +173,7 @@ var casesReadWrite = []struct {
 			SequenceID:          0x8F,
 			SystemID:            0x01,
 			ComponentID:         0x02,
-			Message: &msg.MessageRaw{ //nolint:govet
+			Message: &message.MessageRaw{ //nolint:govet
 				0x0607,
 				[]byte("\x10\x10\x10\x10\x10"),
 			},

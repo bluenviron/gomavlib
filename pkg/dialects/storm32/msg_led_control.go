@@ -18,7 +18,7 @@ type MessageLedControl struct {
 	CustomBytes [24]uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageLedControl) GetID() uint32 {
 	return 186
 }

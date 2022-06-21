@@ -22,7 +22,7 @@ type MessageAslObctrl struct {
 	ObctrlStatus uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageAslObctrl) GetID() uint32 {
 	return 8008
 }

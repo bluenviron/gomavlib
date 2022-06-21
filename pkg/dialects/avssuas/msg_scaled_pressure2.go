@@ -16,7 +16,7 @@ type MessageScaledPressure2 struct {
 	TemperaturePressDiff int16 `mavext:"true"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageScaledPressure2) GetID() uint32 {
 	return 137
 }

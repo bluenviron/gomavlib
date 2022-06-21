@@ -16,7 +16,7 @@ type MessageMissionChanged struct {
 	MissionType MAV_MISSION_TYPE `mavenum:"uint8"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageMissionChanged) GetID() uint32 {
 	return 52
 }

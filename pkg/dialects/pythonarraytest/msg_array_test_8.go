@@ -12,7 +12,7 @@ type MessageArrayTest_8 struct {
 	ArU16 [2]uint16
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageArrayTest_8) GetID() uint32 {
 	return 17158
 }

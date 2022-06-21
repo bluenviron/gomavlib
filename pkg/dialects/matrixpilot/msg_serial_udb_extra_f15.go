@@ -10,7 +10,7 @@ type MessageSerialUdbExtraF15 struct {
 	SueIdVehicleRegistration [20]uint8 `mavname:"sue_ID_VEHICLE_REGISTRATION"`
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageSerialUdbExtraF15) GetID() uint32 {
 	return 179
 }

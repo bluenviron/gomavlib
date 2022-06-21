@@ -5,7 +5,7 @@ import (
 	"math/rand"
 
 	"github.com/aler9/gomavlib/pkg/frame"
-	"github.com/aler9/gomavlib/pkg/msg"
+	"github.com/aler9/gomavlib/pkg/message"
 )
 
 func randomByte() byte {
@@ -124,7 +124,7 @@ func (ch *Channel) run() {
 
 		for what := range ch.write {
 			switch wh := what.(type) {
-			case msg.Message:
+			case message.Message:
 				ch.writer.WriteMessage(wh)
 
 			case frame.Frame:

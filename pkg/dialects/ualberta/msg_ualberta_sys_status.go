@@ -12,7 +12,7 @@ type MessageUalbertaSysStatus struct {
 	Pilot uint8
 }
 
-// GetID implements the msg.Message interface.
+// GetID implements the message.Message interface.
 func (*MessageUalbertaSysStatus) GetID() uint32 {
 	return 222
 }

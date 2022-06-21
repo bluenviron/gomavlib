@@ -1,8 +1,8 @@
-// Package dialect contains the dialect definition and parser.
+// Package dialect contains the dialect definition and its parser.
 package dialect
 
 import (
-	"github.com/aler9/gomavlib/pkg/msg"
+	"github.com/aler9/gomavlib/pkg/message"
 )
 
 // Dialect is a Mavlink dialect.
@@ -11,5 +11,5 @@ type Dialect struct {
 	Version int
 
 	// Messages contains the messages of the dialect.
-	Messages []msg.Message
+	Messages []message.Message
 }

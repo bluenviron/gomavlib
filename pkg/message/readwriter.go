@@ -84,6 +84,175 @@ func msgGoToDef(in string) string {
 	return strings.ToUpper(in[1:])
 }
 
+func readValue(target reflect.Value, buf []byte, f *decEncoderField) int {
+	if f.isEnum {
+		switch f.ftype {
+		case typeUint8:
+			target.SetUint(uint64(buf[0]))
+			return 1
+
+		case typeInt8:
+			target.SetUint(uint64(buf[0]))
+			return 1
+
+		case typeUint16:
+			target.SetUint(uint64(binary.LittleEndian.Uint16(buf)))
+			return 2
+
+		case typeUint32:
+			target.SetUint(uint64(binary.LittleEndian.Uint32(buf)))
+			return 4
+
+		case typeInt32:
+			target.SetUint(uint64(binary.LittleEndian.Uint32(buf)))
+			return 4
+
+		case typeUint64:
+			target.SetUint(binary.LittleEndian.Uint64(buf))
+			return 8
+
+		default:
+			panic("unexpected type")
+		}
+	}
+
+	switch tt := target.Addr().Interface().(type) {
+	case *string:
+		// find string end or NULL character
+		end := 0
+		for end < int(f.arrayLength) && buf[end] != 0 {
+			end++
+		}
+		*tt = string(buf[:end])
+		return int(f.arrayLength) // return length including zeros
+
+	case *int8:
+		*tt = int8(buf[0])
+		return 1
+
+	case *uint8:
+		*tt = buf[0]
+		return 1
+
+	case *int16:
+		*tt = int16(binary.LittleEndian.Uint16(buf))
+		return 2
+
+	case *uint16:
+		*tt = binary.LittleEndian.Uint16(buf)
+		return 2
+
+	case *int32:
+		*tt = int32(binary.LittleEndian.Uint32(buf))
+		return 4
+
+	case *uint32:
+		*tt = binary.LittleEndian.Uint32(buf)
+		return 4
+
+	case *int64:
+		*tt = int64(binary.LittleEndian.Uint64(buf))
+		return 8
+
+	case *uint64:
+		*tt = binary.LittleEndian.Uint64(buf)
+		return 8
+
+	case *float32:
+		*tt = math.Float32frombits(binary.LittleEndian.Uint32(buf))
+		return 4
+
+	case *float64:
+		*tt = math.Float64frombits(binary.LittleEndian.Uint64(buf))
+		return 8
+
+	default:
+		panic("unexpected type")
+	}
+}
+
+func writeValue(buf []byte, target reflect.Value, f *decEncoderField) int {
+	if f.isEnum {
+		switch f.ftype {
+		case typeUint8:
+			buf[0] = byte(target.Uint())
+			return 1
+
+		case typeInt8:
+			buf[0] = byte(target.Uint())
+			return 1
+
+		case typeUint16:
+			binary.LittleEndian.PutUint16(buf, uint16(target.Uint()))
+			return 2
+
+		case typeUint32:
+			binary.LittleEndian.PutUint32(buf, uint32(target.Uint()))
+			return 4
+
+		case typeInt32:
+			binary.LittleEndian.PutUint32(buf, uint32(target.Uint()))
+			return 4
+
+		case typeUint64:
+			binary.LittleEndian.PutUint64(buf, target.Uint())
+			return 8
+
+		default:
+			panic("unexpected type")
+		}
+	}
+
+	switch tt := target.Addr().Interface().(type) {
+	case *string:
+		copy(buf[:f.arrayLength], *tt)
+		return int(f.arrayLength) // return length including zeros
+
+	case *int8:
+		buf[0] = uint8(*tt)
+		return 1
+
+	case *uint8:
+		buf[0] = *tt
+		return 1
+
+	case *int16:
+		binary.LittleEndian.PutUint16(buf, uint16(*tt))
+		return 2
+
+	case *uint16:
+		binary.LittleEndian.PutUint16(buf, *tt)
+		return 2
+
+	case *int32:
+		binary.LittleEndian.PutUint32(buf, uint32(*tt))
+		return 4
+
+	case *uint32:
+		binary.LittleEndian.PutUint32(buf, *tt)
+		return 4
+
+	case *int64:
+		binary.LittleEndian.PutUint64(buf, uint64(*tt))
+		return 8
+
+	case *uint64:
+		binary.LittleEndian.PutUint64(buf, *tt)
+		return 8
+
+	case *float32:
+		binary.LittleEndian.PutUint32(buf, math.Float32bits(*tt))
+		return 4
+
+	case *float64:
+		binary.LittleEndian.PutUint64(buf, math.Float64bits(*tt))
+		return 8
+
+	default:
+		panic("unexpected type")
+	}
+}
+
 type decEncoderField struct {
 	isEnum      bool
 	ftype       fieldType
@@ -93,8 +262,8 @@ type decEncoderField struct {
 	isExtension bool
 }
 
-// DecEncoder is an object that allows to decode and encode a Message.
-type DecEncoder struct {
+// ReadWriter is a Message Reader and Writer.
+type ReadWriter struct {
 	fields       []*decEncoderField
 	sizeNormal   byte
 	sizeExtended byte
@@ -102,9 +271,9 @@ type DecEncoder struct {
 	crcExtra     byte
 }
 
-// NewDecEncoder allocates a DecEncoder.
-func NewDecEncoder(msg Message) (*DecEncoder, error) {
-	mde := &DecEncoder{}
+// NewReadWriter allocates a ReadWriter.
+func NewReadWriter(msg Message) (*ReadWriter, error) {
+	mde := &ReadWriter{}
 	mde.elemType = reflect.TypeOf(msg).Elem()
 
 	mde.fields = make([]*decEncoderField, mde.elemType.NumField())
@@ -256,13 +425,13 @@ func NewDecEncoder(msg Message) (*DecEncoder, error) {
 	return mde, nil
 }
 
-// CRCExtra returns the message CRC extra.
-func (mde *DecEncoder) CRCExtra() byte {
+// CRCExtra returns the CRC extra of the message.
+func (mde *ReadWriter) CRCExtra() byte {
 	return mde.crcExtra
 }
 
-// Decode decodes a Message.
-func (mde *DecEncoder) Decode(buf []byte, isV2 bool) (Message, error) {
+// Read reads a Message.
+func (mde *ReadWriter) Read(buf []byte, isV2 bool) (Message, error) {
 	rmsg := reflect.New(mde.elemType)
 
 	if isV2 {
@@ -292,12 +461,12 @@ func (mde *DecEncoder) Decode(buf []byte, isV2 bool) (Message, error) {
 		case reflect.Array:
 			length := target.Len()
 			for i := 0; i < length; i++ {
-				n := valueDecode(target.Index(i), buf, f)
+				n := readValue(target.Index(i), buf, f)
 				buf = buf[n:]
 			}
 
 		default:
-			n := valueDecode(target, buf, f)
+			n := readValue(target, buf, f)
 			buf = buf[n:]
 		}
 	}
@@ -305,8 +474,8 @@ func (mde *DecEncoder) Decode(buf []byte, isV2 bool) (Message, error) {
 	return rmsg.Interface().(Message), nil
 }
 
-// Encode encodes a message.
-func (mde *DecEncoder) Encode(msg Message, isV2 bool) ([]byte, error) {
+// Write writes a message.
+func (mde *ReadWriter) Write(msg Message, isV2 bool) ([]byte, error) {
 	var buf []byte
 
 	if isV2 {
@@ -330,12 +499,12 @@ func (mde *DecEncoder) Encode(msg Message, isV2 bool) ([]byte, error) {
 		case reflect.Array:
 			length := target.Len()
 			for i := 0; i < length; i++ {
-				n := valueEncode(buf, target.Index(i), f)
+				n := writeValue(buf, target.Index(i), f)
 				buf = buf[n:]
 			}
 
 		default:
-			n := valueEncode(buf, target, f)
+			n := writeValue(buf, target, f)
 			buf = buf[n:]
 		}
 	}
@@ -354,173 +523,4 @@ func (mde *DecEncoder) Encode(msg Message, isV2 bool) ([]byte, error) {
 	}
 
 	return buf, nil
-}
-
-func valueDecode(target reflect.Value, buf []byte, f *decEncoderField) int {
-	if f.isEnum {
-		switch f.ftype {
-		case typeUint8:
-			target.SetUint(uint64(buf[0]))
-			return 1
-
-		case typeInt8:
-			target.SetUint(uint64(buf[0]))
-			return 1
-
-		case typeUint16:
-			target.SetUint(uint64(binary.LittleEndian.Uint16(buf)))
-			return 2
-
-		case typeUint32:
-			target.SetUint(uint64(binary.LittleEndian.Uint32(buf)))
-			return 4
-
-		case typeInt32:
-			target.SetUint(uint64(binary.LittleEndian.Uint32(buf)))
-			return 4
-
-		case typeUint64:
-			target.SetUint(binary.LittleEndian.Uint64(buf))
-			return 8
-
-		default:
-			panic("unexpected type")
-		}
-	}
-
-	switch tt := target.Addr().Interface().(type) {
-	case *string:
-		// find string end or NULL character
-		end := 0
-		for end < int(f.arrayLength) && buf[end] != 0 {
-			end++
-		}
-		*tt = string(buf[:end])
-		return int(f.arrayLength) // return length including zeros
-
-	case *int8:
-		*tt = int8(buf[0])
-		return 1
-
-	case *uint8:
-		*tt = buf[0]
-		return 1
-
-	case *int16:
-		*tt = int16(binary.LittleEndian.Uint16(buf))
-		return 2
-
-	case *uint16:
-		*tt = binary.LittleEndian.Uint16(buf)
-		return 2
-
-	case *int32:
-		*tt = int32(binary.LittleEndian.Uint32(buf))
-		return 4
-
-	case *uint32:
-		*tt = binary.LittleEndian.Uint32(buf)
-		return 4
-
-	case *int64:
-		*tt = int64(binary.LittleEndian.Uint64(buf))
-		return 8
-
-	case *uint64:
-		*tt = binary.LittleEndian.Uint64(buf)
-		return 8
-
-	case *float32:
-		*tt = math.Float32frombits(binary.LittleEndian.Uint32(buf))
-		return 4
-
-	case *float64:
-		*tt = math.Float64frombits(binary.LittleEndian.Uint64(buf))
-		return 8
-
-	default:
-		panic("unexpected type")
-	}
-}
-
-func valueEncode(buf []byte, target reflect.Value, f *decEncoderField) int {
-	if f.isEnum {
-		switch f.ftype {
-		case typeUint8:
-			buf[0] = byte(target.Uint())
-			return 1
-
-		case typeInt8:
-			buf[0] = byte(target.Uint())
-			return 1
-
-		case typeUint16:
-			binary.LittleEndian.PutUint16(buf, uint16(target.Uint()))
-			return 2
-
-		case typeUint32:
-			binary.LittleEndian.PutUint32(buf, uint32(target.Uint()))
-			return 4
-
-		case typeInt32:
-			binary.LittleEndian.PutUint32(buf, uint32(target.Uint()))
-			return 4
-
-		case typeUint64:
-			binary.LittleEndian.PutUint64(buf, target.Uint())
-			return 8
-
-		default:
-			panic("unexpected type")
-		}
-	}
-
-	switch tt := target.Addr().Interface().(type) {
-	case *string:
-		copy(buf[:f.arrayLength], *tt)
-		return int(f.arrayLength) // return length including zeros
-
-	case *int8:
-		buf[0] = uint8(*tt)
-		return 1
-
-	case *uint8:
-		buf[0] = *tt
-		return 1
-
-	case *int16:
-		binary.LittleEndian.PutUint16(buf, uint16(*tt))
-		return 2
-
-	case *uint16:
-		binary.LittleEndian.PutUint16(buf, *tt)
-		return 2
-
-	case *int32:
-		binary.LittleEndian.PutUint32(buf, uint32(*tt))
-		return 4
-
-	case *uint32:
-		binary.LittleEndian.PutUint32(buf, *tt)
-		return 4
-
-	case *int64:
-		binary.LittleEndian.PutUint64(buf, uint64(*tt))
-		return 8
-
-	case *uint64:
-		binary.LittleEndian.PutUint64(buf, *tt)
-		return 8
-
-	case *float32:
-		binary.LittleEndian.PutUint32(buf, math.Float32bits(*tt))
-		return 4
-
-	case *float64:
-		binary.LittleEndian.PutUint64(buf, math.Float64bits(*tt))
-		return 8
-
-	default:
-		panic("unexpected type")
-	}
 }

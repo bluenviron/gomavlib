@@ -41,7 +41,7 @@ func newNodeHeartbeat(n *Node) *nodeHeartbeat {
 	if msgHeartbeat == nil {
 		return nil
 	}
-	mde, err := message.NewDecEncoder(msgHeartbeat)
+	mde, err := message.NewReadWriter(msgHeartbeat)
 	if err != nil || mde.CRCExtra() != 50 {
 		return nil
 	}

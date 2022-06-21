@@ -6,15 +6,15 @@ import (
 	"github.com/aler9/gomavlib/pkg/message"
 )
 
-// DecEncoder is an object that allows to decode and encode a Dialect.
-type DecEncoder struct {
-	MessageDEs map[uint32]*message.DecEncoder
+// ReadWriter is a Dialect Reader and Writer.
+type ReadWriter struct {
+	MessageDEs map[uint32]*message.ReadWriter
 }
 
-// NewDecEncoder allocates a DecEncoder.
-func NewDecEncoder(d *Dialect) (*DecEncoder, error) {
-	dde := &DecEncoder{
-		MessageDEs: make(map[uint32]*message.DecEncoder),
+// NewReadWriter allocates a ReadWriter.
+func NewReadWriter(d *Dialect) (*ReadWriter, error) {
+	dde := &ReadWriter{
+		MessageDEs: make(map[uint32]*message.ReadWriter),
 	}
 
 	for _, m := range d.Messages {
@@ -22,7 +22,7 @@ func NewDecEncoder(d *Dialect) (*DecEncoder, error) {
 			return nil, fmt.Errorf("duplicate message with id %d", m.GetID())
 		}
 
-		de, err := message.NewDecEncoder(m)
+		de, err := message.NewReadWriter(m)
 		if err != nil {
 			return nil, fmt.Errorf("message %T: %s", m, err)
 		}

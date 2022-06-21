@@ -34,7 +34,7 @@ type WriterConf struct {
 	Writer io.Writer
 
 	// (optional) the dialect which contains the messages that will be written.
-	DialectDE *dialect.DecEncoder
+	DialectDE *dialect.ReadWriter
 
 	// Mavlink version used to encode messages.
 	OutVersion WriterOutVersion
@@ -136,7 +136,7 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 		}
 
 		_, isV2 := fr.(*V2Frame)
-		byt, err := mp.Encode(fr.GetMessage(), isV2)
+		byt, err := mp.Write(fr.GetMessage(), isV2)
 		if err != nil {
 			return err
 		}
@@ -194,7 +194,7 @@ func (w *Writer) WriteFrame(fr Frame) error {
 		}
 
 		_, isV2 := fr.(*V2Frame)
-		byt, err := mp.Encode(m, isV2)
+		byt, err := mp.Write(m, isV2)
 		if err != nil {
 			return err
 		}

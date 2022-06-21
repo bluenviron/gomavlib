@@ -75,7 +75,7 @@ func (*MessageOpticalFlow) GetID() uint32 {
 	return 100
 }
 
-var testDialectDE = func() *dialect.DecEncoder {
+var testDialectDE = func() *dialect.ReadWriter {
 	d := &dialect.Dialect{3, []message.Message{ //nolint:govet
 		&MessageTest5{},
 		&MessageTest6{},
@@ -83,7 +83,7 @@ var testDialectDE = func() *dialect.DecEncoder {
 		&MessageHeartbeat{},
 		&MessageOpticalFlow{},
 	}}
-	de, err := dialect.NewDecEncoder(d)
+	de, err := dialect.NewReadWriter(d)
 	if err != nil {
 		panic(err)
 	}
@@ -92,7 +92,7 @@ var testDialectDE = func() *dialect.DecEncoder {
 
 var casesReadWrite = []struct {
 	name      string
-	dialectDE *dialect.DecEncoder
+	dialectDE *dialect.ReadWriter
 	key       *V2Key
 	frame     Frame
 	raw       []byte

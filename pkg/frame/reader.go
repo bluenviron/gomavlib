@@ -39,7 +39,7 @@ type ReaderConf struct {
 
 	// (optional) the dialect which contains the messages that will be read.
 	// If not provided, messages are decoded into the MessageRaw struct.
-	DialectDE *dialect.DecEncoder
+	DialectDE *dialect.ReadWriter
 
 	// (optional) the secret key used to validate incoming frames.
 	// Non-signed frames are discarded. This feature requires v2 frames.
@@ -124,7 +124,7 @@ func (r *Reader) Read() (Frame, error) {
 			}
 
 			_, isV2 := f.(*V2Frame)
-			msg, err := mp.Decode(f.GetMessage().(*message.MessageRaw).Payload, isV2)
+			msg, err := mp.Read(f.GetMessage().(*message.MessageRaw).Payload, isV2)
 			if err != nil {
 				return nil, newError(err.Error())
 			}

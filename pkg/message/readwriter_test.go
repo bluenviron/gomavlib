@@ -172,7 +172,7 @@ var casesCRC = []struct {
 
 func TestCRC(t *testing.T) {
 	for _, c := range casesCRC {
-		mp, err := NewDecEncoder(c.msg)
+		mp, err := NewReadWriter(c.msg)
 		require.NoError(t, err)
 		require.Equal(t, c.crc, mp.crcExtra)
 	}
@@ -397,24 +397,24 @@ var casesMsgs = []struct {
 	},
 }
 
-func TestDecode(t *testing.T) {
+func TestRead(t *testing.T) {
 	for _, c := range casesMsgs {
 		t.Run(c.name, func(t *testing.T) {
-			mp, err := NewDecEncoder(c.parsed)
+			mp, err := NewReadWriter(c.parsed)
 			require.NoError(t, err)
-			msg, err := mp.Decode(c.raw, c.isV2)
+			msg, err := mp.Read(c.raw, c.isV2)
 			require.NoError(t, err)
 			require.Equal(t, c.parsed, msg)
 		})
 	}
 }
 
-func TestEncode(t *testing.T) {
+func TestWrite(t *testing.T) {
 	for _, c := range casesMsgs {
 		t.Run(c.name, func(t *testing.T) {
-			mp, err := NewDecEncoder(c.parsed)
+			mp, err := NewReadWriter(c.parsed)
 			require.NoError(t, err)
-			byt, err := mp.Encode(c.parsed, c.isV2)
+			byt, err := mp.Write(c.parsed, c.isV2)
 			require.NoError(t, err)
 			require.Equal(t, c.raw, byt)
 		})

@@ -30,7 +30,7 @@ import (
 func TestDialects(t *testing.T) {
 {{- range .Dialects }}
 	func() {
-		_, err := dialect.NewDecEncoder({{ . }}.Dialect)
+		_, err := dialect.NewReadWriter({{ . }}.Dialect)
 		require.NoError(t, err)
 	}()
 {{- end }}

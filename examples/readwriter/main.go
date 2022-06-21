@@ -17,7 +17,7 @@ func main() {
 		[]byte("\xfd\t\x01\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x01\x02\x03\x05\x03\xd9\xd1\x01\x02\x00\x00\x00\x00\x00\x0eG\x04\x0c\xef\x9b"))
 	outBuf := bytes.NewBuffer(nil)
 
-	dialectDE, err := dialect.NewDecEncoder(ardupilotmega.Dialect)
+	dialectDE, err := dialect.NewReadWriter(ardupilotmega.Dialect)
 	if err != nil {
 		panic(err)
 	}

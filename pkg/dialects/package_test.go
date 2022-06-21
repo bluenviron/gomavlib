@@ -28,67 +28,67 @@ import (
 
 func TestDialects(t *testing.T) {
 	func() {
-		_, err := dialect.NewDecEncoder(asluav.Dialect)
+		_, err := dialect.NewReadWriter(asluav.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {
-		_, err := dialect.NewDecEncoder(avssuas.Dialect)
+		_, err := dialect.NewReadWriter(avssuas.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {
-		_, err := dialect.NewDecEncoder(all.Dialect)
+		_, err := dialect.NewReadWriter(all.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {
-		_, err := dialect.NewDecEncoder(ardupilotmega.Dialect)
+		_, err := dialect.NewReadWriter(ardupilotmega.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {
-		_, err := dialect.NewDecEncoder(common.Dialect)
+		_, err := dialect.NewReadWriter(common.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {
-		_, err := dialect.NewDecEncoder(development.Dialect)
+		_, err := dialect.NewReadWriter(development.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {
-		_, err := dialect.NewDecEncoder(icarous.Dialect)
+		_, err := dialect.NewReadWriter(icarous.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {
-		_, err := dialect.NewDecEncoder(matrixpilot.Dialect)
+		_, err := dialect.NewReadWriter(matrixpilot.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {
-		_, err := dialect.NewDecEncoder(minimal.Dialect)
+		_, err := dialect.NewReadWriter(minimal.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {
-		_, err := dialect.NewDecEncoder(paparazzi.Dialect)
+		_, err := dialect.NewReadWriter(paparazzi.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {
-		_, err := dialect.NewDecEncoder(pythonarraytest.Dialect)
+		_, err := dialect.NewReadWriter(pythonarraytest.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {
-		_, err := dialect.NewDecEncoder(standard.Dialect)
+		_, err := dialect.NewReadWriter(standard.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {
-		_, err := dialect.NewDecEncoder(storm32.Dialect)
+		_, err := dialect.NewReadWriter(storm32.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {
-		_, err := dialect.NewDecEncoder(test.Dialect)
+		_, err := dialect.NewReadWriter(test.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {
-		_, err := dialect.NewDecEncoder(uavionix.Dialect)
+		_, err := dialect.NewReadWriter(uavionix.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {
-		_, err := dialect.NewDecEncoder(ualberta.Dialect)
+		_, err := dialect.NewReadWriter(ualberta.Dialect)
 		require.NoError(t, err)
 	}()
 }

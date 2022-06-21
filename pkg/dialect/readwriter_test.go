@@ -28,7 +28,7 @@ func (*MessageHeartbeat) GetID() uint32 {
 	return 0
 }
 
-func TestDecEncoder(t *testing.T) {
-	_, err := NewDecEncoder(&Dialect{3, []message.Message{&MessageHeartbeat{}}})
+func TestReadWriter(t *testing.T) {
+	_, err := NewReadWriter(&Dialect{3, []message.Message{&MessageHeartbeat{}}})
 	require.NoError(t, err)
 }

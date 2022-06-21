@@ -55,7 +55,7 @@ func newNodeStreamRequest(n *Node) *nodeStreamRequest {
 	if msgHeartbeat == nil {
 		return nil
 	}
-	mde, err := message.NewDecEncoder(msgHeartbeat)
+	mde, err := message.NewReadWriter(msgHeartbeat)
 	if err != nil || mde.CRCExtra() != 50 {
 		return nil
 	}
@@ -72,7 +72,7 @@ func newNodeStreamRequest(n *Node) *nodeStreamRequest {
 	if msgRequestDataStream == nil {
 		return nil
 	}
-	mde, err = message.NewDecEncoder(msgRequestDataStream)
+	mde, err = message.NewReadWriter(msgRequestDataStream)
 	if err != nil || mde.CRCExtra() != 148 {
 		return nil
 	}

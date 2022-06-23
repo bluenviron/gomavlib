@@ -49,7 +49,7 @@ type ReaderConf struct {
 // Reader is a Frame reader.
 type Reader struct {
 	conf                 ReaderConf
-	readBuffer           *bufio.Reader
+	br                   *bufio.Reader
 	curReadSignatureTime uint64
 }
 
@@ -60,15 +60,15 @@ func NewReader(conf ReaderConf) (*Reader, error) {
 	}
 
 	return &Reader{
-		conf:       conf,
-		readBuffer: bufio.NewReaderSize(conf.Reader, bufferSize),
+		conf: conf,
+		br:   bufio.NewReaderSize(conf.Reader, bufferSize),
 	}, nil
 }
 
 // Read reads a Frame from the reader.
 // It must not be called by multiple routines in parallel.
 func (r *Reader) Read() (Frame, error) {
-	magicByte, err := r.readBuffer.ReadByte()
+	magicByte, err := r.br.ReadByte()
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func (r *Reader) Read() (Frame, error) {
 		return nil, err
 	}
 
-	err = f.decode(r.readBuffer)
+	err = f.decode(r.br)
 	if err != nil {
 		return nil, newError(err.Error())
 	}

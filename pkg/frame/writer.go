@@ -54,7 +54,7 @@ type WriterConf struct {
 // Writer is a Frame writer.
 type Writer struct {
 	conf               WriterConf
-	writeBuffer        []byte
+	bw                 []byte
 	curWriteSequenceID byte
 }
 
@@ -78,8 +78,8 @@ func NewWriter(conf WriterConf) (*Writer, error) {
 	}
 
 	return &Writer{
-		conf:        conf,
-		writeBuffer: make([]byte, 0, bufferSize),
+		conf: conf,
+		bw:   make([]byte, 0, bufferSize),
 	}, nil
 }
 
@@ -204,7 +204,7 @@ func (w *Writer) WriteFrame(fr Frame) error {
 		m = &message.MessageRaw{m.GetID(), byt} //nolint:govet
 	}
 
-	buf, err := fr.encode(w.writeBuffer, m.(*message.MessageRaw).Payload)
+	buf, err := fr.encode(w.bw, m.(*message.MessageRaw).Payload)
 	if err != nil {
 		return err
 	}

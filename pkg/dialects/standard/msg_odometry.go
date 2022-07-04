@@ -38,6 +38,8 @@ type MessageOdometry struct {
 	ResetCounter uint8 `mavext:"true"`
 	// Type of estimator that is providing the odometry.
 	EstimatorType MAV_ESTIMATOR_TYPE `mavenum:"uint8" mavext:"true"`
+	// Optional odometry quality metric as a percentage. -1 = odometry has failed, 0 = unknown/unset quality, 1 = worst quality, 100 = best quality
+	Quality int8 `mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

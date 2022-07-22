@@ -54,7 +54,7 @@ type MessageSerialUdbExtraF2A struct {
 	SueMagfieldearth1 int16 `mavname:"sue_magFieldEarth1"`
 	// Serial UDB Extra Magnetic Field Earth 2
 	SueMagfieldearth2 int16 `mavname:"sue_magFieldEarth2"`
-	// Serial UDB Extra Number of Sattelites in View
+	// Serial UDB Extra Number of Satellites in View
 	SueSvs int16
 	// Serial UDB Extra GPS Horizontal Dilution of Precision
 	SueHdop int16

@@ -12,7 +12,7 @@ type MAV_QSHOT_MODE uint32
 const (
 	// Undefined shot mode. Can be used to determine if qshots should be used or not.
 	MAV_QSHOT_MODE_UNDEFINED MAV_QSHOT_MODE = 0
-	// Start normal gimbal operation. Is usally used to return back from a shot.
+	// Start normal gimbal operation. Is usually used to return back from a shot.
 	MAV_QSHOT_MODE_DEFAULT MAV_QSHOT_MODE = 1
 	// Load and keep safe gimbal position and stop stabilization.
 	MAV_QSHOT_MODE_GIMBAL_RETRACT MAV_QSHOT_MODE = 2

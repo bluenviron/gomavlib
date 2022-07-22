@@ -26,7 +26,7 @@ const (
 	MAV_STORM32_GIMBAL_DEVICE_FLAGS_YAW_ABSOLUTE MAV_STORM32_GIMBAL_DEVICE_FLAGS = 512
 	// RC control. The RC input signal fed to the gimbal device exclusively controls the gimbal's orientation. Overrides RC_MIXED flag if that is also set.
 	MAV_STORM32_GIMBAL_DEVICE_FLAGS_RC_EXCLUSIVE MAV_STORM32_GIMBAL_DEVICE_FLAGS = 1024
-	// RC control. The RC input signal fed to the gimbal device is mixed into the gimbal's orientation. Is overriden by RC_EXCLUSIVE flag if that is also set.
+	// RC control. The RC input signal fed to the gimbal device is mixed into the gimbal's orientation. Is overridden by RC_EXCLUSIVE flag if that is also set.
 	MAV_STORM32_GIMBAL_DEVICE_FLAGS_RC_MIXED MAV_STORM32_GIMBAL_DEVICE_FLAGS = 2048
 	// UINT16_MAX = ignore.
 	MAV_STORM32_GIMBAL_DEVICE_FLAGS_NONE MAV_STORM32_GIMBAL_DEVICE_FLAGS = 65535

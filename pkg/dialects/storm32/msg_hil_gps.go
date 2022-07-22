@@ -3,7 +3,7 @@
 package storm32
 
 // The global position, as returned by the Global Positioning System (GPS). This is
-// NOT the global position estimate of the sytem, but rather a RAW sensor value. See message GLOBAL_POSITION_INT for the global position estimate.
+// NOT the global position estimate of the system, but rather a RAW sensor value. See message GLOBAL_POSITION_INT for the global position estimate.
 type MessageHilGps struct {
 	// Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.
 	TimeUsec uint64

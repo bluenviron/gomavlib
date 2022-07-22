@@ -2,7 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package matrixpilot
 
-// Reqest reading of flexifunction data
+// Request reading of flexifunction data
 type MessageFlexifunctionReadReq struct {
 	// System ID
 	TargetSystem uint8

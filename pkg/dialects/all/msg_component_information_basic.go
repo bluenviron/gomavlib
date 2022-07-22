@@ -10,7 +10,7 @@ type MessageComponentInformationBasic struct {
 	VendorName [32]uint8
 	// Name of the component model
 	ModelName [32]uint8
-	// Sofware version. The version format can be custom, recommended is SEMVER 'major.minor.patch'.
+	// Software version. The version format can be custom, recommended is SEMVER 'major.minor.patch'.
 	SoftwareVersion string `mavlen:"24"`
 	// Hardware version. The version format can be custom, recommended is SEMVER 'major.minor.patch'.
 	HardwareVersion string `mavlen:"24"`

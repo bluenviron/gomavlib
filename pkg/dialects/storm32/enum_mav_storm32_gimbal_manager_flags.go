@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-// Flags for gimbal manager operation. Used for setting and reporting, unless specified otherwise. If a setting is accepted by the gimbal manger, is reported in the STORM32_GIMBAL_MANAGER_STATUS message.
+// Flags for gimbal manager operation. Used for setting and reporting, unless specified otherwise. If a setting is accepted by the gimbal manager, is reported in the STORM32_GIMBAL_MANAGER_STATUS message.
 type MAV_STORM32_GIMBAL_MANAGER_FLAGS uint32
 
 const (

@@ -16,7 +16,7 @@ const (
 	CELLULAR_NETWORK_FAILED_REASON_UNKNOWN CELLULAR_NETWORK_FAILED_REASON = 1
 	// SIM is required for the modem but missing
 	CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING CELLULAR_NETWORK_FAILED_REASON = 2
-	// SIM is available, but not usuable for connection
+	// SIM is available, but not usable for connection
 	CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR CELLULAR_NETWORK_FAILED_REASON = 3
 )
 

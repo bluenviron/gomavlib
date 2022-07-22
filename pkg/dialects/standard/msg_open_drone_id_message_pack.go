@@ -10,7 +10,7 @@ type MessageOpenDroneIdMessagePack struct {
 	TargetComponent uint8
 	// Only used for drone ID data received from other UAs. See detailed description at https://mavlink.io/en/services/opendroneid.html.
 	IdOrMac [20]uint8
-	// This field must currently always be equal to 25 (bytes), since all encoded OpenDroneID messages are specificed to have this length.
+	// This field must currently always be equal to 25 (bytes), since all encoded OpenDroneID messages are specified to have this length.
 	SingleMessageSize uint8
 	// Number of encoded messages in the pack (not the number of bytes). Allowed range is 1 - 9.
 	MsgPackSize uint8

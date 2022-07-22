@@ -10,7 +10,7 @@ type MessageMissionChanged struct {
 	EndIndex int16
 	// System ID of the author of the new mission.
 	OriginSysid uint8
-	// Compnent ID of the author of the new mission.
+	// Component ID of the author of the new mission.
 	OriginCompid MAV_COMPONENT `mavenum:"uint8"`
 	// Mission type.
 	MissionType MAV_MISSION_TYPE `mavenum:"uint8"`

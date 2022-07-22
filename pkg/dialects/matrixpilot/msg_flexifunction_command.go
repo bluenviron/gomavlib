@@ -2,7 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package matrixpilot
 
-// Acknowldge sucess or failure of a flexifunction command
+// Acknowldge success or failure of a flexifunction command
 type MessageFlexifunctionCommand struct {
 	// System ID
 	TargetSystem uint8

@@ -30,7 +30,7 @@ const (
 	MAV_WINCH_STATUS_RETRACTING MAV_WINCH_STATUS_FLAG = 256
 	// Winch is redelivering the payload. This is a failover state if the line tension goes above a threshold during RETRACTING.
 	MAV_WINCH_STATUS_REDELIVER MAV_WINCH_STATUS_FLAG = 512
-	// Winch is abandoning the line and possibly payload. Winch unspools the entire calculated line length. This is a failover state from REDELIVER if the number of attemps exceeds a threshold.
+	// Winch is abandoning the line and possibly payload. Winch unspools the entire calculated line length. This is a failover state from REDELIVER if the number of attempts exceeds a threshold.
 	MAV_WINCH_STATUS_ABANDON_LINE MAV_WINCH_STATUS_FLAG = 1024
 )
 

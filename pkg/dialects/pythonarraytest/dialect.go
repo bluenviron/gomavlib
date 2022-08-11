@@ -234,6 +234,7 @@ var dial = &dialect.Dialect{
 		&MessageOpenDroneIdSystem{},
 		&MessageOpenDroneIdOperatorId{},
 		&MessageOpenDroneIdMessagePack{},
+		&MessageOpenDroneIdArmStatus{},
 		&MessageHygrometerSensor{},
 		// python_array_test.xml
 		&MessageArrayTest_0{},

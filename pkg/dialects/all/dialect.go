@@ -331,7 +331,6 @@ var dial = &dialect.Dialect{
 		// standard.xml
 		// development.xml
 		&MessageParamAckTransaction{},
-		&MessageMissionChanged{},
 		&MessageMissionChecksum{},
 		&MessageAirspeed{},
 		&MessageWifiNetworkInfo{},

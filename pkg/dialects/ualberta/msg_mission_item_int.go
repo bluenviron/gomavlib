@@ -17,7 +17,7 @@ type MessageMissionItemInt struct {
 	Command MAV_CMD `mavenum:"uint16"`
 	// false:0, true:1
 	Current uint8
-	// Autocontinue to next waypoint
+	// Autocontinue to next waypoint. 0: false, 1: true. Set false to pause mission after the item completes.
 	Autocontinue uint8
 	// PARAM1, see MAV_CMD enum
 	Param1 float32

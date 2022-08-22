@@ -23,11 +23,10 @@ func uint24Decode(in []byte) uint32 {
 	return uint32(in[2])<<16 | uint32(in[1])<<8 | uint32(in[0])
 }
 
-func uint24Encode(buf []byte, in uint32) []byte {
+func uint24Encode(buf []byte, in uint32) {
 	buf[0] = byte(in)
 	buf[1] = byte(in >> 8)
 	buf[2] = byte(in >> 16)
-	return buf[:3]
 }
 
 func uint48Decode(in []byte) uint64 {
@@ -35,14 +34,13 @@ func uint48Decode(in []byte) uint64 {
 		uint64(in[2])<<16 | uint64(in[1])<<8 | uint64(in[0])
 }
 
-func uint48Encode(buf []byte, in uint64) []byte {
+func uint48Encode(buf []byte, in uint64) {
 	buf[0] = byte(in)
 	buf[1] = byte(in >> 8)
 	buf[2] = byte(in >> 16)
 	buf[3] = byte(in >> 24)
 	buf[4] = byte(in >> 32)
 	buf[5] = byte(in >> 40)
-	return buf[:6]
 }
 
 // V2Key is a key able to sign and validate V2 frames.
@@ -216,7 +214,8 @@ func (f *V2Frame) genChecksum(crcExtra byte) uint16 {
 	h.Write([]byte{f.SequenceID})
 	h.Write([]byte{f.SystemID})
 	h.Write([]byte{f.ComponentID})
-	h.Write(uint24Encode(buf, msg.ID))
+	uint24Encode(buf, msg.ID)
+	h.Write(buf)
 	h.Write(msg.Payload)
 
 	h.Write([]byte{crcExtra})
@@ -240,12 +239,14 @@ func (f *V2Frame) genSignature(key *V2Key) *V2Signature {
 	h.Write([]byte{f.SequenceID})
 	h.Write([]byte{f.SystemID})
 	h.Write([]byte{f.ComponentID})
-	h.Write(uint24Encode(buf, msg.GetID()))
+	uint24Encode(buf, msg.GetID())
+	h.Write(buf[:3])
 	h.Write(msg.Payload)
 	binary.LittleEndian.PutUint16(buf, f.Checksum)
 	h.Write(buf[:2])
 	h.Write([]byte{f.SignatureLinkID})
-	h.Write(uint48Encode(buf, f.SignatureTimestamp))
+	uint48Encode(buf, f.SignatureTimestamp)
+	h.Write(buf)
 
 	sig := new(V2Signature)
 	copy(sig[:], h.Sum(nil)[:6])

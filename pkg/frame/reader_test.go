@@ -272,6 +272,11 @@ var casesReadWrite = []struct {
 	},
 }
 
+func TestReaderNewErrors(t *testing.T) {
+	_, err := NewReader(ReaderConf{})
+	require.EqualError(t, err, "Reader not provided")
+}
+
 func TestReader(t *testing.T) {
 	for _, ca := range casesReadWrite {
 		t.Run(ca.name, func(t *testing.T) {
@@ -371,4 +376,62 @@ func TestReaderErrors(t *testing.T) {
 			require.EqualError(t, err, ca.err)
 		})
 	}
+}
+
+func TestReaderErrorSignatureTimestamp(t *testing.T) {
+	var buf bytes.Buffer
+
+	msgByts := []byte{4, 0, 0, 0, 1, 2, 3, 5, 3}
+
+	f := &V2Frame{
+		IncompatibilityFlag: 0x01,
+		CompatibilityFlag:   0x00,
+		SequenceID:          0x00,
+		SystemID:            0x00,
+		ComponentID:         0x00,
+		Message: &message.MessageRaw{
+			ID:      0,
+			Payload: msgByts,
+		},
+		Checksum:           0xd1d9,
+		SignatureLinkID:    1,
+		SignatureTimestamp: 20000000,
+	}
+	f.Signature = f.genSignature(NewV2Key(bytes.Repeat([]byte("\x4F"), 32)))
+	buf2 := make([]byte, 1024)
+	n, err := f.encodeTo(buf2, msgByts)
+	require.NoError(t, err)
+	buf.Write(buf2[:n])
+
+	f = &V2Frame{
+		IncompatibilityFlag: 0x01,
+		CompatibilityFlag:   0x00,
+		SequenceID:          0x00,
+		SystemID:            0x00,
+		ComponentID:         0x00,
+		Message: &message.MessageRaw{
+			ID:      0,
+			Payload: msgByts,
+		},
+		Checksum:           0xd1d9,
+		SignatureLinkID:    1,
+		SignatureTimestamp: 2,
+	}
+	f.Signature = f.genSignature(NewV2Key(bytes.Repeat([]byte("\x4F"), 32)))
+	buf2 = make([]byte, 1024)
+	n, err = f.encodeTo(buf2, msgByts)
+	require.NoError(t, err)
+	buf.Write(buf2[:n])
+
+	reader, err := NewReader(ReaderConf{
+		Reader: &buf,
+		InKey:  NewV2Key(bytes.Repeat([]byte("\x4F"), 32)),
+	})
+	require.NoError(t, err)
+
+	_, err = reader.Read()
+	require.NoError(t, err)
+
+	_, err = reader.Read()
+	require.EqualError(t, err, "signature timestamp is too old")
 }

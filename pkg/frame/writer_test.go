@@ -13,7 +13,36 @@ import (
 	"github.com/aler9/gomavlib/pkg/message"
 )
 
-func TestWriterWrite(t *testing.T) {
+func TestWriterNewErrors(t *testing.T) {
+	_, err := NewWriter(WriterConf{
+		OutVersion:  V2,
+		OutSystemID: 1,
+	})
+	require.EqualError(t, err, "Writer not provided")
+
+	var buf bytes.Buffer
+
+	_, err = NewWriter(WriterConf{
+		Writer:      &buf,
+		OutSystemID: 1,
+	})
+	require.EqualError(t, err, "OutVersion not provided")
+
+	_, err = NewWriter(WriterConf{
+		Writer:     &buf,
+		OutVersion: V2,
+	})
+	require.EqualError(t, err, "OutSystemID must be greater than one")
+
+	_, err = NewWriter(WriterConf{
+		Writer:     &buf,
+		OutVersion: V1,
+		OutKey:     NewV2Key(bytes.Repeat([]byte("\x4F"), 32)),
+	})
+	require.EqualError(t, err, "OutSystemID must be greater than one")
+}
+
+func TestWriterWriteFrame(t *testing.T) {
 	for _, ca := range casesReadWrite {
 		t.Run(ca.name, func(t *testing.T) {
 			var buf bytes.Buffer
@@ -32,7 +61,7 @@ func TestWriterWrite(t *testing.T) {
 	}
 }
 
-func TestWriterWriteErrors(t *testing.T) {
+func TestWriterWriteFrameErrors(t *testing.T) {
 	for _, ca := range []struct {
 		name      string
 		dialectRW *dialect.ReadWriter
@@ -64,7 +93,7 @@ func TestWriterWriteErrors(t *testing.T) {
 				},
 				Checksum: 0x66e5,
 			},
-			"message cannot be encoded since dialect is nil",
+			"dialect is nil",
 		},
 		{
 			"not in dialect",
@@ -76,10 +105,10 @@ func TestWriterWriteErrors(t *testing.T) {
 				Message:     &MessageTest8{15, 7},
 				Checksum:    0x66e5,
 			},
-			"message cannot be encoded since it is not in the dialect",
+			"message is not in the dialect",
 		},
 		{
-			"encode error",
+			"frame encode error",
 			testDialectRW,
 			&V1Frame{
 				SequenceID:  0x27,
@@ -164,6 +193,42 @@ func TestWriterWriteMessage(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, c.raw, buf.Bytes())
 			buf.Next(len(c.raw))
+		})
+	}
+}
+
+func TestWriterWriteMessageErrors(t *testing.T) {
+	for _, ca := range []struct {
+		name      string
+		dialectRW *dialect.ReadWriter
+		message   message.Message
+		err       string
+	}{
+		{
+			"nil message",
+			nil,
+			nil,
+			"message is nil",
+		},
+		{
+			"nil dialect",
+			nil,
+			&MessageTest8{15, 7},
+			"dialect is nil",
+		},
+	} {
+		t.Run(ca.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			writer, err := NewWriter(WriterConf{
+				Writer:      &buf,
+				OutVersion:  V2,
+				OutSystemID: 1,
+				DialectRW:   ca.dialectRW,
+			})
+			require.NoError(t, err)
+
+			err = writer.WriteMessage(ca.message)
+			require.EqualError(t, err, ca.err)
 		})
 	}
 }

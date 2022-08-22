@@ -9,25 +9,6 @@ import (
 	"github.com/aler9/gomavlib/pkg/message"
 )
 
-// WriterOutVersion is a Mavlink version.
-type WriterOutVersion int
-
-const (
-	// V1 is Mavlink 1.0
-	V1 WriterOutVersion = 1
-
-	// V2 is Mavlink 2.0
-	V2 WriterOutVersion = 2
-)
-
-// String implements fmt.Stringer.
-func (v WriterOutVersion) String() string {
-	if v == V1 {
-		return "V1"
-	}
-	return "V2"
-}
-
 // WriterConf is the configuration of a Writer.
 type WriterConf struct {
 	// the underlying bytes writer.
@@ -68,7 +49,7 @@ func NewWriter(conf WriterConf) (*Writer, error) {
 		return nil, fmt.Errorf("OutVersion not provided")
 	}
 	if conf.OutSystemID < 1 {
-		return nil, fmt.Errorf("SystemID must be >= 1")
+		return nil, fmt.Errorf("OutSystemID must be greater than one")
 	}
 	if conf.OutComponentID < 1 {
 		conf.OutComponentID = 1
@@ -127,23 +108,20 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 	// encode message if it is not already encoded
 	if _, ok := fr.GetMessage().(*message.MessageRaw); !ok {
 		if w.conf.DialectRW == nil {
-			return fmt.Errorf("message cannot be encoded since dialect is nil")
+			return fmt.Errorf("dialect is nil")
 		}
 
 		mp := w.conf.DialectRW.GetMessage(fr.GetMessage().GetID())
 		if mp == nil {
-			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
+			return fmt.Errorf("message is not in the dialect")
 		}
 
 		_, isV2 := fr.(*V2Frame)
-		byt, err := mp.Write(fr.GetMessage(), isV2)
-		if err != nil {
-			return err
-		}
+		byts := mp.Write(fr.GetMessage(), isV2)
 
 		msgRaw := &message.MessageRaw{
 			ID:      fr.GetMessage().GetID(),
-			Payload: byt,
+			Payload: byts,
 		}
 		switch ff := fr.(type) {
 		case *V1Frame:
@@ -185,23 +163,23 @@ func (w *Writer) WriteFrame(fr Frame) error {
 	// encode message if it is not already encoded
 	if _, ok := m.(*message.MessageRaw); !ok {
 		if w.conf.DialectRW == nil {
-			return fmt.Errorf("message cannot be encoded since dialect is nil")
+			return fmt.Errorf("dialect is nil")
 		}
 
 		mp := w.conf.DialectRW.GetMessage(m.GetID())
 		if mp == nil {
-			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
+			return fmt.Errorf("message is not in the dialect")
 		}
 
 		_, isV2 := fr.(*V2Frame)
-		byt, err := mp.Write(m, isV2)
-		if err != nil {
-			return err
-		}
+		byts := mp.Write(m, isV2)
 
 		// do not touch Message
 		// in such way that the frame can be encoded by other parsers in parallel
-		m = &message.MessageRaw{m.GetID(), byt} //nolint:govet
+		m = &message.MessageRaw{
+			ID:      m.GetID(),
+			Payload: byts,
+		}
 	}
 
 	n, err := fr.encodeTo(w.bw, m.(*message.MessageRaw).Payload)

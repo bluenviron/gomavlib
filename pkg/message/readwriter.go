@@ -110,9 +110,6 @@ func readValue(target reflect.Value, buf []byte, f *decEncoderField) int {
 		case typeUint64:
 			target.SetUint(binary.LittleEndian.Uint64(buf))
 			return 8
-
-		default:
-			panic("unexpected type")
 		}
 	}
 
@@ -165,10 +162,9 @@ func readValue(target reflect.Value, buf []byte, f *decEncoderField) int {
 	case *float64:
 		*tt = math.Float64frombits(binary.LittleEndian.Uint64(buf))
 		return 8
-
-	default:
-		panic("unexpected type")
 	}
+
+	return 0
 }
 
 func writeValue(buf []byte, target reflect.Value, f *decEncoderField) int {
@@ -197,9 +193,6 @@ func writeValue(buf []byte, target reflect.Value, f *decEncoderField) int {
 		case typeUint64:
 			binary.LittleEndian.PutUint64(buf, target.Uint())
 			return 8
-
-		default:
-			panic("unexpected type")
 		}
 	}
 
@@ -247,10 +240,9 @@ func writeValue(buf []byte, target reflect.Value, f *decEncoderField) int {
 	case *float64:
 		binary.LittleEndian.PutUint64(buf, math.Float64bits(*tt))
 		return 8
-
-	default:
-		panic("unexpected type")
 	}
+
+	return 0
 }
 
 type decEncoderField struct {
@@ -300,22 +292,16 @@ func NewReadWriter(msg Message) (*ReadWriter, error) {
 		var dialectType fieldType
 
 		// enum
-		if field.Tag.Get("mavenum") != "" {
+		if tagEnum := field.Tag.Get("mavenum"); tagEnum != "" {
 			isEnum = true
 
 			if goType.Kind() != reflect.Uint32 {
 				return nil, fmt.Errorf("an enum must be an uint32")
 			}
 
-			tagEnum := field.Tag.Get("mavenum")
-
-			if len(tagEnum) == 0 {
-				return nil, fmt.Errorf("enum but tag not specified")
-			}
-
 			dialectType = fieldTypeFromGo[tagEnum]
 			if dialectType == 0 {
-				return nil, fmt.Errorf("invalid go type: %v", tagEnum)
+				return nil, fmt.Errorf("unsupported Go type: %v", tagEnum)
 			}
 
 			switch dialectType {
@@ -333,7 +319,7 @@ func NewReadWriter(msg Message) (*ReadWriter, error) {
 		} else {
 			dialectType = fieldTypeFromGo[goType.Name()]
 			if dialectType == 0 {
-				return nil, fmt.Errorf("invalid go type: %v", goType.Name())
+				return nil, fmt.Errorf("unsupported Go type: %v", goType.Name())
 			}
 
 			// string or char
@@ -474,16 +460,16 @@ func (mde *ReadWriter) Read(buf []byte, isV2 bool) (Message, error) {
 	return rmsg.Interface().(Message), nil
 }
 
-// Write writes a message.
-func (mde *ReadWriter) Write(msg Message, isV2 bool) ([]byte, error) {
-	var buf []byte
-
+func (mde *ReadWriter) size(isV2 bool) uint8 {
 	if isV2 {
-		buf = make([]byte, mde.sizeExtended)
-	} else {
-		buf = make([]byte, mde.sizeNormal)
+		return mde.sizeExtended
 	}
+	return mde.sizeNormal
+}
 
+// Write writes a message.
+func (mde *ReadWriter) Write(msg Message, isV2 bool) []byte {
+	buf := make([]byte, mde.size(isV2))
 	start := buf
 
 	// encode field by field
@@ -522,5 +508,5 @@ func (mde *ReadWriter) Write(msg Message, isV2 bool) ([]byte, error) {
 		buf = buf[:end]
 	}
 
-	return buf, nil
+	return buf
 }

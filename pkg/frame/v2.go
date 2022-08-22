@@ -223,7 +223,7 @@ func (f V2Frame) genChecksum(crcExtra byte) uint16 {
 	return h.Sum16()
 }
 
-func (f *V2Frame) genSignature(key *V2Key) *V2Signature {
+func (f V2Frame) genSignature(key *V2Key) *V2Signature {
 	msg := f.GetMessage().(*message.MessageRaw)
 	h := sha256.New()
 

@@ -16,6 +16,8 @@ type (
 	MAV_CMD               uint32 //nolint:revive
 )
 
+type MYENUM uint32
+
 type MessageAllTypes struct {
 	A uint8
 	B int8
@@ -24,9 +26,16 @@ type MessageAllTypes struct {
 	E uint32
 	F int32
 	G uint64
-	H float32
-	I float64
-	J string `mavlen:"30"`
+	H int64
+	I float32
+	J float64
+	K string `mavlen:"30"`
+	L MYENUM `mavenum:"uint8"`
+	M MYENUM `mavenum:"int8"`
+	N MYENUM `mavenum:"uint16"`
+	P MYENUM `mavenum:"uint32"`
+	Q MYENUM `mavenum:"int32"`
+	R MYENUM `mavenum:"uint64"`
 }
 
 func (*MessageAllTypes) GetID() uint32 {
@@ -191,7 +200,7 @@ func TestCRC(t *testing.T) {
 	for _, c := range casesCRC {
 		mp, err := NewReadWriter(c.msg)
 		require.NoError(t, err)
-		require.Equal(t, c.crc, mp.crcExtra)
+		require.Equal(t, c.crc, mp.CRCExtra())
 	}
 }
 
@@ -214,17 +223,28 @@ var casesReadWriter = []struct {
 			G: 8654,
 			H: 6753,
 			I: 5764,
-			J: "teststring",
+			J: 3423,
+			K: "teststring",
+			L: 232,
+			M: 34,
+			N: 1422,
+			P: 1233,
+			Q: 2343,
+			R: 1232,
 		},
 		[]byte{
 			0xce, 0x21, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-			0x0, 0x0, 0x0, 0x0, 0x0, 0x84, 0xb6, 0x40,
+			0x61, 0x1a, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+			0x0, 0x0, 0x0, 0x0, 0x0, 0xbe, 0xaa, 0x40,
+			0xd0, 0x4, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
 			0xcb, 0x14, 0x0, 0x0, 0x33, 0x1f, 0x0, 0x0,
-			0x0, 0x8, 0xd3, 0x45, 0x3f, 0x5, 0x14, 0x16,
-			0x7f, 0xf4, 0x74, 0x65, 0x73, 0x74, 0x73, 0x74,
-			0x72, 0x69, 0x6e, 0x67, 0x0, 0x0, 0x0, 0x0,
+			0x0, 0x20, 0xb4, 0x45, 0xd1, 0x4, 0x0, 0x0,
+			0x27, 0x9, 0x0, 0x0, 0x3f, 0x5, 0x14, 0x16,
+			0x8e, 0x5, 0x7f, 0xf4, 0x74, 0x65, 0x73, 0x74,
+			0x73, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x0, 0x0,
 			0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
 			0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+			0x0, 0x0, 0xe8, 0x22,
 		},
 	},
 	{
@@ -393,6 +413,67 @@ var casesReadWriter = []struct {
 	},
 }
 
+type Invalid struct{}
+
+func (*Invalid) GetID() uint32 {
+	return 0
+}
+
+type MYENUM2 int8
+
+type MessageInvalidEnum struct {
+	MyEnum MYENUM2 `mavenum:"int8"`
+}
+
+func (*MessageInvalidEnum) GetID() uint32 {
+	return 0
+}
+
+type MYENUM3 uint32
+
+type MessageInvalidEnum2 struct {
+	MyEnum MYENUM3 `mavenum:"invalid"`
+}
+
+func (*MessageInvalidEnum2) GetID() uint32 {
+	return 0
+}
+
+type MYENUM4 uint32
+
+type MessageInvalidEnum3 struct {
+	MyEnum MYENUM4 `mavenum:"int64"`
+}
+
+func (*MessageInvalidEnum3) GetID() uint32 {
+	return 0
+}
+
+type MessageInvalid2 struct {
+	Str string `mavlen:"invalid"`
+}
+
+func (*MessageInvalid2) GetID() uint32 {
+	return 0
+}
+
+func TestNewReadWriterErrors(t *testing.T) {
+	_, err := NewReadWriter(&Invalid{})
+	require.EqualError(t, err, "struct name must begin with 'Message'")
+
+	_, err = NewReadWriter(&MessageInvalidEnum{})
+	require.EqualError(t, err, "an enum must be an uint32")
+
+	_, err = NewReadWriter(&MessageInvalidEnum2{})
+	require.EqualError(t, err, "unsupported Go type: invalid")
+
+	_, err = NewReadWriter(&MessageInvalidEnum3{})
+	require.EqualError(t, err, "type 'int64' cannot be used as enum")
+
+	_, err = NewReadWriter(&MessageInvalid2{})
+	require.EqualError(t, err, "string has invalid length: invalid")
+}
+
 func TestRead(t *testing.T) {
 	for _, c := range casesReadWriter {
 		t.Run(c.name, func(t *testing.T) {
@@ -410,9 +491,8 @@ func TestWrite(t *testing.T) {
 		t.Run(c.name, func(t *testing.T) {
 			mp, err := NewReadWriter(c.parsed)
 			require.NoError(t, err)
-			byt, err := mp.Write(c.parsed, c.isV2)
-			require.NoError(t, err)
-			require.Equal(t, c.raw, byt)
+			byts := mp.Write(c.parsed, c.isV2)
+			require.Equal(t, c.raw, byts)
 		})
 	}
 }

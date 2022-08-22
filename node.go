@@ -189,7 +189,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 		return nil, fmt.Errorf("OutVersion not provided")
 	}
 	if conf.OutSystemID < 1 {
-		return nil, fmt.Errorf("SystemID must be >= 1")
+		return nil, fmt.Errorf("OutSystemID must be greater than one")
 	}
 	if conf.OutComponentID < 1 {
 		conf.OutComponentID = 1

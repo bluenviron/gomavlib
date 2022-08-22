@@ -35,8 +35,14 @@ func (*Invalid) GetID() uint32 {
 }
 
 func TestReadWriter(t *testing.T) {
-	_, err := NewReadWriter(&Dialect{3, []message.Message{&MessageHeartbeat{}}})
+	rw, err := NewReadWriter(&Dialect{3, []message.Message{&MessageHeartbeat{}}})
 	require.NoError(t, err)
+
+	mrw := rw.GetMessage(0)
+	require.NotNil(t, mrw)
+
+	mrw = rw.GetMessage(1)
+	require.Nil(t, mrw)
 }
 
 func TestReadWriterErrors(t *testing.T) {

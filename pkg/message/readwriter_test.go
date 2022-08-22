@@ -16,6 +16,23 @@ type (
 	MAV_CMD               uint32 //nolint:revive
 )
 
+type MessageAllTypes struct {
+	A uint8
+	B int8
+	C uint16
+	D int16
+	E uint32
+	F int32
+	G uint64
+	H float32
+	I float64
+	J string `mavlen:"30"`
+}
+
+func (*MessageAllTypes) GetID() uint32 {
+	return 155
+}
+
 type MessageHeartbeat struct {
 	Type           MAV_TYPE      `mavenum:"uint8"`
 	Autopilot      MAV_AUTOPILOT `mavenum:"uint8"`
@@ -178,58 +195,37 @@ func TestCRC(t *testing.T) {
 	}
 }
 
-var casesMsgs = []struct {
+var casesReadWriter = []struct {
 	name   string
 	isV2   bool
 	parsed Message
 	raw    []byte
 }{
 	{
-		"v1 basic a",
+		"v1",
 		false,
-		&MessageHeartbeat{
-			Type:           1,
-			Autopilot:      2,
-			BaseMode:       3,
-			CustomMode:     6,
-			SystemStatus:   4,
-			MavlinkVersion: 5,
+		&MessageAllTypes{
+			A: 127,
+			B: -12,
+			C: 1343,
+			D: 5652,
+			E: 5323,
+			F: 7987,
+			G: 8654,
+			H: 6753,
+			I: 5764,
+			J: "teststring",
 		},
-		[]byte("\x06\x00\x00\x00\x01\x02\x03\x04\x05"),
-	},
-	{
-		"v1 basic b",
-		false,
-		&MessageSysStatus{
-			OnboardControlSensorsPresent: 0x01010101,
-			OnboardControlSensorsEnabled: 0x01010101,
-			OnboardControlSensorsHealth:  0x01010101,
-			Load:                         0x0101,
-			VoltageBattery:               0x0101,
-			CurrentBattery:               0x0101,
-			BatteryRemaining:             1,
-			DropRateComm:                 0x0101,
-			ErrorsComm:                   0x0101,
-			ErrorsCount1:                 0x0101,
-			ErrorsCount2:                 0x0101,
-			ErrorsCount3:                 0x0101,
-			ErrorsCount4:                 0x0101,
+		[]byte{
+			0xce, 0x21, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+			0x0, 0x0, 0x0, 0x0, 0x0, 0x84, 0xb6, 0x40,
+			0xcb, 0x14, 0x0, 0x0, 0x33, 0x1f, 0x0, 0x0,
+			0x0, 0x8, 0xd3, 0x45, 0x3f, 0x5, 0x14, 0x16,
+			0x7f, 0xf4, 0x74, 0x65, 0x73, 0x74, 0x73, 0x74,
+			0x72, 0x69, 0x6e, 0x67, 0x0, 0x0, 0x0, 0x0,
+			0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+			0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
 		},
-		bytes.Repeat([]byte("\x01"), 31),
-	},
-	{
-		"v1 basic c",
-		false,
-		&MessageChangeOperatorControl{
-			TargetSystem:   1,
-			ControlRequest: 1,
-			Version:        1,
-			Passkey:        "testing",
-		},
-		[]byte("\x01\x01\x01\x74\x65\x73\x74\x69" +
-			"\x6e\x67\x00\x00\x00\x00\x00\x00" +
-			"\x00\x00\x00\x00\x00\x00\x00\x00" +
-			"\x00\x00\x00\x00"),
 	},
 	{
 		"v1 with string with max length",
@@ -398,7 +394,7 @@ var casesMsgs = []struct {
 }
 
 func TestRead(t *testing.T) {
-	for _, c := range casesMsgs {
+	for _, c := range casesReadWriter {
 		t.Run(c.name, func(t *testing.T) {
 			mp, err := NewReadWriter(c.parsed)
 			require.NoError(t, err)
@@ -410,7 +406,7 @@ func TestRead(t *testing.T) {
 }
 
 func TestWrite(t *testing.T) {
-	for _, c := range casesMsgs {
+	for _, c := range casesReadWriter {
 		t.Run(c.name, func(t *testing.T) {
 			mp, err := NewReadWriter(c.parsed)
 			require.NoError(t, err)

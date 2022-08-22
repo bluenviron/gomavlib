@@ -119,14 +119,14 @@ func (r *Reader) Read() (Frame, error) {
 	if r.conf.DialectRW != nil {
 		if mp := r.conf.DialectRW.GetMessage(f.GetMessage().GetID()); mp != nil {
 			if sum := f.genChecksum(mp.CRCExtra()); sum != f.getChecksum() {
-				return nil, newError("wrong checksum (expected %.4x, got %.4x, id=%d)",
+				return nil, newError("wrong checksum, expected %.4x, got %.4x, message id is %d",
 					sum, f.getChecksum(), f.GetMessage().GetID())
 			}
 
 			_, isV2 := f.(*V2Frame)
 			msg, err := mp.Read(f.GetMessage().(*message.MessageRaw).Payload, isV2)
 			if err != nil {
-				return nil, newError(err.Error())
+				return nil, newError(fmt.Sprintf("unable to decode message: %s", err.Error()))
 			}
 
 			switch ff := f.(type) {

@@ -94,7 +94,7 @@ func (f *V1Frame) decode(br *bufio.Reader) error {
 
 func (f V1Frame) encodeTo(buf []byte, msgEncoded []byte) (int, error) {
 	if f.Message.GetID() > 0xFF {
-		return 0, fmt.Errorf("cannot send a message with an id > 0xFF inside a V1 frame")
+		return 0, fmt.Errorf("cannot send a message with an ID greater than 255 with a V1 frame")
 	}
 
 	msgLen := len(msgEncoded)

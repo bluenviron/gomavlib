@@ -28,7 +28,42 @@ func (*MessageHeartbeat) GetID() uint32 {
 	return 0
 }
 
+type Invalid struct{}
+
+func (*Invalid) GetID() uint32 {
+	return 0
+}
+
 func TestReadWriter(t *testing.T) {
 	_, err := NewReadWriter(&Dialect{3, []message.Message{&MessageHeartbeat{}}})
 	require.NoError(t, err)
+}
+
+func TestReadWriterErrors(t *testing.T) {
+	for _, ca := range []struct {
+		name    string
+		dialect *Dialect
+		err     string
+	}{
+		{
+			"duplicate message",
+			&Dialect{3, []message.Message{
+				&MessageHeartbeat{},
+				&MessageHeartbeat{},
+			}},
+			"duplicate message with id 0",
+		},
+		{
+			"invalid message",
+			&Dialect{3, []message.Message{
+				&Invalid{},
+			}},
+			"message *dialect.Invalid: struct name must begin with 'Message'",
+		},
+	} {
+		t.Run(ca.name, func(t *testing.T) {
+			_, err := NewReadWriter(ca.dialect)
+			require.EqualError(t, err, ca.err)
+		})
+	}
 }

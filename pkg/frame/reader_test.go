@@ -45,6 +45,15 @@ func (m *MessageTest8) GetID() uint32 {
 	return 8
 }
 
+type MessageTest9 struct {
+	TestByte byte
+	TestUint uint32
+}
+
+func (m *MessageTest9) GetID() uint32 {
+	return 300
+}
+
 type MessageHeartbeat struct {
 	Type           MAV_TYPE      `mavenum:"uint8"`
 	Autopilot      MAV_AUTOPILOT `mavenum:"uint8"`
@@ -79,7 +88,7 @@ var testDialectRW = func() *dialect.ReadWriter {
 	d := &dialect.Dialect{3, []message.Message{ //nolint:govet
 		&MessageTest5{},
 		&MessageTest6{},
-		&MessageTest8{},
+		&MessageTest9{},
 		&MessageHeartbeat{},
 		&MessageOpticalFlow{},
 	}}
@@ -264,16 +273,102 @@ var casesReadWrite = []struct {
 }
 
 func TestReader(t *testing.T) {
-	for _, c := range casesReadWrite {
-		t.Run(c.name, func(t *testing.T) {
+	for _, ca := range casesReadWrite {
+		t.Run(ca.name, func(t *testing.T) {
 			reader, err := NewReader(ReaderConf{
-				Reader:    bytes.NewReader(c.raw),
-				DialectRW: c.dialectRW,
+				Reader:    bytes.NewReader(ca.raw),
+				DialectRW: ca.dialectRW,
+				InKey:     ca.key,
 			})
 			require.NoError(t, err)
+
 			frame, err := reader.Read()
 			require.NoError(t, err)
-			require.Equal(t, c.frame, frame)
+			require.Equal(t, ca.frame, frame)
+		})
+	}
+}
+
+func TestReaderErrors(t *testing.T) {
+	for _, ca := range []struct {
+		name      string
+		dialectRW *dialect.ReadWriter
+		key       *V2Key
+		byts      []byte
+		err       string
+	}{
+		{
+			"empty",
+			nil,
+			nil,
+			nil,
+			"EOF",
+		},
+		{
+			"invalid magic byte",
+			nil,
+			nil,
+			[]byte{0x07},
+			"invalid magic byte: 7",
+		},
+		{
+			"invalid frame",
+			nil,
+			nil,
+			[]byte{0xFE},
+			"EOF",
+		},
+		{
+			"v1 frame but signature required",
+			nil,
+			NewV2Key(bytes.Repeat([]byte("\x4F"), 32)),
+			[]byte{
+				0xFE, 0x05, 0x27, 0x01, 0x02, 0x08, 0x10, 0x10,
+				0x10, 0x10, 0x10, 0xfa, 0xc7,
+			},
+			"signature required but packet is not v2",
+		},
+		{
+			"wrong signature",
+			nil,
+			NewV2Key(bytes.Repeat([]byte("\x4F"), 32)),
+			[]byte{
+				0xFD, 0x09, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
+				0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x01, 0x02,
+				0x03, 0x05, 0x03, 0xd9, 0xd1, 0x01, 0x02, 0x00,
+				0x00, 0x00, 0x00, 0x00, 0x0e, 0x47, 0x04, 0x0c,
+				0xef, 0x9c,
+			},
+			"wrong signature",
+		},
+		{
+			"wrong checksum",
+			testDialectRW,
+			nil,
+			[]byte{
+				0xFE, 0x05, 0x27, 0x01, 0x02, 0x05, 0x10, 0x10,
+				0x10, 0x10, 0x10, 0xe6, 0x66,
+			},
+			"wrong checksum, expected 66e5, got 66e6, message id is 5",
+		},
+		{
+			"message read error",
+			testDialectRW,
+			nil,
+			[]byte{254, 0, 39, 1, 2, 5, 168, 233},
+			"unable to decode message: wrong size: expected 5, got 0",
+		},
+	} {
+		t.Run(ca.name, func(t *testing.T) {
+			reader, err := NewReader(ReaderConf{
+				Reader:    bytes.NewReader(ca.byts),
+				DialectRW: ca.dialectRW,
+				InKey:     ca.key,
+			})
+			require.NoError(t, err)
+
+			_, err = reader.Read()
+			require.EqualError(t, err, ca.err)
 		})
 	}
 }

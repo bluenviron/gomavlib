@@ -13,20 +13,96 @@ import (
 	"github.com/aler9/gomavlib/pkg/message"
 )
 
-func TestWriterWriteFrame(t *testing.T) {
-	for _, c := range casesReadWrite {
-		t.Run(c.name, func(t *testing.T) {
+func TestWriterWrite(t *testing.T) {
+	for _, ca := range casesReadWrite {
+		t.Run(ca.name, func(t *testing.T) {
 			var buf bytes.Buffer
 			writer, err := NewWriter(WriterConf{
 				Writer:      &buf,
 				OutVersion:  V2,
 				OutSystemID: 1,
-				DialectRW:   c.dialectRW,
+				DialectRW:   ca.dialectRW,
 			})
 			require.NoError(t, err)
-			err = writer.WriteFrame(c.frame)
+
+			err = writer.WriteFrame(ca.frame)
 			require.NoError(t, err)
-			require.Equal(t, c.raw, buf.Bytes())
+			require.Equal(t, ca.raw, buf.Bytes())
+		})
+	}
+}
+
+func TestWriterWriteErrors(t *testing.T) {
+	for _, ca := range []struct {
+		name      string
+		dialectRW *dialect.ReadWriter
+		frame     Frame
+		err       string
+	}{
+		{
+			"nil message",
+			nil,
+			&V1Frame{
+				SequenceID:  0x01,
+				SystemID:    0x02,
+				ComponentID: 0x03,
+				Message:     nil,
+				Checksum:    0x0807,
+			},
+			"message is nil",
+		},
+		{
+			"nil dialect",
+			nil,
+			&V1Frame{
+				SequenceID:  0x27,
+				SystemID:    0x01,
+				ComponentID: 0x02,
+				Message: &MessageTest5{
+					'\x10',
+					binary.LittleEndian.Uint32([]byte("\x10\x10\x10\x10")),
+				},
+				Checksum: 0x66e5,
+			},
+			"message cannot be encoded since dialect is nil",
+		},
+		{
+			"not in dialect",
+			testDialectRW,
+			&V1Frame{
+				SequenceID:  0x27,
+				SystemID:    0x01,
+				ComponentID: 0x02,
+				Message:     &MessageTest8{15, 7},
+				Checksum:    0x66e5,
+			},
+			"message cannot be encoded since it is not in the dialect",
+		},
+		{
+			"encode error",
+			testDialectRW,
+			&V1Frame{
+				SequenceID:  0x27,
+				SystemID:    0x01,
+				ComponentID: 0x02,
+				Message:     &MessageTest9{},
+				Checksum:    0x66e5,
+			},
+			"cannot send a message with an ID greater than 255 with a V1 frame",
+		},
+	} {
+		t.Run(ca.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			writer, err := NewWriter(WriterConf{
+				Writer:      &buf,
+				OutVersion:  V2,
+				OutSystemID: 1,
+				DialectRW:   ca.dialectRW,
+			})
+			require.NoError(t, err)
+
+			err = writer.WriteFrame(ca.frame)
+			require.EqualError(t, err, ca.err)
 		})
 	}
 }

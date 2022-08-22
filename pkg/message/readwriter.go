@@ -280,7 +280,7 @@ func NewReadWriter(msg Message) (*ReadWriter, error) {
 
 	// get name
 	if !strings.HasPrefix(mde.elemType.Name(), "Message") {
-		return nil, fmt.Errorf("message struct name must begin with 'Message'")
+		return nil, fmt.Errorf("struct name must begin with 'Message'")
 	}
 	msgName := msgGoToDef(mde.elemType.Name()[len("Message"):])
 

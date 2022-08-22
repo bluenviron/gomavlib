@@ -450,10 +450,18 @@ func (*MessageInvalidEnum3) GetID() uint32 {
 }
 
 type MessageInvalid2 struct {
-	Str string `mavlen:"invalid"`
+	Pointer *int
 }
 
 func (*MessageInvalid2) GetID() uint32 {
+	return 0
+}
+
+type MessageInvalid3 struct {
+	Str string `mavlen:"invalid"`
+}
+
+func (*MessageInvalid3) GetID() uint32 {
 	return 0
 }
 
@@ -471,6 +479,9 @@ func TestNewReadWriterErrors(t *testing.T) {
 	require.EqualError(t, err, "type 'int64' cannot be used as enum")
 
 	_, err = NewReadWriter(&MessageInvalid2{})
+	require.EqualError(t, err, "unsupported Go type: ")
+
+	_, err = NewReadWriter(&MessageInvalid3{})
 	require.EqualError(t, err, "string has invalid length: invalid")
 }
 

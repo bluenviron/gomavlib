@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMain(t *testing.T) {
+func TestNew(t *testing.T) {
 	testBuf1 := []byte("testing testing 1 2 3")
 	testBuf2 := []byte("second part")
 
@@ -53,6 +53,7 @@ func TestMain(t *testing.T) {
 			require.NoError(t, err)
 			defer conn.Close()
 
+			conn.SetWriteDeadline(time.Now().Add(500 * time.Millisecond))
 			n, err := conn.Write(testBuf1)
 			require.NoError(t, err)
 			require.Equal(t, len(testBuf1), n)
@@ -66,6 +67,15 @@ func TestMain(t *testing.T) {
 	}
 
 	wg.Wait()
+}
+
+func TestNewError(t *testing.T) {
+	l1, err := New("udp4", "127.0.0.1:18456")
+	require.NoError(t, err)
+	defer l1.Close()
+
+	_, err = New("udp4", "127.0.0.1:18456")
+	require.EqualError(t, err, "listen udp4 127.0.0.1:18456: bind: address already in use")
 }
 
 func TestSamePacketMultipleReads(t *testing.T) {
@@ -102,7 +112,7 @@ func TestSamePacketMultipleReads(t *testing.T) {
 	wg.Wait()
 }
 
-func TestDeadline(t *testing.T) {
+func TestReadDeadline(t *testing.T) {
 	l, err := New("udp4", "127.0.0.1:18456")
 	require.NoError(t, err)
 	defer l.Close()

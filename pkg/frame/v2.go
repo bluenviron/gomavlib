@@ -87,26 +87,26 @@ func (f *V2Frame) Clone() Frame {
 }
 
 // GetSystemID implements the Frame interface.
-func (f *V2Frame) GetSystemID() byte {
+func (f V2Frame) GetSystemID() byte {
 	return f.SystemID
 }
 
 // GetComponentID implements the Frame interface.
-func (f *V2Frame) GetComponentID() byte {
+func (f V2Frame) GetComponentID() byte {
 	return f.ComponentID
 }
 
 // GetMessage implements the Frame interface.
-func (f *V2Frame) GetMessage() message.Message {
+func (f V2Frame) GetMessage() message.Message {
 	return f.Message
 }
 
 // IsSigned checks whether the frame contains a signature. It does not validate the signature.
-func (f *V2Frame) IsSigned() bool {
+func (f V2Frame) IsSigned() bool {
 	return (f.IncompatibilityFlag & V2FlagSigned) != 0
 }
 
-func (f *V2Frame) getChecksum() uint16 {
+func (f V2Frame) getChecksum() uint16 {
 	return f.Checksum
 }
 
@@ -168,7 +168,7 @@ func (f *V2Frame) decode(br *bufio.Reader) error {
 	return nil
 }
 
-func (f *V2Frame) encodeTo(buf []byte, msgEncoded []byte) (int, error) {
+func (f V2Frame) encodeTo(buf []byte, msgEncoded []byte) (int, error) {
 	msgLen := len(msgEncoded)
 
 	// header
@@ -203,7 +203,7 @@ func (f *V2Frame) encodeTo(buf []byte, msgEncoded []byte) (int, error) {
 	return n, nil
 }
 
-func (f *V2Frame) genChecksum(crcExtra byte) uint16 {
+func (f V2Frame) genChecksum(crcExtra byte) uint16 {
 	msg := f.GetMessage().(*message.MessageRaw)
 	h := x25.New()
 

@@ -25,7 +25,7 @@ type V1Frame struct {
 }
 
 // Clone implements the Frame interface.
-func (f *V1Frame) Clone() Frame {
+func (f V1Frame) Clone() Frame {
 	return &V1Frame{
 		SequenceID:  f.SequenceID,
 		SystemID:    f.SystemID,
@@ -36,21 +36,21 @@ func (f *V1Frame) Clone() Frame {
 }
 
 // GetSystemID implements the Frame interface.
-func (f *V1Frame) GetSystemID() byte {
+func (f V1Frame) GetSystemID() byte {
 	return f.SystemID
 }
 
 // GetComponentID implements the Frame interface.
-func (f *V1Frame) GetComponentID() byte {
+func (f V1Frame) GetComponentID() byte {
 	return f.ComponentID
 }
 
 // GetMessage implements the Frame interface.
-func (f *V1Frame) GetMessage() message.Message {
+func (f V1Frame) GetMessage() message.Message {
 	return f.Message
 }
 
-func (f *V1Frame) getChecksum() uint16 {
+func (f V1Frame) getChecksum() uint16 {
 	return f.Checksum
 }
 
@@ -92,7 +92,7 @@ func (f *V1Frame) decode(br *bufio.Reader) error {
 	return nil
 }
 
-func (f *V1Frame) encodeTo(buf []byte, msgEncoded []byte) (int, error) {
+func (f V1Frame) encodeTo(buf []byte, msgEncoded []byte) (int, error) {
 	if f.Message.GetID() > 0xFF {
 		return 0, fmt.Errorf("cannot send a message with an id > 0xFF inside a V1 frame")
 	}
@@ -121,7 +121,7 @@ func (f *V1Frame) encodeTo(buf []byte, msgEncoded []byte) (int, error) {
 }
 
 // genChecksum implements the Frame interface.
-func (f *V1Frame) genChecksum(crcExtra byte) uint16 {
+func (f V1Frame) genChecksum(crcExtra byte) uint16 {
 	msg := f.GetMessage().(*message.MessageRaw)
 	h := x25.New()
 

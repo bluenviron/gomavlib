@@ -8,17 +8,17 @@ import (
 
 // ReadWriter is a Dialect Reader and Writer.
 type ReadWriter struct {
-	MessageDEs map[uint32]*message.ReadWriter
+	messageRWs map[uint32]*message.ReadWriter
 }
 
 // NewReadWriter allocates a ReadWriter.
 func NewReadWriter(d *Dialect) (*ReadWriter, error) {
-	dde := &ReadWriter{
-		MessageDEs: make(map[uint32]*message.ReadWriter),
+	rw := &ReadWriter{
+		messageRWs: make(map[uint32]*message.ReadWriter),
 	}
 
 	for _, m := range d.Messages {
-		if _, ok := dde.MessageDEs[m.GetID()]; ok {
+		if _, ok := rw.messageRWs[m.GetID()]; ok {
 			return nil, fmt.Errorf("duplicate message with id %d", m.GetID())
 		}
 
@@ -27,8 +27,17 @@ func NewReadWriter(d *Dialect) (*ReadWriter, error) {
 			return nil, fmt.Errorf("message %T: %s", m, err)
 		}
 
-		dde.MessageDEs[m.GetID()] = de
+		rw.messageRWs[m.GetID()] = de
 	}
 
-	return dde, nil
+	return rw, nil
+}
+
+// GetMessage returns the ReadWriter of a message.
+func (rw *ReadWriter) GetMessage(id uint32) *message.ReadWriter {
+	mrw, ok := rw.messageRWs[id]
+	if !ok {
+		return nil
+	}
+	return mrw
 }

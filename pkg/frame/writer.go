@@ -130,8 +130,8 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 			return fmt.Errorf("message cannot be encoded since dialect is nil")
 		}
 
-		mp, ok := w.conf.DialectRW.MessageDEs[fr.GetMessage().GetID()]
-		if !ok {
+		mp := w.conf.DialectRW.GetMessage(fr.GetMessage().GetID())
+		if mp == nil {
 			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
 		}
 
@@ -155,9 +155,9 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 		// fill checksum
 		switch ff := fr.(type) {
 		case *V1Frame:
-			ff.Checksum = ff.genChecksum(w.conf.DialectRW.MessageDEs[ff.GetMessage().GetID()].CRCExtra())
+			ff.Checksum = ff.genChecksum(mp.CRCExtra())
 		case *V2Frame:
-			ff.Checksum = ff.genChecksum(w.conf.DialectRW.MessageDEs[ff.GetMessage().GetID()].CRCExtra())
+			ff.Checksum = ff.genChecksum(mp.CRCExtra())
 		}
 	}
 
@@ -188,8 +188,8 @@ func (w *Writer) WriteFrame(fr Frame) error {
 			return fmt.Errorf("message cannot be encoded since dialect is nil")
 		}
 
-		mp, ok := w.conf.DialectRW.MessageDEs[m.GetID()]
-		if !ok {
+		mp := w.conf.DialectRW.GetMessage(m.GetID())
+		if mp == nil {
 			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
 		}
 

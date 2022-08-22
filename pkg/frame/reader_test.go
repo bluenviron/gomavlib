@@ -75,7 +75,7 @@ func (*MessageOpticalFlow) GetID() uint32 {
 	return 100
 }
 
-var testDialectDE = func() *dialect.ReadWriter {
+var testDialectRW = func() *dialect.ReadWriter {
 	d := &dialect.Dialect{3, []message.Message{ //nolint:govet
 		&MessageTest5{},
 		&MessageTest6{},
@@ -92,7 +92,7 @@ var testDialectDE = func() *dialect.ReadWriter {
 
 var casesReadWrite = []struct {
 	name      string
-	dialectDE *dialect.ReadWriter
+	dialectRW *dialect.ReadWriter
 	key       *V2Key
 	frame     Frame
 	raw       []byte
@@ -131,7 +131,7 @@ var casesReadWrite = []struct {
 	},
 	{
 		"v1 frame with decoded message",
-		testDialectDE,
+		testDialectRW,
 		nil,
 		&V1Frame{
 			SequenceID:  0x27,
@@ -147,7 +147,7 @@ var casesReadWrite = []struct {
 	},
 	{
 		"v2 frame with nil content",
-		testDialectDE,
+		testDialectRW,
 		nil,
 		&V2Frame{
 			IncompatibilityFlag: 0,
@@ -183,7 +183,7 @@ var casesReadWrite = []struct {
 	},
 	{
 		"v2 frame with decoded message",
-		testDialectDE,
+		testDialectRW,
 		nil,
 		&V2Frame{
 			IncompatibilityFlag: 0x00,
@@ -201,7 +201,7 @@ var casesReadWrite = []struct {
 	},
 	{
 		"v2 frame with decoded message, signed",
-		testDialectDE,
+		testDialectRW,
 		NewV2Key(bytes.Repeat([]byte("\x4F"), 32)),
 		&V2Frame{
 			IncompatibilityFlag: 0x01,
@@ -229,7 +229,7 @@ var casesReadWrite = []struct {
 	},
 	{
 		"v2 frame with decoded message, signed",
-		testDialectDE,
+		testDialectRW,
 		NewV2Key(bytes.Repeat([]byte("\x4F"), 32)),
 		&V2Frame{
 			IncompatibilityFlag: 0x01,
@@ -268,7 +268,7 @@ func TestReader(t *testing.T) {
 		t.Run(c.name, func(t *testing.T) {
 			reader, err := NewReader(ReaderConf{
 				Reader:    bytes.NewReader(c.raw),
-				DialectDE: c.dialectDE,
+				DialectRW: c.dialectRW,
 			})
 			require.NoError(t, err)
 			frame, err := reader.Read()

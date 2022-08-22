@@ -34,7 +34,7 @@ type WriterConf struct {
 	Writer io.Writer
 
 	// (optional) the dialect which contains the messages that will be written.
-	DialectDE *dialect.ReadWriter
+	DialectRW *dialect.ReadWriter
 
 	// Mavlink version used to encode messages.
 	OutVersion WriterOutVersion
@@ -126,11 +126,11 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 
 	// encode message if it is not already encoded
 	if _, ok := fr.GetMessage().(*message.MessageRaw); !ok {
-		if w.conf.DialectDE == nil {
+		if w.conf.DialectRW == nil {
 			return fmt.Errorf("message cannot be encoded since dialect is nil")
 		}
 
-		mp, ok := w.conf.DialectDE.MessageDEs[fr.GetMessage().GetID()]
+		mp, ok := w.conf.DialectRW.MessageDEs[fr.GetMessage().GetID()]
 		if !ok {
 			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
 		}
@@ -155,9 +155,9 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 		// fill checksum
 		switch ff := fr.(type) {
 		case *V1Frame:
-			ff.Checksum = ff.genChecksum(w.conf.DialectDE.MessageDEs[ff.GetMessage().GetID()].CRCExtra())
+			ff.Checksum = ff.genChecksum(w.conf.DialectRW.MessageDEs[ff.GetMessage().GetID()].CRCExtra())
 		case *V2Frame:
-			ff.Checksum = ff.genChecksum(w.conf.DialectDE.MessageDEs[ff.GetMessage().GetID()].CRCExtra())
+			ff.Checksum = ff.genChecksum(w.conf.DialectRW.MessageDEs[ff.GetMessage().GetID()].CRCExtra())
 		}
 	}
 
@@ -184,11 +184,11 @@ func (w *Writer) WriteFrame(fr Frame) error {
 
 	// encode message if it is not already encoded
 	if _, ok := m.(*message.MessageRaw); !ok {
-		if w.conf.DialectDE == nil {
+		if w.conf.DialectRW == nil {
 			return fmt.Errorf("message cannot be encoded since dialect is nil")
 		}
 
-		mp, ok := w.conf.DialectDE.MessageDEs[m.GetID()]
+		mp, ok := w.conf.DialectRW.MessageDEs[m.GetID()]
 		if !ok {
 			return fmt.Errorf("message cannot be encoded since it is not in the dialect")
 		}

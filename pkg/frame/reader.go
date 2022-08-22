@@ -39,7 +39,7 @@ type ReaderConf struct {
 
 	// (optional) the dialect which contains the messages that will be read.
 	// If not provided, messages are decoded into the MessageRaw struct.
-	DialectDE *dialect.ReadWriter
+	DialectRW *dialect.ReadWriter
 
 	// (optional) the secret key used to validate incoming frames.
 	// Non-signed frames are discarded. This feature requires v2 frames.
@@ -116,9 +116,9 @@ func (r *Reader) Read() (Frame, error) {
 	}
 
 	// decode message if in dialect and validate checksum
-	if r.conf.DialectDE != nil {
-		if mp, ok := r.conf.DialectDE.MessageDEs[f.GetMessage().GetID()]; ok {
-			if sum := f.genChecksum(r.conf.DialectDE.MessageDEs[f.GetMessage().GetID()].CRCExtra()); sum != f.getChecksum() {
+	if r.conf.DialectRW != nil {
+		if mp, ok := r.conf.DialectRW.MessageDEs[f.GetMessage().GetID()]; ok {
+			if sum := f.genChecksum(r.conf.DialectRW.MessageDEs[f.GetMessage().GetID()].CRCExtra()); sum != f.getChecksum() {
 				return nil, newError("wrong checksum (expected %.4x, got %.4x, id=%d)",
 					sum, f.getChecksum(), f.GetMessage().GetID())
 			}

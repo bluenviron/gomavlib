@@ -35,12 +35,12 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Cha
 	frw, err := frame.NewReadWriter(
 		frame.ReaderConf{
 			Reader:    rwc,
-			DialectDE: n.dialectDE,
+			DialectRW: n.dialectRW,
 			InKey:     n.conf.InKey,
 		},
 		frame.WriterConf{
 			Writer:      rwc,
-			DialectDE:   n.dialectDE,
+			DialectRW:   n.dialectRW,
 			OutSystemID: n.conf.OutSystemID,
 			OutVersion: func() frame.WriterOutVersion {
 				if n.conf.OutVersion == V2 {

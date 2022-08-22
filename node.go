@@ -145,7 +145,7 @@ type NodeConf struct {
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
 type Node struct {
 	conf               NodeConf
-	dialectDE          *dialect.ReadWriter
+	dialectRW          *dialect.ReadWriter
 	channelAccepters   map[*channelAccepter]struct{}
 	channelAcceptersWg sync.WaitGroup
 	channels           map[*Channel]struct{}
@@ -198,7 +198,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 		return nil, fmt.Errorf("OutKey requires V2 frames")
 	}
 
-	dialectDE, err := func() (*dialect.ReadWriter, error) {
+	dialectRW, err := func() (*dialect.ReadWriter, error) {
 		if conf.Dialect == nil {
 			return nil, nil
 		}
@@ -210,7 +210,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 
 	n := &Node{
 		conf:             conf,
-		dialectDE:        dialectDE,
+		dialectRW:        dialectRW,
 		channelAccepters: make(map[*channelAccepter]struct{}),
 		channels:         make(map[*Channel]struct{}),
 		channelNew:       make(chan *Channel),

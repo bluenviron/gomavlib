@@ -21,7 +21,7 @@ func TestWriterWriteFrame(t *testing.T) {
 				Writer:      &buf,
 				OutVersion:  V2,
 				OutSystemID: 1,
-				DialectDE:   c.dialectDE,
+				DialectRW:   c.dialectRW,
 			})
 			require.NoError(t, err)
 			err = writer.WriteFrame(c.frame)
@@ -77,7 +77,7 @@ func TestWriterWriteMessage(t *testing.T) {
 			buf := bytes.NewBuffer(nil)
 			writer, err := NewWriter(WriterConf{
 				Writer:      buf,
-				DialectDE:   testDialectDE,
+				DialectRW:   testDialectRW,
 				OutVersion:  c.ver,
 				OutSystemID: 1,
 				OutKey:      c.key,
@@ -95,7 +95,7 @@ func TestWriterWriteMessage(t *testing.T) {
 func TestWriterWriteFrameNilMsg(t *testing.T) {
 	writer, err := NewWriter(WriterConf{
 		Writer:      bytes.NewBuffer(nil),
-		DialectDE:   nil,
+		DialectRW:   nil,
 		OutVersion:  V2,
 		OutSystemID: 1,
 	})
@@ -109,12 +109,12 @@ func TestWriterWriteFrameNilMsg(t *testing.T) {
 // ensure that the Frame is left untouched by WriteFrame()
 // and therefore the function can be called by multiple routines in parallel
 func TestWriterWriteFrameIsConst(t *testing.T) {
-	dialectDE, err := dialect.NewReadWriter(&dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}) //nolint:govet
+	dialectRW, err := dialect.NewReadWriter(&dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}) //nolint:govet
 	require.NoError(t, err)
 
 	writer, err := NewWriter(WriterConf{
 		Writer:      bytes.NewBuffer(nil),
-		DialectDE:   dialectDE,
+		DialectRW:   dialectRW,
 		OutVersion:  V2,
 		OutSystemID: 1,
 		OutKey:      NewV2Key(bytes.Repeat([]byte("\x7C"), 32)),

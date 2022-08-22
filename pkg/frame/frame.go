@@ -23,6 +23,6 @@ type Frame interface {
 
 	getChecksum() uint16
 	decode(*bufio.Reader) error
-	encode([]byte, []byte) ([]byte, error)
+	encodeTo([]byte, []byte) (int, error)
 	genChecksum(byte) uint16
 }

@@ -79,7 +79,7 @@ func NewWriter(conf WriterConf) (*Writer, error) {
 
 	return &Writer{
 		conf: conf,
-		bw:   make([]byte, 0, bufferSize),
+		bw:   make([]byte, bufferSize),
 	}, nil
 }
 
@@ -204,13 +204,13 @@ func (w *Writer) WriteFrame(fr Frame) error {
 		m = &message.MessageRaw{m.GetID(), byt} //nolint:govet
 	}
 
-	buf, err := fr.encode(w.bw, m.(*message.MessageRaw).Payload)
+	n, err := fr.encodeTo(w.bw, m.(*message.MessageRaw).Payload)
 	if err != nil {
 		return err
 	}
 
 	// do not check n, since io.Writer is not allowed to return n < len(buf)
 	// without throwing an error
-	_, err = w.conf.Writer.Write(buf)
+	_, err = w.conf.Writer.Write(w.bw[:n])
 	return err
 }

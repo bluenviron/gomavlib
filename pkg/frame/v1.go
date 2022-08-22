@@ -92,14 +92,12 @@ func (f *V1Frame) decode(br *bufio.Reader) error {
 	return nil
 }
 
-func (f *V1Frame) encode(buf []byte, msgEncoded []byte) ([]byte, error) {
+func (f *V1Frame) encodeTo(buf []byte, msgEncoded []byte) (int, error) {
 	if f.Message.GetID() > 0xFF {
-		return nil, fmt.Errorf("cannot send a message with an id > 0xFF inside a V1 frame")
+		return 0, fmt.Errorf("cannot send a message with an id > 0xFF inside a V1 frame")
 	}
 
 	msgLen := len(msgEncoded)
-	bufLen := 6 + msgLen + 2
-	buf = buf[:bufLen]
 
 	// header
 	buf[0] = V1MagicByte
@@ -108,16 +106,18 @@ func (f *V1Frame) encode(buf []byte, msgEncoded []byte) ([]byte, error) {
 	buf[3] = f.SystemID
 	buf[4] = f.ComponentID
 	buf[5] = byte(f.Message.GetID())
+	n := 6
 
 	// message
 	if msgLen > 0 {
-		copy(buf[6:], msgEncoded)
+		n += copy(buf[n:], msgEncoded)
 	}
 
 	// checksum
-	binary.LittleEndian.PutUint16(buf[6+msgLen:], f.Checksum)
+	binary.LittleEndian.PutUint16(buf[n:], f.Checksum)
+	n += 2
 
-	return buf, nil
+	return n, nil
 }
 
 // genChecksum implements the Frame interface.

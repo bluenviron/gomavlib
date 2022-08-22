@@ -170,13 +170,8 @@ func (f *V2Frame) decode(br *bufio.Reader) error {
 	return nil
 }
 
-func (f *V2Frame) encode(buf []byte, msgEncoded []byte) ([]byte, error) {
+func (f *V2Frame) encodeTo(buf []byte, msgEncoded []byte) (int, error) {
 	msgLen := len(msgEncoded)
-	bufLen := 10 + msgLen + 2
-	if f.IsSigned() {
-		bufLen += 13
-	}
-	buf = buf[:bufLen]
 
 	// header
 	buf[0] = V2MagicByte
@@ -187,23 +182,27 @@ func (f *V2Frame) encode(buf []byte, msgEncoded []byte) ([]byte, error) {
 	buf[5] = f.SystemID
 	buf[6] = f.ComponentID
 	uint24Encode(buf[7:], f.Message.GetID())
+	n := 10
 
 	// message
 	if msgLen > 0 {
-		copy(buf[10:], msgEncoded)
+		n += copy(buf[n:], msgEncoded)
 	}
 
 	// checksum
-	binary.LittleEndian.PutUint16(buf[10+msgLen:], f.Checksum)
+	binary.LittleEndian.PutUint16(buf[n:], f.Checksum)
+	n += 2
 
 	// signature
 	if f.IsSigned() {
-		buf[12+msgLen] = f.SignatureLinkID
-		uint48Encode(buf[13+msgLen:], f.SignatureTimestamp)
-		copy(buf[19+msgLen:], f.Signature[:])
+		buf[n] = f.SignatureLinkID
+		n++
+		uint48Encode(buf[n:], f.SignatureTimestamp)
+		n += 6
+		n += copy(buf[n:], f.Signature[:])
 	}
 
-	return buf, nil
+	return n, nil
 }
 
 func (f *V2Frame) genChecksum(crcExtra byte) uint16 {

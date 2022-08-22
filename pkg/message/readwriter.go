@@ -326,12 +326,9 @@ func NewReadWriter(msg Message) (*ReadWriter, error) {
 			if goType.Kind() == reflect.String {
 				tagLen := field.Tag.Get("mavlen")
 
-				// char
-				if len(tagLen) == 0 {
+				if len(tagLen) == 0 { // char
 					arrayLength = 1
-
-					// string
-				} else {
+				} else { // string
 					slen, err := strconv.Atoi(tagLen)
 					if err != nil {
 						return nil, fmt.Errorf("string has invalid length: %v", tagLen)

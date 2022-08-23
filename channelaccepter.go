@@ -31,8 +31,8 @@ func (ca *channelAccepter) runSingle() {
 	for {
 		label, rwc, err := ca.eca.accept()
 		if err != nil {
-			if err != errorTerminated {
-				panic("errorTerminated is the only error allowed here")
+			if err != errTerminated {
+				panic("errTerminated is the only error allowed here")
 			}
 			break
 		}

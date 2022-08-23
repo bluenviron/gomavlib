@@ -129,7 +129,7 @@ func (t *endpointUDPBroadcast) Read(buf []byte) (int, error) {
 	// wait termination, do not report errors
 	if err != nil {
 		<-t.terminate
-		return 0, errorTerminated
+		return 0, errTerminated
 	}
 
 	return n, nil

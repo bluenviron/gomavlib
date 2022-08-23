@@ -61,7 +61,7 @@ const (
 	netWriteTimeout    = 10 * time.Second
 )
 
-var errorTerminated = fmt.Errorf("terminated")
+var errTerminated = fmt.Errorf("terminated")
 
 // netTimedConn forces a net.Conn to use timeouts
 type netTimedConn struct {

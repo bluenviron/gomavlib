@@ -106,7 +106,7 @@ func (t *endpointServer) accept() (string, io.ReadWriteCloser, error) {
 	// wait termination, do not report errors
 	if err != nil {
 		<-t.terminate
-		return "", nil, errorTerminated
+		return "", nil, errTerminated
 	}
 
 	label := fmt.Sprintf("%s:%s", func() string {

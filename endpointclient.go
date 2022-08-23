@@ -182,7 +182,7 @@ func (t *endpointClient) runInner() error {
 	case <-t.ctx.Done(): // Close() has been called
 		conn.Close()
 		<-readerDone
-		return errorTerminated
+		return errTerminated
 	}
 }
 
@@ -193,7 +193,7 @@ func (t *endpointClient) Read(buf []byte) (int, error) {
 		return n, nil
 
 	case <-t.ctx.Done():
-		return 0, errorTerminated
+		return 0, errTerminated
 	}
 }
 

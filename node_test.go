@@ -203,7 +203,7 @@ func (ch testLoopback) Close() error {
 func (ch testLoopback) Read(buf []byte) (int, error) {
 	ret, ok := <-ch
 	if !ok {
-		return 0, errorTerminated
+		return 0, errTerminated
 	}
 	n := copy(buf, ret)
 	return n, nil

@@ -24,13 +24,13 @@ type Endpoint interface {
 // Read() must not return any error unless Close() is called.
 type endpointChannelSingle interface {
 	Endpoint
-	Label() string
+	label() string
 	io.ReadWriteCloser
 }
 
 // endpointChannelAccepter is an endpoint that provides multiple channels.
 type endpointChannelAccepter interface {
 	Endpoint
-	Close() error
-	Accept() (string, io.ReadWriteCloser, error)
+	close() error
+	accept() (string, io.ReadWriteCloser, error)
 }

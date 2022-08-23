@@ -112,7 +112,7 @@ func (t *endpointUDPBroadcast) Conf() EndpointConf {
 	return t.conf
 }
 
-func (t *endpointUDPBroadcast) Label() string {
+func (t *endpointUDPBroadcast) label() string {
 	return fmt.Sprintf("udp:%s", t.broadcastAddr)
 }
 

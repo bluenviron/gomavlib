@@ -87,8 +87,6 @@ func initEndpointClient(conf endpointClientConf) (Endpoint, error) {
 		read:      make(chan []byte),
 	}
 
-	// work in a separate routine
-	// in this way we connect immediately, not after the first Read()
 	go t.run()
 
 	return t, nil
@@ -100,7 +98,7 @@ func (t *endpointClient) Conf() EndpointConf {
 	return t.conf
 }
 
-func (t *endpointClient) Label() string {
+func (t *endpointClient) label() string {
 	return fmt.Sprintf("%s:%s", func() string {
 		if t.conf.isUDP() {
 			return "udp"

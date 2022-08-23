@@ -55,6 +55,6 @@ func (t *endpointSerial) Conf() EndpointConf {
 	return t.conf
 }
 
-func (t *endpointSerial) Label() string {
+func (t *endpointSerial) label() string {
 	return "serial"
 }

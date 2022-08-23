@@ -17,19 +17,19 @@ func newChannelAccepter(n *Node, eca endpointChannelAccepter) (*channelAccepter,
 }
 
 func (ca *channelAccepter) close() {
-	ca.eca.Close()
+	ca.eca.close()
 }
 
 func (ca *channelAccepter) start() {
 	ca.n.channelAcceptersWg.Add(1)
-	go ca.run1()
+	go ca.runSingle()
 }
 
-func (ca *channelAccepter) run1() {
+func (ca *channelAccepter) runSingle() {
 	defer ca.n.channelAcceptersWg.Done()
 
 	for {
-		label, rwc, err := ca.eca.Accept()
+		label, rwc, err := ca.eca.accept()
 		if err != nil {
 			if err != errorTerminated {
 				panic("errorTerminated is the only error allowed here")

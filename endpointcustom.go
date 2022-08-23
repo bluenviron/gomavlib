@@ -32,6 +32,6 @@ func (t *endpointCustom) Conf() EndpointConf {
 	return t.conf
 }
 
-func (t *endpointCustom) Label() string {
+func (t *endpointCustom) label() string {
 	return "custom"
 }

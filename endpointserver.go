@@ -95,13 +95,13 @@ func (t *endpointServer) Conf() EndpointConf {
 	return t.conf
 }
 
-func (t *endpointServer) Close() error {
+func (t *endpointServer) close() error {
 	close(t.terminate)
 	t.listener.Close()
 	return nil
 }
 
-func (t *endpointServer) Accept() (string, io.ReadWriteCloser, error) {
+func (t *endpointServer) accept() (string, io.ReadWriteCloser, error) {
 	rawConn, err := t.listener.Accept()
 	// wait termination, do not report errors
 	if err != nil {

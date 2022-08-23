@@ -251,7 +251,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 			n.channelAccepters[ca] = struct{}{}
 
 		case endpointChannelSingle:
-			ch, err := newChannel(n, ttp, ttp.Label(), ttp)
+			ch, err := newChannel(n, ttp, ttp.label(), ttp)
 			if err != nil {
 				closeExisting()
 				return nil, err

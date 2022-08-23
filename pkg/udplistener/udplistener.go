@@ -99,11 +99,8 @@ func (c *conn) Read(byt []byte) (int, error) {
 	var ok bool
 
 	if !c.readDeadline.IsZero() {
-		readTimer := time.NewTimer(time.Until(c.readDeadline))
-		defer readTimer.Stop()
-
 		select {
-		case <-readTimer.C:
+		case <-time.After(time.Until(c.readDeadline)):
 			return 0, errTimeout
 		case buf, ok = <-c.read:
 		}

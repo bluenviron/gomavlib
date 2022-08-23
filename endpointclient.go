@@ -116,11 +116,8 @@ func (t *endpointClient) run() {
 	for {
 		t.runInner()
 
-		timer := time.NewTimer(netReconnectPeriod)
-		defer timer.Stop()
-
 		select {
-		case <-timer.C:
+		case <-time.After(netReconnectPeriod):
 		case <-t.ctx.Done():
 			return
 		}

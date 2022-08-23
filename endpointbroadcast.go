@@ -53,6 +53,8 @@ type EndpointUDPBroadcast struct {
 	LocalAddress string
 }
 
+var _ endpointChannelSingle = (*endpointUDPBroadcast)(nil)
+
 type endpointUDPBroadcast struct {
 	conf          EndpointUDPBroadcast
 	pc            net.PacketConn

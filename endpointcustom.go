@@ -11,6 +11,8 @@ type EndpointCustom struct {
 	ReadWriteCloser io.ReadWriteCloser
 }
 
+var _ endpointChannelSingle = (*endpointCustom)(nil)
+
 type endpointCustom struct {
 	conf EndpointCustom
 	io.ReadWriteCloser

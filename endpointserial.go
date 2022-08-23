@@ -18,6 +18,8 @@ type EndpointSerial struct {
 	Address string
 }
 
+var _ endpointChannelSingle = (*endpointSerial)(nil)
+
 type endpointSerial struct {
 	conf EndpointSerial
 	io.ReadWriteCloser

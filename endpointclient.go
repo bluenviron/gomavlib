@@ -1,6 +1,7 @@
 package gomavlib
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net"
@@ -56,13 +57,16 @@ func (conf EndpointUDPClient) init() (Endpoint, error) {
 }
 
 type endpointClient struct {
-	conf        endpointClientConf
+	conf endpointClientConf
+
+	ctx         context.Context
+	ctxCancel   func()
+	mb          *multibuffer.MultiBuffer
 	writerMutex sync.Mutex
 	writer      io.Writer
 
 	// in
-	terminate chan struct{}
-	read      chan []byte
+	read chan []byte
 }
 
 func initEndpointClient(conf endpointClientConf) (Endpoint, error) {
@@ -71,15 +75,20 @@ func initEndpointClient(conf endpointClientConf) (Endpoint, error) {
 		return nil, fmt.Errorf("invalid address")
 	}
 
+	ctx, ctxCancel := context.WithCancel(context.Background())
+
 	t := &endpointClient{
 		conf:      conf,
-		terminate: make(chan struct{}),
+		ctx:       ctx,
+		ctxCancel: ctxCancel,
+		mb:        multibuffer.New(2, bufferSize),
 		read:      make(chan []byte),
 	}
 
 	// work in a separate routine
 	// in this way we connect immediately, not after the first Read()
-	go t.do()
+	go t.run()
+
 	return t, nil
 }
 
@@ -99,130 +108,99 @@ func (t *endpointClient) Label() string {
 }
 
 func (t *endpointClient) Close() error {
-	close(t.terminate)
+	t.ctxCancel()
 	return nil
 }
 
-func (t *endpointClient) do() {
-	mb := multibuffer.New(2, bufferSize)
-
+func (t *endpointClient) run() {
 	for {
-		// solve address and connect
-		// in UDP, the only possible error is a DNS failure
-		// in TCP, the handshake must be completed
-		var rawConn net.Conn
-		dialDone := make(chan struct{}, 1)
-		go func() {
-			defer close(dialDone)
+		t.runInner()
 
-			network := func() string {
-				if t.conf.isUDP() {
-					return "udp4"
-				}
-				return "tcp4"
-			}()
-
-			var err error
-			rawConn, err = net.DialTimeout(network, t.conf.getAddress(), netConnectTimeout)
-			if err != nil {
-				rawConn = nil // ensure rawConn is nil in case of error
-			}
-		}()
+		timer := time.NewTimer(netReconnectPeriod)
+		defer timer.Stop()
 
 		select {
-		case <-dialDone:
-		case <-t.terminate:
-			go func() {
-				for range t.read {
-				}
-			}()
-			close(t.read)
+		case <-timer.C:
+		case <-t.ctx.Done():
 			return
 		}
+	}
+}
 
-		if rawConn == nil {
-			ok := func() bool {
-				// wait some seconds before reconnecting
-				timer := time.NewTimer(netReconnectPeriod)
-				defer timer.Stop()
-
-				select {
-				case <-timer.C:
-					return true
-				case <-t.terminate:
-					go func() {
-						for range t.read {
-						}
-					}()
-					close(t.read)
-					return false
-				}
-			}()
-			if !ok {
-				return
-			}
-			continue
+func (t *endpointClient) runInner() error {
+	// solve address and connect
+	// in UDP, the only possible error is a DNS failure
+	// in TCP, the handshake must be completed
+	network := func() string {
+		if t.conf.isUDP() {
+			return "udp4"
 		}
+		return "tcp4"
+	}()
+	timedContext, timedContextClose := context.WithTimeout(t.ctx, netConnectTimeout)
+	nconn, err := (&net.Dialer{}).DialContext(timedContext, network, t.conf.getAddress())
+	timedContextClose()
+	if err != nil {
+		return err
+	}
 
-		conn := &netTimedConn{rawConn}
-		func() {
-			t.writerMutex.Lock()
-			defer t.writerMutex.Unlock()
-			t.writer = conn
-		}()
+	conn := &netTimedConn{nconn}
+	func() {
+		t.writerMutex.Lock()
+		defer t.writerMutex.Unlock()
+		t.writer = conn
+	}()
 
-		readerDone := make(chan struct{})
-		go func() {
-			defer close(readerDone)
-
+	readerDone := make(chan error)
+	go func() {
+		readerDone <- func() error {
 			for {
-				buf := mb.Next()
+				buf := t.mb.Next()
 				n, err := conn.Read(buf)
 				if err != nil {
-					return
+					return err
 				}
 
-				t.read <- buf[:n]
+				select {
+				case t.read <- buf[:n]:
+				case <-t.ctx.Done():
+				}
 			}
 		}()
+	}()
 
-		select {
-		case <-readerDone:
-		case <-t.terminate:
-			go func() {
-				for range t.read {
-				}
-			}()
-			conn.Close()
-			<-readerDone
-			close(t.read)
-			return
-		}
-
-		// unexpected error, restart connection
+	select {
+	case err := <-readerDone: // unexpected error
 		conn.Close()
 		func() {
 			t.writerMutex.Lock()
 			defer t.writerMutex.Unlock()
 			t.writer = nil
 		}()
+		return err
+
+	case <-t.ctx.Done(): // Close() has been called
+		conn.Close()
+		<-readerDone
+		return errorTerminated
 	}
 }
 
 func (t *endpointClient) Read(buf []byte) (int, error) {
-	src, ok := <-t.read
-	if !ok {
+	select {
+	case src := <-t.read:
+		n := copy(buf, src)
+		return n, nil
+
+	case <-t.ctx.Done():
 		return 0, errorTerminated
 	}
-	n := copy(buf, src)
-	return n, nil
 }
 
 func (t *endpointClient) Write(buf []byte) (int, error) {
 	t.writerMutex.Lock()
 	defer t.writerMutex.Unlock()
 
-	// drop packets if disconnected
 	if t.writer == nil {
 		return 0, fmt.Errorf("disconnected")
 	}

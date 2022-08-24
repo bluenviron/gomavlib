@@ -6,7 +6,6 @@ import (
 	"errors"
 )
 
-//
 // States of the mission state machine.
 // Note that these states are independent of whether the mission is in a mode that can execute mission items or not (is suspended).
 // They may not all be relevant on all vehicles.

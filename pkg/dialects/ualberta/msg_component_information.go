@@ -2,7 +2,6 @@
 //nolint:revive,misspell,govet,lll
 package ualberta
 
-//
 // Component information message, which may be requested using MAV_CMD_REQUEST_MESSAGE.
 type MessageComponentInformation struct {
 	// Timestamp (time since system boot).

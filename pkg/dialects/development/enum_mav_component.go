@@ -278,7 +278,7 @@ const (
 	MAV_COMP_ID_UART_BRIDGE MAV_COMPONENT = 241
 	// Component handling TUNNEL messages (e.g. vendor specific GUI of a component).
 	MAV_COMP_ID_TUNNEL_NODE MAV_COMPONENT = 242
-	// Component for handling system messages (e.g. to ARM, takeoff, etc.).
+	// Deprecated, don't use. Component for handling system messages (e.g. to ARM, takeoff, etc.).
 	MAV_COMP_ID_SYSTEM_CONTROL MAV_COMPONENT = 250
 )
 

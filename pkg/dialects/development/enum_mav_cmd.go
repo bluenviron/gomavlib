@@ -160,7 +160,20 @@ const (
 	MAV_CMD_DO_GUIDED_LIMITS MAV_CMD = 222
 	// Control vehicle engine. This is interpreted by the vehicles engine controller to change the target engine state. It is intended for vehicles with internal combustion engines
 	MAV_CMD_DO_ENGINE_CONTROL MAV_CMD = 223
-	// Set the mission item with sequence number seq as current item. This means that the MAV will continue to this mission item on the shortest path (not following the mission items in-between).
+	//
+	// Set the mission item with sequence number seq as the current item and emit MISSION_CURRENT (whether or not the mission number changed).
+	// If a mission is currently being executed, the system will continue to this new mission item on the shortest path, skipping any intermediate mission items.
+	// 	  Note that mission jump repeat counters are not reset unless param2 is set (see MAV_CMD_DO_JUMP param2).
+	//
+	// This command may trigger a mission state-machine change on some systems: for example from MISSION_STATE_NOT_STARTED or MISSION_STATE_PAUSED to MISSION_STATE_ACTIVE.
+	// If the system is in mission mode, on those systems this command might therefore start, restart or resume the mission.
+	// If the system is not in mission mode this command must not trigger a switch to mission mode.
+	//
+	// The mission may be "reset" using param2.
+	// Resetting sets jump counters to initial values (to reset counters without changing the current mission item set the param1 to `-1`).
+	// Resetting also explicitly changes a mission state of MISSION_STATE_COMPLETE to MISSION_STATE_PAUSED or MISSION_STATE_ACTIVE, potentially allowing it to resume when it is (next) in a mission mode.
+	//
+	// 	  The command will ACK with MAV_RESULT_FAILED if the sequence number is out of range (including if there is no mission item).
 	MAV_CMD_DO_SET_MISSION_CURRENT MAV_CMD = 224
 	// NOP - This command is only used to mark the upper limit of the DO commands in the enumeration
 	MAV_CMD_DO_LAST MAV_CMD = 240

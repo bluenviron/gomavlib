@@ -17,11 +17,11 @@ type MessageHomePosition struct {
 	Longitude int32
 	// Altitude (MSL). Positive for up.
 	Altitude int32
-	// Local X position of this position in the local coordinate frame
+	// Local X position of this position in the local coordinate frame (NED)
 	X float32
-	// Local Y position of this position in the local coordinate frame
+	// Local Y position of this position in the local coordinate frame (NED)
 	Y float32
-	// Local Z position of this position in the local coordinate frame
+	// Local Z position of this position in the local coordinate frame (NED: positive "down")
 	Z float32
 	// World to surface normal and heading transformation of the takeoff position. Used to indicate the heading and slope of the ground
 	Q [4]float32

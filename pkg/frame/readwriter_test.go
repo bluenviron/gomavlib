@@ -9,14 +9,10 @@ import (
 
 func TestReadWriterNew(t *testing.T) {
 	var buf bytes.Buffer
-	_, err := NewReadWriter(
-		ReaderConf{
-			Reader: &buf,
-		},
-		WriterConf{
-			Writer:      &buf,
-			OutVersion:  V2,
-			OutSystemID: 1,
-		})
+	_, err := NewReadWriter(ReadWriterConf{
+		ReadWriter:  &buf,
+		OutVersion:  V2,
+		OutSystemID: 1,
+	})
 	require.NoError(t, err)
 }

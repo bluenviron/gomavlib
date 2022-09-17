@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"io"
 
 	"github.com/aler9/gomavlib/pkg/dialect"
 	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
@@ -11,6 +12,11 @@ import (
 
 // if NewNode() is not flexible enough, the library provides a low-level
 // frame reader and writer, that can be used with any kind of byte stream.
+
+type readWriter struct {
+	io.Reader
+	io.Writer
+}
 
 func main() {
 	inBuf := bytes.NewBuffer(
@@ -22,17 +28,15 @@ func main() {
 		panic(err)
 	}
 
-	rw, err := frame.NewReadWriter(
-		frame.ReaderConf{
-			Reader:    inBuf,
-			DialectRW: dialectRW,
+	rw, err := frame.NewReadWriter(frame.ReadWriterConf{
+		ReadWriter: &readWriter{
+			Reader: inBuf,
+			Writer: outBuf,
 		},
-		frame.WriterConf{
-			Writer:      outBuf,
-			DialectRW:   dialectRW,
-			OutVersion:  frame.V2, // change to V1 if you're unable to communicate with the target
-			OutSystemID: 10,
-		})
+		DialectRW:   dialectRW,
+		OutVersion:  frame.V2, // change to V1 if you're unable to communicate with the target
+		OutSystemID: 10,
+	})
 	if err != nil {
 		panic(err)
 	}

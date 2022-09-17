@@ -65,6 +65,7 @@ func NewWriter(conf WriterConf) (*Writer, error) {
 }
 
 // WriteMessage writes a Message.
+// The Message is wrapped into a Frame whose fields are filled automatically.
 // It must not be called by multiple routines in parallel.
 func (w *Writer) WriteMessage(m message.Message) error {
 	if w.conf.OutVersion == V1 {

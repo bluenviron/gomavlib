@@ -32,26 +32,21 @@ type Channel struct {
 }
 
 func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Channel, error) {
-	frw, err := frame.NewReadWriter(
-		frame.ReaderConf{
-			Reader:    rwc,
-			DialectRW: n.dialectRW,
-			InKey:     n.conf.InKey,
-		},
-		frame.WriterConf{
-			Writer:      rwc,
-			DialectRW:   n.dialectRW,
-			OutSystemID: n.conf.OutSystemID,
-			OutVersion: func() frame.WriterOutVersion {
-				if n.conf.OutVersion == V2 {
-					return frame.V2
-				}
-				return frame.V1
-			}(),
-			OutComponentID:     n.conf.OutComponentID,
-			OutSignatureLinkID: randomByte(),
-			OutKey:             n.conf.OutKey,
-		})
+	frw, err := frame.NewReadWriter(frame.ReadWriterConf{
+		ReadWriter:  rwc,
+		DialectRW:   n.dialectRW,
+		InKey:       n.conf.InKey,
+		OutSystemID: n.conf.OutSystemID,
+		OutVersion: func() frame.WriterOutVersion {
+			if n.conf.OutVersion == V2 {
+				return frame.V2
+			}
+			return frame.V1
+		}(),
+		OutComponentID:     n.conf.OutComponentID,
+		OutSignatureLinkID: randomByte(),
+		OutKey:             n.conf.OutKey,
+	})
 	if err != nil {
 		return nil, err
 	}

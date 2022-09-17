@@ -382,7 +382,7 @@ func (n *Node) Close() {
 //   *EventFrame
 //   *EventParseError
 //   *EventStreamRequested
-// See individual events for meaning and content.
+// See individual events for details.
 func (n *Node) Events() chan Event {
 	return n.events
 }

@@ -12,9 +12,14 @@ import (
 	"github.com/aler9/gomavlib/pkg/multibuffer"
 )
 
-const (
-	serialReconnectPeriod = 2 * time.Second
-)
+var serialReconnectPeriod = 2 * time.Second
+
+var serialOpenFunc = func(device string, baud int) (io.ReadWriteCloser, error) {
+	return serial.OpenPort(&serial.Config{
+		Name: device,
+		Baud: baud,
+	})
+}
 
 // EndpointSerial sets up a endpoint that works with a serial port.
 type EndpointSerial struct {
@@ -43,10 +48,7 @@ type endpointSerial struct {
 
 func (conf EndpointSerial) init() (Endpoint, error) {
 	// check device existence
-	test, err := serial.OpenPort(&serial.Config{
-		Name: conf.Device,
-		Baud: conf.Baud,
-	})
+	test, err := serialOpenFunc(conf.Device, conf.Baud)
 	if err != nil {
 		return nil, err
 	}
@@ -99,10 +101,7 @@ func (t *endpointSerial) run() {
 }
 
 func (t *endpointSerial) runInner() error {
-	ser, err := serial.OpenPort(&serial.Config{
-		Name: t.conf.Device,
-		Baud: t.conf.Baud,
-	})
+	ser, err := serialOpenFunc(t.conf.Device, t.conf.Baud)
 	if err != nil {
 		return err
 	}

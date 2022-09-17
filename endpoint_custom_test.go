@@ -2,6 +2,7 @@ package gomavlib
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"testing"
 
@@ -14,26 +15,51 @@ import (
 
 var _ endpointChannelSingle = (*endpointCustom)(nil)
 
-type customEndpoint struct {
-	chOut chan []byte
-	chIn  chan []byte
+type dummyEndpoint struct {
+	chOut     chan []byte
+	chIn      chan []byte
+	chReadErr chan struct{}
 }
 
-func (e *customEndpoint) Close() error {
+func newDummyEndpoint() *dummyEndpoint {
+	return &dummyEndpoint{
+		chOut:     make(chan []byte),
+		chIn:      make(chan []byte),
+		chReadErr: make(chan struct{}),
+	}
+}
+
+func (e *dummyEndpoint) simulateReadError() {
+	close(e.chReadErr)
+}
+
+func (e *dummyEndpoint) push(buf []byte) {
+	e.chOut <- buf
+}
+
+func (e *dummyEndpoint) pull() []byte {
+	return <-e.chIn
+}
+
+func (e *dummyEndpoint) Close() error {
 	close(e.chOut)
 	close(e.chIn)
 	return nil
 }
 
-func (e *customEndpoint) Read(p []byte) (int, error) {
-	buf, ok := <-e.chOut
-	if !ok {
-		return 0, io.EOF
+func (e *dummyEndpoint) Read(p []byte) (int, error) {
+	select {
+	case buf, ok := <-e.chOut:
+		if !ok {
+			return 0, io.EOF
+		}
+		return copy(p, buf), nil
+	case <-e.chReadErr:
+		return 0, errors.New("custom error")
 	}
-	return copy(p, buf), nil
 }
 
-func (e *customEndpoint) Write(p []byte) (int, error) {
+func (e *dummyEndpoint) Write(p []byte) (int, error) {
 	e.chIn <- p
 	return len(p), nil
 }
@@ -44,16 +70,13 @@ func TestEndpointCustom(t *testing.T) {
 		Messages: []message.Message{&MessageHeartbeat{}},
 	}
 
-	ce := &customEndpoint{
-		chOut: make(chan []byte),
-		chIn:  make(chan []byte),
-	}
+	de := newDummyEndpoint()
 
 	node, err := NewNode(NodeConf{
 		Dialect:          dial,
 		OutVersion:       V2,
 		OutSystemID:      10,
-		Endpoints:        []EndpointConf{EndpointCustom{ce}},
+		Endpoints:        []EndpointConf{EndpointCustom{de}},
 		HeartbeatDisable: true,
 	})
 	require.NoError(t, err)
@@ -77,7 +100,7 @@ func TestEndpointCustom(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	for i := 0; i < 3; i++ {
+	for i := 0; i < 3; i++ { //nolint:dupl
 		msg := &MessageHeartbeat{
 			Type:           1,
 			Autopilot:      2,
@@ -88,8 +111,7 @@ func TestEndpointCustom(t *testing.T) {
 		}
 		err = rw.WriteMessage(msg)
 		require.NoError(t, err)
-
-		ce.chOut <- buf.Bytes()
+		de.push(buf.Bytes())
 		buf.Reset()
 
 		evt = <-node.Events()
@@ -114,7 +136,7 @@ func TestEndpointCustom(t *testing.T) {
 		}
 		node.WriteMessageAll(msg)
 
-		buf2 := <-ce.chIn
+		buf2 := de.pull()
 		buf.Write(buf2)
 		fr, err := rw.Read()
 		require.NoError(t, err)

@@ -2,6 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package asluav
 
+//
 // Component metadata message, which may be requested using MAV_CMD_REQUEST_MESSAGE.
 //
 // This contains the MAVLink FTP URI and CRC for the component's general metadata file.

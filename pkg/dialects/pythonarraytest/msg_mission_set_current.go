@@ -2,6 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package pythonarraytest
 
+//
 // Set the mission item with sequence number seq as the current item and emit MISSION_CURRENT (whether or not the mission number changed).
 // If a mission is currently being executed, the system will continue to this new mission item on the shortest path, skipping any intermediate mission items.
 // Note that mission jump repeat counters are not reset (see MAV_CMD_DO_JUMP param2).

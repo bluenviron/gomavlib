@@ -2,6 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package all
 
+//
 // Vehicle status report that is sent out while figure eight execution is in progress (see MAV_CMD_DO_FIGURE_EIGHT).
 // This may typically send at low rates: of the order of 2Hz.
 type MessageFigureEightExecutionStatus struct {

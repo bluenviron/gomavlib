@@ -2,6 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package ardupilotmega
 
+//
 // Time synchronization message.
 // The message is used for both timesync requests and responses.
 // The request is sent with `ts1=syncing component timestamp` and `tc1=0`, and may be broadcast or targeted to a specific system/component.

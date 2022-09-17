@@ -2,7 +2,7 @@
 package message
 
 // Message is the interface that must be implemented by all Mavlink messages.
-// Furthermore, any message must be labeled "MessageNameOfMessage".
+// Furthermore, any message struct must be labeled "MessageNameOfMessage".
 type Message interface {
 	GetID() uint32
 }

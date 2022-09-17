@@ -2,9 +2,8 @@
 //nolint:revive,misspell,govet,lll
 package common
 
-//
 // Sets the home position.
-// 	The home position is the default position that the system will return to and land on.
+// The home position is the default position that the system will return to and land on.
 // The position is set automatically by the system during the takeoff (and may also be set using this message).
 // The global and local positions encode the position in the respective coordinate frames, while the q parameter encodes the orientation of the surface.
 // Under normal conditions it describes the heading and terrain slope, which can be used by the aircraft to adjust the approach.

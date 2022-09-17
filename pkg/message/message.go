@@ -13,7 +13,6 @@ type Message interface {
 // * as intermediate step in the encoding/decoding process
 //
 // * when the parser receives an unknown message
-//
 type MessageRaw struct { //nolint:revive
 	ID      uint32
 	Payload []byte

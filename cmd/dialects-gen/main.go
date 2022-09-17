@@ -1,3 +1,4 @@
+// dialects-gen command.
 package main
 
 import (

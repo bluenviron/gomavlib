@@ -6,7 +6,6 @@ import (
 	"errors"
 )
 
-//
 // Actions for reading and writing plan information (mission, rally points, geofence) between persistent and volatile storage when using MAV_CMD_PREFLIGHT_STORAGE.
 // (Commonly missions are loaded from persistent storage (flash/EEPROM) into volatile storage (RAM) on startup and written back when they are changed.)
 type PREFLIGHT_STORAGE_MISSION_ACTION uint32

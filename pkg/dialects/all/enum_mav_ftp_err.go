@@ -15,7 +15,7 @@ const (
 	// Fail: Unknown failure
 	MAV_FTP_ERR_FAIL MAV_FTP_ERR = 1
 	// FailErrno: Command failed, Err number sent back in PayloadHeader.data[1].
-	// 		This is a file-system error number understood by the server operating system.
+	// This is a file-system error number understood by the server operating system.
 	MAV_FTP_ERR_FAILERRNO MAV_FTP_ERR = 2
 	// InvalidDataSize: Payload size is invalid
 	MAV_FTP_ERR_INVALIDDATASIZE MAV_FTP_ERR = 3

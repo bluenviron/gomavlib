@@ -8,40 +8,7 @@ to communicate with unmanned ground vehicles (UGV) and unmanned aerial vehicles
 (UAV, drones, quadcopters, multirotors). It is supported by the most common
 open-source flight controllers (Ardupilot and PX4).
 
-Basic example (more are available at https://github.com/aler9/gomavlib/tree/master/examples):
-
-  package main
-
-  import (
-  	"fmt"
-  	"github.com/aler9/gomavlib"
-  	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
-  )
-
-  func main() {
-  	node, err := gomavlib.NewNode(gomavlib.NodeConf{
-		Endpoints: []gomavlib.EndpointConf{
-			gomavlib.EndpointSerial{
-				Device: "/dev/ttyUSB0",
-				Baud: 57600,
-			},
-		},
-  		Dialect:     ardupilotmega.Dialect,
-		OutVersion:  gomavlib.V2,
-  		OutSystemID: 10,
-  	})
-  	if err != nil {
-  		panic(err)
-  	}
-  	defer node.Close()
-
-  	for evt := range node.Events() {
-  		if frm,ok := evt.(*gomavlib.EventFrame); ok {
-  			fmt.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())
-  		}
-  	}
-  }
-
+Examples are available at https://github.com/aler9/gomavlib/tree/master/examples
 */
 package gomavlib
 
@@ -377,11 +344,13 @@ func (n *Node) Close() {
 }
 
 // Events returns a channel from which receiving events. Possible events are:
-//   *EventChannelOpen
-//   *EventChannelClose
-//   *EventFrame
-//   *EventParseError
-//   *EventStreamRequested
+//
+// * EventChannelOpen
+// * EventChannelClose
+// * EventFrame
+// * EventParseError
+// * EventStreamRequested
+//
 // See individual events for details.
 func (n *Node) Events() chan Event {
 	return n.events

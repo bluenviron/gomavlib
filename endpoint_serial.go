@@ -36,6 +36,9 @@ type endpointSerial struct {
 
 	// in
 	read chan []byte
+
+	// out
+	done chan struct{}
 }
 
 func (conf EndpointSerial) init() (Endpoint, error) {
@@ -57,6 +60,7 @@ func (conf EndpointSerial) init() (Endpoint, error) {
 		ctxCancel: ctxCancel,
 		mb:        multibuffer.New(2, bufferSize),
 		read:      make(chan []byte),
+		done:      make(chan struct{}),
 	}
 
 	go t.run()
@@ -76,10 +80,13 @@ func (t *endpointSerial) label() string {
 
 func (t *endpointSerial) Close() error {
 	t.ctxCancel()
+	<-t.done
 	return nil
 }
 
 func (t *endpointSerial) run() {
+	defer close(t.done)
+
 	for {
 		t.runInner()
 

@@ -67,6 +67,9 @@ type endpointClient struct {
 
 	// in
 	read chan []byte
+
+	// out
+	done chan struct{}
 }
 
 func initEndpointClient(conf endpointClientConf) (Endpoint, error) {
@@ -83,6 +86,7 @@ func initEndpointClient(conf endpointClientConf) (Endpoint, error) {
 		ctxCancel: ctxCancel,
 		mb:        multibuffer.New(2, bufferSize),
 		read:      make(chan []byte),
+		done:      make(chan struct{}),
 	}
 
 	go t.run()
@@ -107,10 +111,13 @@ func (t *endpointClient) label() string {
 
 func (t *endpointClient) Close() error {
 	t.ctxCancel()
+	<-t.done
 	return nil
 }
 
 func (t *endpointClient) run() {
+	defer close(t.done)
+
 	for {
 		t.runInner()
 

@@ -3,7 +3,6 @@ package gomavlib
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"reflect"
 	"sync"
 	"testing"
@@ -178,52 +177,6 @@ func doTest(t *testing.T, t1 EndpointConf, t2 EndpointConf) {
 	wg.Wait()
 	require.NoError(t, err1)
 	require.NoError(t, err2)
-}
-
-func TestNodeTcpServerClient(t *testing.T) {
-	doTest(t, EndpointTCPServer{"127.0.0.1:5601"}, EndpointTCPClient{"127.0.0.1:5601"})
-}
-
-func TestNodeUdpServerClient(t *testing.T) {
-	doTest(t, EndpointUDPServer{"127.0.0.1:5601"}, EndpointUDPClient{"127.0.0.1:5601"})
-}
-
-func TestNodeUdpBroadcastBroadcast(t *testing.T) {
-	doTest(t, EndpointUDPBroadcast{"127.255.255.255:5602", ":5601"},
-		EndpointUDPBroadcast{"127.255.255.255:5601", ":5602"})
-}
-
-type testLoopback chan []byte
-
-func (ch testLoopback) Close() error {
-	close(ch)
-	return nil
-}
-
-func (ch testLoopback) Read(buf []byte) (int, error) {
-	ret, ok := <-ch
-	if !ok {
-		return 0, errTerminated
-	}
-	n := copy(buf, ret)
-	return n, nil
-}
-
-func (ch testLoopback) Write(buf []byte) (int, error) {
-	ch <- buf
-	return len(buf), nil
-}
-
-type testEndpoint struct {
-	io.ReadCloser
-	io.Writer
-}
-
-func TestNodeCustomCustom(t *testing.T) {
-	l1 := make(testLoopback)
-	l2 := make(testLoopback)
-	doTest(t, EndpointCustom{&testEndpoint{l1, l2}},
-		EndpointCustom{&testEndpoint{l2, l1}})
 }
 
 func TestNodeError(t *testing.T) {
@@ -490,91 +443,4 @@ func TestNodeRouting(t *testing.T) {
 	node3.Close()
 
 	require.NoError(t, err2)
-}
-
-func TestNodeHeartbeat(t *testing.T) {
-	func() {
-		node1, err := NewNode(NodeConf{
-			Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
-			OutVersion:  V2,
-			OutSystemID: 10,
-			Endpoints: []EndpointConf{
-				EndpointUDPServer{"127.0.0.1:5600"},
-			},
-			HeartbeatDisable: true,
-		})
-		require.NoError(t, err)
-		defer node1.Close()
-
-		node2, err := NewNode(NodeConf{
-			Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
-			OutVersion:  V2,
-			OutSystemID: 11,
-			Endpoints: []EndpointConf{
-				EndpointUDPClient{"127.0.0.1:5600"},
-			},
-			HeartbeatDisable: false,
-			HeartbeatPeriod:  500 * time.Millisecond,
-		})
-		require.NoError(t, err)
-		defer node2.Close()
-
-		for evt := range node1.Events() {
-			if ee, ok := evt.(*EventFrame); ok {
-				if _, ok = ee.Message().(*MessageHeartbeat); ok {
-					return
-				}
-			}
-		}
-	}()
-}
-
-func TestNodeStreamRequest(t *testing.T) {
-	func() {
-		node1, err := NewNode(NodeConf{
-			Dialect: &dialect.Dialect{3, []message.Message{ //nolint:govet
-				&MessageHeartbeat{},
-				&MessageRequestDataStream{},
-			}},
-			OutVersion:  V2,
-			OutSystemID: 10,
-			Endpoints: []EndpointConf{
-				EndpointUDPServer{"127.0.0.1:5600"},
-			},
-			HeartbeatDisable:    true,
-			StreamRequestEnable: true,
-		})
-		require.NoError(t, err)
-		defer node1.Close()
-
-		node2, err := NewNode(NodeConf{
-			Dialect: &dialect.Dialect{3, []message.Message{ //nolint:govet
-				&MessageHeartbeat{},
-				&MessageRequestDataStream{},
-			}},
-			OutVersion:  V2,
-			OutSystemID: 10,
-			Endpoints: []EndpointConf{
-				EndpointUDPClient{"127.0.0.1:5600"},
-			},
-			HeartbeatDisable:       false,
-			HeartbeatPeriod:        500 * time.Millisecond,
-			HeartbeatAutopilotType: 3, // MAV_AUTOPILOT_ARDUPILOTMEGA
-		})
-		require.NoError(t, err)
-		defer node2.Close()
-
-		go func() {
-			for range node1.Events() {
-			}
-		}()
-
-		for evt := range node2.Events() {
-			if ee, ok := evt.(*EventFrame); ok {
-				if _, ok = ee.Message().(*MessageRequestDataStream); ok {
-					return
-				}
-			}
-		}
-	}()
 }

@@ -161,6 +161,7 @@ func (t *endpointClient) runInner() error {
 				select {
 				case t.read <- buf[:n]:
 				case <-t.ctx.Done():
+					return errTerminated
 				}
 			}
 		}()

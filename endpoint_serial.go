@@ -135,6 +135,7 @@ func (t *endpointSerial) runInner() error {
 				select {
 				case t.read <- buf[:n]:
 				case <-t.ctx.Done():
+					return errTerminated
 				}
 			}
 		}()

@@ -106,7 +106,8 @@ func (f V2Frame) IsSigned() bool {
 	return (f.IncompatibilityFlag & V2FlagSigned) != 0
 }
 
-func (f V2Frame) getChecksum() uint16 {
+// GetChecksum implements the Frame interface.
+func (f V2Frame) GetChecksum() uint16 {
 	return f.Checksum
 }
 

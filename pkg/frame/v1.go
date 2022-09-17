@@ -50,7 +50,8 @@ func (f V1Frame) GetMessage() message.Message {
 	return f.Message
 }
 
-func (f V1Frame) getChecksum() uint16 {
+// GetChecksum implements the Frame interface.
+func (f V1Frame) GetChecksum() uint16 {
 	return f.Checksum
 }
 

@@ -118,9 +118,9 @@ func (r *Reader) Read() (Frame, error) {
 	// decode message if in dialect and validate checksum
 	if r.conf.DialectRW != nil {
 		if mp := r.conf.DialectRW.GetMessage(f.GetMessage().GetID()); mp != nil {
-			if sum := f.genChecksum(mp.CRCExtra()); sum != f.getChecksum() {
+			if sum := f.genChecksum(mp.CRCExtra()); sum != f.GetChecksum() {
 				return nil, newError("wrong checksum, expected %.4x, got %.4x, message id is %d",
-					sum, f.getChecksum(), f.GetMessage().GetID())
+					sum, f.GetChecksum(), f.GetMessage().GetID())
 			}
 
 			_, isV2 := f.(*V2Frame)

@@ -47,8 +47,6 @@ func (conf EndpointUDPServer) getAddress() string {
 	return conf.Address
 }
 
-var _ endpointChannelAccepter = (*endpointServer)(nil)
-
 type endpointServer struct {
 	conf     endpointServerConf
 	listener net.Listener

@@ -56,8 +56,6 @@ func (conf EndpointUDPClient) init() (Endpoint, error) {
 	return initEndpointClient(conf)
 }
 
-var _ endpointChannelSingle = (*endpointClient)(nil)
-
 type endpointClient struct {
 	conf endpointClientConf
 

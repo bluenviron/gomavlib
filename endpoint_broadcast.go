@@ -48,12 +48,11 @@ func ipByBroadcastIP(target net.IP) net.IP {
 type EndpointUDPBroadcast struct {
 	// the broadcast address to which sending outgoing frames, example: 192.168.5.255:5600
 	BroadcastAddress string
+
 	// (optional) the listening address. if empty, it will be computed
 	// from the broadcast address.
 	LocalAddress string
 }
-
-var _ endpointChannelSingle = (*endpointUDPBroadcast)(nil)
 
 type endpointUDPBroadcast struct {
 	conf          EndpointUDPBroadcast

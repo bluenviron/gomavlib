@@ -32,7 +32,10 @@ func main() {
 	// - writes messages with given system id
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
-			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
+			gomavlib.EndpointSerial{
+				Device: "/dev/ttyUSB0",
+				Baud:   57600,
+			},
 		},
 		Dialect:     dialect,
 		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target

@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"regexp"
-	"strconv"
 	"sync"
 	"time"
 
@@ -18,13 +16,13 @@ const (
 	serialReconnectPeriod = 2 * time.Second
 )
 
-var reSerial = regexp.MustCompile("^(.+?):([0-9]+)$")
-
 // EndpointSerial sets up a endpoint that works with a serial port.
 type EndpointSerial struct {
-	// the address of the serial port in format name:baudrate
-	// example: /dev/ttyUSB0:57600
-	Address string
+	// the name of the device of the serial port (i.e: /dev/ttyUSB0)
+	Device string
+
+	// baud rate (i.e: 57600)
+	Baud int
 }
 
 type endpointSerial struct {
@@ -32,8 +30,6 @@ type endpointSerial struct {
 
 	ctx         context.Context
 	ctxCancel   func()
-	name        string
-	baud        int
 	mb          *multibuffer.MultiBuffer
 	writerMutex sync.Mutex
 	writer      io.Writer
@@ -43,18 +39,10 @@ type endpointSerial struct {
 }
 
 func (conf EndpointSerial) init() (Endpoint, error) {
-	matches := reSerial.FindStringSubmatch(conf.Address)
-	if matches == nil {
-		return nil, fmt.Errorf("invalid address")
-	}
-
-	name := matches[1]
-	baud, _ := strconv.Atoi(matches[2])
-
 	// check device existence
 	test, err := serial.OpenPort(&serial.Config{
-		Name: name,
-		Baud: baud,
+		Name: conf.Device,
+		Baud: conf.Baud,
 	})
 	if err != nil {
 		return nil, err
@@ -67,8 +55,6 @@ func (conf EndpointSerial) init() (Endpoint, error) {
 		conf:      conf,
 		ctx:       ctx,
 		ctxCancel: ctxCancel,
-		name:      name,
-		baud:      baud,
 		mb:        multibuffer.New(2, bufferSize),
 		read:      make(chan []byte),
 	}
@@ -107,8 +93,8 @@ func (t *endpointSerial) run() {
 
 func (t *endpointSerial) runInner() error {
 	ser, err := serial.OpenPort(&serial.Config{
-		Name: t.name,
-		Baud: t.baud,
+		Name: t.conf.Device,
+		Baud: t.conf.Baud,
 	})
 	if err != nil {
 		return err

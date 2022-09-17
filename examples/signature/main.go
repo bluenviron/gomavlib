@@ -20,7 +20,10 @@ func main() {
 	// - sign outgoing messages via OutKey
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
-			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
+			gomavlib.EndpointSerial{
+				Device: "/dev/ttyUSB0",
+				Baud:   57600,
+			},
 		},
 		Dialect:     ardupilotmega.Dialect,
 		OutVersion:  gomavlib.V2, // V2 is mandatory for signatures

@@ -15,7 +15,10 @@ func main() {
 	// - automatically requests streams to ardupilot devices
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
-			gomavlib.EndpointSerial{"/dev/ttyUSB0:57600"},
+			gomavlib.EndpointSerial{
+				Device: "/dev/ttyUSB0",
+				Baud:   57600,
+			},
 		},
 		Dialect:             ardupilotmega.Dialect,
 		OutVersion:          gomavlib.V1, // Ardupilot uses V1

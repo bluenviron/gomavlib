@@ -204,7 +204,7 @@ func (f V2Frame) encodeTo(buf []byte, msgEncoded []byte) (int, error) {
 	return n, nil
 }
 
-func (f V2Frame) genChecksum(crcExtra byte) uint16 {
+func (f V2Frame) generateChecksum(crcExtra byte) uint16 {
 	msg := f.GetMessage().(*message.MessageRaw)
 	h := x25.New()
 

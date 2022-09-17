@@ -134,9 +134,9 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 		// fill checksum
 		switch ff := fr.(type) {
 		case *V1Frame:
-			ff.Checksum = ff.genChecksum(mp.CRCExtra())
+			ff.Checksum = ff.generateChecksum(mp.CRCExtra())
 		case *V2Frame:
-			ff.Checksum = ff.genChecksum(mp.CRCExtra())
+			ff.Checksum = ff.generateChecksum(mp.CRCExtra())
 		}
 	}
 

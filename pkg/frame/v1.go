@@ -121,8 +121,7 @@ func (f V1Frame) encodeTo(buf []byte, msgEncoded []byte) (int, error) {
 	return n, nil
 }
 
-// genChecksum implements the Frame interface.
-func (f V1Frame) genChecksum(crcExtra byte) uint16 {
+func (f V1Frame) generateChecksum(crcExtra byte) uint16 {
 	msg := f.GetMessage().(*message.MessageRaw)
 	h := x25.New()
 

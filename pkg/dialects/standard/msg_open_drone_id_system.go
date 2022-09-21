@@ -18,13 +18,13 @@ type MessageOpenDroneIdSystem struct {
 	OperatorLatitude int32
 	// Longitude of the operator. If unknown: 0 (both Lat/Lon).
 	OperatorLongitude int32
-	// Number of aircraft in the area, group or formation (default 1).
+	// Number of aircraft in the area, group or formation (default 1). Used only for swarms/multiple UA.
 	AreaCount uint16
-	// Radius of the cylindrical area of the group or formation (default 0).
+	// Radius of the cylindrical area of the group or formation (default 0). Used only for swarms/multiple UA.
 	AreaRadius uint16
-	// Area Operations Ceiling relative to WGS84. If unknown: -1000 m.
+	// Area Operations Ceiling relative to WGS84. If unknown: -1000 m. Used only for swarms/multiple UA.
 	AreaCeiling float32
-	// Area Operations Floor relative to WGS84. If unknown: -1000 m.
+	// Area Operations Floor relative to WGS84. If unknown: -1000 m. Used only for swarms/multiple UA.
 	AreaFloor float32
 	// When classification_type is MAV_ODID_CLASSIFICATION_TYPE_EU, specifies the category of the UA.
 	CategoryEu MAV_ODID_CATEGORY_EU `mavenum:"uint8"`

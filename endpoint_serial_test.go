@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"io"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/require"
 
@@ -114,8 +113,6 @@ func TestEndpointSerial(t *testing.T) {
 }
 
 func TestEndpointSerialReconnect(t *testing.T) {
-	serialReconnectPeriod = 1 * time.Millisecond
-
 	endpointCreated := make(chan *dummyEndpoint, 1)
 	serialOpenFunc = func(name string, baud int) (io.ReadWriteCloser, error) {
 		de := newDummyEndpoint()

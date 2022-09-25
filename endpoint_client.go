@@ -5,10 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net"
-	"sync"
-	"time"
 
-	"github.com/aler9/gomavlib/pkg/multibuffer"
+	"github.com/aler9/gomavlib/pkg/autoreconnector"
 )
 
 type endpointClientConf interface {
@@ -58,18 +56,7 @@ func (conf EndpointUDPClient) init() (Endpoint, error) {
 
 type endpointClient struct {
 	conf endpointClientConf
-
-	ctx         context.Context
-	ctxCancel   func()
-	mb          *multibuffer.MultiBuffer
-	writerMutex sync.Mutex
-	writer      io.Writer
-
-	// in
-	read chan []byte
-
-	// out
-	done chan struct{}
+	io.ReadWriteCloser
 }
 
 func initEndpointClient(conf endpointClientConf) (Endpoint, error) {
@@ -78,18 +65,30 @@ func initEndpointClient(conf endpointClientConf) (Endpoint, error) {
 		return nil, fmt.Errorf("invalid address")
 	}
 
-	ctx, ctxCancel := context.WithCancel(context.Background())
-
 	t := &endpointClient{
-		conf:      conf,
-		ctx:       ctx,
-		ctxCancel: ctxCancel,
-		mb:        multibuffer.New(2, bufferSize),
-		read:      make(chan []byte),
-		done:      make(chan struct{}),
-	}
+		conf: conf,
+		ReadWriteCloser: autoreconnector.New(
+			func(ctx context.Context) (io.ReadWriteCloser, error) {
+				// solve address and connect
+				// in UDP, the only possible error is a DNS failure
+				// in TCP, the handshake must be completed
+				network := func() string {
+					if conf.isUDP() {
+						return "udp4"
+					}
+					return "tcp4"
+				}()
+				timedContext, timedContextClose := context.WithTimeout(ctx, netConnectTimeout)
+				nconn, err := (&net.Dialer{}).DialContext(timedContext, network, conf.getAddress())
+				timedContextClose()
+				if err != nil {
+					return nil, err
+				}
 
-	go t.run()
+				return &netTimedConn{nconn}, nil
+			},
+		),
+	}
 
 	return t, nil
 }
@@ -107,106 +106,4 @@ func (t *endpointClient) label() string {
 		}
 		return "tcp"
 	}(), t.conf.getAddress())
-}
-
-func (t *endpointClient) Close() error {
-	t.ctxCancel()
-	<-t.done
-	return nil
-}
-
-func (t *endpointClient) run() {
-	defer close(t.done)
-
-	for {
-		t.runInner()
-
-		select {
-		case <-time.After(netReconnectPeriod):
-		case <-t.ctx.Done():
-			return
-		}
-	}
-}
-
-func (t *endpointClient) runInner() error {
-	// solve address and connect
-	// in UDP, the only possible error is a DNS failure
-	// in TCP, the handshake must be completed
-	network := func() string {
-		if t.conf.isUDP() {
-			return "udp4"
-		}
-		return "tcp4"
-	}()
-	timedContext, timedContextClose := context.WithTimeout(t.ctx, netConnectTimeout)
-	nconn, err := (&net.Dialer{}).DialContext(timedContext, network, t.conf.getAddress())
-	timedContextClose()
-	if err != nil {
-		return err
-	}
-
-	conn := &netTimedConn{nconn}
-	func() {
-		t.writerMutex.Lock()
-		defer t.writerMutex.Unlock()
-		t.writer = conn
-	}()
-
-	readerDone := make(chan error)
-	go func() {
-		readerDone <- func() error {
-			for {
-				buf := t.mb.Next()
-				n, err := conn.Read(buf)
-				if err != nil {
-					return err
-				}
-
-				select {
-				case t.read <- buf[:n]:
-				case <-t.ctx.Done():
-					return errTerminated
-				}
-			}
-		}()
-	}()
-
-	select {
-	case err := <-readerDone: // unexpected error
-		conn.Close()
-		func() {
-			t.writerMutex.Lock()
-			defer t.writerMutex.Unlock()
-			t.writer = nil
-		}()
-		return err
-
-	case <-t.ctx.Done(): // Close() has been called
-		conn.Close()
-		<-readerDone
-		return errTerminated
-	}
-}
-
-func (t *endpointClient) Read(buf []byte) (int, error) {
-	select {
-	case src := <-t.read:
-		n := copy(buf, src)
-		return n, nil
-
-	case <-t.ctx.Done():
-		return 0, errTerminated
-	}
-}
-
-func (t *endpointClient) Write(buf []byte) (int, error) {
-	t.writerMutex.Lock()
-	defer t.writerMutex.Unlock()
-
-	if t.writer == nil {
-		return 0, fmt.Errorf("disconnected")
-	}
-
-	return t.writer.Write(buf)
 }

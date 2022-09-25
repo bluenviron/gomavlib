@@ -47,7 +47,7 @@ const (
 	MAV_FRAME_GLOBAL_TERRAIN_ALT MAV_FRAME = 10
 	// Global (WGS84) coordinate frame (scaled) with AGL altitude (at the waypoint coordinate). First value / x: latitude in degrees*1E7, second value / y: longitude in degrees*1E7, third value / z: positive altitude in meters with 0 being at ground level in terrain model.
 	MAV_FRAME_GLOBAL_TERRAIN_ALT_INT MAV_FRAME = 11
-	// FRD local tangent frame (x: Forward, y: Right, z: Down) with origin that travels with vehicle. The forward axis is aligned to the front of the vehicle in the horizontal plane.
+	// FRD local frame aligned to the vehicle's attitude (x: Forward, y: Right, z: Down) with an origin that travels with vehicle.
 	MAV_FRAME_BODY_FRD MAV_FRAME = 12
 	// MAV_FRAME_BODY_FLU - Body fixed frame of reference, Z-up (x: Forward, y: Left, z: Up).
 	MAV_FRAME_RESERVED_13 MAV_FRAME = 13

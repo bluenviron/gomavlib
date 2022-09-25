@@ -5,6 +5,7 @@ import (
 	"io"
 	"net"
 
+	"github.com/aler9/gomavlib/pkg/timednetconn"
 	"github.com/aler9/gomavlib/pkg/udplistener"
 )
 
@@ -100,7 +101,7 @@ func (t *endpointServer) close() error {
 }
 
 func (t *endpointServer) accept() (string, io.ReadWriteCloser, error) {
-	rawConn, err := t.listener.Accept()
+	nconn, err := t.listener.Accept()
 	// wait termination, do not report errors
 	if err != nil {
 		<-t.terminate
@@ -112,9 +113,9 @@ func (t *endpointServer) accept() (string, io.ReadWriteCloser, error) {
 			return "udp"
 		}
 		return "tcp"
-	}(), rawConn.RemoteAddr())
+	}(), nconn.RemoteAddr())
 
-	conn := &netTimedConn{rawConn}
+	conn := timednetconn.New(netWriteTimeout, nconn)
 
 	return label, conn, nil
 }

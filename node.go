@@ -14,7 +14,6 @@ package gomavlib
 
 import (
 	"fmt"
-	"net"
 	"sync"
 	"time"
 
@@ -24,39 +23,12 @@ import (
 )
 
 const (
-	bufferSize         = 512 // frames cannot go beyond len(header) + 255 + len(check) + len(sig)
-	netConnectTimeout  = 10 * time.Second
-	netReconnectPeriod = 2 * time.Second
-	netReadTimeout     = 60 * time.Second
-	netWriteTimeout    = 10 * time.Second
+	bufferSize        = 512 // frames cannot go beyond len(header) + 255 + len(check) + len(sig)
+	netConnectTimeout = 10 * time.Second
+	netWriteTimeout   = 10 * time.Second
 )
 
 var errTerminated = fmt.Errorf("terminated")
-
-// netTimedConn forces a net.Conn to use timeouts
-type netTimedConn struct {
-	conn net.Conn
-}
-
-func (c *netTimedConn) Close() error {
-	return c.conn.Close()
-}
-
-func (c *netTimedConn) Read(buf []byte) (int, error) {
-	err := c.conn.SetReadDeadline(time.Now().Add(netReadTimeout))
-	if err != nil {
-		return 0, err
-	}
-	return c.conn.Read(buf)
-}
-
-func (c *netTimedConn) Write(buf []byte) (int, error) {
-	err := c.conn.SetWriteDeadline(time.Now().Add(netWriteTimeout))
-	if err != nil {
-		return 0, err
-	}
-	return c.conn.Write(buf)
-}
 
 type writeToReq struct {
 	ch   *Channel

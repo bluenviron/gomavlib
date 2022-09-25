@@ -7,6 +7,7 @@ import (
 	"net"
 
 	"github.com/aler9/gomavlib/pkg/autoreconnector"
+	"github.com/aler9/gomavlib/pkg/timednetconn"
 )
 
 type endpointClientConf interface {
@@ -85,7 +86,7 @@ func initEndpointClient(conf endpointClientConf) (Endpoint, error) {
 					return nil, err
 				}
 
-				return &netTimedConn{nconn}, nil
+				return timednetconn.New(netWriteTimeout, nconn), nil
 			},
 		),
 	}

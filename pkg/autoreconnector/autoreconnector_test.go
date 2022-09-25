@@ -45,36 +45,53 @@ func TestReconnect(t *testing.T) {
 	require.Equal(t, []byte{0x06}, p[:n])
 }
 
-func TestCloseWhileReading(t *testing.T) {
-	ln, err := net.Listen("tcp", "localhost:6657")
-	require.NoError(t, err)
-	defer ln.Close()
+func TestCloseWhileWorking(t *testing.T) {
+	for _, ca := range []string{"read", "write"} {
+		t.Run(ca, func(t *testing.T) {
+			ln, err := net.Listen("tcp", "localhost:6657")
+			require.NoError(t, err)
+			defer ln.Close()
 
-	go func() {
-		conn, err := ln.Accept()
-		require.NoError(t, err)
+			serverDone := make(chan struct{})
 
-		b := make([]byte, 1)
-		conn.Read(b)
+			go func() {
+				conn, err := ln.Accept()
+				require.NoError(t, err)
 
-		conn.Close()
-	}()
+				b := make([]byte, 1)
+				if ca == "read" {
+					conn.Read(b)
+				} else {
+					conn.Write(b)
+				}
 
-	a := New(
-		func(ctx context.Context) (io.ReadWriteCloser, error) {
-			return (&net.Dialer{}).DialContext(ctx, "tcp", "localhost:6657")
-		},
-	)
+				conn.Close()
+				close(serverDone)
+			}()
 
-	readDone := make(chan struct{})
+			a := New(
+				func(ctx context.Context) (io.ReadWriteCloser, error) {
+					return (&net.Dialer{}).DialContext(ctx, "tcp", "localhost:6657")
+				},
+			)
 
-	go func() {
-		defer close(readDone)
-		p := make([]byte, 1)
-		a.Read(p)
-	}()
+			workDone := make(chan struct{})
 
-	time.Sleep(500 * time.Millisecond)
-	a.Close()
-	<-readDone
+			go func() {
+				defer close(workDone)
+
+				p := make([]byte, 1)
+				if ca == "read" {
+					a.Read(p)
+				} else {
+					a.Write(p)
+				}
+			}()
+
+			time.Sleep(500 * time.Millisecond)
+			a.Close()
+			<-workDone
+			<-serverDone
+		})
+	}
 }

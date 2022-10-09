@@ -245,6 +245,12 @@ var dial = &dialect.Dialect{
 		// icarous.xml
 		&MessageIcarousHeartbeat{},
 		&MessageIcarousKinematicBands{},
+		// cubepilot.xml
+		&MessageCubepilotRawRc{},
+		&MessageHerelinkVideoStreamInformation{},
+		&MessageHerelinkTelem{},
+		&MessageCubepilotFirmwareUpdateStart{},
+		&MessageCubepilotFirmwareUpdateResp{},
 		// ardupilotmega.xml
 		&MessageSensorOffsets{},
 		&MessageSetMagOffsets{},

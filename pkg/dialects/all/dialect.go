@@ -342,6 +342,7 @@ var dial = &dialect.Dialect{
 		&MessageAirspeed{},
 		&MessageWifiNetworkInfo{},
 		&MessageFigureEightExecutionStatus{},
+		&MessageBatteryStatusV2{},
 		&MessageComponentInformationBasic{},
 		&MessageGroupStart{},
 		&MessageGroupEnd{},

@@ -18,6 +18,7 @@ var dial = &dialect.Dialect{
 		// minimal.xml
 		&MessageHeartbeat{},
 		&MessageProtocolVersion{},
+		// standard.xml
 		// common.xml
 		&MessageSysStatus{},
 		&MessageSystemTime{},
@@ -335,7 +336,6 @@ var dial = &dialect.Dialect{
 		&MessageGsmLinkStatus{},
 		&MessageSatcomLinkStatus{},
 		&MessageSensorAirflowAngles{},
-		// standard.xml
 		// development.xml
 		&MessageParamAckTransaction{},
 		&MessageMissionChecksum{},

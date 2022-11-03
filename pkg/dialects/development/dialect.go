@@ -18,6 +18,7 @@ var dial = &dialect.Dialect{
 		// minimal.xml
 		&MessageHeartbeat{},
 		&MessageProtocolVersion{},
+		// standard.xml
 		// common.xml
 		&MessageSysStatus{},
 		&MessageSystemTime{},
@@ -238,7 +239,6 @@ var dial = &dialect.Dialect{
 		&MessageOpenDroneIdArmStatus{},
 		&MessageOpenDroneIdSystemUpdate{},
 		&MessageHygrometerSensor{},
-		// standard.xml
 		// development.xml
 		&MessageParamAckTransaction{},
 		&MessageMissionChecksum{},

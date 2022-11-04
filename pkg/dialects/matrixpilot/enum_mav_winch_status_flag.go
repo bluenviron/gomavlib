@@ -32,6 +32,12 @@ const (
 	MAV_WINCH_STATUS_REDELIVER MAV_WINCH_STATUS_FLAG = 512
 	// Winch is abandoning the line and possibly payload. Winch unspools the entire calculated line length. This is a failover state from REDELIVER if the number of attempts exceeds a threshold.
 	MAV_WINCH_STATUS_ABANDON_LINE MAV_WINCH_STATUS_FLAG = 1024
+	// Winch is engaging the locking mechanism.
+	MAV_WINCH_STATUS_LOCKING MAV_WINCH_STATUS_FLAG = 2048
+	// Winch is spooling on line.
+	MAV_WINCH_STATUS_LOAD_LINE MAV_WINCH_STATUS_FLAG = 4096
+	// Winch is loading a payload.
+	MAV_WINCH_STATUS_LOAD_PAYLOAD MAV_WINCH_STATUS_FLAG = 8192
 )
 
 var labels_MAV_WINCH_STATUS_FLAG = map[MAV_WINCH_STATUS_FLAG]string{}

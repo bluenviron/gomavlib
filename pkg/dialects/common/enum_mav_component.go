@@ -222,6 +222,8 @@ const (
 	MAV_COMP_ID_FLARM MAV_COMPONENT = 160
 	// Parachute component.
 	MAV_COMP_ID_PARACHUTE MAV_COMPONENT = 161
+	// Winch component.
+	MAV_COMP_ID_WINCH MAV_COMPONENT = 169
 	// Gimbal #2.
 	MAV_COMP_ID_GIMBAL2 MAV_COMPONENT = 171
 	// Gimbal #3.

@@ -28,6 +28,8 @@ const (
 	WINCH_LOAD_LINE WINCH_ACTIONS = 7
 	// Spool out the entire length of the line. Only action and instance command parameters are used, others are ignored.
 	WINCH_ABANDON_LINE WINCH_ACTIONS = 8
+	// Spools out just enough to present the hook to the user to load the payload. Only action and instance command parameters are used, others are ignored
+	WINCH_LOAD_PAYLOAD WINCH_ACTIONS = 9
 )
 
 var labels_WINCH_ACTIONS = map[WINCH_ACTIONS]string{}

@@ -101,7 +101,9 @@ const (
 	MAV_CMD_DO_CHANGE_ALTITUDE MAV_CMD = 186
 	// Sets actuators (e.g. servos) to a desired value. The actuator numbers are mapped to specific outputs (e.g. on any MAIN or AUX PWM or UAVCAN) using a flight-stack specific mechanism (i.e. a parameter).
 	MAV_CMD_DO_SET_ACTUATOR MAV_CMD = 187
-	// Mission command to perform a landing. This is used as a marker in a mission to tell the autopilot where a sequence of mission items that represents a landing starts. It may also be sent via a COMMAND_LONG to trigger a landing, in which case the nearest (geographically) landing sequence in the mission will be used. The Latitude/Longitude is optional, and may be set to 0 if not needed. If specified then it will be used to help find the closest landing sequence.
+	// Mission command to perform a landing. This is used as a marker in a mission to tell the autopilot where a sequence of mission items that represents a landing starts.
+	// It may also be sent via a COMMAND_LONG to trigger a landing, in which case the nearest (geographically) landing sequence in the mission will be used.
+	// The Latitude/Longitude/Altitude is optional, and may be set to 0 if not needed. If specified then it will be used to help find the closest landing sequence.
 	MAV_CMD_DO_LAND_START MAV_CMD = 189
 	// Mission command to perform a landing from a rally point.
 	MAV_CMD_DO_RALLY_LAND MAV_CMD = 190

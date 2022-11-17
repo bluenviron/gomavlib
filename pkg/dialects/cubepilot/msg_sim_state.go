@@ -30,9 +30,9 @@ type MessageSimState struct {
 	Ygyro float32
 	// Angular speed around Z axis
 	Zgyro float32
-	// Latitude
+	// Latitude (lower precision). Both this and the lat_int field should be set.
 	Lat float32
-	// Longitude
+	// Longitude (lower precision). Both this and the lon_int field should be set.
 	Lon float32
 	// Altitude
 	Alt float32
@@ -46,6 +46,10 @@ type MessageSimState struct {
 	Ve float32
 	// True velocity in down direction in earth-fixed NED frame
 	Vd float32
+	// Latitude (higher precision). If 0, recipients should use the lat field value (otherwise this field is preferred).
+	LatInt int32 `mavext:"true"`
+	// Longitude (higher precision). If 0, recipients should use the lon field value (otherwise this field is preferred).
+	LonInt int32 `mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

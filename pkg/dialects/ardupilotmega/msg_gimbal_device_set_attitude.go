@@ -10,13 +10,13 @@ type MessageGimbalDeviceSetAttitude struct {
 	TargetComponent uint8
 	// Low level gimbal flags.
 	Flags GIMBAL_DEVICE_FLAGS `mavenum:"uint16"`
-	// Quaternion components, w, x, y, z (1 0 0 0 is the null-rotation, the frame is depends on whether the flag GIMBAL_DEVICE_FLAGS_YAW_LOCK is set, set all fields to NaN if only angular velocity should be used)
+	// Quaternion components, w, x, y, z (1 0 0 0 is the null-rotation). The frame depends on whether the flag GIMBAL_DEVICE_FLAGS_YAW_LOCK is set. Set fields to NaN to be ignored (only angular velocity should be used).
 	Q [4]float32
-	// X component of angular velocity, positive is rolling to the right, NaN to be ignored.
+	// X component of angular velocity (positive: rolling to the right). NaN to be ignored.
 	AngularVelocityX float32
-	// Y component of angular velocity, positive is pitching up, NaN to be ignored.
+	// Y component of angular velocity (positive: pitching up). NaN to be ignored.
 	AngularVelocityY float32
-	// Z component of angular velocity, positive is yawing to the right, NaN to be ignored.
+	// Z component of angular velocity (positive: yawing to the right). NaN to be ignored.
 	AngularVelocityZ float32
 }
 

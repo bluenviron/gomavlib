@@ -2,7 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package ardupilotmega
 
-// Low level message containing autopilot state relevant for a gimbal device. This message is to be sent from the gimbal manager to the gimbal device component. The data of this message server for the gimbal's estimator corrections in particular horizon compensation, as well as the autopilot's control intention e.g. feed forward angular control in z-axis.
+// Low level message containing autopilot state relevant for a gimbal device. This message is to be sent from the autopilot to the gimbal device component. The data of this message are for the gimbal device's estimator corrections, in particular horizon compensation, as well as indicates autopilot control intentions, e.g. feed forward angular control in the z-axis.
 type MessageAutopilotStateForGimbalDevice struct {
 	// System ID
 	TargetSystem uint8
@@ -22,7 +22,7 @@ type MessageAutopilotStateForGimbalDevice struct {
 	Vz float32
 	// Estimated delay of the speed data.
 	VEstimatedDelayUs uint32
-	// Feed forward Z component of angular velocity, positive is yawing to the right, NaN to be ignored. This is to indicate if the autopilot is actively yawing.
+	// Feed forward Z component of angular velocity (positive: yawing to the right). NaN to be ignored. This is to indicate if the autopilot is actively yawing.
 	FeedForwardAngularVelocityZ float32
 	// Bitmap indicating which estimator outputs are valid.
 	EstimatorStatus ESTIMATOR_STATUS_FLAGS `mavenum:"uint16"`

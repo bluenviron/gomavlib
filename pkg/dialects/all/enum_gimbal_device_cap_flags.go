@@ -34,6 +34,8 @@ const (
 	GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_LOCK GIMBAL_DEVICE_CAP_FLAGS = 1024
 	// Gimbal device supports yawing/panning infinetely (e.g. using slip disk).
 	GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_INFINITE_YAW GIMBAL_DEVICE_CAP_FLAGS = 2048
+	// Gimbal device supports radio control inputs as an alternative input for controlling the gimbal orientation.
+	GIMBAL_DEVICE_CAP_FLAGS_HAS_RC_INPUTS GIMBAL_DEVICE_CAP_FLAGS = 8192
 )
 
 var labels_GIMBAL_DEVICE_CAP_FLAGS = map[GIMBAL_DEVICE_CAP_FLAGS]string{}

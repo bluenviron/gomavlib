@@ -20,6 +20,10 @@ const (
 	GIMBAL_DEVICE_FLAGS_PITCH_LOCK GIMBAL_DEVICE_FLAGS = 8
 	// Lock yaw angle to absolute angle relative to North (not relative to vehicle). If this flag is set, the yaw angle and z component of angular velocity are relative to North (earth frame, x-axis pointing North), else they are relative to the vehicle heading (vehicle frame, earth frame rotated so that the x-axis is pointing forward).
 	GIMBAL_DEVICE_FLAGS_YAW_LOCK GIMBAL_DEVICE_FLAGS = 16
+	// The gimbal orientation is set exclusively by the RC signals feed to the gimbal's radio control inputs. MAVLink messages for setting the gimbal orientation (GIMBAL_DEVICE_SET_ATTITUDE) are ignored.
+	GIMBAL_DEVICE_FLAGS_RC_EXCLUSIVE GIMBAL_DEVICE_FLAGS = 256
+	// The gimbal orientation is determined by combining/mixing the RC signals feed to the gimbal's radio control inputs and the MAVLink messages for setting the gimbal orientation (GIMBAL_DEVICE_SET_ATTITUDE). How these two controls are combined or mixed is not defined by the protocol but is up to the implementation.
+	GIMBAL_DEVICE_FLAGS_RC_MIXED GIMBAL_DEVICE_FLAGS = 512
 )
 
 var labels_GIMBAL_DEVICE_FLAGS = map[GIMBAL_DEVICE_FLAGS]string{}

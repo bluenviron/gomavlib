@@ -20,14 +20,16 @@ const (
 	GIMBAL_DEVICE_ERROR_FLAGS_ENCODER_ERROR GIMBAL_DEVICE_ERROR_FLAGS = 8
 	// There is an error with the gimbal power source.
 	GIMBAL_DEVICE_ERROR_FLAGS_POWER_ERROR GIMBAL_DEVICE_ERROR_FLAGS = 16
-	// There is an error with the gimbal motor's.
+	// There is an error with the gimbal motors.
 	GIMBAL_DEVICE_ERROR_FLAGS_MOTOR_ERROR GIMBAL_DEVICE_ERROR_FLAGS = 32
 	// There is an error with the gimbal's software.
 	GIMBAL_DEVICE_ERROR_FLAGS_SOFTWARE_ERROR GIMBAL_DEVICE_ERROR_FLAGS = 64
 	// There is an error with the gimbal's communication.
 	GIMBAL_DEVICE_ERROR_FLAGS_COMMS_ERROR GIMBAL_DEVICE_ERROR_FLAGS = 128
-	// Gimbal is currently calibrating.
+	// Gimbal device is currently calibrating.
 	GIMBAL_DEVICE_ERROR_FLAGS_CALIBRATION_RUNNING GIMBAL_DEVICE_ERROR_FLAGS = 256
+	// Gimbal device is not assigned to a gimbal manager.
+	GIMBAL_DEVICE_ERROR_FLAGS_NO_MANAGER GIMBAL_DEVICE_ERROR_FLAGS = 512
 )
 
 var labels_GIMBAL_DEVICE_ERROR_FLAGS = map[GIMBAL_DEVICE_ERROR_FLAGS]string{}

@@ -2,7 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package all
 
-// The attitude in the aeronautical frame (right-handed, Z-down, X-front, Y-right).
+// The attitude in the aeronautical frame (right-handed, Z-down, Y-right, X-front, ZYX, intrinsic).
 type MessageAttitude struct {
 	// Timestamp (time since system boot).
 	TimeBootMs uint32

@@ -28,6 +28,8 @@ type MessageAutopilotStateForGimbalDevice struct {
 	EstimatorStatus ESTIMATOR_STATUS_FLAGS `mavenum:"uint16"`
 	// The landed state. Is set to MAV_LANDED_STATE_UNDEFINED if landed state is unknown.
 	LandedState MAV_LANDED_STATE `mavenum:"uint8"`
+	// Z component of angular velocity in NED (North, East, Down). NaN if unknown.
+	AngularVelocityZ float32 `mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

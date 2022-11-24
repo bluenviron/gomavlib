@@ -8,9 +8,9 @@ type MessageCameraSettings struct {
 	TimeBootMs uint32
 	// Camera mode
 	ModeId CAMERA_MODE `mavenum:"uint8"`
-	// Current zoom level (0.0 to 100.0, NaN if not known)
+	// Current zoom level as a percentage of the full range (0.0 to 100.0, NaN if not known)
 	Zoomlevel float32 `mavext:"true" mavname:"zoomLevel"`
-	// Current focus level (0.0 to 100.0, NaN if not known)
+	// Current focus level as a percentage of the full range (0.0 to 100.0, NaN if not known)
 	Focuslevel float32 `mavext:"true" mavname:"focusLevel"`
 }
 

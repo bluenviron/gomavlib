@@ -6,7 +6,7 @@ package development
 type MessageCellularStatus struct {
 	// Cellular modem status
 	Status CELLULAR_STATUS_FLAG `mavenum:"uint8"`
-	// Failure reason when status in in CELLUAR_STATUS_FAILED
+	// Failure reason when status in in CELLULAR_STATUS_FLAG_FAILED
 	FailureReason CELLULAR_NETWORK_FAILED_REASON `mavenum:"uint8"`
 	// Cellular network radio type: gsm, cdma, lte...
 	Type CELLULAR_NETWORK_RADIO_TYPE `mavenum:"uint8"`

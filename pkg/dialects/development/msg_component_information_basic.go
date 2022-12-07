@@ -2,20 +2,22 @@
 //nolint:revive,misspell,govet,lll
 package development
 
-// Basic component information data.
+// Basic component information data. Should be requested using MAV_CMD_REQUEST_MESSAGE on startup, or when required.
 type MessageComponentInformationBasic struct {
 	// Timestamp (time since system boot).
 	TimeBootMs uint32
-	// Name of the component vendor
-	VendorName [32]uint8
-	// Name of the component model
-	ModelName [32]uint8
-	// Software version. The version format can be custom, recommended is SEMVER 'major.minor.patch'.
-	SoftwareVersion string `mavlen:"24"`
-	// Hardware version. The version format can be custom, recommended is SEMVER 'major.minor.patch'.
-	HardwareVersion string `mavlen:"24"`
 	// Component capability flags
 	Capabilities MAV_PROTOCOL_CAPABILITY `mavenum:"uint64"`
+	// Name of the component vendor. Needs to be zero terminated. The field is optional and can be empty/all zeros.
+	VendorName string `mavlen:"32"`
+	// Name of the component model. Needs to be zero terminated. The field is optional and can be empty/all zeros.
+	ModelName string `mavlen:"32"`
+	// Software version. The recommended format is SEMVER: 'major.minor.patch'  (any format may be used). The field must be zero terminated if it has a value. The field is optional and can be empty/all zeros.
+	SoftwareVersion string `mavlen:"24"`
+	// Hardware version. The recommended format is SEMVER: 'major.minor.patch'  (any format may be used). The field must be zero terminated if it has a value. The field is optional and can be empty/all zeros.
+	HardwareVersion string `mavlen:"24"`
+	// Hardware serial number. The field must be zero terminated if it has a value. The field is optional and can be empty/all zeros.
+	SerialNumber string `mavlen:"32"`
 }
 
 // GetID implements the message.Message interface.

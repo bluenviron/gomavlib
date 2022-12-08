@@ -22,17 +22,17 @@ type MessageGimbalDeviceInformation struct {
 	CapFlags GIMBAL_DEVICE_CAP_FLAGS `mavenum:"uint16"`
 	// Bitmap for use for gimbal-specific capability flags.
 	CustomCapFlags uint16
-	// Minimum hardware roll angle (positive: rolling to the right, negative: rolling to the left)
+	// Minimum hardware roll angle (positive: rolling to the right, negative: rolling to the left). NAN if unknown.
 	RollMin float32
-	// Maximum hardware roll angle (positive: rolling to the right, negative: rolling to the left)
+	// Maximum hardware roll angle (positive: rolling to the right, negative: rolling to the left). NAN if unknown.
 	RollMax float32
-	// Minimum hardware pitch angle (positive: up, negative: down)
+	// Minimum hardware pitch angle (positive: up, negative: down). NAN if unknown.
 	PitchMin float32
-	// Maximum hardware pitch angle (positive: up, negative: down)
+	// Maximum hardware pitch angle (positive: up, negative: down). NAN if unknown.
 	PitchMax float32
-	// Minimum hardware yaw angle (positive: to the right, negative: to the left)
+	// Minimum hardware yaw angle (positive: to the right, negative: to the left). NAN if unknown.
 	YawMin float32
-	// Maximum hardware yaw angle (positive: to the right, negative: to the left)
+	// Maximum hardware yaw angle (positive: to the right, negative: to the left). NAN if unknown.
 	YawMax float32
 }
 

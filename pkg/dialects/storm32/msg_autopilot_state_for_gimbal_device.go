@@ -12,15 +12,15 @@ type MessageAutopilotStateForGimbalDevice struct {
 	TimeBootUs uint64
 	// Quaternion components of autopilot attitude: w, x, y, z (1 0 0 0 is the null-rotation, Hamilton convention).
 	Q [4]float32
-	// Estimated delay of the attitude data.
+	// Estimated delay of the attitude data. 0 if unknown.
 	QEstimatedDelayUs uint32
-	// X Speed in NED (North, East, Down).
+	// X Speed in NED (North, East, Down). NAN if unknown.
 	Vx float32
-	// Y Speed in NED (North, East, Down).
+	// Y Speed in NED (North, East, Down). NAN if unknown.
 	Vy float32
-	// Z Speed in NED (North, East, Down).
+	// Z Speed in NED (North, East, Down). NAN if unknown.
 	Vz float32
-	// Estimated delay of the speed data.
+	// Estimated delay of the speed data. 0 if unknown.
 	VEstimatedDelayUs uint32
 	// Feed forward Z component of angular velocity (positive: yawing to the right). NaN to be ignored. This is to indicate if the autopilot is actively yawing.
 	FeedForwardAngularVelocityZ float32

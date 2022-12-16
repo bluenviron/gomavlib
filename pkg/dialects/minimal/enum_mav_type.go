@@ -58,8 +58,8 @@ const (
 	MAV_TYPE_VTOL_FIXEDROTOR MAV_TYPE = 22
 	// Tailsitter VTOL. Fuselage and wings orientation changes depending on flight phase: vertical for hover, horizontal for cruise. Use more specific VTOL MAV_TYPE_VTOL_DUOROTOR or MAV_TYPE_VTOL_QUADROTOR if appropriate.
 	MAV_TYPE_VTOL_TAILSITTER MAV_TYPE = 23
-	// VTOL reserved 4
-	MAV_TYPE_VTOL_RESERVED4 MAV_TYPE = 24
+	// Tiltwing VTOL. Fuselage stays horizontal in all flight phases. The whole wing, along with any attached engine, can tilt between vertical and horizontal mode.
+	MAV_TYPE_VTOL_TILTWING MAV_TYPE = 24
 	// VTOL reserved 5
 	MAV_TYPE_VTOL_RESERVED5 MAV_TYPE = 25
 	// Gimbal

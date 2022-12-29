@@ -42,6 +42,9 @@ func (ca *channelAccepter) runSingle() {
 			panic(fmt.Errorf("newChannel unexpected error: %s", err))
 		}
 
-		ca.n.channelNew <- ch
+		select {
+		case ca.n.channelNew <- ch:
+		case <-ca.n.terminate:
+		}
 	}
 }

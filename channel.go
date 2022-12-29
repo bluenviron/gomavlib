@@ -85,14 +85,20 @@ func (ch *Channel) run() {
 
 		// wait client here, in order to allow the writer goroutine to start
 		// and allow clients to write messages before starting listening to events
-		ch.n.events <- &EventChannelOpen{ch}
+		select {
+		case ch.n.events <- &EventChannelOpen{ch}:
+		case <-ch.n.terminate:
+		}
 
 		for {
 			fr, err := ch.frw.Read()
 			if err != nil {
 				// ignore parse errors
 				if _, ok := err.(*frame.ReadError); ok {
-					ch.n.events <- &EventParseError{err, ch}
+					select {
+					case ch.n.events <- &EventParseError{err, ch}:
+					case <-ch.n.terminate:
+					}
 					continue
 				}
 				return
@@ -104,7 +110,10 @@ func (ch *Channel) run() {
 				ch.n.nodeStreamRequest.onEventFrame(evt)
 			}
 
-			ch.n.events <- evt
+			select {
+			case ch.n.events <- evt:
+			case <-ch.n.terminate:
+			}
 		}
 	}()
 
@@ -125,9 +134,16 @@ func (ch *Channel) run() {
 
 	select {
 	case <-readerDone:
-		ch.n.events <- &EventChannelClose{ch}
+		select {
+		case ch.n.events <- &EventChannelClose{ch}:
+		case <-ch.n.terminate:
+		}
 
-		ch.n.channelClose <- ch
+		select {
+		case ch.n.channelClose <- ch:
+		case <-ch.n.terminate:
+		}
+
 		<-ch.terminate
 
 		close(ch.write)
@@ -136,7 +152,10 @@ func (ch *Channel) run() {
 		ch.rwc.Close()
 
 	case <-ch.terminate:
-		ch.n.events <- &EventChannelClose{ch}
+		select {
+		case ch.n.events <- &EventChannelClose{ch}:
+		case <-ch.n.terminate:
+		}
 
 		close(ch.write)
 		<-writerDone

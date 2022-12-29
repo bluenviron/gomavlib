@@ -267,22 +267,6 @@ outer:
 		}
 	}
 
-	go func() {
-		for {
-			select {
-			case _, ok := <-n.channelNew:
-				if !ok {
-					return
-				}
-
-			case <-n.channelClose:
-			case <-n.writeTo:
-			case <-n.writeAll:
-			case <-n.writeExcept:
-			}
-		}
-	}()
-
 	if n.nodeHeartbeat != nil {
 		n.nodeHeartbeat.close()
 	}
@@ -300,19 +284,14 @@ outer:
 		ch.close()
 	}
 	n.channelsWg.Wait()
+
+	close(n.events)
 }
 
 // Close halts node operations and waits for all routines to return.
 func (n *Node) Close() {
-	go func() {
-		for range n.events {
-		}
-	}()
-
 	close(n.terminate)
 	<-n.done
-
-	close(n.events)
 }
 
 // Events returns a channel from which receiving events. Possible events are:
@@ -330,36 +309,54 @@ func (n *Node) Events() chan Event {
 
 // WriteMessageTo writes a message to given channel.
 func (n *Node) WriteMessageTo(channel *Channel, m message.Message) {
-	n.writeTo <- writeToReq{channel, m}
+	select {
+	case n.writeTo <- writeToReq{channel, m}:
+	case <-n.terminate:
+	}
 }
 
 // WriteMessageAll writes a message to all channels.
 func (n *Node) WriteMessageAll(m message.Message) {
-	n.writeAll <- m
+	select {
+	case n.writeAll <- m:
+	case <-n.terminate:
+	}
 }
 
 // WriteMessageExcept writes a message to all channels except specified channel.
 func (n *Node) WriteMessageExcept(exceptChannel *Channel, m message.Message) {
-	n.writeExcept <- writeExceptReq{exceptChannel, m}
+	select {
+	case n.writeExcept <- writeExceptReq{exceptChannel, m}:
+	case <-n.terminate:
+	}
 }
 
 // WriteFrameTo writes a frame to given channel.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
 func (n *Node) WriteFrameTo(channel *Channel, fr frame.Frame) {
-	n.writeTo <- writeToReq{channel, fr}
+	select {
+	case n.writeTo <- writeToReq{channel, fr}:
+	case <-n.terminate:
+	}
 }
 
 // WriteFrameAll writes a frame to all channels.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
 func (n *Node) WriteFrameAll(fr frame.Frame) {
-	n.writeAll <- fr
+	select {
+	case n.writeAll <- fr:
+	case <-n.terminate:
+	}
 }
 
 // WriteFrameExcept writes a frame to all channels except specified channel.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
 func (n *Node) WriteFrameExcept(exceptChannel *Channel, fr frame.Frame) {
-	n.writeExcept <- writeExceptReq{exceptChannel, fr}
+	select {
+	case n.writeExcept <- writeExceptReq{exceptChannel, fr}:
+	case <-n.terminate:
+	}
 }

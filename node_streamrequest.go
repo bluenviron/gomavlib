@@ -174,10 +174,13 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 			sr.n.WriteMessageTo(evt.Channel, m.Interface().(message.Message))
 		}
 
-		sr.n.events <- &EventStreamRequested{
+		select {
+		case sr.n.events <- &EventStreamRequested{
 			Channel:     evt.Channel,
 			SystemID:    evt.SystemID(),
 			ComponentID: evt.ComponentID(),
+		}:
+		case <-sr.n.terminate:
 		}
 	}
 }

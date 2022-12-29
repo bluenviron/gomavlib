@@ -6,18 +6,14 @@ package all
 type MessageAirspeed struct {
 	// Sensor ID.
 	Id uint8
-	// Calibrated airspeed (CAS) if available, otherwise indicated airspeed (IAS).
+	// Calibrated airspeed (CAS).
 	Airspeed float32
 	// Temperature. INT16_MAX for value unknown/not supplied.
 	Temperature int16
-	// Differential pressure. NaN for value unknown/not supplied.
-	PressDiff float32
-	// Static pressure. NaN for value unknown/not supplied.
-	PressStatic float32
-	// Error/accuracy. NaN for value unknown/not supplied.
-	Error float32
-	// Airspeed sensor type. NaN for value unknown/not supplied. Used to estimate accuracy (i.e. as an alternative to using the error field).
-	Type AIRSPEED_SENSOR_TYPE `mavenum:"uint8"`
+	// Raw differential pressure. NaN for value unknown/not supplied.
+	RawPress float32
+	// Airspeed sensor flags.
+	Flags AIRSPEED_SENSOR_FLAGS `mavenum:"uint8"`
 }
 
 // GetID implements the message.Message interface.

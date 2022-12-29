@@ -18,7 +18,7 @@ type Frame interface {
 	// returns the component id of the author of the frame.
 	GetComponentID() byte
 
-	// returns the message encapsuled in the frame.
+	// returns the message wrapped in the frame.
 	GetMessage() message.Message
 
 	// returns the checksum of the frame.

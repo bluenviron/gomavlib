@@ -100,6 +100,48 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 
 	w.curWriteSequenceID++
 
+	if w.conf.DialectRW == nil {
+		return fmt.Errorf("dialect is nil")
+	}
+
+	mp := w.conf.DialectRW.GetMessage(fr.GetMessage().GetID())
+	if mp == nil {
+		return fmt.Errorf("message is not in the dialect")
+	}
+
+	// encode message if it is not already encoded
+	if _, ok := fr.GetMessage().(*message.MessageRaw); !ok {
+		w.encodeMessageInFrame(fr, mp)
+	}
+
+	// fill checksum
+	switch ff := fr.(type) {
+	case *V1Frame:
+		ff.Checksum = ff.generateChecksum(mp.CRCExtra())
+	case *V2Frame:
+		ff.Checksum = ff.generateChecksum(mp.CRCExtra())
+	}
+
+	// fill SignatureLinkID, SignatureTimestamp, Signature if v2
+	if ff, ok := fr.(*V2Frame); ok && w.conf.OutKey != nil {
+		ff.SignatureLinkID = w.conf.OutSignatureLinkID
+		// Timestamp in 10 microsecond units since 1st January 2015 GMT time
+		ff.SignatureTimestamp = uint64(time.Since(signatureReferenceDate)) / 10000
+		ff.Signature = ff.genSignature(w.conf.OutKey)
+	}
+
+	return w.writeFrameInner(fr)
+}
+
+// WriteFrame writes a Frame.
+// It must not be called by multiple routines in parallel.
+// This function is intended only for routing pre-existing frames to other nodes,
+// since all frame fields must be filled manually.
+func (w *Writer) WriteFrame(fr Frame) error {
+	if fr.GetMessage() == nil {
+		return fmt.Errorf("message is nil")
+	}
+
 	// encode message if it is not already encoded
 	if _, ok := fr.GetMessage().(*message.MessageRaw); !ok {
 		if w.conf.DialectRW == nil {
@@ -111,77 +153,26 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 			return fmt.Errorf("message is not in the dialect")
 		}
 
-		_, isV2 := fr.(*V2Frame)
-		byts := mp.Write(fr.GetMessage(), isV2)
-
-		msgRaw := &message.MessageRaw{
-			ID:      fr.GetMessage().GetID(),
-			Payload: byts,
-		}
-		switch ff := fr.(type) {
-		case *V1Frame:
-			ff.Message = msgRaw
-		case *V2Frame:
-			ff.Message = msgRaw
-		}
-
-		// fill checksum
-		switch ff := fr.(type) {
-		case *V1Frame:
-			ff.Checksum = ff.generateChecksum(mp.CRCExtra())
-		case *V2Frame:
-			ff.Checksum = ff.generateChecksum(mp.CRCExtra())
-		}
+		w.encodeMessageInFrame(fr, mp)
 	}
 
-	// fill SignatureLinkID, SignatureTimestamp, Signature if v2
-	if ff, ok := fr.(*V2Frame); ok && w.conf.OutKey != nil {
-		ff.SignatureLinkID = w.conf.OutSignatureLinkID
-		// Timestamp in 10 microsecond units since 1st January 2015 GMT time
-		ff.SignatureTimestamp = uint64(time.Since(signatureReferenceDate)) / 10000
-		ff.Signature = ff.genSignature(w.conf.OutKey)
-	}
-
-	return w.writeFrameInner(fr, fr.GetMessage().(*message.MessageRaw))
+	return w.writeFrameInner(fr)
 }
 
-// WriteFrame writes a Frame.
-// It must not be called by multiple routines in parallel.
-// This function is intended only for routing pre-existing frames to other nodes,
-// since all frame fields must be filled manually.
-func (w *Writer) WriteFrame(fr Frame) error {
-	m := fr.GetMessage()
-	if m == nil {
-		return fmt.Errorf("message is nil")
+func (w *Writer) encodeMessageInFrame(fr Frame, mp *message.ReadWriter) {
+	_, isV2 := fr.(*V2Frame)
+	msgRaw := mp.Write(fr.GetMessage(), isV2)
+
+	switch ff := fr.(type) {
+	case *V1Frame:
+		ff.Message = msgRaw
+	case *V2Frame:
+		ff.Message = msgRaw
 	}
-
-	// encode message if it is not already encoded
-	if _, ok := m.(*message.MessageRaw); !ok {
-		if w.conf.DialectRW == nil {
-			return fmt.Errorf("dialect is nil")
-		}
-
-		mp := w.conf.DialectRW.GetMessage(m.GetID())
-		if mp == nil {
-			return fmt.Errorf("message is not in the dialect")
-		}
-
-		_, isV2 := fr.(*V2Frame)
-		byts := mp.Write(m, isV2)
-
-		// do not touch Message
-		// in such way that the frame can be encoded by other parsers in parallel
-		m = &message.MessageRaw{
-			ID:      m.GetID(),
-			Payload: byts,
-		}
-	}
-
-	return w.writeFrameInner(fr, m.(*message.MessageRaw))
 }
 
-func (w *Writer) writeFrameInner(fr Frame, m *message.MessageRaw) error {
-	n, err := fr.encodeTo(w.bw, m.Payload)
+func (w *Writer) writeFrameInner(fr Frame) error {
+	n, err := fr.encodeTo(w.bw, fr.GetMessage().(*message.MessageRaw).Payload)
 	if err != nil {
 		return err
 	}

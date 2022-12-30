@@ -230,6 +230,12 @@ func NewNode(conf NodeConf) (*Node, error) {
 	return n, nil
 }
 
+// Close halts node operations and waits for all routines to return.
+func (n *Node) Close() {
+	close(n.terminate)
+	<-n.done
+}
+
 func (n *Node) run() {
 	defer close(n.done)
 
@@ -248,17 +254,30 @@ outer:
 			if _, ok := n.channels[req.ch]; !ok {
 				return
 			}
-			req.ch.write <- req.what
+
+			var err error
+			req.what, err = n.encodeMessage(req.what)
+			if err == nil {
+				req.ch.write <- req.what
+			}
 
 		case what := <-n.writeAll:
-			for ch := range n.channels {
-				ch.write <- what
+			var err error
+			what, err = n.encodeMessage(what)
+			if err == nil {
+				for ch := range n.channels {
+					ch.write <- what
+				}
 			}
 
 		case req := <-n.writeExcept:
-			for ch := range n.channels {
-				if ch != req.except {
-					ch.write <- req.what
+			var err error
+			req.what, err = n.encodeMessage(req.what)
+			if err == nil {
+				for ch := range n.channels {
+					if ch != req.except {
+						ch.write <- req.what
+					}
 				}
 			}
 
@@ -288,10 +307,49 @@ outer:
 	close(n.events)
 }
 
-// Close halts node operations and waits for all routines to return.
-func (n *Node) Close() {
-	close(n.terminate)
-	<-n.done
+// encode messages once before sending them to the channel's frame.ReadWriter.
+func (n *Node) encodeMessage(what interface{}) (interface{}, error) {
+	switch twhat := what.(type) {
+	case message.Message:
+		if _, ok := twhat.(*message.MessageRaw); !ok {
+			if n.dialectRW == nil {
+				return nil, fmt.Errorf("dialect is nil")
+			}
+
+			mp := n.dialectRW.GetMessage(twhat.GetID())
+			if mp == nil {
+				return nil, fmt.Errorf("message is not in the dialect")
+			}
+
+			msgRaw := mp.Write(twhat, n.conf.OutVersion == V2)
+
+			return msgRaw, nil
+		}
+
+	case frame.Frame:
+		if _, ok := twhat.GetMessage().(*message.MessageRaw); !ok {
+			if n.dialectRW == nil {
+				return nil, fmt.Errorf("dialect is nil")
+			}
+
+			mp := n.dialectRW.GetMessage(twhat.GetMessage().GetID())
+			if mp == nil {
+				return nil, fmt.Errorf("message is not in the dialect")
+			}
+
+			_, isV2 := twhat.(*frame.V2Frame)
+			msgRaw := mp.Write(twhat.GetMessage(), isV2)
+
+			switch ff := twhat.(type) {
+			case *frame.V1Frame:
+				ff.Message = msgRaw
+			case *frame.V2Frame:
+				ff.Message = msgRaw
+			}
+		}
+	}
+
+	return what, nil
 }
 
 // Events returns a channel from which receiving events. Possible events are:

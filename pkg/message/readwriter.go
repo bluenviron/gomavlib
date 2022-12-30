@@ -413,21 +413,21 @@ func (mde *ReadWriter) CRCExtra() byte {
 	return mde.crcExtra
 }
 
-// Read reads a Message.
-func (mde *ReadWriter) Read(buf []byte, isV2 bool) (Message, error) {
+// Read converts a *MessageRaw into a Message.
+func (mde *ReadWriter) Read(m *MessageRaw, isV2 bool) (Message, error) {
 	rmsg := reflect.New(mde.elemType)
 
 	if isV2 {
 		// in V2 buffer length can be > message or < message
 		// in this latter case it must be filled with zeros to support empty-byte de-truncation
 		// and extension fields
-		if len(buf) < int(mde.sizeExtended) {
-			buf = append(buf, bytes.Repeat([]byte{0x00}, int(mde.sizeExtended)-len(buf))...)
+		if len(m.Payload) < int(mde.sizeExtended) {
+			m.Payload = append(m.Payload, bytes.Repeat([]byte{0x00}, int(mde.sizeExtended)-len(m.Payload))...)
 		}
 	} else {
 		// in V1 buffer must fit message perfectly
-		if len(buf) != int(mde.sizeNormal) {
-			return nil, fmt.Errorf("wrong size: expected %d, got %d", mde.sizeNormal, len(buf))
+		if len(m.Payload) != int(mde.sizeNormal) {
+			return nil, fmt.Errorf("wrong size: expected %d, got %d", mde.sizeNormal, len(m.Payload))
 		}
 	}
 
@@ -444,13 +444,13 @@ func (mde *ReadWriter) Read(buf []byte, isV2 bool) (Message, error) {
 		case reflect.Array:
 			length := target.Len()
 			for i := 0; i < length; i++ {
-				n := readValue(target.Index(i), buf, f)
-				buf = buf[n:]
+				n := readValue(target.Index(i), m.Payload, f)
+				m.Payload = m.Payload[n:]
 			}
 
 		default:
-			n := readValue(target, buf, f)
-			buf = buf[n:]
+			n := readValue(target, m.Payload, f)
+			m.Payload = m.Payload[n:]
 		}
 	}
 
@@ -464,8 +464,8 @@ func (mde *ReadWriter) size(isV2 bool) uint8 {
 	return mde.sizeNormal
 }
 
-// Write writes a message.
-func (mde *ReadWriter) Write(msg Message, isV2 bool) []byte {
+// Write converts a Message into a *MessageRaw.
+func (mde *ReadWriter) Write(msg Message, isV2 bool) *MessageRaw {
 	buf := make([]byte, mde.size(isV2))
 	start := buf
 
@@ -505,5 +505,8 @@ func (mde *ReadWriter) Write(msg Message, isV2 bool) []byte {
 		buf = buf[:end]
 	}
 
-	return buf
+	return &MessageRaw{
+		ID:      msg.GetID(),
+		Payload: buf,
+	}
 }

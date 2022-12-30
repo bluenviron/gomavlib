@@ -246,35 +246,3 @@ func TestWriterWriteFrameNilMsg(t *testing.T) {
 	err = writer.WriteFrame(f)
 	require.Error(t, err)
 }
-
-// ensure that the Frame is left untouched by WriteFrame()
-// and therefore the function can be called by multiple routines in parallel
-func TestWriterWriteFrameIsConst(t *testing.T) {
-	dialectRW, err := dialect.NewReadWriter(&dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}) //nolint:govet
-	require.NoError(t, err)
-
-	writer, err := NewWriter(WriterConf{
-		Writer:      bytes.NewBuffer(nil),
-		DialectRW:   dialectRW,
-		OutVersion:  V2,
-		OutSystemID: 1,
-		OutKey:      NewV2Key(bytes.Repeat([]byte("\x7C"), 32)),
-	})
-	require.NoError(t, err)
-
-	f := &V2Frame{
-		Message: &MessageHeartbeat{
-			Type:           1,
-			Autopilot:      2,
-			BaseMode:       3,
-			CustomMode:     4,
-			SystemStatus:   5,
-			MavlinkVersion: 3,
-		},
-	}
-	original := f.Clone()
-
-	err = writer.WriteFrame(f)
-	require.NoError(t, err)
-	require.Equal(t, f, original)
-}

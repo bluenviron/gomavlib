@@ -492,7 +492,10 @@ func TestRead(t *testing.T) {
 		t.Run(c.name, func(t *testing.T) {
 			mp, err := NewReadWriter(c.parsed)
 			require.NoError(t, err)
-			msg, err := mp.Read(c.raw, c.isV2)
+			msg, err := mp.Read(&MessageRaw{
+				ID:      c.parsed.GetID(),
+				Payload: c.raw,
+			}, c.isV2)
 			require.NoError(t, err)
 			require.Equal(t, c.parsed, msg)
 		})
@@ -504,8 +507,11 @@ func TestWrite(t *testing.T) {
 		t.Run(c.name, func(t *testing.T) {
 			mp, err := NewReadWriter(c.parsed)
 			require.NoError(t, err)
-			byts := mp.Write(c.parsed, c.isV2)
-			require.Equal(t, c.raw, byts)
+			msgRaw := mp.Write(c.parsed, c.isV2)
+			require.Equal(t, &MessageRaw{
+				ID:      c.parsed.GetID(),
+				Payload: c.raw,
+			}, msgRaw)
 		})
 	}
 }

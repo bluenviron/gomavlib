@@ -79,32 +79,26 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 		return fmt.Errorf("message is nil")
 	}
 
-	// do not touch the original frame, but work with a separate object
-	// in such way that the frame can be encoded by other parsers in parallel
-	fr = fr.Clone()
-
-	// fill SequenceID, SystemID, ComponentID
+	// fill SequenceID, SystemID, ComponentID, CompatibilityFlag, IncompatibilityFlag
 	switch ff := fr.(type) {
 	case *V1Frame:
 		ff.SequenceID = w.curWriteSequenceID
 		ff.SystemID = w.conf.OutSystemID
 		ff.ComponentID = w.conf.OutComponentID
+
 	case *V2Frame:
 		ff.SequenceID = w.curWriteSequenceID
 		ff.SystemID = w.conf.OutSystemID
 		ff.ComponentID = w.conf.OutComponentID
-	}
-	w.curWriteSequenceID++
 
-	// fill CompatibilityFlag, IncompatibilityFlag if v2
-	if ff, ok := fr.(*V2Frame); ok {
 		ff.CompatibilityFlag = 0
 		ff.IncompatibilityFlag = 0
-
 		if w.conf.OutKey != nil {
 			ff.IncompatibilityFlag |= V2FlagSigned
 		}
 	}
+
+	w.curWriteSequenceID++
 
 	// encode message if it is not already encoded
 	if _, ok := fr.GetMessage().(*message.MessageRaw); !ok {
@@ -148,7 +142,7 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 		ff.Signature = ff.genSignature(w.conf.OutKey)
 	}
 
-	return w.WriteFrame(fr)
+	return w.writeFrameInner(fr, fr.GetMessage().(*message.MessageRaw))
 }
 
 // WriteFrame writes a Frame.
@@ -183,7 +177,11 @@ func (w *Writer) WriteFrame(fr Frame) error {
 		}
 	}
 
-	n, err := fr.encodeTo(w.bw, m.(*message.MessageRaw).Payload)
+	return w.writeFrameInner(fr, m.(*message.MessageRaw))
+}
+
+func (w *Writer) writeFrameInner(fr Frame, m *message.MessageRaw) error {
+	n, err := fr.encodeTo(w.bw, m.Payload)
 	if err != nil {
 		return err
 	}

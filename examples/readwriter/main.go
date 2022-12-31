@@ -13,6 +13,11 @@ import (
 // if NewNode() is not flexible enough, the library provides a low-level
 // frame reader and writer, that can be used with any kind of byte stream.
 
+// this example shows how to:
+// 1) allocate the low-level frame.ReadWriter around a io.ReadWriter
+// 2) read a frame, that contains a message
+// 3) write a message, that is automatically wrapped in a frame
+
 type readWriter struct {
 	io.Reader
 	io.Writer
@@ -28,6 +33,7 @@ func main() {
 		panic(err)
 	}
 
+	// allocate the low-level frame.ReadWriter around a io.ReadWriter
 	rw, err := frame.NewReadWriter(frame.ReadWriterConf{
 		ReadWriter: &readWriter{
 			Reader: inBuf,
@@ -41,7 +47,7 @@ func main() {
 		panic(err)
 	}
 
-	// read a message (wrapped in a frame)
+	// read a frame, that contains a message
 	frame, err := rw.Read()
 	if err != nil {
 		panic(err)
@@ -49,7 +55,7 @@ func main() {
 
 	log.Printf("decoded: %+v\n", frame)
 
-	// write a message
+	// write a message, that is automatically wrapped in a frame
 	err = rw.WriteMessage(&ardupilotmega.MessageParamValue{
 		ParamId:    "test_parameter",
 		ParamValue: 123456,

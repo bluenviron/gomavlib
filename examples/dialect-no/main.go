@@ -6,11 +6,12 @@ import (
 	"github.com/aler9/gomavlib"
 )
 
+// this example shows how to:
+// 1) create a node with no dialect, that doesn't attempt to decode messages
+// 2) print incoming messages
+
 func main() {
-	// create a node which
-	// - communicates with a serial port
-	// - does not use dialects
-	// - writes messages with given system id
+	// create a node with no dialect, that doesn't attempt to decode messages
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{
@@ -27,7 +28,7 @@ func main() {
 	}
 	defer node.Close()
 
-	// print every message we receive
+	// print incoming messages
 	for evt := range node.Events() {
 		if frm, ok := evt.(*gomavlib.EventFrame); ok {
 			log.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())

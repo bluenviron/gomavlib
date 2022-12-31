@@ -8,6 +8,11 @@ import (
 	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
 )
 
+// this example shows how to:
+// 1) create a custom endpoint from a io.ReadWriteCloser
+// 2) create a node which communicates with the custom endpoint
+// 3) print incoming messages
+
 // this is an example struct that implements io.ReadWriteCloser.
 // it does not read anything and prints what it receives.
 // the only requirement is that Close() must release Read().
@@ -44,10 +49,7 @@ func main() {
 	// allocate the custom endpoint
 	endpoint := NewCustomEndpoint()
 
-	// create a node which
-	// - communicates with a custom endpoint
-	// - understands ardupilotmega dialect
-	// - writes messages with given system id
+	// create a node which communicates with the custom endpoint
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointCustom{endpoint},
@@ -64,7 +66,7 @@ func main() {
 	// queue a dummy message
 	endpoint.readChan <- []byte("\xfd\t\x01\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x01\x02\x03\x05\x03\xd9\xd1\x01\x02\x00\x00\x00\x00\x00\x0eG\x04\x0c\xef\x9b")
 
-	// print every message we receive
+	// print incoming messages
 	for evt := range node.Events() {
 		if frm, ok := evt.(*gomavlib.EventFrame); ok {
 			log.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())

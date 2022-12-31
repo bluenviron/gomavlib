@@ -7,11 +7,12 @@ import (
 	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
 )
 
+// this example shows how to:
+// 1) create a node which communicates with a serial endpoint
+// 2) print selected incoming messages
+
 func main() {
-	// create a node which
-	// - communicates with a serial port
-	// - understands ardupilotmega dialect
-	// - writes messages with given system id
+	// create a node which communicates with a serial endpoint
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{
@@ -28,7 +29,7 @@ func main() {
 	}
 	defer node.Close()
 
-	// print selected messages
+	// print selected incoming messages
 	for evt := range node.Events() {
 		if frm, ok := evt.(*gomavlib.EventFrame); ok {
 			switch msg := frm.Message().(type) {

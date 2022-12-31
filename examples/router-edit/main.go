@@ -7,11 +7,15 @@ import (
 	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
 )
 
+// this example shows how to:
+// 1) create a node which communicates with a serial endpoint
+// 2) print incoming frames
+// 3) edit messages of a specific kind
+// 4) recompute the frame checksum and signature
+// 5) route frame to every other channel
+
 func main() {
-	// create a node which
-	// - communicates with multiple endpoints
-	// - understands ardupilotmega dialect
-	// - writes messages with given system id
+	// create a node which communicates with a serial endpoint
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{
@@ -29,17 +33,17 @@ func main() {
 	}
 	defer node.Close()
 
-	// print every message we receive
+	// print incoming frames
 	for evt := range node.Events() {
 		if frm, ok := evt.(*gomavlib.EventFrame); ok {
 			log.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())
 
 			// if incoming message is a heartbeat
 			if msg, ok := frm.Message().(*ardupilotmega.MessageHeartbeat); ok {
-				// edit a field of all incoming heartbeat messages
+				// edit a field
 				msg.Type = ardupilotmega.MAV_TYPE_SUBMARINE
 
-				// since we changed the frame content, recompute the frame checksum and signature
+				// since we changed the frame content, recompute checksum and signature
 				err := node.FixFrame(frm.Frame)
 				if err != nil {
 					log.Printf("ERR: %v", err)

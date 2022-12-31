@@ -6,10 +6,15 @@ import (
 	"github.com/aler9/gomavlib"
 )
 
+// this example shows how to:
+// 1) create a node which communicates with a serial endpoint
+// 2) print incoming frames
+// 3) route received frames to every other channel
+
 func main() {
-	// create a node which
+	// create a node which communicates with a serial endpoint
 	// - communicates with multiple endpoints
-	// - is dialect agnostic, does not attempt to decode messages (in a router it is preferable)
+	// -
 	// - writes messages with given system id
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
@@ -19,7 +24,7 @@ func main() {
 			},
 			gomavlib.EndpointUDPClient{"1.2.3.4:5900"},
 		},
-		Dialect:     nil,
+		Dialect:     nil,         // do not use a dialect and do not attempt to decode messages (in a router it is preferable)
 		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target
 		OutSystemID: 10,
 	})
@@ -28,7 +33,7 @@ func main() {
 	}
 	defer node.Close()
 
-	// print every message we receive
+	// print incoming frames
 	for evt := range node.Events() {
 		if frm, ok := evt.(*gomavlib.EventFrame); ok {
 			log.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())

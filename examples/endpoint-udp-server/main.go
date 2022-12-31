@@ -7,11 +7,12 @@ import (
 	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
 )
 
+// this example shows how to:
+// 1) create a node which communicates with a UDP endpoint in server mode
+// 2) print incoming messages
+
 func main() {
-	// create a node which
-	// - communicates with an UDP endpoint in server mode.
-	// - understands ardupilotmega dialect
-	// - writes messages with given system id
+	// create a node which communicates with a UDP endpoint in server mode
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointUDPServer{":5600"},
@@ -25,7 +26,7 @@ func main() {
 	}
 	defer node.Close()
 
-	// print every message we receive
+	// print incoming messages
 	for evt := range node.Events() {
 		if frm, ok := evt.(*gomavlib.EventFrame); ok {
 			log.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())

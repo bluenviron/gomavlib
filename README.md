@@ -62,6 +62,7 @@ Features:
   * [dialect-custom](examples/dialect-custom/main.go)
   * [events](examples/events/main.go)
   * [router](examples/router/main.go)
+  * [router-edit](examples/router-edit/main.go)
   * [stream-requests](examples/stream-requests/main.go)
   * [readwriter](examples/readwriter/main.go)
 

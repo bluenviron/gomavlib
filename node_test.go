@@ -489,3 +489,67 @@ func TestNodeRoute(t *testing.T) {
 		Checksum:    fr.Frame.GetChecksum(),
 	}, fr.Frame)
 }
+
+func TestNodeFixFrame(t *testing.T) {
+	key := frame.NewV2Key(bytes.Repeat([]byte("\xB2"), 32))
+
+	node1, err := NewNode(NodeConf{
+		Dialect: testDialect,
+		Endpoints: []EndpointConf{
+			EndpointUDPServer{"127.0.0.1:5600"},
+		},
+		HeartbeatDisable: true,
+		InKey:            key,
+		OutVersion:       V2,
+		OutSystemID:      10,
+	})
+	require.NoError(t, err)
+	defer node1.Close()
+
+	node2, err := NewNode(NodeConf{
+		Dialect: testDialect,
+		Endpoints: []EndpointConf{
+			EndpointUDPClient{"127.0.0.1:5600"},
+		},
+		HeartbeatDisable: true,
+		OutVersion:       V2,
+		OutSystemID:      11,
+		OutKey:           key,
+	})
+	require.NoError(t, err)
+	defer node2.Close()
+
+	fra := &frame.V2Frame{
+		SequenceID:          13,
+		SystemID:            15,
+		ComponentID:         11,
+		Message:             testMessage,
+		IncompatibilityFlag: 1,
+		SignatureLinkID:     16,
+		SignatureTimestamp:  23434542,
+		Signature:           (*frame.V2Signature)(&[6]byte{0, 0, 0, 0, 0, 0}),
+	}
+
+	err = node2.FixFrame(fra)
+	require.NoError(t, err)
+	node2.WriteFrameAll(fra)
+
+	<-node1.Events()
+	evt := <-node1.Events()
+	fr, ok := evt.(*EventFrame)
+	require.Equal(t, true, ok)
+	require.Equal(t, &EventFrame{
+		Frame: &frame.V2Frame{
+			SequenceID:          13,
+			SystemID:            15,
+			ComponentID:         11,
+			Message:             testMessage,
+			Checksum:            fr.Frame.GetChecksum(),
+			IncompatibilityFlag: 1,
+			SignatureLinkID:     16,
+			Signature:           fr.Frame.(*frame.V2Frame).Signature,
+			SignatureTimestamp:  23434542,
+		},
+		Channel: fr.Channel,
+	}, evt)
+}

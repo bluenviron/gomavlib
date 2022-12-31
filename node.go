@@ -307,6 +307,39 @@ outer:
 	close(n.events)
 }
 
+// FixFrame recomputes the Frame checksum and signature.
+// This can be called on Frames whose content has been edited.
+func (n *Node) FixFrame(fr frame.Frame) error {
+	_, err := n.encodeMessage(fr)
+	if err != nil {
+		return err
+	}
+
+	if n.dialectRW == nil {
+		return fmt.Errorf("dialect is nil")
+	}
+
+	mp := n.dialectRW.GetMessage(fr.GetMessage().GetID())
+	if mp == nil {
+		return fmt.Errorf("message is not in the dialect")
+	}
+
+	// fill checksum
+	switch ff := fr.(type) {
+	case *frame.V1Frame:
+		ff.Checksum = ff.GenerateChecksum(mp.CRCExtra())
+	case *frame.V2Frame:
+		ff.Checksum = ff.GenerateChecksum(mp.CRCExtra())
+	}
+
+	// fill Signature if v2
+	if ff, ok := fr.(*frame.V2Frame); ok && n.conf.OutKey != nil {
+		ff.Signature = ff.GenerateSignature(n.conf.OutKey)
+	}
+
+	return nil
+}
+
 // encode messages once before sending them to the channel's frame.ReadWriter.
 func (n *Node) encodeMessage(what interface{}) (interface{}, error) {
 	switch twhat := what.(type) {

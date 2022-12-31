@@ -2,10 +2,8 @@ package gomavlib
 
 import (
 	"bytes"
-	"fmt"
 	"sync"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/require"
 
@@ -46,9 +44,23 @@ func (*MessageRequestDataStream) GetID() uint32 {
 	return 66
 }
 
+var testDialect = &dialect.Dialect{
+	Version:  3,
+	Messages: []message.Message{&MessageHeartbeat{}},
+}
+
+var testMessage = &MessageHeartbeat{
+	Type:           7,
+	Autopilot:      5,
+	BaseMode:       4,
+	CustomMode:     3,
+	SystemStatus:   2,
+	MavlinkVersion: 1,
+}
+
 func TestNodeError(t *testing.T) {
 	_, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect:     testDialect,
 		OutVersion:  V2,
 		OutSystemID: 11,
 		Endpoints: []EndpointConf{
@@ -62,7 +74,7 @@ func TestNodeError(t *testing.T) {
 
 func TestNodeCloseInLoop(t *testing.T) {
 	node1, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect:     testDialect,
 		OutVersion:  V2,
 		OutSystemID: 11,
 		Endpoints: []EndpointConf{
@@ -73,7 +85,7 @@ func TestNodeCloseInLoop(t *testing.T) {
 	require.NoError(t, err)
 
 	node2, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect:     testDialect,
 		OutVersion:  V2,
 		OutSystemID: 11,
 		Endpoints: []EndpointConf{
@@ -82,22 +94,9 @@ func TestNodeCloseInLoop(t *testing.T) {
 		HeartbeatDisable: true,
 	})
 	require.NoError(t, err)
+	defer node2.Close()
 
-	go func() {
-		defer node2.Close()
-
-		// wait connection to server
-		time.Sleep(500 * time.Millisecond)
-
-		node2.WriteMessageAll(&MessageHeartbeat{
-			Type:           1,
-			Autopilot:      2,
-			BaseMode:       3,
-			CustomMode:     6,
-			SystemStatus:   4,
-			MavlinkVersion: 5,
-		})
-	}()
+	node2.WriteMessageAll(testMessage)
 
 	for evt := range node1.Events() {
 		if _, ok := evt.(*EventChannelOpen); ok {
@@ -106,9 +105,244 @@ func TestNodeCloseInLoop(t *testing.T) {
 	}
 }
 
-func TestNodeWriteMultipleInLoop(t *testing.T) {
+func TestNodeWriteAll(t *testing.T) {
+	for _, ca := range []string{"message", "frame"} {
+		t.Run(ca, func(t *testing.T) {
+			server, err := NewNode(NodeConf{
+				Dialect:     testDialect,
+				OutVersion:  V2,
+				OutSystemID: 11,
+				Endpoints: []EndpointConf{
+					EndpointTCPServer{"127.0.0.1:5600"},
+				},
+				HeartbeatDisable: true,
+			})
+			require.NoError(t, err)
+			defer server.Close()
+
+			var wg sync.WaitGroup
+			wg.Add(5)
+
+			for i := 0; i < 5; i++ {
+				client, err := NewNode(NodeConf{
+					Dialect:     testDialect,
+					OutVersion:  V2,
+					OutSystemID: 11,
+					Endpoints: []EndpointConf{
+						EndpointTCPClient{"127.0.0.1:5600"},
+					},
+					HeartbeatDisable: true,
+				})
+				require.NoError(t, err)
+				defer client.Close()
+
+				go func() {
+					for evt := range client.Events() {
+						if fr, ok := evt.(*EventFrame); ok {
+							require.Equal(t, &EventFrame{
+								Frame: &frame.V2Frame{
+									SequenceID:  0,
+									SystemID:    11,
+									ComponentID: 1,
+									Message:     testMessage,
+									Checksum:    fr.Frame.GetChecksum(),
+								},
+								Channel: fr.Channel,
+							}, fr)
+							wg.Done()
+						}
+					}
+				}()
+			}
+
+			count := 0
+			for evt := range server.Events() {
+				if _, ok := evt.(*EventChannelOpen); ok {
+					count++
+					if count == 5 {
+						break
+					}
+				}
+			}
+
+			if ca == "message" {
+				server.WriteMessageAll(testMessage)
+			} else {
+				server.WriteFrameAll(&frame.V2Frame{
+					SequenceID:  0,
+					SystemID:    11,
+					ComponentID: 1,
+					Message:     testMessage,
+					Checksum:    55967,
+				})
+			}
+			wg.Wait()
+		})
+	}
+}
+
+func TestNodeWriteExcept(t *testing.T) {
+	for _, ca := range []string{"message", "frame"} {
+		t.Run(ca, func(t *testing.T) {
+			server, err := NewNode(NodeConf{
+				Dialect:     testDialect,
+				OutVersion:  V2,
+				OutSystemID: 11,
+				Endpoints: []EndpointConf{
+					EndpointTCPServer{"127.0.0.1:5600"},
+				},
+				HeartbeatDisable: true,
+			})
+			require.NoError(t, err)
+			defer server.Close()
+
+			var wg sync.WaitGroup
+			wg.Add(4)
+
+			for i := 0; i < 5; i++ {
+				client, err := NewNode(NodeConf{
+					Dialect:     testDialect,
+					OutVersion:  V2,
+					OutSystemID: 11,
+					Endpoints: []EndpointConf{
+						EndpointTCPClient{"127.0.0.1:5600"},
+					},
+					HeartbeatDisable: true,
+				})
+				require.NoError(t, err)
+				defer client.Close()
+
+				go func() {
+					for evt := range client.Events() {
+						if fr, ok := evt.(*EventFrame); ok {
+							require.Equal(t, &EventFrame{
+								Frame: &frame.V2Frame{
+									SequenceID:  0,
+									SystemID:    11,
+									ComponentID: 1,
+									Message:     testMessage,
+									Checksum:    fr.Frame.GetChecksum(),
+								},
+								Channel: fr.Channel,
+							}, fr)
+							wg.Done()
+						}
+					}
+				}()
+			}
+
+			count := 0
+			var except *Channel
+			for evt := range server.Events() {
+				if evt2, ok := evt.(*EventChannelOpen); ok {
+					if count == 1 {
+						except = evt2.Channel
+					}
+					count++
+					if count == 5 {
+						break
+					}
+				}
+			}
+
+			if ca == "message" {
+				server.WriteMessageExcept(except, testMessage)
+			} else {
+				server.WriteFrameExcept(except, &frame.V2Frame{
+					SequenceID:  0,
+					SystemID:    11,
+					ComponentID: 1,
+					Message:     testMessage,
+					Checksum:    55967,
+				})
+			}
+			wg.Wait()
+		})
+	}
+}
+
+func TestNodeWriteTo(t *testing.T) {
+	for _, ca := range []string{"message", "frame"} {
+		t.Run(ca, func(t *testing.T) {
+			server, err := NewNode(NodeConf{
+				Dialect:     testDialect,
+				OutVersion:  V2,
+				OutSystemID: 11,
+				Endpoints: []EndpointConf{
+					EndpointTCPServer{"127.0.0.1:5600"},
+				},
+				HeartbeatDisable: true,
+			})
+			require.NoError(t, err)
+			defer server.Close()
+
+			recv := make(chan struct{})
+
+			for i := 0; i < 5; i++ {
+				client, err := NewNode(NodeConf{
+					Dialect:     testDialect,
+					OutVersion:  V2,
+					OutSystemID: 11,
+					Endpoints: []EndpointConf{
+						EndpointTCPClient{"127.0.0.1:5600"},
+					},
+					HeartbeatDisable: true,
+				})
+				require.NoError(t, err)
+				defer client.Close()
+
+				go func() {
+					for evt := range client.Events() {
+						if fr, ok := evt.(*EventFrame); ok {
+							require.Equal(t, &EventFrame{
+								Frame: &frame.V2Frame{
+									SequenceID:  0,
+									SystemID:    11,
+									ComponentID: 1,
+									Message:     testMessage,
+									Checksum:    fr.Frame.GetChecksum(),
+								},
+								Channel: fr.Channel,
+							}, fr)
+							close(recv)
+						}
+					}
+				}()
+			}
+
+			count := 0
+			var except *Channel
+			for evt := range server.Events() {
+				if evt2, ok := evt.(*EventChannelOpen); ok {
+					if count == 1 {
+						except = evt2.Channel
+					}
+					count++
+					if count == 5 {
+						break
+					}
+				}
+			}
+
+			if ca == "message" {
+				server.WriteMessageTo(except, testMessage)
+			} else {
+				server.WriteFrameTo(except, &frame.V2Frame{
+					SequenceID:  0,
+					SystemID:    11,
+					ComponentID: 1,
+					Message:     testMessage,
+					Checksum:    55967,
+				})
+			}
+			<-recv
+		})
+	}
+}
+
+func TestNodeWriteMessageInLoop(t *testing.T) {
 	node1, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect:     testDialect,
 		OutVersion:  V2,
 		OutSystemID: 11,
 		Endpoints: []EndpointConf{
@@ -117,9 +351,10 @@ func TestNodeWriteMultipleInLoop(t *testing.T) {
 		HeartbeatDisable: true,
 	})
 	require.NoError(t, err)
+	defer node1.Close()
 
 	node2, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect:     testDialect,
 		OutVersion:  V2,
 		OutSystemID: 11,
 		Endpoints: []EndpointConf{
@@ -128,36 +363,16 @@ func TestNodeWriteMultipleInLoop(t *testing.T) {
 		HeartbeatDisable: true,
 	})
 	require.NoError(t, err)
+	defer node2.Close()
 
-	go func() {
-		defer node2.Close()
-
-		// wait connection to server
-		time.Sleep(500 * time.Millisecond)
-
-		node2.WriteMessageAll(&MessageHeartbeat{
-			Type:           1,
-			Autopilot:      2,
-			BaseMode:       3,
-			CustomMode:     6,
-			SystemStatus:   4,
-			MavlinkVersion: 5,
-		})
-	}()
+	node2.WriteMessageAll(testMessage)
 
 	for evt := range node1.Events() {
 		if _, ok := evt.(*EventChannelOpen); ok {
-			for i := 0; i < 100; i++ {
-				node1.WriteMessageAll(&MessageHeartbeat{
-					Type:           1,
-					Autopilot:      2,
-					BaseMode:       3,
-					CustomMode:     6,
-					SystemStatus:   4,
-					MavlinkVersion: 5,
-				})
+			for i := 0; i < 10; i++ {
+				node1.WriteMessageAll(testMessage)
 			}
-			node1.Close()
+			break
 		}
 	}
 }
@@ -166,17 +381,8 @@ func TestNodeSignature(t *testing.T) {
 	key1 := frame.NewV2Key(bytes.Repeat([]byte("\x4F"), 32))
 	key2 := frame.NewV2Key(bytes.Repeat([]byte("\xA8"), 32))
 
-	testMsg := &MessageHeartbeat{
-		Type:           7,
-		Autopilot:      5,
-		BaseMode:       4,
-		CustomMode:     3,
-		SystemStatus:   2,
-		MavlinkVersion: 1,
-	}
-
 	node1, err := NewNode(NodeConf{
-		Dialect: &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect: testDialect,
 		Endpoints: []EndpointConf{
 			EndpointUDPServer{"127.0.0.1:5600"},
 		},
@@ -187,9 +393,10 @@ func TestNodeSignature(t *testing.T) {
 		OutKey:           key1,
 	})
 	require.NoError(t, err)
+	defer node1.Close()
 
 	node2, err := NewNode(NodeConf{
-		Dialect: &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect: testDialect,
 		Endpoints: []EndpointConf{
 			EndpointUDPClient{"127.0.0.1:5600"},
 		},
@@ -200,42 +407,33 @@ func TestNodeSignature(t *testing.T) {
 		OutKey:           key2,
 	})
 	require.NoError(t, err)
+	defer node2.Close()
 
-	var wg sync.WaitGroup
-	wg.Add(2)
+	node2.WriteMessageAll(testMessage)
 
-	go func() {
-		defer wg.Done()
-		defer node1.Close()
-		<-node1.Events()
-	}()
-
-	go func() {
-		defer wg.Done()
-		defer node2.Close()
-
-		time.Sleep(500 * time.Millisecond)
-
-		node2.WriteMessageAll(testMsg)
-
-		<-node2.Events()
-	}()
-
-	wg.Wait()
+	<-node1.Events()
+	evt := <-node1.Events()
+	fr, ok := evt.(*EventFrame)
+	require.Equal(t, true, ok)
+	require.Equal(t, &EventFrame{
+		Frame: &frame.V2Frame{
+			SequenceID:          0,
+			SystemID:            11,
+			ComponentID:         1,
+			Message:             testMessage,
+			Checksum:            fr.Frame.GetChecksum(),
+			IncompatibilityFlag: 1,
+			SignatureLinkID:     fr.Frame.(*frame.V2Frame).SignatureLinkID,
+			Signature:           fr.Frame.(*frame.V2Frame).Signature,
+			SignatureTimestamp:  fr.Frame.(*frame.V2Frame).SignatureTimestamp,
+		},
+		Channel: fr.Channel,
+	}, evt)
 }
 
-func TestNodeRouting(t *testing.T) {
-	testMsg := &MessageHeartbeat{
-		Type:           7,
-		Autopilot:      5,
-		BaseMode:       4,
-		CustomMode:     3,
-		SystemStatus:   2,
-		MavlinkVersion: 1,
-	}
-
+func TestNodeRoute(t *testing.T) {
 	node1, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect:     testDialect,
 		OutVersion:  V2,
 		OutSystemID: 10,
 		Endpoints: []EndpointConf{
@@ -244,9 +442,10 @@ func TestNodeRouting(t *testing.T) {
 		HeartbeatDisable: true,
 	})
 	require.NoError(t, err)
+	defer node1.Close()
 
 	node2, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect:     testDialect,
 		OutVersion:  V2,
 		OutSystemID: 11,
 		Endpoints: []EndpointConf{
@@ -256,9 +455,10 @@ func TestNodeRouting(t *testing.T) {
 		HeartbeatDisable: true,
 	})
 	require.NoError(t, err)
+	defer node2.Close()
 
 	node3, err := NewNode(NodeConf{
-		Dialect:     &dialect.Dialect{3, []message.Message{&MessageHeartbeat{}}}, //nolint:govet
+		Dialect:     testDialect,
 		OutVersion:  V2,
 		OutSystemID: 12,
 		Endpoints: []EndpointConf{
@@ -267,47 +467,25 @@ func TestNodeRouting(t *testing.T) {
 		HeartbeatDisable: true,
 	})
 	require.NoError(t, err)
+	defer node3.Close()
 
-	// wait client connection
-	time.Sleep(500 * time.Millisecond)
+	node1.WriteMessageAll(testMessage)
 
-	node1.WriteMessageAll(testMsg)
+	<-node2.Events()
+	<-node2.Events()
+	evt := <-node2.Events()
+	fr, ok := evt.(*EventFrame)
+	require.Equal(t, true, ok)
+	node2.WriteFrameExcept(fr.Channel, fr.Frame)
 
-	var wg sync.WaitGroup
-	wg.Add(2)
-	var err2 error
-
-	go func() {
-		defer wg.Done()
-
-		for evt := range node2.Events() {
-			if e, ok := evt.(*EventFrame); ok {
-				node2.WriteFrameExcept(e.Channel, e.Frame)
-				return
-			}
-		}
-	}()
-
-	go func() {
-		defer wg.Done()
-
-		for evt := range node3.Events() {
-			if e, ok := evt.(*EventFrame); ok {
-				if _, ok := e.Message().(*MessageHeartbeat); !ok ||
-					e.SystemID() != 10 ||
-					e.ComponentID() != 1 {
-					err2 = fmt.Errorf("wrong message received")
-					return
-				}
-				return
-			}
-		}
-	}()
-
-	wg.Wait()
-	node1.Close()
-	node2.Close()
-	node3.Close()
-
-	require.NoError(t, err2)
+	<-node3.Events()
+	evt = <-node3.Events()
+	fr, ok = evt.(*EventFrame)
+	require.Equal(t, true, ok)
+	require.Equal(t, &frame.V2Frame{
+		SystemID:    10,
+		ComponentID: 1,
+		Message:     testMessage,
+		Checksum:    fr.Frame.GetChecksum(),
+	}, fr.Frame)
 }

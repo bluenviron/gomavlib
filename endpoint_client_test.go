@@ -3,7 +3,6 @@ package gomavlib
 import (
 	"net"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/require"
 
@@ -62,8 +61,6 @@ func TestEndpointClient(t *testing.T) {
 			require.Equal(t, &EventChannelOpen{
 				Channel: evt.(*EventChannelOpen).Channel,
 			}, evt)
-
-			time.Sleep(500 * time.Millisecond)
 
 			var conn net.Conn
 			var rw *frame.ReadWriter

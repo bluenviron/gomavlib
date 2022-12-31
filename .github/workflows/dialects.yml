@@ -3,6 +3,7 @@ name: dialects
 on:
   schedule:
   - cron: '4 5 * * *'
+  workflow_dispatch:
 
 jobs:
   dialects:

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/aler9/gomavlib"
 	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
@@ -30,7 +30,7 @@ func main() {
 
 	for evt := range node.Events() {
 		if frm, ok := evt.(*gomavlib.EventFrame); ok {
-			fmt.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())
+			log.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())
 
 			// if message is a parameter read request addressed to this node
 			if msg, ok := frm.Message().(*ardupilotmega.MessageParamRequestRead); ok &&

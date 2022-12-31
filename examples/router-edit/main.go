@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/aler9/gomavlib"
 	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
@@ -32,7 +32,7 @@ func main() {
 	// print every message we receive
 	for evt := range node.Events() {
 		if frm, ok := evt.(*gomavlib.EventFrame); ok {
-			fmt.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())
+			log.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())
 
 			// if incoming message is a heartbeat
 			if msg, ok := frm.Message().(*ardupilotmega.MessageHeartbeat); ok {
@@ -42,7 +42,7 @@ func main() {
 				// since we changed the frame content, recompute the frame checksum and signature
 				err := node.FixFrame(frm.Frame)
 				if err != nil {
-					fmt.Printf("ERR: %v", err)
+					log.Printf("ERR: %v", err)
 					continue
 				}
 			}

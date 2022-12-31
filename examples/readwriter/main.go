@@ -2,8 +2,8 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"io"
+	"log"
 
 	"github.com/aler9/gomavlib/pkg/dialect"
 	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
@@ -47,7 +47,7 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("decoded: %+v\n", frame)
+	log.Printf("decoded: %+v\n", frame)
 
 	// write a message
 	err = rw.WriteMessage(&ardupilotmega.MessageParamValue{
@@ -59,5 +59,5 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("encoded: %v\n", outBuf.Bytes())
+	log.Printf("encoded: %v\n", outBuf.Bytes())
 }

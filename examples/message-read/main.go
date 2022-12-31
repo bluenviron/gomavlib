@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/aler9/gomavlib"
 	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
@@ -34,11 +34,11 @@ func main() {
 			switch msg := frm.Message().(type) {
 			// if frm.Message() is a *ardupilotmega.MessageHeartbeat, access its fields
 			case *ardupilotmega.MessageHeartbeat:
-				fmt.Printf("received heartbeat (type %d)\n", msg.Type)
+				log.Printf("received heartbeat (type %d)\n", msg.Type)
 
 			// if frm.Message() is a *ardupilotmega.MessageServoOutputRaw, access its fields
 			case *ardupilotmega.MessageServoOutputRaw:
-				fmt.Printf("received servo output with values: %d %d %d %d %d %d %d %d\n",
+				log.Printf("received servo output with values: %d %d %d %d %d %d %d %d\n",
 					msg.Servo1Raw, msg.Servo2Raw, msg.Servo3Raw, msg.Servo4Raw,
 					msg.Servo5Raw, msg.Servo6Raw, msg.Servo7Raw, msg.Servo8Raw)
 			}

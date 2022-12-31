@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/aler9/gomavlib"
 )
@@ -31,7 +31,7 @@ func main() {
 	// print every message we receive
 	for evt := range node.Events() {
 		if frm, ok := evt.(*gomavlib.EventFrame); ok {
-			fmt.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())
+			log.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())
 
 			// route frame to every other channel
 			node.WriteFrameExcept(frm.Channel, frm.Frame)

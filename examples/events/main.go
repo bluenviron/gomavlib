@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/aler9/gomavlib"
 	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
@@ -32,16 +32,16 @@ func main() {
 	for evt := range node.Events() {
 		switch ee := evt.(type) {
 		case *gomavlib.EventFrame:
-			fmt.Printf("frame received: %v\n", ee)
+			log.Printf("frame received: %v\n", ee)
 
 		case *gomavlib.EventParseError:
-			fmt.Printf("parse error: %v\n", ee)
+			log.Printf("parse error: %v\n", ee)
 
 		case *gomavlib.EventChannelOpen:
-			fmt.Printf("channel opened: %v\n", ee)
+			log.Printf("channel opened: %v\n", ee)
 
 		case *gomavlib.EventChannelClose:
-			fmt.Printf("channel closed: %v\n", ee)
+			log.Printf("channel closed: %v\n", ee)
 		}
 	}
 }

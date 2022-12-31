@@ -99,7 +99,7 @@ func (r *Reader) Read() (Frame, error) {
 			return nil, newError("signature required but packet is not v2")
 		}
 
-		if sig := ff.genSignature(r.conf.InKey); *sig != *ff.Signature {
+		if sig := ff.GenerateSignature(r.conf.InKey); *sig != *ff.Signature {
 			return nil, newError("wrong signature")
 		}
 
@@ -118,7 +118,7 @@ func (r *Reader) Read() (Frame, error) {
 	// decode message if in dialect and validate checksum
 	if r.conf.DialectRW != nil {
 		if mp := r.conf.DialectRW.GetMessage(f.GetMessage().GetID()); mp != nil {
-			if sum := f.generateChecksum(mp.CRCExtra()); sum != f.GetChecksum() {
+			if sum := f.GenerateChecksum(mp.CRCExtra()); sum != f.GetChecksum() {
 				return nil, newError("wrong checksum, expected %.4x, got %.4x, message id is %d",
 					sum, f.GetChecksum(), f.GetMessage().GetID())
 			}

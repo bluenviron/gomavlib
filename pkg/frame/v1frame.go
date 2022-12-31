@@ -24,24 +24,41 @@ type V1Frame struct {
 	Checksum    uint16
 }
 
-// GetSystemID implements the Frame interface.
+// GetSystemID implements Frame.
 func (f V1Frame) GetSystemID() byte {
 	return f.SystemID
 }
 
-// GetComponentID implements the Frame interface.
+// GetComponentID implements Frame.
 func (f V1Frame) GetComponentID() byte {
 	return f.ComponentID
 }
 
-// GetMessage implements the Frame interface.
+// GetMessage implements Frame.
 func (f V1Frame) GetMessage() message.Message {
 	return f.Message
 }
 
-// GetChecksum implements the Frame interface.
+// GetChecksum implements Frame.
 func (f V1Frame) GetChecksum() uint16 {
 	return f.Checksum
+}
+
+// GenerateChecksum implements Frame.
+func (f V1Frame) GenerateChecksum(crcExtra byte) uint16 {
+	msg := f.GetMessage().(*message.MessageRaw)
+	h := x25.New()
+
+	h.Write([]byte{byte(len(msg.Payload))})
+	h.Write([]byte{f.SequenceID})
+	h.Write([]byte{f.SystemID})
+	h.Write([]byte{f.ComponentID})
+	h.Write([]byte{byte(msg.ID)})
+	h.Write(msg.Payload)
+
+	h.Write([]byte{crcExtra})
+
+	return h.Sum16()
 }
 
 func (f *V1Frame) decode(br *bufio.Reader) error {
@@ -108,20 +125,4 @@ func (f V1Frame) encodeTo(buf []byte, msgEncoded []byte) (int, error) {
 	n += 2
 
 	return n, nil
-}
-
-func (f V1Frame) generateChecksum(crcExtra byte) uint16 {
-	msg := f.GetMessage().(*message.MessageRaw)
-	h := x25.New()
-
-	h.Write([]byte{byte(len(msg.Payload))})
-	h.Write([]byte{f.SequenceID})
-	h.Write([]byte{f.SystemID})
-	h.Write([]byte{f.ComponentID})
-	h.Write([]byte{byte(msg.ID)})
-	h.Write(msg.Payload)
-
-	h.Write([]byte{crcExtra})
-
-	return h.Sum16()
 }

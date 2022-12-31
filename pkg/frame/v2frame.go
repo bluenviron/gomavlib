@@ -70,17 +70,17 @@ type V2Frame struct {
 	Signature           *V2Signature
 }
 
-// GetSystemID implements the Frame interface.
+// GetSystemID implements Frame.
 func (f V2Frame) GetSystemID() byte {
 	return f.SystemID
 }
 
-// GetComponentID implements the Frame interface.
+// GetComponentID implements Frame.
 func (f V2Frame) GetComponentID() byte {
 	return f.ComponentID
 }
 
-// GetMessage implements the Frame interface.
+// GetMessage implements Frame.
 func (f V2Frame) GetMessage() message.Message {
 	return f.Message
 }
@@ -90,9 +90,61 @@ func (f V2Frame) IsSigned() bool {
 	return (f.IncompatibilityFlag & V2FlagSigned) != 0
 }
 
-// GetChecksum implements the Frame interface.
+// GetChecksum implements Frame.
 func (f V2Frame) GetChecksum() uint16 {
 	return f.Checksum
+}
+
+// GenerateChecksum implements Frame.
+func (f V2Frame) GenerateChecksum(crcExtra byte) uint16 {
+	msg := f.GetMessage().(*message.MessageRaw)
+	h := x25.New()
+
+	buf := make([]byte, 3)
+	h.Write([]byte{byte(len(msg.Payload))})
+	h.Write([]byte{f.IncompatibilityFlag})
+	h.Write([]byte{f.CompatibilityFlag})
+	h.Write([]byte{f.SequenceID})
+	h.Write([]byte{f.SystemID})
+	h.Write([]byte{f.ComponentID})
+	uint24Encode(buf, msg.ID)
+	h.Write(buf)
+	h.Write(msg.Payload)
+
+	h.Write([]byte{crcExtra})
+
+	return h.Sum16()
+}
+
+// GenerateSignature generates the frame signature.
+func (f V2Frame) GenerateSignature(key *V2Key) *V2Signature {
+	msg := f.GetMessage().(*message.MessageRaw)
+	h := sha256.New()
+
+	// secret key
+	h.Write(key[:])
+
+	// the signature covers the whole message, excluding the signature itself
+	buf := make([]byte, 6)
+	h.Write([]byte{V2MagicByte})
+	h.Write([]byte{byte(len(msg.Payload))})
+	h.Write([]byte{f.IncompatibilityFlag})
+	h.Write([]byte{f.CompatibilityFlag})
+	h.Write([]byte{f.SequenceID})
+	h.Write([]byte{f.SystemID})
+	h.Write([]byte{f.ComponentID})
+	uint24Encode(buf, msg.GetID())
+	h.Write(buf[:3])
+	h.Write(msg.Payload)
+	binary.LittleEndian.PutUint16(buf, f.Checksum)
+	h.Write(buf[:2])
+	h.Write([]byte{f.SignatureLinkID})
+	uint48Encode(buf, f.SignatureTimestamp)
+	h.Write(buf)
+
+	sig := new(V2Signature)
+	copy(sig[:], h.Sum(nil)[:6])
+	return sig
 }
 
 func (f *V2Frame) decode(br *bufio.Reader) error {
@@ -112,7 +164,7 @@ func (f *V2Frame) decode(br *bufio.Reader) error {
 
 	// discard frame if incompatibility flag is not understood, as in recommendations
 	if f.IncompatibilityFlag != 0 && f.IncompatibilityFlag != V2FlagSigned {
-		return fmt.Errorf("unknown incompatibility flag (%d)", f.IncompatibilityFlag)
+		return fmt.Errorf("unknown incompatibility flag: %d", f.IncompatibilityFlag)
 	}
 
 	// message
@@ -186,54 +238,4 @@ func (f V2Frame) encodeTo(buf []byte, msgEncoded []byte) (int, error) {
 	}
 
 	return n, nil
-}
-
-func (f V2Frame) generateChecksum(crcExtra byte) uint16 {
-	msg := f.GetMessage().(*message.MessageRaw)
-	h := x25.New()
-
-	buf := make([]byte, 3)
-	h.Write([]byte{byte(len(msg.Payload))})
-	h.Write([]byte{f.IncompatibilityFlag})
-	h.Write([]byte{f.CompatibilityFlag})
-	h.Write([]byte{f.SequenceID})
-	h.Write([]byte{f.SystemID})
-	h.Write([]byte{f.ComponentID})
-	uint24Encode(buf, msg.ID)
-	h.Write(buf)
-	h.Write(msg.Payload)
-
-	h.Write([]byte{crcExtra})
-
-	return h.Sum16()
-}
-
-func (f V2Frame) genSignature(key *V2Key) *V2Signature {
-	msg := f.GetMessage().(*message.MessageRaw)
-	h := sha256.New()
-
-	// secret key
-	h.Write(key[:])
-
-	// the signature covers the whole message, excluding the signature itself
-	buf := make([]byte, 6)
-	h.Write([]byte{V2MagicByte})
-	h.Write([]byte{byte(len(msg.Payload))})
-	h.Write([]byte{f.IncompatibilityFlag})
-	h.Write([]byte{f.CompatibilityFlag})
-	h.Write([]byte{f.SequenceID})
-	h.Write([]byte{f.SystemID})
-	h.Write([]byte{f.ComponentID})
-	uint24Encode(buf, msg.GetID())
-	h.Write(buf[:3])
-	h.Write(msg.Payload)
-	binary.LittleEndian.PutUint16(buf, f.Checksum)
-	h.Write(buf[:2])
-	h.Write([]byte{f.SignatureLinkID})
-	uint48Encode(buf, f.SignatureTimestamp)
-	h.Write(buf)
-
-	sig := new(V2Signature)
-	copy(sig[:], h.Sum(nil)[:6])
-	return sig
 }

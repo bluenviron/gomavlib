@@ -195,7 +195,7 @@ var casesReadWrite = []struct {
 		testDialectRW,
 		nil,
 		&V2Frame{
-			IncompatibilityFlag: 0x00,
+			IncompatibilityFlag: 0,
 			CompatibilityFlag:   0x00,
 			SequenceID:          0x8F,
 			SystemID:            0x01,
@@ -334,6 +334,17 @@ func TestReaderErrors(t *testing.T) {
 			"signature required but packet is not v2",
 		},
 		{
+			"v2 frame unknown incompatibility flag",
+			nil,
+			nil,
+			[]byte{
+				0xfd, 0x5, 0x4, 0x0, 0x8f, 0x1, 0x2, 0x7,
+				0x6, 0x0, 0x10, 0x10, 0x10, 0x10, 0x10, 0x49,
+				0x3,
+			},
+			"unknown incompatibility flag: 4",
+		},
+		{
 			"wrong signature",
 			nil,
 			NewV2Key(bytes.Repeat([]byte("\x4F"), 32)),
@@ -358,6 +369,13 @@ func TestReaderErrors(t *testing.T) {
 		},
 		{
 			"message read error",
+			nil,
+			nil,
+			[]byte{254, 3, 39, 1, 2, 5, 168, 233},
+			"unexpected EOF",
+		},
+		{
+			"message decode error",
 			testDialectRW,
 			nil,
 			[]byte{254, 0, 39, 1, 2, 5, 168, 233},
@@ -397,7 +415,7 @@ func TestReaderErrorSignatureTimestamp(t *testing.T) {
 		SignatureLinkID:    1,
 		SignatureTimestamp: 20000000,
 	}
-	f.Signature = f.genSignature(NewV2Key(bytes.Repeat([]byte("\x4F"), 32)))
+	f.Signature = f.GenerateSignature(NewV2Key(bytes.Repeat([]byte("\x4F"), 32)))
 	buf2 := make([]byte, 1024)
 	n, err := f.encodeTo(buf2, msgByts)
 	require.NoError(t, err)
@@ -417,7 +435,7 @@ func TestReaderErrorSignatureTimestamp(t *testing.T) {
 		SignatureLinkID:    1,
 		SignatureTimestamp: 2,
 	}
-	f.Signature = f.genSignature(NewV2Key(bytes.Repeat([]byte("\x4F"), 32)))
+	f.Signature = f.GenerateSignature(NewV2Key(bytes.Repeat([]byte("\x4F"), 32)))
 	buf2 = make([]byte, 1024)
 	n, err = f.encodeTo(buf2, msgByts)
 	require.NoError(t, err)

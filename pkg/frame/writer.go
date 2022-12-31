@@ -117,9 +117,9 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 	// fill checksum
 	switch ff := fr.(type) {
 	case *V1Frame:
-		ff.Checksum = ff.generateChecksum(mp.CRCExtra())
+		ff.Checksum = ff.GenerateChecksum(mp.CRCExtra())
 	case *V2Frame:
-		ff.Checksum = ff.generateChecksum(mp.CRCExtra())
+		ff.Checksum = ff.GenerateChecksum(mp.CRCExtra())
 	}
 
 	// fill SignatureLinkID, SignatureTimestamp, Signature if v2
@@ -127,7 +127,7 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 		ff.SignatureLinkID = w.conf.OutSignatureLinkID
 		// Timestamp in 10 microsecond units since 1st January 2015 GMT time
 		ff.SignatureTimestamp = uint64(time.Since(signatureReferenceDate)) / 10000
-		ff.Signature = ff.genSignature(w.conf.OutKey)
+		ff.Signature = ff.GenerateSignature(w.conf.OutKey)
 	}
 
 	return w.writeFrameInner(fr)

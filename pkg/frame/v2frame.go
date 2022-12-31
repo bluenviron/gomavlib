@@ -70,22 +70,6 @@ type V2Frame struct {
 	Signature           *V2Signature
 }
 
-// Clone implements the Frame interface.
-func (f *V2Frame) Clone() Frame {
-	return &V2Frame{
-		IncompatibilityFlag: f.IncompatibilityFlag,
-		CompatibilityFlag:   f.CompatibilityFlag,
-		SequenceID:          f.SequenceID,
-		SystemID:            f.SystemID,
-		ComponentID:         f.ComponentID,
-		Message:             f.Message,
-		Checksum:            f.Checksum,
-		SignatureLinkID:     f.SignatureLinkID,
-		SignatureTimestamp:  f.SignatureTimestamp,
-		Signature:           f.Signature,
-	}
-}
-
 // GetSystemID implements the Frame interface.
 func (f V2Frame) GetSystemID() byte {
 	return f.SystemID

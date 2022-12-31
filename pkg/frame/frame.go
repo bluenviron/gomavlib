@@ -9,9 +9,6 @@ import (
 
 // Frame is the interface implemented by frames of every supported version.
 type Frame interface {
-	// generates a clone of the frame.
-	Clone() Frame
-
 	// returns the system id of the author of the frame.
 	GetSystemID() byte
 

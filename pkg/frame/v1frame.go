@@ -24,17 +24,6 @@ type V1Frame struct {
 	Checksum    uint16
 }
 
-// Clone implements the Frame interface.
-func (f V1Frame) Clone() Frame {
-	return &V1Frame{
-		SequenceID:  f.SequenceID,
-		SystemID:    f.SystemID,
-		ComponentID: f.ComponentID,
-		Message:     f.Message,
-		Checksum:    f.Checksum,
-	}
-}
-
 // GetSystemID implements the Frame interface.
 func (f V1Frame) GetSystemID() byte {
 	return f.SystemID

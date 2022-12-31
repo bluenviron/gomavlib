@@ -95,3 +95,14 @@ func TestCloseWhileWorking(t *testing.T) {
 		})
 	}
 }
+
+func TestWriteAfterClose(t *testing.T) {
+	a := New(
+		func(ctx context.Context) (io.ReadWriteCloser, error) {
+			return (&net.Dialer{}).DialContext(ctx, "tcp", "localhost:6657")
+		},
+	)
+	a.Close()
+	_, err := a.Write([]byte{1, 2, 3, 4})
+	require.EqualError(t, err, "terminated")
+}

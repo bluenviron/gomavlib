@@ -35,11 +35,12 @@ func TestWriterNewErrors(t *testing.T) {
 	require.EqualError(t, err, "OutSystemID must be greater than one")
 
 	_, err = NewWriter(WriterConf{
-		Writer:     &buf,
-		OutVersion: V1,
-		OutKey:     NewV2Key(bytes.Repeat([]byte("\x4F"), 32)),
+		Writer:      &buf,
+		OutVersion:  V1,
+		OutSystemID: 1,
+		OutKey:      NewV2Key(bytes.Repeat([]byte("\x4F"), 32)),
 	})
-	require.EqualError(t, err, "OutSystemID must be greater than one")
+	require.EqualError(t, err, "OutKey requires V2 frames")
 }
 
 func TestWriterWriteFrame(t *testing.T) {
@@ -197,6 +198,15 @@ func TestWriterWriteMessage(t *testing.T) {
 	}
 }
 
+type MessageTest10 struct {
+	TestByte1 byte
+	TestUint1 uint32
+}
+
+func (m *MessageTest10) GetID() uint32 {
+	return 301
+}
+
 func TestWriterWriteMessageErrors(t *testing.T) {
 	for _, ca := range []struct {
 		name      string
@@ -215,6 +225,12 @@ func TestWriterWriteMessageErrors(t *testing.T) {
 			nil,
 			&MessageTest8{15, 7},
 			"dialect is nil",
+		},
+		{
+			"not in dialect",
+			testDialectRW,
+			&MessageTest10{15, 7},
+			"message is not in the dialect",
 		},
 	} {
 		t.Run(ca.name, func(t *testing.T) {

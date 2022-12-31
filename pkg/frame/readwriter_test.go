@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestReadWriterNew(t *testing.T) {
+func TestReadWriter(t *testing.T) {
 	var buf bytes.Buffer
 	_, err := NewReadWriter(ReadWriterConf{
 		ReadWriter:  &buf,
@@ -15,4 +15,19 @@ func TestReadWriterNew(t *testing.T) {
 		OutSystemID: 1,
 	})
 	require.NoError(t, err)
+}
+
+func TestReadWriterErrors(t *testing.T) {
+	_, err := NewReadWriter(ReadWriterConf{
+		OutVersion:  V2,
+		OutSystemID: 1,
+	})
+	require.EqualError(t, err, "Reader not provided")
+
+	var buf bytes.Buffer
+	_, err = NewReadWriter(ReadWriterConf{
+		ReadWriter:  &buf,
+		OutSystemID: 1,
+	})
+	require.EqualError(t, err, "OutVersion not provided")
 }

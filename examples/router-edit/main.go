@@ -50,6 +50,7 @@ func main() {
 					continue
 				}
 			}
+
 			// route frame to every other channel
 			node.WriteFrameExcept(frm.Channel, frm.Frame)
 		}

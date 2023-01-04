@@ -40,6 +40,8 @@ type MessageEfiStatus struct {
 	PtCompensation float32
 	// Supply voltage to EFI sparking system.  Zero in this value means "unknown", so if the supply voltage really is zero volts use 0.0001 instead.
 	IgnitionVoltage float32 `mavext:"true"`
+	// Fuel pressure. Zero in this value means "unknown", so if the fuel pressure really is zero kPa use 0.0001 instead.
+	FuelPressure float32 `mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

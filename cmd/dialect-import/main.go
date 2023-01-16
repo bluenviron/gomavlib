@@ -16,7 +16,7 @@ import (
 	"strings"
 	"text/template"
 
-	"gopkg.in/alecthomas/kingpin.v2"
+	"github.com/alecthomas/kong"
 )
 
 var (
@@ -483,34 +483,31 @@ func writeMessage(pkgName string, outMsg *outMessage) error {
 	return os.WriteFile("msg_"+strings.ToLower(outMsg.OrigName)+".go", buf.Bytes(), 0o644)
 }
 
+var cli struct {
+	Pwd     string `help:"Target directory"`
+	Package string `help:"Package name" default:"main"`
+	Comment string `help:"comment to add before the package name"`
+	XML     string `arg:"" help:"Path or url pointing to a XML Mavlink dialect"`
+}
+
 func run() error {
-	kingpin.CommandLine.Help = "Convert Mavlink dialects from XML format into Go format."
+	kong.Parse(&cli,
+		kong.Description("Convert Mavlink dialects from XML format into Go format."),
+		kong.UsageOnError())
 
-	argPwd := kingpin.Flag("pwd", "Target directory").Default("").String()
-	argPkgName := kingpin.Flag("package", "Package name").Default("main").String()
-	argComment := kingpin.Flag("comment", "comment to add before the package name").Default("").String()
-	argMainDef := kingpin.Arg("xml", "Path or url pointing to a XML Mavlink dialect").Required().String()
-
-	kingpin.Parse()
-
-	pwd := *argPwd
-	pkgName := *argPkgName
-	comment := *argComment
-	mainDef := *argMainDef
-
-	if pwd != "" {
-		os.Chdir(pwd)
+	if cli.Pwd != "" {
+		os.Chdir(cli.Pwd)
 	}
 
 	version := ""
 	defsProcessed := make(map[string]struct{})
 	isRemote := func() bool {
-		_, err := url.ParseRequestURI(mainDef)
+		_, err := url.ParseRequestURI(cli.XML)
 		return err == nil
 	}()
 
 	// parse all definitions recursively
-	outDefs, err := processDefinition(&version, defsProcessed, isRemote, mainDef)
+	outDefs, err := processDefinition(&version, defsProcessed, isRemote, cli.XML)
 	if err != nil {
 		return err
 	}
@@ -545,13 +542,13 @@ func run() error {
 		}
 	}
 
-	err = writeDialect(pkgName, comment, version, outDefs, enums)
+	err = writeDialect(cli.Package, cli.Comment, version, outDefs, enums)
 	if err != nil {
 		return err
 	}
 
 	for _, enum := range enums {
-		err := writeEnum(pkgName, enum)
+		err := writeEnum(cli.Package, enum)
 		if err != nil {
 			return err
 		}
@@ -559,7 +556,7 @@ func run() error {
 
 	for _, def := range outDefs {
 		for _, msg := range def.Messages {
-			err := writeMessage(pkgName, msg)
+			err := writeMessage(cli.Package, msg)
 			if err != nil {
 				return err
 			}

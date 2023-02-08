@@ -424,8 +424,6 @@ const (
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW MAV_CMD = 60002
 	// Command to configure a gimbal manager. A gimbal device is never to react to this command. The selected profile is reported in the STORM32_GIMBAL_MANAGER_STATUS message.
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP MAV_CMD = 60010
-	// Command to initiate gimbal actions. Usually performed by the gimbal device, but some can also be done by the gimbal manager. It is hence best to broadcast this command.
-	MAV_CMD_STORM32_DO_GIMBAL_ACTION MAV_CMD = 60011
 	// Command to set the shot manager mode.
 	MAV_CMD_QSHOT_DO_CONFIGURE MAV_CMD = 60020
 )

@@ -12,8 +12,6 @@ type MAV_STORM32_GIMBAL_MANAGER_CAP_FLAGS uint32
 const (
 	// The gimbal manager supports several profiles.
 	MAV_STORM32_GIMBAL_MANAGER_CAP_FLAGS_HAS_PROFILES MAV_STORM32_GIMBAL_MANAGER_CAP_FLAGS = 1
-	// The gimbal manager supports changing the gimbal manager during run time, i.e. can be enabled/disabled.
-	MAV_STORM32_GIMBAL_MANAGER_CAP_FLAGS_SUPPORTS_CHANGE MAV_STORM32_GIMBAL_MANAGER_CAP_FLAGS = 2
 )
 
 var labels_MAV_STORM32_GIMBAL_MANAGER_CAP_FLAGS = map[MAV_STORM32_GIMBAL_MANAGER_CAP_FLAGS]string{}

@@ -6,21 +6,21 @@ import (
 	"errors"
 )
 
-// Gimbal manager profiles. Only standard profiles are defined. Any implementation can define it's own profile in addition, and should use enum values > 16.
+// Gimbal manager profiles. Only standard profiles are defined. Any implementation can define its own profile(s) in addition, and should use enum values > 16.
 type MAV_STORM32_GIMBAL_MANAGER_PROFILE uint32
 
 const (
 	// Default profile. Implementation specific.
 	MAV_STORM32_GIMBAL_MANAGER_PROFILE_DEFAULT MAV_STORM32_GIMBAL_MANAGER_PROFILE = 0
-	// Custom profile. Configurable profile according to the STorM32 definition. Is configured with STORM32_GIMBAL_MANAGER_PROFIL.
+	// Not supported/deprecated.
 	MAV_STORM32_GIMBAL_MANAGER_PROFILE_CUSTOM MAV_STORM32_GIMBAL_MANAGER_PROFILE = 1
-	// Default cooperative profile. Uses STorM32 custom profile with default settings to achieve cooperative behavior.
+	// Profile with cooperative behavior.
 	MAV_STORM32_GIMBAL_MANAGER_PROFILE_COOPERATIVE MAV_STORM32_GIMBAL_MANAGER_PROFILE = 2
-	// Default exclusive profile. Uses STorM32 custom profile with default settings to achieve exclusive behavior.
+	// Profile with exclusive behavior.
 	MAV_STORM32_GIMBAL_MANAGER_PROFILE_EXCLUSIVE MAV_STORM32_GIMBAL_MANAGER_PROFILE = 3
-	// Default priority profile with cooperative behavior for equal priority. Uses STorM32 custom profile with default settings to achieve priority-based behavior.
+	// Profile with priority and cooperative behavior for equal priority.
 	MAV_STORM32_GIMBAL_MANAGER_PROFILE_PRIORITY_COOPERATIVE MAV_STORM32_GIMBAL_MANAGER_PROFILE = 4
-	// Default priority profile with exclusive behavior for equal priority. Uses STorM32 custom profile with default settings to achieve priority-based behavior.
+	// Profile with priority and exclusive behavior for equal priority.
 	MAV_STORM32_GIMBAL_MANAGER_PROFILE_PRIORITY_EXCLUSIVE MAV_STORM32_GIMBAL_MANAGER_PROFILE = 5
 )
 

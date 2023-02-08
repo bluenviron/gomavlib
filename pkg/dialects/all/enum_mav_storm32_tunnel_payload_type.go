@@ -9,26 +9,18 @@ import (
 type MAV_STORM32_TUNNEL_PAYLOAD_TYPE uint32
 
 const (
-	// Registered for STorM32 gimbal controller.
+	// Registered for STorM32 gimbal controller. For communication with gimbal or camera.
 	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH1_IN MAV_STORM32_TUNNEL_PAYLOAD_TYPE = 200
-	// Registered for STorM32 gimbal controller.
+	// Registered for STorM32 gimbal controller. For communication with gimbal or camera.
 	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH1_OUT MAV_STORM32_TUNNEL_PAYLOAD_TYPE = 201
-	// Registered for STorM32 gimbal controller.
+	// Registered for STorM32 gimbal controller. For communication with gimbal.
 	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH2_IN MAV_STORM32_TUNNEL_PAYLOAD_TYPE = 202
-	// Registered for STorM32 gimbal controller.
+	// Registered for STorM32 gimbal controller. For communication with gimbal.
 	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH2_OUT MAV_STORM32_TUNNEL_PAYLOAD_TYPE = 203
-	// Registered for STorM32 gimbal controller.
+	// Registered for STorM32 gimbal controller. For communication with camera.
 	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH3_IN MAV_STORM32_TUNNEL_PAYLOAD_TYPE = 204
-	// Registered for STorM32 gimbal controller.
+	// Registered for STorM32 gimbal controller. For communication with camera.
 	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH3_OUT MAV_STORM32_TUNNEL_PAYLOAD_TYPE = 205
-	// Registered for STorM32 gimbal controller.
-	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED6 MAV_STORM32_TUNNEL_PAYLOAD_TYPE = 206
-	// Registered for STorM32 gimbal controller.
-	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED7 MAV_STORM32_TUNNEL_PAYLOAD_TYPE = 207
-	// Registered for STorM32 gimbal controller.
-	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED8 MAV_STORM32_TUNNEL_PAYLOAD_TYPE = 208
-	// Registered for STorM32 gimbal controller.
-	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED9 MAV_STORM32_TUNNEL_PAYLOAD_TYPE = 209
 )
 
 var labels_MAV_STORM32_TUNNEL_PAYLOAD_TYPE = map[MAV_STORM32_TUNNEL_PAYLOAD_TYPE]string{}

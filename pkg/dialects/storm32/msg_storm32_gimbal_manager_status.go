@@ -8,8 +8,8 @@ type MessageStorm32GimbalManagerStatus struct {
 	GimbalId uint8
 	// Client who is currently supervisor (0 = none).
 	Supervisor MAV_STORM32_GIMBAL_MANAGER_CLIENT `mavenum:"uint8"`
-	// Gimbal device flags currently applied.
-	DeviceFlags MAV_STORM32_GIMBAL_DEVICE_FLAGS `mavenum:"uint16"`
+	// Gimbal device flags currently applied. Same flags as reported by GIMBAL_DEVICE_ATTITUDE_STATUS.
+	DeviceFlags GIMBAL_DEVICE_FLAGS `mavenum:"uint16"`
 	// Gimbal manager flags currently applied.
 	ManagerFlags MAV_STORM32_GIMBAL_MANAGER_FLAGS `mavenum:"uint16"`
 	// Profile currently applied (0 = default).

@@ -8,7 +8,7 @@ type MessageStorm32GimbalManagerCorrectRoll struct {
 	TargetSystem uint8
 	// Component ID
 	TargetComponent uint8
-	// Gimbal ID of the gimbal manager to address (component ID or 1-6 for non-MAVLink gimbal, 0 for all gimbals, send command multiple times for more than one but not all gimbals).
+	// Gimbal ID of the gimbal manager to address (component ID or 1-6 for non-MAVLink gimbal, 0 for all gimbals). Send command multiple times for more than one but not all gimbals.
 	GimbalId uint8
 	// Client which is contacting the gimbal manager (must be set).
 	Client MAV_STORM32_GIMBAL_MANAGER_CLIENT `mavenum:"uint8"`

@@ -8,21 +8,21 @@ type MessageStorm32GimbalManagerControl struct {
 	TargetSystem uint8
 	// Component ID
 	TargetComponent uint8
-	// Gimbal ID of the gimbal manager to address (component ID or 1-6 for non-MAVLink gimbal, 0 for all gimbals, send command multiple times for more than one but not all gimbals).
+	// Gimbal ID of the gimbal manager to address (component ID or 1-6 for non-MAVLink gimbal, 0 for all gimbals). Send command multiple times for more than one but not all gimbals.
 	GimbalId uint8
 	// Client which is contacting the gimbal manager (must be set).
 	Client MAV_STORM32_GIMBAL_MANAGER_CLIENT `mavenum:"uint8"`
-	// Gimbal device flags (UINT16_MAX to be ignored).
-	DeviceFlags MAV_STORM32_GIMBAL_DEVICE_FLAGS `mavenum:"uint16"`
-	// Gimbal manager flags (0 to be ignored).
+	// Gimbal device flags to be applied (UINT16_MAX to be ignored). Same flags as used in GIMBAL_DEVICE_SET_ATTITUDE.
+	DeviceFlags GIMBAL_DEVICE_FLAGS `mavenum:"uint16"`
+	// Gimbal manager flags to be applied (0 to be ignored).
 	ManagerFlags MAV_STORM32_GIMBAL_MANAGER_FLAGS `mavenum:"uint16"`
-	// Quaternion components, w, x, y, z (1 0 0 0 is the null-rotation, the frame is determined by the GIMBAL_MANAGER_FLAGS_ABSOLUTE_YAW flag, set first element to NaN to be ignored).
+	// Quaternion components, w, x, y, z (1 0 0 0 is the null-rotation). Set first element to NaN to be ignored. The frame is determined by the GIMBAL_DEVICE_FLAGS_YAW_IN_xxx_FRAME flags.
 	Q [4]float32
-	// X component of angular velocity (positive: roll to the right, NaN to be ignored).
+	// X component of angular velocity (positive: roll to the right). NaN to be ignored.
 	AngularVelocityX float32
-	// Y component of angular velocity (positive: tilt up, NaN to be ignored).
+	// Y component of angular velocity (positive: tilt up). NaN to be ignored.
 	AngularVelocityY float32
-	// Z component of angular velocity (positive: pan to the right, the frame is determined by the STORM32_GIMBAL_DEVICE_FLAGS_YAW_ABSOLUTE flag, NaN to be ignored).
+	// Z component of angular velocity (positive: pan to the right). NaN to be ignored. The frame is determined by the GIMBAL_DEVICE_FLAGS_YAW_IN_xxx_FRAME flags.
 	AngularVelocityZ float32
 }
 

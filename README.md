@@ -34,6 +34,7 @@ Features:
 * [API Documentation](#api-documentation)
 * [Dialect generation](#dialect-generation)
 * [Testing](#testing)
+* [Standards](#standards)
 * [Links](#links)
 
 ## Installation
@@ -93,6 +94,15 @@ If you want to hack the library and test the results, unit tests can be launched
 make test
 ```
 
+## Standards
+
+* Mavlink
+  * main website https://mavlink.io/en/
+  * packet format https://mavlink.io/en/guide/serialization.html
+  * common dialect https://github.com/mavlink/mavlink/blob/master/message_definitions/v1.0/common.xml
+
+* Golang project layout https://github.com/golang-standards/project-layout
+
 ## Links
 
 Related projects
@@ -114,12 +124,3 @@ Other non-Go libraries
 * C# https://github.com/asvol/mavlink.net
 * Rust https://github.com/3drobotics/rust-mavlink
 * JS https://github.com/omcaree/node-mavlink
-
-Standards
-
-* Mavlink
-  * main website https://mavlink.io/en/
-  * packet format https://mavlink.io/en/guide/serialization.html
-  * common dialect https://github.com/mavlink/mavlink/blob/master/message_definitions/v1.0/common.xml
-
-* Golang project layout https://github.com/golang-standards/project-layout

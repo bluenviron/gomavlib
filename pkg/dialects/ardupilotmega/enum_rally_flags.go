@@ -16,7 +16,10 @@ const (
 	LAND_IMMEDIATELY RALLY_FLAGS = 2
 )
 
-var labels_RALLY_FLAGS = map[RALLY_FLAGS]string{}
+var labels_RALLY_FLAGS = map[RALLY_FLAGS]string{
+	FAVORABLE_WIND:   "FAVORABLE_WIND",
+	LAND_IMMEDIATELY: "LAND_IMMEDIATELY",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e RALLY_FLAGS) MarshalText() ([]byte, error) {

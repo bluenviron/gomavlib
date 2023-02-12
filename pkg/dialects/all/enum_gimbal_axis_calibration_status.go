@@ -3,45 +3,16 @@
 package all
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
 )
 
-type GIMBAL_AXIS_CALIBRATION_STATUS uint32
+type GIMBAL_AXIS_CALIBRATION_STATUS = ardupilotmega.GIMBAL_AXIS_CALIBRATION_STATUS
 
 const (
 	// Axis calibration is in progress.
-	GIMBAL_AXIS_CALIBRATION_STATUS_IN_PROGRESS GIMBAL_AXIS_CALIBRATION_STATUS = 0
+	GIMBAL_AXIS_CALIBRATION_STATUS_IN_PROGRESS GIMBAL_AXIS_CALIBRATION_STATUS = ardupilotmega.GIMBAL_AXIS_CALIBRATION_STATUS_IN_PROGRESS
 	// Axis calibration succeeded.
-	GIMBAL_AXIS_CALIBRATION_STATUS_SUCCEEDED GIMBAL_AXIS_CALIBRATION_STATUS = 1
+	GIMBAL_AXIS_CALIBRATION_STATUS_SUCCEEDED GIMBAL_AXIS_CALIBRATION_STATUS = ardupilotmega.GIMBAL_AXIS_CALIBRATION_STATUS_SUCCEEDED
 	// Axis calibration failed.
-	GIMBAL_AXIS_CALIBRATION_STATUS_FAILED GIMBAL_AXIS_CALIBRATION_STATUS = 2
+	GIMBAL_AXIS_CALIBRATION_STATUS_FAILED GIMBAL_AXIS_CALIBRATION_STATUS = ardupilotmega.GIMBAL_AXIS_CALIBRATION_STATUS_FAILED
 )
-
-var labels_GIMBAL_AXIS_CALIBRATION_STATUS = map[GIMBAL_AXIS_CALIBRATION_STATUS]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e GIMBAL_AXIS_CALIBRATION_STATUS) MarshalText() ([]byte, error) {
-	if l, ok := labels_GIMBAL_AXIS_CALIBRATION_STATUS[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_GIMBAL_AXIS_CALIBRATION_STATUS = map[string]GIMBAL_AXIS_CALIBRATION_STATUS{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *GIMBAL_AXIS_CALIBRATION_STATUS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_GIMBAL_AXIS_CALIBRATION_STATUS[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e GIMBAL_AXIS_CALIBRATION_STATUS) String() string {
-	if l, ok := labels_GIMBAL_AXIS_CALIBRATION_STATUS[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

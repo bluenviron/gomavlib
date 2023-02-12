@@ -14,7 +14,9 @@ const (
 	MAV_DO_REPOSITION_FLAGS_CHANGE_MODE MAV_DO_REPOSITION_FLAGS = 1
 )
 
-var labels_MAV_DO_REPOSITION_FLAGS = map[MAV_DO_REPOSITION_FLAGS]string{}
+var labels_MAV_DO_REPOSITION_FLAGS = map[MAV_DO_REPOSITION_FLAGS]string{
+	MAV_DO_REPOSITION_FLAGS_CHANGE_MODE: "MAV_DO_REPOSITION_FLAGS_CHANGE_MODE",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_DO_REPOSITION_FLAGS) MarshalText() ([]byte, error) {

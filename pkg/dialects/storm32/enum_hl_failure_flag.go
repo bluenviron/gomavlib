@@ -3,68 +3,39 @@
 package storm32
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/common"
 )
 
 // Flags to report failure cases over the high latency telemtry.
-type HL_FAILURE_FLAG uint32
+type HL_FAILURE_FLAG = common.HL_FAILURE_FLAG
 
 const (
 	// GPS failure.
-	HL_FAILURE_FLAG_GPS HL_FAILURE_FLAG = 1
+	HL_FAILURE_FLAG_GPS HL_FAILURE_FLAG = common.HL_FAILURE_FLAG_GPS
 	// Differential pressure sensor failure.
-	HL_FAILURE_FLAG_DIFFERENTIAL_PRESSURE HL_FAILURE_FLAG = 2
+	HL_FAILURE_FLAG_DIFFERENTIAL_PRESSURE HL_FAILURE_FLAG = common.HL_FAILURE_FLAG_DIFFERENTIAL_PRESSURE
 	// Absolute pressure sensor failure.
-	HL_FAILURE_FLAG_ABSOLUTE_PRESSURE HL_FAILURE_FLAG = 4
+	HL_FAILURE_FLAG_ABSOLUTE_PRESSURE HL_FAILURE_FLAG = common.HL_FAILURE_FLAG_ABSOLUTE_PRESSURE
 	// Accelerometer sensor failure.
-	HL_FAILURE_FLAG_3D_ACCEL HL_FAILURE_FLAG = 8
+	HL_FAILURE_FLAG_3D_ACCEL HL_FAILURE_FLAG = common.HL_FAILURE_FLAG_3D_ACCEL
 	// Gyroscope sensor failure.
-	HL_FAILURE_FLAG_3D_GYRO HL_FAILURE_FLAG = 16
+	HL_FAILURE_FLAG_3D_GYRO HL_FAILURE_FLAG = common.HL_FAILURE_FLAG_3D_GYRO
 	// Magnetometer sensor failure.
-	HL_FAILURE_FLAG_3D_MAG HL_FAILURE_FLAG = 32
+	HL_FAILURE_FLAG_3D_MAG HL_FAILURE_FLAG = common.HL_FAILURE_FLAG_3D_MAG
 	// Terrain subsystem failure.
-	HL_FAILURE_FLAG_TERRAIN HL_FAILURE_FLAG = 64
+	HL_FAILURE_FLAG_TERRAIN HL_FAILURE_FLAG = common.HL_FAILURE_FLAG_TERRAIN
 	// Battery failure/critical low battery.
-	HL_FAILURE_FLAG_BATTERY HL_FAILURE_FLAG = 128
+	HL_FAILURE_FLAG_BATTERY HL_FAILURE_FLAG = common.HL_FAILURE_FLAG_BATTERY
 	// RC receiver failure/no rc connection.
-	HL_FAILURE_FLAG_RC_RECEIVER HL_FAILURE_FLAG = 256
+	HL_FAILURE_FLAG_RC_RECEIVER HL_FAILURE_FLAG = common.HL_FAILURE_FLAG_RC_RECEIVER
 	// Offboard link failure.
-	HL_FAILURE_FLAG_OFFBOARD_LINK HL_FAILURE_FLAG = 512
+	HL_FAILURE_FLAG_OFFBOARD_LINK HL_FAILURE_FLAG = common.HL_FAILURE_FLAG_OFFBOARD_LINK
 	// Engine failure.
-	HL_FAILURE_FLAG_ENGINE HL_FAILURE_FLAG = 1024
+	HL_FAILURE_FLAG_ENGINE HL_FAILURE_FLAG = common.HL_FAILURE_FLAG_ENGINE
 	// Geofence violation.
-	HL_FAILURE_FLAG_GEOFENCE HL_FAILURE_FLAG = 2048
+	HL_FAILURE_FLAG_GEOFENCE HL_FAILURE_FLAG = common.HL_FAILURE_FLAG_GEOFENCE
 	// Estimator failure, for example measurement rejection or large variances.
-	HL_FAILURE_FLAG_ESTIMATOR HL_FAILURE_FLAG = 4096
+	HL_FAILURE_FLAG_ESTIMATOR HL_FAILURE_FLAG = common.HL_FAILURE_FLAG_ESTIMATOR
 	// Mission failure.
-	HL_FAILURE_FLAG_MISSION HL_FAILURE_FLAG = 8192
+	HL_FAILURE_FLAG_MISSION HL_FAILURE_FLAG = common.HL_FAILURE_FLAG_MISSION
 )
-
-var labels_HL_FAILURE_FLAG = map[HL_FAILURE_FLAG]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e HL_FAILURE_FLAG) MarshalText() ([]byte, error) {
-	if l, ok := labels_HL_FAILURE_FLAG[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_HL_FAILURE_FLAG = map[string]HL_FAILURE_FLAG{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *HL_FAILURE_FLAG) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_HL_FAILURE_FLAG[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e HL_FAILURE_FLAG) String() string {
-	if l, ok := labels_HL_FAILURE_FLAG[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

@@ -3,62 +3,33 @@
 package all
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
 )
 
 // Flags in EKF_STATUS message.
-type EKF_STATUS_FLAGS uint32
+type EKF_STATUS_FLAGS = ardupilotmega.EKF_STATUS_FLAGS
 
 const (
 	// Set if EKF's attitude estimate is good.
-	EKF_ATTITUDE EKF_STATUS_FLAGS = 1
+	EKF_ATTITUDE EKF_STATUS_FLAGS = ardupilotmega.EKF_ATTITUDE
 	// Set if EKF's horizontal velocity estimate is good.
-	EKF_VELOCITY_HORIZ EKF_STATUS_FLAGS = 2
+	EKF_VELOCITY_HORIZ EKF_STATUS_FLAGS = ardupilotmega.EKF_VELOCITY_HORIZ
 	// Set if EKF's vertical velocity estimate is good.
-	EKF_VELOCITY_VERT EKF_STATUS_FLAGS = 4
+	EKF_VELOCITY_VERT EKF_STATUS_FLAGS = ardupilotmega.EKF_VELOCITY_VERT
 	// Set if EKF's horizontal position (relative) estimate is good.
-	EKF_POS_HORIZ_REL EKF_STATUS_FLAGS = 8
+	EKF_POS_HORIZ_REL EKF_STATUS_FLAGS = ardupilotmega.EKF_POS_HORIZ_REL
 	// Set if EKF's horizontal position (absolute) estimate is good.
-	EKF_POS_HORIZ_ABS EKF_STATUS_FLAGS = 16
+	EKF_POS_HORIZ_ABS EKF_STATUS_FLAGS = ardupilotmega.EKF_POS_HORIZ_ABS
 	// Set if EKF's vertical position (absolute) estimate is good.
-	EKF_POS_VERT_ABS EKF_STATUS_FLAGS = 32
+	EKF_POS_VERT_ABS EKF_STATUS_FLAGS = ardupilotmega.EKF_POS_VERT_ABS
 	// Set if EKF's vertical position (above ground) estimate is good.
-	EKF_POS_VERT_AGL EKF_STATUS_FLAGS = 64
+	EKF_POS_VERT_AGL EKF_STATUS_FLAGS = ardupilotmega.EKF_POS_VERT_AGL
 	// EKF is in constant position mode and does not know it's absolute or relative position.
-	EKF_CONST_POS_MODE EKF_STATUS_FLAGS = 128
+	EKF_CONST_POS_MODE EKF_STATUS_FLAGS = ardupilotmega.EKF_CONST_POS_MODE
 	// Set if EKF's predicted horizontal position (relative) estimate is good.
-	EKF_PRED_POS_HORIZ_REL EKF_STATUS_FLAGS = 256
+	EKF_PRED_POS_HORIZ_REL EKF_STATUS_FLAGS = ardupilotmega.EKF_PRED_POS_HORIZ_REL
 	// Set if EKF's predicted horizontal position (absolute) estimate is good.
-	EKF_PRED_POS_HORIZ_ABS EKF_STATUS_FLAGS = 512
+	EKF_PRED_POS_HORIZ_ABS EKF_STATUS_FLAGS = ardupilotmega.EKF_PRED_POS_HORIZ_ABS
 	// Set if EKF has never been healthy.
-	EKF_UNINITIALIZED EKF_STATUS_FLAGS = 1024
+	EKF_UNINITIALIZED EKF_STATUS_FLAGS = ardupilotmega.EKF_UNINITIALIZED
 )
-
-var labels_EKF_STATUS_FLAGS = map[EKF_STATUS_FLAGS]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e EKF_STATUS_FLAGS) MarshalText() ([]byte, error) {
-	if l, ok := labels_EKF_STATUS_FLAGS[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_EKF_STATUS_FLAGS = map[string]EKF_STATUS_FLAGS{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *EKF_STATUS_FLAGS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_EKF_STATUS_FLAGS[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e EKF_STATUS_FLAGS) String() string {
-	if l, ok := labels_EKF_STATUS_FLAGS[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

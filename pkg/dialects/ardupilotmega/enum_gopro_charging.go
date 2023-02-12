@@ -15,7 +15,10 @@ const (
 	GOPRO_CHARGING_ENABLED GOPRO_CHARGING = 1
 )
 
-var labels_GOPRO_CHARGING = map[GOPRO_CHARGING]string{}
+var labels_GOPRO_CHARGING = map[GOPRO_CHARGING]string{
+	GOPRO_CHARGING_DISABLED: "GOPRO_CHARGING_DISABLED",
+	GOPRO_CHARGING_ENABLED:  "GOPRO_CHARGING_ENABLED",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_CHARGING) MarshalText() ([]byte, error) {

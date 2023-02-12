@@ -3,44 +3,15 @@
 package storm32
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/common"
 )
 
 // Gripper actions.
-type GRIPPER_ACTIONS uint32
+type GRIPPER_ACTIONS = common.GRIPPER_ACTIONS
 
 const (
 	// Gripper release cargo.
-	GRIPPER_ACTION_RELEASE GRIPPER_ACTIONS = 0
+	GRIPPER_ACTION_RELEASE GRIPPER_ACTIONS = common.GRIPPER_ACTION_RELEASE
 	// Gripper grab onto cargo.
-	GRIPPER_ACTION_GRAB GRIPPER_ACTIONS = 1
+	GRIPPER_ACTION_GRAB GRIPPER_ACTIONS = common.GRIPPER_ACTION_GRAB
 )
-
-var labels_GRIPPER_ACTIONS = map[GRIPPER_ACTIONS]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e GRIPPER_ACTIONS) MarshalText() ([]byte, error) {
-	if l, ok := labels_GRIPPER_ACTIONS[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_GRIPPER_ACTIONS = map[string]GRIPPER_ACTIONS{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *GRIPPER_ACTIONS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_GRIPPER_ACTIONS[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e GRIPPER_ACTIONS) String() string {
-	if l, ok := labels_GRIPPER_ACTIONS[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

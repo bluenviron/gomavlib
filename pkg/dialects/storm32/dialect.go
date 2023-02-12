@@ -15,11 +15,11 @@ var Dialect = dial
 var dial = &dialect.Dialect{
 	Version: 1,
 	Messages: []message.Message{
-		// minimal.xml
+		// minimal
 		&MessageHeartbeat{},
 		&MessageProtocolVersion{},
-		// standard.xml
-		// common.xml
+		// standard
+		// common
 		&MessageSysStatus{},
 		&MessageSystemTime{},
 		&MessagePing{},
@@ -239,20 +239,20 @@ var dial = &dialect.Dialect{
 		&MessageOpenDroneIdArmStatus{},
 		&MessageOpenDroneIdSystemUpdate{},
 		&MessageHygrometerSensor{},
-		// uAvionix.xml
+		// uavionix
 		&MessageUavionixAdsbOutCfg{},
 		&MessageUavionixAdsbOutDynamic{},
 		&MessageUavionixAdsbTransceiverHealthReport{},
-		// icarous.xml
+		// icarous
 		&MessageIcarousHeartbeat{},
 		&MessageIcarousKinematicBands{},
-		// cubepilot.xml
+		// cubepilot
 		&MessageCubepilotRawRc{},
 		&MessageHerelinkVideoStreamInformation{},
 		&MessageHerelinkTelem{},
 		&MessageCubepilotFirmwareUpdateStart{},
 		&MessageCubepilotFirmwareUpdateResp{},
-		// ardupilotmega.xml
+		// ardupilotmega
 		&MessageSensorOffsets{},
 		&MessageSetMagOffsets{},
 		&MessageMeminfo{},
@@ -318,7 +318,7 @@ var dial = &dialect.Dialect{
 		&MessageObstacleDistance_3d{},
 		&MessageWaterDepth{},
 		&MessageMcuStatus{},
-		// storm32.xml
+		// storm32
 		&MessageStorm32GimbalManagerInformation{},
 		&MessageStorm32GimbalManagerStatus{},
 		&MessageStorm32GimbalManagerControl{},

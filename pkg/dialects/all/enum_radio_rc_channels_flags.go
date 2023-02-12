@@ -3,44 +3,15 @@
 package all
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/storm32"
 )
 
 // RADIO_RC_CHANNELS flags (bitmask).
-type RADIO_RC_CHANNELS_FLAGS uint32
+type RADIO_RC_CHANNELS_FLAGS = storm32.RADIO_RC_CHANNELS_FLAGS
 
 const (
 	// Failsafe is active.
-	RADIO_RC_CHANNELS_FLAGS_FAILSAFE RADIO_RC_CHANNELS_FLAGS = 1
+	RADIO_RC_CHANNELS_FLAGS_FAILSAFE RADIO_RC_CHANNELS_FLAGS = storm32.RADIO_RC_CHANNELS_FLAGS_FAILSAFE
 	// Indicates that the current frame has not been received. Channel values are frozen.
-	RADIO_RC_CHANNELS_FLAGS_FRAME_MISSED RADIO_RC_CHANNELS_FLAGS = 2
+	RADIO_RC_CHANNELS_FLAGS_FRAME_MISSED RADIO_RC_CHANNELS_FLAGS = storm32.RADIO_RC_CHANNELS_FLAGS_FRAME_MISSED
 )
-
-var labels_RADIO_RC_CHANNELS_FLAGS = map[RADIO_RC_CHANNELS_FLAGS]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e RADIO_RC_CHANNELS_FLAGS) MarshalText() ([]byte, error) {
-	if l, ok := labels_RADIO_RC_CHANNELS_FLAGS[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_RADIO_RC_CHANNELS_FLAGS = map[string]RADIO_RC_CHANNELS_FLAGS{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *RADIO_RC_CHANNELS_FLAGS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_RADIO_RC_CHANNELS_FLAGS[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e RADIO_RC_CHANNELS_FLAGS) String() string {
-	if l, ok := labels_RADIO_RC_CHANNELS_FLAGS[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

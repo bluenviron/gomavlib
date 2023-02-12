@@ -3,48 +3,19 @@
 package all
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/common"
 )
 
 // These flags are used to diagnose the failure state of CELLULAR_STATUS
-type CELLULAR_NETWORK_FAILED_REASON uint32
+type CELLULAR_NETWORK_FAILED_REASON = common.CELLULAR_NETWORK_FAILED_REASON
 
 const (
 	// No error
-	CELLULAR_NETWORK_FAILED_REASON_NONE CELLULAR_NETWORK_FAILED_REASON = 0
+	CELLULAR_NETWORK_FAILED_REASON_NONE CELLULAR_NETWORK_FAILED_REASON = common.CELLULAR_NETWORK_FAILED_REASON_NONE
 	// Error state is unknown
-	CELLULAR_NETWORK_FAILED_REASON_UNKNOWN CELLULAR_NETWORK_FAILED_REASON = 1
+	CELLULAR_NETWORK_FAILED_REASON_UNKNOWN CELLULAR_NETWORK_FAILED_REASON = common.CELLULAR_NETWORK_FAILED_REASON_UNKNOWN
 	// SIM is required for the modem but missing
-	CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING CELLULAR_NETWORK_FAILED_REASON = 2
+	CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING CELLULAR_NETWORK_FAILED_REASON = common.CELLULAR_NETWORK_FAILED_REASON_SIM_MISSING
 	// SIM is available, but not usable for connection
-	CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR CELLULAR_NETWORK_FAILED_REASON = 3
+	CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR CELLULAR_NETWORK_FAILED_REASON = common.CELLULAR_NETWORK_FAILED_REASON_SIM_ERROR
 )
-
-var labels_CELLULAR_NETWORK_FAILED_REASON = map[CELLULAR_NETWORK_FAILED_REASON]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e CELLULAR_NETWORK_FAILED_REASON) MarshalText() ([]byte, error) {
-	if l, ok := labels_CELLULAR_NETWORK_FAILED_REASON[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_CELLULAR_NETWORK_FAILED_REASON = map[string]CELLULAR_NETWORK_FAILED_REASON{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *CELLULAR_NETWORK_FAILED_REASON) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_CELLULAR_NETWORK_FAILED_REASON[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e CELLULAR_NETWORK_FAILED_REASON) String() string {
-	if l, ok := labels_CELLULAR_NETWORK_FAILED_REASON[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

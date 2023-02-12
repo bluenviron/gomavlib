@@ -15,7 +15,10 @@ const (
 	GSM_MODEM_TYPE_HUAWEI_E3372 GSM_MODEM_TYPE = 1
 )
 
-var labels_GSM_MODEM_TYPE = map[GSM_MODEM_TYPE]string{}
+var labels_GSM_MODEM_TYPE = map[GSM_MODEM_TYPE]string{
+	GSM_MODEM_TYPE_UNKNOWN:      "GSM_MODEM_TYPE_UNKNOWN",
+	GSM_MODEM_TYPE_HUAWEI_E3372: "GSM_MODEM_TYPE_HUAWEI_E3372",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GSM_MODEM_TYPE) MarshalText() ([]byte, error) {

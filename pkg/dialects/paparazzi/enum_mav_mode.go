@@ -3,63 +3,34 @@
 package paparazzi
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/common"
 )
 
 // These defines are predefined OR-combined mode flags. There is no need to use values from this enum, but it
 // simplifies the use of the mode flags. Note that manual input is enabled in all modes as a safety override.
-type MAV_MODE uint32
+type MAV_MODE = common.MAV_MODE
 
 const (
 	// System is not ready to fly, booting, calibrating, etc. No flag is set.
-	MAV_MODE_PREFLIGHT MAV_MODE = 0
+	MAV_MODE_PREFLIGHT MAV_MODE = common.MAV_MODE_PREFLIGHT
 	// System is allowed to be active, under assisted RC control.
-	MAV_MODE_STABILIZE_DISARMED MAV_MODE = 80
+	MAV_MODE_STABILIZE_DISARMED MAV_MODE = common.MAV_MODE_STABILIZE_DISARMED
 	// System is allowed to be active, under assisted RC control.
-	MAV_MODE_STABILIZE_ARMED MAV_MODE = 208
+	MAV_MODE_STABILIZE_ARMED MAV_MODE = common.MAV_MODE_STABILIZE_ARMED
 	// System is allowed to be active, under manual (RC) control, no stabilization
-	MAV_MODE_MANUAL_DISARMED MAV_MODE = 64
+	MAV_MODE_MANUAL_DISARMED MAV_MODE = common.MAV_MODE_MANUAL_DISARMED
 	// System is allowed to be active, under manual (RC) control, no stabilization
-	MAV_MODE_MANUAL_ARMED MAV_MODE = 192
+	MAV_MODE_MANUAL_ARMED MAV_MODE = common.MAV_MODE_MANUAL_ARMED
 	// System is allowed to be active, under autonomous control, manual setpoint
-	MAV_MODE_GUIDED_DISARMED MAV_MODE = 88
+	MAV_MODE_GUIDED_DISARMED MAV_MODE = common.MAV_MODE_GUIDED_DISARMED
 	// System is allowed to be active, under autonomous control, manual setpoint
-	MAV_MODE_GUIDED_ARMED MAV_MODE = 216
+	MAV_MODE_GUIDED_ARMED MAV_MODE = common.MAV_MODE_GUIDED_ARMED
 	// System is allowed to be active, under autonomous control and navigation (the trajectory is decided onboard and not pre-programmed by waypoints)
-	MAV_MODE_AUTO_DISARMED MAV_MODE = 92
+	MAV_MODE_AUTO_DISARMED MAV_MODE = common.MAV_MODE_AUTO_DISARMED
 	// System is allowed to be active, under autonomous control and navigation (the trajectory is decided onboard and not pre-programmed by waypoints)
-	MAV_MODE_AUTO_ARMED MAV_MODE = 220
+	MAV_MODE_AUTO_ARMED MAV_MODE = common.MAV_MODE_AUTO_ARMED
 	// UNDEFINED mode. This solely depends on the autopilot - use with caution, intended for developers only.
-	MAV_MODE_TEST_DISARMED MAV_MODE = 66
+	MAV_MODE_TEST_DISARMED MAV_MODE = common.MAV_MODE_TEST_DISARMED
 	// UNDEFINED mode. This solely depends on the autopilot - use with caution, intended for developers only.
-	MAV_MODE_TEST_ARMED MAV_MODE = 194
+	MAV_MODE_TEST_ARMED MAV_MODE = common.MAV_MODE_TEST_ARMED
 )
-
-var labels_MAV_MODE = map[MAV_MODE]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e MAV_MODE) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_MODE[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_MAV_MODE = map[string]MAV_MODE{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *MAV_MODE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_MODE[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e MAV_MODE) String() string {
-	if l, ok := labels_MAV_MODE[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

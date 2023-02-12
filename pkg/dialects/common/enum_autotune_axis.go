@@ -20,7 +20,12 @@ const (
 	AUTOTUNE_AXIS_YAW AUTOTUNE_AXIS = 4
 )
 
-var labels_AUTOTUNE_AXIS = map[AUTOTUNE_AXIS]string{}
+var labels_AUTOTUNE_AXIS = map[AUTOTUNE_AXIS]string{
+	AUTOTUNE_AXIS_DEFAULT: "AUTOTUNE_AXIS_DEFAULT",
+	AUTOTUNE_AXIS_ROLL:    "AUTOTUNE_AXIS_ROLL",
+	AUTOTUNE_AXIS_PITCH:   "AUTOTUNE_AXIS_PITCH",
+	AUTOTUNE_AXIS_YAW:     "AUTOTUNE_AXIS_YAW",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e AUTOTUNE_AXIS) MarshalText() ([]byte, error) {

@@ -13,7 +13,9 @@ const (
 	GOPRO_FLAG_RECORDING GOPRO_HEARTBEAT_FLAGS = 1
 )
 
-var labels_GOPRO_HEARTBEAT_FLAGS = map[GOPRO_HEARTBEAT_FLAGS]string{}
+var labels_GOPRO_HEARTBEAT_FLAGS = map[GOPRO_HEARTBEAT_FLAGS]string{
+	GOPRO_FLAG_RECORDING: "GOPRO_FLAG_RECORDING",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_HEARTBEAT_FLAGS) MarshalText() ([]byte, error) {

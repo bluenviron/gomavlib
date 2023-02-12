@@ -16,7 +16,10 @@ const (
 	GRIPPER_ACTION_GRAB GRIPPER_ACTIONS = 1
 )
 
-var labels_GRIPPER_ACTIONS = map[GRIPPER_ACTIONS]string{}
+var labels_GRIPPER_ACTIONS = map[GRIPPER_ACTIONS]string{
+	GRIPPER_ACTION_RELEASE: "GRIPPER_ACTION_RELEASE",
+	GRIPPER_ACTION_GRAB:    "GRIPPER_ACTION_GRAB",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GRIPPER_ACTIONS) MarshalText() ([]byte, error) {

@@ -54,7 +54,29 @@ const (
 	MAV_AUTOPILOT_REFLEX MAV_AUTOPILOT = 20
 )
 
-var labels_MAV_AUTOPILOT = map[MAV_AUTOPILOT]string{}
+var labels_MAV_AUTOPILOT = map[MAV_AUTOPILOT]string{
+	MAV_AUTOPILOT_GENERIC:                                      "MAV_AUTOPILOT_GENERIC",
+	MAV_AUTOPILOT_RESERVED:                                     "MAV_AUTOPILOT_RESERVED",
+	MAV_AUTOPILOT_SLUGS:                                        "MAV_AUTOPILOT_SLUGS",
+	MAV_AUTOPILOT_ARDUPILOTMEGA:                                "MAV_AUTOPILOT_ARDUPILOTMEGA",
+	MAV_AUTOPILOT_OPENPILOT:                                    "MAV_AUTOPILOT_OPENPILOT",
+	MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY:                       "MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY",
+	MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY: "MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY",
+	MAV_AUTOPILOT_GENERIC_MISSION_FULL:                         "MAV_AUTOPILOT_GENERIC_MISSION_FULL",
+	MAV_AUTOPILOT_INVALID:                                      "MAV_AUTOPILOT_INVALID",
+	MAV_AUTOPILOT_PPZ:                                          "MAV_AUTOPILOT_PPZ",
+	MAV_AUTOPILOT_UDB:                                          "MAV_AUTOPILOT_UDB",
+	MAV_AUTOPILOT_FP:                                           "MAV_AUTOPILOT_FP",
+	MAV_AUTOPILOT_PX4:                                          "MAV_AUTOPILOT_PX4",
+	MAV_AUTOPILOT_SMACCMPILOT:                                  "MAV_AUTOPILOT_SMACCMPILOT",
+	MAV_AUTOPILOT_AUTOQUAD:                                     "MAV_AUTOPILOT_AUTOQUAD",
+	MAV_AUTOPILOT_ARMAZILA:                                     "MAV_AUTOPILOT_ARMAZILA",
+	MAV_AUTOPILOT_AEROB:                                        "MAV_AUTOPILOT_AEROB",
+	MAV_AUTOPILOT_ASLUAV:                                       "MAV_AUTOPILOT_ASLUAV",
+	MAV_AUTOPILOT_SMARTAP:                                      "MAV_AUTOPILOT_SMARTAP",
+	MAV_AUTOPILOT_AIRRAILS:                                     "MAV_AUTOPILOT_AIRRAILS",
+	MAV_AUTOPILOT_REFLEX:                                       "MAV_AUTOPILOT_REFLEX",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_AUTOPILOT) MarshalText() ([]byte, error) {

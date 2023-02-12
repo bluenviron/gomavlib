@@ -32,7 +32,18 @@ const (
 	WINCH_LOAD_PAYLOAD WINCH_ACTIONS = 9
 )
 
-var labels_WINCH_ACTIONS = map[WINCH_ACTIONS]string{}
+var labels_WINCH_ACTIONS = map[WINCH_ACTIONS]string{
+	WINCH_RELAXED:                 "WINCH_RELAXED",
+	WINCH_RELATIVE_LENGTH_CONTROL: "WINCH_RELATIVE_LENGTH_CONTROL",
+	WINCH_RATE_CONTROL:            "WINCH_RATE_CONTROL",
+	WINCH_LOCK:                    "WINCH_LOCK",
+	WINCH_DELIVER:                 "WINCH_DELIVER",
+	WINCH_HOLD:                    "WINCH_HOLD",
+	WINCH_RETRACT:                 "WINCH_RETRACT",
+	WINCH_LOAD_LINE:               "WINCH_LOAD_LINE",
+	WINCH_ABANDON_LINE:            "WINCH_ABANDON_LINE",
+	WINCH_LOAD_PAYLOAD:            "WINCH_LOAD_PAYLOAD",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e WINCH_ACTIONS) MarshalText() ([]byte, error) {

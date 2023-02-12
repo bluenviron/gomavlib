@@ -13,7 +13,10 @@ const (
 	HEADING_TYPE_HEADING            HEADING_TYPE = 1
 )
 
-var labels_HEADING_TYPE = map[HEADING_TYPE]string{}
+var labels_HEADING_TYPE = map[HEADING_TYPE]string{
+	HEADING_TYPE_COURSE_OVER_GROUND: "HEADING_TYPE_COURSE_OVER_GROUND",
+	HEADING_TYPE_HEADING:            "HEADING_TYPE_HEADING",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e HEADING_TYPE) MarshalText() ([]byte, error) {

@@ -17,7 +17,11 @@ const (
 	MAV_ODID_DESC_TYPE_EXTENDED_STATUS MAV_ODID_DESC_TYPE = 2
 )
 
-var labels_MAV_ODID_DESC_TYPE = map[MAV_ODID_DESC_TYPE]string{}
+var labels_MAV_ODID_DESC_TYPE = map[MAV_ODID_DESC_TYPE]string{
+	MAV_ODID_DESC_TYPE_TEXT:            "MAV_ODID_DESC_TYPE_TEXT",
+	MAV_ODID_DESC_TYPE_EMERGENCY:       "MAV_ODID_DESC_TYPE_EMERGENCY",
+	MAV_ODID_DESC_TYPE_EXTENDED_STATUS: "MAV_ODID_DESC_TYPE_EXTENDED_STATUS",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_DESC_TYPE) MarshalText() ([]byte, error) {

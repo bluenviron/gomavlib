@@ -3,60 +3,31 @@
 package pythonarraytest
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/common"
 )
 
 // Winch actions.
-type WINCH_ACTIONS uint32
+type WINCH_ACTIONS = common.WINCH_ACTIONS
 
 const (
 	// Allow motor to freewheel.
-	WINCH_RELAXED WINCH_ACTIONS = 0
+	WINCH_RELAXED WINCH_ACTIONS = common.WINCH_RELAXED
 	// Wind or unwind specified length of line, optionally using specified rate.
-	WINCH_RELATIVE_LENGTH_CONTROL WINCH_ACTIONS = 1
+	WINCH_RELATIVE_LENGTH_CONTROL WINCH_ACTIONS = common.WINCH_RELATIVE_LENGTH_CONTROL
 	// Wind or unwind line at specified rate.
-	WINCH_RATE_CONTROL WINCH_ACTIONS = 2
+	WINCH_RATE_CONTROL WINCH_ACTIONS = common.WINCH_RATE_CONTROL
 	// Perform the locking sequence to relieve motor while in the fully retracted position. Only action and instance command parameters are used, others are ignored.
-	WINCH_LOCK WINCH_ACTIONS = 3
+	WINCH_LOCK WINCH_ACTIONS = common.WINCH_LOCK
 	// Sequence of drop, slow down, touch down, reel up, lock. Only action and instance command parameters are used, others are ignored.
-	WINCH_DELIVER WINCH_ACTIONS = 4
+	WINCH_DELIVER WINCH_ACTIONS = common.WINCH_DELIVER
 	// Engage motor and hold current position. Only action and instance command parameters are used, others are ignored.
-	WINCH_HOLD WINCH_ACTIONS = 5
+	WINCH_HOLD WINCH_ACTIONS = common.WINCH_HOLD
 	// Return the reel to the fully retracted position. Only action and instance command parameters are used, others are ignored.
-	WINCH_RETRACT WINCH_ACTIONS = 6
+	WINCH_RETRACT WINCH_ACTIONS = common.WINCH_RETRACT
 	// Load the reel with line. The winch will calculate the total loaded length and stop when the tension exceeds a threshold. Only action and instance command parameters are used, others are ignored.
-	WINCH_LOAD_LINE WINCH_ACTIONS = 7
+	WINCH_LOAD_LINE WINCH_ACTIONS = common.WINCH_LOAD_LINE
 	// Spool out the entire length of the line. Only action and instance command parameters are used, others are ignored.
-	WINCH_ABANDON_LINE WINCH_ACTIONS = 8
+	WINCH_ABANDON_LINE WINCH_ACTIONS = common.WINCH_ABANDON_LINE
 	// Spools out just enough to present the hook to the user to load the payload. Only action and instance command parameters are used, others are ignored
-	WINCH_LOAD_PAYLOAD WINCH_ACTIONS = 9
+	WINCH_LOAD_PAYLOAD WINCH_ACTIONS = common.WINCH_LOAD_PAYLOAD
 )
-
-var labels_WINCH_ACTIONS = map[WINCH_ACTIONS]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e WINCH_ACTIONS) MarshalText() ([]byte, error) {
-	if l, ok := labels_WINCH_ACTIONS[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_WINCH_ACTIONS = map[string]WINCH_ACTIONS{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *WINCH_ACTIONS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_WINCH_ACTIONS[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e WINCH_ACTIONS) String() string {
-	if l, ok := labels_WINCH_ACTIONS[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

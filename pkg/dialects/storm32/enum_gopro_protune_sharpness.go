@@ -3,45 +3,16 @@
 package storm32
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
 )
 
-type GOPRO_PROTUNE_SHARPNESS uint32
+type GOPRO_PROTUNE_SHARPNESS = ardupilotmega.GOPRO_PROTUNE_SHARPNESS
 
 const (
 	// Low Sharpness.
-	GOPRO_PROTUNE_SHARPNESS_LOW GOPRO_PROTUNE_SHARPNESS = 0
+	GOPRO_PROTUNE_SHARPNESS_LOW GOPRO_PROTUNE_SHARPNESS = ardupilotmega.GOPRO_PROTUNE_SHARPNESS_LOW
 	// Medium Sharpness.
-	GOPRO_PROTUNE_SHARPNESS_MEDIUM GOPRO_PROTUNE_SHARPNESS = 1
+	GOPRO_PROTUNE_SHARPNESS_MEDIUM GOPRO_PROTUNE_SHARPNESS = ardupilotmega.GOPRO_PROTUNE_SHARPNESS_MEDIUM
 	// High Sharpness.
-	GOPRO_PROTUNE_SHARPNESS_HIGH GOPRO_PROTUNE_SHARPNESS = 2
+	GOPRO_PROTUNE_SHARPNESS_HIGH GOPRO_PROTUNE_SHARPNESS = ardupilotmega.GOPRO_PROTUNE_SHARPNESS_HIGH
 )
-
-var labels_GOPRO_PROTUNE_SHARPNESS = map[GOPRO_PROTUNE_SHARPNESS]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e GOPRO_PROTUNE_SHARPNESS) MarshalText() ([]byte, error) {
-	if l, ok := labels_GOPRO_PROTUNE_SHARPNESS[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_GOPRO_PROTUNE_SHARPNESS = map[string]GOPRO_PROTUNE_SHARPNESS{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *GOPRO_PROTUNE_SHARPNESS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_GOPRO_PROTUNE_SHARPNESS[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e GOPRO_PROTUNE_SHARPNESS) String() string {
-	if l, ok := labels_GOPRO_PROTUNE_SHARPNESS[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

@@ -20,7 +20,12 @@ const (
 	MAV_MISSION_TYPE_ALL MAV_MISSION_TYPE = 255
 )
 
-var labels_MAV_MISSION_TYPE = map[MAV_MISSION_TYPE]string{}
+var labels_MAV_MISSION_TYPE = map[MAV_MISSION_TYPE]string{
+	MAV_MISSION_TYPE_MISSION: "MAV_MISSION_TYPE_MISSION",
+	MAV_MISSION_TYPE_FENCE:   "MAV_MISSION_TYPE_FENCE",
+	MAV_MISSION_TYPE_RALLY:   "MAV_MISSION_TYPE_RALLY",
+	MAV_MISSION_TYPE_ALL:     "MAV_MISSION_TYPE_ALL",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MISSION_TYPE) MarshalText() ([]byte, error) {

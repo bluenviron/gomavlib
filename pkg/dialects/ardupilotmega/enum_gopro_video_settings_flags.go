@@ -13,7 +13,9 @@ const (
 	GOPRO_VIDEO_SETTINGS_TV_MODE GOPRO_VIDEO_SETTINGS_FLAGS = 1
 )
 
-var labels_GOPRO_VIDEO_SETTINGS_FLAGS = map[GOPRO_VIDEO_SETTINGS_FLAGS]string{}
+var labels_GOPRO_VIDEO_SETTINGS_FLAGS = map[GOPRO_VIDEO_SETTINGS_FLAGS]string{
+	GOPRO_VIDEO_SETTINGS_TV_MODE: "GOPRO_VIDEO_SETTINGS_TV_MODE",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_VIDEO_SETTINGS_FLAGS) MarshalText() ([]byte, error) {

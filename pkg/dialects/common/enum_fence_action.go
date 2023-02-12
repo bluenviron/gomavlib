@@ -28,7 +28,16 @@ const (
 	FENCE_ACTION_LAND FENCE_ACTION = 7
 )
 
-var labels_FENCE_ACTION = map[FENCE_ACTION]string{}
+var labels_FENCE_ACTION = map[FENCE_ACTION]string{
+	FENCE_ACTION_NONE:            "FENCE_ACTION_NONE",
+	FENCE_ACTION_GUIDED:          "FENCE_ACTION_GUIDED",
+	FENCE_ACTION_REPORT:          "FENCE_ACTION_REPORT",
+	FENCE_ACTION_GUIDED_THR_PASS: "FENCE_ACTION_GUIDED_THR_PASS",
+	FENCE_ACTION_RTL:             "FENCE_ACTION_RTL",
+	FENCE_ACTION_HOLD:            "FENCE_ACTION_HOLD",
+	FENCE_ACTION_TERMINATE:       "FENCE_ACTION_TERMINATE",
+	FENCE_ACTION_LAND:            "FENCE_ACTION_LAND",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FENCE_ACTION) MarshalText() ([]byte, error) {

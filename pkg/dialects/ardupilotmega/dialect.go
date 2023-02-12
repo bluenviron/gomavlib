@@ -15,11 +15,11 @@ var Dialect = dial
 var dial = &dialect.Dialect{
 	Version: 3,
 	Messages: []message.Message{
-		// minimal.xml
+		// minimal
 		&MessageHeartbeat{},
 		&MessageProtocolVersion{},
-		// standard.xml
-		// common.xml
+		// standard
+		// common
 		&MessageSysStatus{},
 		&MessageSystemTime{},
 		&MessagePing{},
@@ -239,20 +239,20 @@ var dial = &dialect.Dialect{
 		&MessageOpenDroneIdArmStatus{},
 		&MessageOpenDroneIdSystemUpdate{},
 		&MessageHygrometerSensor{},
-		// uAvionix.xml
+		// uavionix
 		&MessageUavionixAdsbOutCfg{},
 		&MessageUavionixAdsbOutDynamic{},
 		&MessageUavionixAdsbTransceiverHealthReport{},
-		// icarous.xml
+		// icarous
 		&MessageIcarousHeartbeat{},
 		&MessageIcarousKinematicBands{},
-		// cubepilot.xml
+		// cubepilot
 		&MessageCubepilotRawRc{},
 		&MessageHerelinkVideoStreamInformation{},
 		&MessageHerelinkTelem{},
 		&MessageCubepilotFirmwareUpdateStart{},
 		&MessageCubepilotFirmwareUpdateResp{},
-		// ardupilotmega.xml
+		// ardupilotmega
 		&MessageSensorOffsets{},
 		&MessageSetMagOffsets{},
 		&MessageMeminfo{},

@@ -20,7 +20,12 @@ const (
 	PARAM_ACK_IN_PROGRESS PARAM_ACK = 3
 )
 
-var labels_PARAM_ACK = map[PARAM_ACK]string{}
+var labels_PARAM_ACK = map[PARAM_ACK]string{
+	PARAM_ACK_ACCEPTED:          "PARAM_ACK_ACCEPTED",
+	PARAM_ACK_VALUE_UNSUPPORTED: "PARAM_ACK_VALUE_UNSUPPORTED",
+	PARAM_ACK_FAILED:            "PARAM_ACK_FAILED",
+	PARAM_ACK_IN_PROGRESS:       "PARAM_ACK_IN_PROGRESS",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e PARAM_ACK) MarshalText() ([]byte, error) {

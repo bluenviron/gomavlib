@@ -20,7 +20,12 @@ const (
 	ZOOM_TYPE_FOCAL_LENGTH CAMERA_ZOOM_TYPE = 3
 )
 
-var labels_CAMERA_ZOOM_TYPE = map[CAMERA_ZOOM_TYPE]string{}
+var labels_CAMERA_ZOOM_TYPE = map[CAMERA_ZOOM_TYPE]string{
+	ZOOM_TYPE_STEP:         "ZOOM_TYPE_STEP",
+	ZOOM_TYPE_CONTINUOUS:   "ZOOM_TYPE_CONTINUOUS",
+	ZOOM_TYPE_RANGE:        "ZOOM_TYPE_RANGE",
+	ZOOM_TYPE_FOCAL_LENGTH: "ZOOM_TYPE_FOCAL_LENGTH",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAMERA_ZOOM_TYPE) MarshalText() ([]byte, error) {

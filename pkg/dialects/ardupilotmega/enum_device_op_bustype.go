@@ -16,7 +16,10 @@ const (
 	DEVICE_OP_BUSTYPE_SPI DEVICE_OP_BUSTYPE = 1
 )
 
-var labels_DEVICE_OP_BUSTYPE = map[DEVICE_OP_BUSTYPE]string{}
+var labels_DEVICE_OP_BUSTYPE = map[DEVICE_OP_BUSTYPE]string{
+	DEVICE_OP_BUSTYPE_I2C: "DEVICE_OP_BUSTYPE_I2C",
+	DEVICE_OP_BUSTYPE_SPI: "DEVICE_OP_BUSTYPE_SPI",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e DEVICE_OP_BUSTYPE) MarshalText() ([]byte, error) {

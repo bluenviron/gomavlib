@@ -3,65 +3,36 @@
 package uavionix
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/common"
 )
 
-type MAV_ODID_HOR_ACC uint32
+type MAV_ODID_HOR_ACC = common.MAV_ODID_HOR_ACC
 
 const (
 	// The horizontal accuracy is unknown.
-	MAV_ODID_HOR_ACC_UNKNOWN MAV_ODID_HOR_ACC = 0
+	MAV_ODID_HOR_ACC_UNKNOWN MAV_ODID_HOR_ACC = common.MAV_ODID_HOR_ACC_UNKNOWN
 	// The horizontal accuracy is smaller than 10 Nautical Miles. 18.52 km.
-	MAV_ODID_HOR_ACC_10NM MAV_ODID_HOR_ACC = 1
+	MAV_ODID_HOR_ACC_10NM MAV_ODID_HOR_ACC = common.MAV_ODID_HOR_ACC_10NM
 	// The horizontal accuracy is smaller than 4 Nautical Miles. 7.408 km.
-	MAV_ODID_HOR_ACC_4NM MAV_ODID_HOR_ACC = 2
+	MAV_ODID_HOR_ACC_4NM MAV_ODID_HOR_ACC = common.MAV_ODID_HOR_ACC_4NM
 	// The horizontal accuracy is smaller than 2 Nautical Miles. 3.704 km.
-	MAV_ODID_HOR_ACC_2NM MAV_ODID_HOR_ACC = 3
+	MAV_ODID_HOR_ACC_2NM MAV_ODID_HOR_ACC = common.MAV_ODID_HOR_ACC_2NM
 	// The horizontal accuracy is smaller than 1 Nautical Miles. 1.852 km.
-	MAV_ODID_HOR_ACC_1NM MAV_ODID_HOR_ACC = 4
+	MAV_ODID_HOR_ACC_1NM MAV_ODID_HOR_ACC = common.MAV_ODID_HOR_ACC_1NM
 	// The horizontal accuracy is smaller than 0.5 Nautical Miles. 926 m.
-	MAV_ODID_HOR_ACC_0_5NM MAV_ODID_HOR_ACC = 5
+	MAV_ODID_HOR_ACC_0_5NM MAV_ODID_HOR_ACC = common.MAV_ODID_HOR_ACC_0_5NM
 	// The horizontal accuracy is smaller than 0.3 Nautical Miles. 555.6 m.
-	MAV_ODID_HOR_ACC_0_3NM MAV_ODID_HOR_ACC = 6
+	MAV_ODID_HOR_ACC_0_3NM MAV_ODID_HOR_ACC = common.MAV_ODID_HOR_ACC_0_3NM
 	// The horizontal accuracy is smaller than 0.1 Nautical Miles. 185.2 m.
-	MAV_ODID_HOR_ACC_0_1NM MAV_ODID_HOR_ACC = 7
+	MAV_ODID_HOR_ACC_0_1NM MAV_ODID_HOR_ACC = common.MAV_ODID_HOR_ACC_0_1NM
 	// The horizontal accuracy is smaller than 0.05 Nautical Miles. 92.6 m.
-	MAV_ODID_HOR_ACC_0_05NM MAV_ODID_HOR_ACC = 8
+	MAV_ODID_HOR_ACC_0_05NM MAV_ODID_HOR_ACC = common.MAV_ODID_HOR_ACC_0_05NM
 	// The horizontal accuracy is smaller than 30 meter.
-	MAV_ODID_HOR_ACC_30_METER MAV_ODID_HOR_ACC = 9
+	MAV_ODID_HOR_ACC_30_METER MAV_ODID_HOR_ACC = common.MAV_ODID_HOR_ACC_30_METER
 	// The horizontal accuracy is smaller than 10 meter.
-	MAV_ODID_HOR_ACC_10_METER MAV_ODID_HOR_ACC = 10
+	MAV_ODID_HOR_ACC_10_METER MAV_ODID_HOR_ACC = common.MAV_ODID_HOR_ACC_10_METER
 	// The horizontal accuracy is smaller than 3 meter.
-	MAV_ODID_HOR_ACC_3_METER MAV_ODID_HOR_ACC = 11
+	MAV_ODID_HOR_ACC_3_METER MAV_ODID_HOR_ACC = common.MAV_ODID_HOR_ACC_3_METER
 	// The horizontal accuracy is smaller than 1 meter.
-	MAV_ODID_HOR_ACC_1_METER MAV_ODID_HOR_ACC = 12
+	MAV_ODID_HOR_ACC_1_METER MAV_ODID_HOR_ACC = common.MAV_ODID_HOR_ACC_1_METER
 )
-
-var labels_MAV_ODID_HOR_ACC = map[MAV_ODID_HOR_ACC]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e MAV_ODID_HOR_ACC) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_ODID_HOR_ACC[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_MAV_ODID_HOR_ACC = map[string]MAV_ODID_HOR_ACC{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *MAV_ODID_HOR_ACC) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_ODID_HOR_ACC[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e MAV_ODID_HOR_ACC) String() string {
-	if l, ok := labels_MAV_ODID_HOR_ACC[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

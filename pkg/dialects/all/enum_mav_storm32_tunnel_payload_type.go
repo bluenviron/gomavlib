@@ -3,51 +3,22 @@
 package all
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/storm32"
 )
 
-type MAV_STORM32_TUNNEL_PAYLOAD_TYPE uint32
+type MAV_STORM32_TUNNEL_PAYLOAD_TYPE = storm32.MAV_STORM32_TUNNEL_PAYLOAD_TYPE
 
 const (
 	// Registered for STorM32 gimbal controller. For communication with gimbal or camera.
-	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH1_IN MAV_STORM32_TUNNEL_PAYLOAD_TYPE = 200
+	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH1_IN MAV_STORM32_TUNNEL_PAYLOAD_TYPE = storm32.MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH1_IN
 	// Registered for STorM32 gimbal controller. For communication with gimbal or camera.
-	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH1_OUT MAV_STORM32_TUNNEL_PAYLOAD_TYPE = 201
+	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH1_OUT MAV_STORM32_TUNNEL_PAYLOAD_TYPE = storm32.MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH1_OUT
 	// Registered for STorM32 gimbal controller. For communication with gimbal.
-	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH2_IN MAV_STORM32_TUNNEL_PAYLOAD_TYPE = 202
+	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH2_IN MAV_STORM32_TUNNEL_PAYLOAD_TYPE = storm32.MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH2_IN
 	// Registered for STorM32 gimbal controller. For communication with gimbal.
-	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH2_OUT MAV_STORM32_TUNNEL_PAYLOAD_TYPE = 203
+	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH2_OUT MAV_STORM32_TUNNEL_PAYLOAD_TYPE = storm32.MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH2_OUT
 	// Registered for STorM32 gimbal controller. For communication with camera.
-	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH3_IN MAV_STORM32_TUNNEL_PAYLOAD_TYPE = 204
+	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH3_IN MAV_STORM32_TUNNEL_PAYLOAD_TYPE = storm32.MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH3_IN
 	// Registered for STorM32 gimbal controller. For communication with camera.
-	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH3_OUT MAV_STORM32_TUNNEL_PAYLOAD_TYPE = 205
+	MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH3_OUT MAV_STORM32_TUNNEL_PAYLOAD_TYPE = storm32.MAV_STORM32_TUNNEL_PAYLOAD_TYPE_STORM32_CH3_OUT
 )
-
-var labels_MAV_STORM32_TUNNEL_PAYLOAD_TYPE = map[MAV_STORM32_TUNNEL_PAYLOAD_TYPE]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e MAV_STORM32_TUNNEL_PAYLOAD_TYPE) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_STORM32_TUNNEL_PAYLOAD_TYPE[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_MAV_STORM32_TUNNEL_PAYLOAD_TYPE = map[string]MAV_STORM32_TUNNEL_PAYLOAD_TYPE{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *MAV_STORM32_TUNNEL_PAYLOAD_TYPE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_STORM32_TUNNEL_PAYLOAD_TYPE[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e MAV_STORM32_TUNNEL_PAYLOAD_TYPE) String() string {
-	if l, ok := labels_MAV_STORM32_TUNNEL_PAYLOAD_TYPE[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

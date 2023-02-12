@@ -15,7 +15,10 @@ const (
 	GOPRO_REQUEST_FAILED GOPRO_REQUEST_STATUS = 1
 )
 
-var labels_GOPRO_REQUEST_STATUS = map[GOPRO_REQUEST_STATUS]string{}
+var labels_GOPRO_REQUEST_STATUS = map[GOPRO_REQUEST_STATUS]string{
+	GOPRO_REQUEST_SUCCESS: "GOPRO_REQUEST_SUCCESS",
+	GOPRO_REQUEST_FAILED:  "GOPRO_REQUEST_FAILED",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_REQUEST_STATUS) MarshalText() ([]byte, error) {

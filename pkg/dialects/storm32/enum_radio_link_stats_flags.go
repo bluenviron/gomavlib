@@ -14,7 +14,9 @@ const (
 	RADIO_LINK_STATS_FLAGS_RSSI_DBM RADIO_LINK_STATS_FLAGS = 1
 )
 
-var labels_RADIO_LINK_STATS_FLAGS = map[RADIO_LINK_STATS_FLAGS]string{}
+var labels_RADIO_LINK_STATS_FLAGS = map[RADIO_LINK_STATS_FLAGS]string{
+	RADIO_LINK_STATS_FLAGS_RSSI_DBM: "RADIO_LINK_STATS_FLAGS_RSSI_DBM",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e RADIO_LINK_STATS_FLAGS) MarshalText() ([]byte, error) {

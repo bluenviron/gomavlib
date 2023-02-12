@@ -18,7 +18,11 @@ const (
 	MAV_BATTERY_MODE_HOT_SWAP MAV_BATTERY_MODE = 2
 )
 
-var labels_MAV_BATTERY_MODE = map[MAV_BATTERY_MODE]string{}
+var labels_MAV_BATTERY_MODE = map[MAV_BATTERY_MODE]string{
+	MAV_BATTERY_MODE_UNKNOWN:          "MAV_BATTERY_MODE_UNKNOWN",
+	MAV_BATTERY_MODE_AUTO_DISCHARGING: "MAV_BATTERY_MODE_AUTO_DISCHARGING",
+	MAV_BATTERY_MODE_HOT_SWAP:         "MAV_BATTERY_MODE_HOT_SWAP",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_BATTERY_MODE) MarshalText() ([]byte, error) {

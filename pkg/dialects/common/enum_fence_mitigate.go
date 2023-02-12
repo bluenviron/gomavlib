@@ -18,7 +18,11 @@ const (
 	FENCE_MITIGATE_VEL_LIMIT FENCE_MITIGATE = 2
 )
 
-var labels_FENCE_MITIGATE = map[FENCE_MITIGATE]string{}
+var labels_FENCE_MITIGATE = map[FENCE_MITIGATE]string{
+	FENCE_MITIGATE_UNKNOWN:   "FENCE_MITIGATE_UNKNOWN",
+	FENCE_MITIGATE_NONE:      "FENCE_MITIGATE_NONE",
+	FENCE_MITIGATE_VEL_LIMIT: "FENCE_MITIGATE_VEL_LIMIT",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FENCE_MITIGATE) MarshalText() ([]byte, error) {

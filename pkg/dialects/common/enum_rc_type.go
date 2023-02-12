@@ -16,7 +16,10 @@ const (
 	RC_TYPE_SPEKTRUM_DSMX RC_TYPE = 1
 )
 
-var labels_RC_TYPE = map[RC_TYPE]string{}
+var labels_RC_TYPE = map[RC_TYPE]string{
+	RC_TYPE_SPEKTRUM_DSM2: "RC_TYPE_SPEKTRUM_DSM2",
+	RC_TYPE_SPEKTRUM_DSMX: "RC_TYPE_SPEKTRUM_DSMX",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e RC_TYPE) MarshalText() ([]byte, error) {

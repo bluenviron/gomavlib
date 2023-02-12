@@ -15,11 +15,11 @@ var Dialect = dial
 var dial = &dialect.Dialect{
 	Version: 3,
 	Messages: []message.Message{
-		// minimal.xml
+		// minimal
 		&MessageHeartbeat{},
 		&MessageProtocolVersion{},
-		// standard.xml
-		// common.xml
+		// standard
+		// common
 		&MessageSysStatus{},
 		&MessageSystemTime{},
 		&MessagePing{},

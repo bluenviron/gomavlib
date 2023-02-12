@@ -3,48 +3,19 @@
 package ardupilotmega
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/common"
 )
 
 // Flags to indicate usage for a particular storage (see STORAGE_INFORMATION.storage_usage and MAV_CMD_SET_STORAGE_USAGE).
-type STORAGE_USAGE_FLAG uint32
+type STORAGE_USAGE_FLAG = common.STORAGE_USAGE_FLAG
 
 const (
 	// Always set to 1 (indicates STORAGE_INFORMATION.storage_usage is supported).
-	STORAGE_USAGE_FLAG_SET STORAGE_USAGE_FLAG = 1
+	STORAGE_USAGE_FLAG_SET STORAGE_USAGE_FLAG = common.STORAGE_USAGE_FLAG_SET
 	// Storage for saving photos.
-	STORAGE_USAGE_FLAG_PHOTO STORAGE_USAGE_FLAG = 2
+	STORAGE_USAGE_FLAG_PHOTO STORAGE_USAGE_FLAG = common.STORAGE_USAGE_FLAG_PHOTO
 	// Storage for saving videos.
-	STORAGE_USAGE_FLAG_VIDEO STORAGE_USAGE_FLAG = 4
+	STORAGE_USAGE_FLAG_VIDEO STORAGE_USAGE_FLAG = common.STORAGE_USAGE_FLAG_VIDEO
 	// Storage for saving logs.
-	STORAGE_USAGE_FLAG_LOGS STORAGE_USAGE_FLAG = 8
+	STORAGE_USAGE_FLAG_LOGS STORAGE_USAGE_FLAG = common.STORAGE_USAGE_FLAG_LOGS
 )
-
-var labels_STORAGE_USAGE_FLAG = map[STORAGE_USAGE_FLAG]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e STORAGE_USAGE_FLAG) MarshalText() ([]byte, error) {
-	if l, ok := labels_STORAGE_USAGE_FLAG[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_STORAGE_USAGE_FLAG = map[string]STORAGE_USAGE_FLAG{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *STORAGE_USAGE_FLAG) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_STORAGE_USAGE_FLAG[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e STORAGE_USAGE_FLAG) String() string {
-	if l, ok := labels_STORAGE_USAGE_FLAG[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

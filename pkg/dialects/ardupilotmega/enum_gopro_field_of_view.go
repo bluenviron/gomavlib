@@ -17,7 +17,11 @@ const (
 	GOPRO_FIELD_OF_VIEW_NARROW GOPRO_FIELD_OF_VIEW = 2
 )
 
-var labels_GOPRO_FIELD_OF_VIEW = map[GOPRO_FIELD_OF_VIEW]string{}
+var labels_GOPRO_FIELD_OF_VIEW = map[GOPRO_FIELD_OF_VIEW]string{
+	GOPRO_FIELD_OF_VIEW_WIDE:   "GOPRO_FIELD_OF_VIEW_WIDE",
+	GOPRO_FIELD_OF_VIEW_MEDIUM: "GOPRO_FIELD_OF_VIEW_MEDIUM",
+	GOPRO_FIELD_OF_VIEW_NARROW: "GOPRO_FIELD_OF_VIEW_NARROW",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_FIELD_OF_VIEW) MarshalText() ([]byte, error) {

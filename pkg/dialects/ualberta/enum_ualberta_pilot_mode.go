@@ -16,7 +16,11 @@ const (
 	PILOT_ROTO UALBERTA_PILOT_MODE = 3
 )
 
-var labels_UALBERTA_PILOT_MODE = map[UALBERTA_PILOT_MODE]string{}
+var labels_UALBERTA_PILOT_MODE = map[UALBERTA_PILOT_MODE]string{
+	PILOT_MANUAL: "PILOT_MANUAL",
+	PILOT_AUTO:   "PILOT_AUTO",
+	PILOT_ROTO:   "PILOT_ROTO",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UALBERTA_PILOT_MODE) MarshalText() ([]byte, error) {

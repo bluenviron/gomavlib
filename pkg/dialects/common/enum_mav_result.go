@@ -26,7 +26,15 @@ const (
 	MAV_RESULT_CANCELLED MAV_RESULT = 6
 )
 
-var labels_MAV_RESULT = map[MAV_RESULT]string{}
+var labels_MAV_RESULT = map[MAV_RESULT]string{
+	MAV_RESULT_ACCEPTED:             "MAV_RESULT_ACCEPTED",
+	MAV_RESULT_TEMPORARILY_REJECTED: "MAV_RESULT_TEMPORARILY_REJECTED",
+	MAV_RESULT_DENIED:               "MAV_RESULT_DENIED",
+	MAV_RESULT_UNSUPPORTED:          "MAV_RESULT_UNSUPPORTED",
+	MAV_RESULT_FAILED:               "MAV_RESULT_FAILED",
+	MAV_RESULT_IN_PROGRESS:          "MAV_RESULT_IN_PROGRESS",
+	MAV_RESULT_CANCELLED:            "MAV_RESULT_CANCELLED",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_RESULT) MarshalText() ([]byte, error) {

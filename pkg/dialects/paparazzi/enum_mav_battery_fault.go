@@ -3,58 +3,29 @@
 package paparazzi
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/common"
 )
 
 // Smart battery supply status/fault flags (bitmask) for health indication. The battery must also report either MAV_BATTERY_CHARGE_STATE_FAILED or MAV_BATTERY_CHARGE_STATE_UNHEALTHY if any of these are set.
-type MAV_BATTERY_FAULT uint32
+type MAV_BATTERY_FAULT = common.MAV_BATTERY_FAULT
 
 const (
 	// Battery has deep discharged.
-	MAV_BATTERY_FAULT_DEEP_DISCHARGE MAV_BATTERY_FAULT = 1
+	MAV_BATTERY_FAULT_DEEP_DISCHARGE MAV_BATTERY_FAULT = common.MAV_BATTERY_FAULT_DEEP_DISCHARGE
 	// Voltage spikes.
-	MAV_BATTERY_FAULT_SPIKES MAV_BATTERY_FAULT = 2
+	MAV_BATTERY_FAULT_SPIKES MAV_BATTERY_FAULT = common.MAV_BATTERY_FAULT_SPIKES
 	// One or more cells have failed. Battery should also report MAV_BATTERY_CHARGE_STATE_FAILE (and should not be used).
-	MAV_BATTERY_FAULT_CELL_FAIL MAV_BATTERY_FAULT = 4
+	MAV_BATTERY_FAULT_CELL_FAIL MAV_BATTERY_FAULT = common.MAV_BATTERY_FAULT_CELL_FAIL
 	// Over-current fault.
-	MAV_BATTERY_FAULT_OVER_CURRENT MAV_BATTERY_FAULT = 8
+	MAV_BATTERY_FAULT_OVER_CURRENT MAV_BATTERY_FAULT = common.MAV_BATTERY_FAULT_OVER_CURRENT
 	// Over-temperature fault.
-	MAV_BATTERY_FAULT_OVER_TEMPERATURE MAV_BATTERY_FAULT = 16
+	MAV_BATTERY_FAULT_OVER_TEMPERATURE MAV_BATTERY_FAULT = common.MAV_BATTERY_FAULT_OVER_TEMPERATURE
 	// Under-temperature fault.
-	MAV_BATTERY_FAULT_UNDER_TEMPERATURE MAV_BATTERY_FAULT = 32
+	MAV_BATTERY_FAULT_UNDER_TEMPERATURE MAV_BATTERY_FAULT = common.MAV_BATTERY_FAULT_UNDER_TEMPERATURE
 	// Vehicle voltage is not compatible with this battery (batteries on same power rail should have similar voltage).
-	MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE MAV_BATTERY_FAULT = 64
+	MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE MAV_BATTERY_FAULT = common.MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE
 	// Battery firmware is not compatible with current autopilot firmware.
-	MAV_BATTERY_FAULT_INCOMPATIBLE_FIRMWARE MAV_BATTERY_FAULT = 128
+	MAV_BATTERY_FAULT_INCOMPATIBLE_FIRMWARE MAV_BATTERY_FAULT = common.MAV_BATTERY_FAULT_INCOMPATIBLE_FIRMWARE
 	// Battery is not compatible due to cell configuration (e.g. 5s1p when vehicle requires 6s).
-	BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION MAV_BATTERY_FAULT = 256
+	BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION MAV_BATTERY_FAULT = common.BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION
 )
-
-var labels_MAV_BATTERY_FAULT = map[MAV_BATTERY_FAULT]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e MAV_BATTERY_FAULT) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_BATTERY_FAULT[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_MAV_BATTERY_FAULT = map[string]MAV_BATTERY_FAULT{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *MAV_BATTERY_FAULT) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_BATTERY_FAULT[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e MAV_BATTERY_FAULT) String() string {
-	if l, ok := labels_MAV_BATTERY_FAULT[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

@@ -18,7 +18,11 @@ const (
 	PARACHUTE_RELEASE PARACHUTE_ACTION = 2
 )
 
-var labels_PARACHUTE_ACTION = map[PARACHUTE_ACTION]string{}
+var labels_PARACHUTE_ACTION = map[PARACHUTE_ACTION]string{
+	PARACHUTE_DISABLE: "PARACHUTE_DISABLE",
+	PARACHUTE_ENABLE:  "PARACHUTE_ENABLE",
+	PARACHUTE_RELEASE: "PARACHUTE_RELEASE",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e PARACHUTE_ACTION) MarshalText() ([]byte, error) {

@@ -15,7 +15,7 @@ var Dialect = dial
 var dial = &dialect.Dialect{
 	Version: 3,
 	Messages: []message.Message{
-		// test.xml
+		// test
 		&MessageTestTypes{},
 	},
 }

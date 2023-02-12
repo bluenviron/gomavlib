@@ -3,44 +3,15 @@
 package all
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/development"
 )
 
 // Airspeed sensor flags
-type AIRSPEED_SENSOR_FLAGS uint32
+type AIRSPEED_SENSOR_FLAGS = development.AIRSPEED_SENSOR_FLAGS
 
 const (
 	// Airspeed sensor is unhealthy
-	AIRSPEED_SENSOR_UNHEALTHY AIRSPEED_SENSOR_FLAGS = 0
+	AIRSPEED_SENSOR_UNHEALTHY AIRSPEED_SENSOR_FLAGS = development.AIRSPEED_SENSOR_UNHEALTHY
 	// True if the data from this sensor is being actively used by the flight controller for guidance, navigation or control.
-	AIRSPEED_SENSOR_USING AIRSPEED_SENSOR_FLAGS = 1
+	AIRSPEED_SENSOR_USING AIRSPEED_SENSOR_FLAGS = development.AIRSPEED_SENSOR_USING
 )
-
-var labels_AIRSPEED_SENSOR_FLAGS = map[AIRSPEED_SENSOR_FLAGS]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e AIRSPEED_SENSOR_FLAGS) MarshalText() ([]byte, error) {
-	if l, ok := labels_AIRSPEED_SENSOR_FLAGS[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_AIRSPEED_SENSOR_FLAGS = map[string]AIRSPEED_SENSOR_FLAGS{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *AIRSPEED_SENSOR_FLAGS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_AIRSPEED_SENSOR_FLAGS[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e AIRSPEED_SENSOR_FLAGS) String() string {
-	if l, ok := labels_AIRSPEED_SENSOR_FLAGS[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

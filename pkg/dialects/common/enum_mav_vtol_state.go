@@ -22,7 +22,13 @@ const (
 	MAV_VTOL_STATE_FW MAV_VTOL_STATE = 4
 )
 
-var labels_MAV_VTOL_STATE = map[MAV_VTOL_STATE]string{}
+var labels_MAV_VTOL_STATE = map[MAV_VTOL_STATE]string{
+	MAV_VTOL_STATE_UNDEFINED:        "MAV_VTOL_STATE_UNDEFINED",
+	MAV_VTOL_STATE_TRANSITION_TO_FW: "MAV_VTOL_STATE_TRANSITION_TO_FW",
+	MAV_VTOL_STATE_TRANSITION_TO_MC: "MAV_VTOL_STATE_TRANSITION_TO_MC",
+	MAV_VTOL_STATE_MC:               "MAV_VTOL_STATE_MC",
+	MAV_VTOL_STATE_FW:               "MAV_VTOL_STATE_FW",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_VTOL_STATE) MarshalText() ([]byte, error) {

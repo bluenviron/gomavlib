@@ -13,7 +13,10 @@ const (
 	SPEED_TYPE_GROUNDSPEED SPEED_TYPE = 1
 )
 
-var labels_SPEED_TYPE = map[SPEED_TYPE]string{}
+var labels_SPEED_TYPE = map[SPEED_TYPE]string{
+	SPEED_TYPE_AIRSPEED:    "SPEED_TYPE_AIRSPEED",
+	SPEED_TYPE_GROUNDSPEED: "SPEED_TYPE_GROUNDSPEED",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e SPEED_TYPE) MarshalText() ([]byte, error) {

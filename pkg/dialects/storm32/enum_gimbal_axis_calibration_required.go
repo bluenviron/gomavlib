@@ -3,45 +3,16 @@
 package storm32
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
 )
 
-type GIMBAL_AXIS_CALIBRATION_REQUIRED uint32
+type GIMBAL_AXIS_CALIBRATION_REQUIRED = ardupilotmega.GIMBAL_AXIS_CALIBRATION_REQUIRED
 
 const (
 	// Whether or not this axis requires calibration is unknown at this time.
-	GIMBAL_AXIS_CALIBRATION_REQUIRED_UNKNOWN GIMBAL_AXIS_CALIBRATION_REQUIRED = 0
+	GIMBAL_AXIS_CALIBRATION_REQUIRED_UNKNOWN GIMBAL_AXIS_CALIBRATION_REQUIRED = ardupilotmega.GIMBAL_AXIS_CALIBRATION_REQUIRED_UNKNOWN
 	// This axis requires calibration.
-	GIMBAL_AXIS_CALIBRATION_REQUIRED_TRUE GIMBAL_AXIS_CALIBRATION_REQUIRED = 1
+	GIMBAL_AXIS_CALIBRATION_REQUIRED_TRUE GIMBAL_AXIS_CALIBRATION_REQUIRED = ardupilotmega.GIMBAL_AXIS_CALIBRATION_REQUIRED_TRUE
 	// This axis does not require calibration.
-	GIMBAL_AXIS_CALIBRATION_REQUIRED_FALSE GIMBAL_AXIS_CALIBRATION_REQUIRED = 2
+	GIMBAL_AXIS_CALIBRATION_REQUIRED_FALSE GIMBAL_AXIS_CALIBRATION_REQUIRED = ardupilotmega.GIMBAL_AXIS_CALIBRATION_REQUIRED_FALSE
 )
-
-var labels_GIMBAL_AXIS_CALIBRATION_REQUIRED = map[GIMBAL_AXIS_CALIBRATION_REQUIRED]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e GIMBAL_AXIS_CALIBRATION_REQUIRED) MarshalText() ([]byte, error) {
-	if l, ok := labels_GIMBAL_AXIS_CALIBRATION_REQUIRED[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_GIMBAL_AXIS_CALIBRATION_REQUIRED = map[string]GIMBAL_AXIS_CALIBRATION_REQUIRED{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *GIMBAL_AXIS_CALIBRATION_REQUIRED) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_GIMBAL_AXIS_CALIBRATION_REQUIRED[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e GIMBAL_AXIS_CALIBRATION_REQUIRED) String() string {
-	if l, ok := labels_GIMBAL_AXIS_CALIBRATION_REQUIRED[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

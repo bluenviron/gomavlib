@@ -24,7 +24,13 @@ const (
 	MAV_ROI_TARGET MAV_ROI = 4
 )
 
-var labels_MAV_ROI = map[MAV_ROI]string{}
+var labels_MAV_ROI = map[MAV_ROI]string{
+	MAV_ROI_NONE:     "MAV_ROI_NONE",
+	MAV_ROI_WPNEXT:   "MAV_ROI_WPNEXT",
+	MAV_ROI_WPINDEX:  "MAV_ROI_WPINDEX",
+	MAV_ROI_LOCATION: "MAV_ROI_LOCATION",
+	MAV_ROI_TARGET:   "MAV_ROI_TARGET",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ROI) MarshalText() ([]byte, error) {

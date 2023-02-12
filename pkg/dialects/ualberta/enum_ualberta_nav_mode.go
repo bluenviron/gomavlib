@@ -19,7 +19,12 @@ const (
 	NAV_INS_GPS UALBERTA_NAV_MODE = 4
 )
 
-var labels_UALBERTA_NAV_MODE = map[UALBERTA_NAV_MODE]string{}
+var labels_UALBERTA_NAV_MODE = map[UALBERTA_NAV_MODE]string{
+	NAV_AHRS_INIT:    "NAV_AHRS_INIT",
+	NAV_AHRS:         "NAV_AHRS",
+	NAV_INS_GPS_INIT: "NAV_INS_GPS_INIT",
+	NAV_INS_GPS:      "NAV_INS_GPS",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UALBERTA_NAV_MODE) MarshalText() ([]byte, error) {

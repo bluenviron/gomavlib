@@ -20,7 +20,12 @@ const (
 	MAV_GOTO_HOLD_AT_SPECIFIED_POSITION MAV_GOTO = 3
 )
 
-var labels_MAV_GOTO = map[MAV_GOTO]string{}
+var labels_MAV_GOTO = map[MAV_GOTO]string{
+	MAV_GOTO_DO_HOLD:                    "MAV_GOTO_DO_HOLD",
+	MAV_GOTO_DO_CONTINUE:                "MAV_GOTO_DO_CONTINUE",
+	MAV_GOTO_HOLD_AT_CURRENT_POSITION:   "MAV_GOTO_HOLD_AT_CURRENT_POSITION",
+	MAV_GOTO_HOLD_AT_SPECIFIED_POSITION: "MAV_GOTO_HOLD_AT_SPECIFIED_POSITION",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_GOTO) MarshalText() ([]byte, error) {

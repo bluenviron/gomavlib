@@ -29,7 +29,17 @@ const (
 	MAV_STATE_FLIGHT_TERMINATION MAV_STATE = 8
 )
 
-var labels_MAV_STATE = map[MAV_STATE]string{}
+var labels_MAV_STATE = map[MAV_STATE]string{
+	MAV_STATE_UNINIT:             "MAV_STATE_UNINIT",
+	MAV_STATE_BOOT:               "MAV_STATE_BOOT",
+	MAV_STATE_CALIBRATING:        "MAV_STATE_CALIBRATING",
+	MAV_STATE_STANDBY:            "MAV_STATE_STANDBY",
+	MAV_STATE_ACTIVE:             "MAV_STATE_ACTIVE",
+	MAV_STATE_CRITICAL:           "MAV_STATE_CRITICAL",
+	MAV_STATE_EMERGENCY:          "MAV_STATE_EMERGENCY",
+	MAV_STATE_POWEROFF:           "MAV_STATE_POWEROFF",
+	MAV_STATE_FLIGHT_TERMINATION: "MAV_STATE_FLIGHT_TERMINATION",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_STATE) MarshalText() ([]byte, error) {

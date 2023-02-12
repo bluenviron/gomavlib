@@ -3,45 +3,16 @@
 package storm32
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
 )
 
-type GOPRO_FIELD_OF_VIEW uint32
+type GOPRO_FIELD_OF_VIEW = ardupilotmega.GOPRO_FIELD_OF_VIEW
 
 const (
 	// 0x00: Wide.
-	GOPRO_FIELD_OF_VIEW_WIDE GOPRO_FIELD_OF_VIEW = 0
+	GOPRO_FIELD_OF_VIEW_WIDE GOPRO_FIELD_OF_VIEW = ardupilotmega.GOPRO_FIELD_OF_VIEW_WIDE
 	// 0x01: Medium.
-	GOPRO_FIELD_OF_VIEW_MEDIUM GOPRO_FIELD_OF_VIEW = 1
+	GOPRO_FIELD_OF_VIEW_MEDIUM GOPRO_FIELD_OF_VIEW = ardupilotmega.GOPRO_FIELD_OF_VIEW_MEDIUM
 	// 0x02: Narrow.
-	GOPRO_FIELD_OF_VIEW_NARROW GOPRO_FIELD_OF_VIEW = 2
+	GOPRO_FIELD_OF_VIEW_NARROW GOPRO_FIELD_OF_VIEW = ardupilotmega.GOPRO_FIELD_OF_VIEW_NARROW
 )
-
-var labels_GOPRO_FIELD_OF_VIEW = map[GOPRO_FIELD_OF_VIEW]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e GOPRO_FIELD_OF_VIEW) MarshalText() ([]byte, error) {
-	if l, ok := labels_GOPRO_FIELD_OF_VIEW[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_GOPRO_FIELD_OF_VIEW = map[string]GOPRO_FIELD_OF_VIEW{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *GOPRO_FIELD_OF_VIEW) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_GOPRO_FIELD_OF_VIEW[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e GOPRO_FIELD_OF_VIEW) String() string {
-	if l, ok := labels_GOPRO_FIELD_OF_VIEW[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

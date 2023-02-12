@@ -16,7 +16,10 @@ const (
 	ADSB_ALTITUDE_TYPE_GEOMETRIC ADSB_ALTITUDE_TYPE = 1
 )
 
-var labels_ADSB_ALTITUDE_TYPE = map[ADSB_ALTITUDE_TYPE]string{}
+var labels_ADSB_ALTITUDE_TYPE = map[ADSB_ALTITUDE_TYPE]string{
+	ADSB_ALTITUDE_TYPE_PRESSURE_QNH: "ADSB_ALTITUDE_TYPE_PRESSURE_QNH",
+	ADSB_ALTITUDE_TYPE_GEOMETRIC:    "ADSB_ALTITUDE_TYPE_GEOMETRIC",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ADSB_ALTITUDE_TYPE) MarshalText() ([]byte, error) {

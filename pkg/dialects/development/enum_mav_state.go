@@ -3,57 +3,28 @@
 package development
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/minimal"
 )
 
-type MAV_STATE uint32
+type MAV_STATE = minimal.MAV_STATE
 
 const (
 	// Uninitialized system, state is unknown.
-	MAV_STATE_UNINIT MAV_STATE = 0
+	MAV_STATE_UNINIT MAV_STATE = minimal.MAV_STATE_UNINIT
 	// System is booting up.
-	MAV_STATE_BOOT MAV_STATE = 1
+	MAV_STATE_BOOT MAV_STATE = minimal.MAV_STATE_BOOT
 	// System is calibrating and not flight-ready.
-	MAV_STATE_CALIBRATING MAV_STATE = 2
+	MAV_STATE_CALIBRATING MAV_STATE = minimal.MAV_STATE_CALIBRATING
 	// System is grounded and on standby. It can be launched any time.
-	MAV_STATE_STANDBY MAV_STATE = 3
+	MAV_STATE_STANDBY MAV_STATE = minimal.MAV_STATE_STANDBY
 	// System is active and might be already airborne. Motors are engaged.
-	MAV_STATE_ACTIVE MAV_STATE = 4
+	MAV_STATE_ACTIVE MAV_STATE = minimal.MAV_STATE_ACTIVE
 	// System is in a non-normal flight mode. It can however still navigate.
-	MAV_STATE_CRITICAL MAV_STATE = 5
+	MAV_STATE_CRITICAL MAV_STATE = minimal.MAV_STATE_CRITICAL
 	// System is in a non-normal flight mode. It lost control over parts or over the whole airframe. It is in mayday and going down.
-	MAV_STATE_EMERGENCY MAV_STATE = 6
+	MAV_STATE_EMERGENCY MAV_STATE = minimal.MAV_STATE_EMERGENCY
 	// System just initialized its power-down sequence, will shut down now.
-	MAV_STATE_POWEROFF MAV_STATE = 7
+	MAV_STATE_POWEROFF MAV_STATE = minimal.MAV_STATE_POWEROFF
 	// System is terminating itself.
-	MAV_STATE_FLIGHT_TERMINATION MAV_STATE = 8
+	MAV_STATE_FLIGHT_TERMINATION MAV_STATE = minimal.MAV_STATE_FLIGHT_TERMINATION
 )
-
-var labels_MAV_STATE = map[MAV_STATE]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e MAV_STATE) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_STATE[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_MAV_STATE = map[string]MAV_STATE{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *MAV_STATE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_STATE[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e MAV_STATE) String() string {
-	if l, ok := labels_MAV_STATE[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

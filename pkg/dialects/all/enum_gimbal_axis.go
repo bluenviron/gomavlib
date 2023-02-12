@@ -3,45 +3,16 @@
 package all
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
 )
 
-type GIMBAL_AXIS uint32
+type GIMBAL_AXIS = ardupilotmega.GIMBAL_AXIS
 
 const (
 	// Gimbal yaw axis.
-	GIMBAL_AXIS_YAW GIMBAL_AXIS = 0
+	GIMBAL_AXIS_YAW GIMBAL_AXIS = ardupilotmega.GIMBAL_AXIS_YAW
 	// Gimbal pitch axis.
-	GIMBAL_AXIS_PITCH GIMBAL_AXIS = 1
+	GIMBAL_AXIS_PITCH GIMBAL_AXIS = ardupilotmega.GIMBAL_AXIS_PITCH
 	// Gimbal roll axis.
-	GIMBAL_AXIS_ROLL GIMBAL_AXIS = 2
+	GIMBAL_AXIS_ROLL GIMBAL_AXIS = ardupilotmega.GIMBAL_AXIS_ROLL
 )
-
-var labels_GIMBAL_AXIS = map[GIMBAL_AXIS]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e GIMBAL_AXIS) MarshalText() ([]byte, error) {
-	if l, ok := labels_GIMBAL_AXIS[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_GIMBAL_AXIS = map[string]GIMBAL_AXIS{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *GIMBAL_AXIS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_GIMBAL_AXIS[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e GIMBAL_AXIS) String() string {
-	if l, ok := labels_GIMBAL_AXIS[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

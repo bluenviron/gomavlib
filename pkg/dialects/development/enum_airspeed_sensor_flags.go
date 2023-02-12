@@ -16,7 +16,10 @@ const (
 	AIRSPEED_SENSOR_USING AIRSPEED_SENSOR_FLAGS = 1
 )
 
-var labels_AIRSPEED_SENSOR_FLAGS = map[AIRSPEED_SENSOR_FLAGS]string{}
+var labels_AIRSPEED_SENSOR_FLAGS = map[AIRSPEED_SENSOR_FLAGS]string{
+	AIRSPEED_SENSOR_UNHEALTHY: "AIRSPEED_SENSOR_UNHEALTHY",
+	AIRSPEED_SENSOR_USING:     "AIRSPEED_SENSOR_USING",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e AIRSPEED_SENSOR_FLAGS) MarshalText() ([]byte, error) {

@@ -3,49 +3,20 @@
 package storm32
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
 )
 
-type CAMERA_FEEDBACK_FLAGS uint32
+type CAMERA_FEEDBACK_FLAGS = ardupilotmega.CAMERA_FEEDBACK_FLAGS
 
 const (
 	// Shooting photos, not video.
-	CAMERA_FEEDBACK_PHOTO CAMERA_FEEDBACK_FLAGS = 0
+	CAMERA_FEEDBACK_PHOTO CAMERA_FEEDBACK_FLAGS = ardupilotmega.CAMERA_FEEDBACK_PHOTO
 	// Shooting video, not stills.
-	CAMERA_FEEDBACK_VIDEO CAMERA_FEEDBACK_FLAGS = 1
+	CAMERA_FEEDBACK_VIDEO CAMERA_FEEDBACK_FLAGS = ardupilotmega.CAMERA_FEEDBACK_VIDEO
 	// Unable to achieve requested exposure (e.g. shutter speed too low).
-	CAMERA_FEEDBACK_BADEXPOSURE CAMERA_FEEDBACK_FLAGS = 2
+	CAMERA_FEEDBACK_BADEXPOSURE CAMERA_FEEDBACK_FLAGS = ardupilotmega.CAMERA_FEEDBACK_BADEXPOSURE
 	// Closed loop feedback from camera, we know for sure it has successfully taken a picture.
-	CAMERA_FEEDBACK_CLOSEDLOOP CAMERA_FEEDBACK_FLAGS = 3
+	CAMERA_FEEDBACK_CLOSEDLOOP CAMERA_FEEDBACK_FLAGS = ardupilotmega.CAMERA_FEEDBACK_CLOSEDLOOP
 	// Open loop camera, an image trigger has been requested but we can't know for sure it has successfully taken a picture.
-	CAMERA_FEEDBACK_OPENLOOP CAMERA_FEEDBACK_FLAGS = 4
+	CAMERA_FEEDBACK_OPENLOOP CAMERA_FEEDBACK_FLAGS = ardupilotmega.CAMERA_FEEDBACK_OPENLOOP
 )
-
-var labels_CAMERA_FEEDBACK_FLAGS = map[CAMERA_FEEDBACK_FLAGS]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e CAMERA_FEEDBACK_FLAGS) MarshalText() ([]byte, error) {
-	if l, ok := labels_CAMERA_FEEDBACK_FLAGS[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_CAMERA_FEEDBACK_FLAGS = map[string]CAMERA_FEEDBACK_FLAGS{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *CAMERA_FEEDBACK_FLAGS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_CAMERA_FEEDBACK_FLAGS[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e CAMERA_FEEDBACK_FLAGS) String() string {
-	if l, ok := labels_CAMERA_FEEDBACK_FLAGS[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

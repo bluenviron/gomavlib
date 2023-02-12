@@ -18,7 +18,11 @@ const (
 	MOTOR_TEST_ORDER_BOARD MOTOR_TEST_ORDER = 2
 )
 
-var labels_MOTOR_TEST_ORDER = map[MOTOR_TEST_ORDER]string{}
+var labels_MOTOR_TEST_ORDER = map[MOTOR_TEST_ORDER]string{
+	MOTOR_TEST_ORDER_DEFAULT:  "MOTOR_TEST_ORDER_DEFAULT",
+	MOTOR_TEST_ORDER_SEQUENCE: "MOTOR_TEST_ORDER_SEQUENCE",
+	MOTOR_TEST_ORDER_BOARD:    "MOTOR_TEST_ORDER_BOARD",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MOTOR_TEST_ORDER) MarshalText() ([]byte, error) {

@@ -3,48 +3,19 @@
 package pythonarraytest
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/common"
 )
 
 // Flags to indicate the status of camera storage.
-type STORAGE_STATUS uint32
+type STORAGE_STATUS = common.STORAGE_STATUS
 
 const (
 	// Storage is missing (no microSD card loaded for example.)
-	STORAGE_STATUS_EMPTY STORAGE_STATUS = 0
+	STORAGE_STATUS_EMPTY STORAGE_STATUS = common.STORAGE_STATUS_EMPTY
 	// Storage present but unformatted.
-	STORAGE_STATUS_UNFORMATTED STORAGE_STATUS = 1
+	STORAGE_STATUS_UNFORMATTED STORAGE_STATUS = common.STORAGE_STATUS_UNFORMATTED
 	// Storage present and ready.
-	STORAGE_STATUS_READY STORAGE_STATUS = 2
+	STORAGE_STATUS_READY STORAGE_STATUS = common.STORAGE_STATUS_READY
 	// Camera does not supply storage status information. Capacity information in STORAGE_INFORMATION fields will be ignored.
-	STORAGE_STATUS_NOT_SUPPORTED STORAGE_STATUS = 3
+	STORAGE_STATUS_NOT_SUPPORTED STORAGE_STATUS = common.STORAGE_STATUS_NOT_SUPPORTED
 )
-
-var labels_STORAGE_STATUS = map[STORAGE_STATUS]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e STORAGE_STATUS) MarshalText() ([]byte, error) {
-	if l, ok := labels_STORAGE_STATUS[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_STORAGE_STATUS = map[string]STORAGE_STATUS{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *STORAGE_STATUS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_STORAGE_STATUS[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e STORAGE_STATUS) String() string {
-	if l, ok := labels_STORAGE_STATUS[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

@@ -3,52 +3,23 @@
 package all
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/storm32"
 )
 
 // Gimbal manager profiles. Only standard profiles are defined. Any implementation can define its own profile(s) in addition, and should use enum values > 16.
-type MAV_STORM32_GIMBAL_MANAGER_PROFILE uint32
+type MAV_STORM32_GIMBAL_MANAGER_PROFILE = storm32.MAV_STORM32_GIMBAL_MANAGER_PROFILE
 
 const (
 	// Default profile. Implementation specific.
-	MAV_STORM32_GIMBAL_MANAGER_PROFILE_DEFAULT MAV_STORM32_GIMBAL_MANAGER_PROFILE = 0
+	MAV_STORM32_GIMBAL_MANAGER_PROFILE_DEFAULT MAV_STORM32_GIMBAL_MANAGER_PROFILE = storm32.MAV_STORM32_GIMBAL_MANAGER_PROFILE_DEFAULT
 	// Not supported/deprecated.
-	MAV_STORM32_GIMBAL_MANAGER_PROFILE_CUSTOM MAV_STORM32_GIMBAL_MANAGER_PROFILE = 1
+	MAV_STORM32_GIMBAL_MANAGER_PROFILE_CUSTOM MAV_STORM32_GIMBAL_MANAGER_PROFILE = storm32.MAV_STORM32_GIMBAL_MANAGER_PROFILE_CUSTOM
 	// Profile with cooperative behavior.
-	MAV_STORM32_GIMBAL_MANAGER_PROFILE_COOPERATIVE MAV_STORM32_GIMBAL_MANAGER_PROFILE = 2
+	MAV_STORM32_GIMBAL_MANAGER_PROFILE_COOPERATIVE MAV_STORM32_GIMBAL_MANAGER_PROFILE = storm32.MAV_STORM32_GIMBAL_MANAGER_PROFILE_COOPERATIVE
 	// Profile with exclusive behavior.
-	MAV_STORM32_GIMBAL_MANAGER_PROFILE_EXCLUSIVE MAV_STORM32_GIMBAL_MANAGER_PROFILE = 3
+	MAV_STORM32_GIMBAL_MANAGER_PROFILE_EXCLUSIVE MAV_STORM32_GIMBAL_MANAGER_PROFILE = storm32.MAV_STORM32_GIMBAL_MANAGER_PROFILE_EXCLUSIVE
 	// Profile with priority and cooperative behavior for equal priority.
-	MAV_STORM32_GIMBAL_MANAGER_PROFILE_PRIORITY_COOPERATIVE MAV_STORM32_GIMBAL_MANAGER_PROFILE = 4
+	MAV_STORM32_GIMBAL_MANAGER_PROFILE_PRIORITY_COOPERATIVE MAV_STORM32_GIMBAL_MANAGER_PROFILE = storm32.MAV_STORM32_GIMBAL_MANAGER_PROFILE_PRIORITY_COOPERATIVE
 	// Profile with priority and exclusive behavior for equal priority.
-	MAV_STORM32_GIMBAL_MANAGER_PROFILE_PRIORITY_EXCLUSIVE MAV_STORM32_GIMBAL_MANAGER_PROFILE = 5
+	MAV_STORM32_GIMBAL_MANAGER_PROFILE_PRIORITY_EXCLUSIVE MAV_STORM32_GIMBAL_MANAGER_PROFILE = storm32.MAV_STORM32_GIMBAL_MANAGER_PROFILE_PRIORITY_EXCLUSIVE
 )
-
-var labels_MAV_STORM32_GIMBAL_MANAGER_PROFILE = map[MAV_STORM32_GIMBAL_MANAGER_PROFILE]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e MAV_STORM32_GIMBAL_MANAGER_PROFILE) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_STORM32_GIMBAL_MANAGER_PROFILE[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_MAV_STORM32_GIMBAL_MANAGER_PROFILE = map[string]MAV_STORM32_GIMBAL_MANAGER_PROFILE{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *MAV_STORM32_GIMBAL_MANAGER_PROFILE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_STORM32_GIMBAL_MANAGER_PROFILE[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e MAV_STORM32_GIMBAL_MANAGER_PROFILE) String() string {
-	if l, ok := labels_MAV_STORM32_GIMBAL_MANAGER_PROFILE[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

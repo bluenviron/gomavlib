@@ -3,58 +3,29 @@
 package ardupilotmega
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/common"
 )
 
 // Type of GPS fix
-type GPS_FIX_TYPE uint32
+type GPS_FIX_TYPE = common.GPS_FIX_TYPE
 
 const (
 	// No GPS connected
-	GPS_FIX_TYPE_NO_GPS GPS_FIX_TYPE = 0
+	GPS_FIX_TYPE_NO_GPS GPS_FIX_TYPE = common.GPS_FIX_TYPE_NO_GPS
 	// No position information, GPS is connected
-	GPS_FIX_TYPE_NO_FIX GPS_FIX_TYPE = 1
+	GPS_FIX_TYPE_NO_FIX GPS_FIX_TYPE = common.GPS_FIX_TYPE_NO_FIX
 	// 2D position
-	GPS_FIX_TYPE_2D_FIX GPS_FIX_TYPE = 2
+	GPS_FIX_TYPE_2D_FIX GPS_FIX_TYPE = common.GPS_FIX_TYPE_2D_FIX
 	// 3D position
-	GPS_FIX_TYPE_3D_FIX GPS_FIX_TYPE = 3
+	GPS_FIX_TYPE_3D_FIX GPS_FIX_TYPE = common.GPS_FIX_TYPE_3D_FIX
 	// DGPS/SBAS aided 3D position
-	GPS_FIX_TYPE_DGPS GPS_FIX_TYPE = 4
+	GPS_FIX_TYPE_DGPS GPS_FIX_TYPE = common.GPS_FIX_TYPE_DGPS
 	// RTK float, 3D position
-	GPS_FIX_TYPE_RTK_FLOAT GPS_FIX_TYPE = 5
+	GPS_FIX_TYPE_RTK_FLOAT GPS_FIX_TYPE = common.GPS_FIX_TYPE_RTK_FLOAT
 	// RTK Fixed, 3D position
-	GPS_FIX_TYPE_RTK_FIXED GPS_FIX_TYPE = 6
+	GPS_FIX_TYPE_RTK_FIXED GPS_FIX_TYPE = common.GPS_FIX_TYPE_RTK_FIXED
 	// Static fixed, typically used for base stations
-	GPS_FIX_TYPE_STATIC GPS_FIX_TYPE = 7
+	GPS_FIX_TYPE_STATIC GPS_FIX_TYPE = common.GPS_FIX_TYPE_STATIC
 	// PPP, 3D position.
-	GPS_FIX_TYPE_PPP GPS_FIX_TYPE = 8
+	GPS_FIX_TYPE_PPP GPS_FIX_TYPE = common.GPS_FIX_TYPE_PPP
 )
-
-var labels_GPS_FIX_TYPE = map[GPS_FIX_TYPE]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e GPS_FIX_TYPE) MarshalText() ([]byte, error) {
-	if l, ok := labels_GPS_FIX_TYPE[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_GPS_FIX_TYPE = map[string]GPS_FIX_TYPE{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *GPS_FIX_TYPE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_GPS_FIX_TYPE[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e GPS_FIX_TYPE) String() string {
-	if l, ok := labels_GPS_FIX_TYPE[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

@@ -21,7 +21,13 @@ const (
 	GSM_LINK_TYPE_4G GSM_LINK_TYPE = 4
 )
 
-var labels_GSM_LINK_TYPE = map[GSM_LINK_TYPE]string{}
+var labels_GSM_LINK_TYPE = map[GSM_LINK_TYPE]string{
+	GSM_LINK_TYPE_NONE:    "GSM_LINK_TYPE_NONE",
+	GSM_LINK_TYPE_UNKNOWN: "GSM_LINK_TYPE_UNKNOWN",
+	GSM_LINK_TYPE_2G:      "GSM_LINK_TYPE_2G",
+	GSM_LINK_TYPE_3G:      "GSM_LINK_TYPE_3G",
+	GSM_LINK_TYPE_4G:      "GSM_LINK_TYPE_4G",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GSM_LINK_TYPE) MarshalText() ([]byte, error) {

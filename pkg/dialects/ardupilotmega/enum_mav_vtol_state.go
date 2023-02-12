@@ -3,50 +3,21 @@
 package ardupilotmega
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/common"
 )
 
 // Enumeration of VTOL states
-type MAV_VTOL_STATE uint32
+type MAV_VTOL_STATE = common.MAV_VTOL_STATE
 
 const (
 	// MAV is not configured as VTOL
-	MAV_VTOL_STATE_UNDEFINED MAV_VTOL_STATE = 0
+	MAV_VTOL_STATE_UNDEFINED MAV_VTOL_STATE = common.MAV_VTOL_STATE_UNDEFINED
 	// VTOL is in transition from multicopter to fixed-wing
-	MAV_VTOL_STATE_TRANSITION_TO_FW MAV_VTOL_STATE = 1
+	MAV_VTOL_STATE_TRANSITION_TO_FW MAV_VTOL_STATE = common.MAV_VTOL_STATE_TRANSITION_TO_FW
 	// VTOL is in transition from fixed-wing to multicopter
-	MAV_VTOL_STATE_TRANSITION_TO_MC MAV_VTOL_STATE = 2
+	MAV_VTOL_STATE_TRANSITION_TO_MC MAV_VTOL_STATE = common.MAV_VTOL_STATE_TRANSITION_TO_MC
 	// VTOL is in multicopter state
-	MAV_VTOL_STATE_MC MAV_VTOL_STATE = 3
+	MAV_VTOL_STATE_MC MAV_VTOL_STATE = common.MAV_VTOL_STATE_MC
 	// VTOL is in fixed-wing state
-	MAV_VTOL_STATE_FW MAV_VTOL_STATE = 4
+	MAV_VTOL_STATE_FW MAV_VTOL_STATE = common.MAV_VTOL_STATE_FW
 )
-
-var labels_MAV_VTOL_STATE = map[MAV_VTOL_STATE]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e MAV_VTOL_STATE) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_VTOL_STATE[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_MAV_VTOL_STATE = map[string]MAV_VTOL_STATE{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *MAV_VTOL_STATE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_VTOL_STATE[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e MAV_VTOL_STATE) String() string {
-	if l, ok := labels_MAV_VTOL_STATE[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

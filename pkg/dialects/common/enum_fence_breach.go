@@ -19,7 +19,12 @@ const (
 	FENCE_BREACH_BOUNDARY FENCE_BREACH = 3
 )
 
-var labels_FENCE_BREACH = map[FENCE_BREACH]string{}
+var labels_FENCE_BREACH = map[FENCE_BREACH]string{
+	FENCE_BREACH_NONE:     "FENCE_BREACH_NONE",
+	FENCE_BREACH_MINALT:   "FENCE_BREACH_MINALT",
+	FENCE_BREACH_MAXALT:   "FENCE_BREACH_MAXALT",
+	FENCE_BREACH_BOUNDARY: "FENCE_BREACH_BOUNDARY",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FENCE_BREACH) MarshalText() ([]byte, error) {

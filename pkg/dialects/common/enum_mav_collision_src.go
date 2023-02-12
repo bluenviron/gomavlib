@@ -16,7 +16,10 @@ const (
 	MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT MAV_COLLISION_SRC = 1
 )
 
-var labels_MAV_COLLISION_SRC = map[MAV_COLLISION_SRC]string{}
+var labels_MAV_COLLISION_SRC = map[MAV_COLLISION_SRC]string{
+	MAV_COLLISION_SRC_ADSB:                   "MAV_COLLISION_SRC_ADSB",
+	MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT: "MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_COLLISION_SRC) MarshalText() ([]byte, error) {

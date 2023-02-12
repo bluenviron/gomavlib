@@ -21,7 +21,13 @@ const (
 	GOPRO_MODEL_HERO_4_BLACK GOPRO_MODEL = 4
 )
 
-var labels_GOPRO_MODEL = map[GOPRO_MODEL]string{}
+var labels_GOPRO_MODEL = map[GOPRO_MODEL]string{
+	GOPRO_MODEL_UNKNOWN:            "GOPRO_MODEL_UNKNOWN",
+	GOPRO_MODEL_HERO_3_PLUS_SILVER: "GOPRO_MODEL_HERO_3_PLUS_SILVER",
+	GOPRO_MODEL_HERO_3_PLUS_BLACK:  "GOPRO_MODEL_HERO_3_PLUS_BLACK",
+	GOPRO_MODEL_HERO_4_SILVER:      "GOPRO_MODEL_HERO_4_SILVER",
+	GOPRO_MODEL_HERO_4_BLACK:       "GOPRO_MODEL_HERO_4_BLACK",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_MODEL) MarshalText() ([]byte, error) {

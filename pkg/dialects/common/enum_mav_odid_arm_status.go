@@ -15,7 +15,10 @@ const (
 	MAV_ODID_ARM_STATUS_PRE_ARM_FAIL_GENERIC MAV_ODID_ARM_STATUS = 1
 )
 
-var labels_MAV_ODID_ARM_STATUS = map[MAV_ODID_ARM_STATUS]string{}
+var labels_MAV_ODID_ARM_STATUS = map[MAV_ODID_ARM_STATUS]string{
+	MAV_ODID_ARM_STATUS_GOOD_TO_ARM:          "MAV_ODID_ARM_STATUS_GOOD_TO_ARM",
+	MAV_ODID_ARM_STATUS_PRE_ARM_FAIL_GENERIC: "MAV_ODID_ARM_STATUS_PRE_ARM_FAIL_GENERIC",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_ARM_STATUS) MarshalText() ([]byte, error) {

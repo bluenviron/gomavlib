@@ -13,7 +13,9 @@ const (
 	MAV_ODID_OPERATOR_ID_TYPE_CAA MAV_ODID_OPERATOR_ID_TYPE = 0
 )
 
-var labels_MAV_ODID_OPERATOR_ID_TYPE = map[MAV_ODID_OPERATOR_ID_TYPE]string{}
+var labels_MAV_ODID_OPERATOR_ID_TYPE = map[MAV_ODID_OPERATOR_ID_TYPE]string{
+	MAV_ODID_OPERATOR_ID_TYPE_CAA: "MAV_ODID_OPERATOR_ID_TYPE_CAA",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_OPERATOR_ID_TYPE) MarshalText() ([]byte, error) {

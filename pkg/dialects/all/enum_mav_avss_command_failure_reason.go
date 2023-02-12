@@ -3,45 +3,16 @@
 package all
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/avssuas"
 )
 
-type MAV_AVSS_COMMAND_FAILURE_REASON uint32
+type MAV_AVSS_COMMAND_FAILURE_REASON = avssuas.MAV_AVSS_COMMAND_FAILURE_REASON
 
 const (
 	// AVSS defined command failure reason. PRS not steady.
-	PRS_NOT_STEADY MAV_AVSS_COMMAND_FAILURE_REASON = 1
+	PRS_NOT_STEADY MAV_AVSS_COMMAND_FAILURE_REASON = avssuas.PRS_NOT_STEADY
 	// AVSS defined command failure reason. PRS DTM not armed.
-	PRS_DTM_NOT_ARMED MAV_AVSS_COMMAND_FAILURE_REASON = 2
+	PRS_DTM_NOT_ARMED MAV_AVSS_COMMAND_FAILURE_REASON = avssuas.PRS_DTM_NOT_ARMED
 	// AVSS defined command failure reason. PRS OTM not armed.
-	PRS_OTM_NOT_ARMED MAV_AVSS_COMMAND_FAILURE_REASON = 3
+	PRS_OTM_NOT_ARMED MAV_AVSS_COMMAND_FAILURE_REASON = avssuas.PRS_OTM_NOT_ARMED
 )
-
-var labels_MAV_AVSS_COMMAND_FAILURE_REASON = map[MAV_AVSS_COMMAND_FAILURE_REASON]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e MAV_AVSS_COMMAND_FAILURE_REASON) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_AVSS_COMMAND_FAILURE_REASON[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_MAV_AVSS_COMMAND_FAILURE_REASON = map[string]MAV_AVSS_COMMAND_FAILURE_REASON{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *MAV_AVSS_COMMAND_FAILURE_REASON) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_AVSS_COMMAND_FAILURE_REASON[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e MAV_AVSS_COMMAND_FAILURE_REASON) String() string {
-	if l, ok := labels_MAV_AVSS_COMMAND_FAILURE_REASON[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

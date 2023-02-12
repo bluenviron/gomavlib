@@ -3,47 +3,18 @@
 package all
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/ualberta"
 )
 
 // Navigation filter mode
-type UALBERTA_NAV_MODE uint32
+type UALBERTA_NAV_MODE = ualberta.UALBERTA_NAV_MODE
 
 const (
-	NAV_AHRS_INIT UALBERTA_NAV_MODE = 1
+	NAV_AHRS_INIT UALBERTA_NAV_MODE = ualberta.NAV_AHRS_INIT
 	// AHRS mode
-	NAV_AHRS UALBERTA_NAV_MODE = 2
+	NAV_AHRS UALBERTA_NAV_MODE = ualberta.NAV_AHRS
 	// INS/GPS initialization mode
-	NAV_INS_GPS_INIT UALBERTA_NAV_MODE = 3
+	NAV_INS_GPS_INIT UALBERTA_NAV_MODE = ualberta.NAV_INS_GPS_INIT
 	// INS/GPS mode
-	NAV_INS_GPS UALBERTA_NAV_MODE = 4
+	NAV_INS_GPS UALBERTA_NAV_MODE = ualberta.NAV_INS_GPS
 )
-
-var labels_UALBERTA_NAV_MODE = map[UALBERTA_NAV_MODE]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e UALBERTA_NAV_MODE) MarshalText() ([]byte, error) {
-	if l, ok := labels_UALBERTA_NAV_MODE[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_UALBERTA_NAV_MODE = map[string]UALBERTA_NAV_MODE{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *UALBERTA_NAV_MODE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_UALBERTA_NAV_MODE[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e UALBERTA_NAV_MODE) String() string {
-	if l, ok := labels_UALBERTA_NAV_MODE[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

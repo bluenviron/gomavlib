@@ -16,7 +16,10 @@ const (
 	TUNE_FORMAT_MML_MODERN TUNE_FORMAT = 2
 )
 
-var labels_TUNE_FORMAT = map[TUNE_FORMAT]string{}
+var labels_TUNE_FORMAT = map[TUNE_FORMAT]string{
+	TUNE_FORMAT_QBASIC1_1:  "TUNE_FORMAT_QBASIC1_1",
+	TUNE_FORMAT_MML_MODERN: "TUNE_FORMAT_MML_MODERN",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e TUNE_FORMAT) MarshalText() ([]byte, error) {

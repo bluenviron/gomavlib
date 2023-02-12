@@ -23,7 +23,14 @@ const (
 	LIMITS_RECOVERED LIMITS_STATE = 5
 )
 
-var labels_LIMITS_STATE = map[LIMITS_STATE]string{}
+var labels_LIMITS_STATE = map[LIMITS_STATE]string{
+	LIMITS_INIT:       "LIMITS_INIT",
+	LIMITS_DISABLED:   "LIMITS_DISABLED",
+	LIMITS_ENABLED:    "LIMITS_ENABLED",
+	LIMITS_TRIGGERED:  "LIMITS_TRIGGERED",
+	LIMITS_RECOVERING: "LIMITS_RECOVERING",
+	LIMITS_RECOVERED:  "LIMITS_RECOVERED",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e LIMITS_STATE) MarshalText() ([]byte, error) {

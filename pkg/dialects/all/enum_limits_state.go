@@ -3,51 +3,22 @@
 package all
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
 )
 
-type LIMITS_STATE uint32
+type LIMITS_STATE = ardupilotmega.LIMITS_STATE
 
 const (
 	// Pre-initialization.
-	LIMITS_INIT LIMITS_STATE = 0
+	LIMITS_INIT LIMITS_STATE = ardupilotmega.LIMITS_INIT
 	// Disabled.
-	LIMITS_DISABLED LIMITS_STATE = 1
+	LIMITS_DISABLED LIMITS_STATE = ardupilotmega.LIMITS_DISABLED
 	// Checking limits.
-	LIMITS_ENABLED LIMITS_STATE = 2
+	LIMITS_ENABLED LIMITS_STATE = ardupilotmega.LIMITS_ENABLED
 	// A limit has been breached.
-	LIMITS_TRIGGERED LIMITS_STATE = 3
+	LIMITS_TRIGGERED LIMITS_STATE = ardupilotmega.LIMITS_TRIGGERED
 	// Taking action e.g. Return/RTL.
-	LIMITS_RECOVERING LIMITS_STATE = 4
+	LIMITS_RECOVERING LIMITS_STATE = ardupilotmega.LIMITS_RECOVERING
 	// We're no longer in breach of a limit.
-	LIMITS_RECOVERED LIMITS_STATE = 5
+	LIMITS_RECOVERED LIMITS_STATE = ardupilotmega.LIMITS_RECOVERED
 )
-
-var labels_LIMITS_STATE = map[LIMITS_STATE]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e LIMITS_STATE) MarshalText() ([]byte, error) {
-	if l, ok := labels_LIMITS_STATE[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_LIMITS_STATE = map[string]LIMITS_STATE{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *LIMITS_STATE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_LIMITS_STATE[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e LIMITS_STATE) String() string {
-	if l, ok := labels_LIMITS_STATE[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

@@ -14,7 +14,11 @@ const (
 	CAN_FILTER_REMOVE  CAN_FILTER_OP = 2
 )
 
-var labels_CAN_FILTER_OP = map[CAN_FILTER_OP]string{}
+var labels_CAN_FILTER_OP = map[CAN_FILTER_OP]string{
+	CAN_FILTER_REPLACE: "CAN_FILTER_REPLACE",
+	CAN_FILTER_ADD:     "CAN_FILTER_ADD",
+	CAN_FILTER_REMOVE:  "CAN_FILTER_REMOVE",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAN_FILTER_OP) MarshalText() ([]byte, error) {

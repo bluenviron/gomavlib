@@ -3,44 +3,15 @@
 package all
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/ualberta"
 )
 
 // Mode currently commanded by pilot
-type UALBERTA_PILOT_MODE uint32
+type UALBERTA_PILOT_MODE = ualberta.UALBERTA_PILOT_MODE
 
 const (
-	PILOT_MANUAL UALBERTA_PILOT_MODE = 1
-	PILOT_AUTO   UALBERTA_PILOT_MODE = 2
+	PILOT_MANUAL UALBERTA_PILOT_MODE = ualberta.PILOT_MANUAL
+	PILOT_AUTO   UALBERTA_PILOT_MODE = ualberta.PILOT_AUTO
 	// Rotomotion mode
-	PILOT_ROTO UALBERTA_PILOT_MODE = 3
+	PILOT_ROTO UALBERTA_PILOT_MODE = ualberta.PILOT_ROTO
 )
-
-var labels_UALBERTA_PILOT_MODE = map[UALBERTA_PILOT_MODE]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e UALBERTA_PILOT_MODE) MarshalText() ([]byte, error) {
-	if l, ok := labels_UALBERTA_PILOT_MODE[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_UALBERTA_PILOT_MODE = map[string]UALBERTA_PILOT_MODE{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *UALBERTA_PILOT_MODE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_UALBERTA_PILOT_MODE[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e UALBERTA_PILOT_MODE) String() string {
-	if l, ok := labels_UALBERTA_PILOT_MODE[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

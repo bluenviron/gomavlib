@@ -15,7 +15,10 @@ const (
 	MAV_ODID_HEIGHT_REF_OVER_GROUND MAV_ODID_HEIGHT_REF = 1
 )
 
-var labels_MAV_ODID_HEIGHT_REF = map[MAV_ODID_HEIGHT_REF]string{}
+var labels_MAV_ODID_HEIGHT_REF = map[MAV_ODID_HEIGHT_REF]string{
+	MAV_ODID_HEIGHT_REF_OVER_TAKEOFF: "MAV_ODID_HEIGHT_REF_OVER_TAKEOFF",
+	MAV_ODID_HEIGHT_REF_OVER_GROUND:  "MAV_ODID_HEIGHT_REF_OVER_GROUND",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_HEIGHT_REF) MarshalText() ([]byte, error) {

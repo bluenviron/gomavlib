@@ -26,7 +26,15 @@ const (
 	FOCUS_TYPE_AUTO_CONTINUOUS SET_FOCUS_TYPE = 6
 )
 
-var labels_SET_FOCUS_TYPE = map[SET_FOCUS_TYPE]string{}
+var labels_SET_FOCUS_TYPE = map[SET_FOCUS_TYPE]string{
+	FOCUS_TYPE_STEP:            "FOCUS_TYPE_STEP",
+	FOCUS_TYPE_CONTINUOUS:      "FOCUS_TYPE_CONTINUOUS",
+	FOCUS_TYPE_RANGE:           "FOCUS_TYPE_RANGE",
+	FOCUS_TYPE_METERS:          "FOCUS_TYPE_METERS",
+	FOCUS_TYPE_AUTO:            "FOCUS_TYPE_AUTO",
+	FOCUS_TYPE_AUTO_SINGLE:     "FOCUS_TYPE_AUTO_SINGLE",
+	FOCUS_TYPE_AUTO_CONTINUOUS: "FOCUS_TYPE_AUTO_CONTINUOUS",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e SET_FOCUS_TYPE) MarshalText() ([]byte, error) {

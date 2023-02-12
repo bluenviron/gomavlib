@@ -15,7 +15,7 @@ var Dialect = dial
 var dial = &dialect.Dialect{
 	Version: 0,
 	Messages: []message.Message{
-		// icarous.xml
+		// icarous
 		&MessageIcarousHeartbeat{},
 		&MessageIcarousKinematicBands{},
 	},

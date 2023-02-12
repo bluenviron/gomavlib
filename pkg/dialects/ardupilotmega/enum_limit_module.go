@@ -17,7 +17,11 @@ const (
 	LIMIT_ALTITUDE LIMIT_MODULE = 4
 )
 
-var labels_LIMIT_MODULE = map[LIMIT_MODULE]string{}
+var labels_LIMIT_MODULE = map[LIMIT_MODULE]string{
+	LIMIT_GPSLOCK:  "LIMIT_GPSLOCK",
+	LIMIT_GEOFENCE: "LIMIT_GEOFENCE",
+	LIMIT_ALTITUDE: "LIMIT_ALTITUDE",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e LIMIT_MODULE) MarshalText() ([]byte, error) {

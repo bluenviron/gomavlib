@@ -3,68 +3,39 @@
 package cubepilot
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/common"
 )
 
 // Winch status flags used in WINCH_STATUS
-type MAV_WINCH_STATUS_FLAG uint32
+type MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_FLAG
 
 const (
 	// Winch is healthy
-	MAV_WINCH_STATUS_HEALTHY MAV_WINCH_STATUS_FLAG = 1
+	MAV_WINCH_STATUS_HEALTHY MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_HEALTHY
 	// Winch line is fully retracted
-	MAV_WINCH_STATUS_FULLY_RETRACTED MAV_WINCH_STATUS_FLAG = 2
+	MAV_WINCH_STATUS_FULLY_RETRACTED MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_FULLY_RETRACTED
 	// Winch motor is moving
-	MAV_WINCH_STATUS_MOVING MAV_WINCH_STATUS_FLAG = 4
+	MAV_WINCH_STATUS_MOVING MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_MOVING
 	// Winch clutch is engaged allowing motor to move freely.
-	MAV_WINCH_STATUS_CLUTCH_ENGAGED MAV_WINCH_STATUS_FLAG = 8
+	MAV_WINCH_STATUS_CLUTCH_ENGAGED MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_CLUTCH_ENGAGED
 	// Winch is locked by locking mechanism.
-	MAV_WINCH_STATUS_LOCKED MAV_WINCH_STATUS_FLAG = 16
+	MAV_WINCH_STATUS_LOCKED MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_LOCKED
 	// Winch is gravity dropping payload.
-	MAV_WINCH_STATUS_DROPPING MAV_WINCH_STATUS_FLAG = 32
+	MAV_WINCH_STATUS_DROPPING MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_DROPPING
 	// Winch is arresting payload descent.
-	MAV_WINCH_STATUS_ARRESTING MAV_WINCH_STATUS_FLAG = 64
+	MAV_WINCH_STATUS_ARRESTING MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_ARRESTING
 	// Winch is using torque measurements to sense the ground.
-	MAV_WINCH_STATUS_GROUND_SENSE MAV_WINCH_STATUS_FLAG = 128
+	MAV_WINCH_STATUS_GROUND_SENSE MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_GROUND_SENSE
 	// Winch is returning to the fully retracted position.
-	MAV_WINCH_STATUS_RETRACTING MAV_WINCH_STATUS_FLAG = 256
+	MAV_WINCH_STATUS_RETRACTING MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_RETRACTING
 	// Winch is redelivering the payload. This is a failover state if the line tension goes above a threshold during RETRACTING.
-	MAV_WINCH_STATUS_REDELIVER MAV_WINCH_STATUS_FLAG = 512
+	MAV_WINCH_STATUS_REDELIVER MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_REDELIVER
 	// Winch is abandoning the line and possibly payload. Winch unspools the entire calculated line length. This is a failover state from REDELIVER if the number of attempts exceeds a threshold.
-	MAV_WINCH_STATUS_ABANDON_LINE MAV_WINCH_STATUS_FLAG = 1024
+	MAV_WINCH_STATUS_ABANDON_LINE MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_ABANDON_LINE
 	// Winch is engaging the locking mechanism.
-	MAV_WINCH_STATUS_LOCKING MAV_WINCH_STATUS_FLAG = 2048
+	MAV_WINCH_STATUS_LOCKING MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_LOCKING
 	// Winch is spooling on line.
-	MAV_WINCH_STATUS_LOAD_LINE MAV_WINCH_STATUS_FLAG = 4096
+	MAV_WINCH_STATUS_LOAD_LINE MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_LOAD_LINE
 	// Winch is loading a payload.
-	MAV_WINCH_STATUS_LOAD_PAYLOAD MAV_WINCH_STATUS_FLAG = 8192
+	MAV_WINCH_STATUS_LOAD_PAYLOAD MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_LOAD_PAYLOAD
 )
-
-var labels_MAV_WINCH_STATUS_FLAG = map[MAV_WINCH_STATUS_FLAG]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e MAV_WINCH_STATUS_FLAG) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_WINCH_STATUS_FLAG[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_MAV_WINCH_STATUS_FLAG = map[string]MAV_WINCH_STATUS_FLAG{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *MAV_WINCH_STATUS_FLAG) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_WINCH_STATUS_FLAG[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e MAV_WINCH_STATUS_FLAG) String() string {
-	if l, ok := labels_MAV_WINCH_STATUS_FLAG[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

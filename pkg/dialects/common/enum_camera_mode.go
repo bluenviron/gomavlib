@@ -18,7 +18,11 @@ const (
 	CAMERA_MODE_IMAGE_SURVEY CAMERA_MODE = 2
 )
 
-var labels_CAMERA_MODE = map[CAMERA_MODE]string{}
+var labels_CAMERA_MODE = map[CAMERA_MODE]string{
+	CAMERA_MODE_IMAGE:        "CAMERA_MODE_IMAGE",
+	CAMERA_MODE_VIDEO:        "CAMERA_MODE_VIDEO",
+	CAMERA_MODE_IMAGE_SURVEY: "CAMERA_MODE_IMAGE_SURVEY",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAMERA_MODE) MarshalText() ([]byte, error) {

@@ -3,53 +3,24 @@
 package all
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
 )
 
-type MAV_MODE_GIMBAL uint32
+type MAV_MODE_GIMBAL = ardupilotmega.MAV_MODE_GIMBAL
 
 const (
 	// Gimbal is powered on but has not started initializing yet.
-	MAV_MODE_GIMBAL_UNINITIALIZED MAV_MODE_GIMBAL = 0
+	MAV_MODE_GIMBAL_UNINITIALIZED MAV_MODE_GIMBAL = ardupilotmega.MAV_MODE_GIMBAL_UNINITIALIZED
 	// Gimbal is currently running calibration on the pitch axis.
-	MAV_MODE_GIMBAL_CALIBRATING_PITCH MAV_MODE_GIMBAL = 1
+	MAV_MODE_GIMBAL_CALIBRATING_PITCH MAV_MODE_GIMBAL = ardupilotmega.MAV_MODE_GIMBAL_CALIBRATING_PITCH
 	// Gimbal is currently running calibration on the roll axis.
-	MAV_MODE_GIMBAL_CALIBRATING_ROLL MAV_MODE_GIMBAL = 2
+	MAV_MODE_GIMBAL_CALIBRATING_ROLL MAV_MODE_GIMBAL = ardupilotmega.MAV_MODE_GIMBAL_CALIBRATING_ROLL
 	// Gimbal is currently running calibration on the yaw axis.
-	MAV_MODE_GIMBAL_CALIBRATING_YAW MAV_MODE_GIMBAL = 3
+	MAV_MODE_GIMBAL_CALIBRATING_YAW MAV_MODE_GIMBAL = ardupilotmega.MAV_MODE_GIMBAL_CALIBRATING_YAW
 	// Gimbal has finished calibrating and initializing, but is relaxed pending reception of first rate command from copter.
-	MAV_MODE_GIMBAL_INITIALIZED MAV_MODE_GIMBAL = 4
+	MAV_MODE_GIMBAL_INITIALIZED MAV_MODE_GIMBAL = ardupilotmega.MAV_MODE_GIMBAL_INITIALIZED
 	// Gimbal is actively stabilizing.
-	MAV_MODE_GIMBAL_ACTIVE MAV_MODE_GIMBAL = 5
+	MAV_MODE_GIMBAL_ACTIVE MAV_MODE_GIMBAL = ardupilotmega.MAV_MODE_GIMBAL_ACTIVE
 	// Gimbal is relaxed because it missed more than 10 expected rate command messages in a row. Gimbal will move back to active mode when it receives a new rate command.
-	MAV_MODE_GIMBAL_RATE_CMD_TIMEOUT MAV_MODE_GIMBAL = 6
+	MAV_MODE_GIMBAL_RATE_CMD_TIMEOUT MAV_MODE_GIMBAL = ardupilotmega.MAV_MODE_GIMBAL_RATE_CMD_TIMEOUT
 )
-
-var labels_MAV_MODE_GIMBAL = map[MAV_MODE_GIMBAL]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e MAV_MODE_GIMBAL) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_MODE_GIMBAL[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_MAV_MODE_GIMBAL = map[string]MAV_MODE_GIMBAL{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *MAV_MODE_GIMBAL) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_MODE_GIMBAL[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e MAV_MODE_GIMBAL) String() string {
-	if l, ok := labels_MAV_MODE_GIMBAL[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

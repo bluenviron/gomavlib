@@ -17,7 +17,11 @@ const (
 	GIMBAL_AXIS_ROLL GIMBAL_AXIS = 2
 )
 
-var labels_GIMBAL_AXIS = map[GIMBAL_AXIS]string{}
+var labels_GIMBAL_AXIS = map[GIMBAL_AXIS]string{
+	GIMBAL_AXIS_YAW:   "GIMBAL_AXIS_YAW",
+	GIMBAL_AXIS_PITCH: "GIMBAL_AXIS_PITCH",
+	GIMBAL_AXIS_ROLL:  "GIMBAL_AXIS_ROLL",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GIMBAL_AXIS) MarshalText() ([]byte, error) {

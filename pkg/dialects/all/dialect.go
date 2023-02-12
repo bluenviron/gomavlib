@@ -15,11 +15,11 @@ var Dialect = dial
 var dial = &dialect.Dialect{
 	Version: 2,
 	Messages: []message.Message{
-		// minimal.xml
+		// minimal
 		&MessageHeartbeat{},
 		&MessageProtocolVersion{},
-		// standard.xml
-		// common.xml
+		// standard
+		// common
 		&MessageSysStatus{},
 		&MessageSystemTime{},
 		&MessagePing{},
@@ -239,20 +239,20 @@ var dial = &dialect.Dialect{
 		&MessageOpenDroneIdArmStatus{},
 		&MessageOpenDroneIdSystemUpdate{},
 		&MessageHygrometerSensor{},
-		// uAvionix.xml
+		// uavionix
 		&MessageUavionixAdsbOutCfg{},
 		&MessageUavionixAdsbOutDynamic{},
 		&MessageUavionixAdsbTransceiverHealthReport{},
-		// icarous.xml
+		// icarous
 		&MessageIcarousHeartbeat{},
 		&MessageIcarousKinematicBands{},
-		// cubepilot.xml
+		// cubepilot
 		&MessageCubepilotRawRc{},
 		&MessageHerelinkVideoStreamInformation{},
 		&MessageHerelinkTelem{},
 		&MessageCubepilotFirmwareUpdateStart{},
 		&MessageCubepilotFirmwareUpdateResp{},
-		// ardupilotmega.xml
+		// ardupilotmega
 		&MessageSensorOffsets{},
 		&MessageSetMagOffsets{},
 		&MessageMeminfo{},
@@ -318,7 +318,7 @@ var dial = &dialect.Dialect{
 		&MessageObstacleDistance_3d{},
 		&MessageWaterDepth{},
 		&MessageMcuStatus{},
-		// ASLUAV.xml
+		// asluav
 		&MessageCommandIntStamped{},
 		&MessageCommandLongStamped{},
 		&MessageSensPower{},
@@ -336,7 +336,7 @@ var dial = &dialect.Dialect{
 		&MessageGsmLinkStatus{},
 		&MessageSatcomLinkStatus{},
 		&MessageSensorAirflowAngles{},
-		// development.xml
+		// development
 		&MessageParamAckTransaction{},
 		&MessageMissionChecksum{},
 		&MessageAirspeed{},
@@ -348,7 +348,7 @@ var dial = &dialect.Dialect{
 		&MessageGroupEnd{},
 		&MessageAvailableModes{},
 		&MessageCurrentMode{},
-		// python_array_test.xml
+		// pythonarraytest
 		&MessageArrayTest_0{},
 		&MessageArrayTest_1{},
 		&MessageArrayTest_3{},
@@ -357,13 +357,13 @@ var dial = &dialect.Dialect{
 		&MessageArrayTest_6{},
 		&MessageArrayTest_7{},
 		&MessageArrayTest_8{},
-		// test.xml
+		// test
 		&MessageTestTypes{},
-		// ualberta.xml
+		// ualberta
 		&MessageNavFilterBias{},
 		&MessageRadioCalibration{},
 		&MessageUalbertaSysStatus{},
-		// storm32.xml
+		// storm32
 		&MessageStorm32GimbalManagerInformation{},
 		&MessageStorm32GimbalManagerStatus{},
 		&MessageStorm32GimbalManagerControl{},
@@ -374,11 +374,11 @@ var dial = &dialect.Dialect{
 		&MessageRadioLinkStats{},
 		&MessageFrskyPassthroughArray{},
 		&MessageParamValueArray{},
-		// AVSSUAS.xml
+		// avssuas
 		&MessageAvssPrsSysStatus{},
 		&MessageAvssDronePosition{},
 		&MessageAvssDroneImu{},
 		&MessageAvssDroneOperationMode{},
-		// all.xml
+		// all
 	},
 }

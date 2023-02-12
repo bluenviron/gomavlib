@@ -17,7 +17,14 @@ const (
 	PID_TUNING_LANDING PID_TUNING_AXIS = 6
 )
 
-var labels_PID_TUNING_AXIS = map[PID_TUNING_AXIS]string{}
+var labels_PID_TUNING_AXIS = map[PID_TUNING_AXIS]string{
+	PID_TUNING_ROLL:    "PID_TUNING_ROLL",
+	PID_TUNING_PITCH:   "PID_TUNING_PITCH",
+	PID_TUNING_YAW:     "PID_TUNING_YAW",
+	PID_TUNING_ACCZ:    "PID_TUNING_ACCZ",
+	PID_TUNING_STEER:   "PID_TUNING_STEER",
+	PID_TUNING_LANDING: "PID_TUNING_LANDING",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e PID_TUNING_AXIS) MarshalText() ([]byte, error) {

@@ -3,47 +3,18 @@
 package all
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
 )
 
-type SCRIPTING_CMD uint32
+type SCRIPTING_CMD = ardupilotmega.SCRIPTING_CMD
 
 const (
 	// Start a REPL session.
-	SCRIPTING_CMD_REPL_START SCRIPTING_CMD = 0
+	SCRIPTING_CMD_REPL_START SCRIPTING_CMD = ardupilotmega.SCRIPTING_CMD_REPL_START
 	// End a REPL session.
-	SCRIPTING_CMD_REPL_STOP SCRIPTING_CMD = 1
+	SCRIPTING_CMD_REPL_STOP SCRIPTING_CMD = ardupilotmega.SCRIPTING_CMD_REPL_STOP
 	// Stop execution of scripts.
-	SCRIPTING_CMD_STOP SCRIPTING_CMD = 2
+	SCRIPTING_CMD_STOP SCRIPTING_CMD = ardupilotmega.SCRIPTING_CMD_STOP
 	// Stop execution of scripts and restart.
-	SCRIPTING_CMD_STOP_AND_RESTART SCRIPTING_CMD = 3
+	SCRIPTING_CMD_STOP_AND_RESTART SCRIPTING_CMD = ardupilotmega.SCRIPTING_CMD_STOP_AND_RESTART
 )
-
-var labels_SCRIPTING_CMD = map[SCRIPTING_CMD]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e SCRIPTING_CMD) MarshalText() ([]byte, error) {
-	if l, ok := labels_SCRIPTING_CMD[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_SCRIPTING_CMD = map[string]SCRIPTING_CMD{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *SCRIPTING_CMD) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_SCRIPTING_CMD[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e SCRIPTING_CMD) String() string {
-	if l, ok := labels_SCRIPTING_CMD[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

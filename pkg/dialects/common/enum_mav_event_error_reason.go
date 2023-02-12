@@ -14,7 +14,9 @@ const (
 	MAV_EVENT_ERROR_REASON_UNAVAILABLE MAV_EVENT_ERROR_REASON = 0
 )
 
-var labels_MAV_EVENT_ERROR_REASON = map[MAV_EVENT_ERROR_REASON]string{}
+var labels_MAV_EVENT_ERROR_REASON = map[MAV_EVENT_ERROR_REASON]string{
+	MAV_EVENT_ERROR_REASON_UNAVAILABLE: "MAV_EVENT_ERROR_REASON_UNAVAILABLE",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_EVENT_ERROR_REASON) MarshalText() ([]byte, error) {

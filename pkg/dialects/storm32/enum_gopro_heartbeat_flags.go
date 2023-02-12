@@ -3,41 +3,12 @@
 package storm32
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
 )
 
-type GOPRO_HEARTBEAT_FLAGS uint32
+type GOPRO_HEARTBEAT_FLAGS = ardupilotmega.GOPRO_HEARTBEAT_FLAGS
 
 const (
 	// GoPro is currently recording.
-	GOPRO_FLAG_RECORDING GOPRO_HEARTBEAT_FLAGS = 1
+	GOPRO_FLAG_RECORDING GOPRO_HEARTBEAT_FLAGS = ardupilotmega.GOPRO_FLAG_RECORDING
 )
-
-var labels_GOPRO_HEARTBEAT_FLAGS = map[GOPRO_HEARTBEAT_FLAGS]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e GOPRO_HEARTBEAT_FLAGS) MarshalText() ([]byte, error) {
-	if l, ok := labels_GOPRO_HEARTBEAT_FLAGS[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_GOPRO_HEARTBEAT_FLAGS = map[string]GOPRO_HEARTBEAT_FLAGS{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *GOPRO_HEARTBEAT_FLAGS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_GOPRO_HEARTBEAT_FLAGS[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e GOPRO_HEARTBEAT_FLAGS) String() string {
-	if l, ok := labels_GOPRO_HEARTBEAT_FLAGS[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

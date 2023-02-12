@@ -19,7 +19,12 @@ const (
 	SCRIPTING_CMD_STOP_AND_RESTART SCRIPTING_CMD = 3
 )
 
-var labels_SCRIPTING_CMD = map[SCRIPTING_CMD]string{}
+var labels_SCRIPTING_CMD = map[SCRIPTING_CMD]string{
+	SCRIPTING_CMD_REPL_START:       "SCRIPTING_CMD_REPL_START",
+	SCRIPTING_CMD_REPL_STOP:        "SCRIPTING_CMD_REPL_STOP",
+	SCRIPTING_CMD_STOP:             "SCRIPTING_CMD_STOP",
+	SCRIPTING_CMD_STOP_AND_RESTART: "SCRIPTING_CMD_STOP_AND_RESTART",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e SCRIPTING_CMD) MarshalText() ([]byte, error) {

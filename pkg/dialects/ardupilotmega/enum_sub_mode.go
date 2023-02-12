@@ -21,7 +21,17 @@ const (
 	SUB_MODE_MANUAL    SUB_MODE = 19
 )
 
-var labels_SUB_MODE = map[SUB_MODE]string{}
+var labels_SUB_MODE = map[SUB_MODE]string{
+	SUB_MODE_STABILIZE: "SUB_MODE_STABILIZE",
+	SUB_MODE_ACRO:      "SUB_MODE_ACRO",
+	SUB_MODE_ALT_HOLD:  "SUB_MODE_ALT_HOLD",
+	SUB_MODE_AUTO:      "SUB_MODE_AUTO",
+	SUB_MODE_GUIDED:    "SUB_MODE_GUIDED",
+	SUB_MODE_CIRCLE:    "SUB_MODE_CIRCLE",
+	SUB_MODE_SURFACE:   "SUB_MODE_SURFACE",
+	SUB_MODE_POSHOLD:   "SUB_MODE_POSHOLD",
+	SUB_MODE_MANUAL:    "SUB_MODE_MANUAL",
+}
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e SUB_MODE) MarshalText() ([]byte, error) {

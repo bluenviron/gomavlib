@@ -3,54 +3,25 @@
 package all
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
 )
 
 // Deepstall flight stage.
-type DEEPSTALL_STAGE uint32
+type DEEPSTALL_STAGE = ardupilotmega.DEEPSTALL_STAGE
 
 const (
 	// Flying to the landing point.
-	DEEPSTALL_STAGE_FLY_TO_LANDING DEEPSTALL_STAGE = 0
+	DEEPSTALL_STAGE_FLY_TO_LANDING DEEPSTALL_STAGE = ardupilotmega.DEEPSTALL_STAGE_FLY_TO_LANDING
 	// Building an estimate of the wind.
-	DEEPSTALL_STAGE_ESTIMATE_WIND DEEPSTALL_STAGE = 1
+	DEEPSTALL_STAGE_ESTIMATE_WIND DEEPSTALL_STAGE = ardupilotmega.DEEPSTALL_STAGE_ESTIMATE_WIND
 	// Waiting to breakout of the loiter to fly the approach.
-	DEEPSTALL_STAGE_WAIT_FOR_BREAKOUT DEEPSTALL_STAGE = 2
+	DEEPSTALL_STAGE_WAIT_FOR_BREAKOUT DEEPSTALL_STAGE = ardupilotmega.DEEPSTALL_STAGE_WAIT_FOR_BREAKOUT
 	// Flying to the first arc point to turn around to the landing point.
-	DEEPSTALL_STAGE_FLY_TO_ARC DEEPSTALL_STAGE = 3
+	DEEPSTALL_STAGE_FLY_TO_ARC DEEPSTALL_STAGE = ardupilotmega.DEEPSTALL_STAGE_FLY_TO_ARC
 	// Turning around back to the deepstall landing point.
-	DEEPSTALL_STAGE_ARC DEEPSTALL_STAGE = 4
+	DEEPSTALL_STAGE_ARC DEEPSTALL_STAGE = ardupilotmega.DEEPSTALL_STAGE_ARC
 	// Approaching the landing point.
-	DEEPSTALL_STAGE_APPROACH DEEPSTALL_STAGE = 5
+	DEEPSTALL_STAGE_APPROACH DEEPSTALL_STAGE = ardupilotmega.DEEPSTALL_STAGE_APPROACH
 	// Stalling and steering towards the land point.
-	DEEPSTALL_STAGE_LAND DEEPSTALL_STAGE = 6
+	DEEPSTALL_STAGE_LAND DEEPSTALL_STAGE = ardupilotmega.DEEPSTALL_STAGE_LAND
 )
-
-var labels_DEEPSTALL_STAGE = map[DEEPSTALL_STAGE]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e DEEPSTALL_STAGE) MarshalText() ([]byte, error) {
-	if l, ok := labels_DEEPSTALL_STAGE[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_DEEPSTALL_STAGE = map[string]DEEPSTALL_STAGE{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *DEEPSTALL_STAGE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_DEEPSTALL_STAGE[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e DEEPSTALL_STAGE) String() string {
-	if l, ok := labels_DEEPSTALL_STAGE[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

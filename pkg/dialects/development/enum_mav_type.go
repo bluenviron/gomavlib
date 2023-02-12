@@ -3,126 +3,97 @@
 package development
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/minimal"
 )
 
 // MAVLINK component type reported in HEARTBEAT message. Flight controllers must report the type of the vehicle on which they are mounted (e.g. MAV_TYPE_OCTOROTOR). All other components must report a value appropriate for their type (e.g. a camera must use MAV_TYPE_CAMERA).
-type MAV_TYPE uint32
+type MAV_TYPE = minimal.MAV_TYPE
 
 const (
 	// Generic micro air vehicle
-	MAV_TYPE_GENERIC MAV_TYPE = 0
+	MAV_TYPE_GENERIC MAV_TYPE = minimal.MAV_TYPE_GENERIC
 	// Fixed wing aircraft.
-	MAV_TYPE_FIXED_WING MAV_TYPE = 1
+	MAV_TYPE_FIXED_WING MAV_TYPE = minimal.MAV_TYPE_FIXED_WING
 	// Quadrotor
-	MAV_TYPE_QUADROTOR MAV_TYPE = 2
+	MAV_TYPE_QUADROTOR MAV_TYPE = minimal.MAV_TYPE_QUADROTOR
 	// Coaxial helicopter
-	MAV_TYPE_COAXIAL MAV_TYPE = 3
+	MAV_TYPE_COAXIAL MAV_TYPE = minimal.MAV_TYPE_COAXIAL
 	// Normal helicopter with tail rotor.
-	MAV_TYPE_HELICOPTER MAV_TYPE = 4
+	MAV_TYPE_HELICOPTER MAV_TYPE = minimal.MAV_TYPE_HELICOPTER
 	// Ground installation
-	MAV_TYPE_ANTENNA_TRACKER MAV_TYPE = 5
+	MAV_TYPE_ANTENNA_TRACKER MAV_TYPE = minimal.MAV_TYPE_ANTENNA_TRACKER
 	// Operator control unit / ground control station
-	MAV_TYPE_GCS MAV_TYPE = 6
+	MAV_TYPE_GCS MAV_TYPE = minimal.MAV_TYPE_GCS
 	// Airship, controlled
-	MAV_TYPE_AIRSHIP MAV_TYPE = 7
+	MAV_TYPE_AIRSHIP MAV_TYPE = minimal.MAV_TYPE_AIRSHIP
 	// Free balloon, uncontrolled
-	MAV_TYPE_FREE_BALLOON MAV_TYPE = 8
+	MAV_TYPE_FREE_BALLOON MAV_TYPE = minimal.MAV_TYPE_FREE_BALLOON
 	// Rocket
-	MAV_TYPE_ROCKET MAV_TYPE = 9
+	MAV_TYPE_ROCKET MAV_TYPE = minimal.MAV_TYPE_ROCKET
 	// Ground rover
-	MAV_TYPE_GROUND_ROVER MAV_TYPE = 10
+	MAV_TYPE_GROUND_ROVER MAV_TYPE = minimal.MAV_TYPE_GROUND_ROVER
 	// Surface vessel, boat, ship
-	MAV_TYPE_SURFACE_BOAT MAV_TYPE = 11
+	MAV_TYPE_SURFACE_BOAT MAV_TYPE = minimal.MAV_TYPE_SURFACE_BOAT
 	// Submarine
-	MAV_TYPE_SUBMARINE MAV_TYPE = 12
+	MAV_TYPE_SUBMARINE MAV_TYPE = minimal.MAV_TYPE_SUBMARINE
 	// Hexarotor
-	MAV_TYPE_HEXAROTOR MAV_TYPE = 13
+	MAV_TYPE_HEXAROTOR MAV_TYPE = minimal.MAV_TYPE_HEXAROTOR
 	// Octorotor
-	MAV_TYPE_OCTOROTOR MAV_TYPE = 14
+	MAV_TYPE_OCTOROTOR MAV_TYPE = minimal.MAV_TYPE_OCTOROTOR
 	// Tricopter
-	MAV_TYPE_TRICOPTER MAV_TYPE = 15
+	MAV_TYPE_TRICOPTER MAV_TYPE = minimal.MAV_TYPE_TRICOPTER
 	// Flapping wing
-	MAV_TYPE_FLAPPING_WING MAV_TYPE = 16
+	MAV_TYPE_FLAPPING_WING MAV_TYPE = minimal.MAV_TYPE_FLAPPING_WING
 	// Kite
-	MAV_TYPE_KITE MAV_TYPE = 17
+	MAV_TYPE_KITE MAV_TYPE = minimal.MAV_TYPE_KITE
 	// Onboard companion controller
-	MAV_TYPE_ONBOARD_CONTROLLER MAV_TYPE = 18
+	MAV_TYPE_ONBOARD_CONTROLLER MAV_TYPE = minimal.MAV_TYPE_ONBOARD_CONTROLLER
 	// Two-rotor Tailsitter VTOL that additionally uses control surfaces in vertical operation. Note, value previously named MAV_TYPE_VTOL_DUOROTOR.
-	MAV_TYPE_VTOL_TAILSITTER_DUOROTOR MAV_TYPE = 19
+	MAV_TYPE_VTOL_TAILSITTER_DUOROTOR MAV_TYPE = minimal.MAV_TYPE_VTOL_TAILSITTER_DUOROTOR
 	// Quad-rotor Tailsitter VTOL using a V-shaped quad config in vertical operation. Note: value previously named MAV_TYPE_VTOL_QUADROTOR.
-	MAV_TYPE_VTOL_TAILSITTER_QUADROTOR MAV_TYPE = 20
+	MAV_TYPE_VTOL_TAILSITTER_QUADROTOR MAV_TYPE = minimal.MAV_TYPE_VTOL_TAILSITTER_QUADROTOR
 	// Tiltrotor VTOL. Fuselage and wings stay (nominally) horizontal in all flight phases. It able to tilt (some) rotors to provide thrust in cruise flight.
-	MAV_TYPE_VTOL_TILTROTOR MAV_TYPE = 21
+	MAV_TYPE_VTOL_TILTROTOR MAV_TYPE = minimal.MAV_TYPE_VTOL_TILTROTOR
 	// VTOL with separate fixed rotors for hover and cruise flight. Fuselage and wings stay (nominally) horizontal in all flight phases.
-	MAV_TYPE_VTOL_FIXEDROTOR MAV_TYPE = 22
+	MAV_TYPE_VTOL_FIXEDROTOR MAV_TYPE = minimal.MAV_TYPE_VTOL_FIXEDROTOR
 	// Tailsitter VTOL. Fuselage and wings orientation changes depending on flight phase: vertical for hover, horizontal for cruise. Use more specific VTOL MAV_TYPE_VTOL_DUOROTOR or MAV_TYPE_VTOL_QUADROTOR if appropriate.
-	MAV_TYPE_VTOL_TAILSITTER MAV_TYPE = 23
+	MAV_TYPE_VTOL_TAILSITTER MAV_TYPE = minimal.MAV_TYPE_VTOL_TAILSITTER
 	// Tiltwing VTOL. Fuselage stays horizontal in all flight phases. The whole wing, along with any attached engine, can tilt between vertical and horizontal mode.
-	MAV_TYPE_VTOL_TILTWING MAV_TYPE = 24
+	MAV_TYPE_VTOL_TILTWING MAV_TYPE = minimal.MAV_TYPE_VTOL_TILTWING
 	// VTOL reserved 5
-	MAV_TYPE_VTOL_RESERVED5 MAV_TYPE = 25
+	MAV_TYPE_VTOL_RESERVED5 MAV_TYPE = minimal.MAV_TYPE_VTOL_RESERVED5
 	// Gimbal
-	MAV_TYPE_GIMBAL MAV_TYPE = 26
+	MAV_TYPE_GIMBAL MAV_TYPE = minimal.MAV_TYPE_GIMBAL
 	// ADSB system
-	MAV_TYPE_ADSB MAV_TYPE = 27
+	MAV_TYPE_ADSB MAV_TYPE = minimal.MAV_TYPE_ADSB
 	// Steerable, nonrigid airfoil
-	MAV_TYPE_PARAFOIL MAV_TYPE = 28
+	MAV_TYPE_PARAFOIL MAV_TYPE = minimal.MAV_TYPE_PARAFOIL
 	// Dodecarotor
-	MAV_TYPE_DODECAROTOR MAV_TYPE = 29
+	MAV_TYPE_DODECAROTOR MAV_TYPE = minimal.MAV_TYPE_DODECAROTOR
 	// Camera
-	MAV_TYPE_CAMERA MAV_TYPE = 30
+	MAV_TYPE_CAMERA MAV_TYPE = minimal.MAV_TYPE_CAMERA
 	// Charging station
-	MAV_TYPE_CHARGING_STATION MAV_TYPE = 31
+	MAV_TYPE_CHARGING_STATION MAV_TYPE = minimal.MAV_TYPE_CHARGING_STATION
 	// FLARM collision avoidance system
-	MAV_TYPE_FLARM MAV_TYPE = 32
+	MAV_TYPE_FLARM MAV_TYPE = minimal.MAV_TYPE_FLARM
 	// Servo
-	MAV_TYPE_SERVO MAV_TYPE = 33
+	MAV_TYPE_SERVO MAV_TYPE = minimal.MAV_TYPE_SERVO
 	// Open Drone ID. See https://mavlink.io/en/services/opendroneid.html.
-	MAV_TYPE_ODID MAV_TYPE = 34
+	MAV_TYPE_ODID MAV_TYPE = minimal.MAV_TYPE_ODID
 	// Decarotor
-	MAV_TYPE_DECAROTOR MAV_TYPE = 35
+	MAV_TYPE_DECAROTOR MAV_TYPE = minimal.MAV_TYPE_DECAROTOR
 	// Battery
-	MAV_TYPE_BATTERY MAV_TYPE = 36
+	MAV_TYPE_BATTERY MAV_TYPE = minimal.MAV_TYPE_BATTERY
 	// Parachute
-	MAV_TYPE_PARACHUTE MAV_TYPE = 37
+	MAV_TYPE_PARACHUTE MAV_TYPE = minimal.MAV_TYPE_PARACHUTE
 	// Log
-	MAV_TYPE_LOG MAV_TYPE = 38
+	MAV_TYPE_LOG MAV_TYPE = minimal.MAV_TYPE_LOG
 	// OSD
-	MAV_TYPE_OSD MAV_TYPE = 39
+	MAV_TYPE_OSD MAV_TYPE = minimal.MAV_TYPE_OSD
 	// IMU
-	MAV_TYPE_IMU MAV_TYPE = 40
+	MAV_TYPE_IMU MAV_TYPE = minimal.MAV_TYPE_IMU
 	// GPS
-	MAV_TYPE_GPS MAV_TYPE = 41
+	MAV_TYPE_GPS MAV_TYPE = minimal.MAV_TYPE_GPS
 	// Winch
-	MAV_TYPE_WINCH MAV_TYPE = 42
+	MAV_TYPE_WINCH MAV_TYPE = minimal.MAV_TYPE_WINCH
 )
-
-var labels_MAV_TYPE = map[MAV_TYPE]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e MAV_TYPE) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_TYPE[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_MAV_TYPE = map[string]MAV_TYPE{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *MAV_TYPE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_TYPE[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e MAV_TYPE) String() string {
-	if l, ok := labels_MAV_TYPE[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

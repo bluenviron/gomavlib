@@ -3,52 +3,23 @@
 package all
 
 import (
-	"errors"
+	"github.com/aler9/gomavlib/pkg/dialects/development"
 )
 
 // WiFi wireless security protocols.
-type WIFI_NETWORK_SECURITY uint32
+type WIFI_NETWORK_SECURITY = development.WIFI_NETWORK_SECURITY
 
 const (
 	// Undefined or unknown security protocol.
-	WIFI_NETWORK_SECURITY_UNDEFINED WIFI_NETWORK_SECURITY = 0
+	WIFI_NETWORK_SECURITY_UNDEFINED WIFI_NETWORK_SECURITY = development.WIFI_NETWORK_SECURITY_UNDEFINED
 	// Open network, no security.
-	WIFI_NETWORK_SECURITY_OPEN WIFI_NETWORK_SECURITY = 1
+	WIFI_NETWORK_SECURITY_OPEN WIFI_NETWORK_SECURITY = development.WIFI_NETWORK_SECURITY_OPEN
 	// WEP.
-	WIFI_NETWORK_SECURITY_WEP WIFI_NETWORK_SECURITY = 2
+	WIFI_NETWORK_SECURITY_WEP WIFI_NETWORK_SECURITY = development.WIFI_NETWORK_SECURITY_WEP
 	// WPA1.
-	WIFI_NETWORK_SECURITY_WPA1 WIFI_NETWORK_SECURITY = 3
+	WIFI_NETWORK_SECURITY_WPA1 WIFI_NETWORK_SECURITY = development.WIFI_NETWORK_SECURITY_WPA1
 	// WPA2.
-	WIFI_NETWORK_SECURITY_WPA2 WIFI_NETWORK_SECURITY = 4
+	WIFI_NETWORK_SECURITY_WPA2 WIFI_NETWORK_SECURITY = development.WIFI_NETWORK_SECURITY_WPA2
 	// WPA3.
-	WIFI_NETWORK_SECURITY_WPA3 WIFI_NETWORK_SECURITY = 5
+	WIFI_NETWORK_SECURITY_WPA3 WIFI_NETWORK_SECURITY = development.WIFI_NETWORK_SECURITY_WPA3
 )
-
-var labels_WIFI_NETWORK_SECURITY = map[WIFI_NETWORK_SECURITY]string{}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e WIFI_NETWORK_SECURITY) MarshalText() ([]byte, error) {
-	if l, ok := labels_WIFI_NETWORK_SECURITY[e]; ok {
-		return []byte(l), nil
-	}
-	return nil, errors.New("invalid value")
-}
-
-var reverseLabels_WIFI_NETWORK_SECURITY = map[string]WIFI_NETWORK_SECURITY{}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *WIFI_NETWORK_SECURITY) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_WIFI_NETWORK_SECURITY[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-	return errors.New("invalid value")
-}
-
-// String implements the fmt.Stringer interface.
-func (e WIFI_NETWORK_SECURITY) String() string {
-	if l, ok := labels_WIFI_NETWORK_SECURITY[e]; ok {
-		return l
-	}
-	return "invalid value"
-}

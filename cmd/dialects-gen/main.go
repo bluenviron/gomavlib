@@ -74,14 +74,7 @@ func downloadJSON(addr string, data interface{}) error {
 func processDialect(commit string, name string) error {
 	fmt.Fprintf(os.Stderr, "[%s]\n", name)
 
-	pkgName := strings.ReplaceAll(strings.ToLower(name), "_", "")
-
-	os.Mkdir(filepath.Join("pkg", "dialects", pkgName), 0o755)
-
-	err := shellCommand(fmt.Sprintf("go run ./cmd/dialect-import --pwd=%s --package=%s --comment=\"%s\" %s",
-		filepath.Join("pkg", "dialects", pkgName),
-		pkgName,
-		"Package "+pkgName+" contains the "+name+" dialect.",
+	err := shellCommand(fmt.Sprintf("go run ../../cmd/dialect-import --link %s",
 		"https://raw.githubusercontent.com/mavlink/mavlink/"+commit+"/message_definitions/v1.0/"+name+".xml",
 	))
 	if err != nil {
@@ -97,6 +90,9 @@ func run() error {
 	if err != nil {
 		return err
 	}
+
+	os.Mkdir(filepath.Join("pkg", "dialects"), 0o755)
+	os.Chdir(filepath.Join("pkg", "dialects"))
 
 	var res struct {
 		Sha string `json:"sha"`
@@ -132,7 +128,7 @@ func run() error {
 	}
 
 	err = writeTemplate(
-		filepath.Join("pkg", "dialects", "package_test.go"),
+		"package_test.go",
 		tplTest,
 		map[string]interface{}{
 			"Dialects": dialects,

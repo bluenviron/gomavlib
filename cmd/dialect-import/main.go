@@ -79,7 +79,7 @@ const (
 )
 
 var labels_{{ .Enum.Name }} = map[{{ .Enum.Name }}]string{
-{{- range .Values }}
+{{- range .Enum.Values }}
     {{ .Name }}: "{{ .Name }}",
 {{- end }}
 }

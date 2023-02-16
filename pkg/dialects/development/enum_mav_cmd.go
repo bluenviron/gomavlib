@@ -390,6 +390,8 @@ const (
 	// Enable the specified standard MAVLink mode.
 	// If the mode is not supported the vehicle should ACK with MAV_RESULT_FAILED.
 	MAV_CMD_DO_SET_STANDARD_MODE MAV_CMD = 262
+	// Allows setting an AT S command of an SiK radio.
+	MAV_CMD_SET_AT_S_PARAM MAV_CMD = 550
 )
 
 var labels_MAV_CMD = map[MAV_CMD]string{
@@ -559,6 +561,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_GROUP_START:                        "MAV_CMD_GROUP_START",
 	MAV_CMD_GROUP_END:                          "MAV_CMD_GROUP_END",
 	MAV_CMD_DO_SET_STANDARD_MODE:               "MAV_CMD_DO_SET_STANDARD_MODE",
+	MAV_CMD_SET_AT_S_PARAM:                     "MAV_CMD_SET_AT_S_PARAM",
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.

@@ -457,6 +457,8 @@ const (
 	// Enable the specified standard MAVLink mode.
 	// If the mode is not supported the vehicle should ACK with MAV_RESULT_FAILED.
 	MAV_CMD_DO_SET_STANDARD_MODE MAV_CMD = 262
+	// Allows setting an AT S command of an SiK radio.
+	MAV_CMD_SET_AT_S_PARAM MAV_CMD = 550
 	// Command to a gimbal manager to control the gimbal tilt and pan angles. It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. A gimbal device is never to react to this command.
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW MAV_CMD = 60002
 	// Command to configure a gimbal manager. A gimbal device is never to react to this command. The selected profile is reported in the STORM32_GIMBAL_MANAGER_STATUS message.
@@ -679,6 +681,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_GROUP_START:                                "MAV_CMD_GROUP_START",
 	MAV_CMD_GROUP_END:                                  "MAV_CMD_GROUP_END",
 	MAV_CMD_DO_SET_STANDARD_MODE:                       "MAV_CMD_DO_SET_STANDARD_MODE",
+	MAV_CMD_SET_AT_S_PARAM:                             "MAV_CMD_SET_AT_S_PARAM",
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW: "MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW",
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP:            "MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP",
 	MAV_CMD_QSHOT_DO_CONFIGURE:                         "MAV_CMD_QSHOT_DO_CONFIGURE",

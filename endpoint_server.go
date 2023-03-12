@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"time"
 
 	"github.com/aler9/gomavlib/pkg/timednetconn"
 	"github.com/aler9/gomavlib/pkg/udplistener"
@@ -12,7 +13,7 @@ import (
 type endpointServerConf interface {
 	isUDP() bool
 	getAddress() string
-	init() (Endpoint, error)
+	init(*Node) (Endpoint, error)
 }
 
 // EndpointTCPServer sets up a endpoint that works with a TCP server.
@@ -49,22 +50,23 @@ func (conf EndpointUDPServer) getAddress() string {
 }
 
 type endpointServer struct {
-	conf     endpointServerConf
-	listener net.Listener
+	conf         endpointServerConf
+	listener     net.Listener
+	writeTimeout time.Duration
 
 	// in
 	terminate chan struct{}
 }
 
-func (conf EndpointTCPServer) init() (Endpoint, error) {
-	return initEndpointServer(conf)
+func (conf EndpointTCPServer) init(node *Node) (Endpoint, error) {
+	return initEndpointServer(node, conf)
 }
 
-func (conf EndpointUDPServer) init() (Endpoint, error) {
-	return initEndpointServer(conf)
+func (conf EndpointUDPServer) init(node *Node) (Endpoint, error) {
+	return initEndpointServer(node, conf)
 }
 
-func initEndpointServer(conf endpointServerConf) (Endpoint, error) {
+func initEndpointServer(node *Node, conf endpointServerConf) (Endpoint, error) {
 	_, _, err := net.SplitHostPort(conf.getAddress())
 	if err != nil {
 		return nil, fmt.Errorf("invalid address")
@@ -81,9 +83,10 @@ func initEndpointServer(conf endpointServerConf) (Endpoint, error) {
 	}
 
 	t := &endpointServer{
-		conf:      conf,
-		listener:  listener,
-		terminate: make(chan struct{}),
+		conf:         conf,
+		writeTimeout: node.conf.WriteTimeout,
+		listener:     listener,
+		terminate:    make(chan struct{}),
 	}
 	return t, nil
 }
@@ -115,7 +118,7 @@ func (t *endpointServer) accept() (string, io.ReadWriteCloser, error) {
 		return "tcp"
 	}(), nconn.RemoteAddr())
 
-	conn := timednetconn.New(netWriteTimeout, nconn)
+	conn := timednetconn.New(t.writeTimeout, nconn)
 
 	return label, conn, nil
 }

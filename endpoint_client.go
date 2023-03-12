@@ -13,7 +13,7 @@ import (
 type endpointClientConf interface {
 	isUDP() bool
 	getAddress() string
-	init() (Endpoint, error)
+	init(*Node) (Endpoint, error)
 }
 
 // EndpointTCPClient sets up a endpoint that works with a TCP client.
@@ -33,8 +33,8 @@ func (conf EndpointTCPClient) getAddress() string {
 	return conf.Address
 }
 
-func (conf EndpointTCPClient) init() (Endpoint, error) {
-	return initEndpointClient(conf)
+func (conf EndpointTCPClient) init(node *Node) (Endpoint, error) {
+	return initEndpointClient(node, conf)
 }
 
 // EndpointUDPClient sets up a endpoint that works with a UDP client.
@@ -51,8 +51,8 @@ func (conf EndpointUDPClient) getAddress() string {
 	return conf.Address
 }
 
-func (conf EndpointUDPClient) init() (Endpoint, error) {
-	return initEndpointClient(conf)
+func (conf EndpointUDPClient) init(node *Node) (Endpoint, error) {
+	return initEndpointClient(node, conf)
 }
 
 type endpointClient struct {
@@ -60,7 +60,7 @@ type endpointClient struct {
 	io.ReadWriteCloser
 }
 
-func initEndpointClient(conf endpointClientConf) (Endpoint, error) {
+func initEndpointClient(node *Node, conf endpointClientConf) (Endpoint, error) {
 	_, _, err := net.SplitHostPort(conf.getAddress())
 	if err != nil {
 		return nil, fmt.Errorf("invalid address")
@@ -79,14 +79,14 @@ func initEndpointClient(conf endpointClientConf) (Endpoint, error) {
 					}
 					return "tcp4"
 				}()
-				timedContext, timedContextClose := context.WithTimeout(ctx, netConnectTimeout)
+				timedContext, timedContextClose := context.WithTimeout(ctx, node.conf.ReadTimeout)
 				nconn, err := (&net.Dialer{}).DialContext(timedContext, network, conf.getAddress())
 				timedContextClose()
 				if err != nil {
 					return nil, err
 				}
 
-				return timednetconn.New(netWriteTimeout, nconn), nil
+				return timednetconn.New(node.conf.WriteTimeout, nconn), nil
 			},
 		),
 	}

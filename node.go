@@ -22,12 +22,6 @@ import (
 	"github.com/aler9/gomavlib/pkg/message"
 )
 
-const (
-	bufferSize        = 512 // frames cannot go beyond len(header) + 255 + len(check) + len(sig)
-	netConnectTimeout = 10 * time.Second
-	netWriteTimeout   = 10 * time.Second
-)
-
 var errTerminated = fmt.Errorf("terminated")
 
 type writeToReq struct {
@@ -82,6 +76,13 @@ type NodeConf struct {
 	StreamRequestEnable bool
 	// (optional) the requested stream frequency in Hz. It defaults to 4.
 	StreamRequestFrequency int
+
+	// (optional) read timeout.
+	// It defaults to 10 seconds.
+	ReadTimeout time.Duration
+	// (optional) write timeout.
+	// It defaults to 5 seconds.
+	WriteTimeout time.Duration
 }
 
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
@@ -140,6 +141,13 @@ func NewNode(conf NodeConf) (*Node, error) {
 		return nil, fmt.Errorf("OutKey requires V2 frames")
 	}
 
+	if conf.ReadTimeout == 0 {
+		conf.ReadTimeout = 10 * time.Second
+	}
+	if conf.WriteTimeout == 0 {
+		conf.WriteTimeout = 5 * time.Second
+	}
+
 	dialectRW, err := func() (*dialect.ReadWriter, error) {
 		if conf.Dialect == nil {
 			return nil, nil
@@ -176,7 +184,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 
 	// endpoints
 	for _, tconf := range conf.Endpoints {
-		tp, err := tconf.init()
+		tp, err := tconf.init(n)
 		if err != nil {
 			closeExisting()
 			return nil, err

@@ -57,12 +57,13 @@ type EndpointUDPBroadcast struct {
 type endpointUDPBroadcast struct {
 	conf          EndpointUDPBroadcast
 	pc            net.PacketConn
+	writeTimeout  time.Duration
 	broadcastAddr net.Addr
 
 	terminate chan struct{}
 }
 
-func (conf EndpointUDPBroadcast) init() (Endpoint, error) {
+func (conf EndpointUDPBroadcast) init(node *Node) (Endpoint, error) {
 	ipString, port, err := net.SplitHostPort(conf.BroadcastAddress)
 	if err != nil {
 		return nil, fmt.Errorf("invalid broadcast address")
@@ -99,6 +100,7 @@ func (conf EndpointUDPBroadcast) init() (Endpoint, error) {
 	t := &endpointUDPBroadcast{
 		conf:          conf,
 		pc:            pc,
+		writeTimeout:  node.conf.WriteTimeout,
 		broadcastAddr: &net.UDPAddr{IP: broadcastIP, Port: iport},
 		terminate:     make(chan struct{}),
 	}
@@ -135,7 +137,7 @@ func (t *endpointUDPBroadcast) Read(buf []byte) (int, error) {
 }
 
 func (t *endpointUDPBroadcast) Write(buf []byte) (int, error) {
-	err := t.pc.SetWriteDeadline(time.Now().Add(netWriteTimeout))
+	err := t.pc.SetWriteDeadline(time.Now().Add(t.writeTimeout))
 	if err != nil {
 		return 0, err
 	}

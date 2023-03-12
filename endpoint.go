@@ -6,7 +6,7 @@ import (
 
 // EndpointConf is the interface implemented by all endpoint configurations.
 type EndpointConf interface {
-	init() (Endpoint, error)
+	init(*Node) (Endpoint, error)
 }
 
 // Endpoint is an endpoint, which can create Channels.

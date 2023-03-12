@@ -1,4 +1,3 @@
-
 # gomavlib
 
 [![Test](https://github.com/aler9/gomavlib/workflows/test/badge.svg)](https://github.com/aler9/gomavlib/actions?query=workflow:test)

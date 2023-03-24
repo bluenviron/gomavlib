@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/development"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/development"
 )
 
 // Checksum for the current mission, rally point or geofence plan, or for the "combined" plan (a GCS can use these checksums to determine if it has matching plans).

@@ -3,7 +3,7 @@
 package uavionix
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
 // Describe a trajectory using an array of up-to 5 waypoints in the local frame (MAV_FRAME_LOCAL_NED).

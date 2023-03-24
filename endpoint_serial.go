@@ -6,7 +6,7 @@ import (
 
 	"github.com/tarm/serial"
 
-	"github.com/aler9/gomavlib/pkg/autoreconnector"
+	"github.com/bluenviron/gomavlib/v2/pkg/autoreconnector"
 )
 
 var serialOpenFunc = func(device string, baud int) (io.ReadWriteCloser, error) {

@@ -3,7 +3,7 @@
 package paparazzi
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
 // Barometer readings for 2nd barometer

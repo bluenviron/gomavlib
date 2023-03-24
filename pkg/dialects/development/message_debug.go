@@ -3,7 +3,7 @@
 package development
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
 // Send a debug value. The index is used to discriminate between values. These values show up in the plot of QGroundControl as DEBUG N.

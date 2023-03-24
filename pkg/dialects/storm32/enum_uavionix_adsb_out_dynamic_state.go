@@ -3,7 +3,7 @@
 package storm32
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/uavionix"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/uavionix"
 )
 
 // State flags for ADS-B transponder dynamic report

@@ -3,7 +3,7 @@
 package pythonarraytest
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
 // Actions for reading and writing plan information (mission, rally points, geofence) between persistent and volatile storage when using MAV_CMD_PREFLIGHT_STORAGE.

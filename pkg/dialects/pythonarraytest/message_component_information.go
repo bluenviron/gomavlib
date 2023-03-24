@@ -3,7 +3,7 @@
 package pythonarraytest
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
 // Component information message, which may be requested using MAV_CMD_REQUEST_MESSAGE.

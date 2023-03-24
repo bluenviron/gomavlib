@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/aler9/gomavlib/pkg/message"
-	"github.com/aler9/gomavlib/pkg/x25"
+	"github.com/bluenviron/gomavlib/v2/pkg/message"
+	"github.com/bluenviron/gomavlib/v2/pkg/x25"
 )
 
 const (

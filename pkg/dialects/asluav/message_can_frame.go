@@ -3,7 +3,7 @@
 package asluav
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
 // A forwarded CAN frame as requested by MAV_CMD_CAN_FORWARD.

@@ -3,7 +3,7 @@
 package storm32
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/ardupilotmega"
 )
 
 // Send a block of log data to remote location.

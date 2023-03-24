@@ -6,8 +6,8 @@ import (
 	"io"
 	"net"
 
-	"github.com/aler9/gomavlib/pkg/autoreconnector"
-	"github.com/aler9/gomavlib/pkg/timednetconn"
+	"github.com/bluenviron/gomavlib/v2/pkg/autoreconnector"
+	"github.com/bluenviron/gomavlib/v2/pkg/timednetconn"
 )
 
 type endpointClientConf interface {

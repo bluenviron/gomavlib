@@ -3,7 +3,7 @@
 package uavionix
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
 // ACK / NACK / ERROR values as a result of MAV_CMDs and for mission item transmission.

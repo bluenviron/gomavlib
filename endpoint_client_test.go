@@ -6,10 +6,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/aler9/gomavlib/pkg/dialect"
-	"github.com/aler9/gomavlib/pkg/frame"
-	"github.com/aler9/gomavlib/pkg/message"
-	"github.com/aler9/gomavlib/pkg/udplistener"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v2/pkg/frame"
+	"github.com/bluenviron/gomavlib/v2/pkg/message"
+	"github.com/bluenviron/gomavlib/v2/pkg/udplistener"
 )
 
 var _ endpointChannelSingle = (*endpointClient)(nil)

@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/development"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/development"
 )
 
 // Basic component information data. Should be requested using MAV_CMD_REQUEST_MESSAGE on startup, or when required.

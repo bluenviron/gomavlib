@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/uavionix"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/uavionix"
 )
 
 // Transceiver RF control flags for ADS-B transponder dynamic reports

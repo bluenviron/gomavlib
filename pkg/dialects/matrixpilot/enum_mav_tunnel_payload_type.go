@@ -3,7 +3,7 @@
 package matrixpilot
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
 type MAV_TUNNEL_PAYLOAD_TYPE = common.MAV_TUNNEL_PAYLOAD_TYPE

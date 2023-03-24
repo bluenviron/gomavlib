@@ -22,9 +22,9 @@ import (
 
     "github.com/stretchr/testify/require"
 
-    "github.com/aler9/gomavlib/pkg/dialect"
+    "github.com/bluenviron/gomavlib/v2/pkg/dialect"
 {{- range .Dialects }}
-	"github.com/aler9/gomavlib/pkg/dialects/{{ . }}"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/{{ . }}"
 {{- end }}
 )
 

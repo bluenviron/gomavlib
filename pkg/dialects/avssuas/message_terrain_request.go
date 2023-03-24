@@ -3,7 +3,7 @@
 package avssuas
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
 // Request for terrain data and terrain status. See terrain protocol docs: https://mavlink.io/en/services/terrain.html

@@ -1,4 +1,4 @@
-module github.com/aler9/gomavlib
+module github.com/bluenviron/gomavlib/v2
 
 go 1.18
 

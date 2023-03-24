@@ -3,7 +3,7 @@
 package development
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
 // Bitmask of (optional) autopilot capabilities (64 bit). If a bit is set, the autopilot supports this capability.

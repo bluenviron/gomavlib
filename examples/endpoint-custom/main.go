@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/aler9/gomavlib"
-	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v2"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/ardupilotmega"
 )
 
 // this example shows how to:

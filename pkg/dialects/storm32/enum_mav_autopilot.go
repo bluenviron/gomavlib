@@ -3,7 +3,7 @@
 package storm32
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/minimal"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/minimal"
 )
 
 // Micro air vehicle / autopilot classes. This identifies the individual model.

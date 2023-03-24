@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
 // Bind a RC channel to a parameter. The parameter should change according to the RC channel value.

@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/ardupilotmega"
 )
 
 // A mapping of plane flight modes for custom_mode field of heartbeat.

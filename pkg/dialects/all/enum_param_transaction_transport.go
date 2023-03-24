@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/development"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/development"
 )
 
 // Possible transport layers to set and get parameters via mavlink during a parameter transaction.

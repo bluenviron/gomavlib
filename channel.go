@@ -4,8 +4,8 @@ import (
 	"io"
 	"math/rand"
 
-	"github.com/aler9/gomavlib/pkg/frame"
-	"github.com/aler9/gomavlib/pkg/message"
+	"github.com/bluenviron/gomavlib/v2/pkg/frame"
+	"github.com/bluenviron/gomavlib/v2/pkg/message"
 )
 
 func randomByte() byte {

@@ -3,7 +3,7 @@
 package asluav
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
 // Telemetry of power generation system. Alternator or mechanical generator.

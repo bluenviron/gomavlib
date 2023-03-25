@@ -81,7 +81,7 @@ https://pkg.go.dev/github.com/bluenviron/gomavlib/v2#pkg-index
 Standard dialects are provided in the `pkg/dialects/` folder, but it's also possible to use custom dialects, that can be converted into Go files by running:
 
 ```
-go get github.com/bluenviron/gomavlib/v2/cmd/dialect-import
+go install github.com/bluenviron/gomavlib/v2/cmd/dialect-import@latest
 dialect-import my_dialect.xml
 ```
 

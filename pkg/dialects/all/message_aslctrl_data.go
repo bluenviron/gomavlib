@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/asluav"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/asluav"
 )
 
 // ASL-fixed-wing controller data

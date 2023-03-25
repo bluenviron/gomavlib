@@ -3,7 +3,7 @@
 package ardupilotmega
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
 // These encode the sensors whose status is sent as part of the SYS_STATUS message.

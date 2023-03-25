@@ -3,7 +3,7 @@
 package storm32
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/cubepilot"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/cubepilot"
 )
 
 // Information about video stream

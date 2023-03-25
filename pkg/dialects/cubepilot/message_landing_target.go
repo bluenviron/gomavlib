@@ -3,7 +3,7 @@
 package cubepilot
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
 // The location of a landing target. See: https://mavlink.io/en/services/landing_target.html

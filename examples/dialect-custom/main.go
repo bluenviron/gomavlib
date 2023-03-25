@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/aler9/gomavlib"
-	"github.com/aler9/gomavlib/pkg/dialect"
-	"github.com/aler9/gomavlib/pkg/message"
+	"github.com/bluenviron/gomavlib/v2"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v2/pkg/message"
 )
 
 // this example shows how to:

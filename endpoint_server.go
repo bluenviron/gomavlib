@@ -6,8 +6,8 @@ import (
 	"net"
 	"time"
 
-	"github.com/aler9/gomavlib/pkg/timednetconn"
-	"github.com/aler9/gomavlib/pkg/udplistener"
+	"github.com/bluenviron/gomavlib/v2/pkg/timednetconn"
+	"github.com/bluenviron/gomavlib/v2/pkg/udplistener"
 )
 
 type endpointServerConf interface {

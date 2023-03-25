@@ -3,7 +3,7 @@
 package cubepilot
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
 type FENCE_BREACH = common.FENCE_BREACH

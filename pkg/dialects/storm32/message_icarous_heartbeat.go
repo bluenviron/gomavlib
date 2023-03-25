@@ -3,7 +3,7 @@
 package storm32
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/icarous"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/icarous"
 )
 
 // ICAROUS heartbeat

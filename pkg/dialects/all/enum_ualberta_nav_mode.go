@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/ualberta"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/ualberta"
 )
 
 // Navigation filter mode

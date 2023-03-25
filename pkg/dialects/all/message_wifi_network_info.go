@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/development"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/development"
 )
 
 // Detected WiFi network status information. This message is sent per each WiFi network detected in range with known SSID and general status parameters.

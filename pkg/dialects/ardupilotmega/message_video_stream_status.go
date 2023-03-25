@@ -3,7 +3,7 @@
 package ardupilotmega
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
 // Information about the status of a video stream. It may be requested using MAV_CMD_REQUEST_MESSAGE.

@@ -3,7 +3,7 @@
 package ardupilotmega
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
 // Response to a REQUEST_EVENT in case of an error (e.g. the event is not available anymore).

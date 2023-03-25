@@ -3,7 +3,7 @@
 package storm32
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/ardupilotmega"
 )
 
 // Status of third AHRS filter if available. This is for ANU research group (Ali and Sean).

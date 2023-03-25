@@ -1,17 +1,17 @@
 # gomavlib
 
-[![Test](https://github.com/aler9/gomavlib/workflows/test/badge.svg)](https://github.com/aler9/gomavlib/actions?query=workflow:test)
-[![Lint](https://github.com/aler9/gomavlib/workflows/lint/badge.svg)](https://github.com/aler9/gomavlib/actions?query=workflow:lint)
-[![Dialects](https://github.com/aler9/gomavlib/workflows/dialects/badge.svg)](https://github.com/aler9/gomavlib/actions?query=workflow:dialects)
-[![Go Report Card](https://goreportcard.com/badge/github.com/aler9/gomavlib)](https://goreportcard.com/report/github.com/aler9/gomavlib)
-[![CodeCov](https://codecov.io/gh/aler9/gomavlib/branch/main/graph/badge.svg)](https://app.codecov.io/gh/aler9/gomavlib/branch/main)
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/aler9/gomavlib)](https://pkg.go.dev/github.com/aler9/gomavlib#pkg-index)
+[![Test](https://github.com/bluenviron/gomavlib/workflows/test/badge.svg)](https://github.com/bluenviron/gomavlib/actions?query=workflow:test)
+[![Lint](https://github.com/bluenviron/gomavlib/workflows/lint/badge.svg)](https://github.com/bluenviron/gomavlib/actions?query=workflow:lint)
+[![Dialects](https://github.com/bluenviron/gomavlib/workflows/dialects/badge.svg)](https://github.com/bluenviron/gomavlib/actions?query=workflow:dialects)
+[![Go Report Card](https://goreportcard.com/badge/github.com/bluenviron/gomavlib)](https://goreportcard.com/report/github.com/bluenviron/gomavlib)
+[![CodeCov](https://codecov.io/gh/bluenviron/gomavlib/branch/main/graph/badge.svg)](https://app.codecov.io/gh/bluenviron/gomavlib/branch/main)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/bluenviron/gomavlib/v2)](https://pkg.go.dev/github.com/bluenviron/gomavlib/v2#pkg-index)
 
 gomavlib is a library that implements the Mavlink protocol (2.0 and 1.0) in the Go programming language. It can interact with Mavlink-capable devices through a serial port, UDP, TCP or a custom transport, and it can be used to power UGVs, UAVs, ground stations, monitoring systems or routers.
 
 Mavlink is a lightweight and transport-independent protocol that is mostly used to communicate with unmanned ground vehicles (UGV) and unmanned aerial vehicles (UAV, drones, quadcopters, multirotors). It is supported by the most popular open-source flight controllers (Ardupilot and PX4).
 
-This library powers the [**mavp2p**](https://github.com/aler9/mavp2p) router.
+This library powers the [**mavp2p**](https://github.com/bluenviron/mavp2p) router.
 
 Features:
 
@@ -26,12 +26,6 @@ Features:
 * Send automatic stream requests to Ardupilot devices (disabled by default)
 * Support both domain names and IPs
 * Examples provided for every feature, comprehensive test suite, continuous integration
-
-## Important announcement
-
-my main open source projects are being transferred to the [bluenviron organization](https://github.com/bluenviron), in order to allow the community to maintain and evolve the code regardless of my personal availability.
-
-In the next months, the repository name will be changed accordingly.
 
 ## Table of contents
 
@@ -80,14 +74,14 @@ In the next months, the repository name will be changed accordingly.
 
 ## API Documentation
 
-https://pkg.go.dev/github.com/aler9/gomavlib#pkg-index
+https://pkg.go.dev/github.com/bluenviron/gomavlib/v2#pkg-index
 
 ## Dialect generation
 
 Standard dialects are provided in the `pkg/dialects/` folder, but it's also possible to use custom dialects, that can be converted into Go files by running:
 
 ```
-go get github.com/aler9/gomavlib/cmd/dialect-import
+go get github.com/bluenviron/gomavlib/v2/cmd/dialect-import
 dialect-import my_dialect.xml
 ```
 
@@ -112,7 +106,7 @@ make test
 
 Related projects
 
-* https://github.com/aler9/mavp2p
+* https://github.com/bluenviron/mavp2p
 
 Other Go libraries
 

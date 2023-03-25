@@ -5,9 +5,9 @@ import (
 	"io"
 	"log"
 
-	"github.com/aler9/gomavlib/pkg/dialect"
-	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
-	"github.com/aler9/gomavlib/pkg/frame"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v2/pkg/frame"
 )
 
 // if NewNode() is not flexible enough, the library provides a low-level

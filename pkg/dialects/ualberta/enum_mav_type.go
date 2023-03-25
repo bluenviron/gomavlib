@@ -3,7 +3,7 @@
 package ualberta
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/minimal"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/minimal"
 )
 
 // MAVLINK component type reported in HEARTBEAT message. Flight controllers must report the type of the vehicle on which they are mounted (e.g. MAV_TYPE_OCTOROTOR). All other components must report a value appropriate for their type (e.g. a camera must use MAV_TYPE_CAMERA).

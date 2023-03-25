@@ -3,7 +3,7 @@ package dialect
 import (
 	"fmt"
 
-	"github.com/aler9/gomavlib/pkg/message"
+	"github.com/bluenviron/gomavlib/v2/pkg/message"
 )
 
 // ReadWriter is a Dialect Reader and Writer.

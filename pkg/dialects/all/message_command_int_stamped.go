@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/asluav"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/asluav"
 )
 
 // Message encoding a command with parameters as scaled integers and additional metadata. Scaling depends on the actual command value.

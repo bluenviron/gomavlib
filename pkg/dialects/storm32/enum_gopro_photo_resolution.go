@@ -3,7 +3,7 @@
 package storm32
 
 import (
-	"github.com/aler9/gomavlib/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/ardupilotmega"
 )
 
 type GOPRO_PHOTO_RESOLUTION = ardupilotmega.GOPRO_PHOTO_RESOLUTION

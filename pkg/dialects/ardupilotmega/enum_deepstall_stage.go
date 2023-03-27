@@ -3,7 +3,8 @@
 package ardupilotmega
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Deepstall flight stage.
@@ -38,27 +39,38 @@ var labels_DEEPSTALL_STAGE = map[DEEPSTALL_STAGE]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e DEEPSTALL_STAGE) MarshalText() ([]byte, error) {
-	if l, ok := labels_DEEPSTALL_STAGE[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_DEEPSTALL_STAGE {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_DEEPSTALL_STAGE = map[string]DEEPSTALL_STAGE{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *DEEPSTALL_STAGE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_DEEPSTALL_STAGE[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask DEEPSTALL_STAGE
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_DEEPSTALL_STAGE {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e DEEPSTALL_STAGE) String() string {
-	if l, ok := labels_DEEPSTALL_STAGE[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

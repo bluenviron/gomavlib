@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Indicates the ESC connection type.
@@ -35,27 +36,38 @@ var labels_ESC_CONNECTION_TYPE = map[ESC_CONNECTION_TYPE]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ESC_CONNECTION_TYPE) MarshalText() ([]byte, error) {
-	if l, ok := labels_ESC_CONNECTION_TYPE[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_ESC_CONNECTION_TYPE {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_ESC_CONNECTION_TYPE = map[string]ESC_CONNECTION_TYPE{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ESC_CONNECTION_TYPE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_ESC_CONNECTION_TYPE[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask ESC_CONNECTION_TYPE
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_ESC_CONNECTION_TYPE {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e ESC_CONNECTION_TYPE) String() string {
-	if l, ok := labels_ESC_CONNECTION_TYPE[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

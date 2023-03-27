@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // RTK GPS baseline coordinate system, used for RTK corrections
@@ -23,27 +24,38 @@ var labels_RTK_BASELINE_COORDINATE_SYSTEM = map[RTK_BASELINE_COORDINATE_SYSTEM]s
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e RTK_BASELINE_COORDINATE_SYSTEM) MarshalText() ([]byte, error) {
-	if l, ok := labels_RTK_BASELINE_COORDINATE_SYSTEM[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_RTK_BASELINE_COORDINATE_SYSTEM {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_RTK_BASELINE_COORDINATE_SYSTEM = map[string]RTK_BASELINE_COORDINATE_SYSTEM{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *RTK_BASELINE_COORDINATE_SYSTEM) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_RTK_BASELINE_COORDINATE_SYSTEM[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask RTK_BASELINE_COORDINATE_SYSTEM
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_RTK_BASELINE_COORDINATE_SYSTEM {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e RTK_BASELINE_COORDINATE_SYSTEM) String() string {
-	if l, ok := labels_RTK_BASELINE_COORDINATE_SYSTEM[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

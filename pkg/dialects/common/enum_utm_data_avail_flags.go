@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Flags for the global position report.
@@ -41,27 +42,38 @@ var labels_UTM_DATA_AVAIL_FLAGS = map[UTM_DATA_AVAIL_FLAGS]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UTM_DATA_AVAIL_FLAGS) MarshalText() ([]byte, error) {
-	if l, ok := labels_UTM_DATA_AVAIL_FLAGS[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_UTM_DATA_AVAIL_FLAGS {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_UTM_DATA_AVAIL_FLAGS = map[string]UTM_DATA_AVAIL_FLAGS{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UTM_DATA_AVAIL_FLAGS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_UTM_DATA_AVAIL_FLAGS[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask UTM_DATA_AVAIL_FLAGS
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_UTM_DATA_AVAIL_FLAGS {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e UTM_DATA_AVAIL_FLAGS) String() string {
-	if l, ok := labels_UTM_DATA_AVAIL_FLAGS[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

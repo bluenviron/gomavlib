@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 type MAG_CAL_STATUS uint32
@@ -32,27 +33,38 @@ var labels_MAG_CAL_STATUS = map[MAG_CAL_STATUS]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAG_CAL_STATUS) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAG_CAL_STATUS[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_MAG_CAL_STATUS {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_MAG_CAL_STATUS = map[string]MAG_CAL_STATUS{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAG_CAL_STATUS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAG_CAL_STATUS[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask MAG_CAL_STATUS
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_MAG_CAL_STATUS {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAG_CAL_STATUS) String() string {
-	if l, ok := labels_MAG_CAL_STATUS[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

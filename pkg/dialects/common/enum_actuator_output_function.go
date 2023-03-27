@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Actuator output function. Values greater or equal to 1000 are autopilot-specific.
@@ -116,27 +117,38 @@ var labels_ACTUATOR_OUTPUT_FUNCTION = map[ACTUATOR_OUTPUT_FUNCTION]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ACTUATOR_OUTPUT_FUNCTION) MarshalText() ([]byte, error) {
-	if l, ok := labels_ACTUATOR_OUTPUT_FUNCTION[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_ACTUATOR_OUTPUT_FUNCTION {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_ACTUATOR_OUTPUT_FUNCTION = map[string]ACTUATOR_OUTPUT_FUNCTION{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ACTUATOR_OUTPUT_FUNCTION) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_ACTUATOR_OUTPUT_FUNCTION[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask ACTUATOR_OUTPUT_FUNCTION
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_ACTUATOR_OUTPUT_FUNCTION {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e ACTUATOR_OUTPUT_FUNCTION) String() string {
-	if l, ok := labels_ACTUATOR_OUTPUT_FUNCTION[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

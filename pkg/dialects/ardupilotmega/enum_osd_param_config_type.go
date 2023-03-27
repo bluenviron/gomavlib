@@ -3,7 +3,8 @@
 package ardupilotmega
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // The type of parameter for the OSD parameter editor.
@@ -35,27 +36,38 @@ var labels_OSD_PARAM_CONFIG_TYPE = map[OSD_PARAM_CONFIG_TYPE]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e OSD_PARAM_CONFIG_TYPE) MarshalText() ([]byte, error) {
-	if l, ok := labels_OSD_PARAM_CONFIG_TYPE[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_OSD_PARAM_CONFIG_TYPE {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_OSD_PARAM_CONFIG_TYPE = map[string]OSD_PARAM_CONFIG_TYPE{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *OSD_PARAM_CONFIG_TYPE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_OSD_PARAM_CONFIG_TYPE[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask OSD_PARAM_CONFIG_TYPE
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_OSD_PARAM_CONFIG_TYPE {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e OSD_PARAM_CONFIG_TYPE) String() string {
-	if l, ok := labels_OSD_PARAM_CONFIG_TYPE[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Possible responses from a CELLULAR_CONFIG message.
@@ -32,27 +33,38 @@ var labels_CELLULAR_CONFIG_RESPONSE = map[CELLULAR_CONFIG_RESPONSE]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CELLULAR_CONFIG_RESPONSE) MarshalText() ([]byte, error) {
-	if l, ok := labels_CELLULAR_CONFIG_RESPONSE[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_CELLULAR_CONFIG_RESPONSE {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_CELLULAR_CONFIG_RESPONSE = map[string]CELLULAR_CONFIG_RESPONSE{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CELLULAR_CONFIG_RESPONSE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_CELLULAR_CONFIG_RESPONSE[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask CELLULAR_CONFIG_RESPONSE
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_CELLULAR_CONFIG_RESPONSE {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e CELLULAR_CONFIG_RESPONSE) String() string {
-	if l, ok := labels_CELLULAR_CONFIG_RESPONSE[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

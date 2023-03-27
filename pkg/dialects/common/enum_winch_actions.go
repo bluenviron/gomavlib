@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Winch actions.
@@ -47,27 +48,38 @@ var labels_WINCH_ACTIONS = map[WINCH_ACTIONS]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e WINCH_ACTIONS) MarshalText() ([]byte, error) {
-	if l, ok := labels_WINCH_ACTIONS[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_WINCH_ACTIONS {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_WINCH_ACTIONS = map[string]WINCH_ACTIONS{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *WINCH_ACTIONS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_WINCH_ACTIONS[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask WINCH_ACTIONS
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_WINCH_ACTIONS {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e WINCH_ACTIONS) String() string {
-	if l, ok := labels_WINCH_ACTIONS[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

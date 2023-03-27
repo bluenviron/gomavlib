@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Gimbal device (low level) error flags (bitmap, 0 means no error)
@@ -47,27 +48,38 @@ var labels_GIMBAL_DEVICE_ERROR_FLAGS = map[GIMBAL_DEVICE_ERROR_FLAGS]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GIMBAL_DEVICE_ERROR_FLAGS) MarshalText() ([]byte, error) {
-	if l, ok := labels_GIMBAL_DEVICE_ERROR_FLAGS[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_GIMBAL_DEVICE_ERROR_FLAGS {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_GIMBAL_DEVICE_ERROR_FLAGS = map[string]GIMBAL_DEVICE_ERROR_FLAGS{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GIMBAL_DEVICE_ERROR_FLAGS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_GIMBAL_DEVICE_ERROR_FLAGS[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask GIMBAL_DEVICE_ERROR_FLAGS
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_GIMBAL_DEVICE_ERROR_FLAGS {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e GIMBAL_DEVICE_ERROR_FLAGS) String() string {
-	if l, ok := labels_GIMBAL_DEVICE_ERROR_FLAGS[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

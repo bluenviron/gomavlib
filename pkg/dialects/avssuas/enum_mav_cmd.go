@@ -3,7 +3,8 @@
 package avssuas
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Commands to be executed by the MAV. They can be executed on user request, or as part of a mission script. If the action is used in a mission, the parameter mapping to the waypoint/mission message is as follows: Param 1, Param 2, Param 3, Param 4, X: Param 5, Y:Param 6, Z:Param 7. This command list is similar what ARINC 424 is for commercial aircraft: A data format how to interpret waypoint/mission data. NaN and INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current yaw or latitude rather than a specific value). See https://mavlink.io/en/guide/xml_schema.html#MAV_CMD for information about the structure of the MAV_CMD entries
@@ -546,27 +547,38 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_CMD) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_CMD[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_MAV_CMD {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_MAV_CMD = map[string]MAV_CMD{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_CMD) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_CMD[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask MAV_CMD
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_MAV_CMD {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_CMD) String() string {
-	if l, ok := labels_MAV_CMD[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // These flags are used in the AIS_VESSEL.fields bitmask to indicate validity of data in the other message fields. When set, the data is valid.
@@ -50,27 +51,38 @@ var labels_AIS_FLAGS = map[AIS_FLAGS]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e AIS_FLAGS) MarshalText() ([]byte, error) {
-	if l, ok := labels_AIS_FLAGS[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_AIS_FLAGS {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_AIS_FLAGS = map[string]AIS_FLAGS{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *AIS_FLAGS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_AIS_FLAGS[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask AIS_FLAGS
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_AIS_FLAGS {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e AIS_FLAGS) String() string {
-	if l, ok := labels_AIS_FLAGS[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

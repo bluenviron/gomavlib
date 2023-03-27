@@ -61,7 +61,7 @@ package {{ .PkgName }}
 {{- if .Link }}
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/{{ .Enum.DefName }}"
+    "github.com/bluenviron/gomavlib/v2/pkg/dialects/{{ .Enum.DefName }}"
 )
 
 {{- range .Enum.Description }}
@@ -70,19 +70,20 @@ import (
 type {{ .Enum.Name }} = {{ .Enum.DefName }}.{{ .Enum.Name }}
 
 const (
-	{{- $en := .Enum }}
-	{{- range .Enum.Values }}
-	{{- range .Description }}
-		// {{ . }}
-	{{- end }}
-		{{ .Name }} {{ $en.Name }} = {{ $en.DefName }}.{{ .Name }}
-	{{- end }}
+    {{- $en := .Enum }}
+    {{- range .Enum.Values }}
+    {{- range .Description }}
+        // {{ . }}
+    {{- end }}
+        {{ .Name }} {{ $en.Name }} = {{ $en.DefName }}.{{ .Name }}
+    {{- end }}
 )
 
 {{- else }}
 
 import (
-    "errors"
+    "strings"
+    "fmt"
 )
 
 {{- range .Enum.Description }}
@@ -108,33 +109,41 @@ var labels_{{ .Enum.Name }} = map[{{ .Enum.Name }}]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e {{ .Enum.Name }}) MarshalText() ([]byte, error) {
-    if l, ok := labels_{{ .Enum.Name }}[e]; ok {
-        return []byte(l), nil
+    var names []string
+    for mask, label := range labels_{{ .Enum.Name }} {
+        if e&mask == mask {
+            names = append(names, label)
+        }
     }
-    return nil, errors.New("invalid value")
+    return []byte(strings.Join(names, " | ")), nil
 }
 
-var reverseLabels_{{ .Enum.Name }} = map[string]{{ .Enum.Name }}{
-{{- range .Values }}
-    "{{ .Name }}": {{ .Name }},
-{{- end }}
-}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *{{ .Enum.Name }}) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_{{ .Enum.Name }}[string(text)]; ok {
-		*e = rl
-		return nil
-	}
-    return errors.New("invalid value")
+    labels := strings.Split(string(text), " | ")
+    var mask {{ .Enum.Name }}
+    for _, label := range labels {
+        found := false
+        for value, l := range labels_{{ .Enum.Name }} {
+            if l == label {
+                mask |= value
+                found = true
+                break
+            }
+        }
+        if !found {
+            return fmt.Errorf("invalid label '%s'", label)
+        }
+    }
+    *e = mask
+    return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e {{ .Enum.Name }}) String() string {
-    if l, ok := labels_{{ .Enum.Name }}[e]; ok {
-        return l
-    }
-	return "invalid value"
+    val, _ := e.MarshalText()
+    return string(val)
 }
 {{- end }}
 `))
@@ -147,7 +156,7 @@ package {{ .PkgName }}
 {{- if .Link }}
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/{{ .Msg.DefName }}"
+    "github.com/bluenviron/gomavlib/v2/pkg/dialects/{{ .Msg.DefName }}"
 )
 
 {{- range .Msg.Description }}

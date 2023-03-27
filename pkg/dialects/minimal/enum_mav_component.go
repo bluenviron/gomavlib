@@ -3,7 +3,8 @@
 package minimal
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Component ids (values) for the different types and instances of onboard hardware/software that might make up a MAVLink system (autopilot, cameras, servos, GPS systems, avoidance systems etc.).
@@ -424,27 +425,38 @@ var labels_MAV_COMPONENT = map[MAV_COMPONENT]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_COMPONENT) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_COMPONENT[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_MAV_COMPONENT {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_MAV_COMPONENT = map[string]MAV_COMPONENT{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_COMPONENT[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask MAV_COMPONENT
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_MAV_COMPONENT {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_COMPONENT) String() string {
-	if l, ok := labels_MAV_COMPONENT[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

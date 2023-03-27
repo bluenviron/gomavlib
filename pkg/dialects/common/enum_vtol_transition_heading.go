@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Direction of VTOL transition
@@ -32,27 +33,38 @@ var labels_VTOL_TRANSITION_HEADING = map[VTOL_TRANSITION_HEADING]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e VTOL_TRANSITION_HEADING) MarshalText() ([]byte, error) {
-	if l, ok := labels_VTOL_TRANSITION_HEADING[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_VTOL_TRANSITION_HEADING {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_VTOL_TRANSITION_HEADING = map[string]VTOL_TRANSITION_HEADING{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *VTOL_TRANSITION_HEADING) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_VTOL_TRANSITION_HEADING[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask VTOL_TRANSITION_HEADING
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_VTOL_TRANSITION_HEADING {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e VTOL_TRANSITION_HEADING) String() string {
-	if l, ok := labels_VTOL_TRANSITION_HEADING[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

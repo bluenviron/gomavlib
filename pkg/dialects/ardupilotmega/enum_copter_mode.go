@@ -3,7 +3,8 @@
 package ardupilotmega
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // A mapping of copter flight modes for custom_mode field of heartbeat.
@@ -67,27 +68,38 @@ var labels_COPTER_MODE = map[COPTER_MODE]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e COPTER_MODE) MarshalText() ([]byte, error) {
-	if l, ok := labels_COPTER_MODE[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_COPTER_MODE {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_COPTER_MODE = map[string]COPTER_MODE{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *COPTER_MODE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_COPTER_MODE[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask COPTER_MODE
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_COPTER_MODE {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e COPTER_MODE) String() string {
-	if l, ok := labels_COPTER_MODE[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

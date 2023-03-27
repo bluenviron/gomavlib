@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Enable axes that will be tuned via autotuning. Used in MAV_CMD_DO_AUTOTUNE_ENABLE.
@@ -29,27 +30,38 @@ var labels_AUTOTUNE_AXIS = map[AUTOTUNE_AXIS]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e AUTOTUNE_AXIS) MarshalText() ([]byte, error) {
-	if l, ok := labels_AUTOTUNE_AXIS[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_AUTOTUNE_AXIS {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_AUTOTUNE_AXIS = map[string]AUTOTUNE_AXIS{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *AUTOTUNE_AXIS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_AUTOTUNE_AXIS[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask AUTOTUNE_AXIS
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_AUTOTUNE_AXIS {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e AUTOTUNE_AXIS) String() string {
-	if l, ok := labels_AUTOTUNE_AXIS[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

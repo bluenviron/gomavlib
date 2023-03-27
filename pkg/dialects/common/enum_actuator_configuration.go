@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Actuator configuration, used to change a setting on an actuator. Component information metadata can be used to know which outputs support which commands.
@@ -35,27 +36,38 @@ var labels_ACTUATOR_CONFIGURATION = map[ACTUATOR_CONFIGURATION]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ACTUATOR_CONFIGURATION) MarshalText() ([]byte, error) {
-	if l, ok := labels_ACTUATOR_CONFIGURATION[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_ACTUATOR_CONFIGURATION {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_ACTUATOR_CONFIGURATION = map[string]ACTUATOR_CONFIGURATION{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ACTUATOR_CONFIGURATION) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_ACTUATOR_CONFIGURATION[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask ACTUATOR_CONFIGURATION
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_ACTUATOR_CONFIGURATION {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e ACTUATOR_CONFIGURATION) String() string {
-	if l, ok := labels_ACTUATOR_CONFIGURATION[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

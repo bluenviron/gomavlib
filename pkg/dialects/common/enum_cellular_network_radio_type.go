@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Cellular network radio type
@@ -27,27 +28,38 @@ var labels_CELLULAR_NETWORK_RADIO_TYPE = map[CELLULAR_NETWORK_RADIO_TYPE]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CELLULAR_NETWORK_RADIO_TYPE) MarshalText() ([]byte, error) {
-	if l, ok := labels_CELLULAR_NETWORK_RADIO_TYPE[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_CELLULAR_NETWORK_RADIO_TYPE {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_CELLULAR_NETWORK_RADIO_TYPE = map[string]CELLULAR_NETWORK_RADIO_TYPE{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CELLULAR_NETWORK_RADIO_TYPE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_CELLULAR_NETWORK_RADIO_TYPE[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask CELLULAR_NETWORK_RADIO_TYPE
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_CELLULAR_NETWORK_RADIO_TYPE {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e CELLULAR_NETWORK_RADIO_TYPE) String() string {
-	if l, ok := labels_CELLULAR_NETWORK_RADIO_TYPE[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

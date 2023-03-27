@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 type NAV_VTOL_LAND_OPTIONS uint32
@@ -26,27 +27,38 @@ var labels_NAV_VTOL_LAND_OPTIONS = map[NAV_VTOL_LAND_OPTIONS]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e NAV_VTOL_LAND_OPTIONS) MarshalText() ([]byte, error) {
-	if l, ok := labels_NAV_VTOL_LAND_OPTIONS[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_NAV_VTOL_LAND_OPTIONS {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_NAV_VTOL_LAND_OPTIONS = map[string]NAV_VTOL_LAND_OPTIONS{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *NAV_VTOL_LAND_OPTIONS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_NAV_VTOL_LAND_OPTIONS[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask NAV_VTOL_LAND_OPTIONS
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_NAV_VTOL_LAND_OPTIONS {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e NAV_VTOL_LAND_OPTIONS) String() string {
-	if l, ok := labels_NAV_VTOL_LAND_OPTIONS[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

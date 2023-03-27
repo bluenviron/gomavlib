@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Possible responses from a WIFI_CONFIG_AP message.
@@ -35,27 +36,38 @@ var labels_WIFI_CONFIG_AP_RESPONSE = map[WIFI_CONFIG_AP_RESPONSE]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e WIFI_CONFIG_AP_RESPONSE) MarshalText() ([]byte, error) {
-	if l, ok := labels_WIFI_CONFIG_AP_RESPONSE[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_WIFI_CONFIG_AP_RESPONSE {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_WIFI_CONFIG_AP_RESPONSE = map[string]WIFI_CONFIG_AP_RESPONSE{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *WIFI_CONFIG_AP_RESPONSE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_WIFI_CONFIG_AP_RESPONSE[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask WIFI_CONFIG_AP_RESPONSE
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_WIFI_CONFIG_AP_RESPONSE {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e WIFI_CONFIG_AP_RESPONSE) String() string {
-	if l, ok := labels_WIFI_CONFIG_AP_RESPONSE[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

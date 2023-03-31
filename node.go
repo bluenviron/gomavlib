@@ -8,7 +8,7 @@ to communicate with unmanned ground vehicles (UGV) and unmanned aerial vehicles
 (UAV, drones, quadcopters, multirotors). It is supported by the most common
 open-source flight controllers (Ardupilot and PX4).
 
-Examples are available at https://github.com/bluenviron/gomavlib/tree/master/examples
+Examples are available at https://github.com/bluenviron/gomavlib/tree/main/examples
 */
 package gomavlib
 

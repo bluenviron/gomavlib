@@ -3,7 +3,8 @@
 package development
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Possible transport layers to set and get parameters via mavlink during a parameter transaction.
@@ -23,27 +24,38 @@ var labels_PARAM_TRANSACTION_TRANSPORT = map[PARAM_TRANSACTION_TRANSPORT]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e PARAM_TRANSACTION_TRANSPORT) MarshalText() ([]byte, error) {
-	if l, ok := labels_PARAM_TRANSACTION_TRANSPORT[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_PARAM_TRANSACTION_TRANSPORT {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_PARAM_TRANSACTION_TRANSPORT = map[string]PARAM_TRANSACTION_TRANSPORT{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *PARAM_TRANSACTION_TRANSPORT) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_PARAM_TRANSACTION_TRANSPORT[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask PARAM_TRANSACTION_TRANSPORT
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_PARAM_TRANSACTION_TRANSPORT {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e PARAM_TRANSACTION_TRANSPORT) String() string {
-	if l, ok := labels_PARAM_TRANSACTION_TRANSPORT[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

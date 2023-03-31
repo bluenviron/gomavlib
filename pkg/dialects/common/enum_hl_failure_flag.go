@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Flags to report failure cases over the high latency telemtry.
@@ -59,27 +60,38 @@ var labels_HL_FAILURE_FLAG = map[HL_FAILURE_FLAG]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e HL_FAILURE_FLAG) MarshalText() ([]byte, error) {
-	if l, ok := labels_HL_FAILURE_FLAG[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_HL_FAILURE_FLAG {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_HL_FAILURE_FLAG = map[string]HL_FAILURE_FLAG{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *HL_FAILURE_FLAG) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_HL_FAILURE_FLAG[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask HL_FAILURE_FLAG
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_HL_FAILURE_FLAG {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e HL_FAILURE_FLAG) String() string {
-	if l, ok := labels_HL_FAILURE_FLAG[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

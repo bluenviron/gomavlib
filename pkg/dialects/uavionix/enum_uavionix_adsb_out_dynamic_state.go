@@ -3,7 +3,8 @@
 package uavionix
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // State flags for ADS-B transponder dynamic report
@@ -27,27 +28,38 @@ var labels_UAVIONIX_ADSB_OUT_DYNAMIC_STATE = map[UAVIONIX_ADSB_OUT_DYNAMIC_STATE
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_OUT_DYNAMIC_STATE) MarshalText() ([]byte, error) {
-	if l, ok := labels_UAVIONIX_ADSB_OUT_DYNAMIC_STATE[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_UAVIONIX_ADSB_OUT_DYNAMIC_STATE {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_UAVIONIX_ADSB_OUT_DYNAMIC_STATE = map[string]UAVIONIX_ADSB_OUT_DYNAMIC_STATE{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_OUT_DYNAMIC_STATE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_UAVIONIX_ADSB_OUT_DYNAMIC_STATE[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask UAVIONIX_ADSB_OUT_DYNAMIC_STATE
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_UAVIONIX_ADSB_OUT_DYNAMIC_STATE {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e UAVIONIX_ADSB_OUT_DYNAMIC_STATE) String() string {
-	if l, ok := labels_UAVIONIX_ADSB_OUT_DYNAMIC_STATE[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

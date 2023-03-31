@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 type CAN_FILTER_OP uint32
@@ -22,27 +23,38 @@ var labels_CAN_FILTER_OP = map[CAN_FILTER_OP]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAN_FILTER_OP) MarshalText() ([]byte, error) {
-	if l, ok := labels_CAN_FILTER_OP[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_CAN_FILTER_OP {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_CAN_FILTER_OP = map[string]CAN_FILTER_OP{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CAN_FILTER_OP) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_CAN_FILTER_OP[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask CAN_FILTER_OP
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_CAN_FILTER_OP {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e CAN_FILTER_OP) String() string {
-	if l, ok := labels_CAN_FILTER_OP[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

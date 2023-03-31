@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Tune formats (used for vehicle buzzer/tone generation).
@@ -23,27 +24,38 @@ var labels_TUNE_FORMAT = map[TUNE_FORMAT]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e TUNE_FORMAT) MarshalText() ([]byte, error) {
-	if l, ok := labels_TUNE_FORMAT[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_TUNE_FORMAT {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_TUNE_FORMAT = map[string]TUNE_FORMAT{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *TUNE_FORMAT) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_TUNE_FORMAT[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask TUNE_FORMAT
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_TUNE_FORMAT {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e TUNE_FORMAT) String() string {
-	if l, ok := labels_TUNE_FORMAT[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

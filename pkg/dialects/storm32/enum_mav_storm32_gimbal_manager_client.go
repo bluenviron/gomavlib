@@ -3,7 +3,8 @@
 package storm32
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Gimbal manager client ID. In a prioritizing profile, the priorities are determined by the implementation; they could e.g. be custom1 > onboard > GCS > autopilot/camera > GCS2 > custom2.
@@ -44,27 +45,38 @@ var labels_MAV_STORM32_GIMBAL_MANAGER_CLIENT = map[MAV_STORM32_GIMBAL_MANAGER_CL
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_STORM32_GIMBAL_MANAGER_CLIENT) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_STORM32_GIMBAL_MANAGER_CLIENT[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_MAV_STORM32_GIMBAL_MANAGER_CLIENT {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_MAV_STORM32_GIMBAL_MANAGER_CLIENT = map[string]MAV_STORM32_GIMBAL_MANAGER_CLIENT{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_STORM32_GIMBAL_MANAGER_CLIENT) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_STORM32_GIMBAL_MANAGER_CLIENT[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask MAV_STORM32_GIMBAL_MANAGER_CLIENT
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_MAV_STORM32_GIMBAL_MANAGER_CLIENT {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_STORM32_GIMBAL_MANAGER_CLIENT) String() string {
-	if l, ok := labels_MAV_STORM32_GIMBAL_MANAGER_CLIENT[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

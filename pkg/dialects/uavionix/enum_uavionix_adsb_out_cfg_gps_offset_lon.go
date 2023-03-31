@@ -3,7 +3,8 @@
 package uavionix
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // GPS longitudinal offset encoding
@@ -21,27 +22,38 @@ var labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON = map[UAVIONIX_ADSB_OUT_CFG_GPS_
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON) MarshalText() ([]byte, error) {
-	if l, ok := labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON = map[string]UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON) String() string {
-	if l, ok := labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

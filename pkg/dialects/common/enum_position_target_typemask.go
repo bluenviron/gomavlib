@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Bitmap to indicate which dimensions should be ignored by the vehicle: a value of 0b0000000000000000 or 0b0000001000000000 indicates that none of the setpoint dimensions should be ignored. If bit 9 is set the floats afx afy afz should be interpreted as force instead of acceleration.
@@ -53,27 +54,38 @@ var labels_POSITION_TARGET_TYPEMASK = map[POSITION_TARGET_TYPEMASK]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e POSITION_TARGET_TYPEMASK) MarshalText() ([]byte, error) {
-	if l, ok := labels_POSITION_TARGET_TYPEMASK[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_POSITION_TARGET_TYPEMASK {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_POSITION_TARGET_TYPEMASK = map[string]POSITION_TARGET_TYPEMASK{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *POSITION_TARGET_TYPEMASK) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_POSITION_TARGET_TYPEMASK[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask POSITION_TARGET_TYPEMASK
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_POSITION_TARGET_TYPEMASK {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e POSITION_TARGET_TYPEMASK) String() string {
-	if l, ok := labels_POSITION_TARGET_TYPEMASK[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

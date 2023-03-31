@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Reason for an event error response.
@@ -20,27 +21,38 @@ var labels_MAV_EVENT_ERROR_REASON = map[MAV_EVENT_ERROR_REASON]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_EVENT_ERROR_REASON) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_EVENT_ERROR_REASON[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_MAV_EVENT_ERROR_REASON {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_MAV_EVENT_ERROR_REASON = map[string]MAV_EVENT_ERROR_REASON{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_EVENT_ERROR_REASON) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_EVENT_ERROR_REASON[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask MAV_EVENT_ERROR_REASON
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_MAV_EVENT_ERROR_REASON {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_EVENT_ERROR_REASON) String() string {
-	if l, ok := labels_MAV_EVENT_ERROR_REASON[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

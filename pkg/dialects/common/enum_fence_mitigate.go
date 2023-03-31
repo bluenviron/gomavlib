@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Actions being taken to mitigate/prevent fence breach
@@ -26,27 +27,38 @@ var labels_FENCE_MITIGATE = map[FENCE_MITIGATE]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FENCE_MITIGATE) MarshalText() ([]byte, error) {
-	if l, ok := labels_FENCE_MITIGATE[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_FENCE_MITIGATE {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_FENCE_MITIGATE = map[string]FENCE_MITIGATE{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FENCE_MITIGATE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_FENCE_MITIGATE[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask FENCE_MITIGATE
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_FENCE_MITIGATE {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e FENCE_MITIGATE) String() string {
-	if l, ok := labels_FENCE_MITIGATE[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

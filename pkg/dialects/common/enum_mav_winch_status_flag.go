@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Winch status flags used in WINCH_STATUS
@@ -59,27 +60,38 @@ var labels_MAV_WINCH_STATUS_FLAG = map[MAV_WINCH_STATUS_FLAG]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_WINCH_STATUS_FLAG) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_WINCH_STATUS_FLAG[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_MAV_WINCH_STATUS_FLAG {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_MAV_WINCH_STATUS_FLAG = map[string]MAV_WINCH_STATUS_FLAG{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_WINCH_STATUS_FLAG) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_WINCH_STATUS_FLAG[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask MAV_WINCH_STATUS_FLAG
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_MAV_WINCH_STATUS_FLAG {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_WINCH_STATUS_FLAG) String() string {
-	if l, ok := labels_MAV_WINCH_STATUS_FLAG[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // These values define the type of firmware release.  These values indicate the first version or release of this type.  For example the first alpha release would be 64, the second would be 65.
@@ -32,27 +33,38 @@ var labels_FIRMWARE_VERSION_TYPE = map[FIRMWARE_VERSION_TYPE]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FIRMWARE_VERSION_TYPE) MarshalText() ([]byte, error) {
-	if l, ok := labels_FIRMWARE_VERSION_TYPE[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_FIRMWARE_VERSION_TYPE {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_FIRMWARE_VERSION_TYPE = map[string]FIRMWARE_VERSION_TYPE{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FIRMWARE_VERSION_TYPE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_FIRMWARE_VERSION_TYPE[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask FIRMWARE_VERSION_TYPE
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_FIRMWARE_VERSION_TYPE {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e FIRMWARE_VERSION_TYPE) String() string {
-	if l, ok := labels_FIRMWARE_VERSION_TYPE[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

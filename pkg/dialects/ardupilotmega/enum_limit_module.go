@@ -3,7 +3,8 @@
 package ardupilotmega
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 type LIMIT_MODULE uint32
@@ -25,27 +26,38 @@ var labels_LIMIT_MODULE = map[LIMIT_MODULE]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e LIMIT_MODULE) MarshalText() ([]byte, error) {
-	if l, ok := labels_LIMIT_MODULE[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_LIMIT_MODULE {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_LIMIT_MODULE = map[string]LIMIT_MODULE{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *LIMIT_MODULE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_LIMIT_MODULE[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask LIMIT_MODULE
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_LIMIT_MODULE {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e LIMIT_MODULE) String() string {
-	if l, ok := labels_LIMIT_MODULE[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

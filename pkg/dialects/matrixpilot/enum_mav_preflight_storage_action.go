@@ -3,7 +3,8 @@
 package matrixpilot
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Action required when performing CMD_PREFLIGHT_STORAGE
@@ -38,27 +39,38 @@ var labels_MAV_PREFLIGHT_STORAGE_ACTION = map[MAV_PREFLIGHT_STORAGE_ACTION]strin
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_PREFLIGHT_STORAGE_ACTION) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_PREFLIGHT_STORAGE_ACTION[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_MAV_PREFLIGHT_STORAGE_ACTION {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_MAV_PREFLIGHT_STORAGE_ACTION = map[string]MAV_PREFLIGHT_STORAGE_ACTION{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_PREFLIGHT_STORAGE_ACTION) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_PREFLIGHT_STORAGE_ACTION[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask MAV_PREFLIGHT_STORAGE_ACTION
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_MAV_PREFLIGHT_STORAGE_ACTION {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_PREFLIGHT_STORAGE_ACTION) String() string {
-	if l, ok := labels_MAV_PREFLIGHT_STORAGE_ACTION[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

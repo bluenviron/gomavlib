@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Gimbal manager high level capability flags (bitmap). The first 16 bits are identical to the GIMBAL_DEVICE_CAP_FLAGS. However, the gimbal manager does not need to copy the flags from the gimbal but can also enhance the capabilities and thus add flags.
@@ -65,27 +66,38 @@ var labels_GIMBAL_MANAGER_CAP_FLAGS = map[GIMBAL_MANAGER_CAP_FLAGS]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GIMBAL_MANAGER_CAP_FLAGS) MarshalText() ([]byte, error) {
-	if l, ok := labels_GIMBAL_MANAGER_CAP_FLAGS[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_GIMBAL_MANAGER_CAP_FLAGS {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_GIMBAL_MANAGER_CAP_FLAGS = map[string]GIMBAL_MANAGER_CAP_FLAGS{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GIMBAL_MANAGER_CAP_FLAGS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_GIMBAL_MANAGER_CAP_FLAGS[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask GIMBAL_MANAGER_CAP_FLAGS
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_GIMBAL_MANAGER_CAP_FLAGS {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e GIMBAL_MANAGER_CAP_FLAGS) String() string {
-	if l, ok := labels_GIMBAL_MANAGER_CAP_FLAGS[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

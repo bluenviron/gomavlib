@@ -3,7 +3,8 @@
 package storm32
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 type MAV_STORM32_TUNNEL_PAYLOAD_TYPE uint32
@@ -34,27 +35,38 @@ var labels_MAV_STORM32_TUNNEL_PAYLOAD_TYPE = map[MAV_STORM32_TUNNEL_PAYLOAD_TYPE
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_STORM32_TUNNEL_PAYLOAD_TYPE) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_STORM32_TUNNEL_PAYLOAD_TYPE[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_MAV_STORM32_TUNNEL_PAYLOAD_TYPE {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_MAV_STORM32_TUNNEL_PAYLOAD_TYPE = map[string]MAV_STORM32_TUNNEL_PAYLOAD_TYPE{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_STORM32_TUNNEL_PAYLOAD_TYPE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_STORM32_TUNNEL_PAYLOAD_TYPE[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask MAV_STORM32_TUNNEL_PAYLOAD_TYPE
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_MAV_STORM32_TUNNEL_PAYLOAD_TYPE {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_STORM32_TUNNEL_PAYLOAD_TYPE) String() string {
-	if l, ok := labels_MAV_STORM32_TUNNEL_PAYLOAD_TYPE[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

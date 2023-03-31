@@ -3,7 +3,8 @@
 package ardupilotmega
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 type GOPRO_HEARTBEAT_FLAGS uint32
@@ -19,27 +20,38 @@ var labels_GOPRO_HEARTBEAT_FLAGS = map[GOPRO_HEARTBEAT_FLAGS]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_HEARTBEAT_FLAGS) MarshalText() ([]byte, error) {
-	if l, ok := labels_GOPRO_HEARTBEAT_FLAGS[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_GOPRO_HEARTBEAT_FLAGS {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_GOPRO_HEARTBEAT_FLAGS = map[string]GOPRO_HEARTBEAT_FLAGS{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_HEARTBEAT_FLAGS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_GOPRO_HEARTBEAT_FLAGS[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask GOPRO_HEARTBEAT_FLAGS
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_GOPRO_HEARTBEAT_FLAGS {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e GOPRO_HEARTBEAT_FLAGS) String() string {
-	if l, ok := labels_GOPRO_HEARTBEAT_FLAGS[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

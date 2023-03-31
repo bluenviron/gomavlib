@@ -3,7 +3,8 @@
 package ardupilotmega
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 type GOPRO_FIELD_OF_VIEW uint32
@@ -25,27 +26,38 @@ var labels_GOPRO_FIELD_OF_VIEW = map[GOPRO_FIELD_OF_VIEW]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_FIELD_OF_VIEW) MarshalText() ([]byte, error) {
-	if l, ok := labels_GOPRO_FIELD_OF_VIEW[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_GOPRO_FIELD_OF_VIEW {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_GOPRO_FIELD_OF_VIEW = map[string]GOPRO_FIELD_OF_VIEW{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_FIELD_OF_VIEW) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_GOPRO_FIELD_OF_VIEW[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask GOPRO_FIELD_OF_VIEW
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_GOPRO_FIELD_OF_VIEW {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e GOPRO_FIELD_OF_VIEW) String() string {
-	if l, ok := labels_GOPRO_FIELD_OF_VIEW[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

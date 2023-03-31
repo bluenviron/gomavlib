@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 type MAV_ODID_TIME_ACC uint32
@@ -64,27 +65,38 @@ var labels_MAV_ODID_TIME_ACC = map[MAV_ODID_TIME_ACC]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_TIME_ACC) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_ODID_TIME_ACC[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_MAV_ODID_TIME_ACC {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_MAV_ODID_TIME_ACC = map[string]MAV_ODID_TIME_ACC{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_TIME_ACC) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_ODID_TIME_ACC[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask MAV_ODID_TIME_ACC
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_MAV_ODID_TIME_ACC {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_TIME_ACC) String() string {
-	if l, ok := labels_MAV_ODID_TIME_ACC[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

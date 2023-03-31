@@ -3,7 +3,8 @@
 package ardupilotmega
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 type PID_TUNING_AXIS uint32
@@ -28,27 +29,38 @@ var labels_PID_TUNING_AXIS = map[PID_TUNING_AXIS]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e PID_TUNING_AXIS) MarshalText() ([]byte, error) {
-	if l, ok := labels_PID_TUNING_AXIS[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_PID_TUNING_AXIS {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_PID_TUNING_AXIS = map[string]PID_TUNING_AXIS{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *PID_TUNING_AXIS) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_PID_TUNING_AXIS[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask PID_TUNING_AXIS
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_PID_TUNING_AXIS {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e PID_TUNING_AXIS) String() string {
-	if l, ok := labels_PID_TUNING_AXIS[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

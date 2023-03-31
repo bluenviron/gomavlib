@@ -3,7 +3,8 @@
 package development
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // The frame of a target observation from an onboard sensor.
@@ -29,27 +30,38 @@ var labels_TARGET_OBS_FRAME = map[TARGET_OBS_FRAME]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e TARGET_OBS_FRAME) MarshalText() ([]byte, error) {
-	if l, ok := labels_TARGET_OBS_FRAME[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_TARGET_OBS_FRAME {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_TARGET_OBS_FRAME = map[string]TARGET_OBS_FRAME{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *TARGET_OBS_FRAME) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_TARGET_OBS_FRAME[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask TARGET_OBS_FRAME
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_TARGET_OBS_FRAME {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e TARGET_OBS_FRAME) String() string {
-	if l, ok := labels_TARGET_OBS_FRAME[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

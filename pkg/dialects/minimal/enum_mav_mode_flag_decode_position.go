@@ -3,7 +3,8 @@
 package minimal
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // These values encode the bit positions of the decode position. These values can be used to read the value of a flag bit by combining the base_mode variable with AND with the flag position value. The result will be either 0 or 1, depending on if the flag is set or not.
@@ -41,27 +42,38 @@ var labels_MAV_MODE_FLAG_DECODE_POSITION = map[MAV_MODE_FLAG_DECODE_POSITION]str
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MODE_FLAG_DECODE_POSITION) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_MODE_FLAG_DECODE_POSITION[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_MAV_MODE_FLAG_DECODE_POSITION {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_MAV_MODE_FLAG_DECODE_POSITION = map[string]MAV_MODE_FLAG_DECODE_POSITION{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_MODE_FLAG_DECODE_POSITION) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_MODE_FLAG_DECODE_POSITION[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask MAV_MODE_FLAG_DECODE_POSITION
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_MAV_MODE_FLAG_DECODE_POSITION {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_MODE_FLAG_DECODE_POSITION) String() string {
-	if l, ok := labels_MAV_MODE_FLAG_DECODE_POSITION[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

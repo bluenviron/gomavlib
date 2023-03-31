@@ -3,7 +3,8 @@
 package avssuas
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 type AVSS_HORSEFLY_OPERATION_MODE uint32
@@ -31,27 +32,38 @@ var labels_AVSS_HORSEFLY_OPERATION_MODE = map[AVSS_HORSEFLY_OPERATION_MODE]strin
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e AVSS_HORSEFLY_OPERATION_MODE) MarshalText() ([]byte, error) {
-	if l, ok := labels_AVSS_HORSEFLY_OPERATION_MODE[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_AVSS_HORSEFLY_OPERATION_MODE {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_AVSS_HORSEFLY_OPERATION_MODE = map[string]AVSS_HORSEFLY_OPERATION_MODE{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *AVSS_HORSEFLY_OPERATION_MODE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_AVSS_HORSEFLY_OPERATION_MODE[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask AVSS_HORSEFLY_OPERATION_MODE
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_AVSS_HORSEFLY_OPERATION_MODE {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e AVSS_HORSEFLY_OPERATION_MODE) String() string {
-	if l, ok := labels_AVSS_HORSEFLY_OPERATION_MODE[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

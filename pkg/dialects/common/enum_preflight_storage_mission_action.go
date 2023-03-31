@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Actions for reading and writing plan information (mission, rally points, geofence) between persistent and volatile storage when using MAV_CMD_PREFLIGHT_STORAGE.
@@ -27,27 +28,38 @@ var labels_PREFLIGHT_STORAGE_MISSION_ACTION = map[PREFLIGHT_STORAGE_MISSION_ACTI
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e PREFLIGHT_STORAGE_MISSION_ACTION) MarshalText() ([]byte, error) {
-	if l, ok := labels_PREFLIGHT_STORAGE_MISSION_ACTION[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_PREFLIGHT_STORAGE_MISSION_ACTION {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_PREFLIGHT_STORAGE_MISSION_ACTION = map[string]PREFLIGHT_STORAGE_MISSION_ACTION{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *PREFLIGHT_STORAGE_MISSION_ACTION) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_PREFLIGHT_STORAGE_MISSION_ACTION[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask PREFLIGHT_STORAGE_MISSION_ACTION
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_PREFLIGHT_STORAGE_MISSION_ACTION {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e PREFLIGHT_STORAGE_MISSION_ACTION) String() string {
-	if l, ok := labels_PREFLIGHT_STORAGE_MISSION_ACTION[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

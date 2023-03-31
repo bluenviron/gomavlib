@@ -3,7 +3,8 @@
 package ardupilotmega
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 type GOPRO_FRAME_RATE uint32
@@ -58,27 +59,38 @@ var labels_GOPRO_FRAME_RATE = map[GOPRO_FRAME_RATE]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_FRAME_RATE) MarshalText() ([]byte, error) {
-	if l, ok := labels_GOPRO_FRAME_RATE[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_GOPRO_FRAME_RATE {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_GOPRO_FRAME_RATE = map[string]GOPRO_FRAME_RATE{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_FRAME_RATE) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_GOPRO_FRAME_RATE[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask GOPRO_FRAME_RATE
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_GOPRO_FRAME_RATE {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e GOPRO_FRAME_RATE) String() string {
-	if l, ok := labels_GOPRO_FRAME_RATE[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

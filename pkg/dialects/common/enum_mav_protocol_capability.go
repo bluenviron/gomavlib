@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // Bitmask of (optional) autopilot capabilities (64 bit). If a bit is set, the autopilot supports this capability.
@@ -75,27 +76,38 @@ var labels_MAV_PROTOCOL_CAPABILITY = map[MAV_PROTOCOL_CAPABILITY]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_PROTOCOL_CAPABILITY) MarshalText() ([]byte, error) {
-	if l, ok := labels_MAV_PROTOCOL_CAPABILITY[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_MAV_PROTOCOL_CAPABILITY {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_MAV_PROTOCOL_CAPABILITY = map[string]MAV_PROTOCOL_CAPABILITY{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_PROTOCOL_CAPABILITY) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_MAV_PROTOCOL_CAPABILITY[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask MAV_PROTOCOL_CAPABILITY
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_MAV_PROTOCOL_CAPABILITY {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_PROTOCOL_CAPABILITY) String() string {
-	if l, ok := labels_MAV_PROTOCOL_CAPABILITY[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

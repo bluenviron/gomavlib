@@ -3,7 +3,8 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 // List of possible units where failures can be injected.
@@ -47,27 +48,38 @@ var labels_FAILURE_UNIT = map[FAILURE_UNIT]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FAILURE_UNIT) MarshalText() ([]byte, error) {
-	if l, ok := labels_FAILURE_UNIT[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_FAILURE_UNIT {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_FAILURE_UNIT = map[string]FAILURE_UNIT{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FAILURE_UNIT) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_FAILURE_UNIT[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask FAILURE_UNIT
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_FAILURE_UNIT {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e FAILURE_UNIT) String() string {
-	if l, ok := labels_FAILURE_UNIT[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

@@ -3,7 +3,8 @@
 package ardupilotmega
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 )
 
 type CAMERA_STATUS_TYPES uint32
@@ -37,27 +38,38 @@ var labels_CAMERA_STATUS_TYPES = map[CAMERA_STATUS_TYPES]string{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAMERA_STATUS_TYPES) MarshalText() ([]byte, error) {
-	if l, ok := labels_CAMERA_STATUS_TYPES[e]; ok {
-		return []byte(l), nil
+	var names []string
+	for mask, label := range labels_CAMERA_STATUS_TYPES {
+		if e&mask == mask {
+			names = append(names, label)
+		}
 	}
-	return nil, errors.New("invalid value")
+	return []byte(strings.Join(names, " | ")), nil
 }
-
-var reverseLabels_CAMERA_STATUS_TYPES = map[string]CAMERA_STATUS_TYPES{}
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CAMERA_STATUS_TYPES) UnmarshalText(text []byte) error {
-	if rl, ok := reverseLabels_CAMERA_STATUS_TYPES[string(text)]; ok {
-		*e = rl
-		return nil
+	labels := strings.Split(string(text), " | ")
+	var mask CAMERA_STATUS_TYPES
+	for _, label := range labels {
+		found := false
+		for value, l := range labels_CAMERA_STATUS_TYPES {
+			if l == label {
+				mask |= value
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
-	return errors.New("invalid value")
+	*e = mask
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e CAMERA_STATUS_TYPES) String() string {
-	if l, ok := labels_CAMERA_STATUS_TYPES[e]; ok {
-		return l
-	}
-	return "invalid value"
+	val, _ := e.MarshalText()
+	return string(val)
 }

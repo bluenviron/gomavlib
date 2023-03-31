@@ -348,6 +348,8 @@ var dial = &dialect.Dialect{
 		&MessageGroupEnd{},
 		&MessageAvailableModes{},
 		&MessageCurrentMode{},
+		&MessageTargetAbsolute{},
+		&MessageTargetRelative{},
 		// pythonarraytest
 		&MessageArrayTest_0{},
 		&MessageArrayTest_1{},

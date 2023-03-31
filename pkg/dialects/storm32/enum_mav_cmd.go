@@ -293,7 +293,9 @@ const (
 	MAV_CMD_PANORAMA_CREATE MAV_CMD = 2800
 	// Request VTOL transition
 	MAV_CMD_DO_VTOL_TRANSITION MAV_CMD = 3000
-	// Request authorization to arm the vehicle to a external entity, the arm authorizer is responsible to request all data that is needs from the vehicle before authorize or deny the request. If approved the progress of command_ack message should be set with period of time that this authorization is valid in seconds or in case it was denied it should be set with one of the reasons in ARM_AUTH_DENIED_REASON.
+	// Request authorization to arm the vehicle to a external entity, the arm authorizer is responsible to request all data that is needs from the vehicle before authorize or deny the request.
+	// If approved the COMMAND_ACK message progress field should be set with period of time that this authorization is valid in seconds.
+	// If the authorization is denied COMMAND_ACK.result_param2 should be set with one of the reasons in ARM_AUTH_DENIED_REASON.
 	MAV_CMD_ARM_AUTHORIZATION_REQUEST MAV_CMD = 3001
 	// This command sets the submode to standard guided when vehicle is in guided mode. The vehicle holds position and altitude and the user can input the desired velocities along all three axes.
 	MAV_CMD_SET_GUIDED_SUBMODE_STANDARD MAV_CMD = 4000

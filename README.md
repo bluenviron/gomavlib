@@ -96,30 +96,30 @@ make test
 ## Standards
 
 * Mavlink
-  * main website https://mavlink.io/en/
-  * packet format https://mavlink.io/en/guide/serialization.html
-  * common dialect https://github.com/mavlink/mavlink/blob/master/message_definitions/v1.0/common.xml
+  * [main website](https://mavlink.io/en/)
+  * [packet format](https://mavlink.io/en/guide/serialization.html)
+  * [common dialect](https://github.com/mavlink/mavlink/blob/master/message_definitions/v1.0/common.xml)
 
-* Golang project layout https://github.com/golang-standards/project-layout
+* [Golang project layout](https://github.com/golang-standards/project-layout)
 
 ## Links
 
 Related projects
 
-* https://github.com/bluenviron/mavp2p
+* [mavp2p](https://github.com/bluenviron/mavp2p)
 
 Other Go libraries
 
-* https://github.com/hybridgroup/gobot/tree/master/platforms/mavlink
-* https://github.com/liamstask/go-mavlink
-* https://github.com/ungerik/go-mavlink
-* https://github.com/SpaceLeap/go-mavlink
-* https://github.com/mavlink/MAVSDK-Go
+* [gobot](https://github.com/hybridgroup/gobot/tree/master/platforms/mavlink)
+* [liamstask/go-mavlink](https://github.com/liamstask/go-mavlink)
+* [ungerik/go-mavlink](https://github.com/ungerik/go-mavlink)
+* [SpaceLeap/go-mavlink](https://github.com/SpaceLeap/go-mavlink)
+* [MAVSDK-Go](https://github.com/mavlink/MAVSDK-Go)
 
 Other non-Go libraries
 
-* C https://github.com/mavlink/c_library_v2
-* Python https://github.com/ArduPilot/pymavlink
-* C# https://github.com/asvol/mavlink.net
-* Rust https://github.com/3drobotics/rust-mavlink
-* JS https://github.com/omcaree/node-mavlink
+* [official library (C)](https://github.com/mavlink/c_library_v2)
+* [pymavlink (Python)](https://github.com/ArduPilot/pymavlink)
+* [mavlink.net (C#)](https://github.com/asvol/mavlink.net)
+* [rust-mavlink (Rust)](https://github.com/3drobotics/rust-mavlink)
+* [node-mavlink (JS)](https://github.com/omcaree/node-mavlink)

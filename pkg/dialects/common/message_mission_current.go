@@ -8,7 +8,7 @@ package common
 type MessageMissionCurrent struct {
 	// Sequence
 	Seq uint16
-	// Total number of mission items. 0: Not supported, UINT16_MAX if no mission is present on the vehicle.
+	// Total number of mission items on vehicle (on last item, sequence == total). If the autopilot stores its home location as part of the mission this will be excluded from the total. 0: Not supported, UINT16_MAX if no mission is present on the vehicle.
 	Total uint16 `mavext:"true"`
 	// Mission state machine state. MISSION_STATE_UNKNOWN if state reporting not supported.
 	MissionState MISSION_STATE `mavenum:"uint8" mavext:"true"`

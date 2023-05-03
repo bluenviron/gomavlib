@@ -19,13 +19,16 @@ const (
 	ZOOM_TYPE_RANGE CAMERA_ZOOM_TYPE = 2
 	// Zoom value/variable focal length in millimetres. Note that there is no message to get the valid zoom range of the camera, so this can type can only be used for cameras where the zoom range is known (implying that this cannot reliably be used in a GCS for an arbitrary camera)
 	ZOOM_TYPE_FOCAL_LENGTH CAMERA_ZOOM_TYPE = 3
+	// Zoom value as horizontal field of view in degrees.
+	ZOOM_TYPE_HORIZONTAL_FOV CAMERA_ZOOM_TYPE = 4
 )
 
 var labels_CAMERA_ZOOM_TYPE = map[CAMERA_ZOOM_TYPE]string{
-	ZOOM_TYPE_STEP:         "ZOOM_TYPE_STEP",
-	ZOOM_TYPE_CONTINUOUS:   "ZOOM_TYPE_CONTINUOUS",
-	ZOOM_TYPE_RANGE:        "ZOOM_TYPE_RANGE",
-	ZOOM_TYPE_FOCAL_LENGTH: "ZOOM_TYPE_FOCAL_LENGTH",
+	ZOOM_TYPE_STEP:           "ZOOM_TYPE_STEP",
+	ZOOM_TYPE_CONTINUOUS:     "ZOOM_TYPE_CONTINUOUS",
+	ZOOM_TYPE_RANGE:          "ZOOM_TYPE_RANGE",
+	ZOOM_TYPE_FOCAL_LENGTH:   "ZOOM_TYPE_FOCAL_LENGTH",
+	ZOOM_TYPE_HORIZONTAL_FOV: "ZOOM_TYPE_HORIZONTAL_FOV",
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.

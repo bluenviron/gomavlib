@@ -18,4 +18,6 @@ const (
 	ZOOM_TYPE_RANGE CAMERA_ZOOM_TYPE = common.ZOOM_TYPE_RANGE
 	// Zoom value/variable focal length in millimetres. Note that there is no message to get the valid zoom range of the camera, so this can type can only be used for cameras where the zoom range is known (implying that this cannot reliably be used in a GCS for an arbitrary camera)
 	ZOOM_TYPE_FOCAL_LENGTH CAMERA_ZOOM_TYPE = common.ZOOM_TYPE_FOCAL_LENGTH
+	// Zoom value as horizontal field of view in degrees.
+	ZOOM_TYPE_HORIZONTAL_FOV CAMERA_ZOOM_TYPE = common.ZOOM_TYPE_HORIZONTAL_FOV
 )

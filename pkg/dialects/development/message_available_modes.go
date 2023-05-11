@@ -14,12 +14,12 @@ type MessageAvailableModes struct {
 	ModeIndex uint8
 	// Standard mode.
 	StandardMode MAV_STANDARD_MODE `mavenum:"uint8"`
-	// System mode bitmap.
-	BaseMode MAV_MODE_FLAG `mavenum:"uint8"`
 	// A bitfield for use for autopilot-specific flags
 	CustomMode uint32
+	// Mode properties.
+	Properties MAV_MODE_PROPERTY `mavenum:"uint32"`
 	// Name of custom mode, with null termination character. Should be omitted for standard modes.
-	ModeName string `mavlen:"50"`
+	ModeName string `mavlen:"35"`
 }
 
 // GetID implements the message.Message interface.

@@ -25,6 +25,10 @@ const (
 	MAV_RESULT_IN_PROGRESS MAV_RESULT = 5
 	// Command has been cancelled (as a result of receiving a COMMAND_CANCEL message).
 	MAV_RESULT_CANCELLED MAV_RESULT = 6
+	// Command is valid, but it is only accepted when sent as a COMMAND_LONG (as it has float values for params 5 and 6).
+	MAV_RESULT_COMMAND_LONG_ONLY MAV_RESULT = 7
+	// Command is valid, but it is only accepted when sent as a COMMAND_INT (as it encodes a location in params 5, 6 and 7, and hence requires a reference MAV_FRAME).
+	MAV_RESULT_COMMAND_INT_ONLY MAV_RESULT = 8
 )
 
 var labels_MAV_RESULT = map[MAV_RESULT]string{
@@ -35,6 +39,8 @@ var labels_MAV_RESULT = map[MAV_RESULT]string{
 	MAV_RESULT_FAILED:               "MAV_RESULT_FAILED",
 	MAV_RESULT_IN_PROGRESS:          "MAV_RESULT_IN_PROGRESS",
 	MAV_RESULT_CANCELLED:            "MAV_RESULT_CANCELLED",
+	MAV_RESULT_COMMAND_LONG_ONLY:    "MAV_RESULT_COMMAND_LONG_ONLY",
+	MAV_RESULT_COMMAND_INT_ONLY:     "MAV_RESULT_COMMAND_INT_ONLY",
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.

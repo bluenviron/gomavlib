@@ -8,10 +8,10 @@ package development
 type MessageCurrentMode struct {
 	// Standard mode.
 	StandardMode MAV_STANDARD_MODE `mavenum:"uint8"`
-	// System mode bitmap.
-	BaseMode MAV_MODE_FLAG `mavenum:"uint8"`
 	// A bitfield for use for autopilot-specific flags
 	CustomMode uint32
+	// The custom_mode of the mode that was last commanded by the user (for example, with MAV_CMD_DO_SET_STANDARD_MODE, MAV_CMD_DO_SET_MODE or via RC). This should usually be the same as custom_mode. It will be different if the vehicle is unable to enter the intended mode, or has left that mode due to a failsafe condition. 0 indicates the intended custom mode is unknown/not supplied
+	IntendedCustomMode uint32
 }
 
 // GetID implements the message.Message interface.

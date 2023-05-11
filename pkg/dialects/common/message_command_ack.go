@@ -8,9 +8,9 @@ type MessageCommandAck struct {
 	Command MAV_CMD `mavenum:"uint16"`
 	// Result of command.
 	Result MAV_RESULT `mavenum:"uint8"`
-	// Also used as result_param1, it can be set with an enum containing the errors reasons of why the command was denied, or the progress percentage when result is MAV_RESULT_IN_PROGRESS (UINT8_MAX if the progress is unknown).
+	// The progress percentage when result is MAV_RESULT_IN_PROGRESS. Values: [0-100], or UINT8_MAX if the progress is unknown.
 	Progress uint8 `mavext:"true"`
-	// Additional parameter of the result, example: which parameter of MAV_CMD_NAV_WAYPOINT caused it to be denied.
+	// Additional result information. Can be set with a command-specific enum containing command-specific error reasons for why the command might be denied. If used, the associated enum must be documented in the corresponding MAV_CMD (this enum should have a 0 value to indicate "unused" or "unknown").
 	ResultParam2 int32 `mavext:"true"`
 	// System ID of the target recipient. This is the ID of the system that sent the command for which this COMMAND_ACK is an acknowledgement.
 	TargetSystem uint8 `mavext:"true"`

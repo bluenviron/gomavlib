@@ -252,7 +252,7 @@ const (
 	MAV_CMD_JUMP_TAG MAV_CMD = common.MAV_CMD_JUMP_TAG
 	// Jump to the matching tag in the mission list. Repeat this action for the specified number of times. A mission should contain a single matching tag for each jump. If this is not the case then a jump to a missing tag should complete the mission, and a jump where there are multiple matching tags should always select the one with the lowest mission sequence number.
 	MAV_CMD_DO_JUMP_TAG MAV_CMD = common.MAV_CMD_DO_JUMP_TAG
-	// High level setpoint to be sent to a gimbal manager to set a gimbal attitude. It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. Note: a gimbal is never to react to this command but only the gimbal manager.
+	// Set gimbal manager pitch/yaw setpoints (low rate command). It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. Note: only the gimbal manager will react to this command - it will be ignored by a gimbal device. Use GIMBAL_MANAGER_SET_PITCHYAW if you need to stream pitch/yaw setpoints at higher rate.
 	MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW MAV_CMD = common.MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW
 	// Gimbal configuration to set which sysid/compid is in primary and secondary control.
 	MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE MAV_CMD = common.MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE

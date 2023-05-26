@@ -13,6 +13,7 @@ import (
 	"github.com/bluenviron/gomavlib/v2/pkg/dialects/asluav"
 	"github.com/bluenviron/gomavlib/v2/pkg/dialects/avssuas"
 	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/csairlink"
 	"github.com/bluenviron/gomavlib/v2/pkg/dialects/cubepilot"
 	"github.com/bluenviron/gomavlib/v2/pkg/dialects/development"
 	"github.com/bluenviron/gomavlib/v2/pkg/dialects/icarous"
@@ -46,6 +47,10 @@ func TestDialects(t *testing.T) {
 	}()
 	func() {
 		_, err := dialect.NewReadWriter(common.Dialect)
+		require.NoError(t, err)
+	}()
+	func() {
+		_, err := dialect.NewReadWriter(csairlink.Dialect)
 		require.NoError(t, err)
 	}()
 	func() {

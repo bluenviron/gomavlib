@@ -97,6 +97,8 @@ const (
 	MAV_TYPE_GPS MAV_TYPE = 41
 	// Winch
 	MAV_TYPE_WINCH MAV_TYPE = 42
+	// Generic multirotor that does not fit into a specific type or whose type is unknown
+	MAV_TYPE_GENERIC_MULTIROTOR MAV_TYPE = 43
 )
 
 var labels_MAV_TYPE = map[MAV_TYPE]string{
@@ -143,6 +145,7 @@ var labels_MAV_TYPE = map[MAV_TYPE]string{
 	MAV_TYPE_IMU:                       "MAV_TYPE_IMU",
 	MAV_TYPE_GPS:                       "MAV_TYPE_GPS",
 	MAV_TYPE_WINCH:                     "MAV_TYPE_WINCH",
+	MAV_TYPE_GENERIC_MULTIROTOR:        "MAV_TYPE_GENERIC_MULTIROTOR",
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.

@@ -96,4 +96,6 @@ const (
 	MAV_TYPE_GPS MAV_TYPE = minimal.MAV_TYPE_GPS
 	// Winch
 	MAV_TYPE_WINCH MAV_TYPE = minimal.MAV_TYPE_WINCH
+	// Generic multirotor that does not fit into a specific type or whose type is unknown
+	MAV_TYPE_GENERIC_MULTIROTOR MAV_TYPE = minimal.MAV_TYPE_GENERIC_MULTIROTOR
 )

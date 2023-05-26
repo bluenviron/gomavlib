@@ -22,7 +22,9 @@ type MessageHomePosition struct {
 	Y float32
 	// Local Z position of this position in the local coordinate frame (NED: positive "down")
 	Z float32
-	// World to surface normal and heading transformation of the takeoff position. Used to indicate the heading and slope of the ground
+	// Quaternion indicating world-to-surface-normal and heading transformation of the takeoff position.
+	// Used to indicate the heading and slope of the ground.
+	// All fields should be set to NaN if an accurate quaternion for both heading and surface slope cannot be supplied.
 	Q [4]float32
 	// Local X position of the end of the approach vector. Multicopters should set this position based on their takeoff path. Grass-landing fixed wing aircraft should set it the same way as multicopters. Runway-landing fixed wing aircraft should set it to the opposite direction of the takeoff, assuming the takeoff happened from the threshold / touchdown zone.
 	ApproachX float32

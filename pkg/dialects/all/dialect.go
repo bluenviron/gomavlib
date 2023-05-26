@@ -252,6 +252,9 @@ var dial = &dialect.Dialect{
 		&MessageHerelinkTelem{},
 		&MessageCubepilotFirmwareUpdateStart{},
 		&MessageCubepilotFirmwareUpdateResp{},
+		// csairlink
+		&MessageAirlinkAuth{},
+		&MessageAirlinkAuthResponse{},
 		// ardupilotmega
 		&MessageSensorOffsets{},
 		&MessageSetMagOffsets{},

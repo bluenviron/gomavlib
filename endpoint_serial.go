@@ -30,7 +30,7 @@ type endpointSerial struct {
 	io.ReadWriteCloser
 }
 
-func (conf EndpointSerial) init(node *Node) (Endpoint, error) {
+func (conf EndpointSerial) init(_ *Node) (Endpoint, error) {
 	// check device existence
 	test, err := serialOpenFunc(conf.Device, conf.Baud)
 	if err != nil {

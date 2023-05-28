@@ -231,9 +231,7 @@ func (l *Listener) runReader() {
 
 			conn, preExisting := l.conns[connIndex]
 
-			if !preExisting && l.closed {
-				// listener is closed, ignore new connections
-			} else {
+			if preExisting || !l.closed {
 				if !preExisting {
 					conn = newConn(l, connIndex, uaddr)
 					l.conns[connIndex] = conn

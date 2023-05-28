@@ -33,7 +33,7 @@ func TestNodeStreamRequest(t *testing.T) {
 	defer node1.Close()
 
 	go func() {
-		for range node1.Events() {
+		for range node1.Events() { //nolint:revive
 		}
 	}()
 

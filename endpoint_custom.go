@@ -16,7 +16,7 @@ type endpointCustom struct {
 	io.ReadWriteCloser
 }
 
-func (conf EndpointCustom) init(node *Node) (Endpoint, error) {
+func (conf EndpointCustom) init(_ *Node) (Endpoint, error) {
 	t := &endpointCustom{
 		conf:            conf,
 		ReadWriteCloser: conf.ReadWriteCloser,

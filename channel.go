@@ -1,8 +1,8 @@
 package gomavlib
 
 import (
+	"crypto/rand"
 	"io"
-	"math/rand"
 
 	"github.com/bluenviron/gomavlib/v2/pkg/frame"
 	"github.com/bluenviron/gomavlib/v2/pkg/message"

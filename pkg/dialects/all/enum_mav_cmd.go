@@ -423,6 +423,8 @@ const (
 	MAV_CMD_GUIDED_CHANGE_ALTITUDE MAV_CMD = 43001
 	// Change to target heading at a given rate, overriding previous heading/s. This slews the vehicle at a controllable rate between it's previous heading and the new one. (affects GUIDED only. Exiting GUIDED returns aircraft to normal behaviour defined elsewhere. Designed for onboard companion-computer command-and-control, not normally operator/GCS control.)
 	MAV_CMD_GUIDED_CHANGE_HEADING MAV_CMD = 43002
+	// Provide an external position estimate for use when dead-reckoning. This is meant to be used for occasional position resets that may be provided by a external system such as a remote pilot using landmarks over a video link.
+	MAV_CMD_EXTERNAL_POSITION_ESTIMATE MAV_CMD = 43003
 	// Mission command to reset Maximum Power Point Tracker (MPPT)
 	MAV_CMD_RESET_MPPT MAV_CMD = 40001
 	// Mission command to perform a power cycle on payload
@@ -675,6 +677,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_GUIDED_CHANGE_SPEED:                        "MAV_CMD_GUIDED_CHANGE_SPEED",
 	MAV_CMD_GUIDED_CHANGE_ALTITUDE:                     "MAV_CMD_GUIDED_CHANGE_ALTITUDE",
 	MAV_CMD_GUIDED_CHANGE_HEADING:                      "MAV_CMD_GUIDED_CHANGE_HEADING",
+	MAV_CMD_EXTERNAL_POSITION_ESTIMATE:                 "MAV_CMD_EXTERNAL_POSITION_ESTIMATE",
 	MAV_CMD_RESET_MPPT:                                 "MAV_CMD_RESET_MPPT",
 	MAV_CMD_PAYLOAD_CONTROL:                            "MAV_CMD_PAYLOAD_CONTROL",
 	MAV_CMD_DO_FIGURE_EIGHT:                            "MAV_CMD_DO_FIGURE_EIGHT",

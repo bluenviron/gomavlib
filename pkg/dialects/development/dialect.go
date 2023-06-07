@@ -251,6 +251,7 @@ var dial = &dialect.Dialect{
 		&MessageGroupEnd{},
 		&MessageAvailableModes{},
 		&MessageCurrentMode{},
+		&MessageAvailableModesMonitor{},
 		&MessageTargetAbsolute{},
 		&MessageTargetRelative{},
 	},

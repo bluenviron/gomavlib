@@ -10,7 +10,7 @@ import (
 type MAV_CMD = common.MAV_CMD
 
 const (
-	// Navigate to waypoint.
+	// Navigate to waypoint. This is intended for use in missions (for guided commands outside of missions use MAV_CMD_DO_REPOSITION).
 	MAV_CMD_NAV_WAYPOINT MAV_CMD = common.MAV_CMD_NAV_WAYPOINT
 	// Loiter around this waypoint an unlimited amount of time
 	MAV_CMD_NAV_LOITER_UNLIM MAV_CMD = common.MAV_CMD_NAV_LOITER_UNLIM
@@ -109,7 +109,7 @@ const (
 	MAV_CMD_DO_RALLY_LAND MAV_CMD = common.MAV_CMD_DO_RALLY_LAND
 	// Mission command to safely abort an autonomous landing.
 	MAV_CMD_DO_GO_AROUND MAV_CMD = common.MAV_CMD_DO_GO_AROUND
-	// Reposition the vehicle to a specific WGS84 global position.
+	// Reposition the vehicle to a specific WGS84 global position. This command is intended for guided commands (for missions use MAV_CMD_NAV_WAYPOINT instead).
 	MAV_CMD_DO_REPOSITION MAV_CMD = common.MAV_CMD_DO_REPOSITION
 	// If in a GPS controlled position mode, hold the current position or continue.
 	MAV_CMD_DO_PAUSE_CONTINUE MAV_CMD = common.MAV_CMD_DO_PAUSE_CONTINUE

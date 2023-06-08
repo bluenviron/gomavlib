@@ -28,4 +28,6 @@ const (
 	MAV_RESULT_COMMAND_LONG_ONLY MAV_RESULT = common.MAV_RESULT_COMMAND_LONG_ONLY
 	// Command is valid, but it is only accepted when sent as a COMMAND_INT (as it encodes a location in params 5, 6 and 7, and hence requires a reference MAV_FRAME).
 	MAV_RESULT_COMMAND_INT_ONLY MAV_RESULT = common.MAV_RESULT_COMMAND_INT_ONLY
+	// Command is invalid because a frame is required and the specified frame is not supported.
+	MAV_RESULT_COMMAND_UNSUPPORTED_MAV_FRAME MAV_RESULT = common.MAV_RESULT_COMMAND_UNSUPPORTED_MAV_FRAME
 )

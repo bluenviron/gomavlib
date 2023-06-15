@@ -8,7 +8,7 @@ type MessageGimbalManagerStatus struct {
 	TimeBootMs uint32
 	// High level gimbal manager flags currently applied.
 	Flags GIMBAL_MANAGER_FLAGS `mavenum:"uint32"`
-	// Gimbal device ID that this gimbal manager is responsible for.
+	// Gimbal device ID that this gimbal manager is responsible for. This should be a MAVLink component ID.
 	GimbalDeviceId uint8
 	// System ID of MAVLink component with primary control, 0 for none.
 	PrimaryControlSysid uint8

@@ -40,6 +40,8 @@ type MessageGimbalDeviceAttitudeStatus struct {
 	DeltaYaw float32 `mavext:"true"`
 	// Yaw angular velocity relating the angular velocities in earth and body frames (see message description). NaN if unknown.
 	DeltaYawVelocity float32 `mavext:"true"`
+	// This field is to be used if the gimbal manager and the gimbal device are the same component and hence have the same component ID. This field is then set a number between 1-6. If the component ID is separate, this field is not required and must be set to 0.
+	GimbalDeviceId uint8 `mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

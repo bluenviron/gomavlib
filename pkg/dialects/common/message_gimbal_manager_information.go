@@ -8,7 +8,7 @@ type MessageGimbalManagerInformation struct {
 	TimeBootMs uint32
 	// Bitmap of gimbal capability flags.
 	CapFlags GIMBAL_MANAGER_CAP_FLAGS `mavenum:"uint32"`
-	// Gimbal device ID that this gimbal manager is responsible for. This should be a MAVLink component ID.
+	// Gimbal device ID that this gimbal manager is responsible for. Component ID of gimbal device (or 1-6 for non-MAVLink gimbal).
 	GimbalDeviceId uint8
 	// Minimum hardware roll angle (positive: rolling to the right, negative: rolling to the left)
 	RollMin float32

@@ -34,6 +34,8 @@ type MessageGimbalDeviceInformation struct {
 	YawMin float32
 	// Maximum hardware yaw angle (positive: to the right, negative: to the left). NAN if unknown.
 	YawMax float32
+	// This field is to be used if the gimbal manager and the gimbal device are the same component and hence have the same component ID. This field is then set to a number between 1-6. If the component ID is separate, this field is not required and must be set to 0.
+	GimbalDeviceId uint8 `mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

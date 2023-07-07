@@ -30,6 +30,8 @@ type MessageCameraInformation struct {
 	CamDefinitionVersion uint16
 	// Camera definition URI (if any, otherwise only basic functions will be available). HTTP- (http://) and MAVLink FTP- (mavlinkftp://) formatted URIs are allowed (and both must be supported by any GCS that implements the Camera Protocol). The definition file may be xz compressed, which will be indicated by the file extension .xml.xz (a GCS that implements the protocol must support decompressing the file). The string needs to be zero terminated.  Use a zero-length string if not known.
 	CamDefinitionUri string `mavlen:"140"`
+	// Gimbal id of a gimbal associated with this camera. This is the component id of the gimbal device, or 1-6 for non mavlink gimbals. Use 0 if no gimbal is associated with the camera.
+	GimbalDeviceId uint8 `mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

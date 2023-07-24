@@ -121,7 +121,7 @@ func (a *autoreconnector) Write(p []byte) (int, error) {
 
 		n, err := curConn.Write(p)
 		if err == nil {
-			return n, err
+			return n, nil
 		}
 
 		reset = true

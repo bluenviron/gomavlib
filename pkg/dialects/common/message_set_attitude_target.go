@@ -12,7 +12,7 @@ type MessageSetAttitudeTarget struct {
 	TargetComponent uint8
 	// Bitmap to indicate which dimensions should be ignored by the vehicle.
 	TypeMask ATTITUDE_TARGET_TYPEMASK `mavenum:"uint8"`
-	// Attitude quaternion (w, x, y, z order, zero-rotation is 1, 0, 0, 0)
+	// Attitude quaternion (w, x, y, z order, zero-rotation is 1, 0, 0, 0) from MAV_FRAME_LOCAL_NED to MAV_FRAME_BODY_FRD
 	Q [4]float32
 	// Body roll rate
 	BodyRollRate float32

@@ -6,8 +6,9 @@ import (
 	"net"
 	"time"
 
+	"github.com/pion/transport/v2/udp"
+
 	"github.com/bluenviron/gomavlib/v2/pkg/timednetconn"
-	"github.com/bluenviron/gomavlib/v2/pkg/udplistener"
 )
 
 type endpointServerConf interface {
@@ -72,20 +73,28 @@ func initEndpointServer(node *Node, conf endpointServerConf) (Endpoint, error) {
 		return nil, fmt.Errorf("invalid address")
 	}
 
-	var listener net.Listener
+	var ln net.Listener
 	if conf.isUDP() {
-		listener, err = udplistener.New("udp4", conf.getAddress())
+		addr, err := net.ResolveUDPAddr("udp4", conf.getAddress())
+		if err != nil {
+			return nil, err
+		}
+
+		ln, err = udp.Listen("udp4", addr)
+		if err != nil {
+			return nil, err
+		}
 	} else {
-		listener, err = net.Listen("tcp4", conf.getAddress())
-	}
-	if err != nil {
-		return nil, err
+		ln, err = net.Listen("tcp4", conf.getAddress())
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	t := &endpointServer{
 		conf:         conf,
 		writeTimeout: node.conf.WriteTimeout,
-		listener:     listener,
+		listener:     ln,
 		terminate:    make(chan struct{}),
 	}
 	return t, nil

@@ -4,12 +4,12 @@ import (
 	"net"
 	"testing"
 
+	"github.com/pion/transport/v2/udp"
 	"github.com/stretchr/testify/require"
 
 	"github.com/bluenviron/gomavlib/v2/pkg/dialect"
 	"github.com/bluenviron/gomavlib/v2/pkg/frame"
 	"github.com/bluenviron/gomavlib/v2/pkg/message"
-	"github.com/bluenviron/gomavlib/v2/pkg/udplistener"
 )
 
 var _ endpointChannelSingle = (*endpointClient)(nil)
@@ -23,13 +23,18 @@ func TestEndpointClient(t *testing.T) {
 			}
 
 			var ln net.Listener
-			var err error
 			if ca == "tcp" {
+				var err error
 				ln, err = net.Listen("tcp", "127.0.0.1:5601")
+				require.NoError(t, err)
 			} else {
-				ln, err = udplistener.New("udp", "127.0.0.1:5601")
+				addr, err := net.ResolveUDPAddr("udp", "127.0.0.1:5601")
+				require.NoError(t, err)
+
+				ln, err = udp.Listen("udp", addr)
+				require.NoError(t, err)
 			}
-			require.NoError(t, err)
+
 			defer ln.Close()
 
 			connOpened := make(chan net.Conn)

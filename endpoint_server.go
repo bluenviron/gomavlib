@@ -54,6 +54,7 @@ type endpointServer struct {
 	conf         endpointServerConf
 	listener     net.Listener
 	writeTimeout time.Duration
+	idleTimeout  time.Duration
 
 	// in
 	terminate chan struct{}
@@ -94,6 +95,7 @@ func initEndpointServer(node *Node, conf endpointServerConf) (Endpoint, error) {
 	t := &endpointServer{
 		conf:         conf,
 		writeTimeout: node.conf.WriteTimeout,
+		idleTimeout:  node.conf.IdleTimeout,
 		listener:     ln,
 		terminate:    make(chan struct{}),
 	}
@@ -127,7 +129,10 @@ func (t *endpointServer) accept() (string, io.ReadWriteCloser, error) {
 		return "tcp"
 	}(), nconn.RemoteAddr())
 
-	conn := timednetconn.New(t.writeTimeout, nconn)
+	conn := timednetconn.New(
+		t.idleTimeout,
+		t.writeTimeout,
+		nconn)
 
 	return label, conn, nil
 }

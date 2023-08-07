@@ -9,7 +9,6 @@ import (
 
 	"github.com/bluenviron/gomavlib/v2/pkg/dialect"
 	"github.com/bluenviron/gomavlib/v2/pkg/frame"
-	"github.com/bluenviron/gomavlib/v2/pkg/message"
 )
 
 var _ endpointChannelSingle = (*endpointSerial)(nil)
@@ -22,13 +21,8 @@ func TestEndpointSerial(t *testing.T) {
 		return de, nil
 	}
 
-	dial := &dialect.Dialect{
-		Version:  3,
-		Messages: []message.Message{&MessageHeartbeat{}},
-	}
-
 	node, err := NewNode(NodeConf{
-		Dialect:     dial,
+		Dialect:     testDialect,
 		OutVersion:  V2,
 		OutSystemID: 10,
 		Endpoints: []EndpointConf{EndpointSerial{
@@ -49,7 +43,7 @@ func TestEndpointSerial(t *testing.T) {
 
 	de := <-endpointCreated
 
-	dialectRW, err := dialect.NewReadWriter(dial)
+	dialectRW, err := dialect.NewReadWriter(testDialect)
 	require.NoError(t, err)
 
 	var buf bytes.Buffer
@@ -120,13 +114,8 @@ func TestEndpointSerialReconnect(t *testing.T) {
 		return de, nil
 	}
 
-	dial := &dialect.Dialect{
-		Version:  3,
-		Messages: []message.Message{&MessageHeartbeat{}},
-	}
-
 	node, err := NewNode(NodeConf{
-		Dialect:     dial,
+		Dialect:     testDialect,
 		OutVersion:  V2,
 		OutSystemID: 10,
 		Endpoints: []EndpointConf{EndpointSerial{
@@ -147,7 +136,7 @@ func TestEndpointSerialReconnect(t *testing.T) {
 
 	de := <-endpointCreated
 
-	dialectRW, err := dialect.NewReadWriter(dial)
+	dialectRW, err := dialect.NewReadWriter(testDialect)
 	require.NoError(t, err)
 
 	var buf bytes.Buffer

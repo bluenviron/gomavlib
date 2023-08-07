@@ -14,7 +14,7 @@ var (
 	errTerminated   = errors.New("terminated")
 )
 
-type autoreconnector struct {
+type autoReconnector struct {
 	connect func(context.Context) (io.ReadWriteCloser, error)
 
 	ctx       context.Context
@@ -29,14 +29,14 @@ func New(
 ) io.ReadWriteCloser {
 	ctx, ctxCancel := context.WithCancel(context.Background())
 
-	return &autoreconnector{
+	return &autoReconnector{
 		connect:   connect,
 		ctx:       ctx,
 		ctxCancel: ctxCancel,
 	}
 }
 
-func (a *autoreconnector) Close() error {
+func (a *autoReconnector) Close() error {
 	a.ctxCancel()
 
 	a.connMutex.Lock()
@@ -50,7 +50,7 @@ func (a *autoreconnector) Close() error {
 	return nil
 }
 
-func (a *autoreconnector) getConnection(reset bool) (io.ReadWriteCloser, bool) {
+func (a *autoReconnector) getConnection(reset bool) (io.ReadWriteCloser, bool) {
 	a.connMutex.Lock()
 	defer a.connMutex.Unlock()
 
@@ -92,7 +92,7 @@ func (a *autoreconnector) getConnection(reset bool) (io.ReadWriteCloser, bool) {
 	}
 }
 
-func (a *autoreconnector) Read(p []byte) (int, error) {
+func (a *autoReconnector) Read(p []byte) (int, error) {
 	reset := false
 
 	for {
@@ -110,7 +110,7 @@ func (a *autoreconnector) Read(p []byte) (int, error) {
 	}
 }
 
-func (a *autoreconnector) Write(p []byte) (int, error) {
+func (a *autoReconnector) Write(p []byte) (int, error) {
 	reset := false
 
 	for {
@@ -120,6 +120,7 @@ func (a *autoreconnector) Write(p []byte) (int, error) {
 		}
 
 		n, err := curConn.Write(p)
+
 		if err == nil {
 			return n, nil
 		}

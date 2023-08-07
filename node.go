@@ -81,8 +81,11 @@ type NodeConf struct {
 	// It defaults to 10 seconds.
 	ReadTimeout time.Duration
 	// (optional) write timeout.
-	// It defaults to 5 seconds.
+	// It defaults to 10 seconds.
 	WriteTimeout time.Duration
+	// (optional) timeout before closing idle connections.
+	// It defaults to 60 seconds.
+	IdleTimeout time.Duration
 }
 
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
@@ -145,7 +148,10 @@ func NewNode(conf NodeConf) (*Node, error) {
 		conf.ReadTimeout = 10 * time.Second
 	}
 	if conf.WriteTimeout == 0 {
-		conf.WriteTimeout = 5 * time.Second
+		conf.WriteTimeout = 10 * time.Second
+	}
+	if conf.IdleTimeout == 0 {
+		conf.IdleTimeout = 60 * time.Second
 	}
 
 	dialectRW, err := func() (*dialect.ReadWriter, error) {

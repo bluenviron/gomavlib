@@ -1,15 +1,16 @@
 package gomavlib
 
 import (
+	"io"
 	"net"
 	"testing"
+	"time"
 
 	"github.com/pion/transport/v2/udp"
 	"github.com/stretchr/testify/require"
 
 	"github.com/bluenviron/gomavlib/v2/pkg/dialect"
 	"github.com/bluenviron/gomavlib/v2/pkg/frame"
-	"github.com/bluenviron/gomavlib/v2/pkg/message"
 )
 
 var _ endpointChannelSingle = (*endpointClient)(nil)
@@ -17,11 +18,6 @@ var _ endpointChannelSingle = (*endpointClient)(nil)
 func TestEndpointClient(t *testing.T) {
 	for _, ca := range []string{"tcp", "udp"} {
 		t.Run(ca, func(t *testing.T) {
-			dial := &dialect.Dialect{
-				Version:  3,
-				Messages: []message.Message{&MessageHeartbeat{}},
-			}
-
 			var ln net.Listener
 			if ca == "tcp" {
 				var err error
@@ -37,14 +33,6 @@ func TestEndpointClient(t *testing.T) {
 
 			defer ln.Close()
 
-			connOpened := make(chan net.Conn)
-
-			go func() {
-				conn, err := ln.Accept()
-				require.NoError(t, err)
-				connOpened <- conn
-			}()
-
 			var e EndpointConf
 			if ca == "tcp" {
 				e = EndpointTCPClient{"127.0.0.1:5601"}
@@ -53,7 +41,7 @@ func TestEndpointClient(t *testing.T) {
 			}
 
 			node, err := NewNode(NodeConf{
-				Dialect:          dial,
+				Dialect:          testDialect,
 				OutVersion:       V2,
 				OutSystemID:      10,
 				Endpoints:        []EndpointConf{e},
@@ -67,7 +55,6 @@ func TestEndpointClient(t *testing.T) {
 				Channel: evt.(*EventChannelOpen).Channel,
 			}, evt)
 
-			var conn net.Conn
 			var rw *frame.ReadWriter
 
 			for i := 0; i < 3; i++ {
@@ -82,10 +69,11 @@ func TestEndpointClient(t *testing.T) {
 				node.WriteMessageAll(msg)
 
 				if i == 0 {
-					conn = <-connOpened
+					conn, err := ln.Accept()
+					require.NoError(t, err)
 					defer conn.Close()
 
-					dialectRW, err := dialect.NewReadWriter(dial)
+					dialectRW, err := dialect.NewReadWriter(testDialect)
 					require.NoError(t, err)
 
 					rw, err = frame.NewReadWriter(frame.ReadWriterConf{
@@ -130,6 +118,96 @@ func TestEndpointClient(t *testing.T) {
 					Channel: evt.(*EventFrame).Channel,
 				}, evt)
 			}
+		})
+	}
+}
+
+func TestEndpointClientIdleTimeout(t *testing.T) {
+	for _, ca := range []string{"tcp"} {
+		t.Run(ca, func(t *testing.T) {
+			var ln net.Listener
+			var err error
+			ln, err = net.Listen("tcp", "127.0.0.1:5603")
+			require.NoError(t, err)
+
+			defer ln.Close()
+
+			var e EndpointConf
+			if ca == "tcp" {
+				e = EndpointTCPClient{"127.0.0.1:5603"}
+			} else {
+				e = EndpointUDPClient{"127.0.0.1:5603"}
+			}
+
+			node, err := NewNode(NodeConf{
+				Dialect:          testDialect,
+				OutVersion:       V2,
+				OutSystemID:      10,
+				Endpoints:        []EndpointConf{e},
+				HeartbeatDisable: true,
+				IdleTimeout:      500 * time.Millisecond,
+			})
+			require.NoError(t, err)
+			defer node.Close()
+
+			evt := <-node.Events()
+			require.Equal(t, &EventChannelOpen{
+				Channel: evt.(*EventChannelOpen).Channel,
+			}, evt)
+
+			msg := &MessageHeartbeat{
+				Type:           1,
+				Autopilot:      2,
+				BaseMode:       3,
+				CustomMode:     6,
+				SystemStatus:   4,
+				MavlinkVersion: 5,
+			}
+			node.WriteMessageAll(msg)
+
+			conn, err := ln.Accept()
+			require.NoError(t, err)
+
+			dialectRW, err := dialect.NewReadWriter(testDialect)
+			require.NoError(t, err)
+
+			rw, err := frame.NewReadWriter(frame.ReadWriterConf{
+				ReadWriter:  conn,
+				DialectRW:   dialectRW,
+				OutVersion:  frame.V2,
+				OutSystemID: 11,
+			})
+			require.NoError(t, err)
+
+			fr, err := rw.Read()
+			require.NoError(t, err)
+			require.Equal(t, &frame.V2Frame{
+				SequenceID:  0,
+				SystemID:    10,
+				ComponentID: 1,
+				Message:     msg,
+				Checksum:    fr.GetChecksum(),
+			}, fr)
+
+			closed := make(chan struct{})
+
+			go func() {
+				_, err = rw.Read()
+				require.Equal(t, io.EOF, err)
+				conn.Close()
+				close(closed)
+			}()
+
+			select {
+			case <-closed:
+			case <-time.After(1 * time.Second):
+				t.Errorf("should not happen")
+			}
+
+			// the client reconnects to the server due to autoReconnector
+			conn, err = ln.Accept()
+			require.NoError(t, err)
+			conn.Close()
 		})
 	}
 }

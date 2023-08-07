@@ -8,7 +8,6 @@ import (
 
 	"github.com/bluenviron/gomavlib/v2/pkg/dialect"
 	"github.com/bluenviron/gomavlib/v2/pkg/frame"
-	"github.com/bluenviron/gomavlib/v2/pkg/message"
 )
 
 var _ endpointChannelSingle = (*endpointUDPBroadcast)(nil)
@@ -27,13 +26,8 @@ func (rw *readWriterFromFuncs) Write(p []byte) (int, error) {
 }
 
 func TestEndpointBroadcast(t *testing.T) {
-	dial := &dialect.Dialect{
-		Version:  3,
-		Messages: []message.Message{&MessageHeartbeat{}},
-	}
-
 	node, err := NewNode(NodeConf{
-		Dialect:          dial,
+		Dialect:          testDialect,
 		OutVersion:       V2,
 		OutSystemID:      10,
 		Endpoints:        []EndpointConf{EndpointUDPBroadcast{"127.255.255.255:5602", ":5601"}},
@@ -51,7 +45,7 @@ func TestEndpointBroadcast(t *testing.T) {
 	require.NoError(t, err)
 	defer pc.Close()
 
-	dialectRW, err := dialect.NewReadWriter(dial)
+	dialectRW, err := dialect.NewReadWriter(testDialect)
 	require.NoError(t, err)
 
 	rw, err := frame.NewReadWriter(frame.ReadWriterConf{

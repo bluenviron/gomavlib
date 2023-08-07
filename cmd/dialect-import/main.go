@@ -491,6 +491,7 @@ func processField(fieldDef *dialectField) (*outField, error) {
 }
 
 func writeDialect(
+	dir string,
 	defName string,
 	version string,
 	outDefs []*outDefinition,
@@ -510,10 +511,11 @@ func writeDialect(
 		return err
 	}
 
-	return os.WriteFile("dialect.go", buf.Bytes(), 0o644)
+	return os.WriteFile(filepath.Join(dir, "dialect.go"), buf.Bytes(), 0o644)
 }
 
 func writeEnum(
+	dir string,
 	defName string,
 	enum *outEnum,
 	link bool,
@@ -528,10 +530,15 @@ func writeEnum(
 		return err
 	}
 
-	return os.WriteFile("enum_"+strings.ToLower(enum.Name)+".go", buf.Bytes(), 0o644)
+	return os.WriteFile(filepath.Join(dir, "enum_"+strings.ToLower(enum.Name)+".go"), buf.Bytes(), 0o644)
 }
 
-func writeMessage(defName string, msg *outMessage, link bool) error {
+func writeMessage(
+	dir string,
+	defName string,
+	msg *outMessage,
+	link bool,
+) error {
 	var buf bytes.Buffer
 	err := tplMessage.Execute(&buf, map[string]interface{}{
 		"PkgName": defName,
@@ -542,7 +549,7 @@ func writeMessage(defName string, msg *outMessage, link bool) error {
 		return err
 	}
 
-	return os.WriteFile("message_"+strings.ToLower(msg.OrigName)+".go", buf.Bytes(), 0o644)
+	return os.WriteFile(filepath.Join(dir, "message_"+strings.ToLower(msg.OrigName)+".go"), buf.Bytes(), 0o644)
 }
 
 var cli struct {
@@ -550,14 +557,22 @@ var cli struct {
 	XML  string `arg:"" help:"Path or url pointing to a XML Mavlink dialect"`
 }
 
-func run() error {
-	kong.Parse(&cli,
+func run(args []string) error {
+	parser, err := kong.New(&cli,
 		kong.Description("Convert Mavlink dialects from XML format to Go format."),
 		kong.UsageOnError())
+	if err != nil {
+		return err
+	}
+
+	_, err = parser.Parse(args)
+	if err != nil {
+		return err
+	}
 
 	version := ""
 	processedDefs := make(map[string]struct{})
-	_, err := url.ParseRequestURI(cli.XML)
+	_, err = url.ParseRequestURI(cli.XML)
 	isRemote := (err == nil)
 	defName := defAddrToName(cli.XML)
 
@@ -566,7 +581,6 @@ func run() error {
 	}
 
 	os.Mkdir(defName, 0o755)
-	os.Chdir(defName)
 
 	// parse all definitions recursively
 	outDefs, err := processDefinition(&version, processedDefs, isRemote, cli.XML)
@@ -601,13 +615,13 @@ func run() error {
 		}
 	}
 
-	err = writeDialect(defName, version, outDefs, enums)
+	err = writeDialect(defName, defName, version, outDefs, enums)
 	if err != nil {
 		return err
 	}
 
 	for _, enum := range enums {
-		err := writeEnum(defName, enum, cli.Link)
+		err := writeEnum(defName, defName, enum, cli.Link)
 		if err != nil {
 			return err
 		}
@@ -615,7 +629,7 @@ func run() error {
 
 	for _, def := range outDefs {
 		for _, msg := range def.Messages {
-			err := writeMessage(defName, msg, cli.Link)
+			err := writeMessage(defName, defName, msg, cli.Link)
 			if err != nil {
 				return err
 			}
@@ -626,7 +640,7 @@ func run() error {
 }
 
 func main() {
-	err := run()
+	err := run(os.Args)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "ERR: %s\n", err)
 		os.Exit(1)

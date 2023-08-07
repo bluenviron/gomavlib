@@ -10,7 +10,6 @@ import (
 
 	"github.com/bluenviron/gomavlib/v2/pkg/dialect"
 	"github.com/bluenviron/gomavlib/v2/pkg/frame"
-	"github.com/bluenviron/gomavlib/v2/pkg/message"
 )
 
 var _ endpointChannelSingle = (*endpointCustom)(nil)
@@ -65,15 +64,10 @@ func (e *dummyEndpoint) Write(p []byte) (int, error) {
 }
 
 func TestEndpointCustom(t *testing.T) {
-	dial := &dialect.Dialect{
-		Version:  3,
-		Messages: []message.Message{&MessageHeartbeat{}},
-	}
-
 	de := newDummyEndpoint()
 
 	node, err := NewNode(NodeConf{
-		Dialect:          dial,
+		Dialect:          testDialect,
 		OutVersion:       V2,
 		OutSystemID:      10,
 		Endpoints:        []EndpointConf{EndpointCustom{de}},
@@ -87,7 +81,7 @@ func TestEndpointCustom(t *testing.T) {
 		Channel: evt.(*EventChannelOpen).Channel,
 	}, evt)
 
-	dialectRW, err := dialect.NewReadWriter(dial)
+	dialectRW, err := dialect.NewReadWriter(testDialect)
 	require.NoError(t, err)
 
 	var buf bytes.Buffer

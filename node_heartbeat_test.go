@@ -5,19 +5,11 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/require"
-
-	"github.com/bluenviron/gomavlib/v2/pkg/dialect"
-	"github.com/bluenviron/gomavlib/v2/pkg/message"
 )
 
 func TestNodeHeartbeat(t *testing.T) {
-	dialect := &dialect.Dialect{
-		Version:  3,
-		Messages: []message.Message{&MessageHeartbeat{}},
-	}
-
 	node1, err := NewNode(NodeConf{
-		Dialect:     dialect,
+		Dialect:     testDialect,
 		OutVersion:  V2,
 		OutSystemID: 10,
 		Endpoints: []EndpointConf{
@@ -29,7 +21,7 @@ func TestNodeHeartbeat(t *testing.T) {
 	defer node1.Close()
 
 	node2, err := NewNode(NodeConf{
-		Dialect:     dialect,
+		Dialect:     testDialect,
 		OutVersion:  V2,
 		OutSystemID: 11,
 		Endpoints: []EndpointConf{

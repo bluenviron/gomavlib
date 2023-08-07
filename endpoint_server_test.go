@@ -3,12 +3,12 @@ package gomavlib
 import (
 	"net"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 
 	"github.com/bluenviron/gomavlib/v2/pkg/dialect"
 	"github.com/bluenviron/gomavlib/v2/pkg/frame"
-	"github.com/bluenviron/gomavlib/v2/pkg/message"
 )
 
 var _ endpointChannelAccepter = (*endpointServer)(nil)
@@ -16,11 +16,6 @@ var _ endpointChannelAccepter = (*endpointServer)(nil)
 func TestEndpointServer(t *testing.T) {
 	for _, ca := range []string{"tcp", "udp"} {
 		t.Run(ca, func(t *testing.T) {
-			dial := &dialect.Dialect{
-				Version:  3,
-				Messages: []message.Message{&MessageHeartbeat{}},
-			}
-
 			var e EndpointConf
 			if ca == "tcp" {
 				e = EndpointTCPServer{"127.0.0.1:5601"}
@@ -29,7 +24,7 @@ func TestEndpointServer(t *testing.T) {
 			}
 
 			node, err := NewNode(NodeConf{
-				Dialect:          dial,
+				Dialect:          testDialect,
 				OutVersion:       V2,
 				OutSystemID:      10,
 				Endpoints:        []EndpointConf{e},
@@ -42,7 +37,7 @@ func TestEndpointServer(t *testing.T) {
 			require.NoError(t, err)
 			defer conn.Close()
 
-			dialectRW, err := dialect.NewReadWriter(dial)
+			dialectRW, err := dialect.NewReadWriter(testDialect)
 			require.NoError(t, err)
 
 			rw, err := frame.NewReadWriter(frame.ReadWriterConf{
@@ -104,6 +99,70 @@ func TestEndpointServer(t *testing.T) {
 					Checksum:    fr.GetChecksum(),
 				}, fr)
 			}
+		})
+	}
+}
+
+func TestEndpointServerIdleTimeout(t *testing.T) {
+	for _, ca := range []string{"tcp", "udp"} {
+		t.Run(ca, func(t *testing.T) {
+			var e EndpointConf
+			if ca == "tcp" {
+				e = EndpointTCPServer{"127.0.0.1:5601"}
+			} else {
+				e = EndpointUDPServer{"127.0.0.1:5601"}
+			}
+
+			node, err := NewNode(NodeConf{
+				Dialect:          testDialect,
+				OutVersion:       V2,
+				OutSystemID:      10,
+				Endpoints:        []EndpointConf{e},
+				HeartbeatDisable: true,
+				IdleTimeout:      500 * time.Millisecond,
+			})
+			require.NoError(t, err)
+			defer node.Close()
+
+			conn, err := net.Dial(ca, "127.0.0.1:5601")
+			require.NoError(t, err)
+			defer conn.Close()
+
+			dialectRW, err := dialect.NewReadWriter(testDialect)
+			require.NoError(t, err)
+
+			rw, err := frame.NewReadWriter(frame.ReadWriterConf{
+				ReadWriter:  conn,
+				DialectRW:   dialectRW,
+				OutVersion:  frame.V2,
+				OutSystemID: 11,
+			})
+			require.NoError(t, err)
+
+			msg := &MessageHeartbeat{
+				Type:           1,
+				Autopilot:      2,
+				BaseMode:       3,
+				CustomMode:     6,
+				SystemStatus:   4,
+				MavlinkVersion: 5,
+			}
+			err = rw.WriteMessage(msg)
+			require.NoError(t, err)
+
+			evt := <-node.Events()
+			ch := evt.(*EventChannelOpen).Channel
+			require.Equal(t, &EventChannelOpen{
+				Channel: ch,
+			}, evt)
+
+			// frame
+			<-node.Events()
+
+			evt = <-node.Events()
+			require.Equal(t, &EventChannelClose{
+				Channel: ch,
+			}, evt)
 		})
 	}
 }

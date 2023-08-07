@@ -79,14 +79,20 @@ func initEndpointClient(node *Node, conf endpointClientConf) (Endpoint, error) {
 					}
 					return "tcp4"
 				}()
+
 				timedContext, timedContextClose := context.WithTimeout(ctx, node.conf.ReadTimeout)
 				nconn, err := (&net.Dialer{}).DialContext(timedContext, network, conf.getAddress())
 				timedContextClose()
+
 				if err != nil {
 					return nil, err
 				}
 
-				return timednetconn.New(node.conf.WriteTimeout, nconn), nil
+				return timednetconn.New(
+					node.conf.IdleTimeout,
+					node.conf.WriteTimeout,
+					nconn,
+				), nil
 			},
 		),
 	}

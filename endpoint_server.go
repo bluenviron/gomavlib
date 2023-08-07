@@ -6,8 +6,9 @@ import (
 	"net"
 	"time"
 
+	"github.com/pion/transport/v2/udp"
+
 	"github.com/bluenviron/gomavlib/v2/pkg/timednetconn"
-	"github.com/bluenviron/gomavlib/v2/pkg/udplistener"
 )
 
 type endpointServerConf interface {
@@ -53,6 +54,7 @@ type endpointServer struct {
 	conf         endpointServerConf
 	listener     net.Listener
 	writeTimeout time.Duration
+	idleTimeout  time.Duration
 
 	// in
 	terminate chan struct{}
@@ -72,20 +74,29 @@ func initEndpointServer(node *Node, conf endpointServerConf) (Endpoint, error) {
 		return nil, fmt.Errorf("invalid address")
 	}
 
-	var listener net.Listener
+	var ln net.Listener
 	if conf.isUDP() {
-		listener, err = udplistener.New("udp4", conf.getAddress())
+		addr, err := net.ResolveUDPAddr("udp4", conf.getAddress())
+		if err != nil {
+			return nil, err
+		}
+
+		ln, err = udp.Listen("udp4", addr)
+		if err != nil {
+			return nil, err
+		}
 	} else {
-		listener, err = net.Listen("tcp4", conf.getAddress())
-	}
-	if err != nil {
-		return nil, err
+		ln, err = net.Listen("tcp4", conf.getAddress())
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	t := &endpointServer{
 		conf:         conf,
 		writeTimeout: node.conf.WriteTimeout,
-		listener:     listener,
+		idleTimeout:  node.conf.IdleTimeout,
+		listener:     ln,
 		terminate:    make(chan struct{}),
 	}
 	return t, nil
@@ -118,7 +129,10 @@ func (t *endpointServer) accept() (string, io.ReadWriteCloser, error) {
 		return "tcp"
 	}(), nconn.RemoteAddr())
 
-	conn := timednetconn.New(t.writeTimeout, nconn)
+	conn := timednetconn.New(
+		t.idleTimeout,
+		t.writeTimeout,
+		nconn)
 
 	return label, conn, nil
 }

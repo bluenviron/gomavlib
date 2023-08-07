@@ -565,7 +565,7 @@ func run(args []string) error {
 		return err
 	}
 
-	_, err = parser.Parse(args[1:])
+	_, err = parser.Parse(args)
 	if err != nil {
 		return err
 	}
@@ -640,7 +640,7 @@ func run(args []string) error {
 }
 
 func main() {
-	err := run(os.Args)
+	err := run(os.Args[1:])
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "ERR: %s\n", err)
 		os.Exit(1)

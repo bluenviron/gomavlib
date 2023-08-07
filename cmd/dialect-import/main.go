@@ -286,7 +286,7 @@ func processDefinition(
 	}
 	processedDefs[defAddr] = struct{}{}
 
-	fmt.Fprintf(os.Stderr, "definition %s\n", defAddr)
+	fmt.Fprintf(os.Stderr, "processing definition %s\n", defAddr)
 
 	content, err := getDefinition(isRemote, defAddr)
 	if err != nil {
@@ -565,7 +565,7 @@ func run(args []string) error {
 		return err
 	}
 
-	_, err = parser.Parse(args)
+	_, err = parser.Parse(args[1:])
 	if err != nil {
 		return err
 	}

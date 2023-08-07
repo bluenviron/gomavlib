@@ -48,7 +48,7 @@ func TestRun(t *testing.T) {
 	require.NoError(t, err)
 	defer os.Remove("testdialect.xml")
 
-	err = run([]string{"testdialect.xml"})
+	err = run([]string{"", "testdialect.xml"})
 	require.NoError(t, err)
 
 	_, err = os.ReadFile("testdialect/message_a_message.go")

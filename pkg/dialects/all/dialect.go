@@ -341,7 +341,6 @@ var dial = &dialect.Dialect{
 		&MessageSensorAirflowAngles{},
 		// development
 		&MessageParamAckTransaction{},
-		&MessageMissionChecksum{},
 		&MessageAirspeed{},
 		&MessageWifiNetworkInfo{},
 		&MessageFigureEightExecutionStatus{},

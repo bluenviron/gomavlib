@@ -241,7 +241,6 @@ var dial = &dialect.Dialect{
 		&MessageHygrometerSensor{},
 		// development
 		&MessageParamAckTransaction{},
-		&MessageMissionChecksum{},
 		&MessageAirspeed{},
 		&MessageWifiNetworkInfo{},
 		&MessageFigureEightExecutionStatus{},

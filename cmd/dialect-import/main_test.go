@@ -44,15 +44,18 @@ const testDialect = `<?xml version="1.0"?>
 `
 
 func TestRun(t *testing.T) {
-	err := os.WriteFile("testdialect.xml", []byte(testDialect), 0o644)
+	dir, err := os.MkdirTemp("", "gomavlib")
 	require.NoError(t, err)
-	defer os.Remove("testdialect.xml")
+	defer os.RemoveAll(dir)
+
+	os.Chdir(dir)
+
+	err = os.WriteFile("testdialect.xml", []byte(testDialect), 0o644)
+	require.NoError(t, err)
 
 	err = run([]string{"testdialect.xml"})
 	require.NoError(t, err)
 
-	_, err = os.ReadFile("testdialect/message_a_message.go")
+	_, err = os.Stat("testdialect/message_a_message.go")
 	require.NoError(t, err)
-
-	os.RemoveAll("testdialect")
 }

@@ -1,4 +1,4 @@
-package main
+package conversion
 
 import (
 	"encoding/xml"
@@ -85,8 +85,8 @@ type definition struct {
 	Messages []*definitionMessage `xml:"messages>message"`
 }
 
-func definitionDecode(content []byte) (*definition, error) {
+func definitionDecode(buf []byte) (*definition, error) {
 	def := &definition{}
-	err := xml.Unmarshal(content, def)
+	err := xml.Unmarshal(buf, def)
 	return def, err
 }

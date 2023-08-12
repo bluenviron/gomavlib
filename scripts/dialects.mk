@@ -1,7 +1,7 @@
 define DOCKERFILE_DIALECTS
 FROM $(BASE_IMAGE)
 RUN apk add --no-cache git make
-RUN go install mvdan.cc/gofumpt@v0.3.1
+RUN go install mvdan.cc/gofumpt@v0.5.0
 WORKDIR /s
 COPY go.mod go.sum ./
 RUN go mod download

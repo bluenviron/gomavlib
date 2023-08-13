@@ -60,9 +60,9 @@ func TestCloseWhileWorking(t *testing.T) {
 
 				b := make([]byte, 1)
 				if ca == "read" {
-					conn.Read(b)
+					conn.Read(b) //nolint:errcheck
 				} else {
-					conn.Write(b)
+					conn.Write(b) //nolint:errcheck
 				}
 
 				conn.Close()
@@ -82,9 +82,9 @@ func TestCloseWhileWorking(t *testing.T) {
 
 				p := make([]byte, 1)
 				if ca == "read" {
-					a.Read(p)
+					a.Read(p) //nolint:errcheck
 				} else {
-					a.Write(p)
+					a.Write(p) //nolint:errcheck
 				}
 			}()
 

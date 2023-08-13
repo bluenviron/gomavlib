@@ -149,11 +149,10 @@ func (f V2Frame) GenerateSignature(key *V2Key) *V2Signature {
 
 func (f *V2Frame) decode(br *bufio.Reader) error {
 	// header
-	buf, err := br.Peek(9)
+	buf, err := peekAndDiscard(br, 9)
 	if err != nil {
 		return err
 	}
-	br.Discard(9)
 	msgLen := buf[0]
 	f.IncompatibilityFlag = buf[1]
 	f.CompatibilityFlag = buf[2]
@@ -182,20 +181,18 @@ func (f *V2Frame) decode(br *bufio.Reader) error {
 	}
 
 	// checksum
-	buf, err = br.Peek(2)
+	buf, err = peekAndDiscard(br, 2)
 	if err != nil {
 		return err
 	}
-	br.Discard(2)
 	f.Checksum = binary.LittleEndian.Uint16(buf)
 
 	// signature
 	if f.IsSigned() {
-		buf, err := br.Peek(13)
+		buf, err := peekAndDiscard(br, 13)
 		if err != nil {
 			return err
 		}
-		br.Discard(13)
 		f.SignatureLinkID = buf[0]
 		f.SignatureTimestamp = uint48Decode(buf[1:])
 		f.Signature = new(V2Signature)

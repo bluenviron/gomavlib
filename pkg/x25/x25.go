@@ -31,18 +31,17 @@ func (x *X25) BlockSize() int {
 	return 1
 }
 
-// Write adds more data to the running hash.
-func (x *X25) Write(p []byte) (int, error) {
+// Write adds more data to the hash.
+func (x *X25) Write(p []byte) {
 	for _, b := range p {
 		tmp := uint16(b) ^ (x.crc & 0xFF)
 		tmp ^= (tmp << 4)
 		tmp &= 0xFF
 		x.crc = (x.crc >> 8) ^ (tmp << 8) ^ (tmp << 3) ^ (tmp >> 4)
 	}
-	return len(p), nil
 }
 
-// Sum16 returns the curren thash.
+// Sum16 returns the current hash.
 func (x *X25) Sum16() uint16 {
 	return x.crc
 }

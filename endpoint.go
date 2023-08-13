@@ -31,6 +31,6 @@ type endpointChannelSingle interface {
 // endpointChannelAccepter is an endpoint that provides multiple channels.
 type endpointChannelAccepter interface {
 	Endpoint
-	close() error
+	close()
 	accept() (string, io.ReadWriteCloser, error)
 }

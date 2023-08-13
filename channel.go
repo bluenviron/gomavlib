@@ -8,10 +8,10 @@ import (
 	"github.com/bluenviron/gomavlib/v2/pkg/message"
 )
 
-func randomByte() byte {
+func randomByte() (byte, error) {
 	var buf [1]byte
-	rand.Read(buf[:])
-	return buf[0]
+	_, err := rand.Read(buf[:])
+	return buf[0], err
 }
 
 // Channel is a communication channel created by an Endpoint.
@@ -32,6 +32,11 @@ type Channel struct {
 }
 
 func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Channel, error) {
+	linkID, err := randomByte()
+	if err != nil {
+		return nil, err
+	}
+
 	frw, err := frame.NewReadWriter(frame.ReadWriterConf{
 		ReadWriter:  rwc,
 		DialectRW:   n.dialectRW,
@@ -44,7 +49,7 @@ func newChannel(n *Node, e Endpoint, label string, rwc io.ReadWriteCloser) (*Cha
 			return frame.V1
 		}(),
 		OutComponentID:     n.conf.OutComponentID,
-		OutSignatureLinkID: randomByte(),
+		OutSignatureLinkID: linkID,
 		OutKey:             n.conf.OutKey,
 	})
 	if err != nil {
@@ -124,10 +129,10 @@ func (ch *Channel) run() {
 		for what := range ch.write {
 			switch wh := what.(type) {
 			case message.Message:
-				ch.frw.WriteMessage(wh)
+				ch.frw.WriteMessage(wh) //nolint:errcheck
 
 			case frame.Frame:
-				ch.frw.WriteFrame(wh)
+				ch.frw.WriteFrame(wh) //nolint:errcheck
 			}
 		}
 	}()

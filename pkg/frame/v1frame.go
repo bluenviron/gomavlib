@@ -15,6 +15,15 @@ const (
 	V1MagicByte = 0xFE
 )
 
+func peekAndDiscard(br *bufio.Reader, size int) ([]byte, error) {
+	buf, err := br.Peek(size)
+	if err != nil {
+		return nil, err
+	}
+	br.Discard(size) //nolint:errcheck
+	return buf, nil
+}
+
 // V1Frame is a Mavlink V1 frame.
 type V1Frame struct {
 	SequenceID  byte
@@ -63,11 +72,10 @@ func (f V1Frame) GenerateChecksum(crcExtra byte) uint16 {
 
 func (f *V1Frame) decode(br *bufio.Reader) error {
 	// header
-	buf, err := br.Peek(5)
+	buf, err := peekAndDiscard(br, 5)
 	if err != nil {
 		return err
 	}
-	br.Discard(5)
 	msgLen := buf[0]
 	f.SequenceID = buf[1]
 	f.SystemID = buf[2]
@@ -89,11 +97,10 @@ func (f *V1Frame) decode(br *bufio.Reader) error {
 	}
 
 	// checksum
-	buf, err = br.Peek(2)
+	buf, err = peekAndDiscard(br, 2)
 	if err != nil {
 		return err
 	}
-	br.Discard(2)
 	f.Checksum = binary.LittleEndian.Uint16(buf)
 
 	return nil

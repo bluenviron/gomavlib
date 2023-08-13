@@ -108,10 +108,9 @@ func (t *endpointServer) Conf() EndpointConf {
 	return t.conf
 }
 
-func (t *endpointServer) close() error {
+func (t *endpointServer) close() {
 	close(t.terminate)
 	t.listener.Close()
-	return nil
 }
 
 func (t *endpointServer) accept() (string, io.ReadWriteCloser, error) {

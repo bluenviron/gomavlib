@@ -100,16 +100,16 @@ type Node struct {
 	nodeStreamRequest  *nodeStreamRequest
 
 	// in
-	channelNew   chan *Channel
-	channelClose chan *Channel
-	writeTo      chan writeToReq
-	writeAll     chan interface{}
-	writeExcept  chan writeExceptReq
-	terminate    chan struct{}
+	chNewChannel   chan *Channel
+	chCloseChannel chan *Channel
+	chWriteTo      chan writeToReq
+	chWriteAll     chan interface{}
+	chWriteExcept  chan writeExceptReq
+	terminate      chan struct{}
 
 	// out
-	events chan Event
-	done   chan struct{}
+	chEvent chan Event
+	done    chan struct{}
 }
 
 // NewNode allocates a Node. See NodeConf for the options.
@@ -169,13 +169,13 @@ func NewNode(conf NodeConf) (*Node, error) {
 		dialectRW:        dialectRW,
 		channelAccepters: make(map[*channelAccepter]struct{}),
 		channels:         make(map[*Channel]struct{}),
-		channelNew:       make(chan *Channel),
-		channelClose:     make(chan *Channel),
-		writeTo:          make(chan writeToReq),
-		writeAll:         make(chan interface{}),
-		writeExcept:      make(chan writeExceptReq),
+		chNewChannel:     make(chan *Channel),
+		chCloseChannel:   make(chan *Channel),
+		chWriteTo:        make(chan writeToReq),
+		chWriteAll:       make(chan interface{}),
+		chWriteExcept:    make(chan writeExceptReq),
 		terminate:        make(chan struct{}),
-		events:           make(chan Event),
+		chEvent:          make(chan Event),
 		done:             make(chan struct{}),
 	}
 
@@ -256,15 +256,14 @@ func (n *Node) run() {
 outer:
 	for {
 		select {
-		case ch := <-n.channelNew:
+		case ch := <-n.chNewChannel:
 			n.channels[ch] = struct{}{}
 			ch.start()
 
-		case ch := <-n.channelClose:
+		case ch := <-n.chCloseChannel:
 			delete(n.channels, ch)
-			ch.close()
 
-		case req := <-n.writeTo:
+		case req := <-n.chWriteTo:
 			if _, ok := n.channels[req.ch]; !ok {
 				continue
 			}
@@ -272,25 +271,25 @@ outer:
 			var err error
 			req.what, err = n.encodeMessage(req.what)
 			if err == nil {
-				req.ch.write <- req.what
+				req.ch.write(req.what)
 			}
 
-		case what := <-n.writeAll:
+		case what := <-n.chWriteAll:
 			var err error
 			what, err = n.encodeMessage(what)
 			if err == nil {
 				for ch := range n.channels {
-					ch.write <- what
+					ch.write(what)
 				}
 			}
 
-		case req := <-n.writeExcept:
+		case req := <-n.chWriteExcept:
 			var err error
 			req.what, err = n.encodeMessage(req.what)
 			if err == nil {
 				for ch := range n.channels {
 					if ch != req.except {
-						ch.write <- req.what
+						ch.write(req.what)
 					}
 				}
 			}
@@ -318,7 +317,7 @@ outer:
 	}
 	n.channelsWg.Wait()
 
-	close(n.events)
+	close(n.chEvent)
 }
 
 // FixFrame recomputes the Frame checksum and signature.
@@ -409,13 +408,13 @@ func (n *Node) encodeMessage(what interface{}) (interface{}, error) {
 //
 // See individual events for details.
 func (n *Node) Events() chan Event {
-	return n.events
+	return n.chEvent
 }
 
 // WriteMessageTo writes a message to given channel.
 func (n *Node) WriteMessageTo(channel *Channel, m message.Message) {
 	select {
-	case n.writeTo <- writeToReq{channel, m}:
+	case n.chWriteTo <- writeToReq{channel, m}:
 	case <-n.terminate:
 	}
 }
@@ -423,7 +422,7 @@ func (n *Node) WriteMessageTo(channel *Channel, m message.Message) {
 // WriteMessageAll writes a message to all channels.
 func (n *Node) WriteMessageAll(m message.Message) {
 	select {
-	case n.writeAll <- m:
+	case n.chWriteAll <- m:
 	case <-n.terminate:
 	}
 }
@@ -431,7 +430,7 @@ func (n *Node) WriteMessageAll(m message.Message) {
 // WriteMessageExcept writes a message to all channels except specified channel.
 func (n *Node) WriteMessageExcept(exceptChannel *Channel, m message.Message) {
 	select {
-	case n.writeExcept <- writeExceptReq{exceptChannel, m}:
+	case n.chWriteExcept <- writeExceptReq{exceptChannel, m}:
 	case <-n.terminate:
 	}
 }
@@ -441,7 +440,7 @@ func (n *Node) WriteMessageExcept(exceptChannel *Channel, m message.Message) {
 // since all frame fields must be filled manually.
 func (n *Node) WriteFrameTo(channel *Channel, fr frame.Frame) {
 	select {
-	case n.writeTo <- writeToReq{channel, fr}:
+	case n.chWriteTo <- writeToReq{channel, fr}:
 	case <-n.terminate:
 	}
 }
@@ -451,7 +450,7 @@ func (n *Node) WriteFrameTo(channel *Channel, fr frame.Frame) {
 // since all frame fields must be filled manually.
 func (n *Node) WriteFrameAll(fr frame.Frame) {
 	select {
-	case n.writeAll <- fr:
+	case n.chWriteAll <- fr:
 	case <-n.terminate:
 	}
 }
@@ -461,7 +460,29 @@ func (n *Node) WriteFrameAll(fr frame.Frame) {
 // since all frame fields must be filled manually.
 func (n *Node) WriteFrameExcept(exceptChannel *Channel, fr frame.Frame) {
 	select {
-	case n.writeExcept <- writeExceptReq{exceptChannel, fr}:
+	case n.chWriteExcept <- writeExceptReq{exceptChannel, fr}:
+	case <-n.terminate:
+	}
+}
+
+func (n *Node) pushEvent(evt Event) {
+	select {
+	case n.chEvent <- evt:
+	case <-n.terminate:
+	}
+}
+
+func (n *Node) newChannel(ch *Channel) {
+	select {
+	case n.chNewChannel <- ch:
+	case <-n.terminate:
+		ch.close()
+	}
+}
+
+func (n *Node) closeChannel(ch *Channel) {
+	select {
+	case n.chCloseChannel <- ch:
 	case <-n.terminate:
 	}
 }

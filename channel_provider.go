@@ -4,32 +4,32 @@ import (
 	"fmt"
 )
 
-type channelAccepter struct {
+type channelProvider struct {
 	n   *Node
-	eca endpointChannelAccepter
+	eca endpointChannelProvider
 }
 
-func newChannelAccepter(n *Node, eca endpointChannelAccepter) (*channelAccepter, error) {
-	return &channelAccepter{
+func newChannelProvider(n *Node, eca endpointChannelProvider) (*channelProvider, error) {
+	return &channelProvider{
 		n:   n,
 		eca: eca,
 	}, nil
 }
 
-func (ca *channelAccepter) close() {
+func (ca *channelProvider) close() {
 	ca.eca.close()
 }
 
-func (ca *channelAccepter) start() {
-	ca.n.channelAcceptersWg.Add(1)
+func (ca *channelProvider) start() {
+	ca.n.wg.Add(1)
 	go ca.run()
 }
 
-func (ca *channelAccepter) run() {
-	defer ca.n.channelAcceptersWg.Done()
+func (ca *channelProvider) run() {
+	defer ca.n.wg.Done()
 
 	for {
-		label, rwc, err := ca.eca.accept()
+		label, rwc, err := ca.eca.provide()
 		if err != nil {
 			if err != errTerminated {
 				panic("errTerminated is the only error allowed here")

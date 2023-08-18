@@ -18,7 +18,7 @@ type Endpoint interface {
 
 // a endpoint must also implement one of the following:
 // - endpointChannelSingle
-// - endpointChannelAccepter
+// - endpointChannelProvider
 
 // endpointChannelSingle is an endpoint that provides a single channel.
 // Read() must not return any error unless Close() is called.
@@ -28,9 +28,9 @@ type endpointChannelSingle interface {
 	io.ReadWriteCloser
 }
 
-// endpointChannelAccepter is an endpoint that provides multiple channels.
-type endpointChannelAccepter interface {
+// endpointChannelProvider is an endpoint that provides multiple channels.
+type endpointChannelProvider interface {
 	Endpoint
 	close()
-	accept() (string, io.ReadWriteCloser, error)
+	provide() (string, io.ReadWriteCloser, error)
 }

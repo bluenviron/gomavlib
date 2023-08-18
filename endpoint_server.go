@@ -113,7 +113,7 @@ func (t *endpointServer) close() {
 	t.listener.Close()
 }
 
-func (t *endpointServer) accept() (string, io.ReadWriteCloser, error) {
+func (t *endpointServer) provide() (string, io.ReadWriteCloser, error) {
 	nconn, err := t.listener.Accept()
 	// wait termination, do not report errors
 	if err != nil {

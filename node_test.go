@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"sync"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/require"
 
@@ -97,7 +96,10 @@ func TestNodeCloseInLoop(t *testing.T) {
 	require.NoError(t, err)
 	defer node2.Close()
 
-	time.Sleep(100 * time.Millisecond) // wait UDP channel to reach connected status
+	evt := <-node2.Events()
+	require.Equal(t, &EventChannelOpen{
+		Channel: evt.(*EventChannelOpen).Channel,
+	}, evt)
 
 	node2.WriteMessageAll(testMessage)
 
@@ -368,7 +370,10 @@ func TestNodeWriteMessageInLoop(t *testing.T) {
 	require.NoError(t, err)
 	defer node2.Close()
 
-	time.Sleep(100 * time.Millisecond) // wait UDP channel to reach connected status
+	evt := <-node2.Events()
+	require.Equal(t, &EventChannelOpen{
+		Channel: evt.(*EventChannelOpen).Channel,
+	}, evt)
 
 	node2.WriteMessageAll(testMessage)
 
@@ -414,12 +419,15 @@ func TestNodeSignature(t *testing.T) {
 	require.NoError(t, err)
 	defer node2.Close()
 
-	time.Sleep(100 * time.Millisecond) // wait UDP channel to reach connected status
+	evt := <-node2.Events()
+	require.Equal(t, &EventChannelOpen{
+		Channel: evt.(*EventChannelOpen).Channel,
+	}, evt)
 
 	node2.WriteMessageAll(testMessage)
 
 	<-node1.Events()
-	evt := <-node1.Events()
+	evt = <-node1.Events()
 	fr, ok := evt.(*EventFrame)
 	require.Equal(t, true, ok)
 	require.Equal(t, &EventFrame{
@@ -526,7 +534,10 @@ func TestNodeFixFrame(t *testing.T) {
 	require.NoError(t, err)
 	defer node2.Close()
 
-	time.Sleep(100 * time.Millisecond) // wait UDP channel to reach connected status
+	evt := <-node2.Events()
+	require.Equal(t, &EventChannelOpen{
+		Channel: evt.(*EventChannelOpen).Channel,
+	}, evt)
 
 	fra := &frame.V2Frame{
 		SequenceID:          13,
@@ -544,7 +555,7 @@ func TestNodeFixFrame(t *testing.T) {
 	node2.WriteFrameAll(fra)
 
 	<-node1.Events()
-	evt := <-node1.Events()
+	evt = <-node1.Events()
 	fr, ok := evt.(*EventFrame)
 	require.Equal(t, true, ok)
 	require.Equal(t, &EventFrame{

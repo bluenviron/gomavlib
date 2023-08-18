@@ -67,7 +67,7 @@ func TestEndpointBroadcast(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	for i := 0; i < 3; i++ {
+	for i := 0; i < 3; i++ { //nolint:dupl
 		msg := &MessageHeartbeat{
 			Type:           1,
 			Autopilot:      2,

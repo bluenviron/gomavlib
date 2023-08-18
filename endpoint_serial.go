@@ -6,7 +6,7 @@ import (
 
 	"github.com/tarm/serial"
 
-	"github.com/bluenviron/gomavlib/v2/pkg/autoreconnector"
+	"github.com/bluenviron/gomavlib/v2/pkg/reconnector"
 )
 
 var serialOpenFunc = func(device string, baud int) (io.ReadWriteCloser, error) {
@@ -26,8 +26,8 @@ type EndpointSerial struct {
 }
 
 type endpointSerial struct {
-	conf EndpointConf
-	io.ReadWriteCloser
+	conf        EndpointConf
+	reconnector *reconnector.Reconnector
 }
 
 func (conf EndpointSerial) init(_ *Node) (Endpoint, error) {
@@ -40,7 +40,7 @@ func (conf EndpointSerial) init(_ *Node) (Endpoint, error) {
 
 	t := &endpointSerial{
 		conf: conf,
-		ReadWriteCloser: autoreconnector.New(
+		reconnector: reconnector.New(
 			func(ctx context.Context) (io.ReadWriteCloser, error) {
 				return serialOpenFunc(conf.Device, conf.Baud)
 			},
@@ -56,6 +56,15 @@ func (t *endpointSerial) Conf() EndpointConf {
 	return t.conf
 }
 
-func (t *endpointSerial) label() string {
-	return "serial"
+func (t *endpointSerial) close() {
+	t.reconnector.Close()
+}
+
+func (t *endpointSerial) provide() (string, io.ReadWriteCloser, error) {
+	conn, ok := t.reconnector.Reconnect()
+	if !ok {
+		return "", nil, errTerminated
+	}
+
+	return "serial", conn, nil
 }

@@ -6,7 +6,7 @@ import (
 	"io"
 	"net"
 
-	"github.com/bluenviron/gomavlib/v2/pkg/autoreconnector"
+	"github.com/bluenviron/gomavlib/v2/pkg/reconnector"
 	"github.com/bluenviron/gomavlib/v2/pkg/timednetconn"
 )
 
@@ -56,8 +56,8 @@ func (conf EndpointUDPClient) init(node *Node) (Endpoint, error) {
 }
 
 type endpointClient struct {
-	conf endpointClientConf
-	io.ReadWriteCloser
+	conf        endpointClientConf
+	reconnector *reconnector.Reconnector
 }
 
 func initEndpointClient(node *Node, conf endpointClientConf) (Endpoint, error) {
@@ -68,11 +68,8 @@ func initEndpointClient(node *Node, conf endpointClientConf) (Endpoint, error) {
 
 	t := &endpointClient{
 		conf: conf,
-		ReadWriteCloser: autoreconnector.New(
+		reconnector: reconnector.New(
 			func(ctx context.Context) (io.ReadWriteCloser, error) {
-				// solve address and connect
-				// in UDP, the only possible error is a DNS failure
-				// in TCP, the handshake must be completed
 				network := func() string {
 					if conf.isUDP() {
 						return "udp4"
@@ -80,6 +77,8 @@ func initEndpointClient(node *Node, conf endpointClientConf) (Endpoint, error) {
 					return "tcp4"
 				}()
 
+				// in UDP, the only possible error is a DNS failure
+				// in TCP, the handshake must be completed
 				timedContext, timedContextClose := context.WithTimeout(ctx, node.conf.ReadTimeout)
 				nconn, err := (&net.Dialer{}).DialContext(timedContext, network, conf.getAddress())
 				timedContextClose()
@@ -104,6 +103,19 @@ func (t *endpointClient) isEndpoint() {}
 
 func (t *endpointClient) Conf() EndpointConf {
 	return t.conf
+}
+
+func (t *endpointClient) close() {
+	t.reconnector.Close()
+}
+
+func (t *endpointClient) provide() (string, io.ReadWriteCloser, error) {
+	conn, ok := t.reconnector.Reconnect()
+	if !ok {
+		return "", nil, errTerminated
+	}
+
+	return t.label(), conn, nil
 }
 
 func (t *endpointClient) label() string {

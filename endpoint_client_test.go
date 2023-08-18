@@ -13,7 +13,7 @@ import (
 	"github.com/bluenviron/gomavlib/v2/pkg/frame"
 )
 
-var _ endpointChannelSingle = (*endpointClient)(nil)
+var _ endpointChannelProvider = (*endpointClient)(nil)
 
 func TestEndpointClient(t *testing.T) {
 	for _, ca := range []string{"tcp", "udp"} {
@@ -32,14 +32,10 @@ func TestEndpointClient(t *testing.T) {
 			}
 			defer ln.Close()
 
-			connected := make(chan struct{})
-
 			go func() {
 				conn, err := ln.Accept()
 				require.NoError(t, err)
 				defer conn.Close()
-
-				close(connected)
 
 				dialectRW, err := dialect.NewReadWriter(testDialect)
 				require.NoError(t, err)
@@ -104,12 +100,6 @@ func TestEndpointClient(t *testing.T) {
 				Channel: evt.(*EventChannelOpen).Channel,
 			}, evt)
 
-			if ca == "tcp" {
-				<-connected
-			} else {
-				time.Sleep(100 * time.Millisecond) // wait UDP channel to reach connected status
-			}
-
 			for i := 0; i < 3; i++ {
 				node.WriteMessageAll(&MessageHeartbeat{
 					Type:           1,
@@ -152,15 +142,12 @@ func TestEndpointClientIdleTimeout(t *testing.T) {
 			require.NoError(t, err)
 			defer ln.Close()
 
-			connected := make(chan struct{})
 			closed := make(chan struct{})
 			reconnected := make(chan struct{})
 
 			go func() {
 				conn, err := ln.Accept()
 				require.NoError(t, err)
-
-				close(connected)
 
 				dialectRW, err := dialect.NewReadWriter(testDialect)
 				require.NoError(t, err)
@@ -226,8 +213,6 @@ func TestEndpointClientIdleTimeout(t *testing.T) {
 			require.Equal(t, &EventChannelOpen{
 				Channel: evt.(*EventChannelOpen).Channel,
 			}, evt)
-
-			<-connected
 
 			node.WriteMessageAll(&MessageHeartbeat{
 				Type:           1,

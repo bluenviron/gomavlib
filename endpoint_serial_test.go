@@ -110,7 +110,7 @@ func TestEndpointSerial(t *testing.T) {
 			Channel: evt.(*EventFrame).Channel,
 		}, evt)
 
-		node.WriteMessageAll(&MessageHeartbeat{
+		err := node.WriteMessageAll(&MessageHeartbeat{
 			Type:           6,
 			Autopilot:      5,
 			BaseMode:       4,
@@ -118,6 +118,7 @@ func TestEndpointSerial(t *testing.T) {
 			SystemStatus:   2,
 			MavlinkVersion: 1,
 		})
+		require.NoError(t, err)
 	}
 
 	<-done
@@ -251,7 +252,7 @@ func TestEndpointSerialReconnect(t *testing.T) {
 		Channel: evt.(*EventFrame).Channel,
 	}, evt)
 
-	node.WriteMessageAll(&MessageHeartbeat{
+	err = node.WriteMessageAll(&MessageHeartbeat{
 		Type:           6,
 		Autopilot:      5,
 		BaseMode:       4,
@@ -259,6 +260,7 @@ func TestEndpointSerialReconnect(t *testing.T) {
 		SystemStatus:   2,
 		MavlinkVersion: 1,
 	})
+	require.NoError(t, err)
 
 	evt = <-node.Events()
 	require.Equal(t, &EventChannelClose{
@@ -270,7 +272,7 @@ func TestEndpointSerialReconnect(t *testing.T) {
 		Channel: evt.(*EventChannelOpen).Channel,
 	}, evt)
 
-	node.WriteMessageAll(&MessageHeartbeat{
+	err = node.WriteMessageAll(&MessageHeartbeat{
 		Type:           7,
 		Autopilot:      5,
 		BaseMode:       4,
@@ -278,6 +280,7 @@ func TestEndpointSerialReconnect(t *testing.T) {
 		SystemStatus:   2,
 		MavlinkVersion: 1,
 	})
+	require.NoError(t, err)
 
 	<-done
 }

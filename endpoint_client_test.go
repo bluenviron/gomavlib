@@ -101,7 +101,7 @@ func TestEndpointClient(t *testing.T) {
 			}, evt)
 
 			for i := 0; i < 3; i++ {
-				node.WriteMessageAll(&MessageHeartbeat{
+				err := node.WriteMessageAll(&MessageHeartbeat{
 					Type:           1,
 					Autopilot:      2,
 					BaseMode:       3,
@@ -109,6 +109,7 @@ func TestEndpointClient(t *testing.T) {
 					SystemStatus:   4,
 					MavlinkVersion: 5,
 				})
+				require.NoError(t, err)
 
 				evt = <-node.Events()
 				require.Equal(t, &EventFrame{
@@ -214,7 +215,7 @@ func TestEndpointClientIdleTimeout(t *testing.T) {
 				Channel: evt.(*EventChannelOpen).Channel,
 			}, evt)
 
-			node.WriteMessageAll(&MessageHeartbeat{
+			err = node.WriteMessageAll(&MessageHeartbeat{
 				Type:           1,
 				Autopilot:      2,
 				BaseMode:       3,
@@ -222,6 +223,7 @@ func TestEndpointClientIdleTimeout(t *testing.T) {
 				SystemStatus:   4,
 				MavlinkVersion: 5,
 			})
+			require.NoError(t, err)
 
 			select {
 			case <-closed:

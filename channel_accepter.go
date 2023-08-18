@@ -22,10 +22,10 @@ func (ca *channelAccepter) close() {
 
 func (ca *channelAccepter) start() {
 	ca.n.channelAcceptersWg.Add(1)
-	go ca.runSingle()
+	go ca.run()
 }
 
-func (ca *channelAccepter) runSingle() {
+func (ca *channelAccepter) run() {
 	defer ca.n.channelAcceptersWg.Done()
 
 	for {
@@ -42,9 +42,6 @@ func (ca *channelAccepter) runSingle() {
 			panic(fmt.Errorf("newChannel unexpected error: %s", err))
 		}
 
-		select {
-		case ca.n.channelNew <- ch:
-		case <-ca.n.terminate:
-		}
+		ca.n.newChannel(ch)
 	}
 }

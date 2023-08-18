@@ -90,14 +90,13 @@ type NodeConf struct {
 
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
 type Node struct {
-	conf               NodeConf
-	dialectRW          *dialect.ReadWriter
-	channelAccepters   map[*channelAccepter]struct{}
-	channelAcceptersWg sync.WaitGroup
-	channels           map[*Channel]struct{}
-	channelsWg         sync.WaitGroup
-	nodeHeartbeat      *nodeHeartbeat
-	nodeStreamRequest  *nodeStreamRequest
+	conf              NodeConf
+	dialectRW         *dialect.ReadWriter
+	wg                sync.WaitGroup
+	channelProviders  map[*channelProvider]struct{}
+	channels          map[*Channel]struct{}
+	nodeHeartbeat     *nodeHeartbeat
+	nodeStreamRequest *nodeStreamRequest
 
 	// in
 	chNewChannel   chan *Channel
@@ -167,7 +166,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 	n := &Node{
 		conf:             conf,
 		dialectRW:        dialectRW,
-		channelAccepters: make(map[*channelAccepter]struct{}),
+		channelProviders: make(map[*channelProvider]struct{}),
 		channels:         make(map[*Channel]struct{}),
 		chNewChannel:     make(chan *Channel),
 		chCloseChannel:   make(chan *Channel),
@@ -183,7 +182,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 		for ch := range n.channels {
 			ch.close()
 		}
-		for ca := range n.channelAccepters {
+		for ca := range n.channelProviders {
 			ca.close()
 		}
 	}
@@ -197,14 +196,14 @@ func NewNode(conf NodeConf) (*Node, error) {
 		}
 
 		switch ttp := tp.(type) {
-		case endpointChannelAccepter:
-			ca, err := newChannelAccepter(n, ttp)
+		case endpointChannelProvider:
+			ca, err := newChannelProvider(n, ttp)
 			if err != nil {
 				closeExisting()
 				return nil, err
 			}
 
-			n.channelAccepters[ca] = struct{}{}
+			n.channelProviders[ca] = struct{}{}
 
 		case endpointChannelSingle:
 			ch, err := newChannel(n, ttp, ttp.label(), ttp)
@@ -235,7 +234,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 		ch.start()
 	}
 
-	for ca := range n.channelAccepters {
+	for ca := range n.channelProviders {
 		ca.start()
 	}
 
@@ -307,15 +306,15 @@ outer:
 		n.nodeStreamRequest.close()
 	}
 
-	for ca := range n.channelAccepters {
+	for ca := range n.channelProviders {
 		ca.close()
 	}
-	n.channelAcceptersWg.Wait()
 
 	for ch := range n.channels {
 		ch.close()
 	}
-	n.channelsWg.Wait()
+
+	n.wg.Wait()
 
 	close(n.chEvent)
 }

@@ -11,7 +11,7 @@ import (
 	"github.com/bluenviron/gomavlib/v2/pkg/frame"
 )
 
-var _ endpointChannelAccepter = (*endpointServer)(nil)
+var _ endpointChannelProvider = (*endpointServer)(nil)
 
 func TestEndpointServer(t *testing.T) {
 	for _, ca := range []string{"tcp", "udp"} {

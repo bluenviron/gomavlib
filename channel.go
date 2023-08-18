@@ -10,9 +10,7 @@ import (
 )
 
 const (
-	// this is low in order to avoid accumulating messages
-	// when a channel is reconnecting
-	writeBufferSize = 8
+	writeBufferSize = 64
 )
 
 func randomByte() (byte, error) {
@@ -93,12 +91,12 @@ func (ch *Channel) close() {
 
 func (ch *Channel) start() {
 	ch.running = true
-	ch.n.channelsWg.Add(1)
+	ch.n.wg.Add(1)
 	go ch.run()
 }
 
 func (ch *Channel) run() {
-	defer ch.n.channelsWg.Done()
+	defer ch.n.wg.Done()
 
 	readerDone := make(chan struct{})
 	go ch.runReader(readerDone)

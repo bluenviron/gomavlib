@@ -12,35 +12,50 @@ import (
 var (
 	reconnectPeriod = 2 * time.Second
 	errTerminated   = errors.New("terminated")
+	errReconnecting = errors.New("reconnecting")
+)
+
+type state int
+
+const (
+	stateInitial state = iota
+	stateReconnecting
+	stateConnected
+	stateTerminated
 )
 
 type autoReconnector struct {
 	connect func(context.Context) (io.ReadWriteCloser, error)
 
-	ctx       context.Context
-	ctxCancel func()
-	conn      io.ReadWriteCloser
-	connMutex sync.Mutex
+	mutex            sync.Mutex
+	state            state
+	conn             io.ReadWriteCloser
+	connectCtx       context.Context
+	connectCtxCancel func()
 }
 
 // New returns a io.ReadWriterCloser that implements auto-reconnection.
 func New(
 	connect func(context.Context) (io.ReadWriteCloser, error),
 ) io.ReadWriteCloser {
-	ctx, ctxCancel := context.WithCancel(context.Background())
-
-	return &autoReconnector{
-		connect:   connect,
-		ctx:       ctx,
-		ctxCancel: ctxCancel,
+	a := &autoReconnector{
+		connect: connect,
 	}
+
+	a.resetConnection()
+
+	return a
 }
 
 func (a *autoReconnector) Close() error {
-	a.ctxCancel()
+	a.mutex.Lock()
+	defer a.mutex.Unlock()
 
-	a.connMutex.Lock()
-	defer a.connMutex.Unlock()
+	a.state = stateTerminated
+
+	if a.connectCtxCancel != nil {
+		a.connectCtxCancel()
+	}
 
 	if a.conn != nil {
 		a.conn.Close()
@@ -50,81 +65,107 @@ func (a *autoReconnector) Close() error {
 	return nil
 }
 
-func (a *autoReconnector) getConnection(reset bool) (io.ReadWriteCloser, bool) {
-	a.connMutex.Lock()
-	defer a.connMutex.Unlock()
+func (a *autoReconnector) getConnection() (io.ReadWriteCloser, context.Context, error) {
+	a.mutex.Lock()
+	defer a.mutex.Unlock()
+
+	switch a.state {
+	case stateTerminated:
+		return nil, nil, errTerminated
+
+	case stateReconnecting:
+		return nil, a.connectCtx, errReconnecting
+
+	default:
+		return a.conn, nil, nil
+	}
+}
+
+func (a *autoReconnector) resetConnection() {
+	a.mutex.Lock()
+	defer a.mutex.Unlock()
+
+	switch a.state {
+	case stateTerminated, stateReconnecting:
+		return
+	}
+
+	a.state = stateReconnecting
 
 	if a.conn != nil {
-		if !reset {
-			return a.conn, true
-		}
-
 		a.conn.Close()
 		a.conn = nil
 	}
 
-	select {
-	case <-a.ctx.Done():
-		return nil, false
-	default:
-	}
+	a.connectCtx, a.connectCtxCancel = context.WithCancel(context.Background())
 
-	for {
-		var err error
-		a.conn, err = a.connect(a.ctx)
-		if err == nil {
-			select {
-			case <-a.ctx.Done():
-				a.conn.Close()
-				a.conn = nil
-				return nil, false
-			default:
+	go func() {
+		for {
+			newConn, err := a.connect(a.connectCtx)
+			if err == nil {
+				a.setConn(newConn)
+				return
 			}
 
-			return a.conn, true
+			select {
+			case <-time.After(reconnectPeriod):
+			case <-a.connectCtx.Done():
+				return
+			}
 		}
+	}()
+}
 
-		select {
-		case <-time.After(reconnectPeriod):
-		case <-a.ctx.Done():
-			return nil, false
-		}
+func (a *autoReconnector) setConn(newConn io.ReadWriteCloser) {
+	a.mutex.Lock()
+	defer a.mutex.Unlock()
+
+	if a.state != stateReconnecting {
+		newConn.Close()
+		return
 	}
+
+	a.connectCtxCancel()
+	a.connectCtxCancel = nil
+
+	a.conn = newConn
+	a.state = stateConnected
 }
 
 func (a *autoReconnector) Read(p []byte) (int, error) {
-	reset := false
-
 	for {
-		curConn, ok := a.getConnection(reset)
-		if !ok {
-			return 0, errTerminated
+		curConn, connectCtx, err := a.getConnection()
+		if err == errReconnecting {
+			<-connectCtx.Done()
+			continue
+		}
+		if err != nil {
+			return 0, err
 		}
 
 		n, err := curConn.Read(p)
-		if err == nil || (err == io.EOF && n > 0) {
-			return n, err
+
+		if n == 0 {
+			a.resetConnection()
+			continue
 		}
 
-		reset = true
+		return n, err
 	}
 }
 
 func (a *autoReconnector) Write(p []byte) (int, error) {
-	reset := false
-
-	for {
-		curConn, ok := a.getConnection(reset)
-		if !ok {
-			return 0, errTerminated
-		}
-
-		n, err := curConn.Write(p)
-
-		if err == nil {
-			return n, nil
-		}
-
-		reset = true
+	curConn, _, err := a.getConnection()
+	if err != nil {
+		return 0, err
 	}
+
+	n, err := curConn.Write(p)
+
+	if n == 0 {
+		a.resetConnection()
+		return 0, errReconnecting
+	}
+
+	return n, err
 }

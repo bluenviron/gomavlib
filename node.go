@@ -266,7 +266,7 @@ outer:
 
 		case req := <-n.writeTo:
 			if _, ok := n.channels[req.ch]; !ok {
-				return
+				continue
 			}
 
 			var err error

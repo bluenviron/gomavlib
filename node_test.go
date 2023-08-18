@@ -101,7 +101,8 @@ func TestNodeCloseInLoop(t *testing.T) {
 		Channel: evt.(*EventChannelOpen).Channel,
 	}, evt)
 
-	node2.WriteMessageAll(testMessage)
+	err = node2.WriteMessageAll(testMessage)
+	require.NoError(t, err)
 
 	for evt := range node1.Events() {
 		if _, ok := evt.(*EventChannelOpen); ok {
@@ -171,15 +172,17 @@ func TestNodeWriteAll(t *testing.T) {
 			}
 
 			if ca == "message" {
-				server.WriteMessageAll(testMessage)
+				err := server.WriteMessageAll(testMessage)
+				require.NoError(t, err)
 			} else {
-				server.WriteFrameAll(&frame.V2Frame{
+				err := server.WriteFrameAll(&frame.V2Frame{
 					SequenceID:  0,
 					SystemID:    11,
 					ComponentID: 1,
 					Message:     testMessage,
 					Checksum:    55967,
 				})
+				require.NoError(t, err)
 			}
 			wg.Wait()
 		})
@@ -251,15 +254,17 @@ func TestNodeWriteExcept(t *testing.T) {
 			}
 
 			if ca == "message" {
-				server.WriteMessageExcept(except, testMessage)
+				err := server.WriteMessageExcept(except, testMessage)
+				require.NoError(t, err)
 			} else {
-				server.WriteFrameExcept(except, &frame.V2Frame{
+				err := server.WriteFrameExcept(except, &frame.V2Frame{
 					SequenceID:  0,
 					SystemID:    11,
 					ComponentID: 1,
 					Message:     testMessage,
 					Checksum:    55967,
 				})
+				require.NoError(t, err)
 			}
 			wg.Wait()
 		})
@@ -330,15 +335,17 @@ func TestNodeWriteTo(t *testing.T) {
 			}
 
 			if ca == "message" {
-				server.WriteMessageTo(except, testMessage)
+				err := server.WriteMessageTo(except, testMessage)
+				require.NoError(t, err)
 			} else {
-				server.WriteFrameTo(except, &frame.V2Frame{
+				err := server.WriteFrameTo(except, &frame.V2Frame{
 					SequenceID:  0,
 					SystemID:    11,
 					ComponentID: 1,
 					Message:     testMessage,
 					Checksum:    55967,
 				})
+				require.NoError(t, err)
 			}
 			<-recv
 		})
@@ -375,12 +382,14 @@ func TestNodeWriteMessageInLoop(t *testing.T) {
 		Channel: evt.(*EventChannelOpen).Channel,
 	}, evt)
 
-	node2.WriteMessageAll(testMessage)
+	err = node2.WriteMessageAll(testMessage)
+	require.NoError(t, err)
 
 	for evt := range node1.Events() {
 		if _, ok := evt.(*EventChannelOpen); ok {
 			for i := 0; i < 10; i++ {
-				node1.WriteMessageAll(testMessage)
+				err := node1.WriteMessageAll(testMessage)
+				require.NoError(t, err)
 			}
 			break
 		}
@@ -424,7 +433,8 @@ func TestNodeSignature(t *testing.T) {
 		Channel: evt.(*EventChannelOpen).Channel,
 	}, evt)
 
-	node2.WriteMessageAll(testMessage)
+	err = node2.WriteMessageAll(testMessage)
+	require.NoError(t, err)
 
 	<-node1.Events()
 	evt = <-node1.Events()
@@ -484,14 +494,17 @@ func TestNodeRoute(t *testing.T) {
 	require.NoError(t, err)
 	defer node3.Close()
 
-	node1.WriteMessageAll(testMessage)
+	err = node1.WriteMessageAll(testMessage)
+	require.NoError(t, err)
 
 	<-node2.Events()
 	<-node2.Events()
 	evt := <-node2.Events()
 	fr, ok := evt.(*EventFrame)
 	require.Equal(t, true, ok)
-	node2.WriteFrameExcept(fr.Channel, fr.Frame)
+
+	err = node2.WriteFrameExcept(fr.Channel, fr.Frame)
+	require.NoError(t, err)
 
 	<-node3.Events()
 	evt = <-node3.Events()
@@ -552,7 +565,9 @@ func TestNodeFixFrame(t *testing.T) {
 
 	err = node2.FixFrame(fra)
 	require.NoError(t, err)
-	node2.WriteFrameAll(fra)
+
+	err = node2.WriteFrameAll(fra)
+	require.NoError(t, err)
 
 	<-node1.Events()
 	evt = <-node1.Events()
@@ -572,4 +587,88 @@ func TestNodeFixFrame(t *testing.T) {
 		},
 		Channel: fr.Channel,
 	}, evt)
+}
+
+func TestNodeWriteSameToMultiple(t *testing.T) {
+	server, err := NewNode(NodeConf{
+		Dialect:     testDialect,
+		OutVersion:  V2,
+		OutSystemID: 11,
+		Endpoints: []EndpointConf{
+			EndpointTCPServer{"127.0.0.1:5600"},
+		},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer server.Close()
+
+	client1, err := NewNode(NodeConf{
+		Dialect:     testDialect,
+		OutVersion:  V2,
+		OutSystemID: 11,
+		Endpoints: []EndpointConf{
+			EndpointTCPClient{"127.0.0.1:5600"},
+		},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer client1.Close()
+
+	client2, err := NewNode(NodeConf{
+		Dialect:     testDialect,
+		OutVersion:  V2,
+		OutSystemID: 11,
+		Endpoints: []EndpointConf{
+			EndpointTCPClient{"127.0.0.1:5600"},
+		},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer client2.Close()
+
+	evt := <-client1.Events()
+	_, ok := evt.(*EventChannelOpen)
+	require.Equal(t, true, ok)
+
+	evt = <-client2.Events()
+	_, ok = evt.(*EventChannelOpen)
+	require.Equal(t, true, ok)
+
+	evt = <-server.Events()
+	_, ok = evt.(*EventChannelOpen)
+	require.Equal(t, true, ok)
+
+	evt = <-server.Events()
+	_, ok = evt.(*EventChannelOpen)
+	require.Equal(t, true, ok)
+
+	fr := &frame.V2Frame{
+		SequenceID:  0,
+		SystemID:    11,
+		ComponentID: 1,
+		Message:     testMessage,
+		Checksum:    55967,
+	}
+
+	err = client1.WriteFrameAll(fr)
+	require.NoError(t, err)
+
+	err = client2.WriteFrameAll(fr)
+	require.NoError(t, err)
+
+	for i := 0; i < 2; i++ {
+		evt = <-server.Events()
+		fr, ok := evt.(*EventFrame)
+		require.Equal(t, true, ok)
+		require.Equal(t, &EventFrame{
+			Frame: &frame.V2Frame{
+				SequenceID:  0,
+				SystemID:    11,
+				ComponentID: 1,
+				Message:     testMessage,
+				Checksum:    55967,
+			},
+			Channel: fr.Channel,
+		}, evt)
+	}
 }

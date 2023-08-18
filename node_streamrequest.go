@@ -171,7 +171,7 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 			m.Elem().FieldByName("ReqStreamId").SetUint(uint64(stream))
 			m.Elem().FieldByName("ReqMessageRate").SetUint(uint64(sr.n.conf.StreamRequestFrequency))
 			m.Elem().FieldByName("StartStop").SetUint(uint64(1))
-			sr.n.WriteMessageTo(evt.Channel, m.Interface().(message.Message))
+			sr.n.WriteMessageTo(evt.Channel, m.Interface().(message.Message)) //nolint:errcheck
 		}
 
 		sr.n.pushEvent(&EventStreamRequested{

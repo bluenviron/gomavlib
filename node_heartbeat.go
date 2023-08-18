@@ -77,7 +77,7 @@ func (h *nodeHeartbeat) run() {
 			m.Elem().FieldByName("CustomMode").SetUint(0)
 			m.Elem().FieldByName("SystemStatus").SetUint(4) // MAV_STATE_ACTIVE
 			m.Elem().FieldByName("MavlinkVersion").SetUint(uint64(h.n.conf.Dialect.Version))
-			h.n.WriteMessageAll(m.Interface().(message.Message))
+			h.n.WriteMessageAll(m.Interface().(message.Message)) //nolint:errcheck
 
 		case <-h.terminate:
 			return

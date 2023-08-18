@@ -123,7 +123,8 @@ func TestEndpointCustom(t *testing.T) {
 			SystemStatus:   2,
 			MavlinkVersion: 1,
 		}
-		node.WriteMessageAll(msg)
+		err := node.WriteMessageAll(msg)
+		require.NoError(t, err)
 
 		fr, err := rw.Read()
 		require.NoError(t, err)

@@ -266,30 +266,17 @@ outer:
 			if _, ok := n.channels[req.ch]; !ok {
 				continue
 			}
-
-			var err error
-			req.what, err = n.encodeMessage(req.what)
-			if err == nil {
-				req.ch.write(req.what)
-			}
+			req.ch.write(req.what)
 
 		case what := <-n.chWriteAll:
-			var err error
-			what, err = n.encodeMessage(what)
-			if err == nil {
-				for ch := range n.channels {
-					ch.write(what)
-				}
+			for ch := range n.channels {
+				ch.write(what)
 			}
 
 		case req := <-n.chWriteExcept:
-			var err error
-			req.what, err = n.encodeMessage(req.what)
-			if err == nil {
-				for ch := range n.channels {
-					if ch != req.except {
-						ch.write(req.what)
-					}
+			for ch := range n.channels {
+				if ch != req.except {
+					ch.write(req.what)
 				}
 			}
 
@@ -322,7 +309,7 @@ outer:
 // FixFrame recomputes the Frame checksum and signature.
 // This can be called on Frames whose content has been edited.
 func (n *Node) FixFrame(fr frame.Frame) error {
-	_, err := n.encodeMessage(fr)
+	err := n.encodeFrame(fr)
 	if err != nil {
 		return err
 	}
@@ -352,49 +339,47 @@ func (n *Node) FixFrame(fr frame.Frame) error {
 	return nil
 }
 
-// encode messages once before sending them to the channel's frame.ReadWriter.
-func (n *Node) encodeMessage(what interface{}) (interface{}, error) {
-	switch twhat := what.(type) {
-	case message.Message:
-		if _, ok := twhat.(*message.MessageRaw); !ok {
-			if n.dialectRW == nil {
-				return nil, fmt.Errorf("dialect is nil")
-			}
-
-			mp := n.dialectRW.GetMessage(twhat.GetID())
-			if mp == nil {
-				return nil, fmt.Errorf("message is not in the dialect")
-			}
-
-			msgRaw := mp.Write(twhat, n.conf.OutVersion == V2)
-
-			return msgRaw, nil
+func (n *Node) encodeFrame(fr frame.Frame) error {
+	if _, ok := fr.GetMessage().(*message.MessageRaw); !ok {
+		if n.dialectRW == nil {
+			return fmt.Errorf("dialect is nil")
 		}
 
-	case frame.Frame:
-		if _, ok := twhat.GetMessage().(*message.MessageRaw); !ok {
-			if n.dialectRW == nil {
-				return nil, fmt.Errorf("dialect is nil")
-			}
+		mp := n.dialectRW.GetMessage(fr.GetMessage().GetID())
+		if mp == nil {
+			return fmt.Errorf("message is not in the dialect")
+		}
 
-			mp := n.dialectRW.GetMessage(twhat.GetMessage().GetID())
-			if mp == nil {
-				return nil, fmt.Errorf("message is not in the dialect")
-			}
+		_, isV2 := fr.(*frame.V2Frame)
+		msgRaw := mp.Write(fr.GetMessage(), isV2)
 
-			_, isV2 := twhat.(*frame.V2Frame)
-			msgRaw := mp.Write(twhat.GetMessage(), isV2)
-
-			switch ff := twhat.(type) {
-			case *frame.V1Frame:
-				ff.Message = msgRaw
-			case *frame.V2Frame:
-				ff.Message = msgRaw
-			}
+		switch fr := fr.(type) {
+		case *frame.V1Frame:
+			fr.Message = msgRaw
+		case *frame.V2Frame:
+			fr.Message = msgRaw
 		}
 	}
 
-	return what, nil
+	return nil
+}
+
+func (n *Node) encodeMessage(msg message.Message) (message.Message, error) {
+	if _, ok := msg.(*message.MessageRaw); !ok {
+		if n.dialectRW == nil {
+			return nil, fmt.Errorf("dialect is nil")
+		}
+
+		mp := n.dialectRW.GetMessage(msg.GetID())
+		if mp == nil {
+			return nil, fmt.Errorf("message is not in the dialect")
+		}
+
+		msgRaw := mp.Write(msg, n.conf.OutVersion == V2)
+		return msgRaw, nil
+	}
+
+	return msg, nil
 }
 
 // Events returns a channel from which receiving events. Possible events are:
@@ -411,57 +396,99 @@ func (n *Node) Events() chan Event {
 }
 
 // WriteMessageTo writes a message to given channel.
-func (n *Node) WriteMessageTo(channel *Channel, m message.Message) {
+func (n *Node) WriteMessageTo(channel *Channel, m message.Message) error {
+	m, err := n.encodeMessage(m)
+	if err != nil {
+		return err
+	}
+
 	select {
 	case n.chWriteTo <- writeToReq{channel, m}:
 	case <-n.terminate:
 	}
+
+	return nil
 }
 
 // WriteMessageAll writes a message to all channels.
-func (n *Node) WriteMessageAll(m message.Message) {
+func (n *Node) WriteMessageAll(m message.Message) error {
+	m, err := n.encodeMessage(m)
+	if err != nil {
+		return err
+	}
+
 	select {
 	case n.chWriteAll <- m:
 	case <-n.terminate:
 	}
+
+	return nil
 }
 
 // WriteMessageExcept writes a message to all channels except specified channel.
-func (n *Node) WriteMessageExcept(exceptChannel *Channel, m message.Message) {
+func (n *Node) WriteMessageExcept(exceptChannel *Channel, m message.Message) error {
+	m, err := n.encodeMessage(m)
+	if err != nil {
+		return err
+	}
+
 	select {
 	case n.chWriteExcept <- writeExceptReq{exceptChannel, m}:
 	case <-n.terminate:
 	}
+
+	return nil
 }
 
 // WriteFrameTo writes a frame to given channel.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
-func (n *Node) WriteFrameTo(channel *Channel, fr frame.Frame) {
+func (n *Node) WriteFrameTo(channel *Channel, fr frame.Frame) error {
+	err := n.encodeFrame(fr)
+	if err != nil {
+		return err
+	}
+
 	select {
 	case n.chWriteTo <- writeToReq{channel, fr}:
 	case <-n.terminate:
 	}
+
+	return nil
 }
 
 // WriteFrameAll writes a frame to all channels.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
-func (n *Node) WriteFrameAll(fr frame.Frame) {
+func (n *Node) WriteFrameAll(fr frame.Frame) error {
+	err := n.encodeFrame(fr)
+	if err != nil {
+		return err
+	}
+
 	select {
 	case n.chWriteAll <- fr:
 	case <-n.terminate:
 	}
+
+	return nil
 }
 
 // WriteFrameExcept writes a frame to all channels except specified channel.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
-func (n *Node) WriteFrameExcept(exceptChannel *Channel, fr frame.Frame) {
+func (n *Node) WriteFrameExcept(exceptChannel *Channel, fr frame.Frame) error {
+	err := n.encodeFrame(fr)
+	if err != nil {
+		return err
+	}
+
 	select {
 	case n.chWriteExcept <- writeExceptReq{exceptChannel, fr}:
 	case <-n.terminate:
 	}
+
+	return nil
 }
 
 func (n *Node) pushEvent(evt Event) {

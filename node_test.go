@@ -494,19 +494,32 @@ func TestNodeRoute(t *testing.T) {
 	require.NoError(t, err)
 	defer node3.Close()
 
+	evt := <-node1.Events()
+	_, ok := evt.(*EventChannelOpen)
+	require.Equal(t, true, ok)
+
 	err = node1.WriteMessageAll(testMessage)
 	require.NoError(t, err)
 
-	<-node2.Events()
-	<-node2.Events()
-	evt := <-node2.Events()
+	evt = <-node2.Events()
+	_, ok = evt.(*EventChannelOpen)
+	require.Equal(t, true, ok)
+
+	evt = <-node2.Events()
+	_, ok = evt.(*EventChannelOpen)
+	require.Equal(t, true, ok)
+
+	evt = <-node2.Events()
 	fr, ok := evt.(*EventFrame)
 	require.Equal(t, true, ok)
 
 	err = node2.WriteFrameExcept(fr.Channel, fr.Frame)
 	require.NoError(t, err)
 
-	<-node3.Events()
+	evt = <-node3.Events()
+	_, ok = evt.(*EventChannelOpen)
+	require.Equal(t, true, ok)
+
 	evt = <-node3.Events()
 	fr, ok = evt.(*EventFrame)
 	require.Equal(t, true, ok)

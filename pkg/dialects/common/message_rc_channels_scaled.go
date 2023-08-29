@@ -2,7 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package common
 
-// The scaled values of the RC channels received: (-100%) -10000, (0%) 0, (100%) 10000. Channels that are inactive should be set to UINT16_MAX.
+// The scaled values of the RC channels received: (-100%) -10000, (0%) 0, (100%) 10000. Channels that are inactive should be set to INT16_MAX.
 type MessageRcChannelsScaled struct {
 	// Timestamp (time since system boot).
 	TimeBootMs uint32

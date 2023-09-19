@@ -74,7 +74,7 @@ Features:
 
 ## API Documentation
 
-https://pkg.go.dev/github.com/bluenviron/gomavlib/v2#pkg-index
+[Click to open the API Documentation](https://pkg.go.dev/github.com/bluenviron/gomavlib/v2#pkg-index)
 
 ## Dialect generation
 

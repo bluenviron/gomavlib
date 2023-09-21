@@ -14,15 +14,20 @@ var _ endpointChannelProvider = (*endpointSerial)(nil)
 
 func TestEndpointSerial(t *testing.T) {
 	done := make(chan struct{})
-	first := false
+	n := 0
 
 	serialOpenFunc = func(name string, baud int) (io.ReadWriteCloser, error) {
 		remote, local := newDummyReadWriterPair()
 
-		// skip first call to serialOpenFunc()
-		if !first {
-			first = true
+		n++
+		switch n {
+		case 1:
 			return remote, nil
+
+		case 2:
+
+		default:
+			t.Errorf("should not happen")
 		}
 
 		go func() {

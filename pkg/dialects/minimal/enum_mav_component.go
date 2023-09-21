@@ -4,7 +4,7 @@ package minimal
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Component ids (values) for the different types and instances of onboard hardware/software that might make up a MAVLink system (autopilot, cameras, servos, GPS systems, avoidance systems etc.).
@@ -423,40 +423,168 @@ var labels_MAV_COMPONENT = map[MAV_COMPONENT]string{
 	MAV_COMP_ID_SYSTEM_CONTROL:           "MAV_COMP_ID_SYSTEM_CONTROL",
 }
 
+var values_MAV_COMPONENT = map[string]MAV_COMPONENT{
+	"MAV_COMP_ID_ALL":                      MAV_COMP_ID_ALL,
+	"MAV_COMP_ID_AUTOPILOT1":               MAV_COMP_ID_AUTOPILOT1,
+	"MAV_COMP_ID_USER1":                    MAV_COMP_ID_USER1,
+	"MAV_COMP_ID_USER2":                    MAV_COMP_ID_USER2,
+	"MAV_COMP_ID_USER3":                    MAV_COMP_ID_USER3,
+	"MAV_COMP_ID_USER4":                    MAV_COMP_ID_USER4,
+	"MAV_COMP_ID_USER5":                    MAV_COMP_ID_USER5,
+	"MAV_COMP_ID_USER6":                    MAV_COMP_ID_USER6,
+	"MAV_COMP_ID_USER7":                    MAV_COMP_ID_USER7,
+	"MAV_COMP_ID_USER8":                    MAV_COMP_ID_USER8,
+	"MAV_COMP_ID_USER9":                    MAV_COMP_ID_USER9,
+	"MAV_COMP_ID_USER10":                   MAV_COMP_ID_USER10,
+	"MAV_COMP_ID_USER11":                   MAV_COMP_ID_USER11,
+	"MAV_COMP_ID_USER12":                   MAV_COMP_ID_USER12,
+	"MAV_COMP_ID_USER13":                   MAV_COMP_ID_USER13,
+	"MAV_COMP_ID_USER14":                   MAV_COMP_ID_USER14,
+	"MAV_COMP_ID_USER15":                   MAV_COMP_ID_USER15,
+	"MAV_COMP_ID_USER16":                   MAV_COMP_ID_USER16,
+	"MAV_COMP_ID_USER17":                   MAV_COMP_ID_USER17,
+	"MAV_COMP_ID_USER18":                   MAV_COMP_ID_USER18,
+	"MAV_COMP_ID_USER19":                   MAV_COMP_ID_USER19,
+	"MAV_COMP_ID_USER20":                   MAV_COMP_ID_USER20,
+	"MAV_COMP_ID_USER21":                   MAV_COMP_ID_USER21,
+	"MAV_COMP_ID_USER22":                   MAV_COMP_ID_USER22,
+	"MAV_COMP_ID_USER23":                   MAV_COMP_ID_USER23,
+	"MAV_COMP_ID_USER24":                   MAV_COMP_ID_USER24,
+	"MAV_COMP_ID_USER25":                   MAV_COMP_ID_USER25,
+	"MAV_COMP_ID_USER26":                   MAV_COMP_ID_USER26,
+	"MAV_COMP_ID_USER27":                   MAV_COMP_ID_USER27,
+	"MAV_COMP_ID_USER28":                   MAV_COMP_ID_USER28,
+	"MAV_COMP_ID_USER29":                   MAV_COMP_ID_USER29,
+	"MAV_COMP_ID_USER30":                   MAV_COMP_ID_USER30,
+	"MAV_COMP_ID_USER31":                   MAV_COMP_ID_USER31,
+	"MAV_COMP_ID_USER32":                   MAV_COMP_ID_USER32,
+	"MAV_COMP_ID_USER33":                   MAV_COMP_ID_USER33,
+	"MAV_COMP_ID_USER34":                   MAV_COMP_ID_USER34,
+	"MAV_COMP_ID_USER35":                   MAV_COMP_ID_USER35,
+	"MAV_COMP_ID_USER36":                   MAV_COMP_ID_USER36,
+	"MAV_COMP_ID_USER37":                   MAV_COMP_ID_USER37,
+	"MAV_COMP_ID_USER38":                   MAV_COMP_ID_USER38,
+	"MAV_COMP_ID_USER39":                   MAV_COMP_ID_USER39,
+	"MAV_COMP_ID_USER40":                   MAV_COMP_ID_USER40,
+	"MAV_COMP_ID_USER41":                   MAV_COMP_ID_USER41,
+	"MAV_COMP_ID_USER42":                   MAV_COMP_ID_USER42,
+	"MAV_COMP_ID_USER43":                   MAV_COMP_ID_USER43,
+	"MAV_COMP_ID_TELEMETRY_RADIO":          MAV_COMP_ID_TELEMETRY_RADIO,
+	"MAV_COMP_ID_USER45":                   MAV_COMP_ID_USER45,
+	"MAV_COMP_ID_USER46":                   MAV_COMP_ID_USER46,
+	"MAV_COMP_ID_USER47":                   MAV_COMP_ID_USER47,
+	"MAV_COMP_ID_USER48":                   MAV_COMP_ID_USER48,
+	"MAV_COMP_ID_USER49":                   MAV_COMP_ID_USER49,
+	"MAV_COMP_ID_USER50":                   MAV_COMP_ID_USER50,
+	"MAV_COMP_ID_USER51":                   MAV_COMP_ID_USER51,
+	"MAV_COMP_ID_USER52":                   MAV_COMP_ID_USER52,
+	"MAV_COMP_ID_USER53":                   MAV_COMP_ID_USER53,
+	"MAV_COMP_ID_USER54":                   MAV_COMP_ID_USER54,
+	"MAV_COMP_ID_USER55":                   MAV_COMP_ID_USER55,
+	"MAV_COMP_ID_USER56":                   MAV_COMP_ID_USER56,
+	"MAV_COMP_ID_USER57":                   MAV_COMP_ID_USER57,
+	"MAV_COMP_ID_USER58":                   MAV_COMP_ID_USER58,
+	"MAV_COMP_ID_USER59":                   MAV_COMP_ID_USER59,
+	"MAV_COMP_ID_USER60":                   MAV_COMP_ID_USER60,
+	"MAV_COMP_ID_USER61":                   MAV_COMP_ID_USER61,
+	"MAV_COMP_ID_USER62":                   MAV_COMP_ID_USER62,
+	"MAV_COMP_ID_USER63":                   MAV_COMP_ID_USER63,
+	"MAV_COMP_ID_USER64":                   MAV_COMP_ID_USER64,
+	"MAV_COMP_ID_USER65":                   MAV_COMP_ID_USER65,
+	"MAV_COMP_ID_USER66":                   MAV_COMP_ID_USER66,
+	"MAV_COMP_ID_USER67":                   MAV_COMP_ID_USER67,
+	"MAV_COMP_ID_USER68":                   MAV_COMP_ID_USER68,
+	"MAV_COMP_ID_USER69":                   MAV_COMP_ID_USER69,
+	"MAV_COMP_ID_USER70":                   MAV_COMP_ID_USER70,
+	"MAV_COMP_ID_USER71":                   MAV_COMP_ID_USER71,
+	"MAV_COMP_ID_USER72":                   MAV_COMP_ID_USER72,
+	"MAV_COMP_ID_USER73":                   MAV_COMP_ID_USER73,
+	"MAV_COMP_ID_USER74":                   MAV_COMP_ID_USER74,
+	"MAV_COMP_ID_USER75":                   MAV_COMP_ID_USER75,
+	"MAV_COMP_ID_CAMERA":                   MAV_COMP_ID_CAMERA,
+	"MAV_COMP_ID_CAMERA2":                  MAV_COMP_ID_CAMERA2,
+	"MAV_COMP_ID_CAMERA3":                  MAV_COMP_ID_CAMERA3,
+	"MAV_COMP_ID_CAMERA4":                  MAV_COMP_ID_CAMERA4,
+	"MAV_COMP_ID_CAMERA5":                  MAV_COMP_ID_CAMERA5,
+	"MAV_COMP_ID_CAMERA6":                  MAV_COMP_ID_CAMERA6,
+	"MAV_COMP_ID_SERVO1":                   MAV_COMP_ID_SERVO1,
+	"MAV_COMP_ID_SERVO2":                   MAV_COMP_ID_SERVO2,
+	"MAV_COMP_ID_SERVO3":                   MAV_COMP_ID_SERVO3,
+	"MAV_COMP_ID_SERVO4":                   MAV_COMP_ID_SERVO4,
+	"MAV_COMP_ID_SERVO5":                   MAV_COMP_ID_SERVO5,
+	"MAV_COMP_ID_SERVO6":                   MAV_COMP_ID_SERVO6,
+	"MAV_COMP_ID_SERVO7":                   MAV_COMP_ID_SERVO7,
+	"MAV_COMP_ID_SERVO8":                   MAV_COMP_ID_SERVO8,
+	"MAV_COMP_ID_SERVO9":                   MAV_COMP_ID_SERVO9,
+	"MAV_COMP_ID_SERVO10":                  MAV_COMP_ID_SERVO10,
+	"MAV_COMP_ID_SERVO11":                  MAV_COMP_ID_SERVO11,
+	"MAV_COMP_ID_SERVO12":                  MAV_COMP_ID_SERVO12,
+	"MAV_COMP_ID_SERVO13":                  MAV_COMP_ID_SERVO13,
+	"MAV_COMP_ID_SERVO14":                  MAV_COMP_ID_SERVO14,
+	"MAV_COMP_ID_GIMBAL":                   MAV_COMP_ID_GIMBAL,
+	"MAV_COMP_ID_LOG":                      MAV_COMP_ID_LOG,
+	"MAV_COMP_ID_ADSB":                     MAV_COMP_ID_ADSB,
+	"MAV_COMP_ID_OSD":                      MAV_COMP_ID_OSD,
+	"MAV_COMP_ID_PERIPHERAL":               MAV_COMP_ID_PERIPHERAL,
+	"MAV_COMP_ID_QX1_GIMBAL":               MAV_COMP_ID_QX1_GIMBAL,
+	"MAV_COMP_ID_FLARM":                    MAV_COMP_ID_FLARM,
+	"MAV_COMP_ID_PARACHUTE":                MAV_COMP_ID_PARACHUTE,
+	"MAV_COMP_ID_WINCH":                    MAV_COMP_ID_WINCH,
+	"MAV_COMP_ID_GIMBAL2":                  MAV_COMP_ID_GIMBAL2,
+	"MAV_COMP_ID_GIMBAL3":                  MAV_COMP_ID_GIMBAL3,
+	"MAV_COMP_ID_GIMBAL4":                  MAV_COMP_ID_GIMBAL4,
+	"MAV_COMP_ID_GIMBAL5":                  MAV_COMP_ID_GIMBAL5,
+	"MAV_COMP_ID_GIMBAL6":                  MAV_COMP_ID_GIMBAL6,
+	"MAV_COMP_ID_BATTERY":                  MAV_COMP_ID_BATTERY,
+	"MAV_COMP_ID_BATTERY2":                 MAV_COMP_ID_BATTERY2,
+	"MAV_COMP_ID_MAVCAN":                   MAV_COMP_ID_MAVCAN,
+	"MAV_COMP_ID_MISSIONPLANNER":           MAV_COMP_ID_MISSIONPLANNER,
+	"MAV_COMP_ID_ONBOARD_COMPUTER":         MAV_COMP_ID_ONBOARD_COMPUTER,
+	"MAV_COMP_ID_ONBOARD_COMPUTER2":        MAV_COMP_ID_ONBOARD_COMPUTER2,
+	"MAV_COMP_ID_ONBOARD_COMPUTER3":        MAV_COMP_ID_ONBOARD_COMPUTER3,
+	"MAV_COMP_ID_ONBOARD_COMPUTER4":        MAV_COMP_ID_ONBOARD_COMPUTER4,
+	"MAV_COMP_ID_PATHPLANNER":              MAV_COMP_ID_PATHPLANNER,
+	"MAV_COMP_ID_OBSTACLE_AVOIDANCE":       MAV_COMP_ID_OBSTACLE_AVOIDANCE,
+	"MAV_COMP_ID_VISUAL_INERTIAL_ODOMETRY": MAV_COMP_ID_VISUAL_INERTIAL_ODOMETRY,
+	"MAV_COMP_ID_PAIRING_MANAGER":          MAV_COMP_ID_PAIRING_MANAGER,
+	"MAV_COMP_ID_IMU":                      MAV_COMP_ID_IMU,
+	"MAV_COMP_ID_IMU_2":                    MAV_COMP_ID_IMU_2,
+	"MAV_COMP_ID_IMU_3":                    MAV_COMP_ID_IMU_3,
+	"MAV_COMP_ID_GPS":                      MAV_COMP_ID_GPS,
+	"MAV_COMP_ID_GPS2":                     MAV_COMP_ID_GPS2,
+	"MAV_COMP_ID_ODID_TXRX_1":              MAV_COMP_ID_ODID_TXRX_1,
+	"MAV_COMP_ID_ODID_TXRX_2":              MAV_COMP_ID_ODID_TXRX_2,
+	"MAV_COMP_ID_ODID_TXRX_3":              MAV_COMP_ID_ODID_TXRX_3,
+	"MAV_COMP_ID_UDP_BRIDGE":               MAV_COMP_ID_UDP_BRIDGE,
+	"MAV_COMP_ID_UART_BRIDGE":              MAV_COMP_ID_UART_BRIDGE,
+	"MAV_COMP_ID_TUNNEL_NODE":              MAV_COMP_ID_TUNNEL_NODE,
+	"MAV_COMP_ID_SYSTEM_CONTROL":           MAV_COMP_ID_SYSTEM_CONTROL,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_COMPONENT) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_COMPONENT {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_COMPONENT[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_COMPONENT
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_COMPONENT {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_COMPONENT[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_COMPONENT) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_COMPONENT[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

@@ -40,12 +40,24 @@ var labels_MAV_MODE_FLAG_DECODE_POSITION = map[MAV_MODE_FLAG_DECODE_POSITION]str
 	MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE: "MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE",
 }
 
+var values_MAV_MODE_FLAG_DECODE_POSITION = map[string]MAV_MODE_FLAG_DECODE_POSITION{
+	"MAV_MODE_FLAG_DECODE_POSITION_SAFETY":      MAV_MODE_FLAG_DECODE_POSITION_SAFETY,
+	"MAV_MODE_FLAG_DECODE_POSITION_MANUAL":      MAV_MODE_FLAG_DECODE_POSITION_MANUAL,
+	"MAV_MODE_FLAG_DECODE_POSITION_HIL":         MAV_MODE_FLAG_DECODE_POSITION_HIL,
+	"MAV_MODE_FLAG_DECODE_POSITION_STABILIZE":   MAV_MODE_FLAG_DECODE_POSITION_STABILIZE,
+	"MAV_MODE_FLAG_DECODE_POSITION_GUIDED":      MAV_MODE_FLAG_DECODE_POSITION_GUIDED,
+	"MAV_MODE_FLAG_DECODE_POSITION_AUTO":        MAV_MODE_FLAG_DECODE_POSITION_AUTO,
+	"MAV_MODE_FLAG_DECODE_POSITION_TEST":        MAV_MODE_FLAG_DECODE_POSITION_TEST,
+	"MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE": MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MODE_FLAG_DECODE_POSITION) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_MAV_MODE_FLAG_DECODE_POSITION {
+	for i := 0; i < 8; i++ {
+		mask := MAV_MODE_FLAG_DECODE_POSITION(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_MAV_MODE_FLAG_DECODE_POSITION[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -56,19 +68,12 @@ func (e *MAV_MODE_FLAG_DECODE_POSITION) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask MAV_MODE_FLAG_DECODE_POSITION
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_MODE_FLAG_DECODE_POSITION {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_MAV_MODE_FLAG_DECODE_POSITION[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

@@ -113,6 +113,10 @@ func (t *endpointServer) close() {
 	t.listener.Close()
 }
 
+func (t *endpointServer) oneChannelAtAtime() bool {
+	return false
+}
+
 func (t *endpointServer) provide() (string, io.ReadWriteCloser, error) {
 	nconn, err := t.listener.Accept()
 	// wait termination, do not report errors

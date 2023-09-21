@@ -60,6 +60,10 @@ func (t *endpointSerial) close() {
 	t.reconnector.Close()
 }
 
+func (t *endpointSerial) oneChannelAtAtime() bool {
+	return true
+}
+
 func (t *endpointSerial) provide() (string, io.ReadWriteCloser, error) {
 	conn, ok := t.reconnector.Reconnect()
 	if !ok {

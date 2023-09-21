@@ -61,7 +61,7 @@ func (c *connWithContext) Write(p []byte) (int, error) {
 	return n, err
 }
 
-// Reconnector allocws to perform automatic reconnections.
+// Reconnector allows to perform automatic reconnections.
 type Reconnector struct {
 	connect ConnectFunc
 
@@ -86,7 +86,7 @@ func (a *Reconnector) Close() {
 	a.ctxCancel()
 }
 
-// Reconnect returns the next working connection.
+// Reconnect returns the next connection.
 func (a *Reconnector) Reconnect() (io.ReadWriteCloser, bool) {
 	if a.curConn != nil {
 		select {

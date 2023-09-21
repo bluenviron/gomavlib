@@ -231,6 +231,8 @@ func TestEndpointClientIdleTimeout(t *testing.T) {
 				t.Errorf("should not happen")
 			}
 
+			<-node.Events()
+
 			<-reconnected
 		})
 	}

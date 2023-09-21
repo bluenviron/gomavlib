@@ -16,20 +16,20 @@ func newChannelProvider(n *Node, eca endpointChannelProvider) (*channelProvider,
 	}, nil
 }
 
-func (ca *channelProvider) close() {
-	ca.eca.close()
+func (cp *channelProvider) close() {
+	cp.eca.close()
 }
 
-func (ca *channelProvider) start() {
-	ca.n.wg.Add(1)
-	go ca.run()
+func (cp *channelProvider) start() {
+	cp.n.wg.Add(1)
+	go cp.run()
 }
 
-func (ca *channelProvider) run() {
-	defer ca.n.wg.Done()
+func (cp *channelProvider) run() {
+	defer cp.n.wg.Done()
 
 	for {
-		label, rwc, err := ca.eca.provide()
+		label, rwc, err := cp.eca.provide()
 		if err != nil {
 			if err != errTerminated {
 				panic("errTerminated is the only error allowed here")
@@ -37,11 +37,20 @@ func (ca *channelProvider) run() {
 			break
 		}
 
-		ch, err := newChannel(ca.n, ca.eca, label, rwc)
+		ch, err := newChannel(cp.n, cp.eca, label, rwc)
 		if err != nil {
 			panic(fmt.Errorf("newChannel unexpected error: %s", err))
 		}
 
-		ca.n.newChannel(ch)
+		cp.n.newChannel(ch)
+
+		if cp.eca.oneChannelAtAtime() {
+			// wait the channel to emit EventChannelClose
+			// before creating another channel
+			select {
+			case <-ch.done:
+			case <-cp.n.terminate:
+			}
+		}
 	}
 }

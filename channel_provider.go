@@ -7,16 +7,20 @@ import (
 type channelProvider struct {
 	n   *Node
 	eca endpointChannelProvider
+
+	terminate chan struct{}
 }
 
 func newChannelProvider(n *Node, eca endpointChannelProvider) (*channelProvider, error) {
 	return &channelProvider{
-		n:   n,
-		eca: eca,
+		n:         n,
+		eca:       eca,
+		terminate: make(chan struct{}),
 	}, nil
 }
 
 func (cp *channelProvider) close() {
+	close(cp.terminate)
 	cp.eca.close()
 }
 
@@ -49,7 +53,8 @@ func (cp *channelProvider) run() {
 			// before creating another channel
 			select {
 			case <-ch.done:
-			case <-cp.n.terminate:
+			case <-cp.terminate:
+				return
 			}
 		}
 	}

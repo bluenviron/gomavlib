@@ -343,6 +343,8 @@ var dial = &dialect.Dialect{
 		&MessageParamAckTransaction{},
 		&MessageAirspeed{},
 		&MessageWifiNetworkInfo{},
+		&MessageSetVelocityLimits{},
+		&MessageVelocityLimits{},
 		&MessageFigureEightExecutionStatus{},
 		&MessageBatteryStatusV2{},
 		&MessageComponentInformationBasic{},

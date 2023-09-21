@@ -109,6 +109,10 @@ func (t *endpointClient) close() {
 	t.reconnector.Close()
 }
 
+func (t *endpointClient) oneChannelAtAtime() bool {
+	return true
+}
+
 func (t *endpointClient) provide() (string, io.ReadWriteCloser, error) {
 	conn, ok := t.reconnector.Reconnect()
 	if !ok {

@@ -36,6 +36,9 @@ type Channel struct {
 
 	// in
 	chWrite chan interface{}
+
+	// out
+	done chan struct{}
 }
 
 func newChannel(
@@ -79,6 +82,7 @@ func newChannel(
 		ctxCancel: ctxCancel,
 		frw:       frw,
 		chWrite:   make(chan interface{}, writeBufferSize),
+		done:      make(chan struct{}),
 	}, nil
 }
 
@@ -96,6 +100,7 @@ func (ch *Channel) start() {
 }
 
 func (ch *Channel) run() {
+	defer close(ch.done)
 	defer ch.n.wg.Done()
 
 	readerDone := make(chan struct{})

@@ -32,5 +32,6 @@ type endpointChannelSingle interface {
 type endpointChannelProvider interface {
 	Endpoint
 	close()
+	oneChannelAtAtime() bool
 	provide() (string, io.ReadWriteCloser, error)
 }

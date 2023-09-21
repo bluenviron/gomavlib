@@ -15,6 +15,7 @@ type definitionEnum struct {
 	Name        string                 `xml:"name,attr"`
 	Description string                 `xml:"description"`
 	Values      []*definitionEnumValue `xml:"entry"`
+	Bitmask     bool                   `xml:"bitmask,attr"`
 }
 
 type dialectField struct {

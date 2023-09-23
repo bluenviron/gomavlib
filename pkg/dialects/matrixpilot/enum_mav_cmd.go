@@ -257,9 +257,27 @@ const (
 	MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW MAV_CMD = 1000
 	// Gimbal configuration to set which sysid/compid is in primary and secondary control.
 	MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE MAV_CMD = 1001
-	// Start image capture sequence. Sends CAMERA_IMAGE_CAPTURED after each capture. Use NaN for reserved values.
+	// Start image capture sequence. CAMERA_IMAGE_CAPTURED must be emitted after each capture.
+	// Param1 (id) may be used to specify the target camera: 0: all cameras, 1 to 6: autopilot-connected cameras, 7-255: MAVLink camera component ID.
+	// It is needed in order to target specific cameras connected to the autopilot, or specific sensors in a multi-sensor camera (neither of which have a distinct MAVLink component ID).
+	// It is also needed to specify the target camera in missions.
+	// When used in a mission, an autopilot should execute the MAV_CMD for a specified local camera (param1 = 1-6), or resend it as a command if it is intended for a MAVLink camera (param1 = 7 - 255), setting the command's target_component as the param1 value (and setting param1 in the command to zero).
+	// If the param1 is 0 the autopilot should do both.
+	// When sent in a command the target MAVLink address is set using target_component.
+	// If addressed specifically to an autopilot: param1 should be used in the same way as it is for missions (though command should NACK with MAV_RESULT_DENIED if a specified local camera does not exist).
+	// If addressed to a MAVLink camera, param 1 can be used to address all cameras (0), or to separately address 1 to 7 individual sensors. Other values should be NACKed with MAV_RESULT_DENIED.
+	// If the command is broadcast (target_component is 0) then param 1 should be set to 0 (any other value should be NACKED with MAV_RESULT_DENIED). An autopilot would trigger any local cameras and forward the command to all channels.
 	MAV_CMD_IMAGE_START_CAPTURE MAV_CMD = 2000
-	// Stop image capture sequence Use NaN for reserved values.
+	// Stop image capture sequence.
+	// Param1 (id) may be used to specify the target camera: 0: all cameras, 1 to 6: autopilot-connected cameras, 7-255: MAVLink camera component ID.
+	// It is needed in order to target specific cameras connected to the autopilot, or specific sensors in a multi-sensor camera (neither of which have a distinct MAVLink component ID).
+	// It is also needed to specify the target camera in missions.
+	// When used in a mission, an autopilot should execute the MAV_CMD for a specified local camera (param1 = 1-6), or resend it as a command if it is intended for a MAVLink camera (param1 = 7 - 255), setting the command's target_component as the param1 value (and setting param1 in the command to zero).
+	// If the param1 is 0 the autopilot should do both.
+	// When sent in a command the target MAVLink address is set using target_component.
+	// If addressed specifically to an autopilot: param1 should be used in the same way as it is for missions (though command should NACK with MAV_RESULT_DENIED if a specified local camera does not exist).
+	// If addressed to a MAVLink camera, param1 can be used to address all cameras (0), or to separately address 1 to 7 individual sensors. Other values should be NACKed with MAV_RESULT_DENIED.
+	// If the command is broadcast (target_component is 0) then param 1 should be set to 0 (any other value should be NACKED with MAV_RESULT_DENIED). An autopilot would trigger any local cameras and forward the command to all channels.
 	MAV_CMD_IMAGE_STOP_CAPTURE MAV_CMD = 2001
 	// Re-request a CAMERA_IMAGE_CAPTURED message.
 	MAV_CMD_REQUEST_CAMERA_IMAGE_CAPTURE MAV_CMD = 2002

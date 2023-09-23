@@ -63,6 +63,7 @@ Features:
   * [events](examples/events/main.go)
   * [router](examples/router/main.go)
   * [router-edit](examples/router-edit/main.go)
+  * [serial-to-json](examples/serial-to-json/main.go)
   * [stream-requests](examples/stream-requests/main.go)
   * [readwriter](examples/readwriter/main.go)
 

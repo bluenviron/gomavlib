@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Gripper actions.
@@ -22,40 +22,35 @@ var labels_GRIPPER_ACTIONS = map[GRIPPER_ACTIONS]string{
 	GRIPPER_ACTION_GRAB:    "GRIPPER_ACTION_GRAB",
 }
 
+var values_GRIPPER_ACTIONS = map[string]GRIPPER_ACTIONS{
+	"GRIPPER_ACTION_RELEASE": GRIPPER_ACTION_RELEASE,
+	"GRIPPER_ACTION_GRAB":    GRIPPER_ACTION_GRAB,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GRIPPER_ACTIONS) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_GRIPPER_ACTIONS {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_GRIPPER_ACTIONS[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GRIPPER_ACTIONS) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask GRIPPER_ACTIONS
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_GRIPPER_ACTIONS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_GRIPPER_ACTIONS[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e GRIPPER_ACTIONS) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_GRIPPER_ACTIONS[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

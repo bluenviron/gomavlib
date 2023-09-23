@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type CAN_FILTER_OP uint32
@@ -21,40 +21,36 @@ var labels_CAN_FILTER_OP = map[CAN_FILTER_OP]string{
 	CAN_FILTER_REMOVE:  "CAN_FILTER_REMOVE",
 }
 
+var values_CAN_FILTER_OP = map[string]CAN_FILTER_OP{
+	"CAN_FILTER_REPLACE": CAN_FILTER_REPLACE,
+	"CAN_FILTER_ADD":     CAN_FILTER_ADD,
+	"CAN_FILTER_REMOVE":  CAN_FILTER_REMOVE,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAN_FILTER_OP) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_CAN_FILTER_OP {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_CAN_FILTER_OP[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CAN_FILTER_OP) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask CAN_FILTER_OP
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_CAN_FILTER_OP {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_CAN_FILTER_OP[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e CAN_FILTER_OP) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_CAN_FILTER_OP[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

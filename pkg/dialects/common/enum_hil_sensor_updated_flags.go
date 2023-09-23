@@ -61,12 +61,31 @@ var labels_HIL_SENSOR_UPDATED_FLAGS = map[HIL_SENSOR_UPDATED_FLAGS]string{
 	HIL_SENSOR_UPDATED_RESET:         "HIL_SENSOR_UPDATED_RESET",
 }
 
+var values_HIL_SENSOR_UPDATED_FLAGS = map[string]HIL_SENSOR_UPDATED_FLAGS{
+	"HIL_SENSOR_UPDATED_NONE":          HIL_SENSOR_UPDATED_NONE,
+	"HIL_SENSOR_UPDATED_XACC":          HIL_SENSOR_UPDATED_XACC,
+	"HIL_SENSOR_UPDATED_YACC":          HIL_SENSOR_UPDATED_YACC,
+	"HIL_SENSOR_UPDATED_ZACC":          HIL_SENSOR_UPDATED_ZACC,
+	"HIL_SENSOR_UPDATED_XGYRO":         HIL_SENSOR_UPDATED_XGYRO,
+	"HIL_SENSOR_UPDATED_YGYRO":         HIL_SENSOR_UPDATED_YGYRO,
+	"HIL_SENSOR_UPDATED_ZGYRO":         HIL_SENSOR_UPDATED_ZGYRO,
+	"HIL_SENSOR_UPDATED_XMAG":          HIL_SENSOR_UPDATED_XMAG,
+	"HIL_SENSOR_UPDATED_YMAG":          HIL_SENSOR_UPDATED_YMAG,
+	"HIL_SENSOR_UPDATED_ZMAG":          HIL_SENSOR_UPDATED_ZMAG,
+	"HIL_SENSOR_UPDATED_ABS_PRESSURE":  HIL_SENSOR_UPDATED_ABS_PRESSURE,
+	"HIL_SENSOR_UPDATED_DIFF_PRESSURE": HIL_SENSOR_UPDATED_DIFF_PRESSURE,
+	"HIL_SENSOR_UPDATED_PRESSURE_ALT":  HIL_SENSOR_UPDATED_PRESSURE_ALT,
+	"HIL_SENSOR_UPDATED_TEMPERATURE":   HIL_SENSOR_UPDATED_TEMPERATURE,
+	"HIL_SENSOR_UPDATED_RESET":         HIL_SENSOR_UPDATED_RESET,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e HIL_SENSOR_UPDATED_FLAGS) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_HIL_SENSOR_UPDATED_FLAGS {
+	for i := 0; i < 15; i++ {
+		mask := HIL_SENSOR_UPDATED_FLAGS(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_HIL_SENSOR_UPDATED_FLAGS[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -77,19 +96,12 @@ func (e *HIL_SENSOR_UPDATED_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask HIL_SENSOR_UPDATED_FLAGS
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_HIL_SENSOR_UPDATED_FLAGS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_HIL_SENSOR_UPDATED_FLAGS[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

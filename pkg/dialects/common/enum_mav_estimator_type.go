@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Enumeration of estimator types
@@ -43,40 +43,42 @@ var labels_MAV_ESTIMATOR_TYPE = map[MAV_ESTIMATOR_TYPE]string{
 	MAV_ESTIMATOR_TYPE_AUTOPILOT: "MAV_ESTIMATOR_TYPE_AUTOPILOT",
 }
 
+var values_MAV_ESTIMATOR_TYPE = map[string]MAV_ESTIMATOR_TYPE{
+	"MAV_ESTIMATOR_TYPE_UNKNOWN":   MAV_ESTIMATOR_TYPE_UNKNOWN,
+	"MAV_ESTIMATOR_TYPE_NAIVE":     MAV_ESTIMATOR_TYPE_NAIVE,
+	"MAV_ESTIMATOR_TYPE_VISION":    MAV_ESTIMATOR_TYPE_VISION,
+	"MAV_ESTIMATOR_TYPE_VIO":       MAV_ESTIMATOR_TYPE_VIO,
+	"MAV_ESTIMATOR_TYPE_GPS":       MAV_ESTIMATOR_TYPE_GPS,
+	"MAV_ESTIMATOR_TYPE_GPS_INS":   MAV_ESTIMATOR_TYPE_GPS_INS,
+	"MAV_ESTIMATOR_TYPE_MOCAP":     MAV_ESTIMATOR_TYPE_MOCAP,
+	"MAV_ESTIMATOR_TYPE_LIDAR":     MAV_ESTIMATOR_TYPE_LIDAR,
+	"MAV_ESTIMATOR_TYPE_AUTOPILOT": MAV_ESTIMATOR_TYPE_AUTOPILOT,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ESTIMATOR_TYPE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_ESTIMATOR_TYPE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_ESTIMATOR_TYPE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ESTIMATOR_TYPE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_ESTIMATOR_TYPE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_ESTIMATOR_TYPE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_ESTIMATOR_TYPE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ESTIMATOR_TYPE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_ESTIMATOR_TYPE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

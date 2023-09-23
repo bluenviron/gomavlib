@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Result from PARAM_EXT_SET message (or a PARAM_SET within a transaction).
@@ -28,40 +28,37 @@ var labels_PARAM_ACK = map[PARAM_ACK]string{
 	PARAM_ACK_IN_PROGRESS:       "PARAM_ACK_IN_PROGRESS",
 }
 
+var values_PARAM_ACK = map[string]PARAM_ACK{
+	"PARAM_ACK_ACCEPTED":          PARAM_ACK_ACCEPTED,
+	"PARAM_ACK_VALUE_UNSUPPORTED": PARAM_ACK_VALUE_UNSUPPORTED,
+	"PARAM_ACK_FAILED":            PARAM_ACK_FAILED,
+	"PARAM_ACK_IN_PROGRESS":       PARAM_ACK_IN_PROGRESS,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e PARAM_ACK) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_PARAM_ACK {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_PARAM_ACK[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *PARAM_ACK) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask PARAM_ACK
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_PARAM_ACK {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_PARAM_ACK[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e PARAM_ACK) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_PARAM_ACK[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

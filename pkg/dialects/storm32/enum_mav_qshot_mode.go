@@ -4,7 +4,7 @@ package storm32
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Enumeration of possible shot modes.
@@ -46,40 +46,43 @@ var labels_MAV_QSHOT_MODE = map[MAV_QSHOT_MODE]string{
 	MAV_QSHOT_MODE_HOME_TARGETING:    "MAV_QSHOT_MODE_HOME_TARGETING",
 }
 
+var values_MAV_QSHOT_MODE = map[string]MAV_QSHOT_MODE{
+	"MAV_QSHOT_MODE_UNDEFINED":         MAV_QSHOT_MODE_UNDEFINED,
+	"MAV_QSHOT_MODE_DEFAULT":           MAV_QSHOT_MODE_DEFAULT,
+	"MAV_QSHOT_MODE_GIMBAL_RETRACT":    MAV_QSHOT_MODE_GIMBAL_RETRACT,
+	"MAV_QSHOT_MODE_GIMBAL_NEUTRAL":    MAV_QSHOT_MODE_GIMBAL_NEUTRAL,
+	"MAV_QSHOT_MODE_GIMBAL_MISSION":    MAV_QSHOT_MODE_GIMBAL_MISSION,
+	"MAV_QSHOT_MODE_GIMBAL_RC_CONTROL": MAV_QSHOT_MODE_GIMBAL_RC_CONTROL,
+	"MAV_QSHOT_MODE_POI_TARGETING":     MAV_QSHOT_MODE_POI_TARGETING,
+	"MAV_QSHOT_MODE_SYSID_TARGETING":   MAV_QSHOT_MODE_SYSID_TARGETING,
+	"MAV_QSHOT_MODE_CABLECAM_2POINT":   MAV_QSHOT_MODE_CABLECAM_2POINT,
+	"MAV_QSHOT_MODE_HOME_TARGETING":    MAV_QSHOT_MODE_HOME_TARGETING,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_QSHOT_MODE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_QSHOT_MODE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_QSHOT_MODE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_QSHOT_MODE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_QSHOT_MODE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_QSHOT_MODE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_QSHOT_MODE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_QSHOT_MODE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_QSHOT_MODE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

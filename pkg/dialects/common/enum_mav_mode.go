@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // These defines are predefined OR-combined mode flags. There is no need to use values from this enum, but it
@@ -50,40 +50,44 @@ var labels_MAV_MODE = map[MAV_MODE]string{
 	MAV_MODE_TEST_ARMED:         "MAV_MODE_TEST_ARMED",
 }
 
+var values_MAV_MODE = map[string]MAV_MODE{
+	"MAV_MODE_PREFLIGHT":          MAV_MODE_PREFLIGHT,
+	"MAV_MODE_STABILIZE_DISARMED": MAV_MODE_STABILIZE_DISARMED,
+	"MAV_MODE_STABILIZE_ARMED":    MAV_MODE_STABILIZE_ARMED,
+	"MAV_MODE_MANUAL_DISARMED":    MAV_MODE_MANUAL_DISARMED,
+	"MAV_MODE_MANUAL_ARMED":       MAV_MODE_MANUAL_ARMED,
+	"MAV_MODE_GUIDED_DISARMED":    MAV_MODE_GUIDED_DISARMED,
+	"MAV_MODE_GUIDED_ARMED":       MAV_MODE_GUIDED_ARMED,
+	"MAV_MODE_AUTO_DISARMED":      MAV_MODE_AUTO_DISARMED,
+	"MAV_MODE_AUTO_ARMED":         MAV_MODE_AUTO_ARMED,
+	"MAV_MODE_TEST_DISARMED":      MAV_MODE_TEST_DISARMED,
+	"MAV_MODE_TEST_ARMED":         MAV_MODE_TEST_ARMED,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MODE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_MODE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_MODE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_MODE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_MODE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_MODE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_MODE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_MODE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_MODE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

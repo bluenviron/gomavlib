@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // List of possible units where failures can be injected.
@@ -46,40 +46,48 @@ var labels_FAILURE_UNIT = map[FAILURE_UNIT]string{
 	FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL:  "FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL",
 }
 
+var values_FAILURE_UNIT = map[string]FAILURE_UNIT{
+	"FAILURE_UNIT_SENSOR_GYRO":            FAILURE_UNIT_SENSOR_GYRO,
+	"FAILURE_UNIT_SENSOR_ACCEL":           FAILURE_UNIT_SENSOR_ACCEL,
+	"FAILURE_UNIT_SENSOR_MAG":             FAILURE_UNIT_SENSOR_MAG,
+	"FAILURE_UNIT_SENSOR_BARO":            FAILURE_UNIT_SENSOR_BARO,
+	"FAILURE_UNIT_SENSOR_GPS":             FAILURE_UNIT_SENSOR_GPS,
+	"FAILURE_UNIT_SENSOR_OPTICAL_FLOW":    FAILURE_UNIT_SENSOR_OPTICAL_FLOW,
+	"FAILURE_UNIT_SENSOR_VIO":             FAILURE_UNIT_SENSOR_VIO,
+	"FAILURE_UNIT_SENSOR_DISTANCE_SENSOR": FAILURE_UNIT_SENSOR_DISTANCE_SENSOR,
+	"FAILURE_UNIT_SENSOR_AIRSPEED":        FAILURE_UNIT_SENSOR_AIRSPEED,
+	"FAILURE_UNIT_SYSTEM_BATTERY":         FAILURE_UNIT_SYSTEM_BATTERY,
+	"FAILURE_UNIT_SYSTEM_MOTOR":           FAILURE_UNIT_SYSTEM_MOTOR,
+	"FAILURE_UNIT_SYSTEM_SERVO":           FAILURE_UNIT_SYSTEM_SERVO,
+	"FAILURE_UNIT_SYSTEM_AVOIDANCE":       FAILURE_UNIT_SYSTEM_AVOIDANCE,
+	"FAILURE_UNIT_SYSTEM_RC_SIGNAL":       FAILURE_UNIT_SYSTEM_RC_SIGNAL,
+	"FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL":  FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FAILURE_UNIT) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_FAILURE_UNIT {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_FAILURE_UNIT[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FAILURE_UNIT) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask FAILURE_UNIT
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_FAILURE_UNIT {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_FAILURE_UNIT[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e FAILURE_UNIT) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_FAILURE_UNIT[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

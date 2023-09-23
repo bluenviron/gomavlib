@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Coordinate frames used by MAVLink. Not all frames are supported by all commands, messages, or vehicles.
@@ -95,40 +95,55 @@ var labels_MAV_FRAME = map[MAV_FRAME]string{
 	MAV_FRAME_LOCAL_FLU:               "MAV_FRAME_LOCAL_FLU",
 }
 
+var values_MAV_FRAME = map[string]MAV_FRAME{
+	"MAV_FRAME_GLOBAL":                  MAV_FRAME_GLOBAL,
+	"MAV_FRAME_LOCAL_NED":               MAV_FRAME_LOCAL_NED,
+	"MAV_FRAME_MISSION":                 MAV_FRAME_MISSION,
+	"MAV_FRAME_GLOBAL_RELATIVE_ALT":     MAV_FRAME_GLOBAL_RELATIVE_ALT,
+	"MAV_FRAME_LOCAL_ENU":               MAV_FRAME_LOCAL_ENU,
+	"MAV_FRAME_GLOBAL_INT":              MAV_FRAME_GLOBAL_INT,
+	"MAV_FRAME_GLOBAL_RELATIVE_ALT_INT": MAV_FRAME_GLOBAL_RELATIVE_ALT_INT,
+	"MAV_FRAME_LOCAL_OFFSET_NED":        MAV_FRAME_LOCAL_OFFSET_NED,
+	"MAV_FRAME_BODY_NED":                MAV_FRAME_BODY_NED,
+	"MAV_FRAME_BODY_OFFSET_NED":         MAV_FRAME_BODY_OFFSET_NED,
+	"MAV_FRAME_GLOBAL_TERRAIN_ALT":      MAV_FRAME_GLOBAL_TERRAIN_ALT,
+	"MAV_FRAME_GLOBAL_TERRAIN_ALT_INT":  MAV_FRAME_GLOBAL_TERRAIN_ALT_INT,
+	"MAV_FRAME_BODY_FRD":                MAV_FRAME_BODY_FRD,
+	"MAV_FRAME_RESERVED_13":             MAV_FRAME_RESERVED_13,
+	"MAV_FRAME_RESERVED_14":             MAV_FRAME_RESERVED_14,
+	"MAV_FRAME_RESERVED_15":             MAV_FRAME_RESERVED_15,
+	"MAV_FRAME_RESERVED_16":             MAV_FRAME_RESERVED_16,
+	"MAV_FRAME_RESERVED_17":             MAV_FRAME_RESERVED_17,
+	"MAV_FRAME_RESERVED_18":             MAV_FRAME_RESERVED_18,
+	"MAV_FRAME_RESERVED_19":             MAV_FRAME_RESERVED_19,
+	"MAV_FRAME_LOCAL_FRD":               MAV_FRAME_LOCAL_FRD,
+	"MAV_FRAME_LOCAL_FLU":               MAV_FRAME_LOCAL_FLU,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_FRAME) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_FRAME {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_FRAME[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_FRAME) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_FRAME
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_FRAME {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_FRAME[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_FRAME) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_FRAME[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

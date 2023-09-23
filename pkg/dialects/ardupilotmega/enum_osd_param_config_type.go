@@ -4,7 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // The type of parameter for the OSD parameter editor.
@@ -34,40 +34,42 @@ var labels_OSD_PARAM_CONFIG_TYPE = map[OSD_PARAM_CONFIG_TYPE]string{
 	OSD_PARAM_NUM_TYPES:         "OSD_PARAM_NUM_TYPES",
 }
 
+var values_OSD_PARAM_CONFIG_TYPE = map[string]OSD_PARAM_CONFIG_TYPE{
+	"OSD_PARAM_NONE":              OSD_PARAM_NONE,
+	"OSD_PARAM_SERIAL_PROTOCOL":   OSD_PARAM_SERIAL_PROTOCOL,
+	"OSD_PARAM_SERVO_FUNCTION":    OSD_PARAM_SERVO_FUNCTION,
+	"OSD_PARAM_AUX_FUNCTION":      OSD_PARAM_AUX_FUNCTION,
+	"OSD_PARAM_FLIGHT_MODE":       OSD_PARAM_FLIGHT_MODE,
+	"OSD_PARAM_FAILSAFE_ACTION":   OSD_PARAM_FAILSAFE_ACTION,
+	"OSD_PARAM_FAILSAFE_ACTION_1": OSD_PARAM_FAILSAFE_ACTION_1,
+	"OSD_PARAM_FAILSAFE_ACTION_2": OSD_PARAM_FAILSAFE_ACTION_2,
+	"OSD_PARAM_NUM_TYPES":         OSD_PARAM_NUM_TYPES,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e OSD_PARAM_CONFIG_TYPE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_OSD_PARAM_CONFIG_TYPE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_OSD_PARAM_CONFIG_TYPE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *OSD_PARAM_CONFIG_TYPE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask OSD_PARAM_CONFIG_TYPE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_OSD_PARAM_CONFIG_TYPE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_OSD_PARAM_CONFIG_TYPE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e OSD_PARAM_CONFIG_TYPE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_OSD_PARAM_CONFIG_TYPE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

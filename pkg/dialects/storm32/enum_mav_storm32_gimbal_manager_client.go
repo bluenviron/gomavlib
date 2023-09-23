@@ -4,7 +4,7 @@ package storm32
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Gimbal manager client ID. In a prioritizing profile, the priorities are determined by the implementation; they could e.g. be custom1 > onboard > GCS > autopilot/camera > GCS2 > custom2.
@@ -43,40 +43,42 @@ var labels_MAV_STORM32_GIMBAL_MANAGER_CLIENT = map[MAV_STORM32_GIMBAL_MANAGER_CL
 	MAV_STORM32_GIMBAL_MANAGER_CLIENT_CUSTOM2:   "MAV_STORM32_GIMBAL_MANAGER_CLIENT_CUSTOM2",
 }
 
+var values_MAV_STORM32_GIMBAL_MANAGER_CLIENT = map[string]MAV_STORM32_GIMBAL_MANAGER_CLIENT{
+	"MAV_STORM32_GIMBAL_MANAGER_CLIENT_NONE":      MAV_STORM32_GIMBAL_MANAGER_CLIENT_NONE,
+	"MAV_STORM32_GIMBAL_MANAGER_CLIENT_ONBOARD":   MAV_STORM32_GIMBAL_MANAGER_CLIENT_ONBOARD,
+	"MAV_STORM32_GIMBAL_MANAGER_CLIENT_AUTOPILOT": MAV_STORM32_GIMBAL_MANAGER_CLIENT_AUTOPILOT,
+	"MAV_STORM32_GIMBAL_MANAGER_CLIENT_GCS":       MAV_STORM32_GIMBAL_MANAGER_CLIENT_GCS,
+	"MAV_STORM32_GIMBAL_MANAGER_CLIENT_CAMERA":    MAV_STORM32_GIMBAL_MANAGER_CLIENT_CAMERA,
+	"MAV_STORM32_GIMBAL_MANAGER_CLIENT_GCS2":      MAV_STORM32_GIMBAL_MANAGER_CLIENT_GCS2,
+	"MAV_STORM32_GIMBAL_MANAGER_CLIENT_CAMERA2":   MAV_STORM32_GIMBAL_MANAGER_CLIENT_CAMERA2,
+	"MAV_STORM32_GIMBAL_MANAGER_CLIENT_CUSTOM":    MAV_STORM32_GIMBAL_MANAGER_CLIENT_CUSTOM,
+	"MAV_STORM32_GIMBAL_MANAGER_CLIENT_CUSTOM2":   MAV_STORM32_GIMBAL_MANAGER_CLIENT_CUSTOM2,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_STORM32_GIMBAL_MANAGER_CLIENT) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_STORM32_GIMBAL_MANAGER_CLIENT {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_STORM32_GIMBAL_MANAGER_CLIENT[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_STORM32_GIMBAL_MANAGER_CLIENT) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_STORM32_GIMBAL_MANAGER_CLIENT
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_STORM32_GIMBAL_MANAGER_CLIENT {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_STORM32_GIMBAL_MANAGER_CLIENT[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_STORM32_GIMBAL_MANAGER_CLIENT) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_STORM32_GIMBAL_MANAGER_CLIENT[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

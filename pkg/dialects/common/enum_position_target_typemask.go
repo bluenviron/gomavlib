@@ -52,12 +52,28 @@ var labels_POSITION_TARGET_TYPEMASK = map[POSITION_TARGET_TYPEMASK]string{
 	POSITION_TARGET_TYPEMASK_YAW_RATE_IGNORE: "POSITION_TARGET_TYPEMASK_YAW_RATE_IGNORE",
 }
 
+var values_POSITION_TARGET_TYPEMASK = map[string]POSITION_TARGET_TYPEMASK{
+	"POSITION_TARGET_TYPEMASK_X_IGNORE":        POSITION_TARGET_TYPEMASK_X_IGNORE,
+	"POSITION_TARGET_TYPEMASK_Y_IGNORE":        POSITION_TARGET_TYPEMASK_Y_IGNORE,
+	"POSITION_TARGET_TYPEMASK_Z_IGNORE":        POSITION_TARGET_TYPEMASK_Z_IGNORE,
+	"POSITION_TARGET_TYPEMASK_VX_IGNORE":       POSITION_TARGET_TYPEMASK_VX_IGNORE,
+	"POSITION_TARGET_TYPEMASK_VY_IGNORE":       POSITION_TARGET_TYPEMASK_VY_IGNORE,
+	"POSITION_TARGET_TYPEMASK_VZ_IGNORE":       POSITION_TARGET_TYPEMASK_VZ_IGNORE,
+	"POSITION_TARGET_TYPEMASK_AX_IGNORE":       POSITION_TARGET_TYPEMASK_AX_IGNORE,
+	"POSITION_TARGET_TYPEMASK_AY_IGNORE":       POSITION_TARGET_TYPEMASK_AY_IGNORE,
+	"POSITION_TARGET_TYPEMASK_AZ_IGNORE":       POSITION_TARGET_TYPEMASK_AZ_IGNORE,
+	"POSITION_TARGET_TYPEMASK_FORCE_SET":       POSITION_TARGET_TYPEMASK_FORCE_SET,
+	"POSITION_TARGET_TYPEMASK_YAW_IGNORE":      POSITION_TARGET_TYPEMASK_YAW_IGNORE,
+	"POSITION_TARGET_TYPEMASK_YAW_RATE_IGNORE": POSITION_TARGET_TYPEMASK_YAW_RATE_IGNORE,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e POSITION_TARGET_TYPEMASK) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_POSITION_TARGET_TYPEMASK {
+	for i := 0; i < 12; i++ {
+		mask := POSITION_TARGET_TYPEMASK(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_POSITION_TARGET_TYPEMASK[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -68,19 +84,12 @@ func (e *POSITION_TARGET_TYPEMASK) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask POSITION_TARGET_TYPEMASK
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_POSITION_TARGET_TYPEMASK {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_POSITION_TARGET_TYPEMASK[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

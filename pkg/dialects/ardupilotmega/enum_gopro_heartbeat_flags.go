@@ -18,12 +18,17 @@ var labels_GOPRO_HEARTBEAT_FLAGS = map[GOPRO_HEARTBEAT_FLAGS]string{
 	GOPRO_FLAG_RECORDING: "GOPRO_FLAG_RECORDING",
 }
 
+var values_GOPRO_HEARTBEAT_FLAGS = map[string]GOPRO_HEARTBEAT_FLAGS{
+	"GOPRO_FLAG_RECORDING": GOPRO_FLAG_RECORDING,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_HEARTBEAT_FLAGS) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_GOPRO_HEARTBEAT_FLAGS {
+	for i := 0; i < 1; i++ {
+		mask := GOPRO_HEARTBEAT_FLAGS(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_GOPRO_HEARTBEAT_FLAGS[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -34,19 +39,12 @@ func (e *GOPRO_HEARTBEAT_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask GOPRO_HEARTBEAT_FLAGS
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_GOPRO_HEARTBEAT_FLAGS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_GOPRO_HEARTBEAT_FLAGS[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

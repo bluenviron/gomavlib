@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type MAV_ODID_HEIGHT_REF uint32
@@ -21,40 +21,35 @@ var labels_MAV_ODID_HEIGHT_REF = map[MAV_ODID_HEIGHT_REF]string{
 	MAV_ODID_HEIGHT_REF_OVER_GROUND:  "MAV_ODID_HEIGHT_REF_OVER_GROUND",
 }
 
+var values_MAV_ODID_HEIGHT_REF = map[string]MAV_ODID_HEIGHT_REF{
+	"MAV_ODID_HEIGHT_REF_OVER_TAKEOFF": MAV_ODID_HEIGHT_REF_OVER_TAKEOFF,
+	"MAV_ODID_HEIGHT_REF_OVER_GROUND":  MAV_ODID_HEIGHT_REF_OVER_GROUND,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_HEIGHT_REF) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_ODID_HEIGHT_REF {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_ODID_HEIGHT_REF[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_HEIGHT_REF) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_ODID_HEIGHT_REF
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_ODID_HEIGHT_REF {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_ODID_HEIGHT_REF[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_HEIGHT_REF) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_ODID_HEIGHT_REF[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

@@ -4,7 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type GOPRO_PROTUNE_COLOUR uint32
@@ -21,40 +21,35 @@ var labels_GOPRO_PROTUNE_COLOUR = map[GOPRO_PROTUNE_COLOUR]string{
 	GOPRO_PROTUNE_COLOUR_NEUTRAL:  "GOPRO_PROTUNE_COLOUR_NEUTRAL",
 }
 
+var values_GOPRO_PROTUNE_COLOUR = map[string]GOPRO_PROTUNE_COLOUR{
+	"GOPRO_PROTUNE_COLOUR_STANDARD": GOPRO_PROTUNE_COLOUR_STANDARD,
+	"GOPRO_PROTUNE_COLOUR_NEUTRAL":  GOPRO_PROTUNE_COLOUR_NEUTRAL,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_PROTUNE_COLOUR) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_GOPRO_PROTUNE_COLOUR {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_GOPRO_PROTUNE_COLOUR[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_PROTUNE_COLOUR) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask GOPRO_PROTUNE_COLOUR
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_GOPRO_PROTUNE_COLOUR {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_GOPRO_PROTUNE_COLOUR[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e GOPRO_PROTUNE_COLOUR) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_GOPRO_PROTUNE_COLOUR[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

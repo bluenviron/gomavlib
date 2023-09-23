@@ -19,12 +19,17 @@ var labels_MAV_SYS_STATUS_SENSOR_EXTENDED = map[MAV_SYS_STATUS_SENSOR_EXTENDED]s
 	MAV_SYS_STATUS_RECOVERY_SYSTEM: "MAV_SYS_STATUS_RECOVERY_SYSTEM",
 }
 
+var values_MAV_SYS_STATUS_SENSOR_EXTENDED = map[string]MAV_SYS_STATUS_SENSOR_EXTENDED{
+	"MAV_SYS_STATUS_RECOVERY_SYSTEM": MAV_SYS_STATUS_RECOVERY_SYSTEM,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_SYS_STATUS_SENSOR_EXTENDED) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_MAV_SYS_STATUS_SENSOR_EXTENDED {
+	for i := 0; i < 1; i++ {
+		mask := MAV_SYS_STATUS_SENSOR_EXTENDED(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_MAV_SYS_STATUS_SENSOR_EXTENDED[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -35,19 +40,12 @@ func (e *MAV_SYS_STATUS_SENSOR_EXTENDED) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask MAV_SYS_STATUS_SENSOR_EXTENDED
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_SYS_STATUS_SENSOR_EXTENDED {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_MAV_SYS_STATUS_SENSOR_EXTENDED[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Defines how throttle value is represented in MAV_CMD_DO_MOTOR_TEST.
@@ -28,40 +28,37 @@ var labels_MOTOR_TEST_THROTTLE_TYPE = map[MOTOR_TEST_THROTTLE_TYPE]string{
 	MOTOR_TEST_COMPASS_CAL:      "MOTOR_TEST_COMPASS_CAL",
 }
 
+var values_MOTOR_TEST_THROTTLE_TYPE = map[string]MOTOR_TEST_THROTTLE_TYPE{
+	"MOTOR_TEST_THROTTLE_PERCENT": MOTOR_TEST_THROTTLE_PERCENT,
+	"MOTOR_TEST_THROTTLE_PWM":     MOTOR_TEST_THROTTLE_PWM,
+	"MOTOR_TEST_THROTTLE_PILOT":   MOTOR_TEST_THROTTLE_PILOT,
+	"MOTOR_TEST_COMPASS_CAL":      MOTOR_TEST_COMPASS_CAL,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MOTOR_TEST_THROTTLE_TYPE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MOTOR_TEST_THROTTLE_TYPE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MOTOR_TEST_THROTTLE_TYPE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MOTOR_TEST_THROTTLE_TYPE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MOTOR_TEST_THROTTLE_TYPE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MOTOR_TEST_THROTTLE_TYPE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MOTOR_TEST_THROTTLE_TYPE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MOTOR_TEST_THROTTLE_TYPE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MOTOR_TEST_THROTTLE_TYPE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

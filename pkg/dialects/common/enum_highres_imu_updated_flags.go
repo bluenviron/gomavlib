@@ -61,12 +61,31 @@ var labels_HIGHRES_IMU_UPDATED_FLAGS = map[HIGHRES_IMU_UPDATED_FLAGS]string{
 	HIGHRES_IMU_UPDATED_ALL:           "HIGHRES_IMU_UPDATED_ALL",
 }
 
+var values_HIGHRES_IMU_UPDATED_FLAGS = map[string]HIGHRES_IMU_UPDATED_FLAGS{
+	"HIGHRES_IMU_UPDATED_NONE":          HIGHRES_IMU_UPDATED_NONE,
+	"HIGHRES_IMU_UPDATED_XACC":          HIGHRES_IMU_UPDATED_XACC,
+	"HIGHRES_IMU_UPDATED_YACC":          HIGHRES_IMU_UPDATED_YACC,
+	"HIGHRES_IMU_UPDATED_ZACC":          HIGHRES_IMU_UPDATED_ZACC,
+	"HIGHRES_IMU_UPDATED_XGYRO":         HIGHRES_IMU_UPDATED_XGYRO,
+	"HIGHRES_IMU_UPDATED_YGYRO":         HIGHRES_IMU_UPDATED_YGYRO,
+	"HIGHRES_IMU_UPDATED_ZGYRO":         HIGHRES_IMU_UPDATED_ZGYRO,
+	"HIGHRES_IMU_UPDATED_XMAG":          HIGHRES_IMU_UPDATED_XMAG,
+	"HIGHRES_IMU_UPDATED_YMAG":          HIGHRES_IMU_UPDATED_YMAG,
+	"HIGHRES_IMU_UPDATED_ZMAG":          HIGHRES_IMU_UPDATED_ZMAG,
+	"HIGHRES_IMU_UPDATED_ABS_PRESSURE":  HIGHRES_IMU_UPDATED_ABS_PRESSURE,
+	"HIGHRES_IMU_UPDATED_DIFF_PRESSURE": HIGHRES_IMU_UPDATED_DIFF_PRESSURE,
+	"HIGHRES_IMU_UPDATED_PRESSURE_ALT":  HIGHRES_IMU_UPDATED_PRESSURE_ALT,
+	"HIGHRES_IMU_UPDATED_TEMPERATURE":   HIGHRES_IMU_UPDATED_TEMPERATURE,
+	"HIGHRES_IMU_UPDATED_ALL":           HIGHRES_IMU_UPDATED_ALL,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e HIGHRES_IMU_UPDATED_FLAGS) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_HIGHRES_IMU_UPDATED_FLAGS {
+	for i := 0; i < 15; i++ {
+		mask := HIGHRES_IMU_UPDATED_FLAGS(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_HIGHRES_IMU_UPDATED_FLAGS[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -77,19 +96,12 @@ func (e *HIGHRES_IMU_UPDATED_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask HIGHRES_IMU_UPDATED_FLAGS
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_HIGHRES_IMU_UPDATED_FLAGS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_HIGHRES_IMU_UPDATED_FLAGS[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

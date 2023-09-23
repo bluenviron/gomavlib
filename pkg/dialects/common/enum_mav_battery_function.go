@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Enumeration of battery functions
@@ -31,40 +31,38 @@ var labels_MAV_BATTERY_FUNCTION = map[MAV_BATTERY_FUNCTION]string{
 	MAV_BATTERY_FUNCTION_PAYLOAD:    "MAV_BATTERY_FUNCTION_PAYLOAD",
 }
 
+var values_MAV_BATTERY_FUNCTION = map[string]MAV_BATTERY_FUNCTION{
+	"MAV_BATTERY_FUNCTION_UNKNOWN":    MAV_BATTERY_FUNCTION_UNKNOWN,
+	"MAV_BATTERY_FUNCTION_ALL":        MAV_BATTERY_FUNCTION_ALL,
+	"MAV_BATTERY_FUNCTION_PROPULSION": MAV_BATTERY_FUNCTION_PROPULSION,
+	"MAV_BATTERY_FUNCTION_AVIONICS":   MAV_BATTERY_FUNCTION_AVIONICS,
+	"MAV_BATTERY_FUNCTION_PAYLOAD":    MAV_BATTERY_FUNCTION_PAYLOAD,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_BATTERY_FUNCTION) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_BATTERY_FUNCTION {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_BATTERY_FUNCTION[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_BATTERY_FUNCTION) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_BATTERY_FUNCTION
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_BATTERY_FUNCTION {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_BATTERY_FUNCTION[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_BATTERY_FUNCTION) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_BATTERY_FUNCTION[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

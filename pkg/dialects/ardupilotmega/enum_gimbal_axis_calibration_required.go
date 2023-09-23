@@ -4,7 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type GIMBAL_AXIS_CALIBRATION_REQUIRED uint32
@@ -24,40 +24,36 @@ var labels_GIMBAL_AXIS_CALIBRATION_REQUIRED = map[GIMBAL_AXIS_CALIBRATION_REQUIR
 	GIMBAL_AXIS_CALIBRATION_REQUIRED_FALSE:   "GIMBAL_AXIS_CALIBRATION_REQUIRED_FALSE",
 }
 
+var values_GIMBAL_AXIS_CALIBRATION_REQUIRED = map[string]GIMBAL_AXIS_CALIBRATION_REQUIRED{
+	"GIMBAL_AXIS_CALIBRATION_REQUIRED_UNKNOWN": GIMBAL_AXIS_CALIBRATION_REQUIRED_UNKNOWN,
+	"GIMBAL_AXIS_CALIBRATION_REQUIRED_TRUE":    GIMBAL_AXIS_CALIBRATION_REQUIRED_TRUE,
+	"GIMBAL_AXIS_CALIBRATION_REQUIRED_FALSE":   GIMBAL_AXIS_CALIBRATION_REQUIRED_FALSE,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GIMBAL_AXIS_CALIBRATION_REQUIRED) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_GIMBAL_AXIS_CALIBRATION_REQUIRED {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_GIMBAL_AXIS_CALIBRATION_REQUIRED[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GIMBAL_AXIS_CALIBRATION_REQUIRED) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask GIMBAL_AXIS_CALIBRATION_REQUIRED
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_GIMBAL_AXIS_CALIBRATION_REQUIRED {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_GIMBAL_AXIS_CALIBRATION_REQUIRED[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e GIMBAL_AXIS_CALIBRATION_REQUIRED) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_GIMBAL_AXIS_CALIBRATION_REQUIRED[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

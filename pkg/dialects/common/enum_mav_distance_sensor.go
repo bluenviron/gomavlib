@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Enumeration of distance sensor types
@@ -31,40 +31,38 @@ var labels_MAV_DISTANCE_SENSOR = map[MAV_DISTANCE_SENSOR]string{
 	MAV_DISTANCE_SENSOR_UNKNOWN:    "MAV_DISTANCE_SENSOR_UNKNOWN",
 }
 
+var values_MAV_DISTANCE_SENSOR = map[string]MAV_DISTANCE_SENSOR{
+	"MAV_DISTANCE_SENSOR_LASER":      MAV_DISTANCE_SENSOR_LASER,
+	"MAV_DISTANCE_SENSOR_ULTRASOUND": MAV_DISTANCE_SENSOR_ULTRASOUND,
+	"MAV_DISTANCE_SENSOR_INFRARED":   MAV_DISTANCE_SENSOR_INFRARED,
+	"MAV_DISTANCE_SENSOR_RADAR":      MAV_DISTANCE_SENSOR_RADAR,
+	"MAV_DISTANCE_SENSOR_UNKNOWN":    MAV_DISTANCE_SENSOR_UNKNOWN,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_DISTANCE_SENSOR) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_DISTANCE_SENSOR {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_DISTANCE_SENSOR[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_DISTANCE_SENSOR) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_DISTANCE_SENSOR
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_DISTANCE_SENSOR {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_DISTANCE_SENSOR[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_DISTANCE_SENSOR) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_DISTANCE_SENSOR[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

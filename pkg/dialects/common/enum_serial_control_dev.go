@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // SERIAL_CONTROL device types
@@ -61,40 +61,48 @@ var labels_SERIAL_CONTROL_DEV = map[SERIAL_CONTROL_DEV]string{
 	SERIAL_CONTROL_SERIAL9:    "SERIAL_CONTROL_SERIAL9",
 }
 
+var values_SERIAL_CONTROL_DEV = map[string]SERIAL_CONTROL_DEV{
+	"SERIAL_CONTROL_DEV_TELEM1": SERIAL_CONTROL_DEV_TELEM1,
+	"SERIAL_CONTROL_DEV_TELEM2": SERIAL_CONTROL_DEV_TELEM2,
+	"SERIAL_CONTROL_DEV_GPS1":   SERIAL_CONTROL_DEV_GPS1,
+	"SERIAL_CONTROL_DEV_GPS2":   SERIAL_CONTROL_DEV_GPS2,
+	"SERIAL_CONTROL_DEV_SHELL":  SERIAL_CONTROL_DEV_SHELL,
+	"SERIAL_CONTROL_SERIAL0":    SERIAL_CONTROL_SERIAL0,
+	"SERIAL_CONTROL_SERIAL1":    SERIAL_CONTROL_SERIAL1,
+	"SERIAL_CONTROL_SERIAL2":    SERIAL_CONTROL_SERIAL2,
+	"SERIAL_CONTROL_SERIAL3":    SERIAL_CONTROL_SERIAL3,
+	"SERIAL_CONTROL_SERIAL4":    SERIAL_CONTROL_SERIAL4,
+	"SERIAL_CONTROL_SERIAL5":    SERIAL_CONTROL_SERIAL5,
+	"SERIAL_CONTROL_SERIAL6":    SERIAL_CONTROL_SERIAL6,
+	"SERIAL_CONTROL_SERIAL7":    SERIAL_CONTROL_SERIAL7,
+	"SERIAL_CONTROL_SERIAL8":    SERIAL_CONTROL_SERIAL8,
+	"SERIAL_CONTROL_SERIAL9":    SERIAL_CONTROL_SERIAL9,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e SERIAL_CONTROL_DEV) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_SERIAL_CONTROL_DEV {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_SERIAL_CONTROL_DEV[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *SERIAL_CONTROL_DEV) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask SERIAL_CONTROL_DEV
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_SERIAL_CONTROL_DEV {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_SERIAL_CONTROL_DEV[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e SERIAL_CONTROL_DEV) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_SERIAL_CONTROL_DEV[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

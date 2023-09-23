@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type MAV_ODID_SPEED_ACC uint32
@@ -30,40 +30,38 @@ var labels_MAV_ODID_SPEED_ACC = map[MAV_ODID_SPEED_ACC]string{
 	MAV_ODID_SPEED_ACC_0_3_METERS_PER_SECOND: "MAV_ODID_SPEED_ACC_0_3_METERS_PER_SECOND",
 }
 
+var values_MAV_ODID_SPEED_ACC = map[string]MAV_ODID_SPEED_ACC{
+	"MAV_ODID_SPEED_ACC_UNKNOWN":               MAV_ODID_SPEED_ACC_UNKNOWN,
+	"MAV_ODID_SPEED_ACC_10_METERS_PER_SECOND":  MAV_ODID_SPEED_ACC_10_METERS_PER_SECOND,
+	"MAV_ODID_SPEED_ACC_3_METERS_PER_SECOND":   MAV_ODID_SPEED_ACC_3_METERS_PER_SECOND,
+	"MAV_ODID_SPEED_ACC_1_METERS_PER_SECOND":   MAV_ODID_SPEED_ACC_1_METERS_PER_SECOND,
+	"MAV_ODID_SPEED_ACC_0_3_METERS_PER_SECOND": MAV_ODID_SPEED_ACC_0_3_METERS_PER_SECOND,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_SPEED_ACC) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_ODID_SPEED_ACC {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_ODID_SPEED_ACC[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_SPEED_ACC) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_ODID_SPEED_ACC
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_ODID_SPEED_ACC {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_ODID_SPEED_ACC[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_SPEED_ACC) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_ODID_SPEED_ACC[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

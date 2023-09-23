@@ -4,7 +4,7 @@ package uavionix
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Definitions for aircraft size
@@ -48,40 +48,49 @@ var labels_UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = map[UAVIONIX_ADSB_OUT_CFG_AIRCR
 	UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W90M:    "UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W90M",
 }
 
+var values_UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE = map[string]UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE{
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_NO_DATA":     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_NO_DATA,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L15M_W23M":   UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L15M_W23M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25M_W28P5M": UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25M_W28P5M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25_34M":     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L25_34M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_33M":     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_33M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_38M":     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L35_38M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_39P5M":   UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_39P5M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_45M":     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L45_45M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_45M":     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_45M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_52M":     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L55_52M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_59P5M":   UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_59P5M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_67M":     UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L65_67M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W72P5M":  UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W72P5M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W80M":    UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L75_W80M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W80M":    UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W80M,
+	"UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W90M":    UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE_L85_W90M,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

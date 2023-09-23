@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Sequence that motors are tested when using MAV_CMD_DO_MOTOR_TEST.
@@ -25,40 +25,36 @@ var labels_MOTOR_TEST_ORDER = map[MOTOR_TEST_ORDER]string{
 	MOTOR_TEST_ORDER_BOARD:    "MOTOR_TEST_ORDER_BOARD",
 }
 
+var values_MOTOR_TEST_ORDER = map[string]MOTOR_TEST_ORDER{
+	"MOTOR_TEST_ORDER_DEFAULT":  MOTOR_TEST_ORDER_DEFAULT,
+	"MOTOR_TEST_ORDER_SEQUENCE": MOTOR_TEST_ORDER_SEQUENCE,
+	"MOTOR_TEST_ORDER_BOARD":    MOTOR_TEST_ORDER_BOARD,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MOTOR_TEST_ORDER) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MOTOR_TEST_ORDER {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MOTOR_TEST_ORDER[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MOTOR_TEST_ORDER) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MOTOR_TEST_ORDER
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MOTOR_TEST_ORDER {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MOTOR_TEST_ORDER[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MOTOR_TEST_ORDER) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MOTOR_TEST_ORDER[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

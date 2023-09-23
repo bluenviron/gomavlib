@@ -22,12 +22,18 @@ var labels_RALLY_FLAGS = map[RALLY_FLAGS]string{
 	LAND_IMMEDIATELY: "LAND_IMMEDIATELY",
 }
 
+var values_RALLY_FLAGS = map[string]RALLY_FLAGS{
+	"FAVORABLE_WIND":   FAVORABLE_WIND,
+	"LAND_IMMEDIATELY": LAND_IMMEDIATELY,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e RALLY_FLAGS) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_RALLY_FLAGS {
+	for i := 0; i < 2; i++ {
+		mask := RALLY_FLAGS(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_RALLY_FLAGS[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -38,19 +44,12 @@ func (e *RALLY_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask RALLY_FLAGS
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_RALLY_FLAGS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_RALLY_FLAGS[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

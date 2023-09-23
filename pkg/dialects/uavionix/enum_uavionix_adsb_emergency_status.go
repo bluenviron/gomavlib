@@ -4,7 +4,7 @@ package uavionix
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Emergency status encoding
@@ -32,40 +32,41 @@ var labels_UAVIONIX_ADSB_EMERGENCY_STATUS = map[UAVIONIX_ADSB_EMERGENCY_STATUS]s
 	UAVIONIX_ADSB_OUT_RESERVED:                        "UAVIONIX_ADSB_OUT_RESERVED",
 }
 
+var values_UAVIONIX_ADSB_EMERGENCY_STATUS = map[string]UAVIONIX_ADSB_EMERGENCY_STATUS{
+	"UAVIONIX_ADSB_OUT_NO_EMERGENCY":                    UAVIONIX_ADSB_OUT_NO_EMERGENCY,
+	"UAVIONIX_ADSB_OUT_GENERAL_EMERGENCY":               UAVIONIX_ADSB_OUT_GENERAL_EMERGENCY,
+	"UAVIONIX_ADSB_OUT_LIFEGUARD_EMERGENCY":             UAVIONIX_ADSB_OUT_LIFEGUARD_EMERGENCY,
+	"UAVIONIX_ADSB_OUT_MINIMUM_FUEL_EMERGENCY":          UAVIONIX_ADSB_OUT_MINIMUM_FUEL_EMERGENCY,
+	"UAVIONIX_ADSB_OUT_NO_COMM_EMERGENCY":               UAVIONIX_ADSB_OUT_NO_COMM_EMERGENCY,
+	"UAVIONIX_ADSB_OUT_UNLAWFUL_INTERFERANCE_EMERGENCY": UAVIONIX_ADSB_OUT_UNLAWFUL_INTERFERANCE_EMERGENCY,
+	"UAVIONIX_ADSB_OUT_DOWNED_AIRCRAFT_EMERGENCY":       UAVIONIX_ADSB_OUT_DOWNED_AIRCRAFT_EMERGENCY,
+	"UAVIONIX_ADSB_OUT_RESERVED":                        UAVIONIX_ADSB_OUT_RESERVED,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_EMERGENCY_STATUS) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_UAVIONIX_ADSB_EMERGENCY_STATUS {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_UAVIONIX_ADSB_EMERGENCY_STATUS[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_EMERGENCY_STATUS) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask UAVIONIX_ADSB_EMERGENCY_STATUS
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_UAVIONIX_ADSB_EMERGENCY_STATUS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_UAVIONIX_ADSB_EMERGENCY_STATUS[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e UAVIONIX_ADSB_EMERGENCY_STATUS) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_UAVIONIX_ADSB_EMERGENCY_STATUS[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

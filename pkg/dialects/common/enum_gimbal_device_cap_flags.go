@@ -58,12 +58,30 @@ var labels_GIMBAL_DEVICE_CAP_FLAGS = map[GIMBAL_DEVICE_CAP_FLAGS]string{
 	GIMBAL_DEVICE_CAP_FLAGS_HAS_RC_INPUTS:               "GIMBAL_DEVICE_CAP_FLAGS_HAS_RC_INPUTS",
 }
 
+var values_GIMBAL_DEVICE_CAP_FLAGS = map[string]GIMBAL_DEVICE_CAP_FLAGS{
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_RETRACT":                 GIMBAL_DEVICE_CAP_FLAGS_HAS_RETRACT,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_NEUTRAL":                 GIMBAL_DEVICE_CAP_FLAGS_HAS_NEUTRAL,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_AXIS":               GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_AXIS,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_FOLLOW":             GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_FOLLOW,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_LOCK":               GIMBAL_DEVICE_CAP_FLAGS_HAS_ROLL_LOCK,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_AXIS":              GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_AXIS,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_FOLLOW":            GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_FOLLOW,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_LOCK":              GIMBAL_DEVICE_CAP_FLAGS_HAS_PITCH_LOCK,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_AXIS":                GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_AXIS,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_FOLLOW":              GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_FOLLOW,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_LOCK":                GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_LOCK,
+	"GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_INFINITE_YAW":       GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_INFINITE_YAW,
+	"GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_YAW_IN_EARTH_FRAME": GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_YAW_IN_EARTH_FRAME,
+	"GIMBAL_DEVICE_CAP_FLAGS_HAS_RC_INPUTS":               GIMBAL_DEVICE_CAP_FLAGS_HAS_RC_INPUTS,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GIMBAL_DEVICE_CAP_FLAGS) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_GIMBAL_DEVICE_CAP_FLAGS {
+	for i := 0; i < 14; i++ {
+		mask := GIMBAL_DEVICE_CAP_FLAGS(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_GIMBAL_DEVICE_CAP_FLAGS[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -74,19 +92,12 @@ func (e *GIMBAL_DEVICE_CAP_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask GIMBAL_DEVICE_CAP_FLAGS
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_GIMBAL_DEVICE_CAP_FLAGS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_GIMBAL_DEVICE_CAP_FLAGS[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

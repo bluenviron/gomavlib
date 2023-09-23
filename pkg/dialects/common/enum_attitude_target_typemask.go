@@ -34,12 +34,22 @@ var labels_ATTITUDE_TARGET_TYPEMASK = map[ATTITUDE_TARGET_TYPEMASK]string{
 	ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE:        "ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE",
 }
 
+var values_ATTITUDE_TARGET_TYPEMASK = map[string]ATTITUDE_TARGET_TYPEMASK{
+	"ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE":  ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE,
+	"ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE": ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE,
+	"ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE":   ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE,
+	"ATTITUDE_TARGET_TYPEMASK_THRUST_BODY_SET":        ATTITUDE_TARGET_TYPEMASK_THRUST_BODY_SET,
+	"ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE":        ATTITUDE_TARGET_TYPEMASK_THROTTLE_IGNORE,
+	"ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE":        ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ATTITUDE_TARGET_TYPEMASK) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_ATTITUDE_TARGET_TYPEMASK {
+	for i := 0; i < 6; i++ {
+		mask := ATTITUDE_TARGET_TYPEMASK(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_ATTITUDE_TARGET_TYPEMASK[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -50,19 +60,12 @@ func (e *ATTITUDE_TARGET_TYPEMASK) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask ATTITUDE_TARGET_TYPEMASK
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_ATTITUDE_TARGET_TYPEMASK {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_ATTITUDE_TARGET_TYPEMASK[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

@@ -4,7 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Bus types for device operations.
@@ -22,40 +22,35 @@ var labels_DEVICE_OP_BUSTYPE = map[DEVICE_OP_BUSTYPE]string{
 	DEVICE_OP_BUSTYPE_SPI: "DEVICE_OP_BUSTYPE_SPI",
 }
 
+var values_DEVICE_OP_BUSTYPE = map[string]DEVICE_OP_BUSTYPE{
+	"DEVICE_OP_BUSTYPE_I2C": DEVICE_OP_BUSTYPE_I2C,
+	"DEVICE_OP_BUSTYPE_SPI": DEVICE_OP_BUSTYPE_SPI,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e DEVICE_OP_BUSTYPE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_DEVICE_OP_BUSTYPE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_DEVICE_OP_BUSTYPE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *DEVICE_OP_BUSTYPE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask DEVICE_OP_BUSTYPE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_DEVICE_OP_BUSTYPE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_DEVICE_OP_BUSTYPE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e DEVICE_OP_BUSTYPE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_DEVICE_OP_BUSTYPE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

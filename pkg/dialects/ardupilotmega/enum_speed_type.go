@@ -4,7 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type SPEED_TYPE uint32
@@ -19,40 +19,35 @@ var labels_SPEED_TYPE = map[SPEED_TYPE]string{
 	SPEED_TYPE_GROUNDSPEED: "SPEED_TYPE_GROUNDSPEED",
 }
 
+var values_SPEED_TYPE = map[string]SPEED_TYPE{
+	"SPEED_TYPE_AIRSPEED":    SPEED_TYPE_AIRSPEED,
+	"SPEED_TYPE_GROUNDSPEED": SPEED_TYPE_GROUNDSPEED,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e SPEED_TYPE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_SPEED_TYPE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_SPEED_TYPE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *SPEED_TYPE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask SPEED_TYPE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_SPEED_TYPE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_SPEED_TYPE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e SPEED_TYPE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_SPEED_TYPE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

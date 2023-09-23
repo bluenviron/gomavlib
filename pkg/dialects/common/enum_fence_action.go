@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Actions following geofence breach.
@@ -40,40 +40,41 @@ var labels_FENCE_ACTION = map[FENCE_ACTION]string{
 	FENCE_ACTION_LAND:            "FENCE_ACTION_LAND",
 }
 
+var values_FENCE_ACTION = map[string]FENCE_ACTION{
+	"FENCE_ACTION_NONE":            FENCE_ACTION_NONE,
+	"FENCE_ACTION_GUIDED":          FENCE_ACTION_GUIDED,
+	"FENCE_ACTION_REPORT":          FENCE_ACTION_REPORT,
+	"FENCE_ACTION_GUIDED_THR_PASS": FENCE_ACTION_GUIDED_THR_PASS,
+	"FENCE_ACTION_RTL":             FENCE_ACTION_RTL,
+	"FENCE_ACTION_HOLD":            FENCE_ACTION_HOLD,
+	"FENCE_ACTION_TERMINATE":       FENCE_ACTION_TERMINATE,
+	"FENCE_ACTION_LAND":            FENCE_ACTION_LAND,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FENCE_ACTION) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_FENCE_ACTION {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_FENCE_ACTION[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FENCE_ACTION) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask FENCE_ACTION
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_FENCE_ACTION {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_FENCE_ACTION[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e FENCE_ACTION) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_FENCE_ACTION[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

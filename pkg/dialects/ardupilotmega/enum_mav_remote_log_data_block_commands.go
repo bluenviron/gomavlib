@@ -4,7 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Special ACK block numbers control activation of dataflash log streaming.
@@ -22,40 +22,35 @@ var labels_MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS = map[MAV_REMOTE_LOG_DATA_BLOCK_CO
 	MAV_REMOTE_LOG_DATA_BLOCK_START: "MAV_REMOTE_LOG_DATA_BLOCK_START",
 }
 
+var values_MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS = map[string]MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS{
+	"MAV_REMOTE_LOG_DATA_BLOCK_STOP":  MAV_REMOTE_LOG_DATA_BLOCK_STOP,
+	"MAV_REMOTE_LOG_DATA_BLOCK_START": MAV_REMOTE_LOG_DATA_BLOCK_START,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

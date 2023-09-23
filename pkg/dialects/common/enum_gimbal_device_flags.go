@@ -46,12 +46,26 @@ var labels_GIMBAL_DEVICE_FLAGS = map[GIMBAL_DEVICE_FLAGS]string{
 	GIMBAL_DEVICE_FLAGS_RC_MIXED:                   "GIMBAL_DEVICE_FLAGS_RC_MIXED",
 }
 
+var values_GIMBAL_DEVICE_FLAGS = map[string]GIMBAL_DEVICE_FLAGS{
+	"GIMBAL_DEVICE_FLAGS_RETRACT":                    GIMBAL_DEVICE_FLAGS_RETRACT,
+	"GIMBAL_DEVICE_FLAGS_NEUTRAL":                    GIMBAL_DEVICE_FLAGS_NEUTRAL,
+	"GIMBAL_DEVICE_FLAGS_ROLL_LOCK":                  GIMBAL_DEVICE_FLAGS_ROLL_LOCK,
+	"GIMBAL_DEVICE_FLAGS_PITCH_LOCK":                 GIMBAL_DEVICE_FLAGS_PITCH_LOCK,
+	"GIMBAL_DEVICE_FLAGS_YAW_LOCK":                   GIMBAL_DEVICE_FLAGS_YAW_LOCK,
+	"GIMBAL_DEVICE_FLAGS_YAW_IN_VEHICLE_FRAME":       GIMBAL_DEVICE_FLAGS_YAW_IN_VEHICLE_FRAME,
+	"GIMBAL_DEVICE_FLAGS_YAW_IN_EARTH_FRAME":         GIMBAL_DEVICE_FLAGS_YAW_IN_EARTH_FRAME,
+	"GIMBAL_DEVICE_FLAGS_ACCEPTS_YAW_IN_EARTH_FRAME": GIMBAL_DEVICE_FLAGS_ACCEPTS_YAW_IN_EARTH_FRAME,
+	"GIMBAL_DEVICE_FLAGS_RC_EXCLUSIVE":               GIMBAL_DEVICE_FLAGS_RC_EXCLUSIVE,
+	"GIMBAL_DEVICE_FLAGS_RC_MIXED":                   GIMBAL_DEVICE_FLAGS_RC_MIXED,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GIMBAL_DEVICE_FLAGS) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_GIMBAL_DEVICE_FLAGS {
+	for i := 0; i < 10; i++ {
+		mask := GIMBAL_DEVICE_FLAGS(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_GIMBAL_DEVICE_FLAGS[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -62,19 +76,12 @@ func (e *GIMBAL_DEVICE_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask GIMBAL_DEVICE_FLAGS
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_GIMBAL_DEVICE_FLAGS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_GIMBAL_DEVICE_FLAGS[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

@@ -26,12 +26,21 @@ var labels_UAVIONIX_ADSB_OUT_DYNAMIC_STATE = map[UAVIONIX_ADSB_OUT_DYNAMIC_STATE
 	UAVIONIX_ADSB_OUT_DYNAMIC_STATE_IDENT:                "UAVIONIX_ADSB_OUT_DYNAMIC_STATE_IDENT",
 }
 
+var values_UAVIONIX_ADSB_OUT_DYNAMIC_STATE = map[string]UAVIONIX_ADSB_OUT_DYNAMIC_STATE{
+	"UAVIONIX_ADSB_OUT_DYNAMIC_STATE_INTENT_CHANGE":        UAVIONIX_ADSB_OUT_DYNAMIC_STATE_INTENT_CHANGE,
+	"UAVIONIX_ADSB_OUT_DYNAMIC_STATE_AUTOPILOT_ENABLED":    UAVIONIX_ADSB_OUT_DYNAMIC_STATE_AUTOPILOT_ENABLED,
+	"UAVIONIX_ADSB_OUT_DYNAMIC_STATE_NICBARO_CROSSCHECKED": UAVIONIX_ADSB_OUT_DYNAMIC_STATE_NICBARO_CROSSCHECKED,
+	"UAVIONIX_ADSB_OUT_DYNAMIC_STATE_ON_GROUND":            UAVIONIX_ADSB_OUT_DYNAMIC_STATE_ON_GROUND,
+	"UAVIONIX_ADSB_OUT_DYNAMIC_STATE_IDENT":                UAVIONIX_ADSB_OUT_DYNAMIC_STATE_IDENT,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_OUT_DYNAMIC_STATE) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_UAVIONIX_ADSB_OUT_DYNAMIC_STATE {
+	for i := 0; i < 5; i++ {
+		mask := UAVIONIX_ADSB_OUT_DYNAMIC_STATE(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_UAVIONIX_ADSB_OUT_DYNAMIC_STATE[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -42,19 +51,12 @@ func (e *UAVIONIX_ADSB_OUT_DYNAMIC_STATE) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask UAVIONIX_ADSB_OUT_DYNAMIC_STATE
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_UAVIONIX_ADSB_OUT_DYNAMIC_STATE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_UAVIONIX_ADSB_OUT_DYNAMIC_STATE[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

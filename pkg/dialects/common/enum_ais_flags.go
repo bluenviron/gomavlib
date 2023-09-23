@@ -49,12 +49,29 @@ var labels_AIS_FLAGS = map[AIS_FLAGS]string{
 	AIS_FLAGS_VALID_NAME:                "AIS_FLAGS_VALID_NAME",
 }
 
+var values_AIS_FLAGS = map[string]AIS_FLAGS{
+	"AIS_FLAGS_POSITION_ACCURACY":         AIS_FLAGS_POSITION_ACCURACY,
+	"AIS_FLAGS_VALID_COG":                 AIS_FLAGS_VALID_COG,
+	"AIS_FLAGS_VALID_VELOCITY":            AIS_FLAGS_VALID_VELOCITY,
+	"AIS_FLAGS_HIGH_VELOCITY":             AIS_FLAGS_HIGH_VELOCITY,
+	"AIS_FLAGS_VALID_TURN_RATE":           AIS_FLAGS_VALID_TURN_RATE,
+	"AIS_FLAGS_TURN_RATE_SIGN_ONLY":       AIS_FLAGS_TURN_RATE_SIGN_ONLY,
+	"AIS_FLAGS_VALID_DIMENSIONS":          AIS_FLAGS_VALID_DIMENSIONS,
+	"AIS_FLAGS_LARGE_BOW_DIMENSION":       AIS_FLAGS_LARGE_BOW_DIMENSION,
+	"AIS_FLAGS_LARGE_STERN_DIMENSION":     AIS_FLAGS_LARGE_STERN_DIMENSION,
+	"AIS_FLAGS_LARGE_PORT_DIMENSION":      AIS_FLAGS_LARGE_PORT_DIMENSION,
+	"AIS_FLAGS_LARGE_STARBOARD_DIMENSION": AIS_FLAGS_LARGE_STARBOARD_DIMENSION,
+	"AIS_FLAGS_VALID_CALLSIGN":            AIS_FLAGS_VALID_CALLSIGN,
+	"AIS_FLAGS_VALID_NAME":                AIS_FLAGS_VALID_NAME,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e AIS_FLAGS) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_AIS_FLAGS {
+	for i := 0; i < 13; i++ {
+		mask := AIS_FLAGS(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_AIS_FLAGS[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -65,19 +82,12 @@ func (e *AIS_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask AIS_FLAGS
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_AIS_FLAGS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_AIS_FLAGS[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

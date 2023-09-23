@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Flags to indicate the type of storage.
@@ -43,40 +43,42 @@ var labels_STORAGE_TYPE = map[STORAGE_TYPE]string{
 	STORAGE_TYPE_OTHER:     "STORAGE_TYPE_OTHER",
 }
 
+var values_STORAGE_TYPE = map[string]STORAGE_TYPE{
+	"STORAGE_TYPE_UNKNOWN":   STORAGE_TYPE_UNKNOWN,
+	"STORAGE_TYPE_USB_STICK": STORAGE_TYPE_USB_STICK,
+	"STORAGE_TYPE_SD":        STORAGE_TYPE_SD,
+	"STORAGE_TYPE_MICROSD":   STORAGE_TYPE_MICROSD,
+	"STORAGE_TYPE_CF":        STORAGE_TYPE_CF,
+	"STORAGE_TYPE_CFE":       STORAGE_TYPE_CFE,
+	"STORAGE_TYPE_XQD":       STORAGE_TYPE_XQD,
+	"STORAGE_TYPE_HD":        STORAGE_TYPE_HD,
+	"STORAGE_TYPE_OTHER":     STORAGE_TYPE_OTHER,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e STORAGE_TYPE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_STORAGE_TYPE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_STORAGE_TYPE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *STORAGE_TYPE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask STORAGE_TYPE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_STORAGE_TYPE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_STORAGE_TYPE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e STORAGE_TYPE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_STORAGE_TYPE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

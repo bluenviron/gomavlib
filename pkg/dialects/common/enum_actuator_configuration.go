@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Actuator configuration, used to change a setting on an actuator. Component information metadata can be used to know which outputs support which commands.
@@ -34,40 +34,39 @@ var labels_ACTUATOR_CONFIGURATION = map[ACTUATOR_CONFIGURATION]string{
 	ACTUATOR_CONFIGURATION_SPIN_DIRECTION2: "ACTUATOR_CONFIGURATION_SPIN_DIRECTION2",
 }
 
+var values_ACTUATOR_CONFIGURATION = map[string]ACTUATOR_CONFIGURATION{
+	"ACTUATOR_CONFIGURATION_NONE":            ACTUATOR_CONFIGURATION_NONE,
+	"ACTUATOR_CONFIGURATION_BEEP":            ACTUATOR_CONFIGURATION_BEEP,
+	"ACTUATOR_CONFIGURATION_3D_MODE_ON":      ACTUATOR_CONFIGURATION_3D_MODE_ON,
+	"ACTUATOR_CONFIGURATION_3D_MODE_OFF":     ACTUATOR_CONFIGURATION_3D_MODE_OFF,
+	"ACTUATOR_CONFIGURATION_SPIN_DIRECTION1": ACTUATOR_CONFIGURATION_SPIN_DIRECTION1,
+	"ACTUATOR_CONFIGURATION_SPIN_DIRECTION2": ACTUATOR_CONFIGURATION_SPIN_DIRECTION2,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ACTUATOR_CONFIGURATION) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_ACTUATOR_CONFIGURATION {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_ACTUATOR_CONFIGURATION[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ACTUATOR_CONFIGURATION) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask ACTUATOR_CONFIGURATION
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_ACTUATOR_CONFIGURATION {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_ACTUATOR_CONFIGURATION[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e ACTUATOR_CONFIGURATION) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_ACTUATOR_CONFIGURATION[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

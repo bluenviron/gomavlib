@@ -34,12 +34,22 @@ var labels_MAV_POWER_STATUS = map[MAV_POWER_STATUS]string{
 	MAV_POWER_STATUS_CHANGED:                    "MAV_POWER_STATUS_CHANGED",
 }
 
+var values_MAV_POWER_STATUS = map[string]MAV_POWER_STATUS{
+	"MAV_POWER_STATUS_BRICK_VALID":                MAV_POWER_STATUS_BRICK_VALID,
+	"MAV_POWER_STATUS_SERVO_VALID":                MAV_POWER_STATUS_SERVO_VALID,
+	"MAV_POWER_STATUS_USB_CONNECTED":              MAV_POWER_STATUS_USB_CONNECTED,
+	"MAV_POWER_STATUS_PERIPH_OVERCURRENT":         MAV_POWER_STATUS_PERIPH_OVERCURRENT,
+	"MAV_POWER_STATUS_PERIPH_HIPOWER_OVERCURRENT": MAV_POWER_STATUS_PERIPH_HIPOWER_OVERCURRENT,
+	"MAV_POWER_STATUS_CHANGED":                    MAV_POWER_STATUS_CHANGED,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_POWER_STATUS) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_MAV_POWER_STATUS {
+	for i := 0; i < 6; i++ {
+		mask := MAV_POWER_STATUS(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_MAV_POWER_STATUS[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -50,19 +60,12 @@ func (e *MAV_POWER_STATUS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask MAV_POWER_STATUS
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_POWER_STATUS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_MAV_POWER_STATUS[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

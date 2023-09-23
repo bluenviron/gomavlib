@@ -26,12 +26,21 @@ var labels_TARGET_ABSOLUTE_SENSOR_CAPABILITY_FLAGS = map[TARGET_ABSOLUTE_SENSOR_
 	TARGET_ABSOLUTE_SENSOR_CAPABILITY_RATES:        "TARGET_ABSOLUTE_SENSOR_CAPABILITY_RATES",
 }
 
+var values_TARGET_ABSOLUTE_SENSOR_CAPABILITY_FLAGS = map[string]TARGET_ABSOLUTE_SENSOR_CAPABILITY_FLAGS{
+	"TARGET_ABSOLUTE_SENSOR_CAPABILITY_POSITION":     TARGET_ABSOLUTE_SENSOR_CAPABILITY_POSITION,
+	"TARGET_ABSOLUTE_SENSOR_CAPABILITY_VELOCITY":     TARGET_ABSOLUTE_SENSOR_CAPABILITY_VELOCITY,
+	"TARGET_ABSOLUTE_SENSOR_CAPABILITY_ACCELERATION": TARGET_ABSOLUTE_SENSOR_CAPABILITY_ACCELERATION,
+	"TARGET_ABSOLUTE_SENSOR_CAPABILITY_ATTITUDE":     TARGET_ABSOLUTE_SENSOR_CAPABILITY_ATTITUDE,
+	"TARGET_ABSOLUTE_SENSOR_CAPABILITY_RATES":        TARGET_ABSOLUTE_SENSOR_CAPABILITY_RATES,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e TARGET_ABSOLUTE_SENSOR_CAPABILITY_FLAGS) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_TARGET_ABSOLUTE_SENSOR_CAPABILITY_FLAGS {
+	for i := 0; i < 5; i++ {
+		mask := TARGET_ABSOLUTE_SENSOR_CAPABILITY_FLAGS(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_TARGET_ABSOLUTE_SENSOR_CAPABILITY_FLAGS[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -42,19 +51,12 @@ func (e *TARGET_ABSOLUTE_SENSOR_CAPABILITY_FLAGS) UnmarshalText(text []byte) err
 	labels := strings.Split(string(text), " | ")
 	var mask TARGET_ABSOLUTE_SENSOR_CAPABILITY_FLAGS
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_TARGET_ABSOLUTE_SENSOR_CAPABILITY_FLAGS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_TARGET_ABSOLUTE_SENSOR_CAPABILITY_FLAGS[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

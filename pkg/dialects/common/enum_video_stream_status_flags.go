@@ -22,12 +22,18 @@ var labels_VIDEO_STREAM_STATUS_FLAGS = map[VIDEO_STREAM_STATUS_FLAGS]string{
 	VIDEO_STREAM_STATUS_FLAGS_THERMAL: "VIDEO_STREAM_STATUS_FLAGS_THERMAL",
 }
 
+var values_VIDEO_STREAM_STATUS_FLAGS = map[string]VIDEO_STREAM_STATUS_FLAGS{
+	"VIDEO_STREAM_STATUS_FLAGS_RUNNING": VIDEO_STREAM_STATUS_FLAGS_RUNNING,
+	"VIDEO_STREAM_STATUS_FLAGS_THERMAL": VIDEO_STREAM_STATUS_FLAGS_THERMAL,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e VIDEO_STREAM_STATUS_FLAGS) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_VIDEO_STREAM_STATUS_FLAGS {
+	for i := 0; i < 2; i++ {
+		mask := VIDEO_STREAM_STATUS_FLAGS(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_VIDEO_STREAM_STATUS_FLAGS[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -38,19 +44,12 @@ func (e *VIDEO_STREAM_STATUS_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask VIDEO_STREAM_STATUS_FLAGS
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_VIDEO_STREAM_STATUS_FLAGS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_VIDEO_STREAM_STATUS_FLAGS[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

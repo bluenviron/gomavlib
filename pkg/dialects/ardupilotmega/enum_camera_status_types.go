@@ -4,7 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type CAMERA_STATUS_TYPES uint32
@@ -36,40 +36,40 @@ var labels_CAMERA_STATUS_TYPES = map[CAMERA_STATUS_TYPES]string{
 	CAMERA_STATUS_TYPE_LOWSTOREV:  "CAMERA_STATUS_TYPE_LOWSTOREV",
 }
 
+var values_CAMERA_STATUS_TYPES = map[string]CAMERA_STATUS_TYPES{
+	"CAMERA_STATUS_TYPE_HEARTBEAT":  CAMERA_STATUS_TYPE_HEARTBEAT,
+	"CAMERA_STATUS_TYPE_TRIGGER":    CAMERA_STATUS_TYPE_TRIGGER,
+	"CAMERA_STATUS_TYPE_DISCONNECT": CAMERA_STATUS_TYPE_DISCONNECT,
+	"CAMERA_STATUS_TYPE_ERROR":      CAMERA_STATUS_TYPE_ERROR,
+	"CAMERA_STATUS_TYPE_LOWBATT":    CAMERA_STATUS_TYPE_LOWBATT,
+	"CAMERA_STATUS_TYPE_LOWSTORE":   CAMERA_STATUS_TYPE_LOWSTORE,
+	"CAMERA_STATUS_TYPE_LOWSTOREV":  CAMERA_STATUS_TYPE_LOWSTOREV,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAMERA_STATUS_TYPES) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_CAMERA_STATUS_TYPES {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_CAMERA_STATUS_TYPES[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CAMERA_STATUS_TYPES) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask CAMERA_STATUS_TYPES
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_CAMERA_STATUS_TYPES {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_CAMERA_STATUS_TYPES[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e CAMERA_STATUS_TYPES) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_CAMERA_STATUS_TYPES[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

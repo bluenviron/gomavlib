@@ -46,12 +46,26 @@ var labels_GIMBAL_DEVICE_ERROR_FLAGS = map[GIMBAL_DEVICE_ERROR_FLAGS]string{
 	GIMBAL_DEVICE_ERROR_FLAGS_NO_MANAGER:          "GIMBAL_DEVICE_ERROR_FLAGS_NO_MANAGER",
 }
 
+var values_GIMBAL_DEVICE_ERROR_FLAGS = map[string]GIMBAL_DEVICE_ERROR_FLAGS{
+	"GIMBAL_DEVICE_ERROR_FLAGS_AT_ROLL_LIMIT":       GIMBAL_DEVICE_ERROR_FLAGS_AT_ROLL_LIMIT,
+	"GIMBAL_DEVICE_ERROR_FLAGS_AT_PITCH_LIMIT":      GIMBAL_DEVICE_ERROR_FLAGS_AT_PITCH_LIMIT,
+	"GIMBAL_DEVICE_ERROR_FLAGS_AT_YAW_LIMIT":        GIMBAL_DEVICE_ERROR_FLAGS_AT_YAW_LIMIT,
+	"GIMBAL_DEVICE_ERROR_FLAGS_ENCODER_ERROR":       GIMBAL_DEVICE_ERROR_FLAGS_ENCODER_ERROR,
+	"GIMBAL_DEVICE_ERROR_FLAGS_POWER_ERROR":         GIMBAL_DEVICE_ERROR_FLAGS_POWER_ERROR,
+	"GIMBAL_DEVICE_ERROR_FLAGS_MOTOR_ERROR":         GIMBAL_DEVICE_ERROR_FLAGS_MOTOR_ERROR,
+	"GIMBAL_DEVICE_ERROR_FLAGS_SOFTWARE_ERROR":      GIMBAL_DEVICE_ERROR_FLAGS_SOFTWARE_ERROR,
+	"GIMBAL_DEVICE_ERROR_FLAGS_COMMS_ERROR":         GIMBAL_DEVICE_ERROR_FLAGS_COMMS_ERROR,
+	"GIMBAL_DEVICE_ERROR_FLAGS_CALIBRATION_RUNNING": GIMBAL_DEVICE_ERROR_FLAGS_CALIBRATION_RUNNING,
+	"GIMBAL_DEVICE_ERROR_FLAGS_NO_MANAGER":          GIMBAL_DEVICE_ERROR_FLAGS_NO_MANAGER,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GIMBAL_DEVICE_ERROR_FLAGS) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_GIMBAL_DEVICE_ERROR_FLAGS {
+	for i := 0; i < 10; i++ {
+		mask := GIMBAL_DEVICE_ERROR_FLAGS(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_GIMBAL_DEVICE_ERROR_FLAGS[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -62,19 +76,12 @@ func (e *GIMBAL_DEVICE_ERROR_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask GIMBAL_DEVICE_ERROR_FLAGS
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_GIMBAL_DEVICE_ERROR_FLAGS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_GIMBAL_DEVICE_ERROR_FLAGS[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

@@ -4,7 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL uint32
@@ -24,40 +24,36 @@ var labels_MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL = map[MAV_CMD_DO_AUX_FUNCTION_SW
 	MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_HIGH:   "MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_HIGH",
 }
 
+var values_MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL = map[string]MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL{
+	"MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_LOW":    MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_LOW,
+	"MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_MIDDLE": MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_MIDDLE,
+	"MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_HIGH":   MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_HIGH,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

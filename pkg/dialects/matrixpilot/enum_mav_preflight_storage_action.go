@@ -4,7 +4,7 @@ package matrixpilot
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Action required when performing CMD_PREFLIGHT_STORAGE
@@ -37,40 +37,40 @@ var labels_MAV_PREFLIGHT_STORAGE_ACTION = map[MAV_PREFLIGHT_STORAGE_ACTION]strin
 	MAV_PFS_CMD_DO_NOTHING:     "MAV_PFS_CMD_DO_NOTHING",
 }
 
+var values_MAV_PREFLIGHT_STORAGE_ACTION = map[string]MAV_PREFLIGHT_STORAGE_ACTION{
+	"MAV_PFS_CMD_READ_ALL":       MAV_PFS_CMD_READ_ALL,
+	"MAV_PFS_CMD_WRITE_ALL":      MAV_PFS_CMD_WRITE_ALL,
+	"MAV_PFS_CMD_CLEAR_ALL":      MAV_PFS_CMD_CLEAR_ALL,
+	"MAV_PFS_CMD_READ_SPECIFIC":  MAV_PFS_CMD_READ_SPECIFIC,
+	"MAV_PFS_CMD_WRITE_SPECIFIC": MAV_PFS_CMD_WRITE_SPECIFIC,
+	"MAV_PFS_CMD_CLEAR_SPECIFIC": MAV_PFS_CMD_CLEAR_SPECIFIC,
+	"MAV_PFS_CMD_DO_NOTHING":     MAV_PFS_CMD_DO_NOTHING,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_PREFLIGHT_STORAGE_ACTION) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_PREFLIGHT_STORAGE_ACTION {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_PREFLIGHT_STORAGE_ACTION[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_PREFLIGHT_STORAGE_ACTION) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_PREFLIGHT_STORAGE_ACTION
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_PREFLIGHT_STORAGE_ACTION {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_PREFLIGHT_STORAGE_ACTION[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_PREFLIGHT_STORAGE_ACTION) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_PREFLIGHT_STORAGE_ACTION[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

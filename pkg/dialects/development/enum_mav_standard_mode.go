@@ -4,7 +4,7 @@ package development
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Standard modes with a well understood meaning across flight stacks and vehicle types.
@@ -87,40 +87,43 @@ var labels_MAV_STANDARD_MODE = map[MAV_STANDARD_MODE]string{
 	MAV_STANDARD_MODE_TAKEOFF:       "MAV_STANDARD_MODE_TAKEOFF",
 }
 
+var values_MAV_STANDARD_MODE = map[string]MAV_STANDARD_MODE{
+	"MAV_STANDARD_MODE_NON_STANDARD":  MAV_STANDARD_MODE_NON_STANDARD,
+	"MAV_STANDARD_MODE_POSITION_HOLD": MAV_STANDARD_MODE_POSITION_HOLD,
+	"MAV_STANDARD_MODE_ORBIT":         MAV_STANDARD_MODE_ORBIT,
+	"MAV_STANDARD_MODE_CRUISE":        MAV_STANDARD_MODE_CRUISE,
+	"MAV_STANDARD_MODE_ALTITUDE_HOLD": MAV_STANDARD_MODE_ALTITUDE_HOLD,
+	"MAV_STANDARD_MODE_RETURN_HOME":   MAV_STANDARD_MODE_RETURN_HOME,
+	"MAV_STANDARD_MODE_SAFE_RECOVERY": MAV_STANDARD_MODE_SAFE_RECOVERY,
+	"MAV_STANDARD_MODE_MISSION":       MAV_STANDARD_MODE_MISSION,
+	"MAV_STANDARD_MODE_LAND":          MAV_STANDARD_MODE_LAND,
+	"MAV_STANDARD_MODE_TAKEOFF":       MAV_STANDARD_MODE_TAKEOFF,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_STANDARD_MODE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_STANDARD_MODE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_STANDARD_MODE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_STANDARD_MODE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_STANDARD_MODE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_STANDARD_MODE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_STANDARD_MODE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_STANDARD_MODE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_STANDARD_MODE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

@@ -40,12 +40,24 @@ var labels_UTM_DATA_AVAIL_FLAGS = map[UTM_DATA_AVAIL_FLAGS]string{
 	UTM_DATA_AVAIL_FLAGS_NEXT_WAYPOINT_AVAILABLE:     "UTM_DATA_AVAIL_FLAGS_NEXT_WAYPOINT_AVAILABLE",
 }
 
+var values_UTM_DATA_AVAIL_FLAGS = map[string]UTM_DATA_AVAIL_FLAGS{
+	"UTM_DATA_AVAIL_FLAGS_TIME_VALID":                  UTM_DATA_AVAIL_FLAGS_TIME_VALID,
+	"UTM_DATA_AVAIL_FLAGS_UAS_ID_AVAILABLE":            UTM_DATA_AVAIL_FLAGS_UAS_ID_AVAILABLE,
+	"UTM_DATA_AVAIL_FLAGS_POSITION_AVAILABLE":          UTM_DATA_AVAIL_FLAGS_POSITION_AVAILABLE,
+	"UTM_DATA_AVAIL_FLAGS_ALTITUDE_AVAILABLE":          UTM_DATA_AVAIL_FLAGS_ALTITUDE_AVAILABLE,
+	"UTM_DATA_AVAIL_FLAGS_RELATIVE_ALTITUDE_AVAILABLE": UTM_DATA_AVAIL_FLAGS_RELATIVE_ALTITUDE_AVAILABLE,
+	"UTM_DATA_AVAIL_FLAGS_HORIZONTAL_VELO_AVAILABLE":   UTM_DATA_AVAIL_FLAGS_HORIZONTAL_VELO_AVAILABLE,
+	"UTM_DATA_AVAIL_FLAGS_VERTICAL_VELO_AVAILABLE":     UTM_DATA_AVAIL_FLAGS_VERTICAL_VELO_AVAILABLE,
+	"UTM_DATA_AVAIL_FLAGS_NEXT_WAYPOINT_AVAILABLE":     UTM_DATA_AVAIL_FLAGS_NEXT_WAYPOINT_AVAILABLE,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UTM_DATA_AVAIL_FLAGS) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_UTM_DATA_AVAIL_FLAGS {
+	for i := 0; i < 8; i++ {
+		mask := UTM_DATA_AVAIL_FLAGS(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_UTM_DATA_AVAIL_FLAGS[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -56,19 +68,12 @@ func (e *UTM_DATA_AVAIL_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask UTM_DATA_AVAIL_FLAGS
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_UTM_DATA_AVAIL_FLAGS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_UTM_DATA_AVAIL_FLAGS[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Actions for reading/writing parameters between persistent and volatile storage when using MAV_CMD_PREFLIGHT_STORAGE.
@@ -32,40 +32,38 @@ var labels_PREFLIGHT_STORAGE_PARAMETER_ACTION = map[PREFLIGHT_STORAGE_PARAMETER_
 	PARAM_RESET_ALL_DEFAULT:    "PARAM_RESET_ALL_DEFAULT",
 }
 
+var values_PREFLIGHT_STORAGE_PARAMETER_ACTION = map[string]PREFLIGHT_STORAGE_PARAMETER_ACTION{
+	"PARAM_READ_PERSISTENT":      PARAM_READ_PERSISTENT,
+	"PARAM_WRITE_PERSISTENT":     PARAM_WRITE_PERSISTENT,
+	"PARAM_RESET_CONFIG_DEFAULT": PARAM_RESET_CONFIG_DEFAULT,
+	"PARAM_RESET_SENSOR_DEFAULT": PARAM_RESET_SENSOR_DEFAULT,
+	"PARAM_RESET_ALL_DEFAULT":    PARAM_RESET_ALL_DEFAULT,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e PREFLIGHT_STORAGE_PARAMETER_ACTION) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_PREFLIGHT_STORAGE_PARAMETER_ACTION {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_PREFLIGHT_STORAGE_PARAMETER_ACTION[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *PREFLIGHT_STORAGE_PARAMETER_ACTION) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask PREFLIGHT_STORAGE_PARAMETER_ACTION
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_PREFLIGHT_STORAGE_PARAMETER_ACTION {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_PREFLIGHT_STORAGE_PARAMETER_ACTION[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e PREFLIGHT_STORAGE_PARAMETER_ACTION) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_PREFLIGHT_STORAGE_PARAMETER_ACTION[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

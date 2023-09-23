@@ -49,12 +49,27 @@ var labels_EKF_STATUS_FLAGS = map[EKF_STATUS_FLAGS]string{
 	EKF_UNINITIALIZED:      "EKF_UNINITIALIZED",
 }
 
+var values_EKF_STATUS_FLAGS = map[string]EKF_STATUS_FLAGS{
+	"EKF_ATTITUDE":           EKF_ATTITUDE,
+	"EKF_VELOCITY_HORIZ":     EKF_VELOCITY_HORIZ,
+	"EKF_VELOCITY_VERT":      EKF_VELOCITY_VERT,
+	"EKF_POS_HORIZ_REL":      EKF_POS_HORIZ_REL,
+	"EKF_POS_HORIZ_ABS":      EKF_POS_HORIZ_ABS,
+	"EKF_POS_VERT_ABS":       EKF_POS_VERT_ABS,
+	"EKF_POS_VERT_AGL":       EKF_POS_VERT_AGL,
+	"EKF_CONST_POS_MODE":     EKF_CONST_POS_MODE,
+	"EKF_PRED_POS_HORIZ_REL": EKF_PRED_POS_HORIZ_REL,
+	"EKF_PRED_POS_HORIZ_ABS": EKF_PRED_POS_HORIZ_ABS,
+	"EKF_UNINITIALIZED":      EKF_UNINITIALIZED,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e EKF_STATUS_FLAGS) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_EKF_STATUS_FLAGS {
+	for i := 0; i < 11; i++ {
+		mask := EKF_STATUS_FLAGS(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_EKF_STATUS_FLAGS[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -65,19 +80,12 @@ func (e *EKF_STATUS_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask EKF_STATUS_FLAGS
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_EKF_STATUS_FLAGS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_EKF_STATUS_FLAGS[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

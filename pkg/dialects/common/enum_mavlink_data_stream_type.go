@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type MAVLINK_DATA_STREAM_TYPE uint32
@@ -27,40 +27,39 @@ var labels_MAVLINK_DATA_STREAM_TYPE = map[MAVLINK_DATA_STREAM_TYPE]string{
 	MAVLINK_DATA_STREAM_IMG_PNG:    "MAVLINK_DATA_STREAM_IMG_PNG",
 }
 
+var values_MAVLINK_DATA_STREAM_TYPE = map[string]MAVLINK_DATA_STREAM_TYPE{
+	"MAVLINK_DATA_STREAM_IMG_JPEG":   MAVLINK_DATA_STREAM_IMG_JPEG,
+	"MAVLINK_DATA_STREAM_IMG_BMP":    MAVLINK_DATA_STREAM_IMG_BMP,
+	"MAVLINK_DATA_STREAM_IMG_RAW8U":  MAVLINK_DATA_STREAM_IMG_RAW8U,
+	"MAVLINK_DATA_STREAM_IMG_RAW32U": MAVLINK_DATA_STREAM_IMG_RAW32U,
+	"MAVLINK_DATA_STREAM_IMG_PGM":    MAVLINK_DATA_STREAM_IMG_PGM,
+	"MAVLINK_DATA_STREAM_IMG_PNG":    MAVLINK_DATA_STREAM_IMG_PNG,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAVLINK_DATA_STREAM_TYPE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAVLINK_DATA_STREAM_TYPE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAVLINK_DATA_STREAM_TYPE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAVLINK_DATA_STREAM_TYPE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAVLINK_DATA_STREAM_TYPE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAVLINK_DATA_STREAM_TYPE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAVLINK_DATA_STREAM_TYPE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAVLINK_DATA_STREAM_TYPE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAVLINK_DATA_STREAM_TYPE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

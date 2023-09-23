@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // These flags encode the cellular network status
@@ -55,40 +55,46 @@ var labels_CELLULAR_STATUS_FLAG = map[CELLULAR_STATUS_FLAG]string{
 	CELLULAR_STATUS_FLAG_CONNECTED:     "CELLULAR_STATUS_FLAG_CONNECTED",
 }
 
+var values_CELLULAR_STATUS_FLAG = map[string]CELLULAR_STATUS_FLAG{
+	"CELLULAR_STATUS_FLAG_UNKNOWN":       CELLULAR_STATUS_FLAG_UNKNOWN,
+	"CELLULAR_STATUS_FLAG_FAILED":        CELLULAR_STATUS_FLAG_FAILED,
+	"CELLULAR_STATUS_FLAG_INITIALIZING":  CELLULAR_STATUS_FLAG_INITIALIZING,
+	"CELLULAR_STATUS_FLAG_LOCKED":        CELLULAR_STATUS_FLAG_LOCKED,
+	"CELLULAR_STATUS_FLAG_DISABLED":      CELLULAR_STATUS_FLAG_DISABLED,
+	"CELLULAR_STATUS_FLAG_DISABLING":     CELLULAR_STATUS_FLAG_DISABLING,
+	"CELLULAR_STATUS_FLAG_ENABLING":      CELLULAR_STATUS_FLAG_ENABLING,
+	"CELLULAR_STATUS_FLAG_ENABLED":       CELLULAR_STATUS_FLAG_ENABLED,
+	"CELLULAR_STATUS_FLAG_SEARCHING":     CELLULAR_STATUS_FLAG_SEARCHING,
+	"CELLULAR_STATUS_FLAG_REGISTERED":    CELLULAR_STATUS_FLAG_REGISTERED,
+	"CELLULAR_STATUS_FLAG_DISCONNECTING": CELLULAR_STATUS_FLAG_DISCONNECTING,
+	"CELLULAR_STATUS_FLAG_CONNECTING":    CELLULAR_STATUS_FLAG_CONNECTING,
+	"CELLULAR_STATUS_FLAG_CONNECTED":     CELLULAR_STATUS_FLAG_CONNECTED,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CELLULAR_STATUS_FLAG) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_CELLULAR_STATUS_FLAG {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_CELLULAR_STATUS_FLAG[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CELLULAR_STATUS_FLAG) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask CELLULAR_STATUS_FLAG
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_CELLULAR_STATUS_FLAG {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_CELLULAR_STATUS_FLAG[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e CELLULAR_STATUS_FLAG) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_CELLULAR_STATUS_FLAG[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

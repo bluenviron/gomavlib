@@ -4,7 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type GOPRO_PHOTO_RESOLUTION uint32
@@ -30,40 +30,38 @@ var labels_GOPRO_PHOTO_RESOLUTION = map[GOPRO_PHOTO_RESOLUTION]string{
 	GOPRO_PHOTO_RESOLUTION_12MP_WIDE:  "GOPRO_PHOTO_RESOLUTION_12MP_WIDE",
 }
 
+var values_GOPRO_PHOTO_RESOLUTION = map[string]GOPRO_PHOTO_RESOLUTION{
+	"GOPRO_PHOTO_RESOLUTION_5MP_MEDIUM": GOPRO_PHOTO_RESOLUTION_5MP_MEDIUM,
+	"GOPRO_PHOTO_RESOLUTION_7MP_MEDIUM": GOPRO_PHOTO_RESOLUTION_7MP_MEDIUM,
+	"GOPRO_PHOTO_RESOLUTION_7MP_WIDE":   GOPRO_PHOTO_RESOLUTION_7MP_WIDE,
+	"GOPRO_PHOTO_RESOLUTION_10MP_WIDE":  GOPRO_PHOTO_RESOLUTION_10MP_WIDE,
+	"GOPRO_PHOTO_RESOLUTION_12MP_WIDE":  GOPRO_PHOTO_RESOLUTION_12MP_WIDE,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_PHOTO_RESOLUTION) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_GOPRO_PHOTO_RESOLUTION {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_GOPRO_PHOTO_RESOLUTION[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_PHOTO_RESOLUTION) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask GOPRO_PHOTO_RESOLUTION
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_GOPRO_PHOTO_RESOLUTION {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_GOPRO_PHOTO_RESOLUTION[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e GOPRO_PHOTO_RESOLUTION) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_GOPRO_PHOTO_RESOLUTION[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

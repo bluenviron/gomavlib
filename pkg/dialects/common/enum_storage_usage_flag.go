@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Flags to indicate usage for a particular storage (see STORAGE_INFORMATION.storage_usage and MAV_CMD_SET_STORAGE_USAGE).
@@ -28,40 +28,37 @@ var labels_STORAGE_USAGE_FLAG = map[STORAGE_USAGE_FLAG]string{
 	STORAGE_USAGE_FLAG_LOGS:  "STORAGE_USAGE_FLAG_LOGS",
 }
 
+var values_STORAGE_USAGE_FLAG = map[string]STORAGE_USAGE_FLAG{
+	"STORAGE_USAGE_FLAG_SET":   STORAGE_USAGE_FLAG_SET,
+	"STORAGE_USAGE_FLAG_PHOTO": STORAGE_USAGE_FLAG_PHOTO,
+	"STORAGE_USAGE_FLAG_VIDEO": STORAGE_USAGE_FLAG_VIDEO,
+	"STORAGE_USAGE_FLAG_LOGS":  STORAGE_USAGE_FLAG_LOGS,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e STORAGE_USAGE_FLAG) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_STORAGE_USAGE_FLAG {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_STORAGE_USAGE_FLAG[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *STORAGE_USAGE_FLAG) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask STORAGE_USAGE_FLAG
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_STORAGE_USAGE_FLAG {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_STORAGE_USAGE_FLAG[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e STORAGE_USAGE_FLAG) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_STORAGE_USAGE_FLAG[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Enumeration of battery types
@@ -31,40 +31,38 @@ var labels_MAV_BATTERY_TYPE = map[MAV_BATTERY_TYPE]string{
 	MAV_BATTERY_TYPE_NIMH:    "MAV_BATTERY_TYPE_NIMH",
 }
 
+var values_MAV_BATTERY_TYPE = map[string]MAV_BATTERY_TYPE{
+	"MAV_BATTERY_TYPE_UNKNOWN": MAV_BATTERY_TYPE_UNKNOWN,
+	"MAV_BATTERY_TYPE_LIPO":    MAV_BATTERY_TYPE_LIPO,
+	"MAV_BATTERY_TYPE_LIFE":    MAV_BATTERY_TYPE_LIFE,
+	"MAV_BATTERY_TYPE_LION":    MAV_BATTERY_TYPE_LION,
+	"MAV_BATTERY_TYPE_NIMH":    MAV_BATTERY_TYPE_NIMH,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_BATTERY_TYPE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_BATTERY_TYPE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_BATTERY_TYPE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_BATTERY_TYPE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_BATTERY_TYPE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_BATTERY_TYPE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_BATTERY_TYPE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_BATTERY_TYPE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_BATTERY_TYPE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

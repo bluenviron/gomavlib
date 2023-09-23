@@ -4,7 +4,7 @@ package development
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // The frame of a target observation from an onboard sensor.
@@ -28,40 +28,37 @@ var labels_TARGET_OBS_FRAME = map[TARGET_OBS_FRAME]string{
 	TARGET_OBS_FRAME_OTHER:            "TARGET_OBS_FRAME_OTHER",
 }
 
+var values_TARGET_OBS_FRAME = map[string]TARGET_OBS_FRAME{
+	"TARGET_OBS_FRAME_LOCAL_NED":        TARGET_OBS_FRAME_LOCAL_NED,
+	"TARGET_OBS_FRAME_BODY_FRD":         TARGET_OBS_FRAME_BODY_FRD,
+	"TARGET_OBS_FRAME_LOCAL_OFFSET_NED": TARGET_OBS_FRAME_LOCAL_OFFSET_NED,
+	"TARGET_OBS_FRAME_OTHER":            TARGET_OBS_FRAME_OTHER,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e TARGET_OBS_FRAME) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_TARGET_OBS_FRAME {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_TARGET_OBS_FRAME[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *TARGET_OBS_FRAME) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask TARGET_OBS_FRAME
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_TARGET_OBS_FRAME {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_TARGET_OBS_FRAME[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e TARGET_OBS_FRAME) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_TARGET_OBS_FRAME[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

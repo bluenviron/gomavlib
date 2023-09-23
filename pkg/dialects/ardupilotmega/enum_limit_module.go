@@ -24,12 +24,19 @@ var labels_LIMIT_MODULE = map[LIMIT_MODULE]string{
 	LIMIT_ALTITUDE: "LIMIT_ALTITUDE",
 }
 
+var values_LIMIT_MODULE = map[string]LIMIT_MODULE{
+	"LIMIT_GPSLOCK":  LIMIT_GPSLOCK,
+	"LIMIT_GEOFENCE": LIMIT_GEOFENCE,
+	"LIMIT_ALTITUDE": LIMIT_ALTITUDE,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e LIMIT_MODULE) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_LIMIT_MODULE {
+	for i := 0; i < 3; i++ {
+		mask := LIMIT_MODULE(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_LIMIT_MODULE[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -40,19 +47,12 @@ func (e *LIMIT_MODULE) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask LIMIT_MODULE
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_LIMIT_MODULE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_LIMIT_MODULE[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

@@ -4,7 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type GOPRO_COMMAND uint32
@@ -66,40 +66,50 @@ var labels_GOPRO_COMMAND = map[GOPRO_COMMAND]string{
 	GOPRO_COMMAND_CHARGING:              "GOPRO_COMMAND_CHARGING",
 }
 
+var values_GOPRO_COMMAND = map[string]GOPRO_COMMAND{
+	"GOPRO_COMMAND_POWER":                 GOPRO_COMMAND_POWER,
+	"GOPRO_COMMAND_CAPTURE_MODE":          GOPRO_COMMAND_CAPTURE_MODE,
+	"GOPRO_COMMAND_SHUTTER":               GOPRO_COMMAND_SHUTTER,
+	"GOPRO_COMMAND_BATTERY":               GOPRO_COMMAND_BATTERY,
+	"GOPRO_COMMAND_MODEL":                 GOPRO_COMMAND_MODEL,
+	"GOPRO_COMMAND_VIDEO_SETTINGS":        GOPRO_COMMAND_VIDEO_SETTINGS,
+	"GOPRO_COMMAND_LOW_LIGHT":             GOPRO_COMMAND_LOW_LIGHT,
+	"GOPRO_COMMAND_PHOTO_RESOLUTION":      GOPRO_COMMAND_PHOTO_RESOLUTION,
+	"GOPRO_COMMAND_PHOTO_BURST_RATE":      GOPRO_COMMAND_PHOTO_BURST_RATE,
+	"GOPRO_COMMAND_PROTUNE":               GOPRO_COMMAND_PROTUNE,
+	"GOPRO_COMMAND_PROTUNE_WHITE_BALANCE": GOPRO_COMMAND_PROTUNE_WHITE_BALANCE,
+	"GOPRO_COMMAND_PROTUNE_COLOUR":        GOPRO_COMMAND_PROTUNE_COLOUR,
+	"GOPRO_COMMAND_PROTUNE_GAIN":          GOPRO_COMMAND_PROTUNE_GAIN,
+	"GOPRO_COMMAND_PROTUNE_SHARPNESS":     GOPRO_COMMAND_PROTUNE_SHARPNESS,
+	"GOPRO_COMMAND_PROTUNE_EXPOSURE":      GOPRO_COMMAND_PROTUNE_EXPOSURE,
+	"GOPRO_COMMAND_TIME":                  GOPRO_COMMAND_TIME,
+	"GOPRO_COMMAND_CHARGING":              GOPRO_COMMAND_CHARGING,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_COMMAND) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_GOPRO_COMMAND {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_GOPRO_COMMAND[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_COMMAND) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask GOPRO_COMMAND
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_GOPRO_COMMAND {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_GOPRO_COMMAND[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e GOPRO_COMMAND) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_GOPRO_COMMAND[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

@@ -36,12 +36,26 @@ var labels_ADSB_FLAGS = map[ADSB_FLAGS]string{
 	ADSB_FLAGS_SOURCE_UAT:              "ADSB_FLAGS_SOURCE_UAT",
 }
 
+var values_ADSB_FLAGS = map[string]ADSB_FLAGS{
+	"ADSB_FLAGS_VALID_COORDS":            ADSB_FLAGS_VALID_COORDS,
+	"ADSB_FLAGS_VALID_ALTITUDE":          ADSB_FLAGS_VALID_ALTITUDE,
+	"ADSB_FLAGS_VALID_HEADING":           ADSB_FLAGS_VALID_HEADING,
+	"ADSB_FLAGS_VALID_VELOCITY":          ADSB_FLAGS_VALID_VELOCITY,
+	"ADSB_FLAGS_VALID_CALLSIGN":          ADSB_FLAGS_VALID_CALLSIGN,
+	"ADSB_FLAGS_VALID_SQUAWK":            ADSB_FLAGS_VALID_SQUAWK,
+	"ADSB_FLAGS_SIMULATED":               ADSB_FLAGS_SIMULATED,
+	"ADSB_FLAGS_VERTICAL_VELOCITY_VALID": ADSB_FLAGS_VERTICAL_VELOCITY_VALID,
+	"ADSB_FLAGS_BARO_VALID":              ADSB_FLAGS_BARO_VALID,
+	"ADSB_FLAGS_SOURCE_UAT":              ADSB_FLAGS_SOURCE_UAT,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ADSB_FLAGS) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_ADSB_FLAGS {
+	for i := 0; i < 10; i++ {
+		mask := ADSB_FLAGS(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_ADSB_FLAGS[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -52,19 +66,12 @@ func (e *ADSB_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask ADSB_FLAGS
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_ADSB_FLAGS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_ADSB_FLAGS[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

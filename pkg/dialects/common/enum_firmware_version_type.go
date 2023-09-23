@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // These values define the type of firmware release.  These values indicate the first version or release of this type.  For example the first alpha release would be 64, the second would be 65.
@@ -31,40 +31,38 @@ var labels_FIRMWARE_VERSION_TYPE = map[FIRMWARE_VERSION_TYPE]string{
 	FIRMWARE_VERSION_TYPE_OFFICIAL: "FIRMWARE_VERSION_TYPE_OFFICIAL",
 }
 
+var values_FIRMWARE_VERSION_TYPE = map[string]FIRMWARE_VERSION_TYPE{
+	"FIRMWARE_VERSION_TYPE_DEV":      FIRMWARE_VERSION_TYPE_DEV,
+	"FIRMWARE_VERSION_TYPE_ALPHA":    FIRMWARE_VERSION_TYPE_ALPHA,
+	"FIRMWARE_VERSION_TYPE_BETA":     FIRMWARE_VERSION_TYPE_BETA,
+	"FIRMWARE_VERSION_TYPE_RC":       FIRMWARE_VERSION_TYPE_RC,
+	"FIRMWARE_VERSION_TYPE_OFFICIAL": FIRMWARE_VERSION_TYPE_OFFICIAL,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FIRMWARE_VERSION_TYPE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_FIRMWARE_VERSION_TYPE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_FIRMWARE_VERSION_TYPE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FIRMWARE_VERSION_TYPE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask FIRMWARE_VERSION_TYPE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_FIRMWARE_VERSION_TYPE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_FIRMWARE_VERSION_TYPE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e FIRMWARE_VERSION_TYPE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_FIRMWARE_VERSION_TYPE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

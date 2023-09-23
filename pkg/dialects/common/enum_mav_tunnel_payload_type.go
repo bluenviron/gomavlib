@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type MAV_TUNNEL_PAYLOAD_TYPE uint32
@@ -48,40 +48,44 @@ var labels_MAV_TUNNEL_PAYLOAD_TYPE = map[MAV_TUNNEL_PAYLOAD_TYPE]string{
 	MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED9: "MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED9",
 }
 
+var values_MAV_TUNNEL_PAYLOAD_TYPE = map[string]MAV_TUNNEL_PAYLOAD_TYPE{
+	"MAV_TUNNEL_PAYLOAD_TYPE_UNKNOWN":           MAV_TUNNEL_PAYLOAD_TYPE_UNKNOWN,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED0": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED0,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED1": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED1,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED2": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED2,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED3": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED3,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED4": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED4,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED5": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED5,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED6": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED6,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED7": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED7,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED8": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED8,
+	"MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED9": MAV_TUNNEL_PAYLOAD_TYPE_STORM32_RESERVED9,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_TUNNEL_PAYLOAD_TYPE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_TUNNEL_PAYLOAD_TYPE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_TUNNEL_PAYLOAD_TYPE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_TUNNEL_PAYLOAD_TYPE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_TUNNEL_PAYLOAD_TYPE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_TUNNEL_PAYLOAD_TYPE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_TUNNEL_PAYLOAD_TYPE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_TUNNEL_PAYLOAD_TYPE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_TUNNEL_PAYLOAD_TYPE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

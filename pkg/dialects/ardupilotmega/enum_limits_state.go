@@ -4,7 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type LIMITS_STATE uint32
@@ -33,40 +33,39 @@ var labels_LIMITS_STATE = map[LIMITS_STATE]string{
 	LIMITS_RECOVERED:  "LIMITS_RECOVERED",
 }
 
+var values_LIMITS_STATE = map[string]LIMITS_STATE{
+	"LIMITS_INIT":       LIMITS_INIT,
+	"LIMITS_DISABLED":   LIMITS_DISABLED,
+	"LIMITS_ENABLED":    LIMITS_ENABLED,
+	"LIMITS_TRIGGERED":  LIMITS_TRIGGERED,
+	"LIMITS_RECOVERING": LIMITS_RECOVERING,
+	"LIMITS_RECOVERED":  LIMITS_RECOVERED,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e LIMITS_STATE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_LIMITS_STATE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_LIMITS_STATE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *LIMITS_STATE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask LIMITS_STATE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_LIMITS_STATE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_LIMITS_STATE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e LIMITS_STATE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_LIMITS_STATE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

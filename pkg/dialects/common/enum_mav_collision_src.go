@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Source of information about this collision.
@@ -22,40 +22,35 @@ var labels_MAV_COLLISION_SRC = map[MAV_COLLISION_SRC]string{
 	MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT: "MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT",
 }
 
+var values_MAV_COLLISION_SRC = map[string]MAV_COLLISION_SRC{
+	"MAV_COLLISION_SRC_ADSB":                   MAV_COLLISION_SRC_ADSB,
+	"MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT": MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_COLLISION_SRC) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_COLLISION_SRC {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_COLLISION_SRC[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_COLLISION_SRC) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_COLLISION_SRC
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_COLLISION_SRC {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_COLLISION_SRC[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_COLLISION_SRC) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_COLLISION_SRC[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

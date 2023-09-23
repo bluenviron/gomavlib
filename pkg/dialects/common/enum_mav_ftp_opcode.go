@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // MAV FTP opcodes: https://mavlink.io/en/services/ftp.html
@@ -70,40 +70,51 @@ var labels_MAV_FTP_OPCODE = map[MAV_FTP_OPCODE]string{
 	MAV_FTP_OPCODE_NAK:              "MAV_FTP_OPCODE_NAK",
 }
 
+var values_MAV_FTP_OPCODE = map[string]MAV_FTP_OPCODE{
+	"MAV_FTP_OPCODE_NONE":             MAV_FTP_OPCODE_NONE,
+	"MAV_FTP_OPCODE_TERMINATESESSION": MAV_FTP_OPCODE_TERMINATESESSION,
+	"MAV_FTP_OPCODE_RESETSESSION":     MAV_FTP_OPCODE_RESETSESSION,
+	"MAV_FTP_OPCODE_LISTDIRECTORY":    MAV_FTP_OPCODE_LISTDIRECTORY,
+	"MAV_FTP_OPCODE_OPENFILERO":       MAV_FTP_OPCODE_OPENFILERO,
+	"MAV_FTP_OPCODE_READFILE":         MAV_FTP_OPCODE_READFILE,
+	"MAV_FTP_OPCODE_CREATEFILE":       MAV_FTP_OPCODE_CREATEFILE,
+	"MAV_FTP_OPCODE_WRITEFILE":        MAV_FTP_OPCODE_WRITEFILE,
+	"MAV_FTP_OPCODE_REMOVEFILE":       MAV_FTP_OPCODE_REMOVEFILE,
+	"MAV_FTP_OPCODE_CREATEDIRECTORY":  MAV_FTP_OPCODE_CREATEDIRECTORY,
+	"MAV_FTP_OPCODE_REMOVEDIRECTORY":  MAV_FTP_OPCODE_REMOVEDIRECTORY,
+	"MAV_FTP_OPCODE_OPENFILEWO":       MAV_FTP_OPCODE_OPENFILEWO,
+	"MAV_FTP_OPCODE_TRUNCATEFILE":     MAV_FTP_OPCODE_TRUNCATEFILE,
+	"MAV_FTP_OPCODE_RENAME":           MAV_FTP_OPCODE_RENAME,
+	"MAV_FTP_OPCODE_CALCFILECRC":      MAV_FTP_OPCODE_CALCFILECRC,
+	"MAV_FTP_OPCODE_BURSTREADFILE":    MAV_FTP_OPCODE_BURSTREADFILE,
+	"MAV_FTP_OPCODE_ACK":              MAV_FTP_OPCODE_ACK,
+	"MAV_FTP_OPCODE_NAK":              MAV_FTP_OPCODE_NAK,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_FTP_OPCODE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_FTP_OPCODE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_FTP_OPCODE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_FTP_OPCODE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_FTP_OPCODE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_FTP_OPCODE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_FTP_OPCODE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_FTP_OPCODE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_FTP_OPCODE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

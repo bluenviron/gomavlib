@@ -58,12 +58,30 @@ var labels_MAV_WINCH_STATUS_FLAG = map[MAV_WINCH_STATUS_FLAG]string{
 	MAV_WINCH_STATUS_LOAD_PAYLOAD:    "MAV_WINCH_STATUS_LOAD_PAYLOAD",
 }
 
+var values_MAV_WINCH_STATUS_FLAG = map[string]MAV_WINCH_STATUS_FLAG{
+	"MAV_WINCH_STATUS_HEALTHY":         MAV_WINCH_STATUS_HEALTHY,
+	"MAV_WINCH_STATUS_FULLY_RETRACTED": MAV_WINCH_STATUS_FULLY_RETRACTED,
+	"MAV_WINCH_STATUS_MOVING":          MAV_WINCH_STATUS_MOVING,
+	"MAV_WINCH_STATUS_CLUTCH_ENGAGED":  MAV_WINCH_STATUS_CLUTCH_ENGAGED,
+	"MAV_WINCH_STATUS_LOCKED":          MAV_WINCH_STATUS_LOCKED,
+	"MAV_WINCH_STATUS_DROPPING":        MAV_WINCH_STATUS_DROPPING,
+	"MAV_WINCH_STATUS_ARRESTING":       MAV_WINCH_STATUS_ARRESTING,
+	"MAV_WINCH_STATUS_GROUND_SENSE":    MAV_WINCH_STATUS_GROUND_SENSE,
+	"MAV_WINCH_STATUS_RETRACTING":      MAV_WINCH_STATUS_RETRACTING,
+	"MAV_WINCH_STATUS_REDELIVER":       MAV_WINCH_STATUS_REDELIVER,
+	"MAV_WINCH_STATUS_ABANDON_LINE":    MAV_WINCH_STATUS_ABANDON_LINE,
+	"MAV_WINCH_STATUS_LOCKING":         MAV_WINCH_STATUS_LOCKING,
+	"MAV_WINCH_STATUS_LOAD_LINE":       MAV_WINCH_STATUS_LOAD_LINE,
+	"MAV_WINCH_STATUS_LOAD_PAYLOAD":    MAV_WINCH_STATUS_LOAD_PAYLOAD,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_WINCH_STATUS_FLAG) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_MAV_WINCH_STATUS_FLAG {
+	for i := 0; i < 14; i++ {
+		mask := MAV_WINCH_STATUS_FLAG(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_MAV_WINCH_STATUS_FLAG[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -74,19 +92,12 @@ func (e *MAV_WINCH_STATUS_FLAG) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask MAV_WINCH_STATUS_FLAG
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_WINCH_STATUS_FLAG {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_MAV_WINCH_STATUS_FLAG[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

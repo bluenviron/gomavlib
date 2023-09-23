@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Cellular network radio type
@@ -26,40 +26,38 @@ var labels_CELLULAR_NETWORK_RADIO_TYPE = map[CELLULAR_NETWORK_RADIO_TYPE]string{
 	CELLULAR_NETWORK_RADIO_TYPE_LTE:   "CELLULAR_NETWORK_RADIO_TYPE_LTE",
 }
 
+var values_CELLULAR_NETWORK_RADIO_TYPE = map[string]CELLULAR_NETWORK_RADIO_TYPE{
+	"CELLULAR_NETWORK_RADIO_TYPE_NONE":  CELLULAR_NETWORK_RADIO_TYPE_NONE,
+	"CELLULAR_NETWORK_RADIO_TYPE_GSM":   CELLULAR_NETWORK_RADIO_TYPE_GSM,
+	"CELLULAR_NETWORK_RADIO_TYPE_CDMA":  CELLULAR_NETWORK_RADIO_TYPE_CDMA,
+	"CELLULAR_NETWORK_RADIO_TYPE_WCDMA": CELLULAR_NETWORK_RADIO_TYPE_WCDMA,
+	"CELLULAR_NETWORK_RADIO_TYPE_LTE":   CELLULAR_NETWORK_RADIO_TYPE_LTE,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CELLULAR_NETWORK_RADIO_TYPE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_CELLULAR_NETWORK_RADIO_TYPE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_CELLULAR_NETWORK_RADIO_TYPE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CELLULAR_NETWORK_RADIO_TYPE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask CELLULAR_NETWORK_RADIO_TYPE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_CELLULAR_NETWORK_RADIO_TYPE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_CELLULAR_NETWORK_RADIO_TYPE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e CELLULAR_NETWORK_RADIO_TYPE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_CELLULAR_NETWORK_RADIO_TYPE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

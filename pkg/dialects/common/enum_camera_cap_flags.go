@@ -52,12 +52,28 @@ var labels_CAMERA_CAP_FLAGS = map[CAMERA_CAP_FLAGS]string{
 	CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS:         "CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS",
 }
 
+var values_CAMERA_CAP_FLAGS = map[string]CAMERA_CAP_FLAGS{
+	"CAMERA_CAP_FLAGS_CAPTURE_VIDEO":                   CAMERA_CAP_FLAGS_CAPTURE_VIDEO,
+	"CAMERA_CAP_FLAGS_CAPTURE_IMAGE":                   CAMERA_CAP_FLAGS_CAPTURE_IMAGE,
+	"CAMERA_CAP_FLAGS_HAS_MODES":                       CAMERA_CAP_FLAGS_HAS_MODES,
+	"CAMERA_CAP_FLAGS_CAN_CAPTURE_IMAGE_IN_VIDEO_MODE": CAMERA_CAP_FLAGS_CAN_CAPTURE_IMAGE_IN_VIDEO_MODE,
+	"CAMERA_CAP_FLAGS_CAN_CAPTURE_VIDEO_IN_IMAGE_MODE": CAMERA_CAP_FLAGS_CAN_CAPTURE_VIDEO_IN_IMAGE_MODE,
+	"CAMERA_CAP_FLAGS_HAS_IMAGE_SURVEY_MODE":           CAMERA_CAP_FLAGS_HAS_IMAGE_SURVEY_MODE,
+	"CAMERA_CAP_FLAGS_HAS_BASIC_ZOOM":                  CAMERA_CAP_FLAGS_HAS_BASIC_ZOOM,
+	"CAMERA_CAP_FLAGS_HAS_BASIC_FOCUS":                 CAMERA_CAP_FLAGS_HAS_BASIC_FOCUS,
+	"CAMERA_CAP_FLAGS_HAS_VIDEO_STREAM":                CAMERA_CAP_FLAGS_HAS_VIDEO_STREAM,
+	"CAMERA_CAP_FLAGS_HAS_TRACKING_POINT":              CAMERA_CAP_FLAGS_HAS_TRACKING_POINT,
+	"CAMERA_CAP_FLAGS_HAS_TRACKING_RECTANGLE":          CAMERA_CAP_FLAGS_HAS_TRACKING_RECTANGLE,
+	"CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS":         CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAMERA_CAP_FLAGS) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_CAMERA_CAP_FLAGS {
+	for i := 0; i < 12; i++ {
+		mask := CAMERA_CAP_FLAGS(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_CAMERA_CAP_FLAGS[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -68,19 +84,12 @@ func (e *CAMERA_CAP_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask CAMERA_CAP_FLAGS
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_CAMERA_CAP_FLAGS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_CAMERA_CAP_FLAGS[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

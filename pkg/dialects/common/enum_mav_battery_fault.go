@@ -43,12 +43,25 @@ var labels_MAV_BATTERY_FAULT = map[MAV_BATTERY_FAULT]string{
 	BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION: "BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION",
 }
 
+var values_MAV_BATTERY_FAULT = map[string]MAV_BATTERY_FAULT{
+	"MAV_BATTERY_FAULT_DEEP_DISCHARGE":               MAV_BATTERY_FAULT_DEEP_DISCHARGE,
+	"MAV_BATTERY_FAULT_SPIKES":                       MAV_BATTERY_FAULT_SPIKES,
+	"MAV_BATTERY_FAULT_CELL_FAIL":                    MAV_BATTERY_FAULT_CELL_FAIL,
+	"MAV_BATTERY_FAULT_OVER_CURRENT":                 MAV_BATTERY_FAULT_OVER_CURRENT,
+	"MAV_BATTERY_FAULT_OVER_TEMPERATURE":             MAV_BATTERY_FAULT_OVER_TEMPERATURE,
+	"MAV_BATTERY_FAULT_UNDER_TEMPERATURE":            MAV_BATTERY_FAULT_UNDER_TEMPERATURE,
+	"MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE":         MAV_BATTERY_FAULT_INCOMPATIBLE_VOLTAGE,
+	"MAV_BATTERY_FAULT_INCOMPATIBLE_FIRMWARE":        MAV_BATTERY_FAULT_INCOMPATIBLE_FIRMWARE,
+	"BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION": BATTERY_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_BATTERY_FAULT) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_MAV_BATTERY_FAULT {
+	for i := 0; i < 9; i++ {
+		mask := MAV_BATTERY_FAULT(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_MAV_BATTERY_FAULT[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -59,19 +72,12 @@ func (e *MAV_BATTERY_FAULT) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask MAV_BATTERY_FAULT
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_BATTERY_FAULT {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_MAV_BATTERY_FAULT[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

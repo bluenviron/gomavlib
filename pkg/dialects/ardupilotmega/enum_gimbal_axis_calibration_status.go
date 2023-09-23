@@ -4,7 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type GIMBAL_AXIS_CALIBRATION_STATUS uint32
@@ -24,40 +24,36 @@ var labels_GIMBAL_AXIS_CALIBRATION_STATUS = map[GIMBAL_AXIS_CALIBRATION_STATUS]s
 	GIMBAL_AXIS_CALIBRATION_STATUS_FAILED:      "GIMBAL_AXIS_CALIBRATION_STATUS_FAILED",
 }
 
+var values_GIMBAL_AXIS_CALIBRATION_STATUS = map[string]GIMBAL_AXIS_CALIBRATION_STATUS{
+	"GIMBAL_AXIS_CALIBRATION_STATUS_IN_PROGRESS": GIMBAL_AXIS_CALIBRATION_STATUS_IN_PROGRESS,
+	"GIMBAL_AXIS_CALIBRATION_STATUS_SUCCEEDED":   GIMBAL_AXIS_CALIBRATION_STATUS_SUCCEEDED,
+	"GIMBAL_AXIS_CALIBRATION_STATUS_FAILED":      GIMBAL_AXIS_CALIBRATION_STATUS_FAILED,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GIMBAL_AXIS_CALIBRATION_STATUS) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_GIMBAL_AXIS_CALIBRATION_STATUS {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_GIMBAL_AXIS_CALIBRATION_STATUS[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GIMBAL_AXIS_CALIBRATION_STATUS) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask GIMBAL_AXIS_CALIBRATION_STATUS
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_GIMBAL_AXIS_CALIBRATION_STATUS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_GIMBAL_AXIS_CALIBRATION_STATUS[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e GIMBAL_AXIS_CALIBRATION_STATUS) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_GIMBAL_AXIS_CALIBRATION_STATUS[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

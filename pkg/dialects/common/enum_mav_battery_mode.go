@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Battery mode. Note, the normal operation mode (i.e. when flying) should be reported as MAV_BATTERY_MODE_UNKNOWN to allow message trimming in normal flight.
@@ -25,40 +25,36 @@ var labels_MAV_BATTERY_MODE = map[MAV_BATTERY_MODE]string{
 	MAV_BATTERY_MODE_HOT_SWAP:         "MAV_BATTERY_MODE_HOT_SWAP",
 }
 
+var values_MAV_BATTERY_MODE = map[string]MAV_BATTERY_MODE{
+	"MAV_BATTERY_MODE_UNKNOWN":          MAV_BATTERY_MODE_UNKNOWN,
+	"MAV_BATTERY_MODE_AUTO_DISCHARGING": MAV_BATTERY_MODE_AUTO_DISCHARGING,
+	"MAV_BATTERY_MODE_HOT_SWAP":         MAV_BATTERY_MODE_HOT_SWAP,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_BATTERY_MODE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_BATTERY_MODE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_BATTERY_MODE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_BATTERY_MODE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_BATTERY_MODE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_BATTERY_MODE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_BATTERY_MODE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_BATTERY_MODE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_BATTERY_MODE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

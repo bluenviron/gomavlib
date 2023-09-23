@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // MAV FTP error codes (https://mavlink.io/en/services/ftp.html)
@@ -50,40 +50,44 @@ var labels_MAV_FTP_ERR = map[MAV_FTP_ERR]string{
 	MAV_FTP_ERR_FILENOTFOUND:        "MAV_FTP_ERR_FILENOTFOUND",
 }
 
+var values_MAV_FTP_ERR = map[string]MAV_FTP_ERR{
+	"MAV_FTP_ERR_NONE":                MAV_FTP_ERR_NONE,
+	"MAV_FTP_ERR_FAIL":                MAV_FTP_ERR_FAIL,
+	"MAV_FTP_ERR_FAILERRNO":           MAV_FTP_ERR_FAILERRNO,
+	"MAV_FTP_ERR_INVALIDDATASIZE":     MAV_FTP_ERR_INVALIDDATASIZE,
+	"MAV_FTP_ERR_INVALIDSESSION":      MAV_FTP_ERR_INVALIDSESSION,
+	"MAV_FTP_ERR_NOSESSIONSAVAILABLE": MAV_FTP_ERR_NOSESSIONSAVAILABLE,
+	"MAV_FTP_ERR_EOF":                 MAV_FTP_ERR_EOF,
+	"MAV_FTP_ERR_UNKNOWNCOMMAND":      MAV_FTP_ERR_UNKNOWNCOMMAND,
+	"MAV_FTP_ERR_FILEEXISTS":          MAV_FTP_ERR_FILEEXISTS,
+	"MAV_FTP_ERR_FILEPROTECTED":       MAV_FTP_ERR_FILEPROTECTED,
+	"MAV_FTP_ERR_FILENOTFOUND":        MAV_FTP_ERR_FILENOTFOUND,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_FTP_ERR) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_FTP_ERR {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_FTP_ERR[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_FTP_ERR) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_FTP_ERR
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_FTP_ERR {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_FTP_ERR[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_FTP_ERR) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_FTP_ERR[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

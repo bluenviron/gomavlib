@@ -4,7 +4,7 @@ package ualberta
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Available autopilot modes for ualberta uav
@@ -28,40 +28,38 @@ var labels_UALBERTA_AUTOPILOT_MODE = map[UALBERTA_AUTOPILOT_MODE]string{
 	MODE_AUTO_PID_POS:  "MODE_AUTO_PID_POS",
 }
 
+var values_UALBERTA_AUTOPILOT_MODE = map[string]UALBERTA_AUTOPILOT_MODE{
+	"MODE_MANUAL_DIRECT": MODE_MANUAL_DIRECT,
+	"MODE_MANUAL_SCALED": MODE_MANUAL_SCALED,
+	"MODE_AUTO_PID_ATT":  MODE_AUTO_PID_ATT,
+	"MODE_AUTO_PID_VEL":  MODE_AUTO_PID_VEL,
+	"MODE_AUTO_PID_POS":  MODE_AUTO_PID_POS,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UALBERTA_AUTOPILOT_MODE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_UALBERTA_AUTOPILOT_MODE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_UALBERTA_AUTOPILOT_MODE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UALBERTA_AUTOPILOT_MODE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask UALBERTA_AUTOPILOT_MODE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_UALBERTA_AUTOPILOT_MODE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_UALBERTA_AUTOPILOT_MODE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e UALBERTA_AUTOPILOT_MODE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_UALBERTA_AUTOPILOT_MODE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Enumeration of possible mount operation modes. This message is used by obsolete/deprecated gimbal messages.
@@ -37,40 +37,40 @@ var labels_MAV_MOUNT_MODE = map[MAV_MOUNT_MODE]string{
 	MAV_MOUNT_MODE_HOME_LOCATION:     "MAV_MOUNT_MODE_HOME_LOCATION",
 }
 
+var values_MAV_MOUNT_MODE = map[string]MAV_MOUNT_MODE{
+	"MAV_MOUNT_MODE_RETRACT":           MAV_MOUNT_MODE_RETRACT,
+	"MAV_MOUNT_MODE_NEUTRAL":           MAV_MOUNT_MODE_NEUTRAL,
+	"MAV_MOUNT_MODE_MAVLINK_TARGETING": MAV_MOUNT_MODE_MAVLINK_TARGETING,
+	"MAV_MOUNT_MODE_RC_TARGETING":      MAV_MOUNT_MODE_RC_TARGETING,
+	"MAV_MOUNT_MODE_GPS_POINT":         MAV_MOUNT_MODE_GPS_POINT,
+	"MAV_MOUNT_MODE_SYSID_TARGET":      MAV_MOUNT_MODE_SYSID_TARGET,
+	"MAV_MOUNT_MODE_HOME_LOCATION":     MAV_MOUNT_MODE_HOME_LOCATION,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MOUNT_MODE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_MOUNT_MODE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_MOUNT_MODE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_MOUNT_MODE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_MOUNT_MODE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_MOUNT_MODE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_MOUNT_MODE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_MOUNT_MODE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_MOUNT_MODE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

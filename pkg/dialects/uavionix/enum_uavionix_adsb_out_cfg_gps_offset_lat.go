@@ -4,7 +4,7 @@ package uavionix
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // GPS lataral offset encoding
@@ -32,40 +32,41 @@ var labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT = map[UAVIONIX_ADSB_OUT_CFG_GPS_
 	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_6M: "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_6M",
 }
 
+var values_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT = map[string]UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT{
+	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_NO_DATA":  UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_NO_DATA,
+	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_2M":  UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_2M,
+	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_4M":  UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_4M,
+	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_6M":  UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_LEFT_6M,
+	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_0M": UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_0M,
+	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_2M": UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_2M,
+	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_4M": UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_4M,
+	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_6M": UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT_RIGHT_6M,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

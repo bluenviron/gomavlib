@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // The ROI (region of interest) for the vehicle. This can be
@@ -33,40 +33,38 @@ var labels_MAV_ROI = map[MAV_ROI]string{
 	MAV_ROI_TARGET:   "MAV_ROI_TARGET",
 }
 
+var values_MAV_ROI = map[string]MAV_ROI{
+	"MAV_ROI_NONE":     MAV_ROI_NONE,
+	"MAV_ROI_WPNEXT":   MAV_ROI_WPNEXT,
+	"MAV_ROI_WPINDEX":  MAV_ROI_WPINDEX,
+	"MAV_ROI_LOCATION": MAV_ROI_LOCATION,
+	"MAV_ROI_TARGET":   MAV_ROI_TARGET,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ROI) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_ROI {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_ROI[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ROI) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_ROI
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_ROI {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_ROI[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ROI) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_ROI[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

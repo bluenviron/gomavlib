@@ -40,12 +40,24 @@ var labels_ESC_FAILURE_FLAGS = map[ESC_FAILURE_FLAGS]string{
 	ESC_FAILURE_GENERIC:          "ESC_FAILURE_GENERIC",
 }
 
+var values_ESC_FAILURE_FLAGS = map[string]ESC_FAILURE_FLAGS{
+	"ESC_FAILURE_NONE":             ESC_FAILURE_NONE,
+	"ESC_FAILURE_OVER_CURRENT":     ESC_FAILURE_OVER_CURRENT,
+	"ESC_FAILURE_OVER_VOLTAGE":     ESC_FAILURE_OVER_VOLTAGE,
+	"ESC_FAILURE_OVER_TEMPERATURE": ESC_FAILURE_OVER_TEMPERATURE,
+	"ESC_FAILURE_OVER_RPM":         ESC_FAILURE_OVER_RPM,
+	"ESC_FAILURE_INCONSISTENT_CMD": ESC_FAILURE_INCONSISTENT_CMD,
+	"ESC_FAILURE_MOTOR_STUCK":      ESC_FAILURE_MOTOR_STUCK,
+	"ESC_FAILURE_GENERIC":          ESC_FAILURE_GENERIC,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ESC_FAILURE_FLAGS) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_ESC_FAILURE_FLAGS {
+	for i := 0; i < 8; i++ {
+		mask := ESC_FAILURE_FLAGS(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_ESC_FAILURE_FLAGS[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -56,19 +68,12 @@ func (e *ESC_FAILURE_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask ESC_FAILURE_FLAGS
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_ESC_FAILURE_FLAGS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_ESC_FAILURE_FLAGS[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

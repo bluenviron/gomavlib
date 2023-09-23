@@ -4,7 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type GOPRO_PROTUNE_GAIN uint32
@@ -30,40 +30,38 @@ var labels_GOPRO_PROTUNE_GAIN = map[GOPRO_PROTUNE_GAIN]string{
 	GOPRO_PROTUNE_GAIN_6400: "GOPRO_PROTUNE_GAIN_6400",
 }
 
+var values_GOPRO_PROTUNE_GAIN = map[string]GOPRO_PROTUNE_GAIN{
+	"GOPRO_PROTUNE_GAIN_400":  GOPRO_PROTUNE_GAIN_400,
+	"GOPRO_PROTUNE_GAIN_800":  GOPRO_PROTUNE_GAIN_800,
+	"GOPRO_PROTUNE_GAIN_1600": GOPRO_PROTUNE_GAIN_1600,
+	"GOPRO_PROTUNE_GAIN_3200": GOPRO_PROTUNE_GAIN_3200,
+	"GOPRO_PROTUNE_GAIN_6400": GOPRO_PROTUNE_GAIN_6400,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_PROTUNE_GAIN) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_GOPRO_PROTUNE_GAIN {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_GOPRO_PROTUNE_GAIN[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_PROTUNE_GAIN) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask GOPRO_PROTUNE_GAIN
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_GOPRO_PROTUNE_GAIN {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_GOPRO_PROTUNE_GAIN[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e GOPRO_PROTUNE_GAIN) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_GOPRO_PROTUNE_GAIN[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

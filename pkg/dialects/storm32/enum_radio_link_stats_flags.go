@@ -19,12 +19,17 @@ var labels_RADIO_LINK_STATS_FLAGS = map[RADIO_LINK_STATS_FLAGS]string{
 	RADIO_LINK_STATS_FLAGS_RSSI_DBM: "RADIO_LINK_STATS_FLAGS_RSSI_DBM",
 }
 
+var values_RADIO_LINK_STATS_FLAGS = map[string]RADIO_LINK_STATS_FLAGS{
+	"RADIO_LINK_STATS_FLAGS_RSSI_DBM": RADIO_LINK_STATS_FLAGS_RSSI_DBM,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e RADIO_LINK_STATS_FLAGS) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_RADIO_LINK_STATS_FLAGS {
+	for i := 0; i < 1; i++ {
+		mask := RADIO_LINK_STATS_FLAGS(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_RADIO_LINK_STATS_FLAGS[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -35,19 +40,12 @@ func (e *RADIO_LINK_STATS_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask RADIO_LINK_STATS_FLAGS
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_RADIO_LINK_STATS_FLAGS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_RADIO_LINK_STATS_FLAGS[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

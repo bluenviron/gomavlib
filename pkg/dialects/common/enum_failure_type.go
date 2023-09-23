@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // List of possible failure type to inject.
@@ -40,40 +40,41 @@ var labels_FAILURE_TYPE = map[FAILURE_TYPE]string{
 	FAILURE_TYPE_INTERMITTENT: "FAILURE_TYPE_INTERMITTENT",
 }
 
+var values_FAILURE_TYPE = map[string]FAILURE_TYPE{
+	"FAILURE_TYPE_OK":           FAILURE_TYPE_OK,
+	"FAILURE_TYPE_OFF":          FAILURE_TYPE_OFF,
+	"FAILURE_TYPE_STUCK":        FAILURE_TYPE_STUCK,
+	"FAILURE_TYPE_GARBAGE":      FAILURE_TYPE_GARBAGE,
+	"FAILURE_TYPE_WRONG":        FAILURE_TYPE_WRONG,
+	"FAILURE_TYPE_SLOW":         FAILURE_TYPE_SLOW,
+	"FAILURE_TYPE_DELAYED":      FAILURE_TYPE_DELAYED,
+	"FAILURE_TYPE_INTERMITTENT": FAILURE_TYPE_INTERMITTENT,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FAILURE_TYPE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_FAILURE_TYPE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_FAILURE_TYPE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FAILURE_TYPE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask FAILURE_TYPE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_FAILURE_TYPE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_FAILURE_TYPE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e FAILURE_TYPE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_FAILURE_TYPE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

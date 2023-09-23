@@ -4,7 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type LED_CONTROL_PATTERN uint32
@@ -24,40 +24,36 @@ var labels_LED_CONTROL_PATTERN = map[LED_CONTROL_PATTERN]string{
 	LED_CONTROL_PATTERN_CUSTOM:         "LED_CONTROL_PATTERN_CUSTOM",
 }
 
+var values_LED_CONTROL_PATTERN = map[string]LED_CONTROL_PATTERN{
+	"LED_CONTROL_PATTERN_OFF":            LED_CONTROL_PATTERN_OFF,
+	"LED_CONTROL_PATTERN_FIRMWAREUPDATE": LED_CONTROL_PATTERN_FIRMWAREUPDATE,
+	"LED_CONTROL_PATTERN_CUSTOM":         LED_CONTROL_PATTERN_CUSTOM,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e LED_CONTROL_PATTERN) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_LED_CONTROL_PATTERN {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_LED_CONTROL_PATTERN[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *LED_CONTROL_PATTERN) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask LED_CONTROL_PATTERN
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_LED_CONTROL_PATTERN {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_LED_CONTROL_PATTERN[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e LED_CONTROL_PATTERN) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_LED_CONTROL_PATTERN[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

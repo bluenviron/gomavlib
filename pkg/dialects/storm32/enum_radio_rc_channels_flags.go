@@ -22,12 +22,18 @@ var labels_RADIO_RC_CHANNELS_FLAGS = map[RADIO_RC_CHANNELS_FLAGS]string{
 	RADIO_RC_CHANNELS_FLAGS_FRAME_MISSED: "RADIO_RC_CHANNELS_FLAGS_FRAME_MISSED",
 }
 
+var values_RADIO_RC_CHANNELS_FLAGS = map[string]RADIO_RC_CHANNELS_FLAGS{
+	"RADIO_RC_CHANNELS_FLAGS_FAILSAFE":     RADIO_RC_CHANNELS_FLAGS_FAILSAFE,
+	"RADIO_RC_CHANNELS_FLAGS_FRAME_MISSED": RADIO_RC_CHANNELS_FLAGS_FRAME_MISSED,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e RADIO_RC_CHANNELS_FLAGS) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_RADIO_RC_CHANNELS_FLAGS {
+	for i := 0; i < 2; i++ {
+		mask := RADIO_RC_CHANNELS_FLAGS(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_RADIO_RC_CHANNELS_FLAGS[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -38,19 +44,12 @@ func (e *RADIO_RC_CHANNELS_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask RADIO_RC_CHANNELS_FLAGS
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_RADIO_RC_CHANNELS_FLAGS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_RADIO_RC_CHANNELS_FLAGS[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

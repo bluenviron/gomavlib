@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Result from a MAVLink command (MAV_CMD)
@@ -46,40 +46,43 @@ var labels_MAV_RESULT = map[MAV_RESULT]string{
 	MAV_RESULT_COMMAND_UNSUPPORTED_MAV_FRAME: "MAV_RESULT_COMMAND_UNSUPPORTED_MAV_FRAME",
 }
 
+var values_MAV_RESULT = map[string]MAV_RESULT{
+	"MAV_RESULT_ACCEPTED":                      MAV_RESULT_ACCEPTED,
+	"MAV_RESULT_TEMPORARILY_REJECTED":          MAV_RESULT_TEMPORARILY_REJECTED,
+	"MAV_RESULT_DENIED":                        MAV_RESULT_DENIED,
+	"MAV_RESULT_UNSUPPORTED":                   MAV_RESULT_UNSUPPORTED,
+	"MAV_RESULT_FAILED":                        MAV_RESULT_FAILED,
+	"MAV_RESULT_IN_PROGRESS":                   MAV_RESULT_IN_PROGRESS,
+	"MAV_RESULT_CANCELLED":                     MAV_RESULT_CANCELLED,
+	"MAV_RESULT_COMMAND_LONG_ONLY":             MAV_RESULT_COMMAND_LONG_ONLY,
+	"MAV_RESULT_COMMAND_INT_ONLY":              MAV_RESULT_COMMAND_INT_ONLY,
+	"MAV_RESULT_COMMAND_UNSUPPORTED_MAV_FRAME": MAV_RESULT_COMMAND_UNSUPPORTED_MAV_FRAME,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_RESULT) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_RESULT {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_RESULT[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_RESULT) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_RESULT
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_RESULT {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_RESULT[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_RESULT) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_RESULT[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

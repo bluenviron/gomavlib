@@ -4,7 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type SCRIPTING_CMD uint32
@@ -27,40 +27,37 @@ var labels_SCRIPTING_CMD = map[SCRIPTING_CMD]string{
 	SCRIPTING_CMD_STOP_AND_RESTART: "SCRIPTING_CMD_STOP_AND_RESTART",
 }
 
+var values_SCRIPTING_CMD = map[string]SCRIPTING_CMD{
+	"SCRIPTING_CMD_REPL_START":       SCRIPTING_CMD_REPL_START,
+	"SCRIPTING_CMD_REPL_STOP":        SCRIPTING_CMD_REPL_STOP,
+	"SCRIPTING_CMD_STOP":             SCRIPTING_CMD_STOP,
+	"SCRIPTING_CMD_STOP_AND_RESTART": SCRIPTING_CMD_STOP_AND_RESTART,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e SCRIPTING_CMD) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_SCRIPTING_CMD {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_SCRIPTING_CMD[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *SCRIPTING_CMD) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask SCRIPTING_CMD
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_SCRIPTING_CMD {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_SCRIPTING_CMD[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e SCRIPTING_CMD) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_SCRIPTING_CMD[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

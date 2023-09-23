@@ -4,7 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type HEADING_TYPE uint32
@@ -19,40 +19,35 @@ var labels_HEADING_TYPE = map[HEADING_TYPE]string{
 	HEADING_TYPE_HEADING:            "HEADING_TYPE_HEADING",
 }
 
+var values_HEADING_TYPE = map[string]HEADING_TYPE{
+	"HEADING_TYPE_COURSE_OVER_GROUND": HEADING_TYPE_COURSE_OVER_GROUND,
+	"HEADING_TYPE_HEADING":            HEADING_TYPE_HEADING,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e HEADING_TYPE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_HEADING_TYPE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_HEADING_TYPE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *HEADING_TYPE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask HEADING_TYPE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_HEADING_TYPE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_HEADING_TYPE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e HEADING_TYPE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_HEADING_TYPE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

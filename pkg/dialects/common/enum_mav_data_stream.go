@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // A data stream is not a fixed set of messages, but rather a
@@ -45,40 +45,42 @@ var labels_MAV_DATA_STREAM = map[MAV_DATA_STREAM]string{
 	MAV_DATA_STREAM_EXTRA3:          "MAV_DATA_STREAM_EXTRA3",
 }
 
+var values_MAV_DATA_STREAM = map[string]MAV_DATA_STREAM{
+	"MAV_DATA_STREAM_ALL":             MAV_DATA_STREAM_ALL,
+	"MAV_DATA_STREAM_RAW_SENSORS":     MAV_DATA_STREAM_RAW_SENSORS,
+	"MAV_DATA_STREAM_EXTENDED_STATUS": MAV_DATA_STREAM_EXTENDED_STATUS,
+	"MAV_DATA_STREAM_RC_CHANNELS":     MAV_DATA_STREAM_RC_CHANNELS,
+	"MAV_DATA_STREAM_RAW_CONTROLLER":  MAV_DATA_STREAM_RAW_CONTROLLER,
+	"MAV_DATA_STREAM_POSITION":        MAV_DATA_STREAM_POSITION,
+	"MAV_DATA_STREAM_EXTRA1":          MAV_DATA_STREAM_EXTRA1,
+	"MAV_DATA_STREAM_EXTRA2":          MAV_DATA_STREAM_EXTRA2,
+	"MAV_DATA_STREAM_EXTRA3":          MAV_DATA_STREAM_EXTRA3,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_DATA_STREAM) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_DATA_STREAM {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_DATA_STREAM[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_DATA_STREAM) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_DATA_STREAM
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_DATA_STREAM {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_DATA_STREAM[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_DATA_STREAM) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_DATA_STREAM[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

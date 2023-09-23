@@ -25,12 +25,18 @@ var labels_MAV_MODE_PROPERTY = map[MAV_MODE_PROPERTY]string{
 	MAV_MODE_PROPERTY_NOT_USER_SELECTABLE: "MAV_MODE_PROPERTY_NOT_USER_SELECTABLE",
 }
 
+var values_MAV_MODE_PROPERTY = map[string]MAV_MODE_PROPERTY{
+	"MAV_MODE_PROPERTY_ADVANCED":            MAV_MODE_PROPERTY_ADVANCED,
+	"MAV_MODE_PROPERTY_NOT_USER_SELECTABLE": MAV_MODE_PROPERTY_NOT_USER_SELECTABLE,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MODE_PROPERTY) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_MAV_MODE_PROPERTY {
+	for i := 0; i < 2; i++ {
+		mask := MAV_MODE_PROPERTY(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_MAV_MODE_PROPERTY[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -41,19 +47,12 @@ func (e *MAV_MODE_PROPERTY) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask MAV_MODE_PROPERTY
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_MODE_PROPERTY {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_MAV_MODE_PROPERTY[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

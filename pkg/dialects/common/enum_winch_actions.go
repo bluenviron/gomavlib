@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Winch actions.
@@ -46,40 +46,43 @@ var labels_WINCH_ACTIONS = map[WINCH_ACTIONS]string{
 	WINCH_LOAD_PAYLOAD:            "WINCH_LOAD_PAYLOAD",
 }
 
+var values_WINCH_ACTIONS = map[string]WINCH_ACTIONS{
+	"WINCH_RELAXED":                 WINCH_RELAXED,
+	"WINCH_RELATIVE_LENGTH_CONTROL": WINCH_RELATIVE_LENGTH_CONTROL,
+	"WINCH_RATE_CONTROL":            WINCH_RATE_CONTROL,
+	"WINCH_LOCK":                    WINCH_LOCK,
+	"WINCH_DELIVER":                 WINCH_DELIVER,
+	"WINCH_HOLD":                    WINCH_HOLD,
+	"WINCH_RETRACT":                 WINCH_RETRACT,
+	"WINCH_LOAD_LINE":               WINCH_LOAD_LINE,
+	"WINCH_ABANDON_LINE":            WINCH_ABANDON_LINE,
+	"WINCH_LOAD_PAYLOAD":            WINCH_LOAD_PAYLOAD,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e WINCH_ACTIONS) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_WINCH_ACTIONS {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_WINCH_ACTIONS[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *WINCH_ACTIONS) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask WINCH_ACTIONS
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_WINCH_ACTIONS {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_WINCH_ACTIONS[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e WINCH_ACTIONS) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_WINCH_ACTIONS[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

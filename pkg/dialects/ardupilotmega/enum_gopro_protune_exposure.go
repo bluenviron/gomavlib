@@ -4,7 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type GOPRO_PROTUNE_EXPOSURE uint32
@@ -78,40 +78,54 @@ var labels_GOPRO_PROTUNE_EXPOSURE = map[GOPRO_PROTUNE_EXPOSURE]string{
 	GOPRO_PROTUNE_EXPOSURE_POS_5_0: "GOPRO_PROTUNE_EXPOSURE_POS_5_0",
 }
 
+var values_GOPRO_PROTUNE_EXPOSURE = map[string]GOPRO_PROTUNE_EXPOSURE{
+	"GOPRO_PROTUNE_EXPOSURE_NEG_5_0": GOPRO_PROTUNE_EXPOSURE_NEG_5_0,
+	"GOPRO_PROTUNE_EXPOSURE_NEG_4_5": GOPRO_PROTUNE_EXPOSURE_NEG_4_5,
+	"GOPRO_PROTUNE_EXPOSURE_NEG_4_0": GOPRO_PROTUNE_EXPOSURE_NEG_4_0,
+	"GOPRO_PROTUNE_EXPOSURE_NEG_3_5": GOPRO_PROTUNE_EXPOSURE_NEG_3_5,
+	"GOPRO_PROTUNE_EXPOSURE_NEG_3_0": GOPRO_PROTUNE_EXPOSURE_NEG_3_0,
+	"GOPRO_PROTUNE_EXPOSURE_NEG_2_5": GOPRO_PROTUNE_EXPOSURE_NEG_2_5,
+	"GOPRO_PROTUNE_EXPOSURE_NEG_2_0": GOPRO_PROTUNE_EXPOSURE_NEG_2_0,
+	"GOPRO_PROTUNE_EXPOSURE_NEG_1_5": GOPRO_PROTUNE_EXPOSURE_NEG_1_5,
+	"GOPRO_PROTUNE_EXPOSURE_NEG_1_0": GOPRO_PROTUNE_EXPOSURE_NEG_1_0,
+	"GOPRO_PROTUNE_EXPOSURE_NEG_0_5": GOPRO_PROTUNE_EXPOSURE_NEG_0_5,
+	"GOPRO_PROTUNE_EXPOSURE_ZERO":    GOPRO_PROTUNE_EXPOSURE_ZERO,
+	"GOPRO_PROTUNE_EXPOSURE_POS_0_5": GOPRO_PROTUNE_EXPOSURE_POS_0_5,
+	"GOPRO_PROTUNE_EXPOSURE_POS_1_0": GOPRO_PROTUNE_EXPOSURE_POS_1_0,
+	"GOPRO_PROTUNE_EXPOSURE_POS_1_5": GOPRO_PROTUNE_EXPOSURE_POS_1_5,
+	"GOPRO_PROTUNE_EXPOSURE_POS_2_0": GOPRO_PROTUNE_EXPOSURE_POS_2_0,
+	"GOPRO_PROTUNE_EXPOSURE_POS_2_5": GOPRO_PROTUNE_EXPOSURE_POS_2_5,
+	"GOPRO_PROTUNE_EXPOSURE_POS_3_0": GOPRO_PROTUNE_EXPOSURE_POS_3_0,
+	"GOPRO_PROTUNE_EXPOSURE_POS_3_5": GOPRO_PROTUNE_EXPOSURE_POS_3_5,
+	"GOPRO_PROTUNE_EXPOSURE_POS_4_0": GOPRO_PROTUNE_EXPOSURE_POS_4_0,
+	"GOPRO_PROTUNE_EXPOSURE_POS_4_5": GOPRO_PROTUNE_EXPOSURE_POS_4_5,
+	"GOPRO_PROTUNE_EXPOSURE_POS_5_0": GOPRO_PROTUNE_EXPOSURE_POS_5_0,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_PROTUNE_EXPOSURE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_GOPRO_PROTUNE_EXPOSURE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_GOPRO_PROTUNE_EXPOSURE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_PROTUNE_EXPOSURE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask GOPRO_PROTUNE_EXPOSURE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_GOPRO_PROTUNE_EXPOSURE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_GOPRO_PROTUNE_EXPOSURE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e GOPRO_PROTUNE_EXPOSURE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_GOPRO_PROTUNE_EXPOSURE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

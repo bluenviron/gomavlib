@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Generalized UAVCAN node mode
@@ -31,40 +31,38 @@ var labels_UAVCAN_NODE_MODE = map[UAVCAN_NODE_MODE]string{
 	UAVCAN_NODE_MODE_OFFLINE:         "UAVCAN_NODE_MODE_OFFLINE",
 }
 
+var values_UAVCAN_NODE_MODE = map[string]UAVCAN_NODE_MODE{
+	"UAVCAN_NODE_MODE_OPERATIONAL":     UAVCAN_NODE_MODE_OPERATIONAL,
+	"UAVCAN_NODE_MODE_INITIALIZATION":  UAVCAN_NODE_MODE_INITIALIZATION,
+	"UAVCAN_NODE_MODE_MAINTENANCE":     UAVCAN_NODE_MODE_MAINTENANCE,
+	"UAVCAN_NODE_MODE_SOFTWARE_UPDATE": UAVCAN_NODE_MODE_SOFTWARE_UPDATE,
+	"UAVCAN_NODE_MODE_OFFLINE":         UAVCAN_NODE_MODE_OFFLINE,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVCAN_NODE_MODE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_UAVCAN_NODE_MODE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_UAVCAN_NODE_MODE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVCAN_NODE_MODE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask UAVCAN_NODE_MODE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_UAVCAN_NODE_MODE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_UAVCAN_NODE_MODE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e UAVCAN_NODE_MODE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_UAVCAN_NODE_MODE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

@@ -4,7 +4,7 @@ package asluav
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type GSM_LINK_TYPE uint32
@@ -30,40 +30,38 @@ var labels_GSM_LINK_TYPE = map[GSM_LINK_TYPE]string{
 	GSM_LINK_TYPE_4G:      "GSM_LINK_TYPE_4G",
 }
 
+var values_GSM_LINK_TYPE = map[string]GSM_LINK_TYPE{
+	"GSM_LINK_TYPE_NONE":    GSM_LINK_TYPE_NONE,
+	"GSM_LINK_TYPE_UNKNOWN": GSM_LINK_TYPE_UNKNOWN,
+	"GSM_LINK_TYPE_2G":      GSM_LINK_TYPE_2G,
+	"GSM_LINK_TYPE_3G":      GSM_LINK_TYPE_3G,
+	"GSM_LINK_TYPE_4G":      GSM_LINK_TYPE_4G,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GSM_LINK_TYPE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_GSM_LINK_TYPE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_GSM_LINK_TYPE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GSM_LINK_TYPE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask GSM_LINK_TYPE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_GSM_LINK_TYPE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_GSM_LINK_TYPE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e GSM_LINK_TYPE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_GSM_LINK_TYPE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

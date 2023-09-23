@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type FENCE_BREACH uint32
@@ -27,40 +27,37 @@ var labels_FENCE_BREACH = map[FENCE_BREACH]string{
 	FENCE_BREACH_BOUNDARY: "FENCE_BREACH_BOUNDARY",
 }
 
+var values_FENCE_BREACH = map[string]FENCE_BREACH{
+	"FENCE_BREACH_NONE":     FENCE_BREACH_NONE,
+	"FENCE_BREACH_MINALT":   FENCE_BREACH_MINALT,
+	"FENCE_BREACH_MAXALT":   FENCE_BREACH_MAXALT,
+	"FENCE_BREACH_BOUNDARY": FENCE_BREACH_BOUNDARY,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FENCE_BREACH) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_FENCE_BREACH {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_FENCE_BREACH[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FENCE_BREACH) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask FENCE_BREACH
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_FENCE_BREACH {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_FENCE_BREACH[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e FENCE_BREACH) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_FENCE_BREACH[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

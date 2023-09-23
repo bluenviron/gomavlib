@@ -4,7 +4,7 @@ package common
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Generalized UAVCAN node health
@@ -28,40 +28,37 @@ var labels_UAVCAN_NODE_HEALTH = map[UAVCAN_NODE_HEALTH]string{
 	UAVCAN_NODE_HEALTH_CRITICAL: "UAVCAN_NODE_HEALTH_CRITICAL",
 }
 
+var values_UAVCAN_NODE_HEALTH = map[string]UAVCAN_NODE_HEALTH{
+	"UAVCAN_NODE_HEALTH_OK":       UAVCAN_NODE_HEALTH_OK,
+	"UAVCAN_NODE_HEALTH_WARNING":  UAVCAN_NODE_HEALTH_WARNING,
+	"UAVCAN_NODE_HEALTH_ERROR":    UAVCAN_NODE_HEALTH_ERROR,
+	"UAVCAN_NODE_HEALTH_CRITICAL": UAVCAN_NODE_HEALTH_CRITICAL,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVCAN_NODE_HEALTH) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_UAVCAN_NODE_HEALTH {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_UAVCAN_NODE_HEALTH[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVCAN_NODE_HEALTH) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask UAVCAN_NODE_HEALTH
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_UAVCAN_NODE_HEALTH {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_UAVCAN_NODE_HEALTH[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e UAVCAN_NODE_HEALTH) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_UAVCAN_NODE_HEALTH[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

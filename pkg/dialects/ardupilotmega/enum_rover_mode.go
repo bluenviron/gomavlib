@@ -4,7 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // A mapping of rover flight modes for custom_mode field of heartbeat.
@@ -40,40 +40,45 @@ var labels_ROVER_MODE = map[ROVER_MODE]string{
 	ROVER_MODE_INITIALIZING: "ROVER_MODE_INITIALIZING",
 }
 
+var values_ROVER_MODE = map[string]ROVER_MODE{
+	"ROVER_MODE_MANUAL":       ROVER_MODE_MANUAL,
+	"ROVER_MODE_ACRO":         ROVER_MODE_ACRO,
+	"ROVER_MODE_STEERING":     ROVER_MODE_STEERING,
+	"ROVER_MODE_HOLD":         ROVER_MODE_HOLD,
+	"ROVER_MODE_LOITER":       ROVER_MODE_LOITER,
+	"ROVER_MODE_FOLLOW":       ROVER_MODE_FOLLOW,
+	"ROVER_MODE_SIMPLE":       ROVER_MODE_SIMPLE,
+	"ROVER_MODE_AUTO":         ROVER_MODE_AUTO,
+	"ROVER_MODE_RTL":          ROVER_MODE_RTL,
+	"ROVER_MODE_SMART_RTL":    ROVER_MODE_SMART_RTL,
+	"ROVER_MODE_GUIDED":       ROVER_MODE_GUIDED,
+	"ROVER_MODE_INITIALIZING": ROVER_MODE_INITIALIZING,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ROVER_MODE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_ROVER_MODE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_ROVER_MODE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ROVER_MODE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask ROVER_MODE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_ROVER_MODE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_ROVER_MODE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e ROVER_MODE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_ROVER_MODE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

@@ -4,7 +4,7 @@ package minimal
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type MAV_STATE uint32
@@ -42,40 +42,42 @@ var labels_MAV_STATE = map[MAV_STATE]string{
 	MAV_STATE_FLIGHT_TERMINATION: "MAV_STATE_FLIGHT_TERMINATION",
 }
 
+var values_MAV_STATE = map[string]MAV_STATE{
+	"MAV_STATE_UNINIT":             MAV_STATE_UNINIT,
+	"MAV_STATE_BOOT":               MAV_STATE_BOOT,
+	"MAV_STATE_CALIBRATING":        MAV_STATE_CALIBRATING,
+	"MAV_STATE_STANDBY":            MAV_STATE_STANDBY,
+	"MAV_STATE_ACTIVE":             MAV_STATE_ACTIVE,
+	"MAV_STATE_CRITICAL":           MAV_STATE_CRITICAL,
+	"MAV_STATE_EMERGENCY":          MAV_STATE_EMERGENCY,
+	"MAV_STATE_POWEROFF":           MAV_STATE_POWEROFF,
+	"MAV_STATE_FLIGHT_TERMINATION": MAV_STATE_FLIGHT_TERMINATION,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_STATE) MarshalText() ([]byte, error) {
-	var names []string
-	for mask, label := range labels_MAV_STATE {
-		if e&mask == mask {
-			names = append(names, label)
-		}
+	name, ok := labels_MAV_STATE[e]
+	if !ok {
+		return nil, fmt.Errorf("invalid value %d", e)
 	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(name), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_STATE) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_STATE
-	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_STATE {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	value, ok := values_MAV_STATE[string(text)]
+	if !ok {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
+	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_STATE) String() string {
-	val, _ := e.MarshalText()
-	return string(val)
+	name, ok := labels_MAV_STATE[e]
+	if !ok {
+		return strconv.Itoa(int(e))
+	}
+	return name
 }

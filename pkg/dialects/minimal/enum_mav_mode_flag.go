@@ -40,12 +40,24 @@ var labels_MAV_MODE_FLAG = map[MAV_MODE_FLAG]string{
 	MAV_MODE_FLAG_CUSTOM_MODE_ENABLED:  "MAV_MODE_FLAG_CUSTOM_MODE_ENABLED",
 }
 
+var values_MAV_MODE_FLAG = map[string]MAV_MODE_FLAG{
+	"MAV_MODE_FLAG_SAFETY_ARMED":         MAV_MODE_FLAG_SAFETY_ARMED,
+	"MAV_MODE_FLAG_MANUAL_INPUT_ENABLED": MAV_MODE_FLAG_MANUAL_INPUT_ENABLED,
+	"MAV_MODE_FLAG_HIL_ENABLED":          MAV_MODE_FLAG_HIL_ENABLED,
+	"MAV_MODE_FLAG_STABILIZE_ENABLED":    MAV_MODE_FLAG_STABILIZE_ENABLED,
+	"MAV_MODE_FLAG_GUIDED_ENABLED":       MAV_MODE_FLAG_GUIDED_ENABLED,
+	"MAV_MODE_FLAG_AUTO_ENABLED":         MAV_MODE_FLAG_AUTO_ENABLED,
+	"MAV_MODE_FLAG_TEST_ENABLED":         MAV_MODE_FLAG_TEST_ENABLED,
+	"MAV_MODE_FLAG_CUSTOM_MODE_ENABLED":  MAV_MODE_FLAG_CUSTOM_MODE_ENABLED,
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MODE_FLAG) MarshalText() ([]byte, error) {
 	var names []string
-	for mask, label := range labels_MAV_MODE_FLAG {
+	for i := 0; i < 8; i++ {
+		mask := MAV_MODE_FLAG(1 << i)
 		if e&mask == mask {
-			names = append(names, label)
+			names = append(names, labels_MAV_MODE_FLAG[mask])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -56,19 +68,12 @@ func (e *MAV_MODE_FLAG) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask MAV_MODE_FLAG
 	for _, label := range labels {
-		found := false
-		for value, l := range labels_MAV_MODE_FLAG {
-			if l == label {
-				mask |= value
-				found = true
-				break
-			}
-		}
-		if !found {
+		if value, ok := values_MAV_MODE_FLAG[label]; ok {
+			mask |= value
+		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
-	*e = mask
 	return nil
 }
 

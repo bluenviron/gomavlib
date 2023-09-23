@@ -80,7 +80,11 @@ const (
 {{- else }}
 
 import (
+{{- if .Enum.Bitmask }}
     "strings"
+{{- else }}
+    "strconv"
+{{- end }}
     "fmt"
 )
 
@@ -105,43 +109,67 @@ var labels_{{ .Enum.Name }} = map[{{ .Enum.Name }}]string{
 {{- end }}
 }
 
+var values_{{ .Enum.Name }} = map[string]{{ .Enum.Name }}{
+{{- range .Enum.Values }}
+    "{{ .Name }}": {{ .Name }},
+{{- end }}
+}
+
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e {{ .Enum.Name }}) MarshalText() ([]byte, error) {
+{{- if .Enum.Bitmask }}
     var names []string
-    for mask, label := range labels_{{ .Enum.Name }} {
+    for i := 0; i < {{ len .Enum.Values }}; i++ {
+        mask := {{ .Enum.Name }}(1 << i)
         if e&mask == mask {
-            names = append(names, label)
+            names = append(names, labels_{{ .Enum.Name }}[mask])
         }
     }
     return []byte(strings.Join(names, " | ")), nil
+{{- else }}
+    name, ok := labels_{{ .Enum.Name }}[e]
+    if !ok {
+        return nil, fmt.Errorf("invalid value %d", e)
+    }
+    return []byte(name), nil
+{{- end }}
 }
 
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *{{ .Enum.Name }}) UnmarshalText(text []byte) error {
+{{- if .Enum.Bitmask }}
     labels := strings.Split(string(text), " | ")
     var mask {{ .Enum.Name }}
     for _, label := range labels {
-        found := false
-        for value, l := range labels_{{ .Enum.Name }} {
-            if l == label {
-                mask |= value
-                found = true
-                break
-            }
-        }
-        if !found {
+        if value, ok := values_{{ .Enum.Name }}[label]; ok {
+            mask |= value
+        } else {
             return fmt.Errorf("invalid label '%s'", label)
         }
     }
-    *e = mask
+{{- else }}
+    value, ok := values_{{ .Enum.Name }}[string(text)]
+    if !ok {
+        return fmt.Errorf("invalid label '%s'", text)
+    }
+    *e = value
+{{- end }}
     return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e {{ .Enum.Name }}) String() string {
+{{- if .Enum.Bitmask }}
     val, _ := e.MarshalText()
     return string(val)
+{{- else }}
+    name, ok := labels_{{ .Enum.Name }}[e]
+    if !ok {
+        return strconv.Itoa(int(e))
+    }
+    return name
+{{- end }}
 }
 {{- end }}
 `))
@@ -250,6 +278,7 @@ type outEnum struct {
 	Name        string
 	Description []string
 	Values      []*outEnumValue
+	Bitmask     bool
 }
 
 type outField struct {
@@ -328,6 +357,7 @@ func processDefinition(
 			DefName:     outDef.Name,
 			Name:        enum.Name,
 			Description: parseDescription(enum.Description),
+			Bitmask:     enum.Bitmask,
 		}
 
 		for _, val := range enum.Values {

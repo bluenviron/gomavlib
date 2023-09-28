@@ -3,51 +3,19 @@
 package ardupilotmega
 
 import (
-	"fmt"
-	"strconv"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
-type SPEED_TYPE uint32
+// Speed setpoint types used in MAV_CMD_DO_CHANGE_SPEED
+type SPEED_TYPE = common.SPEED_TYPE
 
 const (
-	SPEED_TYPE_AIRSPEED    SPEED_TYPE = 0
-	SPEED_TYPE_GROUNDSPEED SPEED_TYPE = 1
+	// Airspeed
+	SPEED_TYPE_AIRSPEED SPEED_TYPE = common.SPEED_TYPE_AIRSPEED
+	// Groundspeed
+	SPEED_TYPE_GROUNDSPEED SPEED_TYPE = common.SPEED_TYPE_GROUNDSPEED
+	// Climb speed
+	SPEED_TYPE_CLIMB_SPEED SPEED_TYPE = common.SPEED_TYPE_CLIMB_SPEED
+	// Descent speed
+	SPEED_TYPE_DESCENT_SPEED SPEED_TYPE = common.SPEED_TYPE_DESCENT_SPEED
 )
-
-var labels_SPEED_TYPE = map[SPEED_TYPE]string{
-	SPEED_TYPE_AIRSPEED:    "SPEED_TYPE_AIRSPEED",
-	SPEED_TYPE_GROUNDSPEED: "SPEED_TYPE_GROUNDSPEED",
-}
-
-var values_SPEED_TYPE = map[string]SPEED_TYPE{
-	"SPEED_TYPE_AIRSPEED":    SPEED_TYPE_AIRSPEED,
-	"SPEED_TYPE_GROUNDSPEED": SPEED_TYPE_GROUNDSPEED,
-}
-
-// MarshalText implements the encoding.TextMarshaler interface.
-func (e SPEED_TYPE) MarshalText() ([]byte, error) {
-	name, ok := labels_SPEED_TYPE[e]
-	if !ok {
-		return nil, fmt.Errorf("invalid value %d", e)
-	}
-	return []byte(name), nil
-}
-
-// UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *SPEED_TYPE) UnmarshalText(text []byte) error {
-	value, ok := values_SPEED_TYPE[string(text)]
-	if !ok {
-		return fmt.Errorf("invalid label '%s'", text)
-	}
-	*e = value
-	return nil
-}
-
-// String implements the fmt.Stringer interface.
-func (e SPEED_TYPE) String() string {
-	name, ok := labels_SPEED_TYPE[e]
-	if !ok {
-		return strconv.Itoa(int(e))
-	}
-	return name
-}

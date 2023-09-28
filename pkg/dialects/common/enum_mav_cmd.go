@@ -73,7 +73,7 @@ const (
 	MAV_CMD_DO_SET_MODE MAV_CMD = 176
 	// Jump to the desired command in the mission list.  Repeat this action only the specified number of times
 	MAV_CMD_DO_JUMP MAV_CMD = 177
-	// Change speed and/or throttle set points. The value persists until it is overridden or there is a mode change.
+	// Change speed and/or throttle set points. The value persists until it is overridden or there is a mode change
 	MAV_CMD_DO_CHANGE_SPEED MAV_CMD = 178
 	// Sets the home position to either to the current position or a specified position.
 	// The home position is the default position that the system will return to and land on.

@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// Flags to report failure cases over the high latency telemtry.
+// Flags to report failure cases over the high latency telemetry.
 type HL_FAILURE_FLAG uint32
 
 const (
@@ -27,7 +27,7 @@ const (
 	HL_FAILURE_FLAG_TERRAIN HL_FAILURE_FLAG = 64
 	// Battery failure/critical low battery.
 	HL_FAILURE_FLAG_BATTERY HL_FAILURE_FLAG = 128
-	// RC receiver failure/no rc connection.
+	// RC receiver failure/no RC connection.
 	HL_FAILURE_FLAG_RC_RECEIVER HL_FAILURE_FLAG = 256
 	// Offboard link failure.
 	HL_FAILURE_FLAG_OFFBOARD_LINK HL_FAILURE_FLAG = 512

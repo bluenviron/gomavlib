@@ -10,7 +10,7 @@ import (
 type GIMBAL_DEVICE_FLAGS = common.GIMBAL_DEVICE_FLAGS
 
 const (
-	// Set to retracted safe position (no stabilization), takes presedence over all other flags.
+	// Set to retracted safe position (no stabilization), takes precedence over all other flags.
 	GIMBAL_DEVICE_FLAGS_RETRACT GIMBAL_DEVICE_FLAGS = common.GIMBAL_DEVICE_FLAGS_RETRACT
 	// Set to neutral/default position, taking precedence over all other flags except RETRACT. Neutral is commonly forward-facing and horizontal (roll=pitch=yaw=0) but may be any orientation.
 	GIMBAL_DEVICE_FLAGS_NEUTRAL GIMBAL_DEVICE_FLAGS = common.GIMBAL_DEVICE_FLAGS_NEUTRAL

@@ -6,7 +6,7 @@ import (
 	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
-// Flags to report failure cases over the high latency telemtry.
+// Flags to report failure cases over the high latency telemetry.
 type HL_FAILURE_FLAG = common.HL_FAILURE_FLAG
 
 const (
@@ -26,7 +26,7 @@ const (
 	HL_FAILURE_FLAG_TERRAIN HL_FAILURE_FLAG = common.HL_FAILURE_FLAG_TERRAIN
 	// Battery failure/critical low battery.
 	HL_FAILURE_FLAG_BATTERY HL_FAILURE_FLAG = common.HL_FAILURE_FLAG_BATTERY
-	// RC receiver failure/no rc connection.
+	// RC receiver failure/no RC connection.
 	HL_FAILURE_FLAG_RC_RECEIVER HL_FAILURE_FLAG = common.HL_FAILURE_FLAG_RC_RECEIVER
 	// Offboard link failure.
 	HL_FAILURE_FLAG_OFFBOARD_LINK HL_FAILURE_FLAG = common.HL_FAILURE_FLAG_OFFBOARD_LINK

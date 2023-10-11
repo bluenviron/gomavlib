@@ -32,7 +32,7 @@ const (
 	GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_FOLLOW GIMBAL_DEVICE_CAP_FLAGS = common.GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_FOLLOW
 	// Gimbal device supports locking to an absolute heading, i.e., yaw angle relative to North (earth frame, often this is an option available).
 	GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_LOCK GIMBAL_DEVICE_CAP_FLAGS = common.GIMBAL_DEVICE_CAP_FLAGS_HAS_YAW_LOCK
-	// Gimbal device supports yawing/panning infinetely (e.g. using slip disk).
+	// Gimbal device supports yawing/panning infinitely (e.g. using slip disk).
 	GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_INFINITE_YAW GIMBAL_DEVICE_CAP_FLAGS = common.GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_INFINITE_YAW
 	// Gimbal device supports yaw angles and angular velocities relative to North (earth frame). This usually requires support by an autopilot via AUTOPILOT_STATE_FOR_GIMBAL_DEVICE. Support can go on and off during runtime, which is reported by the flag GIMBAL_DEVICE_FLAGS_CAN_ACCEPT_YAW_IN_EARTH_FRAME.
 	GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_YAW_IN_EARTH_FRAME GIMBAL_DEVICE_CAP_FLAGS = common.GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_YAW_IN_EARTH_FRAME

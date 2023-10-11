@@ -91,7 +91,7 @@ const (
 	// Cycle a between its nominal setting and a desired PWM for a desired number of cycles with a desired period.
 	MAV_CMD_DO_REPEAT_SERVO MAV_CMD = 184
 	// Terminate flight immediately.
-	// Flight termination immediately and irreversably terminates the current flight, returning the vehicle to ground.
+	// Flight termination immediately and irreversibly terminates the current flight, returning the vehicle to ground.
 	// The vehicle will ignore RC or other input until it has been power-cycled.
 	// Termination may trigger safety measures, including: disabling motors and deployment of parachute on multicopters, and setting flight surfaces to initiate a landing pattern on fixed-wing).
 	// On multicopters without a parachute it may trigger a crash landing.
@@ -203,7 +203,7 @@ const (
 	// The results of the checks are usually then reported in SYS_STATUS messages (this is system-specific).
 	// The command should return MAV_RESULT_TEMPORARILY_REJECTED if the system is already armed.
 	MAV_CMD_RUN_PREARM_CHECKS MAV_CMD = 401
-	// Turns illuminators ON/OFF. An illuminator is a light source that is used for lighting up dark areas external to the sytstem: e.g. a torch or searchlight (as opposed to a light source for illuminating the system itself, e.g. an indicator light).
+	// Turns illuminators ON/OFF. An illuminator is a light source that is used for lighting up dark areas external to the system: e.g. a torch or searchlight (as opposed to a light source for illuminating the system itself, e.g. an indicator light).
 	MAV_CMD_ILLUMINATOR_ON_OFF MAV_CMD = 405
 	// Request the home position from the vehicle.
 	// The vehicle will ACK the command and then emit the HOME_POSITION message.

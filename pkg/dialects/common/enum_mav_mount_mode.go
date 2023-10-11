@@ -11,7 +11,7 @@ import (
 type MAV_MOUNT_MODE uint32
 
 const (
-	// Load and keep safe position (Roll,Pitch,Yaw) from permant memory and stop stabilization
+	// Load and keep safe position (Roll,Pitch,Yaw) from permanent memory and stop stabilization
 	MAV_MOUNT_MODE_RETRACT MAV_MOUNT_MODE = 0
 	// Load and keep neutral position (Roll,Pitch,Yaw) from permanent memory.
 	MAV_MOUNT_MODE_NEUTRAL MAV_MOUNT_MODE = 1

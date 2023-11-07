@@ -49,28 +49,28 @@ var values_DEEPSTALL_STAGE = map[string]DEEPSTALL_STAGE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e DEEPSTALL_STAGE) MarshalText() ([]byte, error) {
-	name, ok := labels_DEEPSTALL_STAGE[e]
-	if !ok {
-		return nil, fmt.Errorf("invalid value %d", e)
+	if name, ok := labels_DEEPSTALL_STAGE[e]; ok {
+		return []byte(name), nil
 	}
-	return []byte(name), nil
+	return []byte(strconv.Itoa(int(e))), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *DEEPSTALL_STAGE) UnmarshalText(text []byte) error {
-	value, ok := values_DEEPSTALL_STAGE[string(text)]
-	if !ok {
+	if value, ok := values_DEEPSTALL_STAGE[string(text)]; ok {
+		*e = value
+	} else if value, err := strconv.Atoi(string(text)); err == nil {
+		*e = DEEPSTALL_STAGE(value)
+	} else {
 		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e DEEPSTALL_STAGE) String() string {
-	name, ok := labels_DEEPSTALL_STAGE[e]
-	if !ok {
-		return strconv.Itoa(int(e))
+	if name, ok := labels_DEEPSTALL_STAGE[e]; ok {
+		return name
 	}
-	return name
+	return strconv.Itoa(int(e))
 }

@@ -4,6 +4,7 @@ package development
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -36,6 +37,9 @@ var values_TARGET_ABSOLUTE_SENSOR_CAPABILITY_FLAGS = map[string]TARGET_ABSOLUTE_
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e TARGET_ABSOLUTE_SENSOR_CAPABILITY_FLAGS) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 5; i++ {
 		mask := TARGET_ABSOLUTE_SENSOR_CAPABILITY_FLAGS(1 << i)
@@ -53,6 +57,8 @@ func (e *TARGET_ABSOLUTE_SENSOR_CAPABILITY_FLAGS) UnmarshalText(text []byte) err
 	for _, label := range labels {
 		if value, ok := values_TARGET_ABSOLUTE_SENSOR_CAPABILITY_FLAGS[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= TARGET_ABSOLUTE_SENSOR_CAPABILITY_FLAGS(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

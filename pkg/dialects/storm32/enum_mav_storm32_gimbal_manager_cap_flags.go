@@ -4,6 +4,7 @@ package storm32
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -25,6 +26,9 @@ var values_MAV_STORM32_GIMBAL_MANAGER_CAP_FLAGS = map[string]MAV_STORM32_GIMBAL_
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_STORM32_GIMBAL_MANAGER_CAP_FLAGS) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 1; i++ {
 		mask := MAV_STORM32_GIMBAL_MANAGER_CAP_FLAGS(1 << i)
@@ -42,6 +46,8 @@ func (e *MAV_STORM32_GIMBAL_MANAGER_CAP_FLAGS) UnmarshalText(text []byte) error 
 	for _, label := range labels {
 		if value, ok := values_MAV_STORM32_GIMBAL_MANAGER_CAP_FLAGS[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= MAV_STORM32_GIMBAL_MANAGER_CAP_FLAGS(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

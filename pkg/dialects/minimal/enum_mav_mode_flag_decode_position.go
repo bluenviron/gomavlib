@@ -4,6 +4,7 @@ package minimal
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -53,6 +54,9 @@ var values_MAV_MODE_FLAG_DECODE_POSITION = map[string]MAV_MODE_FLAG_DECODE_POSIT
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MODE_FLAG_DECODE_POSITION) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 8; i++ {
 		mask := MAV_MODE_FLAG_DECODE_POSITION(1 << i)
@@ -70,6 +74,8 @@ func (e *MAV_MODE_FLAG_DECODE_POSITION) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_MAV_MODE_FLAG_DECODE_POSITION[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= MAV_MODE_FLAG_DECODE_POSITION(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

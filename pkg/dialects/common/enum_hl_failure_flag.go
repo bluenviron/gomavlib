@@ -4,6 +4,7 @@ package common
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -77,6 +78,9 @@ var values_HL_FAILURE_FLAG = map[string]HL_FAILURE_FLAG{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e HL_FAILURE_FLAG) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 14; i++ {
 		mask := HL_FAILURE_FLAG(1 << i)
@@ -94,6 +98,8 @@ func (e *HL_FAILURE_FLAG) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_HL_FAILURE_FLAG[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= HL_FAILURE_FLAG(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

@@ -4,6 +4,7 @@ package common
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -57,6 +58,9 @@ var values_MAV_BATTERY_FAULT = map[string]MAV_BATTERY_FAULT{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_BATTERY_FAULT) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 9; i++ {
 		mask := MAV_BATTERY_FAULT(1 << i)
@@ -74,6 +78,8 @@ func (e *MAV_BATTERY_FAULT) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_MAV_BATTERY_FAULT[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= MAV_BATTERY_FAULT(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

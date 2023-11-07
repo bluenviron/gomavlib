@@ -4,6 +4,7 @@ package uavionix
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -36,6 +37,9 @@ var values_UAVIONIX_ADSB_OUT_DYNAMIC_STATE = map[string]UAVIONIX_ADSB_OUT_DYNAMI
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_OUT_DYNAMIC_STATE) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 5; i++ {
 		mask := UAVIONIX_ADSB_OUT_DYNAMIC_STATE(1 << i)
@@ -53,6 +57,8 @@ func (e *UAVIONIX_ADSB_OUT_DYNAMIC_STATE) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_UAVIONIX_ADSB_OUT_DYNAMIC_STATE[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= UAVIONIX_ADSB_OUT_DYNAMIC_STATE(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

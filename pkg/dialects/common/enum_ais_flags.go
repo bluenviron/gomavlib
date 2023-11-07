@@ -4,6 +4,7 @@ package common
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -67,6 +68,9 @@ var values_AIS_FLAGS = map[string]AIS_FLAGS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e AIS_FLAGS) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 13; i++ {
 		mask := AIS_FLAGS(1 << i)
@@ -84,6 +88,8 @@ func (e *AIS_FLAGS) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_AIS_FLAGS[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= AIS_FLAGS(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

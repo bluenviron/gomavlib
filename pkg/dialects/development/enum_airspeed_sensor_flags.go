@@ -4,6 +4,7 @@ package development
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -29,6 +30,9 @@ var values_AIRSPEED_SENSOR_FLAGS = map[string]AIRSPEED_SENSOR_FLAGS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e AIRSPEED_SENSOR_FLAGS) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 2; i++ {
 		mask := AIRSPEED_SENSOR_FLAGS(1 << i)
@@ -46,6 +50,8 @@ func (e *AIRSPEED_SENSOR_FLAGS) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_AIRSPEED_SENSOR_FLAGS[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= AIRSPEED_SENSOR_FLAGS(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

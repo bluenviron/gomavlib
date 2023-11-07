@@ -32,28 +32,28 @@ var values_GOPRO_FIELD_OF_VIEW = map[string]GOPRO_FIELD_OF_VIEW{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_FIELD_OF_VIEW) MarshalText() ([]byte, error) {
-	name, ok := labels_GOPRO_FIELD_OF_VIEW[e]
-	if !ok {
-		return nil, fmt.Errorf("invalid value %d", e)
+	if name, ok := labels_GOPRO_FIELD_OF_VIEW[e]; ok {
+		return []byte(name), nil
 	}
-	return []byte(name), nil
+	return []byte(strconv.Itoa(int(e))), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_FIELD_OF_VIEW) UnmarshalText(text []byte) error {
-	value, ok := values_GOPRO_FIELD_OF_VIEW[string(text)]
-	if !ok {
+	if value, ok := values_GOPRO_FIELD_OF_VIEW[string(text)]; ok {
+		*e = value
+	} else if value, err := strconv.Atoi(string(text)); err == nil {
+		*e = GOPRO_FIELD_OF_VIEW(value)
+	} else {
 		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e GOPRO_FIELD_OF_VIEW) String() string {
-	name, ok := labels_GOPRO_FIELD_OF_VIEW[e]
-	if !ok {
-		return strconv.Itoa(int(e))
+	if name, ok := labels_GOPRO_FIELD_OF_VIEW[e]; ok {
+		return name
 	}
-	return name
+	return strconv.Itoa(int(e))
 }

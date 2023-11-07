@@ -4,6 +4,7 @@ package common
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -69,6 +70,9 @@ var values_POSITION_TARGET_TYPEMASK = map[string]POSITION_TARGET_TYPEMASK{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e POSITION_TARGET_TYPEMASK) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 12; i++ {
 		mask := POSITION_TARGET_TYPEMASK(1 << i)
@@ -86,6 +90,8 @@ func (e *POSITION_TARGET_TYPEMASK) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_POSITION_TARGET_TYPEMASK[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= POSITION_TARGET_TYPEMASK(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

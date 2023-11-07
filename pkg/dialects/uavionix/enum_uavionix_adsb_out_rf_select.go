@@ -4,6 +4,7 @@ package uavionix
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -30,6 +31,9 @@ var values_UAVIONIX_ADSB_OUT_RF_SELECT = map[string]UAVIONIX_ADSB_OUT_RF_SELECT{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_OUT_RF_SELECT) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 3; i++ {
 		mask := UAVIONIX_ADSB_OUT_RF_SELECT(1 << i)
@@ -47,6 +51,8 @@ func (e *UAVIONIX_ADSB_OUT_RF_SELECT) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_UAVIONIX_ADSB_OUT_RF_SELECT[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= UAVIONIX_ADSB_OUT_RF_SELECT(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

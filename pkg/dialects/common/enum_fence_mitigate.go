@@ -33,28 +33,28 @@ var values_FENCE_MITIGATE = map[string]FENCE_MITIGATE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FENCE_MITIGATE) MarshalText() ([]byte, error) {
-	name, ok := labels_FENCE_MITIGATE[e]
-	if !ok {
-		return nil, fmt.Errorf("invalid value %d", e)
+	if name, ok := labels_FENCE_MITIGATE[e]; ok {
+		return []byte(name), nil
 	}
-	return []byte(name), nil
+	return []byte(strconv.Itoa(int(e))), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FENCE_MITIGATE) UnmarshalText(text []byte) error {
-	value, ok := values_FENCE_MITIGATE[string(text)]
-	if !ok {
+	if value, ok := values_FENCE_MITIGATE[string(text)]; ok {
+		*e = value
+	} else if value, err := strconv.Atoi(string(text)); err == nil {
+		*e = FENCE_MITIGATE(value)
+	} else {
 		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e FENCE_MITIGATE) String() string {
-	name, ok := labels_FENCE_MITIGATE[e]
-	if !ok {
-		return strconv.Itoa(int(e))
+	if name, ok := labels_FENCE_MITIGATE[e]; ok {
+		return name
 	}
-	return name
+	return strconv.Itoa(int(e))
 }

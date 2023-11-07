@@ -4,6 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -24,6 +25,9 @@ var values_GOPRO_VIDEO_SETTINGS_FLAGS = map[string]GOPRO_VIDEO_SETTINGS_FLAGS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_VIDEO_SETTINGS_FLAGS) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 1; i++ {
 		mask := GOPRO_VIDEO_SETTINGS_FLAGS(1 << i)
@@ -41,6 +45,8 @@ func (e *GOPRO_VIDEO_SETTINGS_FLAGS) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_GOPRO_VIDEO_SETTINGS_FLAGS[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= GOPRO_VIDEO_SETTINGS_FLAGS(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

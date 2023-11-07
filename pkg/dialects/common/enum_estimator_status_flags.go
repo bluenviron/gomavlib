@@ -4,6 +4,7 @@ package common
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -69,6 +70,9 @@ var values_ESTIMATOR_STATUS_FLAGS = map[string]ESTIMATOR_STATUS_FLAGS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ESTIMATOR_STATUS_FLAGS) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 12; i++ {
 		mask := ESTIMATOR_STATUS_FLAGS(1 << i)
@@ -86,6 +90,8 @@ func (e *ESTIMATOR_STATUS_FLAGS) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_ESTIMATOR_STATUS_FLAGS[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= ESTIMATOR_STATUS_FLAGS(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

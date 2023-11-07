@@ -4,6 +4,7 @@ package common
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -25,6 +26,9 @@ var values_MAV_SYS_STATUS_SENSOR_EXTENDED = map[string]MAV_SYS_STATUS_SENSOR_EXT
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_SYS_STATUS_SENSOR_EXTENDED) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 1; i++ {
 		mask := MAV_SYS_STATUS_SENSOR_EXTENDED(1 << i)
@@ -42,6 +46,8 @@ func (e *MAV_SYS_STATUS_SENSOR_EXTENDED) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_MAV_SYS_STATUS_SENSOR_EXTENDED[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= MAV_SYS_STATUS_SENSOR_EXTENDED(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

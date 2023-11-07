@@ -96,28 +96,28 @@ var values_COPTER_MODE = map[string]COPTER_MODE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e COPTER_MODE) MarshalText() ([]byte, error) {
-	name, ok := labels_COPTER_MODE[e]
-	if !ok {
-		return nil, fmt.Errorf("invalid value %d", e)
+	if name, ok := labels_COPTER_MODE[e]; ok {
+		return []byte(name), nil
 	}
-	return []byte(name), nil
+	return []byte(strconv.Itoa(int(e))), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *COPTER_MODE) UnmarshalText(text []byte) error {
-	value, ok := values_COPTER_MODE[string(text)]
-	if !ok {
+	if value, ok := values_COPTER_MODE[string(text)]; ok {
+		*e = value
+	} else if value, err := strconv.Atoi(string(text)); err == nil {
+		*e = COPTER_MODE(value)
+	} else {
 		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e COPTER_MODE) String() string {
-	name, ok := labels_COPTER_MODE[e]
-	if !ok {
-		return strconv.Itoa(int(e))
+	if name, ok := labels_COPTER_MODE[e]; ok {
+		return name
 	}
-	return name
+	return strconv.Itoa(int(e))
 }

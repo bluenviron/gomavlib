@@ -4,6 +4,7 @@ package common
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -61,6 +62,9 @@ var values_GIMBAL_DEVICE_ERROR_FLAGS = map[string]GIMBAL_DEVICE_ERROR_FLAGS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GIMBAL_DEVICE_ERROR_FLAGS) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 10; i++ {
 		mask := GIMBAL_DEVICE_ERROR_FLAGS(1 << i)
@@ -78,6 +82,8 @@ func (e *GIMBAL_DEVICE_ERROR_FLAGS) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_GIMBAL_DEVICE_ERROR_FLAGS[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= GIMBAL_DEVICE_ERROR_FLAGS(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

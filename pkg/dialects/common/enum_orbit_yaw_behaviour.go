@@ -41,28 +41,28 @@ var values_ORBIT_YAW_BEHAVIOUR = map[string]ORBIT_YAW_BEHAVIOUR{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ORBIT_YAW_BEHAVIOUR) MarshalText() ([]byte, error) {
-	name, ok := labels_ORBIT_YAW_BEHAVIOUR[e]
-	if !ok {
-		return nil, fmt.Errorf("invalid value %d", e)
+	if name, ok := labels_ORBIT_YAW_BEHAVIOUR[e]; ok {
+		return []byte(name), nil
 	}
-	return []byte(name), nil
+	return []byte(strconv.Itoa(int(e))), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ORBIT_YAW_BEHAVIOUR) UnmarshalText(text []byte) error {
-	value, ok := values_ORBIT_YAW_BEHAVIOUR[string(text)]
-	if !ok {
+	if value, ok := values_ORBIT_YAW_BEHAVIOUR[string(text)]; ok {
+		*e = value
+	} else if value, err := strconv.Atoi(string(text)); err == nil {
+		*e = ORBIT_YAW_BEHAVIOUR(value)
+	} else {
 		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e ORBIT_YAW_BEHAVIOUR) String() string {
-	name, ok := labels_ORBIT_YAW_BEHAVIOUR[e]
-	if !ok {
-		return strconv.Itoa(int(e))
+	if name, ok := labels_ORBIT_YAW_BEHAVIOUR[e]; ok {
+		return name
 	}
-	return name
+	return strconv.Itoa(int(e))
 }

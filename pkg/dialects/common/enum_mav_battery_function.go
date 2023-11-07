@@ -41,28 +41,28 @@ var values_MAV_BATTERY_FUNCTION = map[string]MAV_BATTERY_FUNCTION{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_BATTERY_FUNCTION) MarshalText() ([]byte, error) {
-	name, ok := labels_MAV_BATTERY_FUNCTION[e]
-	if !ok {
-		return nil, fmt.Errorf("invalid value %d", e)
+	if name, ok := labels_MAV_BATTERY_FUNCTION[e]; ok {
+		return []byte(name), nil
 	}
-	return []byte(name), nil
+	return []byte(strconv.Itoa(int(e))), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_BATTERY_FUNCTION) UnmarshalText(text []byte) error {
-	value, ok := values_MAV_BATTERY_FUNCTION[string(text)]
-	if !ok {
+	if value, ok := values_MAV_BATTERY_FUNCTION[string(text)]; ok {
+		*e = value
+	} else if value, err := strconv.Atoi(string(text)); err == nil {
+		*e = MAV_BATTERY_FUNCTION(value)
+	} else {
 		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_BATTERY_FUNCTION) String() string {
-	name, ok := labels_MAV_BATTERY_FUNCTION[e]
-	if !ok {
-		return strconv.Itoa(int(e))
+	if name, ok := labels_MAV_BATTERY_FUNCTION[e]; ok {
+		return name
 	}
-	return name
+	return strconv.Itoa(int(e))
 }

@@ -89,8 +89,6 @@ func (e *UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE) String() string {
-	if name, ok := labels_UAVIONIX_ADSB_OUT_CFG_AIRCRAFT_SIZE[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

@@ -92,8 +92,6 @@ func (e *AIS_NAV_STATUS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e AIS_NAV_STATUS) String() string {
-	if name, ok := labels_AIS_NAV_STATUS[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

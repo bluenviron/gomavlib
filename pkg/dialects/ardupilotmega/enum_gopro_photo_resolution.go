@@ -60,8 +60,6 @@ func (e *GOPRO_PHOTO_RESOLUTION) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e GOPRO_PHOTO_RESOLUTION) String() string {
-	if name, ok := labels_GOPRO_PHOTO_RESOLUTION[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

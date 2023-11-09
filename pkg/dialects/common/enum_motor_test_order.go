@@ -53,8 +53,6 @@ func (e *MOTOR_TEST_ORDER) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MOTOR_TEST_ORDER) String() string {
-	if name, ok := labels_MOTOR_TEST_ORDER[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

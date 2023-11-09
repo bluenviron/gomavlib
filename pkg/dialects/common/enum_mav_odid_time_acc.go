@@ -104,8 +104,6 @@ func (e *MAV_ODID_TIME_ACC) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_TIME_ACC) String() string {
-	if name, ok := labels_MAV_ODID_TIME_ACC[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

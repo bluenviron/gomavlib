@@ -48,8 +48,6 @@ func (e *GOPRO_PROTUNE_COLOUR) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e GOPRO_PROTUNE_COLOUR) String() string {
-	if name, ok := labels_GOPRO_PROTUNE_COLOUR[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

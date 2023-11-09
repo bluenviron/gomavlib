@@ -51,8 +51,6 @@ func (e *UALBERTA_PILOT_MODE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e UALBERTA_PILOT_MODE) String() string {
-	if name, ok := labels_UALBERTA_PILOT_MODE[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

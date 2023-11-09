@@ -136,7 +136,6 @@ func (e {{ .Enum.Name }}) MarshalText() ([]byte, error) {
 {{- end }}
 }
 
-
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *{{ .Enum.Name }}) UnmarshalText(text []byte) error {
 {{- if .Enum.Bitmask }}
@@ -165,15 +164,8 @@ func (e *{{ .Enum.Name }}) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e {{ .Enum.Name }}) String() string {
-{{- if .Enum.Bitmask }}
     val, _ := e.MarshalText()
     return string(val)
-{{- else }}
-    if name, ok := labels_{{ .Enum.Name }}[e]; ok {
-        return name
-    }
-    return strconv.Itoa(int(e))
-{{- end }}
 }
 {{- end }}
 `))

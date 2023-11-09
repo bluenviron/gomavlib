@@ -63,8 +63,6 @@ func (e *MAV_ROI) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ROI) String() string {
-	if name, ok := labels_MAV_ROI[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

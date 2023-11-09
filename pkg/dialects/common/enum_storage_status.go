@@ -57,8 +57,6 @@ func (e *STORAGE_STATUS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e STORAGE_STATUS) String() string {
-	if name, ok := labels_STORAGE_STATUS[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

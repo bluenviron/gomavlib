@@ -48,8 +48,6 @@ func (e *MAV_ODID_HEIGHT_REF) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_ODID_HEIGHT_REF) String() string {
-	if name, ok := labels_MAV_ODID_HEIGHT_REF[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

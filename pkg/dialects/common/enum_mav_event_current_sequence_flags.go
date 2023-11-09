@@ -45,8 +45,6 @@ func (e *MAV_EVENT_CURRENT_SEQUENCE_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_EVENT_CURRENT_SEQUENCE_FLAGS) String() string {
-	if name, ok := labels_MAV_EVENT_CURRENT_SEQUENCE_FLAGS[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

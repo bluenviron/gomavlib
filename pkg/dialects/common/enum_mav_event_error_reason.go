@@ -45,8 +45,6 @@ func (e *MAV_EVENT_ERROR_REASON) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_EVENT_ERROR_REASON) String() string {
-	if name, ok := labels_MAV_EVENT_ERROR_REASON[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

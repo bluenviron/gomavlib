@@ -60,8 +60,6 @@ func (e *GOPRO_PROTUNE_WHITE_BALANCE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e GOPRO_PROTUNE_WHITE_BALANCE) String() string {
-	if name, ok := labels_GOPRO_PROTUNE_WHITE_BALANCE[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

@@ -60,8 +60,6 @@ func (e *CAMERA_FEEDBACK_FLAGS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e CAMERA_FEEDBACK_FLAGS) String() string {
-	if name, ok := labels_CAMERA_FEEDBACK_FLAGS[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

@@ -64,8 +64,6 @@ func (e *MAG_CAL_STATUS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAG_CAL_STATUS) String() string {
-	if name, ok := labels_MAG_CAL_STATUS[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

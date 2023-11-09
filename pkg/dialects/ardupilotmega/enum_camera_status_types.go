@@ -68,8 +68,6 @@ func (e *CAMERA_STATUS_TYPES) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e CAMERA_STATUS_TYPES) String() string {
-	if name, ok := labels_CAMERA_STATUS_TYPES[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

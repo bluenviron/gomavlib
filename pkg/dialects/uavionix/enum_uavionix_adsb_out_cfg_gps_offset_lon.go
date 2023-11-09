@@ -47,8 +47,6 @@ func (e *UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON) UnmarshalText(text []byte) error 
 
 // String implements the fmt.Stringer interface.
 func (e UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON) String() string {
-	if name, ok := labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

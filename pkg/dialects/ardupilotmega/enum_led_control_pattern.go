@@ -52,8 +52,6 @@ func (e *LED_CONTROL_PATTERN) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e LED_CONTROL_PATTERN) String() string {
-	if name, ok := labels_LED_CONTROL_PATTERN[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

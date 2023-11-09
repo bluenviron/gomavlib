@@ -53,8 +53,6 @@ func (e *NAV_VTOL_LAND_OPTIONS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e NAV_VTOL_LAND_OPTIONS) String() string {
-	if name, ok := labels_NAV_VTOL_LAND_OPTIONS[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

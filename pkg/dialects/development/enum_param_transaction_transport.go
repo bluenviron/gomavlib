@@ -49,8 +49,6 @@ func (e *PARAM_TRANSACTION_TRANSPORT) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e PARAM_TRANSACTION_TRANSPORT) String() string {
-	if name, ok := labels_PARAM_TRANSACTION_TRANSPORT[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

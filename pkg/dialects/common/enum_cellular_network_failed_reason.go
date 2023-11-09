@@ -57,8 +57,6 @@ func (e *CELLULAR_NETWORK_FAILED_REASON) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e CELLULAR_NETWORK_FAILED_REASON) String() string {
-	if name, ok := labels_CELLULAR_NETWORK_FAILED_REASON[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

@@ -101,8 +101,6 @@ func (e *SERIAL_CONTROL_DEV) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e SERIAL_CONTROL_DEV) String() string {
-	if name, ok := labels_SERIAL_CONTROL_DEV[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

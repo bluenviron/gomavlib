@@ -57,8 +57,6 @@ func (e *PARAM_ACK) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e PARAM_ACK) String() string {
-	if name, ok := labels_PARAM_ACK[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

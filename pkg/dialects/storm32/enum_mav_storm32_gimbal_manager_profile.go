@@ -65,8 +65,6 @@ func (e *MAV_STORM32_GIMBAL_MANAGER_PROFILE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_STORM32_GIMBAL_MANAGER_PROFILE) String() string {
-	if name, ok := labels_MAV_STORM32_GIMBAL_MANAGER_PROFILE[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

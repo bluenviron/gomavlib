@@ -49,8 +49,6 @@ func (e *TUNE_FORMAT) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e TUNE_FORMAT) String() string {
-	if name, ok := labels_TUNE_FORMAT[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

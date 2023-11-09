@@ -64,8 +64,6 @@ func (e *ACCELCAL_VEHICLE_POS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e ACCELCAL_VEHICLE_POS) String() string {
-	if name, ok := labels_ACCELCAL_VEHICLE_POS[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

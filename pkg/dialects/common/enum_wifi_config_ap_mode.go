@@ -57,8 +57,6 @@ func (e *WIFI_CONFIG_AP_MODE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e WIFI_CONFIG_AP_MODE) String() string {
-	if name, ok := labels_WIFI_CONFIG_AP_MODE[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

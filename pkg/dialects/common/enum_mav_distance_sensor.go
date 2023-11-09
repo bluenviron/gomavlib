@@ -61,8 +61,6 @@ func (e *MAV_DISTANCE_SENSOR) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_DISTANCE_SENSOR) String() string {
-	if name, ok := labels_MAV_DISTANCE_SENSOR[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

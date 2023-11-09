@@ -49,8 +49,6 @@ func (e *MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS) String() string {
-	if name, ok := labels_MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

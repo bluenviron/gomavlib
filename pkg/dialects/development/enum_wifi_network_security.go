@@ -65,8 +65,6 @@ func (e *WIFI_NETWORK_SECURITY) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e WIFI_NETWORK_SECURITY) String() string {
-	if name, ok := labels_WIFI_NETWORK_SECURITY[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

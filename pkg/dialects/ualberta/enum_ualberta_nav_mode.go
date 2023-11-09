@@ -56,8 +56,6 @@ func (e *UALBERTA_NAV_MODE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e UALBERTA_NAV_MODE) String() string {
-	if name, ok := labels_UALBERTA_NAV_MODE[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

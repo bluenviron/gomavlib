@@ -52,8 +52,6 @@ func (e *GIMBAL_AXIS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e GIMBAL_AXIS) String() string {
-	if name, ok := labels_GIMBAL_AXIS[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

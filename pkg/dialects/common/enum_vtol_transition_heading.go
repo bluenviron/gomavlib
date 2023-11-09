@@ -61,8 +61,6 @@ func (e *VTOL_TRANSITION_HEADING) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e VTOL_TRANSITION_HEADING) String() string {
-	if name, ok := labels_VTOL_TRANSITION_HEADING[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

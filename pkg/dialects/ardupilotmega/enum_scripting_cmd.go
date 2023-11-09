@@ -56,8 +56,6 @@ func (e *SCRIPTING_CMD) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e SCRIPTING_CMD) String() string {
-	if name, ok := labels_SCRIPTING_CMD[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

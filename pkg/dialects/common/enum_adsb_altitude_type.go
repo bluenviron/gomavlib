@@ -49,8 +49,6 @@ func (e *ADSB_ALTITUDE_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e ADSB_ALTITUDE_TYPE) String() string {
-	if name, ok := labels_ADSB_ALTITUDE_TYPE[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

@@ -96,8 +96,6 @@ func (e *AVSS_M300_OPERATION_MODE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e AVSS_M300_OPERATION_MODE) String() string {
-	if name, ok := labels_AVSS_M300_OPERATION_MODE[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

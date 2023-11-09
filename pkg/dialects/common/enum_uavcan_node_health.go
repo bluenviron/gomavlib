@@ -57,8 +57,6 @@ func (e *UAVCAN_NODE_HEALTH) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e UAVCAN_NODE_HEALTH) String() string {
-	if name, ok := labels_UAVCAN_NODE_HEALTH[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

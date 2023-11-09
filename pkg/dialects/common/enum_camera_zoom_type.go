@@ -61,8 +61,6 @@ func (e *CAMERA_ZOOM_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e CAMERA_ZOOM_TYPE) String() string {
-	if name, ok := labels_CAMERA_ZOOM_TYPE[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

@@ -65,8 +65,6 @@ func (e *ACTUATOR_CONFIGURATION) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e ACTUATOR_CONFIGURATION) String() string {
-	if name, ok := labels_ACTUATOR_CONFIGURATION[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

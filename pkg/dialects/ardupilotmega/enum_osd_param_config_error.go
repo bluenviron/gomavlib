@@ -53,8 +53,6 @@ func (e *OSD_PARAM_CONFIG_ERROR) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e OSD_PARAM_CONFIG_ERROR) String() string {
-	if name, ok := labels_OSD_PARAM_CONFIG_ERROR[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

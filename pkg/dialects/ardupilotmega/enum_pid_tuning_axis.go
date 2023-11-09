@@ -58,8 +58,6 @@ func (e *PID_TUNING_AXIS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e PID_TUNING_AXIS) String() string {
-	if name, ok := labels_PID_TUNING_AXIS[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

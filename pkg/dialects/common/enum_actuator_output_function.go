@@ -173,8 +173,6 @@ func (e *ACTUATOR_OUTPUT_FUNCTION) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e ACTUATOR_OUTPUT_FUNCTION) String() string {
-	if name, ok := labels_ACTUATOR_OUTPUT_FUNCTION[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

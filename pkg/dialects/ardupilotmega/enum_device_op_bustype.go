@@ -49,8 +49,6 @@ func (e *DEVICE_OP_BUSTYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e DEVICE_OP_BUSTYPE) String() string {
-	if name, ok := labels_DEVICE_OP_BUSTYPE[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

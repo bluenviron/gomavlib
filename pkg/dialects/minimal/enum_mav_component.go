@@ -583,8 +583,6 @@ func (e *MAV_COMPONENT) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e MAV_COMPONENT) String() string {
-	if name, ok := labels_MAV_COMPONENT[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

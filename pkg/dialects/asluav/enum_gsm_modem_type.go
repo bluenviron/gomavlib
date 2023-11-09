@@ -48,8 +48,6 @@ func (e *GSM_MODEM_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e GSM_MODEM_TYPE) String() string {
-	if name, ok := labels_GSM_MODEM_TYPE[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

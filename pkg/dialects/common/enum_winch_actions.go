@@ -81,8 +81,6 @@ func (e *WINCH_ACTIONS) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e WINCH_ACTIONS) String() string {
-	if name, ok := labels_WINCH_ACTIONS[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

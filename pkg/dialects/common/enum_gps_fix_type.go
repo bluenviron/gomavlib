@@ -77,8 +77,6 @@ func (e *GPS_FIX_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e GPS_FIX_TYPE) String() string {
-	if name, ok := labels_GPS_FIX_TYPE[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

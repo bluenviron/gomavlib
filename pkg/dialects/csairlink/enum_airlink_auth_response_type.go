@@ -48,8 +48,6 @@ func (e *AIRLINK_AUTH_RESPONSE_TYPE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e AIRLINK_AUTH_RESPONSE_TYPE) String() string {
-	if name, ok := labels_AIRLINK_AUTH_RESPONSE_TYPE[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

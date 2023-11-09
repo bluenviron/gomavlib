@@ -61,8 +61,6 @@ func (e *CELLULAR_CONFIG_RESPONSE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e CELLULAR_CONFIG_RESPONSE) String() string {
-	if name, ok := labels_CELLULAR_CONFIG_RESPONSE[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

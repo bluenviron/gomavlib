@@ -52,8 +52,6 @@ func (e *MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL) UnmarshalText(text []byte) error 
 
 // String implements the fmt.Stringer interface.
 func (e MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL) String() string {
-	if name, ok := labels_MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

@@ -53,8 +53,6 @@ func (e *FENCE_MITIGATE) UnmarshalText(text []byte) error {
 
 // String implements the fmt.Stringer interface.
 func (e FENCE_MITIGATE) String() string {
-	if name, ok := labels_FENCE_MITIGATE[e]; ok {
-		return name
-	}
-	return strconv.Itoa(int(e))
+	val, _ := e.MarshalText()
+	return string(val)
 }

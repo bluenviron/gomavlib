@@ -4,6 +4,7 @@ package storm32
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -29,6 +30,9 @@ var values_RADIO_RC_CHANNELS_FLAGS = map[string]RADIO_RC_CHANNELS_FLAGS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e RADIO_RC_CHANNELS_FLAGS) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 2; i++ {
 		mask := RADIO_RC_CHANNELS_FLAGS(1 << i)
@@ -46,6 +50,8 @@ func (e *RADIO_RC_CHANNELS_FLAGS) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_RADIO_RC_CHANNELS_FLAGS[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= RADIO_RC_CHANNELS_FLAGS(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

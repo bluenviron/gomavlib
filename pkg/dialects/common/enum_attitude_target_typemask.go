@@ -4,6 +4,7 @@ package common
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -45,6 +46,9 @@ var values_ATTITUDE_TARGET_TYPEMASK = map[string]ATTITUDE_TARGET_TYPEMASK{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ATTITUDE_TARGET_TYPEMASK) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 6; i++ {
 		mask := ATTITUDE_TARGET_TYPEMASK(1 << i)
@@ -62,6 +66,8 @@ func (e *ATTITUDE_TARGET_TYPEMASK) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_ATTITUDE_TARGET_TYPEMASK[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= ATTITUDE_TARGET_TYPEMASK(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

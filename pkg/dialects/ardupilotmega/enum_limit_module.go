@@ -4,6 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -32,6 +33,9 @@ var values_LIMIT_MODULE = map[string]LIMIT_MODULE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e LIMIT_MODULE) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 3; i++ {
 		mask := LIMIT_MODULE(1 << i)
@@ -49,6 +53,8 @@ func (e *LIMIT_MODULE) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_LIMIT_MODULE[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= LIMIT_MODULE(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

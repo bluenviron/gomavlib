@@ -4,6 +4,7 @@ package ardupilotmega
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -29,6 +30,9 @@ var values_RALLY_FLAGS = map[string]RALLY_FLAGS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e RALLY_FLAGS) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 2; i++ {
 		mask := RALLY_FLAGS(1 << i)
@@ -46,6 +50,8 @@ func (e *RALLY_FLAGS) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_RALLY_FLAGS[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= RALLY_FLAGS(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

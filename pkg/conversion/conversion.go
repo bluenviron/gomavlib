@@ -80,10 +80,9 @@ const (
 {{- else }}
 
 import (
+    "strconv"
 {{- if .Enum.Bitmask }}
     "strings"
-{{- else }}
-    "strconv"
 {{- end }}
     "fmt"
 )
@@ -118,6 +117,9 @@ var values_{{ .Enum.Name }} = map[string]{{ .Enum.Name }}{
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e {{ .Enum.Name }}) MarshalText() ([]byte, error) {
 {{- if .Enum.Bitmask }}
+    if e == 0 {
+        return []byte("0"), nil
+    }
     var names []string
     for i := 0; i < {{ len .Enum.Values }}; i++ {
         mask := {{ .Enum.Name }}(1 << i)
@@ -127,11 +129,10 @@ func (e {{ .Enum.Name }}) MarshalText() ([]byte, error) {
     }
     return []byte(strings.Join(names, " | ")), nil
 {{- else }}
-    name, ok := labels_{{ .Enum.Name }}[e]
-    if !ok {
-        return nil, fmt.Errorf("invalid value %d", e)
+    if name, ok := labels_{{ .Enum.Name }}[e]; ok {
+        return []byte(name), nil
     }
-    return []byte(name), nil
+    return []byte(strconv.Itoa(int(e))), nil
 {{- end }}
 }
 
@@ -144,16 +145,20 @@ func (e *{{ .Enum.Name }}) UnmarshalText(text []byte) error {
     for _, label := range labels {
         if value, ok := values_{{ .Enum.Name }}[label]; ok {
             mask |= value
+        } else if value, err := strconv.Atoi(label); err == nil {
+            mask |= {{ .Enum.Name }}(value)
         } else {
             return fmt.Errorf("invalid label '%s'", label)
         }
     }
 {{- else }}
-    value, ok := values_{{ .Enum.Name }}[string(text)]
-    if !ok {
+    if value, ok := values_{{ .Enum.Name }}[string(text)]; ok {
+       *e = value
+    } else if value, err := strconv.Atoi(string(text)); err == nil {
+       *e = {{ .Enum.Name }}(value)
+    } else {
         return fmt.Errorf("invalid label '%s'", text)
     }
-    *e = value
 {{- end }}
     return nil
 }
@@ -164,11 +169,10 @@ func (e {{ .Enum.Name }}) String() string {
     val, _ := e.MarshalText()
     return string(val)
 {{- else }}
-    name, ok := labels_{{ .Enum.Name }}[e]
-    if !ok {
-        return strconv.Itoa(int(e))
+    if name, ok := labels_{{ .Enum.Name }}[e]; ok {
+        return name
     }
-    return name
+    return strconv.Itoa(int(e))
 {{- end }}
 }
 {{- end }}

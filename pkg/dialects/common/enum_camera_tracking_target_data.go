@@ -4,6 +4,7 @@ package common
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -37,6 +38,9 @@ var values_CAMERA_TRACKING_TARGET_DATA = map[string]CAMERA_TRACKING_TARGET_DATA{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAMERA_TRACKING_TARGET_DATA) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 4; i++ {
 		mask := CAMERA_TRACKING_TARGET_DATA(1 << i)
@@ -54,6 +58,8 @@ func (e *CAMERA_TRACKING_TARGET_DATA) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_CAMERA_TRACKING_TARGET_DATA[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= CAMERA_TRACKING_TARGET_DATA(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

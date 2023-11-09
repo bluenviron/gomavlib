@@ -4,6 +4,7 @@ package common
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -53,6 +54,9 @@ var values_UTM_DATA_AVAIL_FLAGS = map[string]UTM_DATA_AVAIL_FLAGS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UTM_DATA_AVAIL_FLAGS) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 8; i++ {
 		mask := UTM_DATA_AVAIL_FLAGS(1 << i)
@@ -70,6 +74,8 @@ func (e *UTM_DATA_AVAIL_FLAGS) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_UTM_DATA_AVAIL_FLAGS[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= UTM_DATA_AVAIL_FLAGS(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

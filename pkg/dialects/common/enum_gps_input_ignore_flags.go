@@ -4,6 +4,7 @@ package common
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -52,6 +53,9 @@ var values_GPS_INPUT_IGNORE_FLAGS = map[string]GPS_INPUT_IGNORE_FLAGS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GPS_INPUT_IGNORE_FLAGS) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 8; i++ {
 		mask := GPS_INPUT_IGNORE_FLAGS(1 << i)
@@ -69,6 +73,8 @@ func (e *GPS_INPUT_IGNORE_FLAGS) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_GPS_INPUT_IGNORE_FLAGS[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= GPS_INPUT_IGNORE_FLAGS(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

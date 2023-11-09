@@ -37,28 +37,28 @@ var values_MOTOR_TEST_THROTTLE_TYPE = map[string]MOTOR_TEST_THROTTLE_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MOTOR_TEST_THROTTLE_TYPE) MarshalText() ([]byte, error) {
-	name, ok := labels_MOTOR_TEST_THROTTLE_TYPE[e]
-	if !ok {
-		return nil, fmt.Errorf("invalid value %d", e)
+	if name, ok := labels_MOTOR_TEST_THROTTLE_TYPE[e]; ok {
+		return []byte(name), nil
 	}
-	return []byte(name), nil
+	return []byte(strconv.Itoa(int(e))), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MOTOR_TEST_THROTTLE_TYPE) UnmarshalText(text []byte) error {
-	value, ok := values_MOTOR_TEST_THROTTLE_TYPE[string(text)]
-	if !ok {
+	if value, ok := values_MOTOR_TEST_THROTTLE_TYPE[string(text)]; ok {
+		*e = value
+	} else if value, err := strconv.Atoi(string(text)); err == nil {
+		*e = MOTOR_TEST_THROTTLE_TYPE(value)
+	} else {
 		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MOTOR_TEST_THROTTLE_TYPE) String() string {
-	name, ok := labels_MOTOR_TEST_THROTTLE_TYPE[e]
-	if !ok {
-		return strconv.Itoa(int(e))
+	if name, ok := labels_MOTOR_TEST_THROTTLE_TYPE[e]; ok {
+		return name
 	}
-	return name
+	return strconv.Itoa(int(e))
 }

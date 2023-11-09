@@ -4,6 +4,7 @@ package common
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -41,6 +42,9 @@ var values_SERIAL_CONTROL_FLAG = map[string]SERIAL_CONTROL_FLAG{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e SERIAL_CONTROL_FLAG) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 5; i++ {
 		mask := SERIAL_CONTROL_FLAG(1 << i)
@@ -58,6 +62,8 @@ func (e *SERIAL_CONTROL_FLAG) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_SERIAL_CONTROL_FLAG[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= SERIAL_CONTROL_FLAG(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

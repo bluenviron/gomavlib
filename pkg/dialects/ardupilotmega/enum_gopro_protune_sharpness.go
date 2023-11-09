@@ -32,28 +32,28 @@ var values_GOPRO_PROTUNE_SHARPNESS = map[string]GOPRO_PROTUNE_SHARPNESS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_PROTUNE_SHARPNESS) MarshalText() ([]byte, error) {
-	name, ok := labels_GOPRO_PROTUNE_SHARPNESS[e]
-	if !ok {
-		return nil, fmt.Errorf("invalid value %d", e)
+	if name, ok := labels_GOPRO_PROTUNE_SHARPNESS[e]; ok {
+		return []byte(name), nil
 	}
-	return []byte(name), nil
+	return []byte(strconv.Itoa(int(e))), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_PROTUNE_SHARPNESS) UnmarshalText(text []byte) error {
-	value, ok := values_GOPRO_PROTUNE_SHARPNESS[string(text)]
-	if !ok {
+	if value, ok := values_GOPRO_PROTUNE_SHARPNESS[string(text)]; ok {
+		*e = value
+	} else if value, err := strconv.Atoi(string(text)); err == nil {
+		*e = GOPRO_PROTUNE_SHARPNESS(value)
+	} else {
 		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e GOPRO_PROTUNE_SHARPNESS) String() string {
-	name, ok := labels_GOPRO_PROTUNE_SHARPNESS[e]
-	if !ok {
-		return strconv.Itoa(int(e))
+	if name, ok := labels_GOPRO_PROTUNE_SHARPNESS[e]; ok {
+		return name
 	}
-	return name
+	return strconv.Itoa(int(e))
 }

@@ -73,28 +73,28 @@ var values_CELLULAR_STATUS_FLAG = map[string]CELLULAR_STATUS_FLAG{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CELLULAR_STATUS_FLAG) MarshalText() ([]byte, error) {
-	name, ok := labels_CELLULAR_STATUS_FLAG[e]
-	if !ok {
-		return nil, fmt.Errorf("invalid value %d", e)
+	if name, ok := labels_CELLULAR_STATUS_FLAG[e]; ok {
+		return []byte(name), nil
 	}
-	return []byte(name), nil
+	return []byte(strconv.Itoa(int(e))), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CELLULAR_STATUS_FLAG) UnmarshalText(text []byte) error {
-	value, ok := values_CELLULAR_STATUS_FLAG[string(text)]
-	if !ok {
+	if value, ok := values_CELLULAR_STATUS_FLAG[string(text)]; ok {
+		*e = value
+	} else if value, err := strconv.Atoi(string(text)); err == nil {
+		*e = CELLULAR_STATUS_FLAG(value)
+	} else {
 		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e CELLULAR_STATUS_FLAG) String() string {
-	name, ok := labels_CELLULAR_STATUS_FLAG[e]
-	if !ok {
-		return strconv.Itoa(int(e))
+	if name, ok := labels_CELLULAR_STATUS_FLAG[e]; ok {
+		return name
 	}
-	return name
+	return strconv.Itoa(int(e))
 }

@@ -45,28 +45,28 @@ var values_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT = map[string]UAVIONIX_ADSB_OUT_C
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT) MarshalText() ([]byte, error) {
-	name, ok := labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT[e]
-	if !ok {
-		return nil, fmt.Errorf("invalid value %d", e)
+	if name, ok := labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT[e]; ok {
+		return []byte(name), nil
 	}
-	return []byte(name), nil
+	return []byte(strconv.Itoa(int(e))), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT) UnmarshalText(text []byte) error {
-	value, ok := values_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT[string(text)]
-	if !ok {
+	if value, ok := values_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT[string(text)]; ok {
+		*e = value
+	} else if value, err := strconv.Atoi(string(text)); err == nil {
+		*e = UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT(value)
+	} else {
 		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT) String() string {
-	name, ok := labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT[e]
-	if !ok {
-		return strconv.Itoa(int(e))
+	if name, ok := labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LAT[e]; ok {
+		return name
 	}
-	return name
+	return strconv.Itoa(int(e))
 }

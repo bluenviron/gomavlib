@@ -4,6 +4,7 @@ package common
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -97,6 +98,9 @@ var values_MAV_PROTOCOL_CAPABILITY = map[string]MAV_PROTOCOL_CAPABILITY{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_PROTOCOL_CAPABILITY) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 18; i++ {
 		mask := MAV_PROTOCOL_CAPABILITY(1 << i)
@@ -114,6 +118,8 @@ func (e *MAV_PROTOCOL_CAPABILITY) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_MAV_PROTOCOL_CAPABILITY[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= MAV_PROTOCOL_CAPABILITY(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

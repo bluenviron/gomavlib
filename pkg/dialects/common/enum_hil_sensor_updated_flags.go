@@ -4,6 +4,7 @@ package common
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -81,6 +82,9 @@ var values_HIL_SENSOR_UPDATED_FLAGS = map[string]HIL_SENSOR_UPDATED_FLAGS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e HIL_SENSOR_UPDATED_FLAGS) MarshalText() ([]byte, error) {
+	if e == 0 {
+		return []byte("0"), nil
+	}
 	var names []string
 	for i := 0; i < 15; i++ {
 		mask := HIL_SENSOR_UPDATED_FLAGS(1 << i)
@@ -98,6 +102,8 @@ func (e *HIL_SENSOR_UPDATED_FLAGS) UnmarshalText(text []byte) error {
 	for _, label := range labels {
 		if value, ok := values_HIL_SENSOR_UPDATED_FLAGS[label]; ok {
 			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= HIL_SENSOR_UPDATED_FLAGS(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}

@@ -189,28 +189,28 @@ var values_MAV_SENSOR_ORIENTATION = map[string]MAV_SENSOR_ORIENTATION{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_SENSOR_ORIENTATION) MarshalText() ([]byte, error) {
-	name, ok := labels_MAV_SENSOR_ORIENTATION[e]
-	if !ok {
-		return nil, fmt.Errorf("invalid value %d", e)
+	if name, ok := labels_MAV_SENSOR_ORIENTATION[e]; ok {
+		return []byte(name), nil
 	}
-	return []byte(name), nil
+	return []byte(strconv.Itoa(int(e))), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_SENSOR_ORIENTATION) UnmarshalText(text []byte) error {
-	value, ok := values_MAV_SENSOR_ORIENTATION[string(text)]
-	if !ok {
+	if value, ok := values_MAV_SENSOR_ORIENTATION[string(text)]; ok {
+		*e = value
+	} else if value, err := strconv.Atoi(string(text)); err == nil {
+		*e = MAV_SENSOR_ORIENTATION(value)
+	} else {
 		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e MAV_SENSOR_ORIENTATION) String() string {
-	name, ok := labels_MAV_SENSOR_ORIENTATION[e]
-	if !ok {
-		return strconv.Itoa(int(e))
+	if name, ok := labels_MAV_SENSOR_ORIENTATION[e]; ok {
+		return name
 	}
-	return name
+	return strconv.Itoa(int(e))
 }

@@ -32,28 +32,28 @@ var values_GIMBAL_AXIS_CALIBRATION_STATUS = map[string]GIMBAL_AXIS_CALIBRATION_S
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GIMBAL_AXIS_CALIBRATION_STATUS) MarshalText() ([]byte, error) {
-	name, ok := labels_GIMBAL_AXIS_CALIBRATION_STATUS[e]
-	if !ok {
-		return nil, fmt.Errorf("invalid value %d", e)
+	if name, ok := labels_GIMBAL_AXIS_CALIBRATION_STATUS[e]; ok {
+		return []byte(name), nil
 	}
-	return []byte(name), nil
+	return []byte(strconv.Itoa(int(e))), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GIMBAL_AXIS_CALIBRATION_STATUS) UnmarshalText(text []byte) error {
-	value, ok := values_GIMBAL_AXIS_CALIBRATION_STATUS[string(text)]
-	if !ok {
+	if value, ok := values_GIMBAL_AXIS_CALIBRATION_STATUS[string(text)]; ok {
+		*e = value
+	} else if value, err := strconv.Atoi(string(text)); err == nil {
+		*e = GIMBAL_AXIS_CALIBRATION_STATUS(value)
+	} else {
 		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = value
 	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e GIMBAL_AXIS_CALIBRATION_STATUS) String() string {
-	name, ok := labels_GIMBAL_AXIS_CALIBRATION_STATUS[e]
-	if !ok {
-		return strconv.Itoa(int(e))
+	if name, ok := labels_GIMBAL_AXIS_CALIBRATION_STATUS[e]; ok {
+		return name
 	}
-	return name
+	return strconv.Itoa(int(e))
 }

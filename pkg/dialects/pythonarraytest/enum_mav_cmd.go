@@ -345,6 +345,8 @@ const (
 	MAV_CMD_FIXED_MAG_CAL_YAW MAV_CMD = common.MAV_CMD_FIXED_MAG_CAL_YAW
 	// Command to operate winch.
 	MAV_CMD_DO_WINCH MAV_CMD = common.MAV_CMD_DO_WINCH
+	// Provide an external position estimate for use when dead-reckoning. This is meant to be used for occasional position resets that may be provided by a external system such as a remote pilot using landmarks over a video link.
+	MAV_CMD_EXTERNAL_POSITION_ESTIMATE MAV_CMD = common.MAV_CMD_EXTERNAL_POSITION_ESTIMATE
 	// User defined waypoint item. Ground Station will show the Vehicle as flying through this item.
 	MAV_CMD_WAYPOINT_USER_1 MAV_CMD = common.MAV_CMD_WAYPOINT_USER_1
 	// User defined waypoint item. Ground Station will show the Vehicle as flying through this item.

@@ -346,6 +346,8 @@ const (
 	MAV_CMD_FIXED_MAG_CAL_YAW MAV_CMD = 42006
 	// Command to operate winch.
 	MAV_CMD_DO_WINCH MAV_CMD = 42600
+	// Provide an external position estimate for use when dead-reckoning. This is meant to be used for occasional position resets that may be provided by a external system such as a remote pilot using landmarks over a video link.
+	MAV_CMD_EXTERNAL_POSITION_ESTIMATE MAV_CMD = 43003
 	// User defined waypoint item. Ground Station will show the Vehicle as flying through this item.
 	MAV_CMD_WAYPOINT_USER_1 MAV_CMD = 31000
 	// User defined waypoint item. Ground Station will show the Vehicle as flying through this item.
@@ -441,8 +443,6 @@ const (
 	MAV_CMD_GUIDED_CHANGE_ALTITUDE MAV_CMD = 43001
 	// Change to target heading at a given rate, overriding previous heading/s. This slews the vehicle at a controllable rate between it's previous heading and the new one. (affects GUIDED only. Exiting GUIDED returns aircraft to normal behaviour defined elsewhere. Designed for onboard companion-computer command-and-control, not normally operator/GCS control.)
 	MAV_CMD_GUIDED_CHANGE_HEADING MAV_CMD = 43002
-	// Provide an external position estimate for use when dead-reckoning. This is meant to be used for occasional position resets that may be provided by a external system such as a remote pilot using landmarks over a video link.
-	MAV_CMD_EXTERNAL_POSITION_ESTIMATE MAV_CMD = 43003
 	// Command to a gimbal manager to control the gimbal tilt and pan angles. It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. A gimbal device is never to react to this command.
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW MAV_CMD = 60002
 	// Command to configure a gimbal manager. A gimbal device is never to react to this command. The selected profile is reported in the STORM32_GIMBAL_MANAGER_STATUS message.
@@ -595,6 +595,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_PAYLOAD_CONTROL_DEPLOY:                     "MAV_CMD_PAYLOAD_CONTROL_DEPLOY",
 	MAV_CMD_FIXED_MAG_CAL_YAW:                          "MAV_CMD_FIXED_MAG_CAL_YAW",
 	MAV_CMD_DO_WINCH:                                   "MAV_CMD_DO_WINCH",
+	MAV_CMD_EXTERNAL_POSITION_ESTIMATE:                 "MAV_CMD_EXTERNAL_POSITION_ESTIMATE",
 	MAV_CMD_WAYPOINT_USER_1:                            "MAV_CMD_WAYPOINT_USER_1",
 	MAV_CMD_WAYPOINT_USER_2:                            "MAV_CMD_WAYPOINT_USER_2",
 	MAV_CMD_WAYPOINT_USER_3:                            "MAV_CMD_WAYPOINT_USER_3",
@@ -642,7 +643,6 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_GUIDED_CHANGE_SPEED:                        "MAV_CMD_GUIDED_CHANGE_SPEED",
 	MAV_CMD_GUIDED_CHANGE_ALTITUDE:                     "MAV_CMD_GUIDED_CHANGE_ALTITUDE",
 	MAV_CMD_GUIDED_CHANGE_HEADING:                      "MAV_CMD_GUIDED_CHANGE_HEADING",
-	MAV_CMD_EXTERNAL_POSITION_ESTIMATE:                 "MAV_CMD_EXTERNAL_POSITION_ESTIMATE",
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW: "MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW",
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP:            "MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP",
 	MAV_CMD_QSHOT_DO_CONFIGURE:                         "MAV_CMD_QSHOT_DO_CONFIGURE",
@@ -792,6 +792,7 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_PAYLOAD_CONTROL_DEPLOY":                     MAV_CMD_PAYLOAD_CONTROL_DEPLOY,
 	"MAV_CMD_FIXED_MAG_CAL_YAW":                          MAV_CMD_FIXED_MAG_CAL_YAW,
 	"MAV_CMD_DO_WINCH":                                   MAV_CMD_DO_WINCH,
+	"MAV_CMD_EXTERNAL_POSITION_ESTIMATE":                 MAV_CMD_EXTERNAL_POSITION_ESTIMATE,
 	"MAV_CMD_WAYPOINT_USER_1":                            MAV_CMD_WAYPOINT_USER_1,
 	"MAV_CMD_WAYPOINT_USER_2":                            MAV_CMD_WAYPOINT_USER_2,
 	"MAV_CMD_WAYPOINT_USER_3":                            MAV_CMD_WAYPOINT_USER_3,
@@ -839,7 +840,6 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_GUIDED_CHANGE_SPEED":                        MAV_CMD_GUIDED_CHANGE_SPEED,
 	"MAV_CMD_GUIDED_CHANGE_ALTITUDE":                     MAV_CMD_GUIDED_CHANGE_ALTITUDE,
 	"MAV_CMD_GUIDED_CHANGE_HEADING":                      MAV_CMD_GUIDED_CHANGE_HEADING,
-	"MAV_CMD_EXTERNAL_POSITION_ESTIMATE":                 MAV_CMD_EXTERNAL_POSITION_ESTIMATE,
 	"MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW": MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW,
 	"MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP":            MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP,
 	"MAV_CMD_QSHOT_DO_CONFIGURE":                         MAV_CMD_QSHOT_DO_CONFIGURE,

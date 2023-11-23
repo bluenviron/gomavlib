@@ -346,6 +346,8 @@ const (
 	MAV_CMD_FIXED_MAG_CAL_YAW MAV_CMD = 42006
 	// Command to operate winch.
 	MAV_CMD_DO_WINCH MAV_CMD = 42600
+	// Provide an external position estimate for use when dead-reckoning. This is meant to be used for occasional position resets that may be provided by a external system such as a remote pilot using landmarks over a video link.
+	MAV_CMD_EXTERNAL_POSITION_ESTIMATE MAV_CMD = 43003
 	// User defined waypoint item. Ground Station will show the Vehicle as flying through this item.
 	MAV_CMD_WAYPOINT_USER_1 MAV_CMD = 31000
 	// User defined waypoint item. Ground Station will show the Vehicle as flying through this item.
@@ -441,8 +443,6 @@ const (
 	MAV_CMD_GUIDED_CHANGE_ALTITUDE MAV_CMD = 43001
 	// Change to target heading at a given rate, overriding previous heading/s. This slews the vehicle at a controllable rate between it's previous heading and the new one. (affects GUIDED only. Exiting GUIDED returns aircraft to normal behaviour defined elsewhere. Designed for onboard companion-computer command-and-control, not normally operator/GCS control.)
 	MAV_CMD_GUIDED_CHANGE_HEADING MAV_CMD = 43002
-	// Provide an external position estimate for use when dead-reckoning. This is meant to be used for occasional position resets that may be provided by a external system such as a remote pilot using landmarks over a video link.
-	MAV_CMD_EXTERNAL_POSITION_ESTIMATE MAV_CMD = 43003
 	// Mission command to reset Maximum Power Point Tracker (MPPT)
 	MAV_CMD_RESET_MPPT MAV_CMD = 40001
 	// Mission command to perform a power cycle on payload
@@ -455,13 +455,6 @@ const (
 	MAV_CMD_DO_FIGURE_EIGHT MAV_CMD = 35
 	// Request to start or end a parameter transaction. Multiple kinds of transport layers can be used to exchange parameters in the transaction (param, param_ext and mavftp). The command response can either be a success/failure or an in progress in case the receiving side takes some time to apply the parameters.
 	MAV_CMD_PARAM_TRANSACTION MAV_CMD = 900
-	// Sets the action on geofence breach.
-	// If sent using the command protocol this sets the system-default geofence action.
-	// As part of a mission protocol plan it sets the fence action for the next complete geofence definition *after* the command.
-	// Note: A fence action defined in a plan will override the default system setting (even if the system-default is `FENCE_ACTION_NONE`).
-	// Note: Every geofence in a plan can have its own action; if no fence action is defined for a particular fence the system-default will be used.
-	// Note: The flight stack should reject a plan or command that uses a geofence action that it does not support and send a STATUSTEXT with the reason.
-	MAV_CMD_SET_FENCE_BREACH_ACTION MAV_CMD = 5010
 	// Request a target system to start an upgrade of one (or all) of its components.
 	// For example, the command might be sent to a companion computer to cause it to upgrade a connected flight controller.
 	// The system doing the upgrade will report progress using the normal command protocol sequence for a long running operation.
@@ -648,6 +641,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_PAYLOAD_CONTROL_DEPLOY:                     "MAV_CMD_PAYLOAD_CONTROL_DEPLOY",
 	MAV_CMD_FIXED_MAG_CAL_YAW:                          "MAV_CMD_FIXED_MAG_CAL_YAW",
 	MAV_CMD_DO_WINCH:                                   "MAV_CMD_DO_WINCH",
+	MAV_CMD_EXTERNAL_POSITION_ESTIMATE:                 "MAV_CMD_EXTERNAL_POSITION_ESTIMATE",
 	MAV_CMD_WAYPOINT_USER_1:                            "MAV_CMD_WAYPOINT_USER_1",
 	MAV_CMD_WAYPOINT_USER_2:                            "MAV_CMD_WAYPOINT_USER_2",
 	MAV_CMD_WAYPOINT_USER_3:                            "MAV_CMD_WAYPOINT_USER_3",
@@ -695,12 +689,10 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_GUIDED_CHANGE_SPEED:                        "MAV_CMD_GUIDED_CHANGE_SPEED",
 	MAV_CMD_GUIDED_CHANGE_ALTITUDE:                     "MAV_CMD_GUIDED_CHANGE_ALTITUDE",
 	MAV_CMD_GUIDED_CHANGE_HEADING:                      "MAV_CMD_GUIDED_CHANGE_HEADING",
-	MAV_CMD_EXTERNAL_POSITION_ESTIMATE:                 "MAV_CMD_EXTERNAL_POSITION_ESTIMATE",
 	MAV_CMD_RESET_MPPT:                                 "MAV_CMD_RESET_MPPT",
 	MAV_CMD_PAYLOAD_CONTROL:                            "MAV_CMD_PAYLOAD_CONTROL",
 	MAV_CMD_DO_FIGURE_EIGHT:                            "MAV_CMD_DO_FIGURE_EIGHT",
 	MAV_CMD_PARAM_TRANSACTION:                          "MAV_CMD_PARAM_TRANSACTION",
-	MAV_CMD_SET_FENCE_BREACH_ACTION:                    "MAV_CMD_SET_FENCE_BREACH_ACTION",
 	MAV_CMD_DO_UPGRADE:                                 "MAV_CMD_DO_UPGRADE",
 	MAV_CMD_GROUP_START:                                "MAV_CMD_GROUP_START",
 	MAV_CMD_GROUP_END:                                  "MAV_CMD_GROUP_END",
@@ -862,6 +854,7 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_PAYLOAD_CONTROL_DEPLOY":                     MAV_CMD_PAYLOAD_CONTROL_DEPLOY,
 	"MAV_CMD_FIXED_MAG_CAL_YAW":                          MAV_CMD_FIXED_MAG_CAL_YAW,
 	"MAV_CMD_DO_WINCH":                                   MAV_CMD_DO_WINCH,
+	"MAV_CMD_EXTERNAL_POSITION_ESTIMATE":                 MAV_CMD_EXTERNAL_POSITION_ESTIMATE,
 	"MAV_CMD_WAYPOINT_USER_1":                            MAV_CMD_WAYPOINT_USER_1,
 	"MAV_CMD_WAYPOINT_USER_2":                            MAV_CMD_WAYPOINT_USER_2,
 	"MAV_CMD_WAYPOINT_USER_3":                            MAV_CMD_WAYPOINT_USER_3,
@@ -909,12 +902,10 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_GUIDED_CHANGE_SPEED":                        MAV_CMD_GUIDED_CHANGE_SPEED,
 	"MAV_CMD_GUIDED_CHANGE_ALTITUDE":                     MAV_CMD_GUIDED_CHANGE_ALTITUDE,
 	"MAV_CMD_GUIDED_CHANGE_HEADING":                      MAV_CMD_GUIDED_CHANGE_HEADING,
-	"MAV_CMD_EXTERNAL_POSITION_ESTIMATE":                 MAV_CMD_EXTERNAL_POSITION_ESTIMATE,
 	"MAV_CMD_RESET_MPPT":                                 MAV_CMD_RESET_MPPT,
 	"MAV_CMD_PAYLOAD_CONTROL":                            MAV_CMD_PAYLOAD_CONTROL,
 	"MAV_CMD_DO_FIGURE_EIGHT":                            MAV_CMD_DO_FIGURE_EIGHT,
 	"MAV_CMD_PARAM_TRANSACTION":                          MAV_CMD_PARAM_TRANSACTION,
-	"MAV_CMD_SET_FENCE_BREACH_ACTION":                    MAV_CMD_SET_FENCE_BREACH_ACTION,
 	"MAV_CMD_DO_UPGRADE":                                 MAV_CMD_DO_UPGRADE,
 	"MAV_CMD_GROUP_START":                                MAV_CMD_GROUP_START,
 	"MAV_CMD_GROUP_END":                                  MAV_CMD_GROUP_END,

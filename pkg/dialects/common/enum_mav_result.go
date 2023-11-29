@@ -25,9 +25,9 @@ const (
 	MAV_RESULT_IN_PROGRESS MAV_RESULT = 5
 	// Command has been cancelled (as a result of receiving a COMMAND_CANCEL message).
 	MAV_RESULT_CANCELLED MAV_RESULT = 6
-	// Command is valid, but it is only accepted when sent as a COMMAND_LONG (as it has float values for params 5 and 6).
+	// Command is only accepted when sent as a COMMAND_LONG.
 	MAV_RESULT_COMMAND_LONG_ONLY MAV_RESULT = 7
-	// Command is valid, but it is only accepted when sent as a COMMAND_INT (as it encodes a location in params 5, 6 and 7, and hence requires a reference MAV_FRAME).
+	// Command is only accepted when sent as a COMMAND_INT.
 	MAV_RESULT_COMMAND_INT_ONLY MAV_RESULT = 8
 	// Command is invalid because a frame is required and the specified frame is not supported.
 	MAV_RESULT_COMMAND_UNSUPPORTED_MAV_FRAME MAV_RESULT = 9

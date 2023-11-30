@@ -14,6 +14,12 @@ type MessageMissionCurrent struct {
 	MissionState MISSION_STATE `mavenum:"uint8" mavext:"true"`
 	// Vehicle is in a mode that can execute mission items or suspended. 0: Unknown, 1: In mission mode, 2: Suspended (not in mission mode).
 	MissionMode uint8 `mavext:"true"`
+	// Id of current on-vehicle mission plan, or 0 if IDs are not supported or there is no mission loaded. GCS can use this to track changes to the mission plan type. The same value is returned on mission upload (in the MISSION_ACK).
+	MissionId uint32 `mavext:"true"`
+	// Id of current on-vehicle fence plan, or 0 if IDs are not supported or there is no fence loaded. GCS can use this to track changes to the fence plan type. The same value is returned on fence upload (in the MISSION_ACK).
+	FenceId uint32 `mavext:"true"`
+	// Id of current on-vehicle rally point plan, or 0 if IDs are not supported or there are no rally points loaded. GCS can use this to track changes to the rally point plan type. The same value is returned on rally point upload (in the MISSION_ACK).
+	RallyPointsId uint32 `mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

@@ -255,6 +255,10 @@ var dial = &dialect.Dialect{
 		// csairlink
 		&MessageAirlinkAuth{},
 		&MessageAirlinkAuthResponse{},
+		&MessageAirlinkEyeGsHolePushRequest{},
+		&MessageAirlinkEyeGsHolePushResponse{},
+		&MessageAirlinkEyeHp{},
+		&MessageAirlinkEyeTurnInit{},
 		// ardupilotmega
 		&MessageSensorOffsets{},
 		&MessageSetMagOffsets{},

@@ -108,6 +108,7 @@ func (e *HIL_SENSOR_UPDATED_FLAGS) UnmarshalText(text []byte) error {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
+	*e = mask
 	return nil
 }
 

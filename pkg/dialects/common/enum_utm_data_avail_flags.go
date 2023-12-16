@@ -80,6 +80,7 @@ func (e *UTM_DATA_AVAIL_FLAGS) UnmarshalText(text []byte) error {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
+	*e = mask
 	return nil
 }
 

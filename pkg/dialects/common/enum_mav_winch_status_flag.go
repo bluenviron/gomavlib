@@ -104,6 +104,7 @@ func (e *MAV_WINCH_STATUS_FLAG) UnmarshalText(text []byte) error {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
+	*e = mask
 	return nil
 }
 

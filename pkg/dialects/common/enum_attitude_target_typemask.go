@@ -72,6 +72,7 @@ func (e *ATTITUDE_TARGET_TYPEMASK) UnmarshalText(text []byte) error {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
+	*e = mask
 	return nil
 }
 

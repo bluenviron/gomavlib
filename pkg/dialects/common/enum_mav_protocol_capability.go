@@ -124,6 +124,7 @@ func (e *MAV_PROTOCOL_CAPABILITY) UnmarshalText(text []byte) error {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
+	*e = mask
 	return nil
 }
 

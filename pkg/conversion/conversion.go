@@ -150,6 +150,7 @@ func (e *{{ .Enum.Name }}) UnmarshalText(text []byte) error {
             return fmt.Errorf("invalid label '%s'", label)
         }
     }
+	*e = mask
 {{- else }}
     if value, ok := values_{{ .Enum.Name }}[string(text)]; ok {
        *e = value

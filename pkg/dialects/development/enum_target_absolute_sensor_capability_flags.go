@@ -63,6 +63,7 @@ func (e *TARGET_ABSOLUTE_SENSOR_CAPABILITY_FLAGS) UnmarshalText(text []byte) err
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
+	*e = mask
 	return nil
 }
 

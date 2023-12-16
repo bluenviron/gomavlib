@@ -92,6 +92,7 @@ func (e *EKF_STATUS_FLAGS) UnmarshalText(text []byte) error {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
+	*e = mask
 	return nil
 }
 

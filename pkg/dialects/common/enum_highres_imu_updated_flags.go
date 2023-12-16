@@ -108,6 +108,7 @@ func (e *HIGHRES_IMU_UPDATED_FLAGS) UnmarshalText(text []byte) error {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
+	*e = mask
 	return nil
 }
 

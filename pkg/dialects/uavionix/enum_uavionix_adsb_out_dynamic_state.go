@@ -63,6 +63,7 @@ func (e *UAVIONIX_ADSB_OUT_DYNAMIC_STATE) UnmarshalText(text []byte) error {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
+	*e = mask
 	return nil
 }
 

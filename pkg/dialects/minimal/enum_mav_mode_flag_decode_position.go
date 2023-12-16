@@ -80,6 +80,7 @@ func (e *MAV_MODE_FLAG_DECODE_POSITION) UnmarshalText(text []byte) error {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
+	*e = mask
 	return nil
 }
 

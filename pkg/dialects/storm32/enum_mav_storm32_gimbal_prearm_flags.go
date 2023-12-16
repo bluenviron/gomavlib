@@ -100,6 +100,7 @@ func (e *MAV_STORM32_GIMBAL_PREARM_FLAGS) UnmarshalText(text []byte) error {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
+	*e = mask
 	return nil
 }
 

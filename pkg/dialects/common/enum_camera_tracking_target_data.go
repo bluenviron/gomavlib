@@ -64,6 +64,7 @@ func (e *CAMERA_TRACKING_TARGET_DATA) UnmarshalText(text []byte) error {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
+	*e = mask
 	return nil
 }
 

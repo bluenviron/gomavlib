@@ -59,6 +59,7 @@ func (e *MAV_MODE_PROPERTY) UnmarshalText(text []byte) error {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
+	*e = mask
 	return nil
 }
 

@@ -79,6 +79,7 @@ func (e *GPS_INPUT_IGNORE_FLAGS) UnmarshalText(text []byte) error {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
+	*e = mask
 	return nil
 }
 

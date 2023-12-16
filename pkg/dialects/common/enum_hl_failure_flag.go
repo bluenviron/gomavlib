@@ -104,6 +104,7 @@ func (e *HL_FAILURE_FLAG) UnmarshalText(text []byte) error {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
+	*e = mask
 	return nil
 }
 

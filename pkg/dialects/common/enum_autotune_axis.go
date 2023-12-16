@@ -64,6 +64,7 @@ func (e *AUTOTUNE_AXIS) UnmarshalText(text []byte) error {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
+	*e = mask
 	return nil
 }
 

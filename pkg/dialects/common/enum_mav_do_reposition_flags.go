@@ -52,6 +52,7 @@ func (e *MAV_DO_REPOSITION_FLAGS) UnmarshalText(text []byte) error {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
+	*e = mask
 	return nil
 }
 

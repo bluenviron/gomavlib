@@ -52,6 +52,7 @@ func (e *MAV_SYS_STATUS_SENSOR_EXTENDED) UnmarshalText(text []byte) error {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
 	}
+	*e = mask
 	return nil
 }
 

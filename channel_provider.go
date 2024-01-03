@@ -1,6 +1,7 @@
 package gomavlib
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -35,7 +36,7 @@ func (cp *channelProvider) run() {
 	for {
 		label, rwc, err := cp.eca.provide()
 		if err != nil {
-			if err != errTerminated {
+			if !errors.Is(err, errTerminated) {
 				panic("errTerminated is the only error allowed here")
 			}
 			break
@@ -43,7 +44,7 @@ func (cp *channelProvider) run() {
 
 		ch, err := newChannel(cp.n, cp.eca, label, rwc)
 		if err != nil {
-			panic(fmt.Errorf("newChannel unexpected error: %s", err))
+			panic(fmt.Errorf("newChannel unexpected error: %w", err))
 		}
 
 		cp.n.newChannel(ch)

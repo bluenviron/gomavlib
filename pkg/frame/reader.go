@@ -22,12 +22,12 @@ type ReadError struct {
 	str string
 }
 
-func (e *ReadError) Error() string {
+func (e ReadError) Error() string {
 	return e.str
 }
 
-func newError(format string, args ...interface{}) *ReadError {
-	return &ReadError{
+func newError(format string, args ...interface{}) ReadError {
+	return ReadError{
 		str: fmt.Sprintf(format, args...),
 	}
 }

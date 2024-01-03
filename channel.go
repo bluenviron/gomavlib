@@ -3,6 +3,7 @@ package gomavlib
 import (
 	"context"
 	"crypto/rand"
+	"errors"
 	"io"
 
 	"github.com/bluenviron/gomavlib/v2/pkg/frame"
@@ -141,7 +142,8 @@ func (ch *Channel) runReader(readerDone chan struct{}) {
 	for {
 		fr, err := ch.frw.Read()
 		if err != nil {
-			if _, ok := err.(*frame.ReadError); ok {
+			var eerr frame.ReadError
+			if errors.As(err, &eerr) {
 				ch.n.pushEvent(&EventParseError{err, ch})
 				continue
 			}

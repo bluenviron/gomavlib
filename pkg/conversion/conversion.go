@@ -319,7 +319,7 @@ func processDefinition(
 
 	def, err := definitionDecode(content)
 	if err != nil {
-		return nil, fmt.Errorf("unable to decode: %s", err)
+		return nil, fmt.Errorf("unable to decode: %w", err)
 	}
 
 	addrPath, _ := filepath.Split(defAddr)
@@ -393,14 +393,14 @@ func getDefinition(isRemote bool, defAddr string) ([]byte, error) {
 	if isRemote {
 		byt, err := download(defAddr)
 		if err != nil {
-			return nil, fmt.Errorf("unable to download: %s", err)
+			return nil, fmt.Errorf("unable to download: %w", err)
 		}
 		return byt, nil
 	}
 
 	byt, err := os.ReadFile(defAddr)
 	if err != nil {
-		return nil, fmt.Errorf("unable to open: %s", err)
+		return nil, fmt.Errorf("unable to open: %w", err)
 	}
 	return byt, nil
 }

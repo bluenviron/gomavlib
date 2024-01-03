@@ -24,7 +24,7 @@ func NewReadWriter(d *Dialect) (*ReadWriter, error) {
 
 		de, err := message.NewReadWriter(m)
 		if err != nil {
-			return nil, fmt.Errorf("message %T: %s", m, err)
+			return nil, fmt.Errorf("message %T: %w", m, err)
 		}
 
 		rw.messageRWs[m.GetID()] = de

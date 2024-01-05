@@ -56,7 +56,7 @@ const (
 	MAV_TYPE_VTOL_TILTROTOR MAV_TYPE = minimal.MAV_TYPE_VTOL_TILTROTOR
 	// VTOL with separate fixed rotors for hover and cruise flight. Fuselage and wings stay (nominally) horizontal in all flight phases.
 	MAV_TYPE_VTOL_FIXEDROTOR MAV_TYPE = minimal.MAV_TYPE_VTOL_FIXEDROTOR
-	// Tailsitter VTOL. Fuselage and wings orientation changes depending on flight phase: vertical for hover, horizontal for cruise. Use more specific VTOL MAV_TYPE_VTOL_DUOROTOR or MAV_TYPE_VTOL_QUADROTOR if appropriate.
+	// Tailsitter VTOL. Fuselage and wings orientation changes depending on flight phase: vertical for hover, horizontal for cruise. Use more specific VTOL MAV_TYPE_VTOL_TAILSITTER_DUOROTOR or MAV_TYPE_VTOL_TAILSITTER_QUADROTOR if appropriate.
 	MAV_TYPE_VTOL_TAILSITTER MAV_TYPE = minimal.MAV_TYPE_VTOL_TAILSITTER
 	// Tiltwing VTOL. Fuselage stays horizontal in all flight phases. The whole wing, along with any attached engine, can tilt between vertical and horizontal mode.
 	MAV_TYPE_VTOL_TILTWING MAV_TYPE = minimal.MAV_TYPE_VTOL_TILTWING

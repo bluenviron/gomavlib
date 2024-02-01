@@ -6,6 +6,9 @@ import (
 	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
 )
 
-// Information about flight since last arming.
+// Flight information.
+// This includes time since boot for arm, takeoff, and land, and a flight number.
+// Takeoff and landing values reset to zero on arm.
 // This can be requested using MAV_CMD_REQUEST_MESSAGE.
+// Note, some fields are misnamed - timestamps are from boot (not UTC) and the flight_uuid is a sequence number.
 type MessageFlightInformation = common.MessageFlightInformation

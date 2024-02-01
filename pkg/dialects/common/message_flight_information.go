@@ -2,17 +2,22 @@
 //nolint:revive,misspell,govet,lll
 package common
 
-// Information about flight since last arming.
+// Flight information.
+// This includes time since boot for arm, takeoff, and land, and a flight number.
+// Takeoff and landing values reset to zero on arm.
 // This can be requested using MAV_CMD_REQUEST_MESSAGE.
+// Note, some fields are misnamed - timestamps are from boot (not UTC) and the flight_uuid is a sequence number.
 type MessageFlightInformation struct {
 	// Timestamp (time since system boot).
 	TimeBootMs uint32
-	// Timestamp at arming (time since UNIX epoch) in UTC, 0 for unknown
+	// Timestamp at arming (since system boot). Set to 0 on boot. Set value on arming. Note, field is misnamed UTC.
 	ArmingTimeUtc uint64
-	// Timestamp at takeoff (time since UNIX epoch) in UTC, 0 for unknown
+	// Timestamp at takeoff (since system boot). Set to 0 at boot and on arming. Note, field is misnamed UTC.
 	TakeoffTimeUtc uint64
-	// Universally unique identifier (UUID) of flight, should correspond to name of log files
+	// Flight number. Note, field is misnamed UUID.
 	FlightUuid uint64
+	// Timestamp at landing (in ms since system boot). Set to 0 at boot and on arming.
+	LandingTime uint32 `mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

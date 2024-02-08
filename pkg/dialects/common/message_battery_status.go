@@ -2,7 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package common
 
-// Battery information. Updates GCS with flight controller battery status. Smart batteries also use this message, but may additionally send SMART_BATTERY_INFO.
+// Battery information. Updates GCS with flight controller battery status. Smart batteries also use this message, but may additionally send BATTERY_INFO.
 type MessageBatteryStatus struct {
 	// Battery ID
 	Id uint8

@@ -8,6 +8,8 @@ type MessageComponentInformationBasic struct {
 	TimeBootMs uint32
 	// Component capability flags
 	Capabilities MAV_PROTOCOL_CAPABILITY `mavenum:"uint64"`
+	// Date of manufacture as a UNIX Epoch time (since 1.1.1970) in seconds.
+	TimeManufactureS uint32
 	// Name of the component vendor. Needs to be zero terminated. The field is optional and can be empty/all zeros.
 	VendorName string `mavlen:"32"`
 	// Name of the component model. Needs to be zero terminated. The field is optional and can be empty/all zeros.

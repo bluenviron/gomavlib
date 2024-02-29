@@ -8,7 +8,7 @@ import (
 )
 
 // Result of mission operation (in a MISSION_ACK message).
-type MAV_MISSION_RESULT uint32
+type MAV_MISSION_RESULT uint64
 
 const (
 	// mission accepted OK

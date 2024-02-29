@@ -8,7 +8,7 @@ import (
 )
 
 // Direction of VTOL transition
-type VTOL_TRANSITION_HEADING uint32
+type VTOL_TRANSITION_HEADING uint64
 
 const (
 	// Respect the heading configuration of the vehicle.

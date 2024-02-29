@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_ODID_STATUS uint32
+type MAV_ODID_STATUS uint64
 
 const (
 	// The status of the (UA) Unmanned Aircraft is undefined.

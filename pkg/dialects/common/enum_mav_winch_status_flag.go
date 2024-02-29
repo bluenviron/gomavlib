@@ -9,7 +9,7 @@ import (
 )
 
 // Winch status flags used in WINCH_STATUS
-type MAV_WINCH_STATUS_FLAG uint32
+type MAV_WINCH_STATUS_FLAG uint64
 
 const (
 	// Winch is healthy

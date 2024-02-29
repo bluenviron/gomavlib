@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_STATE uint32
+type MAV_STATE uint64
 
 const (
 	// Uninitialized system, state is unknown.

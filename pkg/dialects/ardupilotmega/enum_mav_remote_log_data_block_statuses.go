@@ -8,7 +8,7 @@ import (
 )
 
 // Possible remote log data block statuses.
-type MAV_REMOTE_LOG_DATA_BLOCK_STATUSES uint32
+type MAV_REMOTE_LOG_DATA_BLOCK_STATUSES uint64
 
 const (
 	// This block has NOT been received.

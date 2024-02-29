@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_ODID_CATEGORY_EU uint32
+type MAV_ODID_CATEGORY_EU uint64
 
 const (
 	// The category for the UA, according to the EU specification, is undeclared.

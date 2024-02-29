@@ -8,7 +8,7 @@ import (
 )
 
 // Aircraft-rated danger from this threat.
-type MAV_COLLISION_THREAT_LEVEL uint32
+type MAV_COLLISION_THREAT_LEVEL uint64
 
 const (
 	// Not a threat

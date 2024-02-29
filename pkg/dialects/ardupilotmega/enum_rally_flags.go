@@ -9,7 +9,7 @@ import (
 )
 
 // Flags in RALLY_POINT message.
-type RALLY_FLAGS uint32
+type RALLY_FLAGS uint64
 
 const (
 	// Flag set when requiring favorable winds for landing.

@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GOPRO_COMMAND uint32
+type GOPRO_COMMAND uint64
 
 const (
 	// (Get/Set).

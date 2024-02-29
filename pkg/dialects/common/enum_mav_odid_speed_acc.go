@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_ODID_SPEED_ACC uint32
+type MAV_ODID_SPEED_ACC uint64
 
 const (
 	// The speed accuracy is unknown.

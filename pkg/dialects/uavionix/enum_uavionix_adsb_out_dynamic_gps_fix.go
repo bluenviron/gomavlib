@@ -8,7 +8,7 @@ import (
 )
 
 // Status for ADS-B transponder dynamic input
-type UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX uint32
+type UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX uint64
 
 const (
 	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_0 UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = 0

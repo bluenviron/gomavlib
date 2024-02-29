@@ -8,7 +8,7 @@ import (
 )
 
 // Enumeration for battery charge states.
-type MAV_BATTERY_CHARGE_STATE uint32
+type MAV_BATTERY_CHARGE_STATE uint64
 
 const (
 	// Low battery state is not provided

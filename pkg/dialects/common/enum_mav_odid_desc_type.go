@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_ODID_DESC_TYPE uint32
+type MAV_ODID_DESC_TYPE uint64
 
 const (
 	// Optional free-form text description of the purpose of the flight.

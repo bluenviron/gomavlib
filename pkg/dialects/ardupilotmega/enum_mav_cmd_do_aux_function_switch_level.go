@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL uint32
+type MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL uint64
 
 const (
 	// Switch Low.

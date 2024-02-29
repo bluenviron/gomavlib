@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GOPRO_CAPTURE_MODE uint32
+type GOPRO_CAPTURE_MODE uint64
 
 const (
 	// Video mode.

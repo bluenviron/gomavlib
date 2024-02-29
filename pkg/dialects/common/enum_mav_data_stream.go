@@ -10,7 +10,7 @@ import (
 // A data stream is not a fixed set of messages, but rather a
 // recommendation to the autopilot software. Individual autopilots may or may not obey
 // the recommended messages.
-type MAV_DATA_STREAM uint32
+type MAV_DATA_STREAM uint64
 
 const (
 	// Enable all data streams

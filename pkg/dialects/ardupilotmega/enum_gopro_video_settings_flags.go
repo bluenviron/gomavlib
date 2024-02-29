@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-type GOPRO_VIDEO_SETTINGS_FLAGS uint32
+type GOPRO_VIDEO_SETTINGS_FLAGS uint64
 
 const (
 	// 0=NTSC, 1=PAL.

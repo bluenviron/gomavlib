@@ -8,7 +8,7 @@ import (
 )
 
 // A mapping of sub flight modes for custom_mode field of heartbeat.
-type SUB_MODE uint32
+type SUB_MODE uint64
 
 const (
 	SUB_MODE_STABILIZE SUB_MODE = 0

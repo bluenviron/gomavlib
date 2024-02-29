@@ -8,15 +8,14 @@ import (
 )
 
 type (
-	MAV_TYPE              uint32 //nolint:revive
-	MAV_AUTOPILOT         uint32 //nolint:revive
-	MAV_MODE_FLAG         uint32 //nolint:revive
-	MAV_STATE             uint32 //nolint:revive
-	MAV_SYS_STATUS_SENSOR uint32 //nolint:revive
-	MAV_CMD               uint32 //nolint:revive
+	MAV_TYPE              uint64 //nolint:revive
+	MAV_AUTOPILOT         uint64 //nolint:revive
+	MAV_MODE_FLAG         uint64 //nolint:revive
+	MAV_STATE             uint64 //nolint:revive
+	MAV_SYS_STATUS_SENSOR uint64 //nolint:revive
+	MAV_CMD               uint64 //nolint:revive
+	MYENUM                uint64
 )
-
-type MYENUM uint32
 
 type MessageAllTypes struct {
 	A uint8
@@ -431,7 +430,7 @@ func (*MessageInvalidEnum) GetID() uint32 {
 	return 0
 }
 
-type MYENUM3 uint32
+type MYENUM3 uint64
 
 type MessageInvalidEnum2 struct {
 	MyEnum MYENUM3 `mavenum:"invalid"`
@@ -441,7 +440,7 @@ func (*MessageInvalidEnum2) GetID() uint32 {
 	return 0
 }
 
-type MYENUM4 uint32
+type MYENUM4 uint64
 
 type MessageInvalidEnum3 struct {
 	MyEnum MYENUM4 `mavenum:"int64"`
@@ -472,7 +471,7 @@ func TestNewReadWriterErrors(t *testing.T) {
 	require.EqualError(t, err, "struct name must begin with 'Message'")
 
 	_, err = NewReadWriter(&MessageInvalidEnum{})
-	require.EqualError(t, err, "an enum must be an uint32")
+	require.EqualError(t, err, "an enum must be an uint64")
 
 	_, err = NewReadWriter(&MessageInvalidEnum2{})
 	require.EqualError(t, err, "unsupported Go type: invalid")

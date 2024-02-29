@@ -9,7 +9,7 @@ import (
 )
 
 // Flags to report failure cases over the high latency telemetry.
-type HL_FAILURE_FLAG uint32
+type HL_FAILURE_FLAG uint64
 
 const (
 	// GPS failure.

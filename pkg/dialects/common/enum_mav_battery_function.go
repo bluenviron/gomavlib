@@ -8,7 +8,7 @@ import (
 )
 
 // Enumeration of battery functions
-type MAV_BATTERY_FUNCTION uint32
+type MAV_BATTERY_FUNCTION uint64
 
 const (
 	// Battery function is unknown

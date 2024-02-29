@@ -9,7 +9,7 @@ import (
 )
 
 // Bitmask of (optional) autopilot capabilities (64 bit). If a bit is set, the autopilot supports this capability.
-type MAV_PROTOCOL_CAPABILITY uint32
+type MAV_PROTOCOL_CAPABILITY uint64
 
 const (
 	// Autopilot supports the MISSION_ITEM float message type.

@@ -9,7 +9,7 @@ import (
 )
 
 // Bitmap of options for the MAV_CMD_DO_REPOSITION
-type MAV_DO_REPOSITION_FLAGS uint32
+type MAV_DO_REPOSITION_FLAGS uint64
 
 const (
 	// The aircraft should immediately transition into guided. This should not be set for follow me applications

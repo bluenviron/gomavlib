@@ -8,7 +8,7 @@ import (
 )
 
 // RC type
-type RC_TYPE uint32
+type RC_TYPE uint64
 
 const (
 	// Spektrum DSM2

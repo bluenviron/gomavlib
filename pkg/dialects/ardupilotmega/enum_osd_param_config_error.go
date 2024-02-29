@@ -8,7 +8,7 @@ import (
 )
 
 // The error type for the OSD parameter editor.
-type OSD_PARAM_CONFIG_ERROR uint32
+type OSD_PARAM_CONFIG_ERROR uint64
 
 const (
 	OSD_PARAM_SUCCESS                 OSD_PARAM_CONFIG_ERROR = 0

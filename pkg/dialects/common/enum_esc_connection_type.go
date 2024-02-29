@@ -8,7 +8,7 @@ import (
 )
 
 // Indicates the ESC connection type.
-type ESC_CONNECTION_TYPE uint32
+type ESC_CONNECTION_TYPE uint64
 
 const (
 	// Traditional PPM ESC.

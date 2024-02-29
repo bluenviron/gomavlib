@@ -9,7 +9,7 @@ import (
 )
 
 // Enable axes that will be tuned via autotuning. Used in MAV_CMD_DO_AUTOTUNE_ENABLE.
-type AUTOTUNE_AXIS uint32
+type AUTOTUNE_AXIS uint64
 
 const (
 	// Flight stack tunes axis according to its default settings.

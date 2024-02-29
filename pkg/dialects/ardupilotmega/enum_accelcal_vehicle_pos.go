@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type ACCELCAL_VEHICLE_POS uint32
+type ACCELCAL_VEHICLE_POS uint64
 
 const (
 	ACCELCAL_VEHICLE_POS_LEVEL    ACCELCAL_VEHICLE_POS = 1

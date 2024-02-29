@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type LIMITS_STATE uint32
+type LIMITS_STATE uint64
 
 const (
 	// Pre-initialization.

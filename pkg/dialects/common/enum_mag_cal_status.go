@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAG_CAL_STATUS uint32
+type MAG_CAL_STATUS uint64
 
 const (
 	MAG_CAL_NOT_STARTED      MAG_CAL_STATUS = 0

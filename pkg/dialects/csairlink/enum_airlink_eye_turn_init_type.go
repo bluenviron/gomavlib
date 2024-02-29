@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type AIRLINK_EYE_TURN_INIT_TYPE uint32
+type AIRLINK_EYE_TURN_INIT_TYPE uint64
 
 const (
 	AIRLINK_TURN_INIT_START AIRLINK_EYE_TURN_INIT_TYPE = 0

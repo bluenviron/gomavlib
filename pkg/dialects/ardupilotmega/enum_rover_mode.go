@@ -8,7 +8,7 @@ import (
 )
 
 // A mapping of rover flight modes for custom_mode field of heartbeat.
-type ROVER_MODE uint32
+type ROVER_MODE uint64
 
 const (
 	ROVER_MODE_MANUAL       ROVER_MODE = 0

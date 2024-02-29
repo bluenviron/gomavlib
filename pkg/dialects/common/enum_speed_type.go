@@ -8,7 +8,7 @@ import (
 )
 
 // Speed setpoint types used in MAV_CMD_DO_CHANGE_SPEED
-type SPEED_TYPE uint32
+type SPEED_TYPE uint64
 
 const (
 	// Airspeed

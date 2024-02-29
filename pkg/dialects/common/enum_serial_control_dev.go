@@ -8,7 +8,7 @@ import (
 )
 
 // SERIAL_CONTROL device types
-type SERIAL_CONTROL_DEV uint32
+type SERIAL_CONTROL_DEV uint64
 
 const (
 	// First telemetry port

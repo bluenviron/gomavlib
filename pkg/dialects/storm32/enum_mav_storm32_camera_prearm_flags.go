@@ -9,7 +9,7 @@ import (
 )
 
 // STorM32 camera prearm check flags.
-type MAV_STORM32_CAMERA_PREARM_FLAGS uint32
+type MAV_STORM32_CAMERA_PREARM_FLAGS uint64
 
 const (
 	// The camera has been found and is connected.

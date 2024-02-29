@@ -8,7 +8,7 @@ import (
 )
 
 // Indicates the severity level, generally used for status messages to indicate their relative urgency. Based on RFC-5424 using expanded definitions at: http://www.kiwisyslog.com/kb/info:-syslog-message-levels/.
-type MAV_SEVERITY uint32
+type MAV_SEVERITY uint64
 
 const (
 	// System is unusable. This is a "panic" condition.

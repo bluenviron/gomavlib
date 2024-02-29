@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GOPRO_FRAME_RATE uint32
+type GOPRO_FRAME_RATE uint64
 
 const (
 	// 12 FPS.

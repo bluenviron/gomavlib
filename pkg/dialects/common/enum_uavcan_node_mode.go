@@ -8,7 +8,7 @@ import (
 )
 
 // Generalized UAVCAN node mode
-type UAVCAN_NODE_MODE uint32
+type UAVCAN_NODE_MODE uint64
 
 const (
 	// The node is performing its primary functions.

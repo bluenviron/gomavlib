@@ -9,7 +9,7 @@ import (
 )
 
 // Camera capability flags (Bitmap)
-type CAMERA_CAP_FLAGS uint32
+type CAMERA_CAP_FLAGS uint64
 
 const (
 	// Camera is able to record video

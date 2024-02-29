@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_STORM32_TUNNEL_PAYLOAD_TYPE uint32
+type MAV_STORM32_TUNNEL_PAYLOAD_TYPE uint64
 
 const (
 	// Registered for STorM32 gimbal controller. For communication with gimbal or camera.

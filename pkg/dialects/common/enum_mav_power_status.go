@@ -9,7 +9,7 @@ import (
 )
 
 // Power supply status flags (bitmask)
-type MAV_POWER_STATUS uint32
+type MAV_POWER_STATUS uint64
 
 const (
 	// main brick power supply valid

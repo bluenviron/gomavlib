@@ -8,7 +8,7 @@ import (
 )
 
 // Specifies the datatype of a MAVLink extended parameter.
-type MAV_PARAM_EXT_TYPE uint32
+type MAV_PARAM_EXT_TYPE uint64
 
 const (
 	// 8-bit unsigned integer

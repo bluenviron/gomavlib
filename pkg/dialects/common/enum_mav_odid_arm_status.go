@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_ODID_ARM_STATUS uint32
+type MAV_ODID_ARM_STATUS uint64
 
 const (
 	// Passing arming checks.

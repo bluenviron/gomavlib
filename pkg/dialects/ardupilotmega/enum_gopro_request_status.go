@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GOPRO_REQUEST_STATUS uint32
+type GOPRO_REQUEST_STATUS uint64
 
 const (
 	// The write message with ID indicated succeeded.

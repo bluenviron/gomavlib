@@ -8,7 +8,7 @@ import (
 )
 
 // Enumeration of sensor orientation, according to its rotations
-type MAV_SENSOR_ORIENTATION uint32
+type MAV_SENSOR_ORIENTATION uint64
 
 const (
 	// Roll: 0, Pitch: 0, Yaw: 0

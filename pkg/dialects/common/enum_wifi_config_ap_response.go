@@ -8,7 +8,7 @@ import (
 )
 
 // Possible responses from a WIFI_CONFIG_AP message.
-type WIFI_CONFIG_AP_RESPONSE uint32
+type WIFI_CONFIG_AP_RESPONSE uint64
 
 const (
 	// Undefined response. Likely an indicative of a system that doesn't support this request.

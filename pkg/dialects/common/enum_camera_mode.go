@@ -8,7 +8,7 @@ import (
 )
 
 // Camera Modes.
-type CAMERA_MODE uint32
+type CAMERA_MODE uint64
 
 const (
 	// Camera is in image/photo capture mode.

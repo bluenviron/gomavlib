@@ -8,7 +8,7 @@ import (
 )
 
 // Available autopilot modes for ualberta uav
-type UALBERTA_AUTOPILOT_MODE uint32
+type UALBERTA_AUTOPILOT_MODE uint64
 
 const (
 	// Raw input pulse widts sent to output

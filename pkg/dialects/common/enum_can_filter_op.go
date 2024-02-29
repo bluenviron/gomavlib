@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type CAN_FILTER_OP uint32
+type CAN_FILTER_OP uint64
 
 const (
 	CAN_FILTER_REPLACE CAN_FILTER_OP = 0

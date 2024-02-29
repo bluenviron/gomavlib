@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GOPRO_BURST_RATE uint32
+type GOPRO_BURST_RATE uint64
 
 const (
 	// 3 Shots / 1 Second.

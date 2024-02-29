@@ -8,7 +8,7 @@ import (
 )
 
 // Enumeration of possible mount operation modes. This message is used by obsolete/deprecated gimbal messages.
-type MAV_MOUNT_MODE uint32
+type MAV_MOUNT_MODE uint64
 
 const (
 	// Load and keep safe position (Roll,Pitch,Yaw) from permanent memory and stop stabilization

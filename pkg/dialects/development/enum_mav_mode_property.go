@@ -9,7 +9,7 @@ import (
 )
 
 // Mode properties.
-type MAV_MODE_PROPERTY uint32
+type MAV_MODE_PROPERTY uint64
 
 const (
 	// If set, this mode is an advanced mode.

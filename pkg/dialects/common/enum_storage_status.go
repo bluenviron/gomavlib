@@ -8,7 +8,7 @@ import (
 )
 
 // Flags to indicate the status of camera storage.
-type STORAGE_STATUS uint32
+type STORAGE_STATUS uint64
 
 const (
 	// Storage is missing (no microSD card loaded for example.)

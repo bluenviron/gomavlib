@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_ODID_ID_TYPE uint32
+type MAV_ODID_ID_TYPE uint64
 
 const (
 	// No type defined.

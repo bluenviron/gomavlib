@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type FENCE_BREACH uint32
+type FENCE_BREACH uint64
 
 const (
 	// No last fence breach

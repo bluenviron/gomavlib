@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type AIRLINK_AUTH_RESPONSE_TYPE uint32
+type AIRLINK_AUTH_RESPONSE_TYPE uint64
 
 const (
 	// Login or password error

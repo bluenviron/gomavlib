@@ -8,7 +8,7 @@ import (
 )
 
 // A mapping of plane flight modes for custom_mode field of heartbeat.
-type PLANE_MODE uint32
+type PLANE_MODE uint64
 
 const (
 	PLANE_MODE_MANUAL        PLANE_MODE = 0

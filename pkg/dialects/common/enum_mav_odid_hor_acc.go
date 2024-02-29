@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_ODID_HOR_ACC uint32
+type MAV_ODID_HOR_ACC uint64
 
 const (
 	// The horizontal accuracy is unknown.

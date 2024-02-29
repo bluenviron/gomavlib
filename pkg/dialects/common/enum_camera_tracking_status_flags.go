@@ -8,7 +8,7 @@ import (
 )
 
 // Camera tracking status flags
-type CAMERA_TRACKING_STATUS_FLAGS uint32
+type CAMERA_TRACKING_STATUS_FLAGS uint64
 
 const (
 	// Camera is not tracking

@@ -9,7 +9,7 @@ import (
 )
 
 // Status flags for ADS-B transponder dynamic output
-type UAVIONIX_ADSB_RF_HEALTH uint32
+type UAVIONIX_ADSB_RF_HEALTH uint64
 
 const (
 	UAVIONIX_ADSB_RF_HEALTH_INITIALIZING UAVIONIX_ADSB_RF_HEALTH = 0

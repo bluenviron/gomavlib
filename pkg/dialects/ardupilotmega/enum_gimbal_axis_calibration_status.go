@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GIMBAL_AXIS_CALIBRATION_STATUS uint32
+type GIMBAL_AXIS_CALIBRATION_STATUS uint64
 
 const (
 	// Axis calibration is in progress.

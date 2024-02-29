@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GOPRO_MODEL uint32
+type GOPRO_MODEL uint64
 
 const (
 	// Unknown gopro model.

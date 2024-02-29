@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_ARM_AUTH_DENIED_REASON uint32
+type MAV_ARM_AUTH_DENIED_REASON uint64
 
 const (
 	// Not a specific reason

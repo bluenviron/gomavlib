@@ -8,7 +8,7 @@ import (
 )
 
 // A mapping of copter flight modes for custom_mode field of heartbeat.
-type COPTER_MODE uint32
+type COPTER_MODE uint64
 
 const (
 	COPTER_MODE_STABILIZE    COPTER_MODE = 0

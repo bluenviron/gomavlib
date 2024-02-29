@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type AVSS_HORSEFLY_OPERATION_MODE uint32
+type AVSS_HORSEFLY_OPERATION_MODE uint64
 
 const (
 	// In manual control mode

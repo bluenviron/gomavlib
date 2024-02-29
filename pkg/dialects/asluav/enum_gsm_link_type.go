@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GSM_LINK_TYPE uint32
+type GSM_LINK_TYPE uint64
 
 const (
 	// no service

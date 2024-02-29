@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GSM_MODEM_TYPE uint32
+type GSM_MODEM_TYPE uint64
 
 const (
 	// not specified

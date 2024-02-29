@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GOPRO_RESOLUTION uint32
+type GOPRO_RESOLUTION uint64
 
 const (
 	// 848 x 480 (480p).

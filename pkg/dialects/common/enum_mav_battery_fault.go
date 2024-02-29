@@ -9,7 +9,7 @@ import (
 )
 
 // Smart battery supply status/fault flags (bitmask) for health indication. The battery must also report either MAV_BATTERY_CHARGE_STATE_FAILED or MAV_BATTERY_CHARGE_STATE_UNHEALTHY if any of these are set.
-type MAV_BATTERY_FAULT uint32
+type MAV_BATTERY_FAULT uint64
 
 const (
 	// Battery has deep discharged.

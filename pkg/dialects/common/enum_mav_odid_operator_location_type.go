@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_ODID_OPERATOR_LOCATION_TYPE uint32
+type MAV_ODID_OPERATOR_LOCATION_TYPE uint64
 
 const (
 	// The location/altitude of the operator is the same as the take-off location.

@@ -9,7 +9,7 @@ import (
 )
 
 // RADIO_RC_CHANNELS flags (bitmask).
-type RADIO_RC_CHANNELS_FLAGS uint32
+type RADIO_RC_CHANNELS_FLAGS uint64
 
 const (
 	// Failsafe is active.

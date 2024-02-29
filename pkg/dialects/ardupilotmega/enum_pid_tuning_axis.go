@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type PID_TUNING_AXIS uint32
+type PID_TUNING_AXIS uint64
 
 const (
 	PID_TUNING_ROLL    PID_TUNING_AXIS = 1

@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"math"
 	"net/http"
 	"net/url"
 	"os"
@@ -68,13 +67,13 @@ import (
 type {{ .Enum.Name }} = {{ .Enum.DefName }}.{{ .Enum.Name }}
 
 const (
-    {{- $en := .Enum }}
-    {{- range .Enum.Values }}
-    {{- range .Description }}
+{{- $en := .Enum }}
+{{- range .Enum.Values }}
+{{- range .Description }}
         // {{ . }}
-    {{- end }}
+{{- end }}
         {{ .Name }} {{ $en.Name }} = {{ $en.DefName }}.{{ .Name }}
-    {{- end }}
+{{- end }}
 )
 
 {{- else }}
@@ -90,7 +89,7 @@ import (
 {{- range .Enum.Description }}
 // {{ . }}
 {{- end }}
-type {{ .Enum.Name }} uint32
+type {{ .Enum.Name }} uint64
 
 const (
 {{- $pn := .Enum.Name }}
@@ -264,8 +263,24 @@ func parseDescription(in string) []string {
 	return lines
 }
 
+func uintPow(base, exp uint64) uint64 {
+	result := uint64(1)
+	for {
+		if exp&1 == 1 {
+			result *= base
+		}
+		exp >>= 1
+		if exp == 0 {
+			break
+		}
+		base *= base
+	}
+
+	return result
+}
+
 type outEnumValue struct {
-	Value       uint32
+	Value       uint64
 	Name        string
 	Description []string
 }
@@ -357,19 +372,51 @@ func processDefinition(
 			Bitmask:     enum.Bitmask,
 		}
 
-		for _, val := range enum.Values {
-			tmp, err := strconv.ParseInt(val.Value, 10, 64)
-			if err != nil {
-				return nil, err
-			}
-			if tmp < 0 || tmp > int64(math.Pow(2, 32)) {
-				return nil, fmt.Errorf("enum values that overflow an uint32 are not supported")
+		for _, entry := range enum.Entries {
+			var v uint64
+
+			switch {
+			case strings.HasPrefix(entry.Value, "0b"):
+				tmp, err := strconv.ParseUint(entry.Value[2:], 2, 64)
+				if err != nil {
+					return nil, err
+				}
+				v = tmp
+
+			case strings.HasPrefix(entry.Value, "0x"):
+				tmp, err := strconv.ParseUint(entry.Value[2:], 16, 64)
+				if err != nil {
+					return nil, err
+				}
+				v = tmp
+
+			case strings.Contains(entry.Value, "**"):
+				parts := strings.SplitN(entry.Value, "**", 2)
+
+				x, err := strconv.ParseUint(parts[0], 10, 64)
+				if err != nil {
+					return nil, err
+				}
+
+				y, err := strconv.ParseUint(parts[1], 10, 64)
+				if err != nil {
+					return nil, err
+				}
+
+				v = uintPow(x, y)
+
+			default:
+				tmp, err := strconv.ParseUint(entry.Value, 10, 64)
+				if err != nil {
+					return nil, err
+				}
+				v = tmp
 			}
 
 			oute.Values = append(oute.Values, &outEnumValue{
-				Value:       uint32(tmp),
-				Name:        val.Name,
-				Description: parseDescription(val.Description),
+				Value:       v,
+				Name:        entry.Name,
+				Description: parseDescription(entry.Description),
 			})
 		}
 

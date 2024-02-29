@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-type definitionEnumValue struct {
+type definitionEnumEntry struct {
 	Value       string `xml:"value,attr"`
 	Name        string `xml:"name,attr"`
 	Description string `xml:"description"`
@@ -14,7 +14,7 @@ type definitionEnumValue struct {
 type definitionEnum struct {
 	Name        string                 `xml:"name,attr"`
 	Description string                 `xml:"description"`
-	Values      []*definitionEnumValue `xml:"entry"`
+	Entries     []*definitionEnumEntry `xml:"entry"`
 	Bitmask     bool                   `xml:"bitmask,attr"`
 }
 

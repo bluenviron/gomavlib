@@ -410,6 +410,11 @@ const (
 	MAV_CMD_DO_SET_STANDARD_MODE MAV_CMD = 262
 	// Allows setting an AT S command of an SiK radio.
 	MAV_CMD_SET_AT_S_PARAM MAV_CMD = 550
+	// Used to manually set/unset emergency status for remote id.
+	// This is for compliance with MOC ASTM docs, specifically F358 section 7.7: "Emergency Status Indicator".
+	// The requirement can also be satisfied by automatic setting of the emergency status by flight stack, and that approach is preferred.
+	// See https://mavlink.io/en/services/opendroneid.html for more information.
+	MAV_CMD_ODID_SET_EMERGENCY MAV_CMD = 12900
 )
 
 var labels_MAV_CMD = map[MAV_CMD]string{
@@ -581,6 +586,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_GROUP_END:                          "MAV_CMD_GROUP_END",
 	MAV_CMD_DO_SET_STANDARD_MODE:               "MAV_CMD_DO_SET_STANDARD_MODE",
 	MAV_CMD_SET_AT_S_PARAM:                     "MAV_CMD_SET_AT_S_PARAM",
+	MAV_CMD_ODID_SET_EMERGENCY:                 "MAV_CMD_ODID_SET_EMERGENCY",
 }
 
 var values_MAV_CMD = map[string]MAV_CMD{
@@ -752,6 +758,7 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_GROUP_END":                          MAV_CMD_GROUP_END,
 	"MAV_CMD_DO_SET_STANDARD_MODE":               MAV_CMD_DO_SET_STANDARD_MODE,
 	"MAV_CMD_SET_AT_S_PARAM":                     MAV_CMD_SET_AT_S_PARAM,
+	"MAV_CMD_ODID_SET_EMERGENCY":                 MAV_CMD_ODID_SET_EMERGENCY,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.

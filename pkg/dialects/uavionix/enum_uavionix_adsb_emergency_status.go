@@ -8,7 +8,7 @@ import (
 )
 
 // Emergency status encoding
-type UAVIONIX_ADSB_EMERGENCY_STATUS uint32
+type UAVIONIX_ADSB_EMERGENCY_STATUS uint64
 
 const (
 	UAVIONIX_ADSB_OUT_NO_EMERGENCY                    UAVIONIX_ADSB_EMERGENCY_STATUS = 0

@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GOPRO_PROTUNE_EXPOSURE uint32
+type GOPRO_PROTUNE_EXPOSURE uint64
 
 const (
 	// -5.0 EV (Hero 3+ Only).

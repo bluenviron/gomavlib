@@ -9,7 +9,7 @@ import (
 
 // Actions for reading/writing parameters between persistent and volatile storage when using MAV_CMD_PREFLIGHT_STORAGE.
 // (Commonly parameters are loaded from persistent storage (flash/EEPROM) into volatile storage (RAM) on startup and written back when they are changed.)
-type PREFLIGHT_STORAGE_PARAMETER_ACTION uint32
+type PREFLIGHT_STORAGE_PARAMETER_ACTION uint64
 
 const (
 	// Read all parameters from persistent storage. Replaces values in volatile storage.

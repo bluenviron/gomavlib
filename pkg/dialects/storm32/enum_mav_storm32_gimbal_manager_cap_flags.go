@@ -9,7 +9,7 @@ import (
 )
 
 // Gimbal manager capability flags.
-type MAV_STORM32_GIMBAL_MANAGER_CAP_FLAGS uint32
+type MAV_STORM32_GIMBAL_MANAGER_CAP_FLAGS uint64
 
 const (
 	// The gimbal manager supports several profiles.

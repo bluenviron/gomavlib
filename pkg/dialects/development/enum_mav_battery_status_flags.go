@@ -9,7 +9,7 @@ import (
 )
 
 // Battery status flags for fault, health and state indication.
-type MAV_BATTERY_STATUS_FLAGS uint32
+type MAV_BATTERY_STATUS_FLAGS uint64
 
 const (
 	// The battery is not ready to use (fly).

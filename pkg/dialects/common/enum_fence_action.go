@@ -8,7 +8,7 @@ import (
 )
 
 // Actions following geofence breach.
-type FENCE_ACTION uint32
+type FENCE_ACTION uint64
 
 const (
 	// Disable fenced mode. If used in a plan this would mean the next fence is disabled.

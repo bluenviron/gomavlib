@@ -8,7 +8,7 @@ import (
 )
 
 // Possible safety switch states.
-type SAFETY_SWITCH_STATE uint32
+type SAFETY_SWITCH_STATE uint64
 
 const (
 	// Safety switch is engaged and vehicle should be safe to approach.

@@ -8,7 +8,7 @@ import (
 )
 
 // Focus types for MAV_CMD_SET_CAMERA_FOCUS
-type SET_FOCUS_TYPE uint32
+type SET_FOCUS_TYPE uint64
 
 const (
 	// Focus one step increment (-1 for focusing in, 1 for focusing out towards infinity).

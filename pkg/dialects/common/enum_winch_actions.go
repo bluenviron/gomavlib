@@ -8,7 +8,7 @@ import (
 )
 
 // Winch actions.
-type WINCH_ACTIONS uint32
+type WINCH_ACTIONS uint64
 
 const (
 	// Allow motor to freewheel.

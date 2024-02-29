@@ -9,7 +9,7 @@ import (
 )
 
 // These flags are used in the AIS_VESSEL.fields bitmask to indicate validity of data in the other message fields. When set, the data is valid.
-type AIS_FLAGS uint32
+type AIS_FLAGS uint64
 
 const (
 	// 1 = Position accuracy less than 10m, 0 = position accuracy greater than 10m.

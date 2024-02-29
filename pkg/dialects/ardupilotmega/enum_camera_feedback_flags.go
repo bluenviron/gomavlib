@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type CAMERA_FEEDBACK_FLAGS uint32
+type CAMERA_FEEDBACK_FLAGS uint64
 
 const (
 	// Shooting photos, not video.

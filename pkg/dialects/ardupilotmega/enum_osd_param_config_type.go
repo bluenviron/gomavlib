@@ -8,7 +8,7 @@ import (
 )
 
 // The type of parameter for the OSD parameter editor.
-type OSD_PARAM_CONFIG_TYPE uint32
+type OSD_PARAM_CONFIG_TYPE uint64
 
 const (
 	OSD_PARAM_NONE              OSD_PARAM_CONFIG_TYPE = 0

@@ -295,8 +295,8 @@ func NewReadWriter(msg Message) (*ReadWriter, error) {
 		if tagEnum := field.Tag.Get("mavenum"); tagEnum != "" {
 			isEnum = true
 
-			if goType.Kind() != reflect.Uint32 {
-				return nil, fmt.Errorf("an enum must be an uint32")
+			if goType.Kind() != reflect.Uint64 {
+				return nil, fmt.Errorf("an enum must be an uint64")
 			}
 
 			dialectType = fieldTypeFromGo[tagEnum]

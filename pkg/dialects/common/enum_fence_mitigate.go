@@ -8,7 +8,7 @@ import (
 )
 
 // Actions being taken to mitigate/prevent fence breach
-type FENCE_MITIGATE uint32
+type FENCE_MITIGATE uint64
 
 const (
 	// Unknown

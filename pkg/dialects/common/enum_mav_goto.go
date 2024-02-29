@@ -8,7 +8,7 @@ import (
 )
 
 // Actions that may be specified in MAV_CMD_OVERRIDE_GOTO to override mission execution.
-type MAV_GOTO uint32
+type MAV_GOTO uint64
 
 const (
 	// Hold at the current position.

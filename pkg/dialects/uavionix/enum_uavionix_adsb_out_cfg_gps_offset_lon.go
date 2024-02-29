@@ -8,7 +8,7 @@ import (
 )
 
 // GPS longitudinal offset encoding
-type UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON uint32
+type UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON uint64
 
 const (
 	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_NO_DATA           UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON = 0

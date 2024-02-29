@@ -8,7 +8,7 @@ import (
 )
 
 // Possible actions an aircraft can take to avoid a collision.
-type MAV_COLLISION_ACTION uint32
+type MAV_COLLISION_ACTION uint64
 
 const (
 	// Ignore any potential collisions

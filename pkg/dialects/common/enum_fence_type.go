@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-type FENCE_TYPE uint32
+type FENCE_TYPE uint64
 
 const (
 	// All fence types

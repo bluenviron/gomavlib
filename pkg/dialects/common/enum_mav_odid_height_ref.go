@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_ODID_HEIGHT_REF uint32
+type MAV_ODID_HEIGHT_REF uint64
 
 const (
 	// The height field is relative to the take-off location.

@@ -8,7 +8,7 @@ import (
 )
 
 // WiFi Mode.
-type WIFI_CONFIG_AP_MODE uint32
+type WIFI_CONFIG_AP_MODE uint64
 
 const (
 	// WiFi mode is undefined.

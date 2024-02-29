@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GOPRO_PROTUNE_COLOUR uint32
+type GOPRO_PROTUNE_COLOUR uint64
 
 const (
 	// Auto.

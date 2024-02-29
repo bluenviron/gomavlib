@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type AIRLINK_EYE_IP_VERSION uint32
+type AIRLINK_EYE_IP_VERSION uint64
 
 const (
 	AIRLINK_IP_V4 AIRLINK_EYE_IP_VERSION = 0

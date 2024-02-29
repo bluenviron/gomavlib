@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GIMBAL_AXIS uint32
+type GIMBAL_AXIS uint64
 
 const (
 	// Gimbal yaw axis.

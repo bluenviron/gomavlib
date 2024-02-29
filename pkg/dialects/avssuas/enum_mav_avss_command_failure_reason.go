@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_AVSS_COMMAND_FAILURE_REASON uint32
+type MAV_AVSS_COMMAND_FAILURE_REASON uint64
 
 const (
 	// AVSS defined command failure reason. PRS not steady.

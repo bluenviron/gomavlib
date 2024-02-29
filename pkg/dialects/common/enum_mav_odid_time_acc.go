@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_ODID_TIME_ACC uint32
+type MAV_ODID_TIME_ACC uint64
 
 const (
 	// The timestamp accuracy is unknown.

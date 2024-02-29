@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GOPRO_PHOTO_RESOLUTION uint32
+type GOPRO_PHOTO_RESOLUTION uint64
 
 const (
 	// 5MP Medium.

@@ -9,7 +9,7 @@ import (
 )
 
 // Flags in the HIL_SENSOR message indicate which fields have updated since the last message
-type HIL_SENSOR_UPDATED_FLAGS uint32
+type HIL_SENSOR_UPDATED_FLAGS uint64
 
 const (
 	// None of the fields in HIL_SENSOR have been updated

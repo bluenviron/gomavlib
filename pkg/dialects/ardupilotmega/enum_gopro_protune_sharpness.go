@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GOPRO_PROTUNE_SHARPNESS uint32
+type GOPRO_PROTUNE_SHARPNESS uint64
 
 const (
 	// Low Sharpness.

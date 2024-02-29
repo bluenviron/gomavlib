@@ -9,7 +9,7 @@ import (
 )
 
 // These flags encode the MAV mode.
-type MAV_MODE_FLAG uint32
+type MAV_MODE_FLAG uint64
 
 const (
 	// 0b10000000 MAV safety set to armed. Motors are enabled / running / can start. Ready to fly. Additional note: this flag is to be ignore when sent in the command MAV_CMD_DO_SET_MODE and MAV_CMD_COMPONENT_ARM_DISARM shall be used instead. The flag can still be used to report the armed state.

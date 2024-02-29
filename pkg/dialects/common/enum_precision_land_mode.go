@@ -8,7 +8,7 @@ import (
 )
 
 // Precision land modes (used in MAV_CMD_NAV_LAND).
-type PRECISION_LAND_MODE uint32
+type PRECISION_LAND_MODE uint64
 
 const (
 	// Normal (non-precision) landing.

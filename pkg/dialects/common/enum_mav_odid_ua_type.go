@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_ODID_UA_TYPE uint32
+type MAV_ODID_UA_TYPE uint64
 
 const (
 	// No UA (Unmanned Aircraft) type defined.

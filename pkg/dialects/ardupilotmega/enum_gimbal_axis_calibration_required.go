@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GIMBAL_AXIS_CALIBRATION_REQUIRED uint32
+type GIMBAL_AXIS_CALIBRATION_REQUIRED uint64
 
 const (
 	// Whether or not this axis requires calibration is unknown at this time.

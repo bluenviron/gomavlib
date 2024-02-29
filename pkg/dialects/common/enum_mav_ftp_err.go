@@ -8,7 +8,7 @@ import (
 )
 
 // MAV FTP error codes (https://mavlink.io/en/services/ftp.html)
-type MAV_FTP_ERR uint32
+type MAV_FTP_ERR uint64
 
 const (
 	// None: No error

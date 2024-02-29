@@ -8,7 +8,7 @@ import (
 )
 
 // Defines how throttle value is represented in MAV_CMD_DO_MOTOR_TEST.
-type MOTOR_TEST_THROTTLE_TYPE uint32
+type MOTOR_TEST_THROTTLE_TYPE uint64
 
 const (
 	// Throttle as a percentage (0 ~ 100)

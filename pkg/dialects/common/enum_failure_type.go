@@ -8,7 +8,7 @@ import (
 )
 
 // List of possible failure type to inject.
-type FAILURE_TYPE uint32
+type FAILURE_TYPE uint64
 
 const (
 	// No failure injected, used to reset a previous failure.

@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-type LIMIT_MODULE uint32
+type LIMIT_MODULE uint64
 
 const (
 	// Pre-initialization.

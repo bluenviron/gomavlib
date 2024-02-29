@@ -9,7 +9,7 @@ import (
 )
 
 // Camera tracking target data (shows where tracked target is within image)
-type CAMERA_TRACKING_TARGET_DATA uint32
+type CAMERA_TRACKING_TARGET_DATA uint64
 
 const (
 	// No target data

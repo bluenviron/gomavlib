@@ -8,7 +8,7 @@ import (
 )
 
 // Result from PARAM_EXT_SET message (or a PARAM_SET within a transaction).
-type PARAM_ACK uint32
+type PARAM_ACK uint64
 
 const (
 	// Parameter value ACCEPTED and SET

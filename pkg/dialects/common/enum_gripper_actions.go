@@ -8,7 +8,7 @@ import (
 )
 
 // Gripper actions.
-type GRIPPER_ACTIONS uint32
+type GRIPPER_ACTIONS uint64
 
 const (
 	// Gripper release cargo.

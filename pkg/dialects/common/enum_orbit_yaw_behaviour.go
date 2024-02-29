@@ -8,7 +8,7 @@ import (
 )
 
 // Yaw behaviour during orbit flight.
-type ORBIT_YAW_BEHAVIOUR uint32
+type ORBIT_YAW_BEHAVIOUR uint64
 
 const (
 	// Vehicle front points to the center (default).

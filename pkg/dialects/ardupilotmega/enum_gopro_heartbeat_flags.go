@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-type GOPRO_HEARTBEAT_FLAGS uint32
+type GOPRO_HEARTBEAT_FLAGS uint64
 
 const (
 	// GoPro is currently recording.

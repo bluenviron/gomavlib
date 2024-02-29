@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type ICAROUS_FMS_STATE uint32
+type ICAROUS_FMS_STATE uint64
 
 const (
 	ICAROUS_FMS_STATE_IDLE     ICAROUS_FMS_STATE = 0

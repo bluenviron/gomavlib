@@ -8,7 +8,7 @@ import (
 )
 
 // Special ACK block numbers control activation of dataflash log streaming.
-type MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS uint32
+type MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS uint64
 
 const (
 	// UAV to stop sending DataFlash blocks.

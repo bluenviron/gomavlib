@@ -8,7 +8,7 @@ import (
 )
 
 // Result from a MAVLink command (MAV_CMD)
-type MAV_RESULT uint32
+type MAV_RESULT uint64
 
 const (
 	// Command is valid (is supported and has valid parameters), and was executed.

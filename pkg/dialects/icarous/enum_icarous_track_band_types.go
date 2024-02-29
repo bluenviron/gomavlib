@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type ICAROUS_TRACK_BAND_TYPES uint32
+type ICAROUS_TRACK_BAND_TYPES uint64
 
 const (
 	ICAROUS_TRACK_BAND_TYPE_NONE     ICAROUS_TRACK_BAND_TYPES = 0

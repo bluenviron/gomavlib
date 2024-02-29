@@ -8,7 +8,7 @@ import (
 )
 
 // Deepstall flight stage.
-type DEEPSTALL_STAGE uint32
+type DEEPSTALL_STAGE uint64
 
 const (
 	// Flying to the landing point.

@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_TUNNEL_PAYLOAD_TYPE uint32
+type MAV_TUNNEL_PAYLOAD_TYPE uint64
 
 const (
 	// Encoding of payload unknown.

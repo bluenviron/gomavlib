@@ -8,7 +8,7 @@ import (
 )
 
 // MAV FTP opcodes: https://mavlink.io/en/services/ftp.html
-type MAV_FTP_OPCODE uint32
+type MAV_FTP_OPCODE uint64
 
 const (
 	// None. Ignored, always ACKed

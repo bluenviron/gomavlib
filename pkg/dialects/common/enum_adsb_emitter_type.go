@@ -8,7 +8,7 @@ import (
 )
 
 // ADSB classification for the type of vehicle emitting the transponder signal
-type ADSB_EMITTER_TYPE uint32
+type ADSB_EMITTER_TYPE uint64
 
 const (
 	ADSB_EMITTER_TYPE_NO_INFO           ADSB_EMITTER_TYPE = 0

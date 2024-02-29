@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_ODID_CLASSIFICATION_TYPE uint32
+type MAV_ODID_CLASSIFICATION_TYPE uint64
 
 const (
 	// The classification type for the UA is undeclared.

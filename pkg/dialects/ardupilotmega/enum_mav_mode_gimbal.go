@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_MODE_GIMBAL uint32
+type MAV_MODE_GIMBAL uint64
 
 const (
 	// Gimbal is powered on but has not started initializing yet.

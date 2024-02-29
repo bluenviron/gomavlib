@@ -9,7 +9,7 @@ import (
 )
 
 // Airspeed sensor flags
-type AIRSPEED_SENSOR_FLAGS uint32
+type AIRSPEED_SENSOR_FLAGS uint64
 
 const (
 	// Airspeed sensor is unhealthy

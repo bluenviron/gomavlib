@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type LED_CONTROL_PATTERN uint32
+type LED_CONTROL_PATTERN uint64
 
 const (
 	// LED patterns off (return control to regular vehicle control).

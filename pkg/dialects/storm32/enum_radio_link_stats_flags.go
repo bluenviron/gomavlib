@@ -9,7 +9,7 @@ import (
 )
 
 // RADIO_LINK_STATS flags (bitmask).
-type RADIO_LINK_STATS_FLAGS uint32
+type RADIO_LINK_STATS_FLAGS uint64
 
 const (
 	// Rssi are in negative dBm. Values 0..254 corresponds to 0..-254 dBm.

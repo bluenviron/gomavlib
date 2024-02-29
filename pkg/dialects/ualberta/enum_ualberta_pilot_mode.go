@@ -8,7 +8,7 @@ import (
 )
 
 // Mode currently commanded by pilot
-type UALBERTA_PILOT_MODE uint32
+type UALBERTA_PILOT_MODE uint64
 
 const (
 	PILOT_MANUAL UALBERTA_PILOT_MODE = 1

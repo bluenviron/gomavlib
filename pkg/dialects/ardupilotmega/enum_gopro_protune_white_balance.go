@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GOPRO_PROTUNE_WHITE_BALANCE uint32
+type GOPRO_PROTUNE_WHITE_BALANCE uint64
 
 const (
 	// Auto.

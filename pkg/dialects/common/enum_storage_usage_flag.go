@@ -8,7 +8,7 @@ import (
 )
 
 // Flags to indicate usage for a particular storage (see STORAGE_INFORMATION.storage_usage and MAV_CMD_SET_STORAGE_USAGE).
-type STORAGE_USAGE_FLAG uint32
+type STORAGE_USAGE_FLAG uint64
 
 const (
 	// Always set to 1 (indicates STORAGE_INFORMATION.storage_usage is supported).

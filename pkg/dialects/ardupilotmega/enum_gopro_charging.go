@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GOPRO_CHARGING uint32
+type GOPRO_CHARGING uint64
 
 const (
 	// Charging disabled.

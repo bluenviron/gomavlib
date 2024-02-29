@@ -8,7 +8,7 @@ import (
 )
 
 // Generalized UAVCAN node health
-type UAVCAN_NODE_HEALTH uint32
+type UAVCAN_NODE_HEALTH uint64
 
 const (
 	// The node is functioning properly.

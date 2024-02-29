@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-type GPS_INPUT_IGNORE_FLAGS uint32
+type GPS_INPUT_IGNORE_FLAGS uint64
 
 const (
 	// ignore altitude field

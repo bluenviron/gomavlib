@@ -8,7 +8,7 @@ import (
 )
 
 // Enumeration of possible shot modes.
-type MAV_QSHOT_MODE uint32
+type MAV_QSHOT_MODE uint64
 
 const (
 	// Undefined shot mode. Can be used to determine if qshots should be used or not.

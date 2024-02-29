@@ -10,7 +10,7 @@ import (
 // States of the mission state machine.
 // Note that these states are independent of whether the mission is in a mode that can execute mission items or not (is suspended).
 // They may not all be relevant on all vehicles.
-type MISSION_STATE uint32
+type MISSION_STATE uint64
 
 const (
 	// The mission status reporting is not supported.

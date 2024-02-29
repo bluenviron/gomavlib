@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GOPRO_HEARTBEAT_STATUS uint32
+type GOPRO_HEARTBEAT_STATUS uint64
 
 const (
 	// No GoPro connected.

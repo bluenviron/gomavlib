@@ -8,7 +8,7 @@ import (
 )
 
 // Supported component metadata types. These are used in the "general" metadata file returned by COMPONENT_METADATA to provide information about supported metadata types. The types are not used directly in MAVLink messages.
-type COMP_METADATA_TYPE uint32
+type COMP_METADATA_TYPE uint64
 
 const (
 	// General information about the component. General metadata includes information about other metadata types supported by the component. Files of this type must be supported, and must be downloadable from vehicle using a MAVLink FTP URI.

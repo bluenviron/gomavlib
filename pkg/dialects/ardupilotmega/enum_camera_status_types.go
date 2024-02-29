@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type CAMERA_STATUS_TYPES uint32
+type CAMERA_STATUS_TYPES uint64
 
 const (
 	// Camera heartbeat, announce camera component ID at 1Hz.

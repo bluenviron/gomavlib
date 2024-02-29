@@ -8,7 +8,7 @@ import (
 )
 
 // The frame of a target observation from an onboard sensor.
-type TARGET_OBS_FRAME uint32
+type TARGET_OBS_FRAME uint64
 
 const (
 	// NED local tangent frame (x: North, y: East, z: Down) with origin fixed relative to earth.

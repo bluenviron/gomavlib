@@ -8,7 +8,7 @@ import (
 )
 
 // Navigational status of AIS vessel, enum duplicated from AIS standard, https://gpsd.gitlab.io/gpsd/AIVDM.html
-type AIS_NAV_STATUS uint32
+type AIS_NAV_STATUS uint64
 
 const (
 	// Under way using engine.

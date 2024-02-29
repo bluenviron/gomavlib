@@ -8,7 +8,7 @@ import (
 )
 
 // Sequence that motors are tested when using MAV_CMD_DO_MOTOR_TEST.
-type MOTOR_TEST_ORDER uint32
+type MOTOR_TEST_ORDER uint64
 
 const (
 	// Default autopilot motor test method.

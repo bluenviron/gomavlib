@@ -8,7 +8,7 @@ import (
 )
 
 // List of possible units where failures can be injected.
-type FAILURE_UNIT uint32
+type FAILURE_UNIT uint64
 
 const (
 	FAILURE_UNIT_SENSOR_GYRO            FAILURE_UNIT = 0

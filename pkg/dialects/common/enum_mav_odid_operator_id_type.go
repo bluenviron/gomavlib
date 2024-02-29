@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type MAV_ODID_OPERATOR_ID_TYPE uint32
+type MAV_ODID_OPERATOR_ID_TYPE uint64
 
 const (
 	// CAA (Civil Aviation Authority) registered operator ID.

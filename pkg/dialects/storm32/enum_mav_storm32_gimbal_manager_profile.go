@@ -8,7 +8,7 @@ import (
 )
 
 // Gimbal manager profiles. Only standard profiles are defined. Any implementation can define its own profile(s) in addition, and should use enum values > 16.
-type MAV_STORM32_GIMBAL_MANAGER_PROFILE uint32
+type MAV_STORM32_GIMBAL_MANAGER_PROFILE uint64
 
 const (
 	// Default profile. Implementation specific.

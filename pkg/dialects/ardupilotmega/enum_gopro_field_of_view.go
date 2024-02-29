@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GOPRO_FIELD_OF_VIEW uint32
+type GOPRO_FIELD_OF_VIEW uint64
 
 const (
 	// 0x00: Wide.

@@ -8,7 +8,7 @@ import (
 )
 
 // Actuator output function. Values greater or equal to 1000 are autopilot-specific.
-type ACTUATOR_OUTPUT_FUNCTION uint32
+type ACTUATOR_OUTPUT_FUNCTION uint64
 
 const (
 	// No function (disabled).

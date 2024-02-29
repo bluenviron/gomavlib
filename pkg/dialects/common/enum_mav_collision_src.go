@@ -8,7 +8,7 @@ import (
 )
 
 // Source of information about this collision.
-type MAV_COLLISION_SRC uint32
+type MAV_COLLISION_SRC uint64
 
 const (
 	// ID field references ADSB_VEHICLE packets

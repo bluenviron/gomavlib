@@ -8,7 +8,7 @@ import (
 )
 
 // Action required when performing CMD_PREFLIGHT_STORAGE
-type MAV_PREFLIGHT_STORAGE_ACTION uint32
+type MAV_PREFLIGHT_STORAGE_ACTION uint64
 
 const (
 	// Read all parameters from storage

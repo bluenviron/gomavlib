@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type SCRIPTING_CMD uint32
+type SCRIPTING_CMD uint64
 
 const (
 	// Start a REPL session.

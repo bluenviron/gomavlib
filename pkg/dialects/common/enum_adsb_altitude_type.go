@@ -8,7 +8,7 @@ import (
 )
 
 // Enumeration of the ADSB altimeter types
-type ADSB_ALTITUDE_TYPE uint32
+type ADSB_ALTITUDE_TYPE uint64
 
 const (
 	// Altitude reported from a Baro source using QNH reference

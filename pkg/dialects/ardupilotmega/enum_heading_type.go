@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type HEADING_TYPE uint32
+type HEADING_TYPE uint64
 
 const (
 	HEADING_TYPE_COURSE_OVER_GROUND HEADING_TYPE = 0

@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-type GOPRO_PROTUNE_GAIN uint32
+type GOPRO_PROTUNE_GAIN uint64
 
 const (
 	// ISO 400.

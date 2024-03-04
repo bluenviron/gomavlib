@@ -6,7 +6,7 @@ require (
 	bou.ke/monkey v1.0.2
 	github.com/alecthomas/kong v0.8.1
 	github.com/pion/transport/v2 v2.2.4
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07
 )
 

@@ -249,6 +249,8 @@ const (
 	// A target system can choose to always use default storage, in which case it should ACK the command with MAV_RESULT_UNSUPPORTED.
 	// A target system can choose to not allow a particular storage to be set as preferred storage, in which case it should ACK the command with MAV_RESULT_DENIED.
 	MAV_CMD_SET_STORAGE_USAGE MAV_CMD = 533
+	// Set camera source. Changes the camera's active sources on cameras with multiple image sensors.
+	MAV_CMD_SET_CAMERA_SOURCE MAV_CMD = 534
 	// Tagged jump target. Can be jumped to with MAV_CMD_DO_JUMP_TAG.
 	MAV_CMD_JUMP_TAG MAV_CMD = 600
 	// Jump to the matching tag in the mission list. Repeat this action for the specified number of times. A mission should contain a single matching tag for each jump. If this is not the case then a jump to a missing tag should complete the mission, and a jump where there are multiple matching tags should always select the one with the lowest mission sequence number.
@@ -493,6 +495,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_SET_CAMERA_ZOOM:                    "MAV_CMD_SET_CAMERA_ZOOM",
 	MAV_CMD_SET_CAMERA_FOCUS:                   "MAV_CMD_SET_CAMERA_FOCUS",
 	MAV_CMD_SET_STORAGE_USAGE:                  "MAV_CMD_SET_STORAGE_USAGE",
+	MAV_CMD_SET_CAMERA_SOURCE:                  "MAV_CMD_SET_CAMERA_SOURCE",
 	MAV_CMD_JUMP_TAG:                           "MAV_CMD_JUMP_TAG",
 	MAV_CMD_DO_JUMP_TAG:                        "MAV_CMD_DO_JUMP_TAG",
 	MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW:         "MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW",
@@ -659,6 +662,7 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_SET_CAMERA_ZOOM":                    MAV_CMD_SET_CAMERA_ZOOM,
 	"MAV_CMD_SET_CAMERA_FOCUS":                   MAV_CMD_SET_CAMERA_FOCUS,
 	"MAV_CMD_SET_STORAGE_USAGE":                  MAV_CMD_SET_STORAGE_USAGE,
+	"MAV_CMD_SET_CAMERA_SOURCE":                  MAV_CMD_SET_CAMERA_SOURCE,
 	"MAV_CMD_JUMP_TAG":                           MAV_CMD_JUMP_TAG,
 	"MAV_CMD_DO_JUMP_TAG":                        MAV_CMD_DO_JUMP_TAG,
 	"MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW":         MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW,

@@ -250,6 +250,7 @@ var dial = &dialect.Dialect{
 		&MessageComponentInformationBasic{},
 		&MessageGroupStart{},
 		&MessageGroupEnd{},
+		&MessageRadioRcChannels{},
 		&MessageAvailableModes{},
 		&MessageCurrentMode{},
 		&MessageAvailableModesMonitor{},

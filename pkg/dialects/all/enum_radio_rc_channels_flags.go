@@ -3,15 +3,15 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/storm32"
+	"github.com/bluenviron/gomavlib/v2/pkg/dialects/development"
 )
 
 // RADIO_RC_CHANNELS flags (bitmask).
-type RADIO_RC_CHANNELS_FLAGS = storm32.RADIO_RC_CHANNELS_FLAGS
+type RADIO_RC_CHANNELS_FLAGS = development.RADIO_RC_CHANNELS_FLAGS
 
 const (
-	// Failsafe is active.
-	RADIO_RC_CHANNELS_FLAGS_FAILSAFE RADIO_RC_CHANNELS_FLAGS = storm32.RADIO_RC_CHANNELS_FLAGS_FAILSAFE
-	// Indicates that the current frame has not been received. Channel values are frozen.
-	RADIO_RC_CHANNELS_FLAGS_FRAME_MISSED RADIO_RC_CHANNELS_FLAGS = storm32.RADIO_RC_CHANNELS_FLAGS_FRAME_MISSED
+	// Failsafe is active. The content of the RC channels data in the RADIO_RC_CHANNELS message is implementation dependent.
+	RADIO_RC_CHANNELS_FLAGS_FAILSAFE RADIO_RC_CHANNELS_FLAGS = development.RADIO_RC_CHANNELS_FLAGS_FAILSAFE
+	// Channel data may be out of date. This is set when the receiver is unable to validate incoming data from the transmitter and has therefore resent the last valid data it received.
+	RADIO_RC_CHANNELS_FLAGS_OUTDATED RADIO_RC_CHANNELS_FLAGS = development.RADIO_RC_CHANNELS_FLAGS_OUTDATED
 )

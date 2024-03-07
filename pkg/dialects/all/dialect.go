@@ -354,6 +354,7 @@ var dial = &dialect.Dialect{
 		&MessageComponentInformationBasic{},
 		&MessageGroupStart{},
 		&MessageGroupEnd{},
+		&MessageRadioRcChannels{},
 		&MessageAvailableModes{},
 		&MessageCurrentMode{},
 		&MessageAvailableModesMonitor{},
@@ -381,8 +382,6 @@ var dial = &dialect.Dialect{
 		&MessageStorm32GimbalManagerControlPitchyaw{},
 		&MessageStorm32GimbalManagerCorrectRoll{},
 		&MessageQshotStatus{},
-		&MessageRadioRcChannels{},
-		&MessageRadioLinkStats{},
 		&MessageFrskyPassthroughArray{},
 		&MessageParamValueArray{},
 		// avssuas

@@ -34,7 +34,7 @@ func TestReconnector(t *testing.T) {
 	var buf dummyRWC
 
 	r := New(
-		func(ctx context.Context) (io.ReadWriteCloser, error) {
+		func(_ context.Context) (io.ReadWriteCloser, error) {
 			return &buf, nil
 		},
 	)

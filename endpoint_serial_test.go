@@ -16,7 +16,7 @@ func TestEndpointSerial(t *testing.T) {
 	done := make(chan struct{})
 	n := 0
 
-	serialOpenFunc = func(name string, baud int) (io.ReadWriteCloser, error) {
+	serialOpenFunc = func(_ string, _ int) (io.ReadWriteCloser, error) {
 		remote, local := newDummyReadWriterPair()
 
 		n++
@@ -133,7 +133,7 @@ func TestEndpointSerialReconnect(t *testing.T) {
 	done := make(chan struct{})
 	count := 0
 
-	serialOpenFunc = func(name string, baud int) (io.ReadWriteCloser, error) {
+	serialOpenFunc = func(_ string, _ int) (io.ReadWriteCloser, error) {
 		remote, local := newDummyReadWriterPair()
 
 		switch count {

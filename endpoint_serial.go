@@ -41,7 +41,7 @@ func (conf EndpointSerial) init(_ *Node) (Endpoint, error) {
 	t := &endpointSerial{
 		conf: conf,
 		reconnector: reconnector.New(
-			func(ctx context.Context) (io.ReadWriteCloser, error) {
+			func(_ context.Context) (io.ReadWriteCloser, error) {
 				return serialOpenFunc(conf.Device, conf.Baud)
 			},
 		),

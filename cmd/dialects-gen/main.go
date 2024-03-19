@@ -97,7 +97,7 @@ func shellCommand(cmdstr string) error {
 }
 
 func downloadJSON(addr string, data interface{}) error {
-	req, err := http.NewRequest("GET", addr, nil)
+	req, err := http.NewRequest(http.MethodGet, addr, nil)
 	if err != nil {
 		return err
 	}

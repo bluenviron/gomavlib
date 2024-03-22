@@ -21,21 +21,19 @@ import (
 type MAV_FRAME = common.MAV_FRAME
 
 const (
-	// Global (WGS84) coordinate frame + MSL altitude. First value / x: latitude, second value / y: longitude, third value / z: positive altitude over mean sea level (MSL).
+	// Global (WGS84) coordinate frame + altitude relative to mean sea level (MSL).
 	MAV_FRAME_GLOBAL MAV_FRAME = common.MAV_FRAME_GLOBAL
 	// NED local tangent frame (x: North, y: East, z: Down) with origin fixed relative to earth.
 	MAV_FRAME_LOCAL_NED MAV_FRAME = common.MAV_FRAME_LOCAL_NED
 	// NOT a coordinate frame, indicates a mission command.
 	MAV_FRAME_MISSION MAV_FRAME = common.MAV_FRAME_MISSION
 	// Global (WGS84) coordinate frame + altitude relative to the home position.
-	// First value / x: latitude, second value / y: longitude, third value / z: positive altitude with 0 being at the altitude of the home position.
 	MAV_FRAME_GLOBAL_RELATIVE_ALT MAV_FRAME = common.MAV_FRAME_GLOBAL_RELATIVE_ALT
 	// ENU local tangent frame (x: East, y: North, z: Up) with origin fixed relative to earth.
 	MAV_FRAME_LOCAL_ENU MAV_FRAME = common.MAV_FRAME_LOCAL_ENU
-	// Global (WGS84) coordinate frame (scaled) + MSL altitude. First value / x: latitude in degrees*1E7, second value / y: longitude in degrees*1E7, third value / z: positive altitude over mean sea level (MSL).
+	// Global (WGS84) coordinate frame (scaled) + altitude relative to mean sea level (MSL).
 	MAV_FRAME_GLOBAL_INT MAV_FRAME = common.MAV_FRAME_GLOBAL_INT
 	// Global (WGS84) coordinate frame (scaled) + altitude relative to the home position.
-	// First value / x: latitude in degrees*1E7, second value / y: longitude in degrees*1E7, third value / z: positive altitude with 0 being at the altitude of the home position.
 	MAV_FRAME_GLOBAL_RELATIVE_ALT_INT MAV_FRAME = common.MAV_FRAME_GLOBAL_RELATIVE_ALT_INT
 	// NED local tangent frame (x: North, y: East, z: Down) with origin that travels with the vehicle.
 	MAV_FRAME_LOCAL_OFFSET_NED MAV_FRAME = common.MAV_FRAME_LOCAL_OFFSET_NED
@@ -43,9 +41,9 @@ const (
 	MAV_FRAME_BODY_NED MAV_FRAME = common.MAV_FRAME_BODY_NED
 	// This is the same as MAV_FRAME_BODY_FRD.
 	MAV_FRAME_BODY_OFFSET_NED MAV_FRAME = common.MAV_FRAME_BODY_OFFSET_NED
-	// Global (WGS84) coordinate frame with AGL altitude (at the waypoint coordinate). First value / x: latitude in degrees, second value / y: longitude in degrees, third value / z: positive altitude in meters with 0 being at ground level in terrain model.
+	// Global (WGS84) coordinate frame with AGL altitude (altitude at ground level).
 	MAV_FRAME_GLOBAL_TERRAIN_ALT MAV_FRAME = common.MAV_FRAME_GLOBAL_TERRAIN_ALT
-	// Global (WGS84) coordinate frame (scaled) with AGL altitude (at the waypoint coordinate). First value / x: latitude in degrees*1E7, second value / y: longitude in degrees*1E7, third value / z: positive altitude in meters with 0 being at ground level in terrain model.
+	// Global (WGS84) coordinate frame (scaled) with AGL altitude (altitude at ground level).
 	MAV_FRAME_GLOBAL_TERRAIN_ALT_INT MAV_FRAME = common.MAV_FRAME_GLOBAL_TERRAIN_ALT_INT
 	// FRD local frame aligned to the vehicle's attitude (x: Forward, y: Right, z: Down) with an origin that travels with vehicle.
 	MAV_FRAME_BODY_FRD MAV_FRAME = common.MAV_FRAME_BODY_FRD

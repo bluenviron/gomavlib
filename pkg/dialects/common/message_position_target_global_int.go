@@ -6,13 +6,13 @@ package common
 type MessagePositionTargetGlobalInt struct {
 	// Timestamp (time since system boot). The rationale for the timestamp in the setpoint is to allow the system to compensate for the transport delay of the setpoint. This allows the system to compensate processing latency.
 	TimeBootMs uint32
-	// Valid options are: MAV_FRAME_GLOBAL_INT = 5, MAV_FRAME_GLOBAL_RELATIVE_ALT_INT = 6, MAV_FRAME_GLOBAL_TERRAIN_ALT_INT = 11
+	// Valid options are: MAV_FRAME_GLOBAL = 0, MAV_FRAME_GLOBAL_RELATIVE_ALT = 3, MAV_FRAME_GLOBAL_TERRAIN_ALT = 10 (MAV_FRAME_GLOBAL_INT, MAV_FRAME_GLOBAL_RELATIVE_ALT_INT, MAV_FRAME_GLOBAL_TERRAIN_ALT_INT are allowed synonyms, but have been deprecated)
 	CoordinateFrame MAV_FRAME `mavenum:"uint8"`
 	// Bitmap to indicate which dimensions should be ignored by the vehicle.
 	TypeMask POSITION_TARGET_TYPEMASK `mavenum:"uint16"`
-	// X Position in WGS84 frame
+	// Latitude in WGS84 frame
 	LatInt int32
-	// Y Position in WGS84 frame
+	// Longitude in WGS84 frame
 	LonInt int32
 	// Altitude (MSL, AGL or relative to home altitude, depending on frame)
 	Alt float32

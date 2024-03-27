@@ -138,7 +138,11 @@ const (
 	MAV_CMD_DO_MOUNT_CONTROL MAV_CMD = 205
 	// Mission command to set camera trigger distance for this flight. The camera is triggered each time this distance is exceeded. This command can also be used to set the shutter integration time for the camera.
 	MAV_CMD_DO_SET_CAM_TRIGG_DIST MAV_CMD = 206
-	// Mission command to enable the geofence
+	// Enable the geofence.
+	// This can be used in a mission or via the command protocol.
+	// The persistence/lifetime of the setting is undefined.
+	// Depending on flight stack implementation it may persist until superseded, or it may revert to a system default at the end of a mission.
+	// Flight stacks typically reset the setting to system defaults on reboot.
 	MAV_CMD_DO_FENCE_ENABLE MAV_CMD = 207
 	// Mission item/command to release a parachute or enable/disable auto release.
 	MAV_CMD_DO_PARACHUTE MAV_CMD = 208

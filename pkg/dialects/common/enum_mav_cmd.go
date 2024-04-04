@@ -102,6 +102,16 @@ const (
 	MAV_CMD_DO_CHANGE_ALTITUDE MAV_CMD = 186
 	// Sets actuators (e.g. servos) to a desired value. The actuator numbers are mapped to specific outputs (e.g. on any MAIN or AUX PWM or UAVCAN) using a flight-stack specific mechanism (i.e. a parameter).
 	MAV_CMD_DO_SET_ACTUATOR MAV_CMD = 187
+	// Mission item to specify the start of a failsafe/landing return-path segment (the end of the segment is the next MAV_CMD_DO_LAND_START item).
+	// A vehicle that is using missions for landing (e.g. in a return mode) will join the mission on the closest path of the return-path segment (instead of MAV_CMD_DO_LAND_START or the nearest waypoint).
+	// The main use case is to minimize the failsafe flight path in corridor missions, where the inbound/outbound paths are constrained (by geofences) to the same particular path.
+	// The MAV_CMD_NAV_RETURN_PATH_START would be placed at the start of the return path.
+	// If a failsafe occurs on the outbound path the vehicle will move to the nearest point on the return path (which is parallel for this kind of mission), effectively turning round and following the shortest path to landing.
+	// If a failsafe occurs on the inbound path the vehicle is already on the return segment and will continue to landing.
+	// The Latitude/Longitude/Altitude are optional, and may be set to 0 if not needed.
+	// If specified, the item defines the waypoint at which the return segment starts.
+	// If sent using as a command, the vehicle will perform a mission landing (using the land segment if defined) or reject the command if mission landings are not supported, or no mission landing is defined. When used as a command any position information in the command is ignored.
+	MAV_CMD_DO_RETURN_PATH_START MAV_CMD = 188
 	// Mission command to perform a landing. This is used as a marker in a mission to tell the autopilot where a sequence of mission items that represents a landing starts.
 	// It may also be sent via a COMMAND_LONG to trigger a landing, in which case the nearest (geographically) landing sequence in the mission will be used.
 	// The Latitude/Longitude/Altitude is optional, and may be set to 0 if not needed. If specified then it will be used to help find the closest landing sequence.
@@ -432,6 +442,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_DO_FLIGHTTERMINATION:               "MAV_CMD_DO_FLIGHTTERMINATION",
 	MAV_CMD_DO_CHANGE_ALTITUDE:                 "MAV_CMD_DO_CHANGE_ALTITUDE",
 	MAV_CMD_DO_SET_ACTUATOR:                    "MAV_CMD_DO_SET_ACTUATOR",
+	MAV_CMD_DO_RETURN_PATH_START:               "MAV_CMD_DO_RETURN_PATH_START",
 	MAV_CMD_DO_LAND_START:                      "MAV_CMD_DO_LAND_START",
 	MAV_CMD_DO_RALLY_LAND:                      "MAV_CMD_DO_RALLY_LAND",
 	MAV_CMD_DO_GO_AROUND:                       "MAV_CMD_DO_GO_AROUND",
@@ -597,6 +608,7 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_DO_FLIGHTTERMINATION":               MAV_CMD_DO_FLIGHTTERMINATION,
 	"MAV_CMD_DO_CHANGE_ALTITUDE":                 MAV_CMD_DO_CHANGE_ALTITUDE,
 	"MAV_CMD_DO_SET_ACTUATOR":                    MAV_CMD_DO_SET_ACTUATOR,
+	"MAV_CMD_DO_RETURN_PATH_START":               MAV_CMD_DO_RETURN_PATH_START,
 	"MAV_CMD_DO_LAND_START":                      MAV_CMD_DO_LAND_START,
 	"MAV_CMD_DO_RALLY_LAND":                      MAV_CMD_DO_RALLY_LAND,
 	"MAV_CMD_DO_GO_AROUND":                       MAV_CMD_DO_GO_AROUND,

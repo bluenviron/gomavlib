@@ -43,6 +43,11 @@ func (f V1Frame) GetComponentID() byte {
 	return f.ComponentID
 }
 
+// GetSequenceID implements Frame.
+func (f V1Frame) GetSequenceID() byte {
+	return f.SequenceID
+}
+
 // GetMessage implements Frame.
 func (f V1Frame) GetMessage() message.Message {
 	return f.Message

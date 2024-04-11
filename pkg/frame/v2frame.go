@@ -80,6 +80,11 @@ func (f V2Frame) GetComponentID() byte {
 	return f.ComponentID
 }
 
+// GetSequenceID implements Frame.
+func (f V2Frame) GetSequenceID() byte {
+	return f.SequenceID
+}
+
 // GetMessage implements Frame.
 func (f V2Frame) GetMessage() message.Message {
 	return f.Message

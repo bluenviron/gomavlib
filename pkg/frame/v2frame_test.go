@@ -16,5 +16,6 @@ func TestV2Frame(t *testing.T) {
 	}
 	require.Equal(t, uint8(56), f.GetSystemID())
 	require.Equal(t, uint8(89), f.GetComponentID())
+	require.Equal(t, uint8(123), f.GetSequenceID())
 	require.Equal(t, uint16(31415), f.GetChecksum())
 }

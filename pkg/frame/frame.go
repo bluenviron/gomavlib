@@ -18,6 +18,9 @@ type Frame interface {
 	// returns the message wrapped in the frame.
 	GetMessage() message.Message
 
+	// returns the sequence number in the frame
+	GetSequenceID() byte
+
 	// returns the checksum of the frame.
 	GetChecksum() uint16
 

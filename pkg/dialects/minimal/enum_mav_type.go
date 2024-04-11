@@ -99,6 +99,8 @@ const (
 	MAV_TYPE_WINCH MAV_TYPE = 42
 	// Generic multirotor that does not fit into a specific type or whose type is unknown
 	MAV_TYPE_GENERIC_MULTIROTOR MAV_TYPE = 43
+	// Illuminator. An illuminator is a light source that is used for lighting up dark areas external to the sytstem: e.g. a torch or searchlight (as opposed to a light source for illuminating the system itself, e.g. an indicator light).
+	MAV_TYPE_ILLUMINATOR MAV_TYPE = 44
 )
 
 var labels_MAV_TYPE = map[MAV_TYPE]string{
@@ -146,6 +148,7 @@ var labels_MAV_TYPE = map[MAV_TYPE]string{
 	MAV_TYPE_GPS:                       "MAV_TYPE_GPS",
 	MAV_TYPE_WINCH:                     "MAV_TYPE_WINCH",
 	MAV_TYPE_GENERIC_MULTIROTOR:        "MAV_TYPE_GENERIC_MULTIROTOR",
+	MAV_TYPE_ILLUMINATOR:               "MAV_TYPE_ILLUMINATOR",
 }
 
 var values_MAV_TYPE = map[string]MAV_TYPE{
@@ -193,6 +196,7 @@ var values_MAV_TYPE = map[string]MAV_TYPE{
 	"MAV_TYPE_GPS":                       MAV_TYPE_GPS,
 	"MAV_TYPE_WINCH":                     MAV_TYPE_WINCH,
 	"MAV_TYPE_GENERIC_MULTIROTOR":        MAV_TYPE_GENERIC_MULTIROTOR,
+	"MAV_TYPE_ILLUMINATOR":               MAV_TYPE_ILLUMINATOR,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.

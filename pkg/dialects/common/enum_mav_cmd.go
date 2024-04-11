@@ -219,6 +219,8 @@ const (
 	MAV_CMD_RUN_PREARM_CHECKS MAV_CMD = 401
 	// Turns illuminators ON/OFF. An illuminator is a light source that is used for lighting up dark areas external to the system: e.g. a torch or searchlight (as opposed to a light source for illuminating the system itself, e.g. an indicator light).
 	MAV_CMD_ILLUMINATOR_ON_OFF MAV_CMD = 405
+	// Configures illuminator settings. An illuminator is a light source that is used for lighting up dark areas external to the system: e.g. a torch or searchlight (as opposed to a light source for illuminating the system itself, e.g. an indicator light).
+	MAV_CMD_DO_ILLUMINATOR_CONFIGURE MAV_CMD = 406
 	// Request the home position from the vehicle.
 	// The vehicle will ACK the command and then emit the HOME_POSITION message.
 	MAV_CMD_GET_HOME_POSITION MAV_CMD = 410
@@ -487,6 +489,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_COMPONENT_ARM_DISARM:               "MAV_CMD_COMPONENT_ARM_DISARM",
 	MAV_CMD_RUN_PREARM_CHECKS:                  "MAV_CMD_RUN_PREARM_CHECKS",
 	MAV_CMD_ILLUMINATOR_ON_OFF:                 "MAV_CMD_ILLUMINATOR_ON_OFF",
+	MAV_CMD_DO_ILLUMINATOR_CONFIGURE:           "MAV_CMD_DO_ILLUMINATOR_CONFIGURE",
 	MAV_CMD_GET_HOME_POSITION:                  "MAV_CMD_GET_HOME_POSITION",
 	MAV_CMD_INJECT_FAILURE:                     "MAV_CMD_INJECT_FAILURE",
 	MAV_CMD_START_RX_PAIR:                      "MAV_CMD_START_RX_PAIR",
@@ -653,6 +656,7 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_COMPONENT_ARM_DISARM":               MAV_CMD_COMPONENT_ARM_DISARM,
 	"MAV_CMD_RUN_PREARM_CHECKS":                  MAV_CMD_RUN_PREARM_CHECKS,
 	"MAV_CMD_ILLUMINATOR_ON_OFF":                 MAV_CMD_ILLUMINATOR_ON_OFF,
+	"MAV_CMD_DO_ILLUMINATOR_CONFIGURE":           MAV_CMD_DO_ILLUMINATOR_CONFIGURE,
 	"MAV_CMD_GET_HOME_POSITION":                  MAV_CMD_GET_HOME_POSITION,
 	"MAV_CMD_INJECT_FAILURE":                     MAV_CMD_INJECT_FAILURE,
 	"MAV_CMD_START_RX_PAIR":                      MAV_CMD_START_RX_PAIR,

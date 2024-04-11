@@ -218,6 +218,8 @@ const (
 	MAV_CMD_RUN_PREARM_CHECKS MAV_CMD = common.MAV_CMD_RUN_PREARM_CHECKS
 	// Turns illuminators ON/OFF. An illuminator is a light source that is used for lighting up dark areas external to the system: e.g. a torch or searchlight (as opposed to a light source for illuminating the system itself, e.g. an indicator light).
 	MAV_CMD_ILLUMINATOR_ON_OFF MAV_CMD = common.MAV_CMD_ILLUMINATOR_ON_OFF
+	// Configures illuminator settings. An illuminator is a light source that is used for lighting up dark areas external to the system: e.g. a torch or searchlight (as opposed to a light source for illuminating the system itself, e.g. an indicator light).
+	MAV_CMD_DO_ILLUMINATOR_CONFIGURE MAV_CMD = common.MAV_CMD_DO_ILLUMINATOR_CONFIGURE
 	// Request the home position from the vehicle.
 	// The vehicle will ACK the command and then emit the HOME_POSITION message.
 	MAV_CMD_GET_HOME_POSITION MAV_CMD = common.MAV_CMD_GET_HOME_POSITION

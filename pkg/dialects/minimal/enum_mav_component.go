@@ -281,6 +281,8 @@ const (
 	MAV_COMP_ID_UART_BRIDGE MAV_COMPONENT = 241
 	// Component handling TUNNEL messages (e.g. vendor specific GUI of a component).
 	MAV_COMP_ID_TUNNEL_NODE MAV_COMPONENT = 242
+	// Illuminator
+	MAV_COMP_ID_ILLUMINATOR MAV_COMPONENT = 243
 	// Deprecated, don't use. Component for handling system messages (e.g. to ARM, takeoff, etc.).
 	MAV_COMP_ID_SYSTEM_CONTROL MAV_COMPONENT = 250
 )
@@ -420,6 +422,7 @@ var labels_MAV_COMPONENT = map[MAV_COMPONENT]string{
 	MAV_COMP_ID_UDP_BRIDGE:               "MAV_COMP_ID_UDP_BRIDGE",
 	MAV_COMP_ID_UART_BRIDGE:              "MAV_COMP_ID_UART_BRIDGE",
 	MAV_COMP_ID_TUNNEL_NODE:              "MAV_COMP_ID_TUNNEL_NODE",
+	MAV_COMP_ID_ILLUMINATOR:              "MAV_COMP_ID_ILLUMINATOR",
 	MAV_COMP_ID_SYSTEM_CONTROL:           "MAV_COMP_ID_SYSTEM_CONTROL",
 }
 
@@ -558,6 +561,7 @@ var values_MAV_COMPONENT = map[string]MAV_COMPONENT{
 	"MAV_COMP_ID_UDP_BRIDGE":               MAV_COMP_ID_UDP_BRIDGE,
 	"MAV_COMP_ID_UART_BRIDGE":              MAV_COMP_ID_UART_BRIDGE,
 	"MAV_COMP_ID_TUNNEL_NODE":              MAV_COMP_ID_TUNNEL_NODE,
+	"MAV_COMP_ID_ILLUMINATOR":              MAV_COMP_ID_ILLUMINATOR,
 	"MAV_COMP_ID_SYSTEM_CONTROL":           MAV_COMP_ID_SYSTEM_CONTROL,
 }
 

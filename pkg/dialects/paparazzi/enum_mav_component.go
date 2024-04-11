@@ -280,6 +280,8 @@ const (
 	MAV_COMP_ID_UART_BRIDGE MAV_COMPONENT = minimal.MAV_COMP_ID_UART_BRIDGE
 	// Component handling TUNNEL messages (e.g. vendor specific GUI of a component).
 	MAV_COMP_ID_TUNNEL_NODE MAV_COMPONENT = minimal.MAV_COMP_ID_TUNNEL_NODE
+	// Illuminator
+	MAV_COMP_ID_ILLUMINATOR MAV_COMPONENT = minimal.MAV_COMP_ID_ILLUMINATOR
 	// Deprecated, don't use. Component for handling system messages (e.g. to ARM, takeoff, etc.).
 	MAV_COMP_ID_SYSTEM_CONTROL MAV_COMPONENT = minimal.MAV_COMP_ID_SYSTEM_CONTROL
 )

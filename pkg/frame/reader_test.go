@@ -111,9 +111,9 @@ var casesReadWrite = []struct {
 		nil,
 		nil,
 		&V1Frame{
-			SequenceID:  0x01,
-			SystemID:    0x02,
-			ComponentID: 0x03,
+			SequenceNumber: 0x01,
+			SystemID:       0x02,
+			ComponentID:    0x03,
 			Message: &message.MessageRaw{
 				ID:      4,
 				Payload: nil,
@@ -127,9 +127,9 @@ var casesReadWrite = []struct {
 		nil,
 		nil,
 		&V1Frame{
-			SequenceID:  0x27,
-			SystemID:    0x01,
-			ComponentID: 0x02,
+			SequenceNumber: 0x27,
+			SystemID:       0x01,
+			ComponentID:    0x02,
 			Message: &message.MessageRaw{ //nolint:govet
 				8,
 				[]byte("\x10\x10\x10\x10\x10"),
@@ -143,9 +143,9 @@ var casesReadWrite = []struct {
 		testDialectRW,
 		nil,
 		&V1Frame{
-			SequenceID:  0x27,
-			SystemID:    0x01,
-			ComponentID: 0x02,
+			SequenceNumber: 0x27,
+			SystemID:       0x01,
+			ComponentID:    0x02,
 			Message: &MessageTest5{
 				'\x10',
 				binary.LittleEndian.Uint32([]byte("\x10\x10\x10\x10")),
@@ -161,7 +161,7 @@ var casesReadWrite = []struct {
 		&V2Frame{
 			IncompatibilityFlag: 0,
 			CompatibilityFlag:   0,
-			SequenceID:          3,
+			SequenceNumber:      3,
 			SystemID:            4,
 			ComponentID:         5,
 			Message: &message.MessageRaw{ //nolint:govet
@@ -179,7 +179,7 @@ var casesReadWrite = []struct {
 		&V2Frame{
 			IncompatibilityFlag: 0x00,
 			CompatibilityFlag:   0x00,
-			SequenceID:          0x8F,
+			SequenceNumber:      0x8F,
 			SystemID:            0x01,
 			ComponentID:         0x02,
 			Message: &message.MessageRaw{ //nolint:govet
@@ -197,7 +197,7 @@ var casesReadWrite = []struct {
 		&V2Frame{
 			IncompatibilityFlag: 0,
 			CompatibilityFlag:   0x00,
-			SequenceID:          0x8F,
+			SequenceNumber:      0x8F,
 			SystemID:            0x01,
 			ComponentID:         0x02,
 			Message: &MessageTest6{
@@ -215,7 +215,7 @@ var casesReadWrite = []struct {
 		&V2Frame{
 			IncompatibilityFlag: 0x01,
 			CompatibilityFlag:   0x00,
-			SequenceID:          0x00,
+			SequenceNumber:      0x00,
 			SystemID:            0x00,
 			ComponentID:         0x00,
 			Message: &MessageHeartbeat{
@@ -243,7 +243,7 @@ var casesReadWrite = []struct {
 		&V2Frame{
 			IncompatibilityFlag: 0x01,
 			CompatibilityFlag:   0x00,
-			SequenceID:          0x00,
+			SequenceNumber:      0x00,
 			SystemID:            0x00,
 			ComponentID:         0x00,
 			Message: &MessageOpticalFlow{
@@ -404,7 +404,7 @@ func TestReaderErrorSignatureTimestamp(t *testing.T) {
 	f := &V2Frame{
 		IncompatibilityFlag: 0x01,
 		CompatibilityFlag:   0x00,
-		SequenceID:          0x00,
+		SequenceNumber:      0x00,
 		SystemID:            0x00,
 		ComponentID:         0x00,
 		Message: &message.MessageRaw{
@@ -424,7 +424,7 @@ func TestReaderErrorSignatureTimestamp(t *testing.T) {
 	f = &V2Frame{
 		IncompatibilityFlag: 0x01,
 		CompatibilityFlag:   0x00,
-		SequenceID:          0x00,
+		SequenceNumber:      0x00,
 		SystemID:            0x00,
 		ComponentID:         0x00,
 		Message: &message.MessageRaw{

@@ -60,7 +60,7 @@ type V2Signature [6]byte
 type V2Frame struct {
 	IncompatibilityFlag byte
 	CompatibilityFlag   byte
-	SequenceID          byte
+	SequenceNumber      byte
 	SystemID            byte
 	ComponentID         byte
 	Message             message.Message
@@ -80,9 +80,9 @@ func (f V2Frame) GetComponentID() byte {
 	return f.ComponentID
 }
 
-// GetSequenceID implements Frame.
-func (f V2Frame) GetSequenceID() byte {
-	return f.SequenceID
+// GetSequenceNumber implements Frame.
+func (f V2Frame) GetSequenceNumber() byte {
+	return f.SequenceNumber
 }
 
 // GetMessage implements Frame.
@@ -109,7 +109,7 @@ func (f V2Frame) GenerateChecksum(crcExtra byte) uint16 {
 	h.Write([]byte{byte(len(msg.Payload))})
 	h.Write([]byte{f.IncompatibilityFlag})
 	h.Write([]byte{f.CompatibilityFlag})
-	h.Write([]byte{f.SequenceID})
+	h.Write([]byte{f.SequenceNumber})
 	h.Write([]byte{f.SystemID})
 	h.Write([]byte{f.ComponentID})
 	uint24Encode(buf, msg.ID)
@@ -135,7 +135,7 @@ func (f V2Frame) GenerateSignature(key *V2Key) *V2Signature {
 	h.Write([]byte{byte(len(msg.Payload))})
 	h.Write([]byte{f.IncompatibilityFlag})
 	h.Write([]byte{f.CompatibilityFlag})
-	h.Write([]byte{f.SequenceID})
+	h.Write([]byte{f.SequenceNumber})
 	h.Write([]byte{f.SystemID})
 	h.Write([]byte{f.ComponentID})
 	uint24Encode(buf, msg.GetID())
@@ -161,7 +161,7 @@ func (f *V2Frame) decode(br *bufio.Reader) error {
 	msgLen := buf[0]
 	f.IncompatibilityFlag = buf[1]
 	f.CompatibilityFlag = buf[2]
-	f.SequenceID = buf[3]
+	f.SequenceNumber = buf[3]
 	f.SystemID = buf[4]
 	f.ComponentID = buf[5]
 	msgID := uint24Decode(buf[6:])
@@ -215,7 +215,7 @@ func (f V2Frame) encodeTo(buf []byte, msgEncoded []byte) (int, error) {
 	buf[1] = byte(msgLen)
 	buf[2] = f.IncompatibilityFlag
 	buf[3] = f.CompatibilityFlag
-	buf[4] = f.SequenceID
+	buf[4] = f.SequenceNumber
 	buf[5] = f.SystemID
 	buf[6] = f.ComponentID
 	uint24Encode(buf[7:], f.Message.GetID())

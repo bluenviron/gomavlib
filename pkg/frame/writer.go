@@ -34,9 +34,9 @@ type WriterConf struct {
 
 // Writer is a Frame writer.
 type Writer struct {
-	conf               WriterConf
-	bw                 []byte
-	curWriteSequenceID byte
+	conf                   WriterConf
+	bw                     []byte
+	curWriteSequenceNumber byte
 }
 
 // NewWriter allocates a Writer.
@@ -79,15 +79,15 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 		return fmt.Errorf("message is nil")
 	}
 
-	// fill SequenceID, SystemID, ComponentID, CompatibilityFlag, IncompatibilityFlag
+	// fill SequenceNumber, SystemID, ComponentID, CompatibilityFlag, IncompatibilityFlag
 	switch ff := fr.(type) {
 	case *V1Frame:
-		ff.SequenceID = w.curWriteSequenceID
+		ff.SequenceNumber = w.curWriteSequenceNumber
 		ff.SystemID = w.conf.OutSystemID
 		ff.ComponentID = w.conf.OutComponentID
 
 	case *V2Frame:
-		ff.SequenceID = w.curWriteSequenceID
+		ff.SequenceNumber = w.curWriteSequenceNumber
 		ff.SystemID = w.conf.OutSystemID
 		ff.ComponentID = w.conf.OutComponentID
 
@@ -98,7 +98,7 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 		}
 	}
 
-	w.curWriteSequenceID++
+	w.curWriteSequenceNumber++
 
 	if w.conf.DialectRW == nil {
 		return fmt.Errorf("dialect is nil")

@@ -6,7 +6,7 @@ import (
 
 	"github.com/tarm/serial"
 
-	"github.com/bluenviron/gomavlib/v2/pkg/reconnector"
+	"github.com/bluenviron/gomavlib/v3/pkg/reconnector"
 )
 
 var serialOpenFunc = func(device string, baud int) (io.ReadWriteCloser, error) {

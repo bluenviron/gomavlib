@@ -3,7 +3,7 @@
 package matrixpilot
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 type FENCE_BREACH = common.FENCE_BREACH

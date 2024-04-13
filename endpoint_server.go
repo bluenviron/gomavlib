@@ -8,7 +8,7 @@ import (
 
 	"github.com/pion/transport/v2/udp"
 
-	"github.com/bluenviron/gomavlib/v2/pkg/timednetconn"
+	"github.com/bluenviron/gomavlib/v3/pkg/timednetconn"
 )
 
 type endpointServerConf interface {

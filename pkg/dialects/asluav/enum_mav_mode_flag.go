@@ -3,7 +3,7 @@
 package asluav
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/minimal"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/minimal"
 )
 
 // These flags encode the MAV mode.

@@ -24,9 +24,9 @@ import (
 
     "github.com/stretchr/testify/require"
 
-    "github.com/bluenviron/gomavlib/v2/pkg/dialect"
+    "github.com/bluenviron/gomavlib/v3/pkg/dialect"
 {{- range .Dialects }}
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/{{ . }}"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/{{ . }}"
 {{- end }}
 )
 

@@ -3,7 +3,7 @@
 package cubepilot
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Precision land modes (used in MAV_CMD_NAV_LAND).

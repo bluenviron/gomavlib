@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/pythonarraytest"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/pythonarraytest"
 )
 
 // Array test #4.

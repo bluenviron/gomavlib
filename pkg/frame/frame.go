@@ -4,7 +4,7 @@ package frame
 import (
 	"bufio"
 
-	"github.com/bluenviron/gomavlib/v2/pkg/message"
+	"github.com/bluenviron/gomavlib/v3/pkg/message"
 )
 
 // Frame is the interface implemented by frames of every supported version.

@@ -4,8 +4,8 @@
 package avssuas
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialect"
-	"github.com/bluenviron/gomavlib/v2/pkg/message"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v3/pkg/message"
 )
 
 // Dialect contains the dialect definition.

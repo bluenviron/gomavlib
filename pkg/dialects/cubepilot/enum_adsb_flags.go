@@ -3,7 +3,7 @@
 package cubepilot
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // These flags indicate status such as data validity of each data source. Set = data valid

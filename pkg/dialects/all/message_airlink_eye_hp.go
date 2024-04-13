@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/csairlink"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/csairlink"
 )
 
 // A package with information about the hole punching status. It is used for constant sending to avoid NAT closing timeout.

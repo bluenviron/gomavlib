@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/uavionix"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/uavionix"
 )
 
 // Transceiver heartbeat with health report (updated every 10s)

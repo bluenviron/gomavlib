@@ -147,11 +147,11 @@ func TestNodeWriteAll(t *testing.T) {
 						if fr, ok := evt.(*EventFrame); ok {
 							require.Equal(t, &EventFrame{
 								Frame: &frame.V2Frame{
-									SequenceID:  0,
-									SystemID:    11,
-									ComponentID: 1,
-									Message:     testMessage,
-									Checksum:    fr.Frame.GetChecksum(),
+									SequenceNumber: 0,
+									SystemID:       11,
+									ComponentID:    1,
+									Message:        testMessage,
+									Checksum:       fr.Frame.GetChecksum(),
 								},
 								Channel: fr.Channel,
 							}, fr)
@@ -176,11 +176,11 @@ func TestNodeWriteAll(t *testing.T) {
 				require.NoError(t, err)
 			} else {
 				err := server.WriteFrameAll(&frame.V2Frame{
-					SequenceID:  0,
-					SystemID:    11,
-					ComponentID: 1,
-					Message:     testMessage,
-					Checksum:    55967,
+					SequenceNumber: 0,
+					SystemID:       11,
+					ComponentID:    1,
+					Message:        testMessage,
+					Checksum:       55967,
 				})
 				require.NoError(t, err)
 			}
@@ -225,11 +225,11 @@ func TestNodeWriteExcept(t *testing.T) {
 						if fr, ok := evt.(*EventFrame); ok {
 							require.Equal(t, &EventFrame{
 								Frame: &frame.V2Frame{
-									SequenceID:  0,
-									SystemID:    11,
-									ComponentID: 1,
-									Message:     testMessage,
-									Checksum:    fr.Frame.GetChecksum(),
+									SequenceNumber: 0,
+									SystemID:       11,
+									ComponentID:    1,
+									Message:        testMessage,
+									Checksum:       fr.Frame.GetChecksum(),
 								},
 								Channel: fr.Channel,
 							}, fr)
@@ -258,11 +258,11 @@ func TestNodeWriteExcept(t *testing.T) {
 				require.NoError(t, err)
 			} else {
 				err := server.WriteFrameExcept(except, &frame.V2Frame{
-					SequenceID:  0,
-					SystemID:    11,
-					ComponentID: 1,
-					Message:     testMessage,
-					Checksum:    55967,
+					SequenceNumber: 0,
+					SystemID:       11,
+					ComponentID:    1,
+					Message:        testMessage,
+					Checksum:       55967,
 				})
 				require.NoError(t, err)
 			}
@@ -306,11 +306,11 @@ func TestNodeWriteTo(t *testing.T) {
 						if fr, ok := evt.(*EventFrame); ok {
 							require.Equal(t, &EventFrame{
 								Frame: &frame.V2Frame{
-									SequenceID:  0,
-									SystemID:    11,
-									ComponentID: 1,
-									Message:     testMessage,
-									Checksum:    fr.Frame.GetChecksum(),
+									SequenceNumber: 0,
+									SystemID:       11,
+									ComponentID:    1,
+									Message:        testMessage,
+									Checksum:       fr.Frame.GetChecksum(),
 								},
 								Channel: fr.Channel,
 							}, fr)
@@ -339,11 +339,11 @@ func TestNodeWriteTo(t *testing.T) {
 				require.NoError(t, err)
 			} else {
 				err := server.WriteFrameTo(except, &frame.V2Frame{
-					SequenceID:  0,
-					SystemID:    11,
-					ComponentID: 1,
-					Message:     testMessage,
-					Checksum:    55967,
+					SequenceNumber: 0,
+					SystemID:       11,
+					ComponentID:    1,
+					Message:        testMessage,
+					Checksum:       55967,
 				})
 				require.NoError(t, err)
 			}
@@ -442,7 +442,7 @@ func TestNodeSignature(t *testing.T) {
 	require.Equal(t, true, ok)
 	require.Equal(t, &EventFrame{
 		Frame: &frame.V2Frame{
-			SequenceID:          0,
+			SequenceNumber:      0,
 			SystemID:            11,
 			ComponentID:         1,
 			Message:             testMessage,
@@ -566,7 +566,7 @@ func TestNodeFixFrame(t *testing.T) {
 	}, evt)
 
 	fra := &frame.V2Frame{
-		SequenceID:          13,
+		SequenceNumber:      13,
 		SystemID:            15,
 		ComponentID:         11,
 		Message:             testMessage,
@@ -588,7 +588,7 @@ func TestNodeFixFrame(t *testing.T) {
 	require.Equal(t, true, ok)
 	require.Equal(t, &EventFrame{
 		Frame: &frame.V2Frame{
-			SequenceID:          13,
+			SequenceNumber:      13,
 			SystemID:            15,
 			ComponentID:         11,
 			Message:             testMessage,
@@ -656,11 +656,11 @@ func TestNodeWriteSameToMultiple(t *testing.T) {
 	require.Equal(t, true, ok)
 
 	fr := &frame.V2Frame{
-		SequenceID:  0,
-		SystemID:    11,
-		ComponentID: 1,
-		Message:     testMessage,
-		Checksum:    55967,
+		SequenceNumber: 0,
+		SystemID:       11,
+		ComponentID:    1,
+		Message:        testMessage,
+		Checksum:       55967,
 	}
 
 	err = client1.WriteFrameAll(fr)
@@ -675,11 +675,11 @@ func TestNodeWriteSameToMultiple(t *testing.T) {
 		require.Equal(t, true, ok)
 		require.Equal(t, &EventFrame{
 			Frame: &frame.V2Frame{
-				SequenceID:  0,
-				SystemID:    11,
-				ComponentID: 1,
-				Message:     testMessage,
-				Checksum:    55967,
+				SequenceNumber: 0,
+				SystemID:       11,
+				ComponentID:    1,
+				Message:        testMessage,
+				Checksum:       55967,
 			},
 			Channel: fr.Channel,
 		}, evt)

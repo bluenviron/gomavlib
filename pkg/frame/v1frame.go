@@ -26,11 +26,11 @@ func peekAndDiscard(br *bufio.Reader, size int) ([]byte, error) {
 
 // V1Frame is a Mavlink V1 frame.
 type V1Frame struct {
-	SequenceID  byte
-	SystemID    byte
-	ComponentID byte
-	Message     message.Message
-	Checksum    uint16
+	SequenceNumber byte
+	SystemID       byte
+	ComponentID    byte
+	Message        message.Message
+	Checksum       uint16
 }
 
 // GetSystemID implements Frame.
@@ -41,6 +41,11 @@ func (f V1Frame) GetSystemID() byte {
 // GetComponentID implements Frame.
 func (f V1Frame) GetComponentID() byte {
 	return f.ComponentID
+}
+
+// GetSequenceNumber implements Frame.
+func (f V1Frame) GetSequenceNumber() byte {
+	return f.SequenceNumber
 }
 
 // GetMessage implements Frame.
@@ -59,7 +64,7 @@ func (f V1Frame) GenerateChecksum(crcExtra byte) uint16 {
 	h := x25.New()
 
 	h.Write([]byte{byte(len(msg.Payload))})
-	h.Write([]byte{f.SequenceID})
+	h.Write([]byte{f.SequenceNumber})
 	h.Write([]byte{f.SystemID})
 	h.Write([]byte{f.ComponentID})
 	h.Write([]byte{byte(msg.ID)})
@@ -77,7 +82,7 @@ func (f *V1Frame) decode(br *bufio.Reader) error {
 		return err
 	}
 	msgLen := buf[0]
-	f.SequenceID = buf[1]
+	f.SequenceNumber = buf[1]
 	f.SystemID = buf[2]
 	f.ComponentID = buf[3]
 	msgID := buf[4]
@@ -116,7 +121,7 @@ func (f V1Frame) encodeTo(buf []byte, msgEncoded []byte) (int, error) {
 	// header
 	buf[0] = V1MagicByte
 	buf[1] = byte(msgLen)
-	buf[2] = f.SequenceID
+	buf[2] = f.SequenceNumber
 	buf[3] = f.SystemID
 	buf[4] = f.ComponentID
 	buf[5] = byte(f.Message.GetID())

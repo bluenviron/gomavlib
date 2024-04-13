@@ -106,11 +106,11 @@ func TestEndpointCustom(t *testing.T) {
 		evt = <-node.Events()
 		require.Equal(t, &EventFrame{
 			Frame: &frame.V2Frame{
-				SequenceID:  byte(i),
-				SystemID:    11,
-				ComponentID: 1,
-				Message:     msg,
-				Checksum:    evt.(*EventFrame).Frame.GetChecksum(),
+				SequenceNumber: byte(i),
+				SystemID:       11,
+				ComponentID:    1,
+				Message:        msg,
+				Checksum:       evt.(*EventFrame).Frame.GetChecksum(),
 			},
 			Channel: evt.(*EventFrame).Channel,
 		}, evt)
@@ -129,11 +129,11 @@ func TestEndpointCustom(t *testing.T) {
 		fr, err := rw.Read()
 		require.NoError(t, err)
 		require.Equal(t, &frame.V2Frame{
-			SequenceID:  byte(i),
-			SystemID:    10,
-			ComponentID: 1,
-			Message:     msg,
-			Checksum:    fr.GetChecksum(),
+			SequenceNumber: byte(i),
+			SystemID:       10,
+			ComponentID:    1,
+			Message:        msg,
+			Checksum:       fr.GetChecksum(),
 		}, fr)
 	}
 }

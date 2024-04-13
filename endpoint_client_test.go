@@ -52,9 +52,9 @@ func TestEndpointClient(t *testing.T) {
 					fr, err := rw.Read()
 					require.NoError(t, err)
 					require.Equal(t, &frame.V2Frame{
-						SequenceID:  byte(i),
-						SystemID:    10,
-						ComponentID: 1,
+						SequenceNumber: byte(i),
+						SystemID:       10,
+						ComponentID:    1,
 						Message: &MessageHeartbeat{
 							Type:           1,
 							Autopilot:      2,
@@ -114,9 +114,9 @@ func TestEndpointClient(t *testing.T) {
 				evt = <-node.Events()
 				require.Equal(t, &EventFrame{
 					Frame: &frame.V2Frame{
-						SequenceID:  byte(i),
-						SystemID:    11,
-						ComponentID: 1,
+						SequenceNumber: byte(i),
+						SystemID:       11,
+						ComponentID:    1,
 						Message: &MessageHeartbeat{
 							Type:           6,
 							Autopilot:      5,
@@ -164,9 +164,9 @@ func TestEndpointClientIdleTimeout(t *testing.T) {
 				fr, err := rw.Read()
 				require.NoError(t, err)
 				require.Equal(t, &frame.V2Frame{
-					SequenceID:  0,
-					SystemID:    10,
-					ComponentID: 1,
+					SequenceNumber: 0,
+					SystemID:       10,
+					ComponentID:    1,
 					Message: &MessageHeartbeat{
 						Type:           1,
 						Autopilot:      2,

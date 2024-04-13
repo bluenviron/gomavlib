@@ -15,6 +15,9 @@ type Frame interface {
 	// returns the component id of the author of the frame.
 	GetComponentID() byte
 
+	// returns the sequence number in the frame
+	GetSequenceNumber() byte
+
 	// returns the message wrapped in the frame.
 	GetMessage() message.Message
 

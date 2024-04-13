@@ -8,13 +8,14 @@ import (
 
 func TestV2Frame(t *testing.T) {
 	f := &V2Frame{
-		SequenceID:  123,
-		SystemID:    56,
-		ComponentID: 89,
-		Message:     nil,
-		Checksum:    31415,
+		SequenceNumber: 123,
+		SystemID:       56,
+		ComponentID:    89,
+		Message:        nil,
+		Checksum:       31415,
 	}
 	require.Equal(t, uint8(56), f.GetSystemID())
 	require.Equal(t, uint8(89), f.GetComponentID())
+	require.Equal(t, uint8(123), f.GetSequenceNumber())
 	require.Equal(t, uint16(31415), f.GetChecksum())
 }

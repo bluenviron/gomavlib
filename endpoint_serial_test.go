@@ -56,9 +56,9 @@ func TestEndpointSerial(t *testing.T) {
 				fr, err := rw.Read()
 				require.NoError(t, err)
 				require.Equal(t, &frame.V2Frame{
-					SequenceID:  byte(i),
-					SystemID:    10,
-					ComponentID: 1,
+					SequenceNumber: byte(i),
+					SystemID:       10,
+					ComponentID:    1,
 					Message: &MessageHeartbeat{
 						Type:           6,
 						Autopilot:      5,
@@ -99,9 +99,9 @@ func TestEndpointSerial(t *testing.T) {
 		evt := <-node.Events()
 		require.Equal(t, &EventFrame{
 			Frame: &frame.V2Frame{
-				SequenceID:  byte(i),
-				SystemID:    11,
-				ComponentID: 1,
+				SequenceNumber: byte(i),
+				SystemID:       11,
+				ComponentID:    1,
 				Message: &MessageHeartbeat{
 					Type:           1,
 					Autopilot:      2,
@@ -165,9 +165,9 @@ func TestEndpointSerialReconnect(t *testing.T) {
 				fr, err := rw.Read()
 				require.NoError(t, err)
 				require.Equal(t, &frame.V2Frame{
-					SequenceID:  0,
-					SystemID:    10,
-					ComponentID: 1,
+					SequenceNumber: 0,
+					SystemID:       10,
+					ComponentID:    1,
 					Message: &MessageHeartbeat{
 						Type:           6,
 						Autopilot:      5,
@@ -198,9 +198,9 @@ func TestEndpointSerialReconnect(t *testing.T) {
 				fr, err := rw.Read()
 				require.NoError(t, err)
 				require.Equal(t, &frame.V2Frame{
-					SequenceID:  0,
-					SystemID:    10,
-					ComponentID: 1,
+					SequenceNumber: 0,
+					SystemID:       10,
+					ComponentID:    1,
 					Message: &MessageHeartbeat{
 						Type:           7,
 						Autopilot:      5,
@@ -241,9 +241,9 @@ func TestEndpointSerialReconnect(t *testing.T) {
 	evt = <-node.Events()
 	require.Equal(t, &EventFrame{
 		Frame: &frame.V2Frame{
-			SequenceID:  0,
-			SystemID:    11,
-			ComponentID: 1,
+			SequenceNumber: 0,
+			SystemID:       11,
+			ComponentID:    1,
 			Message: &MessageHeartbeat{
 				Type:           1,
 				Autopilot:      2,

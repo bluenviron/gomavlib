@@ -5,7 +5,7 @@
 [![Dialects](https://github.com/bluenviron/gomavlib/workflows/dialects/badge.svg)](https://github.com/bluenviron/gomavlib/actions?query=workflow:dialects)
 [![Go Report Card](https://goreportcard.com/badge/github.com/bluenviron/gomavlib)](https://goreportcard.com/report/github.com/bluenviron/gomavlib)
 [![CodeCov](https://codecov.io/gh/bluenviron/gomavlib/branch/main/graph/badge.svg)](https://app.codecov.io/gh/bluenviron/gomavlib/branch/main)
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/bluenviron/gomavlib/v2)](https://pkg.go.dev/github.com/bluenviron/gomavlib/v2#pkg-index)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/bluenviron/gomavlib/v3)](https://pkg.go.dev/github.com/bluenviron/gomavlib/v3#pkg-index)
 
 gomavlib is a library that implements the Mavlink protocol (2.0 and 1.0) in the Go programming language. It can interact with Mavlink-capable devices through a serial port, UDP, TCP or a custom transport, and it can be used to power UGVs, UAVs, ground stations, monitoring systems or routers.
 
@@ -75,14 +75,14 @@ Features:
 
 ## API Documentation
 
-[Click to open the API Documentation](https://pkg.go.dev/github.com/bluenviron/gomavlib/v2#pkg-index)
+[Click to open the API Documentation](https://pkg.go.dev/github.com/bluenviron/gomavlib/v3#pkg-index)
 
 ## Dialect generation
 
 Standard dialects are provided in the `pkg/dialects/` folder, but it's also possible to use custom dialects, that can be converted into Go files by running:
 
 ```
-go install github.com/bluenviron/gomavlib/v2/cmd/dialect-import@latest
+go install github.com/bluenviron/gomavlib/v3/cmd/dialect-import@latest
 dialect-import my_dialect.xml
 ```
 

@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/cubepilot"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/cubepilot"
 )
 
 // Information about video stream

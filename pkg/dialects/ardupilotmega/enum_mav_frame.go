@@ -3,7 +3,7 @@
 package ardupilotmega
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Coordinate frames used by MAVLink. Not all frames are supported by all commands, messages, or vehicles.

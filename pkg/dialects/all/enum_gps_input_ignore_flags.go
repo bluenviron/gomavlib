@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 type GPS_INPUT_IGNORE_FLAGS = common.GPS_INPUT_IGNORE_FLAGS

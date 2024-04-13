@@ -3,7 +3,7 @@
 package ualberta
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Vehicle status report that is sent out while orbit execution is in progress (see MAV_CMD_DO_ORBIT).

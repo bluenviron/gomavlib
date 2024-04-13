@@ -3,7 +3,7 @@
 package paparazzi
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Settings of a camera. Can be requested with a MAV_CMD_REQUEST_MESSAGE command.

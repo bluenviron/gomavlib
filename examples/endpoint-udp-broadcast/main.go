@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/bluenviron/gomavlib/v2"
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v3"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
 )
 
 // this example shows how to:

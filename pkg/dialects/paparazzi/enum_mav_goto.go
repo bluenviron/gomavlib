@@ -3,7 +3,7 @@
 package paparazzi
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Actions that may be specified in MAV_CMD_OVERRIDE_GOTO to override mission execution.

@@ -3,7 +3,7 @@
 package ualberta
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Tune formats supported by vehicle. This should be emitted as response to MAV_CMD_REQUEST_MESSAGE.

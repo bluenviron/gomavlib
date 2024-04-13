@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/development"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/development"
 )
 
 // Get information about a particular flight modes.

@@ -3,7 +3,7 @@
 package ardupilotmega
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/uavionix"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/uavionix"
 )
 
 // Dynamic data used to generate ADS-B out transponder data (send at 5Hz)

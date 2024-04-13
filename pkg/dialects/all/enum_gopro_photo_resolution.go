@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
 )
 
 type GOPRO_PHOTO_RESOLUTION = ardupilotmega.GOPRO_PHOTO_RESOLUTION

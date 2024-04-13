@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/asluav"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/asluav"
 )
 
 // Send a command with up to seven parameters to the MAV and additional metadata

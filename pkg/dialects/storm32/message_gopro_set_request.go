@@ -3,7 +3,7 @@
 package storm32
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
 )
 
 // Request to set a GOPRO_COMMAND with a desired.

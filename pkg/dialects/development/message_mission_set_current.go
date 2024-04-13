@@ -3,7 +3,7 @@
 package development
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Set the mission item with sequence number seq as the current item and emit MISSION_CURRENT (whether or not the mission number changed).

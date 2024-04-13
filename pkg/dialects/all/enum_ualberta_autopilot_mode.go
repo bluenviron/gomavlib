@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/ualberta"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ualberta"
 )
 
 // Available autopilot modes for ualberta uav

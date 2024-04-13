@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/development"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/development"
 )
 
 // A change to the sequence number indicates that the set of AVAILABLE_MODES has changed.

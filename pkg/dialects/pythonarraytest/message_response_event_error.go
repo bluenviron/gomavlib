@@ -3,7 +3,7 @@
 package pythonarraytest
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Response to a REQUEST_EVENT in case of an error (e.g. the event is not available anymore).

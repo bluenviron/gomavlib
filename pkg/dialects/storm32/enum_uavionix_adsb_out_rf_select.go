@@ -3,7 +3,7 @@
 package storm32
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/uavionix"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/uavionix"
 )
 
 // Transceiver RF control flags for ADS-B transponder dynamic reports

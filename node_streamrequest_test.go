@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/bluenviron/gomavlib/v2/pkg/dialect"
-	"github.com/bluenviron/gomavlib/v2/pkg/message"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v3/pkg/message"
 )
 
 func TestNodeStreamRequest(t *testing.T) {

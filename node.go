@@ -17,9 +17,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bluenviron/gomavlib/v2/pkg/dialect"
-	"github.com/bluenviron/gomavlib/v2/pkg/frame"
-	"github.com/bluenviron/gomavlib/v2/pkg/message"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v3/pkg/frame"
+	"github.com/bluenviron/gomavlib/v3/pkg/message"
 )
 
 var errTerminated = fmt.Errorf("terminated")

@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/storm32"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/storm32"
 )
 
 // Gimbal manager capability flags.

@@ -3,7 +3,7 @@
 package avssuas
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Actuator output function. Values greater or equal to 1000 are autopilot-specific.

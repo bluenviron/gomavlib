@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
 )
 
 // The MCU status, giving MCU temperature and voltage. The min and max voltages are to allow for detecting power supply instability.

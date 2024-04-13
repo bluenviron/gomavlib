@@ -3,7 +3,7 @@
 package matrixpilot
 
 import (
-	"github.com/bluenviron/gomavlib/v2/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // RTK GPS baseline coordinate system, used for RTK corrections

@@ -4,7 +4,7 @@ package development
 
 // Battery dynamic information.
 // This should be streamed (nominally at 1Hz).
-// Static/invariant battery information is sent in SMART_BATTERY_INFO.
+// Static/invariant battery information is sent in BATTERY_INFO.
 // Note that smart batteries should set the MAV_BATTERY_STATUS_FLAGS_CAPACITY_RELATIVE_TO_FULL bit to indicate that supplied capacity values are relative to a battery that is known to be full.
 // Power monitors would not set this bit, indicating that capacity_consumed is relative to drone power-on, and that other values are estimated based on the assumption that the battery was full on power-on.
 type MessageBatteryStatusV2 struct {
@@ -18,7 +18,7 @@ type MessageBatteryStatusV2 struct {
 	Current float32
 	// Consumed charge. NaN: field not provided. This is either the consumption since power-on or since the battery was full, depending on the value of MAV_BATTERY_STATUS_FLAGS_CAPACITY_RELATIVE_TO_FULL.
 	CapacityConsumed float32
-	// Remaining charge (until empty). UINT32_MAX: field not provided. Note: If MAV_BATTERY_STATUS_FLAGS_CAPACITY_RELATIVE_TO_FULL is unset, this value is based on the assumption the battery was full when the system was powered.
+	// Remaining charge (until empty). NaN: field not provided. Note: If MAV_BATTERY_STATUS_FLAGS_CAPACITY_RELATIVE_TO_FULL is unset, this value is based on the assumption the battery was full when the system was powered.
 	CapacityRemaining float32
 	// Remaining battery energy. Values: [0-100], UINT8_MAX: field not provided.
 	PercentRemaining uint8

@@ -8,7 +8,7 @@ import (
 
 // Battery dynamic information.
 // This should be streamed (nominally at 1Hz).
-// Static/invariant battery information is sent in SMART_BATTERY_INFO.
+// Static/invariant battery information is sent in BATTERY_INFO.
 // Note that smart batteries should set the MAV_BATTERY_STATUS_FLAGS_CAPACITY_RELATIVE_TO_FULL bit to indicate that supplied capacity values are relative to a battery that is known to be full.
 // Power monitors would not set this bit, indicating that capacity_consumed is relative to drone power-on, and that other values are estimated based on the assumption that the battery was full on power-on.
 type MessageBatteryStatusV2 = development.MessageBatteryStatusV2

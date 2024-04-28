@@ -147,22 +147,22 @@ func TestEndpointClientIdleTimeout(t *testing.T) {
 			reconnected := make(chan struct{})
 
 			go func() {
-				conn, err := ln.Accept()
-				require.NoError(t, err)
+				conn, err2 := ln.Accept()
+				require.NoError(t, err2)
 
-				dialectRW, err := dialect.NewReadWriter(testDialect)
-				require.NoError(t, err)
+				dialectRW, err2 := dialect.NewReadWriter(testDialect)
+				require.NoError(t, err2)
 
-				rw, err := frame.NewReadWriter(frame.ReadWriterConf{
+				rw, err2 := frame.NewReadWriter(frame.ReadWriterConf{
 					ReadWriter:  conn,
 					DialectRW:   dialectRW,
 					OutVersion:  frame.V2,
 					OutSystemID: 11,
 				})
-				require.NoError(t, err)
+				require.NoError(t, err2)
 
-				fr, err := rw.Read()
-				require.NoError(t, err)
+				fr, err2 := rw.Read()
+				require.NoError(t, err2)
 				require.Equal(t, &frame.V2Frame{
 					SequenceNumber: 0,
 					SystemID:       10,
@@ -178,15 +178,15 @@ func TestEndpointClientIdleTimeout(t *testing.T) {
 					Checksum: fr.GetChecksum(),
 				}, fr)
 
-				_, err = rw.Read()
-				require.Equal(t, io.EOF, err)
+				_, err2 = rw.Read()
+				require.Equal(t, io.EOF, err2)
 				conn.Close()
 
 				close(closed)
 
 				// the client reconnects to the server due to autoReconnector
-				conn, err = ln.Accept()
-				require.NoError(t, err)
+				conn, err2 = ln.Accept()
+				require.NoError(t, err2)
 				conn.Close()
 
 				close(reconnected)

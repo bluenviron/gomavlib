@@ -76,7 +76,8 @@ func initEndpointServer(node *Node, conf endpointServerConf) (Endpoint, error) {
 
 	var ln net.Listener
 	if conf.isUDP() {
-		addr, err := net.ResolveUDPAddr("udp4", conf.getAddress())
+		var addr *net.UDPAddr
+		addr, err = net.ResolveUDPAddr("udp4", conf.getAddress())
 		if err != nil {
 			return nil, err
 		}

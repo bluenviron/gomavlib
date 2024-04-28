@@ -631,7 +631,8 @@ func Convert(path string, link bool) error {
 	isRemote := (err == nil)
 	defName := defAddrToName(path)
 
-	if _, err := os.Stat(defName); !os.IsNotExist(err) {
+	_, err = os.Stat(defName)
+	if !os.IsNotExist(err) {
 		return fmt.Errorf("directory '%s' already exists", defName)
 	}
 

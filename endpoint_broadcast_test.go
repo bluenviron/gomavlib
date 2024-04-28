@@ -51,8 +51,8 @@ func TestEndpointBroadcast(t *testing.T) {
 	rw, err := frame.NewReadWriter(frame.ReadWriterConf{
 		ReadWriter: &readWriterFromFuncs{
 			readFunc: func(p []byte) (int, error) {
-				n, _, err := pc.ReadFrom(p)
-				return n, err
+				n, _, err2 := pc.ReadFrom(p)
+				return n, err2
 			},
 			writeFunc: func(p []byte) (int, error) {
 				return pc.WriteTo(p, &net.UDPAddr{

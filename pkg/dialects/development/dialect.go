@@ -249,6 +249,7 @@ var dial = &dialect.Dialect{
 		&MessageVelocityLimits{},
 		&MessageFigureEightExecutionStatus{},
 		&MessageBatteryStatusV2{},
+		&MessageFuelStatus{},
 		&MessageGroupStart{},
 		&MessageGroupEnd{},
 		&MessageRadioRcChannels{},

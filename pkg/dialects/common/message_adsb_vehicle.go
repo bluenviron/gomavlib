@@ -28,7 +28,7 @@ type MessageAdsbVehicle struct {
 	Tslc uint8
 	// Bitmap to indicate various statuses including valid data fields
 	Flags ADSB_FLAGS `mavenum:"uint16"`
-	// Squawk code
+	// Squawk code. Note that the code is in decimal: e.g. 7700 (general emergency) is encoded as binary 0b0001_1110_0001_0100, not(!) as 0b0000_111_111_000_000
 	Squawk uint16
 }
 

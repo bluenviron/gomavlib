@@ -504,6 +504,9 @@ const (
 	// The requirement can also be satisfied by automatic setting of the emergency status by flight stack, and that approach is preferred.
 	// See https://mavlink.io/en/services/opendroneid.html for more information.
 	MAV_CMD_ODID_SET_EMERGENCY MAV_CMD = 12900
+	// Set an external estimate of wind direction and speed.
+	// This might be used to provide an initial wind estimate to the estimator (EKF) in the case where the vehicle is wind dead-reckoning, extending the time when operating without GPS before before position drift builds to an unsafe level. For this use case the command might reasonably be sent every few minutes when operating at altitude, and the value is cleared if the estimator resets itself.
+	MAV_CMD_EXTERNAL_WIND_ESTIMATE MAV_CMD = 43004
 	// Command to a gimbal manager to control the gimbal tilt and pan angles. It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. A gimbal device is never to react to this command.
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW MAV_CMD = 60002
 	// Command to configure a gimbal manager. A gimbal device is never to react to this command. The selected profile is reported in the STORM32_GIMBAL_MANAGER_STATUS message.
@@ -733,6 +736,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_SET_AT_S_PARAM:                             "MAV_CMD_SET_AT_S_PARAM",
 	MAV_CMD_DO_SET_SYS_CMP_ID:                          "MAV_CMD_DO_SET_SYS_CMP_ID",
 	MAV_CMD_ODID_SET_EMERGENCY:                         "MAV_CMD_ODID_SET_EMERGENCY",
+	MAV_CMD_EXTERNAL_WIND_ESTIMATE:                     "MAV_CMD_EXTERNAL_WIND_ESTIMATE",
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW: "MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW",
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP:            "MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP",
 	MAV_CMD_QSHOT_DO_CONFIGURE:                         "MAV_CMD_QSHOT_DO_CONFIGURE",
@@ -952,6 +956,7 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_SET_AT_S_PARAM":                             MAV_CMD_SET_AT_S_PARAM,
 	"MAV_CMD_DO_SET_SYS_CMP_ID":                          MAV_CMD_DO_SET_SYS_CMP_ID,
 	"MAV_CMD_ODID_SET_EMERGENCY":                         MAV_CMD_ODID_SET_EMERGENCY,
+	"MAV_CMD_EXTERNAL_WIND_ESTIMATE":                     MAV_CMD_EXTERNAL_WIND_ESTIMATE,
 	"MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW": MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW,
 	"MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP":            MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP,
 	"MAV_CMD_QSHOT_DO_CONFIGURE":                         MAV_CMD_QSHOT_DO_CONFIGURE,

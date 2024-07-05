@@ -13,7 +13,7 @@ type MessageGlobalPositionInt struct {
 	Lon int32
 	// Altitude (MSL). Note that virtually all GPS modules provide both WGS84 and MSL.
 	Alt int32
-	// Altitude above ground
+	// Altitude above home
 	RelativeAlt int32
 	// Ground X Speed (Latitude, positive north)
 	Vx int16

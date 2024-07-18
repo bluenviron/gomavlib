@@ -32,6 +32,8 @@ type MessageCameraInformation struct {
 	CamDefinitionUri string `mavlen:"140"`
 	// Gimbal id of a gimbal associated with this camera. This is the component id of the gimbal device, or 1-6 for non mavlink gimbals. Use 0 if no gimbal is associated with the camera.
 	GimbalDeviceId uint8 `mavext:"true"`
+	// Camera id of a camera associated with this component. This is the component id of a proxied MAVLink camera, or 1-6 for a non-MAVLink camera attached to the component. Use 0 if the component is a camera (not something else providing access to a camera).
+	CameraDeviceId uint8 `mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

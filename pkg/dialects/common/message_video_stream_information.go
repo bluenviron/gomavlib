@@ -28,6 +28,8 @@ type MessageVideoStreamInformation struct {
 	Name string `mavlen:"32"`
 	// Video stream URI (TCP or RTSP URI ground station should connect to) or port number (UDP port ground station should listen to).
 	Uri string `mavlen:"160"`
+	// Encoding of stream.
+	Encoding VIDEO_STREAM_ENCODING `mavenum:"uint8" mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

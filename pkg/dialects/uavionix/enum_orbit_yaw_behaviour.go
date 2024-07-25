@@ -20,4 +20,6 @@ const (
 	ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TANGENT_TO_CIRCLE ORBIT_YAW_BEHAVIOUR = common.ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TANGENT_TO_CIRCLE
 	// Yaw controlled by RC input.
 	ORBIT_YAW_BEHAVIOUR_RC_CONTROLLED ORBIT_YAW_BEHAVIOUR = common.ORBIT_YAW_BEHAVIOUR_RC_CONTROLLED
+	// Vehicle uses current yaw behaviour (unchanged). The vehicle-default yaw behaviour is used if this value is specified when orbit is first commanded.
+	ORBIT_YAW_BEHAVIOUR_UNCHANGED ORBIT_YAW_BEHAVIOUR = common.ORBIT_YAW_BEHAVIOUR_UNCHANGED
 )

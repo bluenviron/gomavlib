@@ -64,17 +64,33 @@ func NewWriter(conf WriterConf) (*Writer, error) {
 	}, nil
 }
 
+// WriteBroadcastMessage writes a broadcast Message (with system ID and component ID equal to zero).
+// The Message is wrapped into a Frame whose fields are filled automatically.
+// It must not be called by multiple routines in parallel.
+func (w *Writer) WriteBroadcastMessage(m message.Message) error {
+	var fr Frame
+	if w.conf.OutVersion == V1 {
+		fr = &V1Frame{Message: m}
+	} else {
+		fr = &V2Frame{Message: m}
+	}
+	return w.writeFrameAndFill(fr, true)
+}
+
 // WriteMessage writes a Message.
 // The Message is wrapped into a Frame whose fields are filled automatically.
 // It must not be called by multiple routines in parallel.
 func (w *Writer) WriteMessage(m message.Message) error {
+	var fr Frame
 	if w.conf.OutVersion == V1 {
-		return w.writeFrameAndFill(&V1Frame{Message: m})
+		fr = &V1Frame{Message: m}
+	} else {
+		fr = &V2Frame{Message: m}
 	}
-	return w.writeFrameAndFill(&V2Frame{Message: m})
+	return w.writeFrameAndFill(fr, false)
 }
 
-func (w *Writer) writeFrameAndFill(fr Frame) error {
+func (w *Writer) writeFrameAndFill(fr Frame, broadcast bool) error {
 	if fr.GetMessage() == nil {
 		return fmt.Errorf("message is nil")
 	}
@@ -83,13 +99,17 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 	switch ff := fr.(type) {
 	case *V1Frame:
 		ff.SequenceNumber = w.curWriteSequenceNumber
-		ff.SystemID = w.conf.OutSystemID
-		ff.ComponentID = w.conf.OutComponentID
+		if !broadcast {
+			ff.SystemID = w.conf.OutSystemID
+			ff.ComponentID = w.conf.OutComponentID
+		}
 
 	case *V2Frame:
 		ff.SequenceNumber = w.curWriteSequenceNumber
-		ff.SystemID = w.conf.OutSystemID
-		ff.ComponentID = w.conf.OutComponentID
+		if !broadcast {
+			ff.SystemID = w.conf.OutSystemID
+			ff.ComponentID = w.conf.OutComponentID
+		}
 
 		ff.CompatibilityFlag = 0
 		ff.IncompatibilityFlag = 0

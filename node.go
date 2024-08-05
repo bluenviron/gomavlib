@@ -101,8 +101,8 @@ type Node struct {
 	// in
 	chNewChannel   chan *Channel
 	chCloseChannel chan *Channel
-	chWriteTo      chan writeToReq
 	chWriteAll     chan interface{}
+	chWriteTo      chan writeToReq
 	chWriteExcept  chan writeExceptReq
 	terminate      chan struct{}
 
@@ -170,8 +170,8 @@ func NewNode(conf NodeConf) (*Node, error) {
 		channels:         make(map[*Channel]struct{}),
 		chNewChannel:     make(chan *Channel),
 		chCloseChannel:   make(chan *Channel),
-		chWriteTo:        make(chan writeToReq),
 		chWriteAll:       make(chan interface{}),
+		chWriteTo:        make(chan writeToReq),
 		chWriteExcept:    make(chan writeExceptReq),
 		terminate:        make(chan struct{}),
 		chEvent:          make(chan Event),
@@ -262,16 +262,16 @@ outer:
 		case ch := <-n.chCloseChannel:
 			delete(n.channels, ch)
 
+		case what := <-n.chWriteAll:
+			for ch := range n.channels {
+				ch.write(what)
+			}
+
 		case req := <-n.chWriteTo:
 			if _, ok := n.channels[req.ch]; !ok {
 				continue
 			}
 			req.ch.write(req.what)
-
-		case what := <-n.chWriteAll:
-			for ch := range n.channels {
-				ch.write(what)
-			}
 
 		case req := <-n.chWriteExcept:
 			for ch := range n.channels {
@@ -395,15 +395,15 @@ func (n *Node) Events() chan Event {
 	return n.chEvent
 }
 
-// WriteMessageTo writes a message to given channel.
-func (n *Node) WriteMessageTo(channel *Channel, m message.Message) error {
+// WriteBroadcastMessage writes a broadcast message (with system ID and component ID equal to zero) to all channels.
+func (n *Node) WriteBroadcastMessage(m message.Message) error {
 	m, err := n.encodeMessage(m)
 	if err != nil {
 		return err
 	}
 
 	select {
-	case n.chWriteTo <- writeToReq{channel, m}:
+	case n.chWriteAll <- broadcastMessage{m}:
 	case <-n.terminate:
 	}
 
@@ -425,6 +425,21 @@ func (n *Node) WriteMessageAll(m message.Message) error {
 	return nil
 }
 
+// WriteMessageTo writes a message to given channel.
+func (n *Node) WriteMessageTo(channel *Channel, m message.Message) error {
+	m, err := n.encodeMessage(m)
+	if err != nil {
+		return err
+	}
+
+	select {
+	case n.chWriteTo <- writeToReq{channel, m}:
+	case <-n.terminate:
+	}
+
+	return nil
+}
+
 // WriteMessageExcept writes a message to all channels except specified channel.
 func (n *Node) WriteMessageExcept(exceptChannel *Channel, m message.Message) error {
 	m, err := n.encodeMessage(m)
@@ -434,23 +449,6 @@ func (n *Node) WriteMessageExcept(exceptChannel *Channel, m message.Message) err
 
 	select {
 	case n.chWriteExcept <- writeExceptReq{exceptChannel, m}:
-	case <-n.terminate:
-	}
-
-	return nil
-}
-
-// WriteFrameTo writes a frame to given channel.
-// This function is intended only for routing pre-existing frames to other nodes,
-// since all frame fields must be filled manually.
-func (n *Node) WriteFrameTo(channel *Channel, fr frame.Frame) error {
-	err := n.encodeFrame(fr)
-	if err != nil {
-		return err
-	}
-
-	select {
-	case n.chWriteTo <- writeToReq{channel, fr}:
 	case <-n.terminate:
 	}
 
@@ -468,6 +466,23 @@ func (n *Node) WriteFrameAll(fr frame.Frame) error {
 
 	select {
 	case n.chWriteAll <- fr:
+	case <-n.terminate:
+	}
+
+	return nil
+}
+
+// WriteFrameTo writes a frame to given channel.
+// This function is intended only for routing pre-existing frames to other nodes,
+// since all frame fields must be filled manually.
+func (n *Node) WriteFrameTo(channel *Channel, fr frame.Frame) error {
+	err := n.encodeFrame(fr)
+	if err != nil {
+		return err
+	}
+
+	select {
+	case n.chWriteTo <- writeToReq{channel, fr}:
 	case <-n.terminate:
 	}
 

@@ -14,6 +14,10 @@ const (
 	writeBufferSize = 64
 )
 
+type broadcastMessage struct {
+	message.Message
+}
+
 func randomByte() (byte, error) {
 	var buf [1]byte
 	_, err := rand.Read(buf[:])
@@ -166,12 +170,15 @@ func (ch *Channel) runWriter(writerTerminate chan struct{}, writerDone chan stru
 	for {
 		select {
 		case what := <-ch.chWrite:
-			switch wh := what.(type) {
+			switch what := what.(type) {
+			case broadcastMessage:
+				ch.frw.WriteBroadcastMessage(what.Message) //nolint:errcheck
+
 			case message.Message:
-				ch.frw.WriteMessage(wh) //nolint:errcheck
+				ch.frw.WriteMessage(what) //nolint:errcheck
 
 			case frame.Frame:
-				ch.frw.WriteFrame(wh) //nolint:errcheck
+				ch.frw.WriteFrame(what) //nolint:errcheck
 			}
 
 		case <-writerTerminate:

@@ -262,3 +262,62 @@ func TestWriterWriteFrameNilMsg(t *testing.T) {
 	err = writer.WriteFrame(f)
 	require.Error(t, err)
 }
+
+func TestWriterWriteBroadcastMessage(t *testing.T) {
+	for _, ca := range []struct {
+		name    string
+		version WriterOutVersion
+		dec     message.Message
+		enc     []byte
+	}{
+		{
+			"v1",
+			V1,
+			&MessageHeartbeat{
+				Type:           1,
+				Autopilot:      2,
+				BaseMode:       3,
+				CustomMode:     4,
+				SystemStatus:   5,
+				MavlinkVersion: 3,
+			},
+			[]byte{
+				0xfe, 0x09, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00,
+				0x00, 0x00, 0x01, 0x02, 0x03, 0x05, 0x03, 0x9c,
+				0x5c,
+			},
+		},
+		{
+			"v2",
+			V2,
+			&MessageHeartbeat{
+				Type:           1,
+				Autopilot:      2,
+				BaseMode:       3,
+				CustomMode:     4,
+				SystemStatus:   5,
+				MavlinkVersion: 3,
+			},
+			[]byte{
+				0xfd, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x01, 0x02,
+				0x03, 0x05, 0x03, 0x3e, 0x29,
+			},
+		},
+	} {
+		t.Run(ca.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			writer, err := NewWriter(WriterConf{
+				Writer:      &buf,
+				DialectRW:   testDialectRW,
+				OutVersion:  ca.version,
+				OutSystemID: 1,
+			})
+			require.NoError(t, err)
+
+			err = writer.WriteBroadcastMessage(ca.dec)
+			require.NoError(t, err)
+			require.Equal(t, ca.enc, buf.Bytes())
+		})
+	}
+}

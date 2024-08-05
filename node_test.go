@@ -111,6 +111,69 @@ func TestNodeCloseInLoop(t *testing.T) {
 	}
 }
 
+func TestNodeWriteBroadcast(t *testing.T) {
+	server, err := NewNode(NodeConf{
+		Dialect:     testDialect,
+		OutVersion:  V2,
+		OutSystemID: 11,
+		Endpoints: []EndpointConf{
+			EndpointTCPServer{"127.0.0.1:5600"},
+		},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer server.Close()
+
+	var wg sync.WaitGroup
+	wg.Add(5)
+
+	for i := 0; i < 5; i++ {
+		var client *Node
+		client, err = NewNode(NodeConf{
+			Dialect:     testDialect,
+			OutVersion:  V2,
+			OutSystemID: 11,
+			Endpoints: []EndpointConf{
+				EndpointTCPClient{"127.0.0.1:5600"},
+			},
+			HeartbeatDisable: true,
+		})
+		require.NoError(t, err)
+		defer client.Close()
+
+		go func() {
+			for evt := range client.Events() {
+				if fr, ok := evt.(*EventFrame); ok {
+					require.Equal(t, &EventFrame{
+						Frame: &frame.V2Frame{
+							SequenceNumber: 0,
+							SystemID:       0,
+							ComponentID:    0,
+							Message:        testMessage,
+							Checksum:       fr.Frame.GetChecksum(),
+						},
+						Channel: fr.Channel,
+					}, fr)
+					wg.Done()
+				}
+			}
+		}()
+	}
+
+	count := 0
+	for evt := range server.Events() {
+		if _, ok := evt.(*EventChannelOpen); ok {
+			count++
+			if count == 5 {
+				break
+			}
+		}
+	}
+
+	err = server.WriteBroadcastMessage(testMessage)
+	require.NoError(t, err)
+}
+
 func TestNodeWriteAll(t *testing.T) {
 	for _, ca := range []string{"message", "frame"} {
 		t.Run(ca, func(t *testing.T) {

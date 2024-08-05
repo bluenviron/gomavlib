@@ -85,13 +85,16 @@ func (*MessageOpticalFlow) GetID() uint32 {
 }
 
 var testDialectRW = func() *dialect.ReadWriter {
-	d := &dialect.Dialect{3, []message.Message{ //nolint:govet
-		&MessageTest5{},
-		&MessageTest6{},
-		&MessageTest9{},
-		&MessageHeartbeat{},
-		&MessageOpticalFlow{},
-	}}
+	d := &dialect.Dialect{
+		Version: 3,
+		Messages: []message.Message{
+			&MessageTest5{},
+			&MessageTest6{},
+			&MessageTest9{},
+			&MessageHeartbeat{},
+			&MessageOpticalFlow{},
+		},
+	}
 	de, err := dialect.NewReadWriter(d)
 	if err != nil {
 		panic(err)
@@ -130,9 +133,9 @@ var casesReadWrite = []struct {
 			SequenceNumber: 0x27,
 			SystemID:       0x01,
 			ComponentID:    0x02,
-			Message: &message.MessageRaw{ //nolint:govet
-				8,
-				[]byte("\x10\x10\x10\x10\x10"),
+			Message: &message.MessageRaw{
+				ID:      8,
+				Payload: []byte("\x10\x10\x10\x10\x10"),
 			},
 			Checksum: 0xc7fa,
 		},
@@ -164,9 +167,9 @@ var casesReadWrite = []struct {
 			SequenceNumber:      3,
 			SystemID:            4,
 			ComponentID:         5,
-			Message: &message.MessageRaw{ //nolint:govet
-				4,
-				nil,
+			Message: &message.MessageRaw{
+				ID:      4,
+				Payload: nil,
 			},
 			Checksum: 0x0ab7,
 		},
@@ -182,9 +185,9 @@ var casesReadWrite = []struct {
 			SequenceNumber:      0x8F,
 			SystemID:            0x01,
 			ComponentID:         0x02,
-			Message: &message.MessageRaw{ //nolint:govet
-				0x0607,
-				[]byte("\x10\x10\x10\x10\x10"),
+			Message: &message.MessageRaw{
+				ID:      0x0607,
+				Payload: []byte("\x10\x10\x10\x10\x10"),
 			},
 			Checksum: 0x0349,
 		},

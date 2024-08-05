@@ -29,8 +29,8 @@ var tplDialect = template.Must(template.New("").Parse(
 package {{ .PkgName }}
 
 import (
-    "github.com/bluenviron/gomavlib/v3/pkg/message"
-    "github.com/bluenviron/gomavlib/v3/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v3/pkg/message"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
 )
 
 // Dialect contains the dialect definition.
@@ -38,15 +38,15 @@ var Dialect = dial
 
 // dial is not exposed directly in order not to display it in godoc.
 var dial = &dialect.Dialect{
-    Version: {{.Version}},
-    Messages: []message.Message{
+	Version: {{.Version}},
+	Messages: []message.Message{
 {{- range .Defs }}
-    // {{ .Name }}
+	// {{ .Name }}
 {{- range .Messages }}
-        &Message{{ .Name }}{},
+		&Message{{ .Name }}{},
 {{- end }}
 {{- end }}
-    },
+	},
 }
 `))
 
@@ -58,7 +58,7 @@ package {{ .PkgName }}
 {{- if .Link }}
 
 import (
-    "github.com/bluenviron/gomavlib/v3/pkg/dialects/{{ .Enum.DefName }}"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/{{ .Enum.DefName }}"
 )
 
 {{- range .Enum.Description }}
@@ -70,20 +70,20 @@ const (
 {{- $en := .Enum }}
 {{- range .Enum.Values }}
 {{- range .Description }}
-        // {{ . }}
+		// {{ . }}
 {{- end }}
-        {{ .Name }} {{ $en.Name }} = {{ $en.DefName }}.{{ .Name }}
+		{{ .Name }} {{ $en.Name }} = {{ $en.DefName }}.{{ .Name }}
 {{- end }}
 )
 
 {{- else }}
 
 import (
-    "strconv"
+	"strconv"
 {{- if .Enum.Bitmask }}
-    "strings"
+	"strings"
 {{- end }}
-    "fmt"
+	"fmt"
 )
 
 {{- range .Enum.Description }}
@@ -95,77 +95,77 @@ const (
 {{- $pn := .Enum.Name }}
 {{- range .Enum.Values }}
 {{- range .Description }}
-    // {{ . }}
+	// {{ . }}
 {{- end }}
-    {{ .Name }} {{ $pn }} = {{ .Value }}
+	{{ .Name }} {{ $pn }} = {{ .Value }}
 {{- end }}
 )
 
 var labels_{{ .Enum.Name }} = map[{{ .Enum.Name }}]string{
 {{- range .Enum.Values }}
-    {{ .Name }}: "{{ .Name }}",
+	{{ .Name }}: "{{ .Name }}",
 {{- end }}
 }
 
 var values_{{ .Enum.Name }} = map[string]{{ .Enum.Name }}{
 {{- range .Enum.Values }}
-    "{{ .Name }}": {{ .Name }},
+	"{{ .Name }}": {{ .Name }},
 {{- end }}
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e {{ .Enum.Name }}) MarshalText() ([]byte, error) {
 {{- if .Enum.Bitmask }}
-    if e == 0 {
-        return []byte("0"), nil
-    }
-    var names []string
-    for i := 0; i < {{ len .Enum.Values }}; i++ {
-        mask := {{ .Enum.Name }}(1 << i)
-        if e&mask == mask {
-            names = append(names, labels_{{ .Enum.Name }}[mask])
-        }
-    }
-    return []byte(strings.Join(names, " | ")), nil
+	if e == 0 {
+		return []byte("0"), nil
+	}
+	var names []string
+	for i := 0; i < {{ len .Enum.Values }}; i++ {
+		mask := {{ .Enum.Name }}(1 << i)
+		if e&mask == mask {
+			names = append(names, labels_{{ .Enum.Name }}[mask])
+		}
+	}
+	return []byte(strings.Join(names, " | ")), nil
 {{- else }}
-    if name, ok := labels_{{ .Enum.Name }}[e]; ok {
-        return []byte(name), nil
-    }
-    return []byte(strconv.Itoa(int(e))), nil
+	if name, ok := labels_{{ .Enum.Name }}[e]; ok {
+		return []byte(name), nil
+	}
+	return []byte(strconv.Itoa(int(e))), nil
 {{- end }}
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *{{ .Enum.Name }}) UnmarshalText(text []byte) error {
 {{- if .Enum.Bitmask }}
-    labels := strings.Split(string(text), " | ")
-    var mask {{ .Enum.Name }}
-    for _, label := range labels {
-        if value, ok := values_{{ .Enum.Name }}[label]; ok {
-            mask |= value
-        } else if value, err := strconv.Atoi(label); err == nil {
-            mask |= {{ .Enum.Name }}(value)
-        } else {
-            return fmt.Errorf("invalid label '%s'", label)
-        }
-    }
+	labels := strings.Split(string(text), " | ")
+	var mask {{ .Enum.Name }}
+	for _, label := range labels {
+		if value, ok := values_{{ .Enum.Name }}[label]; ok {
+			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= {{ .Enum.Name }}(value)
+		} else {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
+	}
 	*e = mask
 {{- else }}
-    if value, ok := values_{{ .Enum.Name }}[string(text)]; ok {
-       *e = value
-    } else if value, err := strconv.Atoi(string(text)); err == nil {
-       *e = {{ .Enum.Name }}(value)
-    } else {
-        return fmt.Errorf("invalid label '%s'", text)
-    }
+	if value, ok := values_{{ .Enum.Name }}[string(text)]; ok {
+	   *e = value
+	} else if value, err := strconv.Atoi(string(text)); err == nil {
+	   *e = {{ .Enum.Name }}(value)
+	} else {
+		return fmt.Errorf("invalid label '%s'", text)
+	}
 {{- end }}
-    return nil
+	return nil
 }
 
 // String implements the fmt.Stringer interface.
 func (e {{ .Enum.Name }}) String() string {
-    val, _ := e.MarshalText()
-    return string(val)
+	val, _ := e.MarshalText()
+	return string(val)
 }
 {{- end }}
 `))
@@ -178,7 +178,7 @@ package {{ .PkgName }}
 {{- if .Link }}
 
 import (
-    "github.com/bluenviron/gomavlib/v3/pkg/dialects/{{ .Msg.DefName }}"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/{{ .Msg.DefName }}"
 )
 
 {{- range .Msg.Description }}
@@ -194,15 +194,15 @@ type Message{{ .Msg.Name }} = {{ .Msg.DefName }}.Message{{ .Msg.Name }}
 type Message{{ .Msg.Name }} struct {
 {{- range .Msg.Fields }}
 {{- range .Description }}
-    // {{ . }}
+	// {{ . }}
 {{- end }}
-    {{ .Line }}
+	{{ .Line }}
 {{- end }}
 }
 
 // GetID implements the message.Message interface.
 func (*Message{{ .Msg.Name }}) GetID() uint32 {
-    return {{ .Msg.ID }}
+	return {{ .Msg.ID }}
 }
 
 {{- end }}

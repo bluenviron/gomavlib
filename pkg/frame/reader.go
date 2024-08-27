@@ -90,7 +90,7 @@ func (r *Reader) Read() (Frame, error) {
 
 	err = f.decode(r.br)
 	if err != nil {
-		return nil, newError(err.Error())
+		return nil, newError("%s", err.Error())
 	}
 
 	if r.conf.InKey != nil {
@@ -126,7 +126,7 @@ func (r *Reader) Read() (Frame, error) {
 			_, isV2 := f.(*V2Frame)
 			msg, err := mp.Read(f.GetMessage().(*message.MessageRaw), isV2)
 			if err != nil {
-				return nil, newError(fmt.Sprintf("unable to decode message: %s", err.Error()))
+				return nil, newError("unable to decode message: %s", err.Error())
 			}
 
 			switch ff := f.(type) {

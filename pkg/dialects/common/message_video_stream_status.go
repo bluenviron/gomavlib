@@ -20,6 +20,8 @@ type MessageVideoStreamStatus struct {
 	Rotation uint16
 	// Horizontal Field of view
 	Hfov uint16
+	// Camera id of a non-MAVLink camera attached to an autopilot (1-6).  0 if the component is a MAVLink camera (with its own component id).
+	CameraDeviceId uint8 `mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

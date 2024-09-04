@@ -24,6 +24,8 @@ type MessageCameraFovStatus struct {
 	Hfov float32
 	// Vertical field of view (NaN if unknown).
 	Vfov float32
+	// Camera id of a non-MAVLink camera attached to an autopilot (1-6).  0 if the component is a MAVLink camera (with its own component id).
+	CameraDeviceId uint8 `mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

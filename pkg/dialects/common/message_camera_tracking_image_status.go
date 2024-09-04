@@ -24,6 +24,8 @@ type MessageCameraTrackingImageStatus struct {
 	RecBottomX float32
 	// Current tracked rectangle bottom y value if CAMERA_TRACKING_MODE_RECTANGLE (normalized 0..1, 0 is top, 1 is bottom), NAN if unknown
 	RecBottomY float32
+	// Camera id of a non-MAVLink camera attached to an autopilot (1-6).  0 if the component is a MAVLink camera (with its own component id).
+	CameraDeviceId uint8 `mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

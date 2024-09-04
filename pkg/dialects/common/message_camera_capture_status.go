@@ -18,6 +18,8 @@ type MessageCameraCaptureStatus struct {
 	AvailableCapacity float32
 	// Total number of images captured ('forever', or until reset using MAV_CMD_STORAGE_FORMAT).
 	ImageCount int32 `mavext:"true"`
+	// Camera id of a non-MAVLink camera attached to an autopilot (1-6).  0 if the component is a MAVLink camera (with its own component id).
+	CameraDeviceId uint8 `mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

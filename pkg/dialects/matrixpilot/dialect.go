@@ -179,6 +179,7 @@ var dial = &dialect.Dialect{
 		&MessageCameraFovStatus{},
 		&MessageCameraTrackingImageStatus{},
 		&MessageCameraTrackingGeoStatus{},
+		&MessageCameraThermalRange{},
 		&MessageGimbalManagerInformation{},
 		&MessageGimbalManagerStatus{},
 		&MessageGimbalManagerSetAttitude{},

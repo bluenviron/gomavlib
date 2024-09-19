@@ -50,4 +50,6 @@ const (
 	// Parameter protocol uses C-cast of parameter values to set the param_value (float) fields: https://mavlink.io/en/services/parameter.html#parameter-encoding.
 	// Note that either this flag or MAV_PROTOCOL_CAPABILITY_PARAM_ENCODE_BYTEWISE should be set if the parameter protocol is supported.
 	MAV_PROTOCOL_CAPABILITY_PARAM_ENCODE_C_CAST MAV_PROTOCOL_CAPABILITY = common.MAV_PROTOCOL_CAPABILITY_PARAM_ENCODE_C_CAST
+	// This component implements/is a gimbal manager. This means the GIMBAL_MANAGER_INFORMATION, and other messages can be requested.
+	MAV_PROTOCOL_CAPABILITY_COMPONENT_IMPLEMENTS_GIMBAL_MANAGER MAV_PROTOCOL_CAPABILITY = common.MAV_PROTOCOL_CAPABILITY_COMPONENT_IMPLEMENTS_GIMBAL_MANAGER
 )

@@ -2,32 +2,79 @@ package main
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
-	"os"
+	"log"
+	"math"
+	"reflect"
 
 	"github.com/bluenviron/gomavlib/v3"
 	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
-	"github.com/bluenviron/gomavlib/v3/pkg/frame"
 )
 
 // this example shows how to:
 // 1) create a node which communicates with a serial endpoint
-// 2) convert any message to a generic JSON object
-// the output of this example can be combined with a JSON parser like jq to display individual messages, for example:
-//     go run ./examples/serial-to-json | jq 'select(.MessageType == "*minimal.MessageHeartbeat")'
+// 2) encode incoming messages into JSON
+// 3) print messages in the console
+
+// float values "NaN", "+Inf", "-Inf" cannot be converted into JSON numbers.
+// convert them to string before performing the JSON encoding.
+func convertIncompatibleFloats(obj any) interface{} {
+	v := reflect.ValueOf(obj)
+	if v.Kind() == reflect.Pointer {
+		v = v.Elem()
+	}
+
+	convert := func(f float64) interface{} {
+		if math.IsNaN(f) {
+			return "NaN"
+		} else if math.IsInf(f, 1) {
+			return "+Inf"
+		} else if math.IsInf(f, -1) {
+			return "-Inf"
+		}
+		return f
+	}
+
+	switch v.Kind() {
+	case reflect.Float32:
+		return convert(float64(v.Interface().(float32)))
+
+	case reflect.Float64:
+		return convert(v.Interface().(float64))
+
+	case reflect.Bool, reflect.Int, reflect.Uint, reflect.Int8, reflect.Uint8, reflect.Int16, reflect.Uint16,
+		reflect.Int32, reflect.Uint32, reflect.Int64, reflect.Uint64:
+		return v.Interface()
+
+	case reflect.Array:
+		nl := v.Len()
+		out := make([]interface{}, nl)
+		for i := 0; i < nl; i++ {
+			out[i] = convertIncompatibleFloats(v.Index(i).Interface())
+		}
+		return out
+
+	case reflect.Struct:
+		t := v.Type()
+		nf := t.NumField()
+		out := make(map[string]interface{}, nf)
+		for i := 0; i < nf; i++ {
+			out[t.Field(i).Name] = convertIncompatibleFloats(v.Field(i).Interface())
+		}
+		return out
+
+	default:
+		panic(fmt.Errorf("unsupported type: %s", v.Kind()))
+	}
+}
 
 func main() {
-	baudRate := flag.Int("b", 57600, "baud rate")
-	port := flag.String("p", "/dev/ttyUSB0", "port")
-	flag.Parse()
-
 	// create a node which communicates with a serial endpoint
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{
-				Device: *port,
-				Baud:   *baudRate,
+				Device: "/dev/ttyUSB0",
+				Baud:   57600,
 			},
 		},
 		Dialect:     common.Dialect,
@@ -39,23 +86,22 @@ func main() {
 	}
 	defer node.Close()
 
-	jsonEncoder := json.NewEncoder(os.Stdout)
 	for evt := range node.Events() {
 		if frm, ok := evt.(*gomavlib.EventFrame); ok {
-			// add the message type to the JSON object
-			if err := jsonEncoder.Encode(struct {
-				MessageType string
-				Frame       *frame.Frame
+			// encode incoming messages
+			enc, err := json.Marshal(struct {
+				Type    string
+				Content interface{}
 			}{
-				MessageType: fmt.Sprintf("%T", frm.Message()),
-				Frame:       &frm.Frame,
-			}); err != nil {
-				// some messages contain floating point NaN values which cannot be encoded in JSON
-				// silently ignore these errors
-				if err.Error() != "json: unsupported value: NaN" {
-					panic(err)
-				}
+				Type:    fmt.Sprintf("%T", frm.Message()),
+				Content: convertIncompatibleFloats(frm.Message()),
+			})
+			if err != nil {
+				panic(err)
 			}
+
+			// print messages in the console
+			log.Printf("%s\n", enc)
 		}
 	}
 }

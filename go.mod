@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	bou.ke/monkey v1.0.2
-	github.com/alecthomas/kong v1.2.1
+	github.com/alecthomas/kong v1.3.0
 	github.com/pion/transport/v2 v2.2.10
 	github.com/stretchr/testify v1.9.0
 	github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07

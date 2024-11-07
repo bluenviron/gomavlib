@@ -260,5 +260,6 @@ var dial = &dialect.Dialect{
 		&MessageGnssIntegrity{},
 		&MessageTargetAbsolute{},
 		&MessageTargetRelative{},
+		&MessageControlStatus{},
 	},
 }

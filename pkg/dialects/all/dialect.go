@@ -364,6 +364,7 @@ var dial = &dialect.Dialect{
 		&MessageGnssIntegrity{},
 		&MessageTargetAbsolute{},
 		&MessageTargetRelative{},
+		&MessageControlStatus{},
 		// pythonarraytest
 		&MessageArrayTest_0{},
 		&MessageArrayTest_1{},

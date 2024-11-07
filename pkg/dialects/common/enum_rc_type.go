@@ -7,24 +7,24 @@ import (
 	"strconv"
 )
 
-// RC type
+// RC type. Used in MAV_CMD_START_RX_PAIR.
 type RC_TYPE uint64
 
 const (
-	// Spektrum DSM2
-	RC_TYPE_SPEKTRUM_DSM2 RC_TYPE = 0
-	// Spektrum DSMX
-	RC_TYPE_SPEKTRUM_DSMX RC_TYPE = 1
+	// Spektrum
+	RC_TYPE_SPEKTRUM RC_TYPE = 0
+	// CRSF
+	RC_TYPE_CRSF RC_TYPE = 1
 )
 
 var labels_RC_TYPE = map[RC_TYPE]string{
-	RC_TYPE_SPEKTRUM_DSM2: "RC_TYPE_SPEKTRUM_DSM2",
-	RC_TYPE_SPEKTRUM_DSMX: "RC_TYPE_SPEKTRUM_DSMX",
+	RC_TYPE_SPEKTRUM: "RC_TYPE_SPEKTRUM",
+	RC_TYPE_CRSF:     "RC_TYPE_CRSF",
 }
 
 var values_RC_TYPE = map[string]RC_TYPE{
-	"RC_TYPE_SPEKTRUM_DSM2": RC_TYPE_SPEKTRUM_DSM2,
-	"RC_TYPE_SPEKTRUM_DSMX": RC_TYPE_SPEKTRUM_DSMX,
+	"RC_TYPE_SPEKTRUM": RC_TYPE_SPEKTRUM,
+	"RC_TYPE_CRSF":     RC_TYPE_CRSF,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.

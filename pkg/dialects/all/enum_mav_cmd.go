@@ -507,6 +507,29 @@ const (
 	// Set an external estimate of wind direction and speed.
 	// This might be used to provide an initial wind estimate to the estimator (EKF) in the case where the vehicle is wind dead-reckoning, extending the time when operating without GPS before before position drift builds to an unsafe level. For this use case the command might reasonably be sent every few minutes when operating at altitude, and the value is cleared if the estimator resets itself.
 	MAV_CMD_EXTERNAL_WIND_ESTIMATE MAV_CMD = 43004
+	// Request GCS control of a system (or of a specific component in a system).
+	// A controlled system should only accept MAVLink commands and command-like messages that are sent by its controlling GCS, or from other components with the same system id.
+	// Commands from other systems should be rejected with MAV_RESULT_PERMISSION_DENIED (except for this command, which may be acknowledged with MAV_RESULT_ACCEPTED if control is granted).
+	// Command-like messages should be ignored (or rejected if that is supported by their associated protocol).
+	// GCS control of the whole system is managed via a single component that we will refer to here as the "system manager component".
+	// This component streams the CONTROL_STATUS message and sets the GCS_CONTROL_STATUS_FLAGS_SYSTEM_MANAGER flag.
+	// Other components in the system should monitor for the CONTROL_STATUS message with this flag, and set their controlling GCS to match its published system id.
+	// A GCS that wants to control the system should also monitor for the same message and flag, and address the MAV_CMD_REQUEST_OPERATOR_CONTROL to its component id.
+	// Note that integrators are required to ensure that there is only one system manager component in the system (i.e. one component emitting the message with GCS_CONTROL_STATUS_FLAGS_SYSTEM_MANAGER set).
+	// The MAV_CMD_REQUEST_OPERATOR_CONTROL command is sent by a GCS to the system manager component to request or release control of a system, specifying whether subsequent takeover requests from another GCS are automatically granted, or require permission.
+	// The system manager component should grant control to the GCS if the system does not require takeover permission (or is uncontrolled) and ACK the request with MAV_RESULT_ACCEPTED.
+	// The system manager component should then stream CONTROL_STATUS indicating its controlling system: all other components with the same system id should monitor this message and set their own controlling GCS to match that of the system manager component.
+	// If the system manager component cannot grant control (because takeover requires permission), the request should be rejected with MAV_RESULT_PERMISSION_DENIED.
+	// The system manager component should then send this same command to the current owning GCS in order to notify of the request.
+	// The owning GCS would ACK with MAV_RESULT_ACCEPTED, and might choose to release control of the vehicle, or re-request control with the takeover bit set to allow permission.
+	// Note that the pilots of both GCS should co-ordinate safe handover offline.
+	// Note that in most systems the only controlled component will be the "system manager component", and that will be the autopilot.
+	// However separate GCS control of a particular component is also permitted, if supported by the component.
+	// In this case the GCS will address MAV_CMD_REQUEST_OPERATOR_CONTROL to the specific component it wants to control.
+	// The component will then stream CONTROL_STATUS for its controlling GCS (it must not set GCS_CONTROL_STATUS_FLAGS_SYSTEM_MANAGER).
+	// The component should fall back to the system GCS (if any) when it is not directly controlled, and may stop emitting CONTROL_STATUS.
+	// The flow is otherwise the same as for requesting control over the whole system.
+	MAV_CMD_REQUEST_OPERATOR_CONTROL MAV_CMD = 43005
 	// Command to a gimbal manager to control the gimbal tilt and pan angles. It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. A gimbal device is never to react to this command.
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW MAV_CMD = 60002
 	// Command to configure a gimbal manager. A gimbal device is never to react to this command. The selected profile is reported in the STORM32_GIMBAL_MANAGER_STATUS message.
@@ -737,6 +760,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_DO_SET_SYS_CMP_ID:                          "MAV_CMD_DO_SET_SYS_CMP_ID",
 	MAV_CMD_ODID_SET_EMERGENCY:                         "MAV_CMD_ODID_SET_EMERGENCY",
 	MAV_CMD_EXTERNAL_WIND_ESTIMATE:                     "MAV_CMD_EXTERNAL_WIND_ESTIMATE",
+	MAV_CMD_REQUEST_OPERATOR_CONTROL:                   "MAV_CMD_REQUEST_OPERATOR_CONTROL",
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW: "MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW",
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP:            "MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP",
 	MAV_CMD_QSHOT_DO_CONFIGURE:                         "MAV_CMD_QSHOT_DO_CONFIGURE",
@@ -957,6 +981,7 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_DO_SET_SYS_CMP_ID":                          MAV_CMD_DO_SET_SYS_CMP_ID,
 	"MAV_CMD_ODID_SET_EMERGENCY":                         MAV_CMD_ODID_SET_EMERGENCY,
 	"MAV_CMD_EXTERNAL_WIND_ESTIMATE":                     MAV_CMD_EXTERNAL_WIND_ESTIMATE,
+	"MAV_CMD_REQUEST_OPERATOR_CONTROL":                   MAV_CMD_REQUEST_OPERATOR_CONTROL,
 	"MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW": MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW,
 	"MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP":            MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP,
 	"MAV_CMD_QSHOT_DO_CONFIGURE":                         MAV_CMD_QSHOT_DO_CONFIGURE,

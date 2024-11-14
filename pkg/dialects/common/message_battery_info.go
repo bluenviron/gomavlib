@@ -50,5 +50,5 @@ type MessageBatteryInfo struct {
 
 // GetID implements the message.Message interface.
 func (*MessageBatteryInfo) GetID() uint32 {
-	return 370
+	return 372
 }

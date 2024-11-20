@@ -462,7 +462,7 @@ const (
 	// The component will then stream CONTROL_STATUS for its controlling GCS (it must not set GCS_CONTROL_STATUS_FLAGS_SYSTEM_MANAGER).
 	// The component should fall back to the system GCS (if any) when it is not directly controlled, and may stop emitting CONTROL_STATUS.
 	// The flow is otherwise the same as for requesting control over the whole system.
-	MAV_CMD_REQUEST_OPERATOR_CONTROL MAV_CMD = 43005
+	MAV_CMD_REQUEST_OPERATOR_CONTROL MAV_CMD = 32100
 )
 
 var labels_MAV_CMD = map[MAV_CMD]string{

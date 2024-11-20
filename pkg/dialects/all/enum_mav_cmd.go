@@ -529,7 +529,7 @@ const (
 	// The component will then stream CONTROL_STATUS for its controlling GCS (it must not set GCS_CONTROL_STATUS_FLAGS_SYSTEM_MANAGER).
 	// The component should fall back to the system GCS (if any) when it is not directly controlled, and may stop emitting CONTROL_STATUS.
 	// The flow is otherwise the same as for requesting control over the whole system.
-	MAV_CMD_REQUEST_OPERATOR_CONTROL MAV_CMD = 43005
+	MAV_CMD_REQUEST_OPERATOR_CONTROL MAV_CMD = 32100
 	// Command to a gimbal manager to control the gimbal tilt and pan angles. It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. A gimbal device is never to react to this command.
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW MAV_CMD = 60002
 	// Command to configure a gimbal manager. A gimbal device is never to react to this command. The selected profile is reported in the STORM32_GIMBAL_MANAGER_STATUS message.

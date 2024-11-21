@@ -480,16 +480,6 @@ const (
 	// The system doing the upgrade will report progress using the normal command protocol sequence for a long running operation.
 	// Command protocol information: https://mavlink.io/en/services/command.html.
 	MAV_CMD_DO_UPGRADE MAV_CMD = 247
-	// Define start of a group of mission items. When control reaches this command a GROUP_START message is emitted.
-	// The end of a group is marked using MAV_CMD_GROUP_END with the same group id.
-	// Group ids are expected, but not required, to iterate sequentially.
-	// Groups can be nested.
-	MAV_CMD_GROUP_START MAV_CMD = 301
-	// Define end of a group of mission items. When control reaches this command a GROUP_END message is emitted.
-	// The start of the group is marked is marked using MAV_CMD_GROUP_START with the same group id.
-	// Group ids are expected, but not required, to iterate sequentially.
-	// Groups can be nested.
-	MAV_CMD_GROUP_END MAV_CMD = 302
 	// Enable the specified standard MAVLink mode.
 	// If the mode is not supported the vehicle should ACK with MAV_RESULT_FAILED.
 	MAV_CMD_DO_SET_STANDARD_MODE MAV_CMD = 262
@@ -753,8 +743,6 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_DO_FIGURE_EIGHT:                            "MAV_CMD_DO_FIGURE_EIGHT",
 	MAV_CMD_PARAM_TRANSACTION:                          "MAV_CMD_PARAM_TRANSACTION",
 	MAV_CMD_DO_UPGRADE:                                 "MAV_CMD_DO_UPGRADE",
-	MAV_CMD_GROUP_START:                                "MAV_CMD_GROUP_START",
-	MAV_CMD_GROUP_END:                                  "MAV_CMD_GROUP_END",
 	MAV_CMD_DO_SET_STANDARD_MODE:                       "MAV_CMD_DO_SET_STANDARD_MODE",
 	MAV_CMD_SET_AT_S_PARAM:                             "MAV_CMD_SET_AT_S_PARAM",
 	MAV_CMD_DO_SET_SYS_CMP_ID:                          "MAV_CMD_DO_SET_SYS_CMP_ID",
@@ -974,8 +962,6 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_DO_FIGURE_EIGHT":                            MAV_CMD_DO_FIGURE_EIGHT,
 	"MAV_CMD_PARAM_TRANSACTION":                          MAV_CMD_PARAM_TRANSACTION,
 	"MAV_CMD_DO_UPGRADE":                                 MAV_CMD_DO_UPGRADE,
-	"MAV_CMD_GROUP_START":                                MAV_CMD_GROUP_START,
-	"MAV_CMD_GROUP_END":                                  MAV_CMD_GROUP_END,
 	"MAV_CMD_DO_SET_STANDARD_MODE":                       MAV_CMD_DO_SET_STANDARD_MODE,
 	"MAV_CMD_SET_AT_S_PARAM":                             MAV_CMD_SET_AT_S_PARAM,
 	"MAV_CMD_DO_SET_SYS_CMP_ID":                          MAV_CMD_DO_SET_SYS_CMP_ID,

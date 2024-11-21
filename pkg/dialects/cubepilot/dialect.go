@@ -212,6 +212,7 @@ var dial = &dialect.Dialect{
 		&MessageDebugFloatArray{},
 		&MessageOrbitExecutionStatus{},
 		&MessageSmartBatteryInfo{},
+		&MessageFuelStatus{},
 		&MessageBatteryInfo{},
 		&MessageGeneratorStatus{},
 		&MessageActuatorOutputStatus{},

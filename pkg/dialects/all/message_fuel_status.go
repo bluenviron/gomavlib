@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/development"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Fuel status.
@@ -16,4 +16,4 @@ import (
 // This kind of information may also be sent in fuel-specific messages such as BATTERY_STATUS_V2.
 // If both messages are sent for the same fuel system, the ids and corresponding information must match.
 // This should be streamed (nominally at 0.1 Hz).
-type MessageFuelStatus = development.MessageFuelStatus
+type MessageFuelStatus = common.MessageFuelStatus

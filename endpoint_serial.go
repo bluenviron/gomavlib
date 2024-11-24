@@ -4,7 +4,7 @@ import (
 	"context"
 	"io"
 
-	"go.bug.st/serial"
+	"github.com/chrisdalke/go-serial"
 
 	"github.com/chrisdalke/gomavlib/v3/pkg/reconnector"
 )

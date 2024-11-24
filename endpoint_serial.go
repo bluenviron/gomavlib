@@ -4,15 +4,14 @@ import (
 	"context"
 	"io"
 
-	"github.com/tarm/serial"
+	"go.bug.st/serial"
 
 	"github.com/bluenviron/gomavlib/v3/pkg/reconnector"
 )
 
 var serialOpenFunc = func(device string, baud int) (io.ReadWriteCloser, error) {
-	return serial.OpenPort(&serial.Config{
-		Name: device,
-		Baud: baud,
+	return serial.Open(device, &serial.Mode{
+		BaudRate: baud,
 	})
 }
 

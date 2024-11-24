@@ -3,7 +3,7 @@
 package pythonarraytest
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
 )
 
 // Time/duration estimates for various events and actions given the current vehicle state and position.

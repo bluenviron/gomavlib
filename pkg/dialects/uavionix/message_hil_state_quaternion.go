@@ -3,7 +3,7 @@
 package uavionix
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
 )
 
 // Sent from simulation to autopilot, avoids in contrast to HIL_STATE singularities. This packet is useful for high throughput applications such as hardware in the loop simulations.

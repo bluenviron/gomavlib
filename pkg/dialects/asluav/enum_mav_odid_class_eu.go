@@ -3,7 +3,7 @@
 package asluav
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
 )
 
 type MAV_ODID_CLASS_EU = common.MAV_ODID_CLASS_EU

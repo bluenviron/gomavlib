@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/bluenviron/gomavlib/v3"
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
-	"github.com/bluenviron/gomavlib/v3/pkg/frame"
+	"github.com/chrisdalke/gomavlib/v3"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/ardupilotmega"
+	"github.com/chrisdalke/gomavlib/v3/pkg/frame"
 )
 
 func main() {

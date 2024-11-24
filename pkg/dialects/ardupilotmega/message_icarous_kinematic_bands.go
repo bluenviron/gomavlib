@@ -3,7 +3,7 @@
 package ardupilotmega
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/icarous"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/icarous"
 )
 
 // Kinematic multi bands (track) output from Daidalus

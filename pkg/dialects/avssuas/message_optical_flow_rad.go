@@ -3,7 +3,7 @@
 package avssuas
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
 )
 
 // Optical flow from an angular rate flow sensor (e.g. PX4FLOW or mouse sensor)

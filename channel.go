@@ -6,8 +6,8 @@ import (
 	"errors"
 	"io"
 
-	"github.com/bluenviron/gomavlib/v3/pkg/frame"
-	"github.com/bluenviron/gomavlib/v3/pkg/message"
+	"github.com/chrisdalke/gomavlib/v3/pkg/frame"
+	"github.com/chrisdalke/gomavlib/v3/pkg/message"
 )
 
 const (

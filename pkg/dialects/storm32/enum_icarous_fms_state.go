@@ -3,7 +3,7 @@
 package storm32
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/icarous"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/icarous"
 )
 
 type ICAROUS_FMS_STATE = icarous.ICAROUS_FMS_STATE

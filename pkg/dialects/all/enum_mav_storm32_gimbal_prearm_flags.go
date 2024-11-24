@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/storm32"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/storm32"
 )
 
 // STorM32 gimbal prearm check flags.

@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/test"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/test"
 )
 
 // Test all field types

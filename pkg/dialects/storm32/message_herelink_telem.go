@@ -3,7 +3,7 @@
 package storm32
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/cubepilot"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/cubepilot"
 )
 
 // Herelink Telemetry

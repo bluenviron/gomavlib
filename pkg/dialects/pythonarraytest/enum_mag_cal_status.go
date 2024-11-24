@@ -3,7 +3,7 @@
 package pythonarraytest
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
 )
 
 type MAG_CAL_STATUS = common.MAG_CAL_STATUS

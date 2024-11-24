@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/ardupilotmega"
 )
 
 type ACCELCAL_VEHICLE_POS = ardupilotmega.ACCELCAL_VEHICLE_POS

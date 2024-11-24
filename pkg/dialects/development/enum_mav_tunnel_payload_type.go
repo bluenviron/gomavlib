@@ -3,7 +3,7 @@
 package development
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
 )
 
 type MAV_TUNNEL_PAYLOAD_TYPE = common.MAV_TUNNEL_PAYLOAD_TYPE

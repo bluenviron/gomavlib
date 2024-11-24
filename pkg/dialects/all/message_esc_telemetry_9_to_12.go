@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/ardupilotmega"
 )
 
 // ESC Telemetry Data for ESCs 9 to 12, matching data sent by BLHeli ESCs.

@@ -3,7 +3,7 @@
 package cubepilot
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/minimal"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/minimal"
 )
 
 // These flags encode the MAV mode.

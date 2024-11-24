@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/storm32"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/storm32"
 )
 
 // Gimbal manager profiles. Only standard profiles are defined. Any implementation can define its own profile(s) in addition, and should use enum values > 16.

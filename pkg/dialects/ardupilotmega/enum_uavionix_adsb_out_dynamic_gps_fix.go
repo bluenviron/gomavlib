@@ -3,7 +3,7 @@
 package ardupilotmega
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/uavionix"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/uavionix"
 )
 
 // Status for ADS-B transponder dynamic input

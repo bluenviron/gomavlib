@@ -3,7 +3,7 @@
 package pythonarraytest
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
 )
 
 // The autopilot is requesting a resource (file, binary, other type of data)

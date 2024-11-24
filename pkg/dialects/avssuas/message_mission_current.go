@@ -3,7 +3,7 @@
 package avssuas
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
 )
 
 // Message that announces the sequence number of the current target mission item (that the system will fly towards/execute when the mission is running).

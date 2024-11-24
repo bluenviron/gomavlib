@@ -4,8 +4,8 @@
 package standard
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
-	"github.com/bluenviron/gomavlib/v3/pkg/message"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialect"
+	"github.com/chrisdalke/gomavlib/v3/pkg/message"
 )
 
 // Dialect contains the dialect definition.

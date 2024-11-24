@@ -7,7 +7,7 @@ import (
 
 	"github.com/alecthomas/kong"
 
-	"github.com/bluenviron/gomavlib/v3/pkg/conversion"
+	"github.com/chrisdalke/gomavlib/v3/pkg/conversion"
 )
 
 var cli struct {

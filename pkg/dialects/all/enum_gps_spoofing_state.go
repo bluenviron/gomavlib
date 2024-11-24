@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/development"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/development"
 )
 
 // Signal spoofing state in a GPS receiver.

@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/development"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/development"
 )
 
 // RADIO_RC_CHANNELS flags (bitmask).

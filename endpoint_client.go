@@ -6,8 +6,8 @@ import (
 	"io"
 	"net"
 
-	"github.com/bluenviron/gomavlib/v3/pkg/reconnector"
-	"github.com/bluenviron/gomavlib/v3/pkg/timednetconn"
+	"github.com/chrisdalke/gomavlib/v3/pkg/reconnector"
+	"github.com/chrisdalke/gomavlib/v3/pkg/timednetconn"
 )
 
 type endpointClientConf interface {

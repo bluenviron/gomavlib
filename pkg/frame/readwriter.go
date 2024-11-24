@@ -3,7 +3,7 @@ package frame
 import (
 	"io"
 
-	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialect"
 )
 
 // ReadWriterConf is the configuration of a ReadWriter.

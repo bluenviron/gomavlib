@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/bluenviron/gomavlib/v3/pkg/message"
+	"github.com/chrisdalke/gomavlib/v3/pkg/message"
 )
 
 type (

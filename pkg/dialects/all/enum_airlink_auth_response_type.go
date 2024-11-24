@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/csairlink"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/csairlink"
 )
 
 type AIRLINK_AUTH_RESPONSE_TYPE = csairlink.AIRLINK_AUTH_RESPONSE_TYPE

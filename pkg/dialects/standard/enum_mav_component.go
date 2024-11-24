@@ -3,7 +3,7 @@
 package standard
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/minimal"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/minimal"
 )
 
 // Component ids (values) for the different types and instances of onboard hardware/software that might make up a MAVLink system (autopilot, cameras, servos, GPS systems, avoidance systems etc.).

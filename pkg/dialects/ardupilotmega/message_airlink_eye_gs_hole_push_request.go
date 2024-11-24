@@ -3,7 +3,7 @@
 package ardupilotmega
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/csairlink"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/csairlink"
 )
 
 // Request to hole punching

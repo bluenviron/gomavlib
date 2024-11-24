@@ -3,7 +3,7 @@
 package storm32
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/csairlink"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/csairlink"
 )
 
 // Response information about the connected device

@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/avssuas"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/avssuas"
 )
 
 type AVSS_HORSEFLY_OPERATION_MODE = avssuas.AVSS_HORSEFLY_OPERATION_MODE

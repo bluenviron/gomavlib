@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/ardupilotmega"
 )
 
 type GOPRO_VIDEO_SETTINGS_FLAGS = ardupilotmega.GOPRO_VIDEO_SETTINGS_FLAGS

@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/asluav"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/asluav"
 )
 
 // Fixed-wing soaring (i.e. thermal seeking) data

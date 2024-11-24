@@ -3,7 +3,7 @@
 package storm32
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/csairlink"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/csairlink"
 )
 
 type AIRLINK_EYE_GS_HOLE_PUSH_RESP_TYPE = csairlink.AIRLINK_EYE_GS_HOLE_PUSH_RESP_TYPE

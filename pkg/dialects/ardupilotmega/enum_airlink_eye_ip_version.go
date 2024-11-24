@@ -3,7 +3,7 @@
 package ardupilotmega
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/csairlink"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/csairlink"
 )
 
 type AIRLINK_EYE_IP_VERSION = csairlink.AIRLINK_EYE_IP_VERSION

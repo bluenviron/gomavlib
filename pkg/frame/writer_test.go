@@ -9,8 +9,8 @@ import (
 	"bou.ke/monkey"
 	"github.com/stretchr/testify/require"
 
-	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
-	"github.com/bluenviron/gomavlib/v3/pkg/message"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialect"
+	"github.com/chrisdalke/gomavlib/v3/pkg/message"
 )
 
 func TestWriterNewErrors(t *testing.T) {

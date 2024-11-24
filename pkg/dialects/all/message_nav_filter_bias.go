@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ualberta"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/ualberta"
 )
 
 // Accelerometer and Gyro biases from the navigation filter

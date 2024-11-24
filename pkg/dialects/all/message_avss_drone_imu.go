@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/avssuas"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/avssuas"
 )
 
 // Drone IMU data. Quaternion order is w, x, y, z and a zero rotation would be expressed as (1 0 0 0).

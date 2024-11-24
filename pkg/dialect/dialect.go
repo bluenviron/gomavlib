@@ -2,7 +2,7 @@
 package dialect
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/message"
+	"github.com/chrisdalke/gomavlib/v3/pkg/message"
 )
 
 // Dialect is a Mavlink dialect.

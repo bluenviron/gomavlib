@@ -3,7 +3,7 @@
 package matrixpilot
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/minimal"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/minimal"
 )
 
 type MAV_STATE = minimal.MAV_STATE

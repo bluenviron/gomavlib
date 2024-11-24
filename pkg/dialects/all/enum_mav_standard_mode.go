@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/development"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/development"
 )
 
 // Standard modes with a well understood meaning across flight stacks and vehicle types.

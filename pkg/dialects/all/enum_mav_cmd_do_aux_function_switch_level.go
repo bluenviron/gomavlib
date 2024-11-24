@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/ardupilotmega"
 )
 
 type MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL = ardupilotmega.MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL

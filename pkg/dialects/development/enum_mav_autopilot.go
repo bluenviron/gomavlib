@@ -3,7 +3,7 @@
 package development
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/minimal"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/minimal"
 )
 
 // Micro air vehicle / autopilot classes. This identifies the individual model.

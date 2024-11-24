@@ -3,7 +3,7 @@
 package development
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
 )
 
 type NAV_VTOL_LAND_OPTIONS = common.NAV_VTOL_LAND_OPTIONS

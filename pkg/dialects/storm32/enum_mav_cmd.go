@@ -400,6 +400,8 @@ const (
 	MAV_CMD_USER_5 MAV_CMD = 31014
 	// Request forwarding of CAN packets from the given CAN bus to this component. CAN Frames are sent using CAN_FRAME and CANFD_FRAME messages
 	MAV_CMD_CAN_FORWARD MAV_CMD = 32000
+	// Set Loweheiser desired states
+	MAV_CMD_LOWEHEISER_SET_STATE MAV_CMD = 10151
 	// Set the distance to be repeated on mission resume
 	MAV_CMD_DO_SET_RESUME_REPEAT_DIST MAV_CMD = 215
 	// Control attached liquid sprayer
@@ -463,6 +465,8 @@ const (
 	MAV_CMD_GUIDED_CHANGE_ALTITUDE MAV_CMD = 43001
 	// Change to target heading at a given rate, overriding previous heading/s. This slews the vehicle at a controllable rate between it's previous heading and the new one. (affects GUIDED only. Exiting GUIDED returns aircraft to normal behaviour defined elsewhere. Designed for onboard companion-computer command-and-control, not normally operator/GCS control.)
 	MAV_CMD_GUIDED_CHANGE_HEADING MAV_CMD = 43002
+	// Provide a value for height above ground level. This can be used for things like fixed wing and VTOL landing.
+	MAV_CMD_SET_HAGL MAV_CMD = 43005
 	// Command to a gimbal manager to control the gimbal tilt and pan angles. It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. A gimbal device is never to react to this command.
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW MAV_CMD = 60002
 	// Command to configure a gimbal manager. A gimbal device is never to react to this command. The selected profile is reported in the STORM32_GIMBAL_MANAGER_STATUS message.
@@ -636,6 +640,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_USER_4:                                     "MAV_CMD_USER_4",
 	MAV_CMD_USER_5:                                     "MAV_CMD_USER_5",
 	MAV_CMD_CAN_FORWARD:                                "MAV_CMD_CAN_FORWARD",
+	MAV_CMD_LOWEHEISER_SET_STATE:                       "MAV_CMD_LOWEHEISER_SET_STATE",
 	MAV_CMD_DO_SET_RESUME_REPEAT_DIST:                  "MAV_CMD_DO_SET_RESUME_REPEAT_DIST",
 	MAV_CMD_DO_SPRAYER:                                 "MAV_CMD_DO_SPRAYER",
 	MAV_CMD_DO_SEND_SCRIPT_MESSAGE:                     "MAV_CMD_DO_SEND_SCRIPT_MESSAGE",
@@ -667,6 +672,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_GUIDED_CHANGE_SPEED:                        "MAV_CMD_GUIDED_CHANGE_SPEED",
 	MAV_CMD_GUIDED_CHANGE_ALTITUDE:                     "MAV_CMD_GUIDED_CHANGE_ALTITUDE",
 	MAV_CMD_GUIDED_CHANGE_HEADING:                      "MAV_CMD_GUIDED_CHANGE_HEADING",
+	MAV_CMD_SET_HAGL:                                   "MAV_CMD_SET_HAGL",
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW: "MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW",
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP:            "MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP",
 	MAV_CMD_QSHOT_DO_CONFIGURE:                         "MAV_CMD_QSHOT_DO_CONFIGURE",
@@ -837,6 +843,7 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_USER_4":                                     MAV_CMD_USER_4,
 	"MAV_CMD_USER_5":                                     MAV_CMD_USER_5,
 	"MAV_CMD_CAN_FORWARD":                                MAV_CMD_CAN_FORWARD,
+	"MAV_CMD_LOWEHEISER_SET_STATE":                       MAV_CMD_LOWEHEISER_SET_STATE,
 	"MAV_CMD_DO_SET_RESUME_REPEAT_DIST":                  MAV_CMD_DO_SET_RESUME_REPEAT_DIST,
 	"MAV_CMD_DO_SPRAYER":                                 MAV_CMD_DO_SPRAYER,
 	"MAV_CMD_DO_SEND_SCRIPT_MESSAGE":                     MAV_CMD_DO_SEND_SCRIPT_MESSAGE,
@@ -868,6 +875,7 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_GUIDED_CHANGE_SPEED":                        MAV_CMD_GUIDED_CHANGE_SPEED,
 	"MAV_CMD_GUIDED_CHANGE_ALTITUDE":                     MAV_CMD_GUIDED_CHANGE_ALTITUDE,
 	"MAV_CMD_GUIDED_CHANGE_HEADING":                      MAV_CMD_GUIDED_CHANGE_HEADING,
+	"MAV_CMD_SET_HAGL":                                   MAV_CMD_SET_HAGL,
 	"MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW": MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW,
 	"MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP":            MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP,
 	"MAV_CMD_QSHOT_DO_CONFIGURE":                         MAV_CMD_QSHOT_DO_CONFIGURE,

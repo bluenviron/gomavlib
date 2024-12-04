@@ -30,6 +30,8 @@ const (
 	EKF_PRED_POS_HORIZ_REL EKF_STATUS_FLAGS = ardupilotmega.EKF_PRED_POS_HORIZ_REL
 	// Set if EKF's predicted horizontal position (absolute) estimate is good.
 	EKF_PRED_POS_HORIZ_ABS EKF_STATUS_FLAGS = ardupilotmega.EKF_PRED_POS_HORIZ_ABS
+	// Set if EKF believes the GPS input data is faulty.
+	EKF_GPS_GLITCHING EKF_STATUS_FLAGS = ardupilotmega.EKF_GPS_GLITCHING
 	// Set if EKF has never been healthy.
 	EKF_UNINITIALIZED EKF_STATUS_FLAGS = ardupilotmega.EKF_UNINITIALIZED
 )

@@ -400,6 +400,8 @@ const (
 	MAV_CMD_USER_5 MAV_CMD = 31014
 	// Request forwarding of CAN packets from the given CAN bus to this component. CAN Frames are sent using CAN_FRAME and CANFD_FRAME messages
 	MAV_CMD_CAN_FORWARD MAV_CMD = 32000
+	// Set Loweheiser desired states
+	MAV_CMD_LOWEHEISER_SET_STATE MAV_CMD = 10151
 	// Set the distance to be repeated on mission resume
 	MAV_CMD_DO_SET_RESUME_REPEAT_DIST MAV_CMD = 215
 	// Control attached liquid sprayer
@@ -463,6 +465,8 @@ const (
 	MAV_CMD_GUIDED_CHANGE_ALTITUDE MAV_CMD = 43001
 	// Change to target heading at a given rate, overriding previous heading/s. This slews the vehicle at a controllable rate between it's previous heading and the new one. (affects GUIDED only. Exiting GUIDED returns aircraft to normal behaviour defined elsewhere. Designed for onboard companion-computer command-and-control, not normally operator/GCS control.)
 	MAV_CMD_GUIDED_CHANGE_HEADING MAV_CMD = 43002
+	// Provide a value for height above ground level. This can be used for things like fixed wing and VTOL landing.
+	MAV_CMD_SET_HAGL MAV_CMD = 43005
 	// Mission command to reset Maximum Power Point Tracker (MPPT)
 	MAV_CMD_RESET_MPPT MAV_CMD = 40001
 	// Mission command to perform a power cycle on payload
@@ -708,6 +712,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_USER_4:                                     "MAV_CMD_USER_4",
 	MAV_CMD_USER_5:                                     "MAV_CMD_USER_5",
 	MAV_CMD_CAN_FORWARD:                                "MAV_CMD_CAN_FORWARD",
+	MAV_CMD_LOWEHEISER_SET_STATE:                       "MAV_CMD_LOWEHEISER_SET_STATE",
 	MAV_CMD_DO_SET_RESUME_REPEAT_DIST:                  "MAV_CMD_DO_SET_RESUME_REPEAT_DIST",
 	MAV_CMD_DO_SPRAYER:                                 "MAV_CMD_DO_SPRAYER",
 	MAV_CMD_DO_SEND_SCRIPT_MESSAGE:                     "MAV_CMD_DO_SEND_SCRIPT_MESSAGE",
@@ -739,6 +744,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_GUIDED_CHANGE_SPEED:                        "MAV_CMD_GUIDED_CHANGE_SPEED",
 	MAV_CMD_GUIDED_CHANGE_ALTITUDE:                     "MAV_CMD_GUIDED_CHANGE_ALTITUDE",
 	MAV_CMD_GUIDED_CHANGE_HEADING:                      "MAV_CMD_GUIDED_CHANGE_HEADING",
+	MAV_CMD_SET_HAGL:                                   "MAV_CMD_SET_HAGL",
 	MAV_CMD_RESET_MPPT:                                 "MAV_CMD_RESET_MPPT",
 	MAV_CMD_PAYLOAD_CONTROL:                            "MAV_CMD_PAYLOAD_CONTROL",
 	MAV_CMD_DO_FIGURE_EIGHT:                            "MAV_CMD_DO_FIGURE_EIGHT",
@@ -927,6 +933,7 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_USER_4":                                     MAV_CMD_USER_4,
 	"MAV_CMD_USER_5":                                     MAV_CMD_USER_5,
 	"MAV_CMD_CAN_FORWARD":                                MAV_CMD_CAN_FORWARD,
+	"MAV_CMD_LOWEHEISER_SET_STATE":                       MAV_CMD_LOWEHEISER_SET_STATE,
 	"MAV_CMD_DO_SET_RESUME_REPEAT_DIST":                  MAV_CMD_DO_SET_RESUME_REPEAT_DIST,
 	"MAV_CMD_DO_SPRAYER":                                 MAV_CMD_DO_SPRAYER,
 	"MAV_CMD_DO_SEND_SCRIPT_MESSAGE":                     MAV_CMD_DO_SEND_SCRIPT_MESSAGE,
@@ -958,6 +965,7 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_GUIDED_CHANGE_SPEED":                        MAV_CMD_GUIDED_CHANGE_SPEED,
 	"MAV_CMD_GUIDED_CHANGE_ALTITUDE":                     MAV_CMD_GUIDED_CHANGE_ALTITUDE,
 	"MAV_CMD_GUIDED_CHANGE_HEADING":                      MAV_CMD_GUIDED_CHANGE_HEADING,
+	"MAV_CMD_SET_HAGL":                                   MAV_CMD_SET_HAGL,
 	"MAV_CMD_RESET_MPPT":                                 MAV_CMD_RESET_MPPT,
 	"MAV_CMD_PAYLOAD_CONTROL":                            MAV_CMD_PAYLOAD_CONTROL,
 	"MAV_CMD_DO_FIGURE_EIGHT":                            MAV_CMD_DO_FIGURE_EIGHT,

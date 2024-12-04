@@ -16,16 +16,24 @@ const (
 	FAVORABLE_WIND RALLY_FLAGS = 1
 	// Flag set when plane is to immediately descend to break altitude and land without GCS intervention. Flag not set when plane is to loiter at Rally point until commanded to land.
 	LAND_IMMEDIATELY RALLY_FLAGS = 2
+	// True if the following altitude frame value is valid.
+	ALT_FRAME_VALID RALLY_FLAGS = 4
+	// 2 bit value representing altitude frame. 0: absolute, 1: relative home, 2: relative origin, 3: relative terrain
+	ALT_FRAME RALLY_FLAGS = 24
 )
 
 var labels_RALLY_FLAGS = map[RALLY_FLAGS]string{
 	FAVORABLE_WIND:   "FAVORABLE_WIND",
 	LAND_IMMEDIATELY: "LAND_IMMEDIATELY",
+	ALT_FRAME_VALID:  "ALT_FRAME_VALID",
+	ALT_FRAME:        "ALT_FRAME",
 }
 
 var values_RALLY_FLAGS = map[string]RALLY_FLAGS{
 	"FAVORABLE_WIND":   FAVORABLE_WIND,
 	"LAND_IMMEDIATELY": LAND_IMMEDIATELY,
+	"ALT_FRAME_VALID":  ALT_FRAME_VALID,
+	"ALT_FRAME":        ALT_FRAME,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -34,7 +42,7 @@ func (e RALLY_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 2; i++ {
+	for i := 0; i < 4; i++ {
 		mask := RALLY_FLAGS(1 << i)
 		if e&mask == mask {
 			names = append(names, labels_RALLY_FLAGS[mask])

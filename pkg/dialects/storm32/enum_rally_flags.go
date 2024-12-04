@@ -14,4 +14,8 @@ const (
 	FAVORABLE_WIND RALLY_FLAGS = ardupilotmega.FAVORABLE_WIND
 	// Flag set when plane is to immediately descend to break altitude and land without GCS intervention. Flag not set when plane is to loiter at Rally point until commanded to land.
 	LAND_IMMEDIATELY RALLY_FLAGS = ardupilotmega.LAND_IMMEDIATELY
+	// True if the following altitude frame value is valid.
+	ALT_FRAME_VALID RALLY_FLAGS = ardupilotmega.ALT_FRAME_VALID
+	// 2 bit value representing altitude frame. 0: absolute, 1: relative home, 2: relative origin, 3: relative terrain
+	ALT_FRAME RALLY_FLAGS = ardupilotmega.ALT_FRAME
 )

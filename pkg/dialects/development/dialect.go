@@ -245,7 +245,6 @@ var dial = &dialect.Dialect{
 		&MessageOpenDroneIdSystemUpdate{},
 		&MessageHygrometerSensor{},
 		// development
-		&MessageParamAckTransaction{},
 		&MessageAirspeed{},
 		&MessageSetVelocityLimits{},
 		&MessageVelocityLimits{},

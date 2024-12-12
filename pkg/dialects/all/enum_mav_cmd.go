@@ -477,8 +477,6 @@ const (
 	// This command only defines the flight path. Speed should be set independently (use e.g. MAV_CMD_DO_CHANGE_SPEED).
 	// Yaw and other degrees of freedom are not specified, and will be flight-stack specific (on vehicles where they can be controlled independent of the heading).
 	MAV_CMD_DO_FIGURE_EIGHT MAV_CMD = 35
-	// Request to start or end a parameter transaction. Multiple kinds of transport layers can be used to exchange parameters in the transaction (param, param_ext and mavftp). The command response can either be a success/failure or an in progress in case the receiving side takes some time to apply the parameters.
-	MAV_CMD_PARAM_TRANSACTION MAV_CMD = 900
 	// Request a target system to start an upgrade of one (or all) of its components.
 	// For example, the command might be sent to a companion computer to cause it to upgrade a connected flight controller.
 	// The system doing the upgrade will report progress using the normal command protocol sequence for a long running operation.
@@ -748,7 +746,6 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_RESET_MPPT:                                 "MAV_CMD_RESET_MPPT",
 	MAV_CMD_PAYLOAD_CONTROL:                            "MAV_CMD_PAYLOAD_CONTROL",
 	MAV_CMD_DO_FIGURE_EIGHT:                            "MAV_CMD_DO_FIGURE_EIGHT",
-	MAV_CMD_PARAM_TRANSACTION:                          "MAV_CMD_PARAM_TRANSACTION",
 	MAV_CMD_DO_UPGRADE:                                 "MAV_CMD_DO_UPGRADE",
 	MAV_CMD_DO_SET_STANDARD_MODE:                       "MAV_CMD_DO_SET_STANDARD_MODE",
 	MAV_CMD_SET_AT_S_PARAM:                             "MAV_CMD_SET_AT_S_PARAM",
@@ -969,7 +966,6 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_RESET_MPPT":                                 MAV_CMD_RESET_MPPT,
 	"MAV_CMD_PAYLOAD_CONTROL":                            MAV_CMD_PAYLOAD_CONTROL,
 	"MAV_CMD_DO_FIGURE_EIGHT":                            MAV_CMD_DO_FIGURE_EIGHT,
-	"MAV_CMD_PARAM_TRANSACTION":                          MAV_CMD_PARAM_TRANSACTION,
 	"MAV_CMD_DO_UPGRADE":                                 MAV_CMD_DO_UPGRADE,
 	"MAV_CMD_DO_SET_STANDARD_MODE":                       MAV_CMD_DO_SET_STANDARD_MODE,
 	"MAV_CMD_SET_AT_S_PARAM":                             MAV_CMD_SET_AT_S_PARAM,

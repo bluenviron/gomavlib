@@ -5,9 +5,9 @@ go 1.21
 require (
 	bou.ke/monkey v1.0.2
 	github.com/alecthomas/kong v1.4.0
-	github.com/chrisdalke/go-serial v0.0.0-20241124015809-f878b0b76bc8
 	github.com/pion/transport/v2 v2.2.10
 	github.com/stretchr/testify v1.9.0
+	go.bug.st/serial v1.6.2
 )
 
 require (

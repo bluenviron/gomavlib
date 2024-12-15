@@ -16,7 +16,6 @@ var serialOpenFunc = func(device string, baud int) (io.ReadWriteCloser, error) {
 		DataBits: 8,
 		StopBits: serial.OneStopBit,
 	})
-
 	if err != nil {
 		return nil, err
 	}

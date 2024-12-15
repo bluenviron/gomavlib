@@ -4,16 +4,26 @@ import (
 	"context"
 	"io"
 
-	"github.com/tarm/serial"
+	"go.bug.st/serial"
 
 	"github.com/bluenviron/gomavlib/v3/pkg/reconnector"
 )
 
 var serialOpenFunc = func(device string, baud int) (io.ReadWriteCloser, error) {
-	return serial.OpenPort(&serial.Config{
-		Name: device,
-		Baud: baud,
+	dev, err := serial.Open(device, &serial.Mode{
+		BaudRate: baud,
+		Parity:   serial.NoParity,
+		DataBits: 8,
+		StopBits: serial.OneStopBit,
 	})
+	if err != nil {
+		return nil, err
+	}
+
+	dev.SetDTR(true) //nolint:errcheck
+	dev.SetRTS(true) //nolint:errcheck
+
+	return dev, nil
 }
 
 // EndpointSerial sets up a endpoint that works with a serial port.

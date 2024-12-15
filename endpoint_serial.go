@@ -23,7 +23,7 @@ var serialOpenFunc = func(device string, baud int) (io.ReadWriteCloser, error) {
 
 	dev.SetDTR(true) //nolint:errcheck
 	dev.SetRTS(true) //nolint:errcheck
-	
+
 	return dev, nil
 }
 

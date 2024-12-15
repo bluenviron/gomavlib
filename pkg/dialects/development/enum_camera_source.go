@@ -3,7 +3,7 @@
 package development
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Camera sources for MAV_CMD_SET_CAMERA_SOURCE

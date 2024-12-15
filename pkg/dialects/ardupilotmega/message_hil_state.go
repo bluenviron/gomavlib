@@ -3,7 +3,7 @@
 package ardupilotmega
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Sent from simulation to autopilot. This packet is useful for high throughput applications such as hardware in the loop simulations.

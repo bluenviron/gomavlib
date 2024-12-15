@@ -3,7 +3,7 @@
 package development
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // These encode the sensors whose status is sent as part of the SYS_STATUS message.

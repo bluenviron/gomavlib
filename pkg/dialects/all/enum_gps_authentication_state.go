@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/development"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/development"
 )
 
 // Signal authentication state in a GPS receiver.

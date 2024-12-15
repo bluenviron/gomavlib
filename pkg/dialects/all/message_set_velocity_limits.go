@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/development"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/development"
 )
 
 // Set temporary maximum limits for horizontal speed, vertical speed and yaw rate.

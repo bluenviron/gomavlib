@@ -3,7 +3,7 @@
 package cubepilot
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Distance sensor information for an onboard rangefinder.

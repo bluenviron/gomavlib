@@ -3,7 +3,7 @@
 package pythonarraytest
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // ADSB classification for the type of vehicle emitting the transponder signal

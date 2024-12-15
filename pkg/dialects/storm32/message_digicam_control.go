@@ -3,7 +3,7 @@
 package storm32
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
 )
 
 // Control on-board Camera Control System to take shots.

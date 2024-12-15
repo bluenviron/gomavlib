@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
 )
 
 type GOPRO_CAPTURE_MODE = ardupilotmega.GOPRO_CAPTURE_MODE

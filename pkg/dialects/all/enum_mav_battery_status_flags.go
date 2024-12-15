@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/development"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/development"
 )
 
 // Battery status flags for fault, health and state indication.

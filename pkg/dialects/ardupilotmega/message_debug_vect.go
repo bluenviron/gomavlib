@@ -3,7 +3,7 @@
 package ardupilotmega
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // To debug something using a named 3D vector.

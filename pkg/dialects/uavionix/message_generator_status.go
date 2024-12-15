@@ -3,7 +3,7 @@
 package uavionix
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Telemetry of power generation system. Alternator or mechanical generator.

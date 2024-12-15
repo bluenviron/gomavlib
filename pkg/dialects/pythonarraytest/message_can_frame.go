@@ -3,7 +3,7 @@
 package pythonarraytest
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // A forwarded CAN frame as requested by MAV_CMD_CAN_FORWARD.

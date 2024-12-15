@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/chrisdalke/gomavlib/v3/pkg/message"
+	"github.com/bluenviron/gomavlib/v3/pkg/message"
 )
 
 type nodeHeartbeat struct {

@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/avssuas"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/avssuas"
 )
 
 // AVSS PRS system status.

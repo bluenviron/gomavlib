@@ -3,7 +3,7 @@
 package ualberta
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Simulated optical flow from a flow sensor (e.g. PX4FLOW or optical mouse sensor)

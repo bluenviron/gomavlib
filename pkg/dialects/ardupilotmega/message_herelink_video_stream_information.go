@@ -3,7 +3,7 @@
 package ardupilotmega
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/cubepilot"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/cubepilot"
 )
 
 // Information about video stream

@@ -7,8 +7,8 @@ import (
 	"math"
 	"reflect"
 
-	"github.com/chrisdalke/gomavlib/v3"
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // this example shows how to:

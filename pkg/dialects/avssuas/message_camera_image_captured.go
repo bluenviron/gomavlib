@@ -3,7 +3,7 @@
 package avssuas
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Information about a captured image. This is emitted every time a message is captured.

@@ -3,7 +3,7 @@
 package ualberta
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Message appropriate for high latency connections like Iridium (version 2)

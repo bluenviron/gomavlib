@@ -3,7 +3,7 @@
 package asluav
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Possible responses from a CELLULAR_CONFIG message.

@@ -3,7 +3,7 @@
 package development
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // These flags are used to diagnose the failure state of CELLULAR_STATUS

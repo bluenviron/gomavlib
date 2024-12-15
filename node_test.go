@@ -7,9 +7,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialect"
-	"github.com/chrisdalke/gomavlib/v3/pkg/frame"
-	"github.com/chrisdalke/gomavlib/v3/pkg/message"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v3/pkg/frame"
+	"github.com/bluenviron/gomavlib/v3/pkg/message"
 )
 
 type (

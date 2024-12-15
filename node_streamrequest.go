@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/chrisdalke/gomavlib/v3/pkg/message"
+	"github.com/bluenviron/gomavlib/v3/pkg/message"
 )
 
 const (

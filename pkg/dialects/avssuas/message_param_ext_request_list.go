@@ -3,7 +3,7 @@
 package avssuas
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Request all parameters of this component. All parameters should be emitted in response as PARAM_EXT_VALUE.

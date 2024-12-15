@@ -24,7 +24,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 var casesEnum = []struct {
@@ -76,7 +76,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
 )
 
 func TestDialect(t *testing.T) {

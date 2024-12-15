@@ -3,7 +3,7 @@
 package uavionix
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 type MAV_ODID_DESC_TYPE = common.MAV_ODID_DESC_TYPE

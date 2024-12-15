@@ -3,7 +3,7 @@
 package ualberta
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Reports results of completed compass calibration. Sent until MAG_CAL_ACK received.

@@ -3,7 +3,7 @@
 package asluav
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Enumeration of possible mount operation modes. This message is used by obsolete/deprecated gimbal messages.

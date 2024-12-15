@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
 )
 
 type GOPRO_PROTUNE_WHITE_BALANCE = ardupilotmega.GOPRO_PROTUNE_WHITE_BALANCE

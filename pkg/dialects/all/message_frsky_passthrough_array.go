@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/storm32"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/storm32"
 )
 
 // Frsky SPort passthrough multi packet container.

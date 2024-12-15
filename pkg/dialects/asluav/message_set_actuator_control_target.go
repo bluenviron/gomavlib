@@ -3,7 +3,7 @@
 package asluav
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Set the vehicle attitude and body angular rates.

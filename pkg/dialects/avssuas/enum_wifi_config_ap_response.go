@@ -3,7 +3,7 @@
 package avssuas
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Possible responses from a WIFI_CONFIG_AP message.

@@ -3,7 +3,7 @@
 package storm32
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // The RAW IMU readings for secondary 9DOF sensor setup. This message should contain the scaled values to the described units

@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/storm32"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/storm32"
 )
 
 type MAV_STORM32_TUNNEL_PAYLOAD_TYPE = storm32.MAV_STORM32_TUNNEL_PAYLOAD_TYPE

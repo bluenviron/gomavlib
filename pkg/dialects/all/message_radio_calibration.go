@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/ualberta"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ualberta"
 )
 
 // Complete set of calibration parameters for the radio

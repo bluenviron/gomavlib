@@ -1,4 +1,4 @@
-module github.com/chrisdalke/gomavlib/v3
+module github.com/bluenviron/gomavlib/v3
 
 go 1.21
 

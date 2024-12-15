@@ -3,7 +3,7 @@
 package uavionix
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Play vehicle tone/tune (buzzer). Supersedes message PLAY_TUNE.

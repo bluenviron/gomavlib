@@ -3,7 +3,7 @@
 package asluav
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Bitmap of options for the MAV_CMD_DO_REPOSITION

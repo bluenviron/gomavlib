@@ -3,7 +3,7 @@
 package matrixpilot
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 type MAV_ODID_SPEED_ACC = common.MAV_ODID_SPEED_ACC

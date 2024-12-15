@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/asluav"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/asluav"
 )
 
 // Maximum Power Point Tracker (MPPT) sensor data for solar module power performance tracking

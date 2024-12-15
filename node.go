@@ -8,7 +8,7 @@ to communicate with unmanned ground vehicles (UGV) and unmanned aerial vehicles
 (UAV, drones, quadcopters, multirotors). It is supported by the most common
 open-source flight controllers (Ardupilot and PX4).
 
-Examples are available at https://github.com/chrisdalke/gomavlib/tree/main/examples
+Examples are available at https://github.com/bluenviron/gomavlib/tree/main/examples
 */
 package gomavlib
 
@@ -17,9 +17,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialect"
-	"github.com/chrisdalke/gomavlib/v3/pkg/frame"
-	"github.com/chrisdalke/gomavlib/v3/pkg/message"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v3/pkg/frame"
+	"github.com/bluenviron/gomavlib/v3/pkg/message"
 )
 
 var errTerminated = fmt.Errorf("terminated")

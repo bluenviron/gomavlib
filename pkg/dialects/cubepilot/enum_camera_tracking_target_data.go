@@ -3,7 +3,7 @@
 package cubepilot
 
 import (
-	"github.com/chrisdalke/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Camera tracking target data (shows where tracked target is within image)

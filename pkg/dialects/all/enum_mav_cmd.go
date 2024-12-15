@@ -400,6 +400,8 @@ const (
 	MAV_CMD_USER_5 MAV_CMD = 31014
 	// Request forwarding of CAN packets from the given CAN bus to this component. CAN Frames are sent using CAN_FRAME and CANFD_FRAME messages
 	MAV_CMD_CAN_FORWARD MAV_CMD = 32000
+	// Set Loweheiser desired states
+	MAV_CMD_LOWEHEISER_SET_STATE MAV_CMD = 10151
 	// Set the distance to be repeated on mission resume
 	MAV_CMD_DO_SET_RESUME_REPEAT_DIST MAV_CMD = 215
 	// Control attached liquid sprayer
@@ -463,6 +465,8 @@ const (
 	MAV_CMD_GUIDED_CHANGE_ALTITUDE MAV_CMD = 43001
 	// Change to target heading at a given rate, overriding previous heading/s. This slews the vehicle at a controllable rate between it's previous heading and the new one. (affects GUIDED only. Exiting GUIDED returns aircraft to normal behaviour defined elsewhere. Designed for onboard companion-computer command-and-control, not normally operator/GCS control.)
 	MAV_CMD_GUIDED_CHANGE_HEADING MAV_CMD = 43002
+	// Provide a value for height above ground level. This can be used for things like fixed wing and VTOL landing.
+	MAV_CMD_SET_HAGL MAV_CMD = 43005
 	// Mission command to reset Maximum Power Point Tracker (MPPT)
 	MAV_CMD_RESET_MPPT MAV_CMD = 40001
 	// Mission command to perform a power cycle on payload
@@ -473,8 +477,6 @@ const (
 	// This command only defines the flight path. Speed should be set independently (use e.g. MAV_CMD_DO_CHANGE_SPEED).
 	// Yaw and other degrees of freedom are not specified, and will be flight-stack specific (on vehicles where they can be controlled independent of the heading).
 	MAV_CMD_DO_FIGURE_EIGHT MAV_CMD = 35
-	// Request to start or end a parameter transaction. Multiple kinds of transport layers can be used to exchange parameters in the transaction (param, param_ext and mavftp). The command response can either be a success/failure or an in progress in case the receiving side takes some time to apply the parameters.
-	MAV_CMD_PARAM_TRANSACTION MAV_CMD = 900
 	// Request a target system to start an upgrade of one (or all) of its components.
 	// For example, the command might be sent to a companion computer to cause it to upgrade a connected flight controller.
 	// The system doing the upgrade will report progress using the normal command protocol sequence for a long running operation.
@@ -499,7 +501,7 @@ const (
 	MAV_CMD_EXTERNAL_WIND_ESTIMATE MAV_CMD = 43004
 	// Request GCS control of a system (or of a specific component in a system).
 	// A controlled system should only accept MAVLink commands and command-like messages that are sent by its controlling GCS, or from other components with the same system id.
-	// Commands from other systems should be rejected with MAV_RESULT_PERMISSION_DENIED (except for this command, which may be acknowledged with MAV_RESULT_ACCEPTED if control is granted).
+	// Commands from other systems should be rejected with MAV_RESULT_FAILED (except for this command, which may be acknowledged with MAV_RESULT_ACCEPTED if control is granted).
 	// Command-like messages should be ignored (or rejected if that is supported by their associated protocol).
 	// GCS control of the whole system is managed via a single component that we will refer to here as the "system manager component".
 	// This component streams the CONTROL_STATUS message and sets the GCS_CONTROL_STATUS_FLAGS_SYSTEM_MANAGER flag.
@@ -509,9 +511,10 @@ const (
 	// The MAV_CMD_REQUEST_OPERATOR_CONTROL command is sent by a GCS to the system manager component to request or release control of a system, specifying whether subsequent takeover requests from another GCS are automatically granted, or require permission.
 	// The system manager component should grant control to the GCS if the system does not require takeover permission (or is uncontrolled) and ACK the request with MAV_RESULT_ACCEPTED.
 	// The system manager component should then stream CONTROL_STATUS indicating its controlling system: all other components with the same system id should monitor this message and set their own controlling GCS to match that of the system manager component.
-	// If the system manager component cannot grant control (because takeover requires permission), the request should be rejected with MAV_RESULT_PERMISSION_DENIED.
+	// If the system manager component cannot grant control (because takeover requires permission), the request should be rejected with MAV_RESULT_FAILED.
 	// The system manager component should then send this same command to the current owning GCS in order to notify of the request.
 	// The owning GCS would ACK with MAV_RESULT_ACCEPTED, and might choose to release control of the vehicle, or re-request control with the takeover bit set to allow permission.
+	// In case it choses to re-request control with takeover bit set to allow permission, requestor GCS will only have 10 seconds to get control, otherwise owning GCS will re-request control with takeover bit set to disallow permission, and requestor GCS will need repeat the request if still interested in getting control.
 	// Note that the pilots of both GCS should co-ordinate safe handover offline.
 	// Note that in most systems the only controlled component will be the "system manager component", and that will be the autopilot.
 	// However separate GCS control of a particular component is also permitted, if supported by the component.
@@ -707,6 +710,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_USER_4:                                     "MAV_CMD_USER_4",
 	MAV_CMD_USER_5:                                     "MAV_CMD_USER_5",
 	MAV_CMD_CAN_FORWARD:                                "MAV_CMD_CAN_FORWARD",
+	MAV_CMD_LOWEHEISER_SET_STATE:                       "MAV_CMD_LOWEHEISER_SET_STATE",
 	MAV_CMD_DO_SET_RESUME_REPEAT_DIST:                  "MAV_CMD_DO_SET_RESUME_REPEAT_DIST",
 	MAV_CMD_DO_SPRAYER:                                 "MAV_CMD_DO_SPRAYER",
 	MAV_CMD_DO_SEND_SCRIPT_MESSAGE:                     "MAV_CMD_DO_SEND_SCRIPT_MESSAGE",
@@ -738,10 +742,10 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_GUIDED_CHANGE_SPEED:                        "MAV_CMD_GUIDED_CHANGE_SPEED",
 	MAV_CMD_GUIDED_CHANGE_ALTITUDE:                     "MAV_CMD_GUIDED_CHANGE_ALTITUDE",
 	MAV_CMD_GUIDED_CHANGE_HEADING:                      "MAV_CMD_GUIDED_CHANGE_HEADING",
+	MAV_CMD_SET_HAGL:                                   "MAV_CMD_SET_HAGL",
 	MAV_CMD_RESET_MPPT:                                 "MAV_CMD_RESET_MPPT",
 	MAV_CMD_PAYLOAD_CONTROL:                            "MAV_CMD_PAYLOAD_CONTROL",
 	MAV_CMD_DO_FIGURE_EIGHT:                            "MAV_CMD_DO_FIGURE_EIGHT",
-	MAV_CMD_PARAM_TRANSACTION:                          "MAV_CMD_PARAM_TRANSACTION",
 	MAV_CMD_DO_UPGRADE:                                 "MAV_CMD_DO_UPGRADE",
 	MAV_CMD_DO_SET_STANDARD_MODE:                       "MAV_CMD_DO_SET_STANDARD_MODE",
 	MAV_CMD_SET_AT_S_PARAM:                             "MAV_CMD_SET_AT_S_PARAM",
@@ -926,6 +930,7 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_USER_4":                                     MAV_CMD_USER_4,
 	"MAV_CMD_USER_5":                                     MAV_CMD_USER_5,
 	"MAV_CMD_CAN_FORWARD":                                MAV_CMD_CAN_FORWARD,
+	"MAV_CMD_LOWEHEISER_SET_STATE":                       MAV_CMD_LOWEHEISER_SET_STATE,
 	"MAV_CMD_DO_SET_RESUME_REPEAT_DIST":                  MAV_CMD_DO_SET_RESUME_REPEAT_DIST,
 	"MAV_CMD_DO_SPRAYER":                                 MAV_CMD_DO_SPRAYER,
 	"MAV_CMD_DO_SEND_SCRIPT_MESSAGE":                     MAV_CMD_DO_SEND_SCRIPT_MESSAGE,
@@ -957,10 +962,10 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_GUIDED_CHANGE_SPEED":                        MAV_CMD_GUIDED_CHANGE_SPEED,
 	"MAV_CMD_GUIDED_CHANGE_ALTITUDE":                     MAV_CMD_GUIDED_CHANGE_ALTITUDE,
 	"MAV_CMD_GUIDED_CHANGE_HEADING":                      MAV_CMD_GUIDED_CHANGE_HEADING,
+	"MAV_CMD_SET_HAGL":                                   MAV_CMD_SET_HAGL,
 	"MAV_CMD_RESET_MPPT":                                 MAV_CMD_RESET_MPPT,
 	"MAV_CMD_PAYLOAD_CONTROL":                            MAV_CMD_PAYLOAD_CONTROL,
 	"MAV_CMD_DO_FIGURE_EIGHT":                            MAV_CMD_DO_FIGURE_EIGHT,
-	"MAV_CMD_PARAM_TRANSACTION":                          MAV_CMD_PARAM_TRANSACTION,
 	"MAV_CMD_DO_UPGRADE":                                 MAV_CMD_DO_UPGRADE,
 	"MAV_CMD_DO_SET_STANDARD_MODE":                       MAV_CMD_DO_SET_STANDARD_MODE,
 	"MAV_CMD_SET_AT_S_PARAM":                             MAV_CMD_SET_AT_S_PARAM,

@@ -50,28 +50,24 @@ const (
 	// Hybrid MC/FW ("VTOL") vehicles behave according to their current configuration/mode (FW or MC).
 	// Other vehicle types must not support this mode (this may be revisited through the PR process).
 	MAV_STANDARD_MODE_ALTITUDE_HOLD MAV_STANDARD_MODE = 4
-	// Return home mode (auto).
-	// Automatic mode that returns vehicle to home via a safe flight path.
-	// It may also automatically land the vehicle (i.e. RTL).
-	// The precise flight path and landing behaviour depend on vehicle configuration and type.
-	MAV_STANDARD_MODE_RETURN_HOME MAV_STANDARD_MODE = 5
 	// Safe recovery mode (auto).
-	// Automatic mode that takes vehicle to a predefined safe location via a safe flight path (rally point or mission defined landing) .
-	// It may also automatically land the vehicle.
+	// Automatic mode that takes vehicle to a predefined safe location via a safe flight path, and may also automatically land the vehicle.
+	// This mode is more commonly referred to as RTL and/or or Smart RTL.
 	// The precise return location, flight path, and landing behaviour depend on vehicle configuration and type.
-	MAV_STANDARD_MODE_SAFE_RECOVERY MAV_STANDARD_MODE = 6
+	// For example, the vehicle might return to the home/launch location, a rally point, or the start of a mission landing, it might follow a direct path, mission path, or breadcrumb path, and land using a mission landing pattern or some other kind of descent.
+	MAV_STANDARD_MODE_SAFE_RECOVERY MAV_STANDARD_MODE = 5
 	// Mission mode (automatic).
 	// Automatic mode that executes MAVLink missions.
 	// Missions are executed from the current waypoint as soon as the mode is enabled.
-	MAV_STANDARD_MODE_MISSION MAV_STANDARD_MODE = 7
+	MAV_STANDARD_MODE_MISSION MAV_STANDARD_MODE = 6
 	// Land mode (auto).
 	// Automatic mode that lands the vehicle at the current location.
 	// The precise landing behaviour depends on vehicle configuration and type.
-	MAV_STANDARD_MODE_LAND MAV_STANDARD_MODE = 8
+	MAV_STANDARD_MODE_LAND MAV_STANDARD_MODE = 7
 	// Takeoff mode (auto).
 	// Automatic takeoff mode.
 	// The precise takeoff behaviour depends on vehicle configuration and type.
-	MAV_STANDARD_MODE_TAKEOFF MAV_STANDARD_MODE = 9
+	MAV_STANDARD_MODE_TAKEOFF MAV_STANDARD_MODE = 8
 )
 
 var labels_MAV_STANDARD_MODE = map[MAV_STANDARD_MODE]string{
@@ -80,7 +76,6 @@ var labels_MAV_STANDARD_MODE = map[MAV_STANDARD_MODE]string{
 	MAV_STANDARD_MODE_ORBIT:         "MAV_STANDARD_MODE_ORBIT",
 	MAV_STANDARD_MODE_CRUISE:        "MAV_STANDARD_MODE_CRUISE",
 	MAV_STANDARD_MODE_ALTITUDE_HOLD: "MAV_STANDARD_MODE_ALTITUDE_HOLD",
-	MAV_STANDARD_MODE_RETURN_HOME:   "MAV_STANDARD_MODE_RETURN_HOME",
 	MAV_STANDARD_MODE_SAFE_RECOVERY: "MAV_STANDARD_MODE_SAFE_RECOVERY",
 	MAV_STANDARD_MODE_MISSION:       "MAV_STANDARD_MODE_MISSION",
 	MAV_STANDARD_MODE_LAND:          "MAV_STANDARD_MODE_LAND",
@@ -93,7 +88,6 @@ var values_MAV_STANDARD_MODE = map[string]MAV_STANDARD_MODE{
 	"MAV_STANDARD_MODE_ORBIT":         MAV_STANDARD_MODE_ORBIT,
 	"MAV_STANDARD_MODE_CRUISE":        MAV_STANDARD_MODE_CRUISE,
 	"MAV_STANDARD_MODE_ALTITUDE_HOLD": MAV_STANDARD_MODE_ALTITUDE_HOLD,
-	"MAV_STANDARD_MODE_RETURN_HOME":   MAV_STANDARD_MODE_RETURN_HOME,
 	"MAV_STANDARD_MODE_SAFE_RECOVERY": MAV_STANDARD_MODE_SAFE_RECOVERY,
 	"MAV_STANDARD_MODE_MISSION":       MAV_STANDARD_MODE_MISSION,
 	"MAV_STANDARD_MODE_LAND":          MAV_STANDARD_MODE_LAND,

@@ -32,6 +32,8 @@ const (
 	EKF_PRED_POS_HORIZ_REL EKF_STATUS_FLAGS = 256
 	// Set if EKF's predicted horizontal position (absolute) estimate is good.
 	EKF_PRED_POS_HORIZ_ABS EKF_STATUS_FLAGS = 512
+	// Set if EKF believes the GPS input data is faulty.
+	EKF_GPS_GLITCHING EKF_STATUS_FLAGS = 32768
 	// Set if EKF has never been healthy.
 	EKF_UNINITIALIZED EKF_STATUS_FLAGS = 1024
 )
@@ -47,6 +49,7 @@ var labels_EKF_STATUS_FLAGS = map[EKF_STATUS_FLAGS]string{
 	EKF_CONST_POS_MODE:     "EKF_CONST_POS_MODE",
 	EKF_PRED_POS_HORIZ_REL: "EKF_PRED_POS_HORIZ_REL",
 	EKF_PRED_POS_HORIZ_ABS: "EKF_PRED_POS_HORIZ_ABS",
+	EKF_GPS_GLITCHING:      "EKF_GPS_GLITCHING",
 	EKF_UNINITIALIZED:      "EKF_UNINITIALIZED",
 }
 
@@ -61,6 +64,7 @@ var values_EKF_STATUS_FLAGS = map[string]EKF_STATUS_FLAGS{
 	"EKF_CONST_POS_MODE":     EKF_CONST_POS_MODE,
 	"EKF_PRED_POS_HORIZ_REL": EKF_PRED_POS_HORIZ_REL,
 	"EKF_PRED_POS_HORIZ_ABS": EKF_PRED_POS_HORIZ_ABS,
+	"EKF_GPS_GLITCHING":      EKF_GPS_GLITCHING,
 	"EKF_UNINITIALIZED":      EKF_UNINITIALIZED,
 }
 
@@ -70,7 +74,7 @@ func (e EKF_STATUS_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 11; i++ {
+	for i := 0; i < 12; i++ {
 		mask := EKF_STATUS_FLAGS(1 << i)
 		if e&mask == mask {
 			names = append(names, labels_EKF_STATUS_FLAGS[mask])

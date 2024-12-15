@@ -251,6 +251,8 @@ var dial = &dialect.Dialect{
 		// icarous
 		&MessageIcarousHeartbeat{},
 		&MessageIcarousKinematicBands{},
+		// loweheiser
+		&MessageLoweheiserGovEfi{},
 		// cubepilot
 		&MessageCubepilotRawRc{},
 		&MessageHerelinkVideoStreamInformation{},
@@ -317,6 +319,8 @@ var dial = &dialect.Dialect{
 		&MessageDeviceOpReadReply{},
 		&MessageDeviceOpWrite{},
 		&MessageDeviceOpWriteReply{},
+		&MessageSecureCommand{},
+		&MessageSecureCommandReply{},
 		&MessageAdapTuning{},
 		&MessageVisionPositionDelta{},
 		&MessageAoaSsa{},
@@ -330,6 +334,11 @@ var dial = &dialect.Dialect{
 		&MessageObstacleDistance_3d{},
 		&MessageWaterDepth{},
 		&MessageMcuStatus{},
+		&MessageEscTelemetry_13To_16{},
+		&MessageEscTelemetry_17To_20{},
+		&MessageEscTelemetry_21To_24{},
+		&MessageEscTelemetry_25To_28{},
+		&MessageEscTelemetry_29To_32{},
 		// storm32
 		&MessageStorm32GimbalManagerInformation{},
 		&MessageStorm32GimbalManagerStatus{},

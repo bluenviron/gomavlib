@@ -14,7 +14,7 @@ type MessageCameraImageCaptured struct {
 	TimeBootMs uint32
 	// Timestamp (time since UNIX epoch) in UTC. 0 for unknown.
 	TimeUtc uint64
-	// Deprecated/unused. Component IDs are used to differentiate multiple cameras.
+	// Camera id of a non-MAVLink camera attached to an autopilot (1-6).  0 if the component is a MAVLink camera (with its own component id). Field name is usually camera_device_id.
 	CameraId uint8
 	// Latitude where image was taken
 	Lat int32

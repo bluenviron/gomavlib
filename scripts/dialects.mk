@@ -10,7 +10,7 @@ export DOCKERFILE_DIALECTS
 
 dialects:
 	echo "$$DOCKERFILE_DIALECTS" | docker build . -f - -t temp
-	docker run --rm -it -v $(PWD):/s temp \
+	docker run --rm -it -v $(shell pwd):/s temp \
 	make dialects-nodocker
 
 dialects-nodocker:

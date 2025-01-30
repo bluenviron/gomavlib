@@ -2,15 +2,12 @@
 //nolint:revive,misspell,govet,lll
 package development
 
+import (
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+)
+
 // A change to the sequence number indicates that the set of AVAILABLE_MODES has changed.
 // A receiver must re-request all available modes whenever the sequence number changes.
 // This is only emitted after the first change and should then be broadcast at low rate (nominally 0.3 Hz) and on change.
-type MessageAvailableModesMonitor struct {
-	// Sequence number. The value iterates sequentially whenever AVAILABLE_MODES changes (e.g. support for a new mode is added/removed dynamically).
-	Seq uint8
-}
-
-// GetID implements the message.Message interface.
-func (*MessageAvailableModesMonitor) GetID() uint32 {
-	return 437
-}
+// See https://mavlink.io/en/services/standard_modes.html
+type MessageAvailableModesMonitor = common.MessageAvailableModesMonitor

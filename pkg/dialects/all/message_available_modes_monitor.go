@@ -3,10 +3,11 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/development"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // A change to the sequence number indicates that the set of AVAILABLE_MODES has changed.
 // A receiver must re-request all available modes whenever the sequence number changes.
 // This is only emitted after the first change and should then be broadcast at low rate (nominally 0.3 Hz) and on change.
-type MessageAvailableModesMonitor = development.MessageAvailableModesMonitor
+// See https://mavlink.io/en/services/standard_modes.html
+type MessageAvailableModesMonitor = common.MessageAvailableModesMonitor

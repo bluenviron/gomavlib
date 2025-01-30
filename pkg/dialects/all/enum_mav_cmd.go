@@ -203,6 +203,10 @@ const (
 	MAV_CMD_OVERRIDE_GOTO MAV_CMD = 252
 	// Mission command to set a Camera Auto Mount Pivoting Oblique Survey (Replaces CAM_TRIGG_DIST for this purpose). The camera is triggered each time this distance is exceeded, then the mount moves to the next position. Params 4~6 set-up the angle limits and number of positions for oblique survey, where mount-enabled vehicles automatically roll the camera between shots to emulate an oblique camera setup (providing an increased HFOV). This command can also be used to set the shutter integration time for the camera.
 	MAV_CMD_OBLIQUE_SURVEY MAV_CMD = 260
+	// Enable the specified standard MAVLink mode.
+	// If the specified mode is not supported, the vehicle should ACK with MAV_RESULT_FAILED.
+	// See https://mavlink.io/en/services/standard_modes.html
+	MAV_CMD_DO_SET_STANDARD_MODE MAV_CMD = 262
 	// start running a mission
 	MAV_CMD_MISSION_START MAV_CMD = 300
 	// Actuator testing command. This is similar to MAV_CMD_DO_MOTOR_TEST but operates on the level of output functions, i.e. it is possible to test Motor1 independent from which output it is configured on. Autopilots typically refuse this command while armed.
@@ -482,9 +486,6 @@ const (
 	// The system doing the upgrade will report progress using the normal command protocol sequence for a long running operation.
 	// Command protocol information: https://mavlink.io/en/services/command.html.
 	MAV_CMD_DO_UPGRADE MAV_CMD = 247
-	// Enable the specified standard MAVLink mode.
-	// If the mode is not supported the vehicle should ACK with MAV_RESULT_FAILED.
-	MAV_CMD_DO_SET_STANDARD_MODE MAV_CMD = 262
 	// Allows setting an AT S command of an SiK radio.
 	MAV_CMD_SET_AT_S_PARAM MAV_CMD = 550
 	// Set system and component id.
@@ -626,6 +627,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN:                  "MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN",
 	MAV_CMD_OVERRIDE_GOTO:                              "MAV_CMD_OVERRIDE_GOTO",
 	MAV_CMD_OBLIQUE_SURVEY:                             "MAV_CMD_OBLIQUE_SURVEY",
+	MAV_CMD_DO_SET_STANDARD_MODE:                       "MAV_CMD_DO_SET_STANDARD_MODE",
 	MAV_CMD_MISSION_START:                              "MAV_CMD_MISSION_START",
 	MAV_CMD_ACTUATOR_TEST:                              "MAV_CMD_ACTUATOR_TEST",
 	MAV_CMD_CONFIGURE_ACTUATOR:                         "MAV_CMD_CONFIGURE_ACTUATOR",
@@ -747,7 +749,6 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_PAYLOAD_CONTROL:                            "MAV_CMD_PAYLOAD_CONTROL",
 	MAV_CMD_DO_FIGURE_EIGHT:                            "MAV_CMD_DO_FIGURE_EIGHT",
 	MAV_CMD_DO_UPGRADE:                                 "MAV_CMD_DO_UPGRADE",
-	MAV_CMD_DO_SET_STANDARD_MODE:                       "MAV_CMD_DO_SET_STANDARD_MODE",
 	MAV_CMD_SET_AT_S_PARAM:                             "MAV_CMD_SET_AT_S_PARAM",
 	MAV_CMD_DO_SET_SYS_CMP_ID:                          "MAV_CMD_DO_SET_SYS_CMP_ID",
 	MAV_CMD_ODID_SET_EMERGENCY:                         "MAV_CMD_ODID_SET_EMERGENCY",
@@ -846,6 +847,7 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN":                  MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN,
 	"MAV_CMD_OVERRIDE_GOTO":                              MAV_CMD_OVERRIDE_GOTO,
 	"MAV_CMD_OBLIQUE_SURVEY":                             MAV_CMD_OBLIQUE_SURVEY,
+	"MAV_CMD_DO_SET_STANDARD_MODE":                       MAV_CMD_DO_SET_STANDARD_MODE,
 	"MAV_CMD_MISSION_START":                              MAV_CMD_MISSION_START,
 	"MAV_CMD_ACTUATOR_TEST":                              MAV_CMD_ACTUATOR_TEST,
 	"MAV_CMD_CONFIGURE_ACTUATOR":                         MAV_CMD_CONFIGURE_ACTUATOR,
@@ -967,7 +969,6 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_PAYLOAD_CONTROL":                            MAV_CMD_PAYLOAD_CONTROL,
 	"MAV_CMD_DO_FIGURE_EIGHT":                            MAV_CMD_DO_FIGURE_EIGHT,
 	"MAV_CMD_DO_UPGRADE":                                 MAV_CMD_DO_UPGRADE,
-	"MAV_CMD_DO_SET_STANDARD_MODE":                       MAV_CMD_DO_SET_STANDARD_MODE,
 	"MAV_CMD_SET_AT_S_PARAM":                             MAV_CMD_SET_AT_S_PARAM,
 	"MAV_CMD_DO_SET_SYS_CMP_ID":                          MAV_CMD_DO_SET_SYS_CMP_ID,
 	"MAV_CMD_ODID_SET_EMERGENCY":                         MAV_CMD_ODID_SET_EMERGENCY,

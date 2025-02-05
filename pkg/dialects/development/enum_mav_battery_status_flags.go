@@ -70,7 +70,7 @@ const (
 	// If unset a GCS is recommended to advise that users fully charge the battery on power on.
 	MAV_BATTERY_STATUS_FLAGS_CAPACITY_RELATIVE_TO_FULL MAV_BATTERY_STATUS_FLAGS = 262144
 	// Reserved (not used). If set, this will indicate that an additional status field exists for higher status values.
-	MAV_BATTERY_STATUS_FLAGS_EXTENDED MAV_BATTERY_STATUS_FLAGS = 4294967295
+	MAV_BATTERY_STATUS_FLAGS_EXTENDED MAV_BATTERY_STATUS_FLAGS = 2147483648
 )
 
 var labels_MAV_BATTERY_STATUS_FLAGS = map[MAV_BATTERY_STATUS_FLAGS]string{

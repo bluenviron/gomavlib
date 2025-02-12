@@ -10,8 +10,6 @@ import (
 type HIL_SENSOR_UPDATED_FLAGS = common.HIL_SENSOR_UPDATED_FLAGS
 
 const (
-	// None of the fields in HIL_SENSOR have been updated
-	HIL_SENSOR_UPDATED_NONE HIL_SENSOR_UPDATED_FLAGS = common.HIL_SENSOR_UPDATED_NONE
 	// The value in the xacc field has been updated
 	HIL_SENSOR_UPDATED_XACC HIL_SENSOR_UPDATED_FLAGS = common.HIL_SENSOR_UPDATED_XACC
 	// The value in the yacc field has been updated

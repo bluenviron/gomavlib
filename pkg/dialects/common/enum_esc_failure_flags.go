@@ -12,8 +12,6 @@ import (
 type ESC_FAILURE_FLAGS uint64
 
 const (
-	// No ESC failure.
-	ESC_FAILURE_NONE ESC_FAILURE_FLAGS = 0
 	// Over current failure.
 	ESC_FAILURE_OVER_CURRENT ESC_FAILURE_FLAGS = 1
 	// Over voltage failure.
@@ -31,7 +29,6 @@ const (
 )
 
 var labels_ESC_FAILURE_FLAGS = map[ESC_FAILURE_FLAGS]string{
-	ESC_FAILURE_NONE:             "ESC_FAILURE_NONE",
 	ESC_FAILURE_OVER_CURRENT:     "ESC_FAILURE_OVER_CURRENT",
 	ESC_FAILURE_OVER_VOLTAGE:     "ESC_FAILURE_OVER_VOLTAGE",
 	ESC_FAILURE_OVER_TEMPERATURE: "ESC_FAILURE_OVER_TEMPERATURE",
@@ -42,7 +39,6 @@ var labels_ESC_FAILURE_FLAGS = map[ESC_FAILURE_FLAGS]string{
 }
 
 var values_ESC_FAILURE_FLAGS = map[string]ESC_FAILURE_FLAGS{
-	"ESC_FAILURE_NONE":             ESC_FAILURE_NONE,
 	"ESC_FAILURE_OVER_CURRENT":     ESC_FAILURE_OVER_CURRENT,
 	"ESC_FAILURE_OVER_VOLTAGE":     ESC_FAILURE_OVER_VOLTAGE,
 	"ESC_FAILURE_OVER_TEMPERATURE": ESC_FAILURE_OVER_TEMPERATURE,
@@ -58,7 +54,7 @@ func (e ESC_FAILURE_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 8; i++ {
+	for i := 0; i < 7; i++ {
 		mask := ESC_FAILURE_FLAGS(1 << i)
 		if e&mask == mask {
 			names = append(names, labels_ESC_FAILURE_FLAGS[mask])

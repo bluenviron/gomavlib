@@ -12,8 +12,6 @@ import (
 type HIL_SENSOR_UPDATED_FLAGS uint64
 
 const (
-	// None of the fields in HIL_SENSOR have been updated
-	HIL_SENSOR_UPDATED_NONE HIL_SENSOR_UPDATED_FLAGS = 0
 	// The value in the xacc field has been updated
 	HIL_SENSOR_UPDATED_XACC HIL_SENSOR_UPDATED_FLAGS = 1
 	// The value in the yacc field has been updated
@@ -45,7 +43,6 @@ const (
 )
 
 var labels_HIL_SENSOR_UPDATED_FLAGS = map[HIL_SENSOR_UPDATED_FLAGS]string{
-	HIL_SENSOR_UPDATED_NONE:          "HIL_SENSOR_UPDATED_NONE",
 	HIL_SENSOR_UPDATED_XACC:          "HIL_SENSOR_UPDATED_XACC",
 	HIL_SENSOR_UPDATED_YACC:          "HIL_SENSOR_UPDATED_YACC",
 	HIL_SENSOR_UPDATED_ZACC:          "HIL_SENSOR_UPDATED_ZACC",
@@ -63,7 +60,6 @@ var labels_HIL_SENSOR_UPDATED_FLAGS = map[HIL_SENSOR_UPDATED_FLAGS]string{
 }
 
 var values_HIL_SENSOR_UPDATED_FLAGS = map[string]HIL_SENSOR_UPDATED_FLAGS{
-	"HIL_SENSOR_UPDATED_NONE":          HIL_SENSOR_UPDATED_NONE,
 	"HIL_SENSOR_UPDATED_XACC":          HIL_SENSOR_UPDATED_XACC,
 	"HIL_SENSOR_UPDATED_YACC":          HIL_SENSOR_UPDATED_YACC,
 	"HIL_SENSOR_UPDATED_ZACC":          HIL_SENSOR_UPDATED_ZACC,
@@ -86,7 +82,7 @@ func (e HIL_SENSOR_UPDATED_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 15; i++ {
+	for i := 0; i < 14; i++ {
 		mask := HIL_SENSOR_UPDATED_FLAGS(1 << i)
 		if e&mask == mask {
 			names = append(names, labels_HIL_SENSOR_UPDATED_FLAGS[mask])

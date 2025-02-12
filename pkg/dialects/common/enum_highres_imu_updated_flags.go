@@ -12,8 +12,6 @@ import (
 type HIGHRES_IMU_UPDATED_FLAGS uint64
 
 const (
-	// None of the fields in HIGHRES_IMU have been updated
-	HIGHRES_IMU_UPDATED_NONE HIGHRES_IMU_UPDATED_FLAGS = 0
 	// The value in the xacc field has been updated
 	HIGHRES_IMU_UPDATED_XACC HIGHRES_IMU_UPDATED_FLAGS = 1
 	// The value in the yacc field has been updated
@@ -43,7 +41,6 @@ const (
 )
 
 var labels_HIGHRES_IMU_UPDATED_FLAGS = map[HIGHRES_IMU_UPDATED_FLAGS]string{
-	HIGHRES_IMU_UPDATED_NONE:          "HIGHRES_IMU_UPDATED_NONE",
 	HIGHRES_IMU_UPDATED_XACC:          "HIGHRES_IMU_UPDATED_XACC",
 	HIGHRES_IMU_UPDATED_YACC:          "HIGHRES_IMU_UPDATED_YACC",
 	HIGHRES_IMU_UPDATED_ZACC:          "HIGHRES_IMU_UPDATED_ZACC",
@@ -60,7 +57,6 @@ var labels_HIGHRES_IMU_UPDATED_FLAGS = map[HIGHRES_IMU_UPDATED_FLAGS]string{
 }
 
 var values_HIGHRES_IMU_UPDATED_FLAGS = map[string]HIGHRES_IMU_UPDATED_FLAGS{
-	"HIGHRES_IMU_UPDATED_NONE":          HIGHRES_IMU_UPDATED_NONE,
 	"HIGHRES_IMU_UPDATED_XACC":          HIGHRES_IMU_UPDATED_XACC,
 	"HIGHRES_IMU_UPDATED_YACC":          HIGHRES_IMU_UPDATED_YACC,
 	"HIGHRES_IMU_UPDATED_ZACC":          HIGHRES_IMU_UPDATED_ZACC,
@@ -82,7 +78,7 @@ func (e HIGHRES_IMU_UPDATED_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 14; i++ {
+	for i := 0; i < 13; i++ {
 		mask := HIGHRES_IMU_UPDATED_FLAGS(1 << i)
 		if e&mask == mask {
 			names = append(names, labels_HIGHRES_IMU_UPDATED_FLAGS[mask])

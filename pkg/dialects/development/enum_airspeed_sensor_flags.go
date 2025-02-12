@@ -13,9 +13,9 @@ type AIRSPEED_SENSOR_FLAGS uint64
 
 const (
 	// Airspeed sensor is unhealthy
-	AIRSPEED_SENSOR_UNHEALTHY AIRSPEED_SENSOR_FLAGS = 0
+	AIRSPEED_SENSOR_UNHEALTHY AIRSPEED_SENSOR_FLAGS = 1
 	// True if the data from this sensor is being actively used by the flight controller for guidance, navigation or control.
-	AIRSPEED_SENSOR_USING AIRSPEED_SENSOR_FLAGS = 1
+	AIRSPEED_SENSOR_USING AIRSPEED_SENSOR_FLAGS = 2
 )
 
 var labels_AIRSPEED_SENSOR_FLAGS = map[AIRSPEED_SENSOR_FLAGS]string{

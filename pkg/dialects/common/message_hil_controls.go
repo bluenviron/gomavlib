@@ -2,7 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package common
 
-// Sent from autopilot to simulation. Hardware in the loop control outputs
+// Sent from autopilot to simulation. Hardware in the loop control outputs. Alternative to HIL_ACTUATOR_CONTROLS.
 type MessageHilControls struct {
 	// Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.
 	TimeUsec uint64

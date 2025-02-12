@@ -6,5 +6,5 @@ import (
 	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
-// Sent from autopilot to simulation. Hardware in the loop control outputs (replacement for HIL_CONTROLS)
+// Sent from autopilot to simulation. Hardware in the loop control outputs. Alternative to HIL_CONTROLS.
 type MessageHilActuatorControls = common.MessageHilActuatorControls

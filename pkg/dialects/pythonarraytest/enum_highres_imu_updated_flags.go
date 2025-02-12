@@ -10,8 +10,6 @@ import (
 type HIGHRES_IMU_UPDATED_FLAGS = common.HIGHRES_IMU_UPDATED_FLAGS
 
 const (
-	// None of the fields in HIGHRES_IMU have been updated
-	HIGHRES_IMU_UPDATED_NONE HIGHRES_IMU_UPDATED_FLAGS = common.HIGHRES_IMU_UPDATED_NONE
 	// The value in the xacc field has been updated
 	HIGHRES_IMU_UPDATED_XACC HIGHRES_IMU_UPDATED_FLAGS = common.HIGHRES_IMU_UPDATED_XACC
 	// The value in the yacc field has been updated

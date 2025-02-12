@@ -10,8 +10,6 @@ import (
 type ESC_FAILURE_FLAGS = common.ESC_FAILURE_FLAGS
 
 const (
-	// No ESC failure.
-	ESC_FAILURE_NONE ESC_FAILURE_FLAGS = common.ESC_FAILURE_NONE
 	// Over current failure.
 	ESC_FAILURE_OVER_CURRENT ESC_FAILURE_FLAGS = common.ESC_FAILURE_OVER_CURRENT
 	// Over voltage failure.

@@ -42,7 +42,7 @@ type MessageHighLatency2 struct {
 	Eph uint8
 	// Maximum error vertical position since last message
 	Epv uint8
-	// Air temperature from airspeed sensor
+	// Air temperature
 	TemperatureAir int8
 	// Maximum climb rate magnitude since last message
 	ClimbRate int8

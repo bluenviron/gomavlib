@@ -19,16 +19,21 @@ const (
 	// If set, this mode should not be added to the list of selectable modes.
 	// The mode might still be selected by the FC directly (for example as part of a failsafe).
 	MAV_MODE_PROPERTY_NOT_USER_SELECTABLE MAV_MODE_PROPERTY = 2
+	// If set, this mode is automatically controlled (it may use but does not require a manual controller).
+	// If unset the mode is a assumed to require user input (be a manual mode).
+	MAV_MODE_PROPERTY_AUTO_MODE MAV_MODE_PROPERTY = 4
 )
 
 var labels_MAV_MODE_PROPERTY = map[MAV_MODE_PROPERTY]string{
 	MAV_MODE_PROPERTY_ADVANCED:            "MAV_MODE_PROPERTY_ADVANCED",
 	MAV_MODE_PROPERTY_NOT_USER_SELECTABLE: "MAV_MODE_PROPERTY_NOT_USER_SELECTABLE",
+	MAV_MODE_PROPERTY_AUTO_MODE:           "MAV_MODE_PROPERTY_AUTO_MODE",
 }
 
 var values_MAV_MODE_PROPERTY = map[string]MAV_MODE_PROPERTY{
 	"MAV_MODE_PROPERTY_ADVANCED":            MAV_MODE_PROPERTY_ADVANCED,
 	"MAV_MODE_PROPERTY_NOT_USER_SELECTABLE": MAV_MODE_PROPERTY_NOT_USER_SELECTABLE,
+	"MAV_MODE_PROPERTY_AUTO_MODE":           MAV_MODE_PROPERTY_AUTO_MODE,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.
@@ -37,7 +42,7 @@ func (e MAV_MODE_PROPERTY) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 2; i++ {
+	for i := 0; i < 3; i++ {
 		mask := MAV_MODE_PROPERTY(1 << i)
 		if e&mask == mask {
 			names = append(names, labels_MAV_MODE_PROPERTY[mask])

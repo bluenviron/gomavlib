@@ -347,8 +347,10 @@ const (
 	// Fence return point (there can only be one such point in a geofence definition). If rally points are supported they should be used instead.
 	MAV_CMD_NAV_FENCE_RETURN_POINT MAV_CMD = 5000
 	// Fence vertex for an inclusion polygon (the polygon must not be self-intersecting). The vehicle must stay within this area. Minimum of 3 vertices required.
+	// The vertices for a polygon must be sent sequentially, each with param1 set to the total number of vertices in the polygon.
 	MAV_CMD_NAV_FENCE_POLYGON_VERTEX_INCLUSION MAV_CMD = 5001
 	// Fence vertex for an exclusion polygon (the polygon must not be self-intersecting). The vehicle must stay outside this area. Minimum of 3 vertices required.
+	// The vertices for a polygon must be sent sequentially, each with param1 set to the total number of vertices in the polygon.
 	MAV_CMD_NAV_FENCE_POLYGON_VERTEX_EXCLUSION MAV_CMD = 5002
 	// Circular fence area. The vehicle must stay inside this area.
 	MAV_CMD_NAV_FENCE_CIRCLE_INCLUSION MAV_CMD = 5003

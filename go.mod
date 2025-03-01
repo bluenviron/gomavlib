@@ -1,6 +1,6 @@
 module github.com/bluenviron/gomavlib/v3
 
-go 1.21.0
+go 1.22.0
 
 require (
 	bou.ke/monkey v1.0.2

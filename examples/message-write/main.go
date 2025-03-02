@@ -8,9 +8,9 @@ import (
 )
 
 // this example shows how to:
-// 1) create a node which communicates with a serial endpoint
-// 2) wait for a specific incoming message
-// 3) write a reply message
+// 1) create a node which communicates with a serial endpoint.
+// 2) wait for a specific incoming message.
+// 3) write a reply message.
 
 func main() {
 	// create a node which communicates with a serial endpoint

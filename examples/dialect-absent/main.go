@@ -7,11 +7,11 @@ import (
 )
 
 // this example shows how to:
-// 1) create a node with no dialect, that doesn't attempt to decode messages
-// 2) print incoming messages
+// 1) create a node without any dialect, that doesn't attempt to decode messages.
+// 2) print incoming messages.
 
 func main() {
-	// create a node with no dialect, that doesn't attempt to decode messages
+	// create a node without any dialect, that doesn't attempt to decode messages
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{

@@ -10,13 +10,13 @@ import (
 	"github.com/bluenviron/gomavlib/v3/pkg/frame"
 )
 
-// if NewNode() is not flexible enough, the library provides a low-level
+// When Node is not flexible enough, the library provides a low-level
 // frame reader and writer, that can be used with any kind of byte stream.
 
 // this example shows how to:
-// 1) allocate the low-level frame.ReadWriter around a io.ReadWriter
-// 2) read a frame, that contains a message
-// 3) write a message, that is automatically wrapped in a frame
+// 1) allocate the low-level frame.ReadWriter around a io.ReadWriter.
+// 2) read a frame, that contains a message.
+// 3) write a message, that is automatically wrapped in a frame.
 
 type readWriter struct {
 	io.Reader

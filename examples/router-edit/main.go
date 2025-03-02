@@ -8,11 +8,11 @@ import (
 )
 
 // this example shows how to:
-// 1) create a node which communicates with a serial endpoint
-// 2) print incoming frames
-// 3) edit messages of a specific kind
-// 4) recompute the frame checksum and signature
-// 5) route frame to every other channel
+// 1) create a node which communicates with a serial endpoint.
+// 2) print incoming frames.
+// 3) edit messages of a specific kind.
+// 4) recompute the frame checksum and signature.
+// 5) route frame to every other channel.
 
 func main() {
 	// create a node which communicates with a serial endpoint
@@ -22,7 +22,7 @@ func main() {
 				Device: "/dev/ttyUSB0",
 				Baud:   57600,
 			},
-			gomavlib.EndpointUDPClient{"1.2.3.4:5900"},
+			gomavlib.EndpointUDPClient{Address: "1.2.3.4:5900"},
 		},
 		Dialect:     ardupilotmega.Dialect,
 		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target

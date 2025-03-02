@@ -9,9 +9,9 @@ import (
 )
 
 // this example shows how to:
-// 1) create a custom dialect from a list of messages
-// 2) create a node which understands the custom dialect
-// 3) print incoming messages
+// 1) create a custom dialect from a list of messages.
+// 2) create a node which understands the custom dialect.
+// 3) print incoming messages.
 
 // this is a custom message.
 // It must be prefixed with "Message" and implement the message.Message interface.
@@ -27,7 +27,7 @@ func (*MessageCustom) GetID() uint32 {
 
 func main() {
 	// create a custom dialect from a list of messages
-	dialect := &dialect.Dialect{3, []message.Message{
+	dialect := &dialect.Dialect{Version: 3, Messages: []message.Message{
 		&MessageCustom{},
 	}}
 

@@ -8,8 +8,8 @@ import (
 )
 
 // this example shows how to:
-// 1) create a node which communicates with a serial endpoint
-// 2) print incoming events
+// 1) create a node which communicates with a serial endpoint.
+// 2) print incoming events.
 
 func main() {
 	// create a node which communicates with a serial endpoint

@@ -8,14 +8,14 @@ import (
 )
 
 // this example shows how to:
-// 1) create a node which communicates with a UDP endpoint in client mode
-// 2) print incoming messages
+// 1) create a node which communicates with a UDP endpoint in client mode.
+// 2) print incoming messages.
 
 func main() {
 	// create a node which communicates with a UDP endpoint in client mode
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
-			gomavlib.EndpointUDPClient{"1.2.3.4:5600"},
+			gomavlib.EndpointUDPClient{Address: "1.2.3.4:5600"},
 		},
 		Dialect:     ardupilotmega.Dialect,
 		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target

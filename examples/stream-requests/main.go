@@ -7,12 +7,14 @@ import (
 	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
 )
 
+// this example shows how to:
+// 1) create a node which communicates with a serial endpoint.
+//    The node is configured to automatically request streams
+//    to ardupilot devices, that require an explicit message.
+// 2) print incoming frames.
+
 func main() {
-	// create a node which
-	// - communicates with a serial port
-	// - understands ardupilotmega dialect
-	// - writes messages with given system id
-	// - automatically requests streams to ardupilot devices
+	// create a node
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{

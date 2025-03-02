@@ -15,24 +15,25 @@ This library powers the [**mavp2p**](https://github.com/bluenviron/mavp2p) route
 
 Features:
 
-* Decode and encode Mavlink v2.0 and v1.0. Supports checksums, empty-byte truncation (v2.0), signatures (v2.0), message extensions (v2.0).
-* Dialects are optional, the library can work with standard dialects (ready-to-use standard dialects are provided in directory `dialects/`), custom dialects or no dialects at all. In case of custom dialects, a dialect generator is available in order to convert XML definitions into their Go representation.
-* Create nodes able to communicate with multiple endpoints in parallel and with multiple transports:
-  * serial
-  * UDP (server, client or broadcast mode)
-  * TCP (server or client mode)
-  * custom reader/writer
-* Emit heartbeats automatically
-* Send automatic stream requests to Ardupilot devices (disabled by default)
-* Support both domain names and IPs
-* Examples provided for every feature, comprehensive test suite, continuous integration
+* Create Mavlink nodes able to communicate with other nodes.
+  * Supported transports: serial, UDP (server, client or broadcast mode), TCP (server or client mode), custom reader/writer.
+  * Emit heartbeats automatically.
+  * Send automatic stream requests to Ardupilot devices (disabled by default).
+  * Use both domain names and IPs.
+* Decode and encode Mavlink v2.0 and v1.0.
+  * Compute and validate checksums.
+  * Support all v2 features: empty-byte truncation, signatures, message extensions.
+* Use dialects in multiple ways.
+  * Ready-to-use standard dialects are available in directory `dialects/`.
+  * Custom dialects can be defined. Aa dialect generator is available in order to convert XML definitions into their Go representation.
+  * Use no dialect at all. Messages can be routed without having their content decoded.
 
 ## Table of contents
 
 * [Installation](#installation)
+* [Examples](#examples)
 * [API Documentation](#api-documentation)
 * [Dialect generation](#dialect-generation)
-* [Testing](#testing)
 * [Specifications](#specifications)
 * [Links](#links)
 
@@ -46,32 +47,34 @@ Features:
    go mod init main
    ```
 
-3. Download one of the example files and place it in the folder:
+3. Download one of the [example files](#examples) and place it in the folder.
 
-  * [endpoint-serial](examples/endpoint-serial/main.go)
-  * [endpoint-udp-server](examples/endpoint-udp-server/main.go)
-  * [endpoint-udp-client](examples/endpoint-udp-client/main.go)
-  * [endpoint-udp-broadcast](examples/endpoint-udp-broadcast/main.go)
-  * [endpoint-tcp-server](examples/endpoint-tcp-server/main.go)
-  * [endpoint-tcp-client](examples/endpoint-tcp-client/main.go)
-  * [endpoint-custom](examples/endpoint-custom/main.go)
-  * [message-read](examples/message-read/main.go)
-  * [message-write](examples/message-write/main.go)
-  * [signature](examples/signature/main.go)
-  * [dialect-no](examples/dialect-no/main.go)
-  * [dialect-custom](examples/dialect-custom/main.go)
-  * [events](examples/events/main.go)
-  * [router](examples/router/main.go)
-  * [router-edit](examples/router-edit/main.go)
-  * [serial-to-json](examples/serial-to-json/main.go)
-  * [stream-requests](examples/stream-requests/main.go)
-  * [readwriter](examples/readwriter/main.go)
-
-4. Compile and run
+4. Compile and run:
 
    ```
    go run name-of-the-go-file.go
    ```
+
+## Examples
+
+* [endpoint-serial](examples/endpoint-serial/main.go)
+* [endpoint-udp-server](examples/endpoint-udp-server/main.go)
+* [endpoint-udp-client](examples/endpoint-udp-client/main.go)
+* [endpoint-udp-broadcast](examples/endpoint-udp-broadcast/main.go)
+* [endpoint-tcp-server](examples/endpoint-tcp-server/main.go)
+* [endpoint-tcp-client](examples/endpoint-tcp-client/main.go)
+* [endpoint-custom](examples/endpoint-custom/main.go)
+* [message-read](examples/message-read/main.go)
+* [message-write](examples/message-write/main.go)
+* [signature](examples/signature/main.go)
+* [dialect-absent](examples/dialect-absent/main.go)
+* [dialect-custom](examples/dialect-custom/main.go)
+* [events](examples/events/main.go)
+* [router](examples/router/main.go)
+* [router-edit](examples/router-edit/main.go)
+* [serial-to-json](examples/serial-to-json/main.go)
+* [stream-requests](examples/stream-requests/main.go)
+* [read-writer](examples/read-writer/main.go)
 
 ## API Documentation
 
@@ -84,14 +87,6 @@ Standard dialects are provided in the `pkg/dialects/` folder, but it's also poss
 ```
 go install github.com/bluenviron/gomavlib/v3/cmd/dialect-import@latest
 dialect-import my_dialect.xml
-```
-
-## Testing
-
-If you want to hack the library and test the results, unit tests can be launched with:
-
-```
-make test
 ```
 
 ## Specifications

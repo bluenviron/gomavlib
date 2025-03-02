@@ -8,16 +8,17 @@ import (
 	"github.com/bluenviron/gomavlib/v3/pkg/frame"
 )
 
+// this example shows how to:
+// 1) create a node which communicates with a serial endpoint.
+//    The node is configured to validate incoming messages through InKey
+//    and sign outgoing messages with OutKey.
+// 2) print incoming frames.
+
 func main() {
 	// initialize a 6-bytes key. A key can have up to 32 bytes.
 	key := frame.NewV2Key([]byte("abcdef"))
 
-	// create a node which
-	// - communicates with a serial port.
-	// - understands ardupilotmega dialect
-	// - writes messages with given system id
-	// - validates incoming messages via InKey
-	// - sign outgoing messages via OutKey
+	// create a node.
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{

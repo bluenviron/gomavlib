@@ -9,9 +9,9 @@ import (
 )
 
 // this example shows how to:
-// 1) create a custom endpoint from a io.ReadWriteCloser
-// 2) create a node which communicates with the custom endpoint
-// 3) print incoming messages
+// 1) create a custom endpoint from a io.ReadWriteCloser.
+// 2) create a node which communicates with the custom endpoint.
+// 3) print incoming messages.
 
 // this is an example struct that implements io.ReadWriteCloser.
 // it does not read anything and prints what it receives.
@@ -52,7 +52,7 @@ func main() {
 	// create a node which communicates with the custom endpoint
 	node, err := gomavlib.NewNode(gomavlib.NodeConf{
 		Endpoints: []gomavlib.EndpointConf{
-			gomavlib.EndpointCustom{endpoint},
+			gomavlib.EndpointCustom{ReadWriteCloser: endpoint},
 		},
 		Dialect:     ardupilotmega.Dialect,
 		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target

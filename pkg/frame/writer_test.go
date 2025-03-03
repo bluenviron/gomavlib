@@ -19,31 +19,9 @@ func TestWriterNewErrors(t *testing.T) {
 		OutSystemID: 1,
 	})
 	require.EqualError(t, err, "ByteWriter not provided")
-
-	var buf bytes.Buffer
-
-	_, err = NewWriter(WriterConf{
-		Writer:      &buf,
-		OutSystemID: 1,
-	})
-	require.EqualError(t, err, "OutVersion not provided")
-
-	_, err = NewWriter(WriterConf{
-		Writer:     &buf,
-		OutVersion: V2,
-	})
-	require.EqualError(t, err, "OutSystemID must be greater than one")
-
-	_, err = NewWriter(WriterConf{
-		Writer:      &buf,
-		OutVersion:  V1,
-		OutSystemID: 1,
-		OutKey:      NewV2Key(bytes.Repeat([]byte("\x4F"), 32)),
-	})
-	require.EqualError(t, err, "OutKey requires V2 frames")
 }
 
-func TestWriterWriteFrame(t *testing.T) {
+func TestWriterWrite(t *testing.T) {
 	for _, ca := range casesReadWrite {
 		t.Run(ca.name, func(t *testing.T) {
 			var buf bytes.Buffer
@@ -55,14 +33,14 @@ func TestWriterWriteFrame(t *testing.T) {
 			})
 			require.NoError(t, err)
 
-			err = writer.WriteFrame(ca.frame)
+			err = writer.Write(ca.frame)
 			require.NoError(t, err)
 			require.Equal(t, ca.raw, buf.Bytes())
 		})
 	}
 }
 
-func TestWriterWriteFrameErrors(t *testing.T) {
+func TestWriterWriteErrors(t *testing.T) {
 	for _, ca := range []struct {
 		name      string
 		dialectRW *dialect.ReadWriter
@@ -131,7 +109,7 @@ func TestWriterWriteFrameErrors(t *testing.T) {
 			})
 			require.NoError(t, err)
 
-			err = writer.WriteFrame(ca.frame)
+			err = writer.Write(ca.frame)
 			require.EqualError(t, err, ca.err)
 		})
 	}
@@ -193,7 +171,6 @@ func TestWriterWriteMessage(t *testing.T) {
 			err = writer.WriteMessage(c.msg)
 			require.NoError(t, err)
 			require.Equal(t, c.raw, buf.Bytes())
-			buf.Next(len(c.raw))
 		})
 	}
 }
@@ -259,6 +236,6 @@ func TestWriterWriteFrameNilMsg(t *testing.T) {
 	require.NoError(t, err)
 
 	f := &V1Frame{Message: nil}
-	err = writer.WriteFrame(f)
+	err = writer.Write(f)
 	require.Error(t, err)
 }

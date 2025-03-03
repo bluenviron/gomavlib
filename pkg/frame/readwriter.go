@@ -68,17 +68,27 @@ type ReadWriter struct {
 	InKey *V2Key
 
 	// Mavlink version used to encode messages.
+	//
+	// Deprecated: use streamwriter.Writer for writing messages.
 	OutVersion WriterOutVersion
 	// system id, added to every outgoing frame and used to identify this
 	// node in the network.
+	//
+	// Deprecated: use streamwriter.Writer for writing messages.
 	OutSystemID byte
 	// (optional) component id, added to every outgoing frame, defaults to 1.
+	//
+	// Deprecated: use streamwriter.Writer for writing messages.
 	OutComponentID byte
 	// (optional) value to insert into the signature link id.
 	// This feature requires v2 frames.
+	//
+	// Deprecated: use streamwriter.Writer for writing messages.
 	OutSignatureLinkID byte
 	// (optional) secret key used to sign outgoing frames.
 	// This feature requires v2 frames.
+	//
+	// Deprecated: use streamwriter.Writer for writing messages.
 	OutKey *V2Key
 
 	*Reader

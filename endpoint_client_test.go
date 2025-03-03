@@ -11,6 +11,7 @@ import (
 
 	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
 	"github.com/bluenviron/gomavlib/v3/pkg/frame"
+	"github.com/bluenviron/gomavlib/v3/pkg/streamwriter"
 )
 
 var _ endpointChannelProvider = (*endpointClient)(nil)
@@ -44,10 +45,16 @@ func TestEndpointClient(t *testing.T) {
 				rw := &frame.ReadWriter{
 					ByteReadWriter: conn,
 					DialectRW:      dialectRW,
-					OutVersion:     frame.V2,
-					OutSystemID:    11,
 				}
 				err = rw.Initialize()
+				require.NoError(t, err)
+
+				sw := &streamwriter.Writer{
+					FrameWriter: rw.Writer,
+					Version:     streamwriter.V2,
+					SystemID:    11,
+				}
+				err = sw.Initialize()
 				require.NoError(t, err)
 
 				for i := 0; i < 3; i++ {
@@ -68,7 +75,7 @@ func TestEndpointClient(t *testing.T) {
 						Checksum: fr.GetChecksum(),
 					}, fr)
 
-					err = rw.WriteMessage(&MessageHeartbeat{
+					err = sw.Write(&MessageHeartbeat{
 						Type:           6,
 						Autopilot:      5,
 						BaseMode:       4,
@@ -156,11 +163,9 @@ func TestEndpointClientIdleTimeout(t *testing.T) {
 				err2 = dialectRW.Initialize()
 				require.NoError(t, err2)
 
-				rw := &frame.ReadWriter{
-					ByteReadWriter: conn,
-					DialectRW:      dialectRW,
-					OutVersion:     frame.V2,
-					OutSystemID:    11,
+				rw := &frame.Reader{
+					ByteReader: conn,
+					DialectRW:  dialectRW,
 				}
 				err2 = rw.Initialize()
 				require.NoError(t, err2)

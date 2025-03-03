@@ -8,6 +8,7 @@ import (
 	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
 	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
 	"github.com/bluenviron/gomavlib/v3/pkg/frame"
+	"github.com/bluenviron/gomavlib/v3/pkg/streamwriter"
 )
 
 // When Node is not flexible enough, the library provides a low-level
@@ -41,11 +42,20 @@ func main() {
 			Reader: inBuf,
 			Writer: outBuf,
 		},
-		DialectRW:   dialectRW,
-		OutVersion:  frame.V2, // change to V1 if you're unable to communicate with the target
-		OutSystemID: 10,
+		DialectRW: dialectRW,
 	}
 	err = rw.Initialize()
+	if err != nil {
+		panic(err)
+	}
+
+	// allocate streamwriter.Writer around frame.ReadWriter.
+	nw := &streamwriter.Writer{
+		FrameWriter: rw.Writer,
+		Version:     streamwriter.V2, // change to V1 if you're unable to communicate with the target
+		SystemID:    10,
+	}
+	err = nw.Initialize()
 	if err != nil {
 		panic(err)
 	}
@@ -59,7 +69,7 @@ func main() {
 	log.Printf("decoded: %+v\n", frame)
 
 	// write a message, that is automatically wrapped in a frame
-	err = rw.WriteMessage(&ardupilotmega.MessageParamValue{
+	err = nw.Write(&ardupilotmega.MessageParamValue{
 		ParamId:    "test_parameter",
 		ParamValue: 123456,
 		ParamType:  ardupilotmega.MAV_PARAM_TYPE_UINT32,

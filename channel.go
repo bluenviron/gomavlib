@@ -8,6 +8,7 @@ import (
 
 	"github.com/bluenviron/gomavlib/v3/pkg/frame"
 	"github.com/bluenviron/gomavlib/v3/pkg/message"
+	"github.com/bluenviron/gomavlib/v3/pkg/streamwriter"
 )
 
 const (
@@ -25,15 +26,16 @@ func randomByte() (byte, error) {
 // For instance, a TCP client endpoint creates a single channel, while a TCP
 // server endpoint creates a channel for each incoming connection.
 type Channel struct {
-	n     *Node
-	e     Endpoint
-	label string
-	rwc   io.Closer
+	node     *Node
+	endpoint Endpoint
+	label    string
+	rwc      io.ReadWriteCloser
 
-	ctx       context.Context
-	ctxCancel func()
-	frw       *frame.ReadWriter
-	running   bool
+	ctx          context.Context
+	ctxCancel    func()
+	frameWriter  *frame.ReadWriter
+	streamWriter *streamwriter.Writer
+	running      bool
 
 	// in
 	chWrite chan interface{}
@@ -42,50 +44,45 @@ type Channel struct {
 	done chan struct{}
 }
 
-func newChannel(
-	n *Node,
-	e Endpoint,
-	label string,
-	rwc io.ReadWriteCloser,
-) (*Channel, error) {
+func (ch *Channel) initialize() error {
 	linkID, err := randomByte()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	frw := &frame.ReadWriter{
-		ByteReadWriter: rwc,
-		DialectRW:      n.dialectRW,
-		InKey:          n.InKey,
-		OutSystemID:    n.OutSystemID,
-		OutVersion: func() frame.WriterOutVersion {
-			if n.OutVersion == V2 {
-				return frame.V2
-			}
-			return frame.V1
-		}(),
-		OutComponentID:     n.OutComponentID,
-		OutSignatureLinkID: linkID,
-		OutKey:             n.OutKey,
+	ch.frameWriter = &frame.ReadWriter{
+		ByteReadWriter: ch.rwc,
+		DialectRW:      ch.node.dialectRW,
+		InKey:          ch.node.InKey,
 	}
-	err = frw.Initialize()
+	err = ch.frameWriter.Initialize()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	ctx, ctxCancel := context.WithCancel(context.Background())
+	ch.streamWriter = &streamwriter.Writer{
+		FrameWriter: ch.frameWriter.Writer,
+		SystemID:    ch.node.OutSystemID,
+		Version: func() streamwriter.Version {
+			if ch.node.OutVersion == V2 {
+				return streamwriter.V2
+			}
+			return streamwriter.V1
+		}(),
+		ComponentID:     ch.node.OutComponentID,
+		SignatureLinkID: linkID,
+		Key:             ch.node.OutKey,
+	}
+	err = ch.streamWriter.Initialize()
+	if err != nil {
+		return err
+	}
 
-	return &Channel{
-		n:         n,
-		e:         e,
-		label:     label,
-		rwc:       rwc,
-		ctx:       ctx,
-		ctxCancel: ctxCancel,
-		frw:       frw,
-		chWrite:   make(chan interface{}, writeBufferSize),
-		done:      make(chan struct{}),
-	}, nil
+	ch.ctx, ch.ctxCancel = context.WithCancel(context.Background())
+	ch.chWrite = make(chan interface{}, writeBufferSize)
+	ch.done = make(chan struct{})
+
+	return nil
 }
 
 func (ch *Channel) close() {
@@ -97,13 +94,13 @@ func (ch *Channel) close() {
 
 func (ch *Channel) start() {
 	ch.running = true
-	ch.n.wg.Add(1)
+	ch.node.wg.Add(1)
 	go ch.run()
 }
 
 func (ch *Channel) run() {
 	defer close(ch.done)
-	defer ch.n.wg.Done()
+	defer ch.node.wg.Done()
 
 	readerDone := make(chan struct{})
 	go ch.runReader(readerDone)
@@ -129,8 +126,8 @@ func (ch *Channel) run() {
 
 	ch.ctxCancel()
 
-	ch.n.pushEvent(&EventChannelClose{ch})
-	ch.n.closeChannel(ch)
+	ch.node.pushEvent(&EventChannelClose{ch})
+	ch.node.closeChannel(ch)
 }
 
 func (ch *Channel) runReader(readerDone chan struct{}) {
@@ -138,14 +135,14 @@ func (ch *Channel) runReader(readerDone chan struct{}) {
 
 	// wait client here, in order to allow the writer goroutine to start
 	// and allow clients to write messages before starting listening to events
-	ch.n.pushEvent(&EventChannelOpen{ch})
+	ch.node.pushEvent(&EventChannelOpen{ch})
 
 	for {
-		fr, err := ch.frw.Read()
+		fr, err := ch.frameWriter.Read()
 		if err != nil {
 			var eerr frame.ReadError
 			if errors.As(err, &eerr) {
-				ch.n.pushEvent(&EventParseError{err, ch})
+				ch.node.pushEvent(&EventParseError{err, ch})
 				continue
 			}
 			return
@@ -153,11 +150,11 @@ func (ch *Channel) runReader(readerDone chan struct{}) {
 
 		evt := &EventFrame{fr, ch}
 
-		if ch.n.nodeStreamRequest != nil {
-			ch.n.nodeStreamRequest.onEventFrame(evt)
+		if ch.node.nodeStreamRequest != nil {
+			ch.node.nodeStreamRequest.onEventFrame(evt)
 		}
 
-		ch.n.pushEvent(evt)
+		ch.node.pushEvent(evt)
 	}
 }
 
@@ -169,10 +166,10 @@ func (ch *Channel) runWriter(writerTerminate chan struct{}, writerDone chan stru
 		case what := <-ch.chWrite:
 			switch wh := what.(type) {
 			case message.Message:
-				ch.frw.WriteMessage(wh) //nolint:errcheck
+				ch.streamWriter.Write(wh) //nolint:errcheck
 
 			case frame.Frame:
-				ch.frw.WriteFrame(wh) //nolint:errcheck
+				ch.frameWriter.Write(wh) //nolint:errcheck
 			}
 
 		case <-writerTerminate:
@@ -188,7 +185,7 @@ func (ch *Channel) String() string {
 
 // Endpoint returns the channel Endpoint.
 func (ch *Channel) Endpoint() Endpoint {
-	return ch.e
+	return ch.endpoint
 }
 
 func (ch *Channel) write(what interface{}) {

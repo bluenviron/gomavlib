@@ -42,7 +42,13 @@ func (cp *channelProvider) run() {
 			break
 		}
 
-		ch, err := newChannel(cp.n, cp.eca, label, rwc)
+		ch := &Channel{
+			node:     cp.n,
+			endpoint: cp.eca,
+			label:    label,
+			rwc:      rwc,
+		}
+		err = ch.initialize()
 		if err != nil {
 			panic(fmt.Errorf("newChannel unexpected error: %w", err))
 		}

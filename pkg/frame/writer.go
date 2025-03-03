@@ -9,6 +9,18 @@ import (
 	"github.com/bluenviron/gomavlib/v3/pkg/message"
 )
 
+func encodeMessageInFrame(fr Frame, mp *message.ReadWriter) {
+	_, isV2 := fr.(*V2Frame)
+	msgRaw := mp.Write(fr.GetMessage(), isV2)
+
+	switch ff := fr.(type) {
+	case *V1Frame:
+		ff.Message = msgRaw
+	case *V2Frame:
+		ff.Message = msgRaw
+	}
+}
+
 // WriterConf is the configuration of a Writer.
 //
 // Deprecated: configuration has been moved inside Writer.
@@ -60,17 +72,27 @@ type Writer struct {
 	DialectRW *dialect.ReadWriter
 
 	// Mavlink version used to encode messages.
+	//
+	// Deprecated: use streamwriter.Writer for writing messages.
 	OutVersion WriterOutVersion
 	// system id, added to every outgoing frame and used to identify this
 	// node in the network.
+	//
+	// Deprecated: use streamwriter.Writer for writing messages.
 	OutSystemID byte
 	// (optional) component id, added to every outgoing frame, defaults to 1.
+	//
+	// Deprecated: use streamwriter.Writer for writing messages.
 	OutComponentID byte
 	// (optional) value to insert into the signature link id.
 	// This feature requires v2 frames.
+	//
+	// Deprecated: use streamwriter.Writer for writing messages.
 	OutSignatureLinkID byte
 	// (optional) secret key used to sign outgoing frames.
 	// This feature requires v2 frames.
+	//
+	// Deprecated: use streamwriter.Writer for writing messages.
 	OutKey *V2Key
 
 	//
@@ -87,17 +109,8 @@ func (w *Writer) Initialize() error {
 		return fmt.Errorf("ByteWriter not provided")
 	}
 
-	if w.OutVersion == 0 {
-		return fmt.Errorf("OutVersion not provided")
-	}
-	if w.OutSystemID < 1 {
-		return fmt.Errorf("OutSystemID must be greater than one")
-	}
 	if w.OutComponentID < 1 {
 		w.OutComponentID = 1
-	}
-	if w.OutKey != nil && w.OutVersion != V2 {
-		return fmt.Errorf("OutKey requires V2 frames")
 	}
 
 	w.bw = make([]byte, bufferSize)
@@ -108,6 +121,8 @@ func (w *Writer) Initialize() error {
 // WriteMessage writes a Message.
 // The Message is wrapped into a Frame whose fields are filled automatically.
 // It must not be called by multiple routines in parallel.
+//
+// Deprecated: replaced by streamwriter.Writer.Write().
 func (w *Writer) WriteMessage(m message.Message) error {
 	if w.OutVersion == V1 {
 		return w.writeFrameAndFill(&V1Frame{Message: m})
@@ -152,7 +167,7 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 
 	// encode message if it is not already encoded
 	if _, ok := fr.GetMessage().(*message.MessageRaw); !ok {
-		w.encodeMessageInFrame(fr, mp)
+		encodeMessageInFrame(fr, mp)
 	}
 
 	// fill checksum
@@ -178,7 +193,15 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 // It must not be called by multiple routines in parallel.
 // This function is intended only for routing pre-existing frames to other nodes,
 // since all frame fields must be filled manually.
+//
+// Deprecated: replaced by Write().
 func (w *Writer) WriteFrame(fr Frame) error {
+	return w.Write(fr)
+}
+
+// Write writes a Frame.
+// It must not be called by multiple routines in parallel.
+func (w *Writer) Write(fr Frame) error {
 	if fr.GetMessage() == nil {
 		return fmt.Errorf("message is nil")
 	}
@@ -194,22 +217,10 @@ func (w *Writer) WriteFrame(fr Frame) error {
 			return fmt.Errorf("message is not in the dialect")
 		}
 
-		w.encodeMessageInFrame(fr, mp)
+		encodeMessageInFrame(fr, mp)
 	}
 
 	return w.writeFrameInner(fr)
-}
-
-func (w *Writer) encodeMessageInFrame(fr Frame, mp *message.ReadWriter) {
-	_, isV2 := fr.(*V2Frame)
-	msgRaw := mp.Write(fr.GetMessage(), isV2)
-
-	switch ff := fr.(type) {
-	case *V1Frame:
-		ff.Message = msgRaw
-	case *V2Frame:
-		ff.Message = msgRaw
-	}
 }
 
 func (w *Writer) writeFrameInner(fr Frame) error {

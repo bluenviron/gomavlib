@@ -1,0 +1,4 @@
+go test fuzz v1
+[]byte("\xfe\x02000000")
+bool(true)
+bool(false)

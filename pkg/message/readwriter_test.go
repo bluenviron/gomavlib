@@ -1,9 +1,11 @@
-package message
+package message_test
 
 import (
 	"bytes"
 	"testing"
 
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v3/pkg/message"
 	"github.com/stretchr/testify/require"
 )
 
@@ -163,7 +165,7 @@ func (*MessageTrajectoryRepresentationWaypoints) GetID() uint32 {
 }
 
 var casesCRC = []struct {
-	msg Message
+	msg message.Message
 	crc byte
 }{
 	{
@@ -198,7 +200,7 @@ var casesCRC = []struct {
 
 func TestCRC(t *testing.T) {
 	for _, c := range casesCRC {
-		mp, err := NewReadWriter(c.msg)
+		mp, err := message.NewReadWriter(c.msg)
 		require.NoError(t, err)
 		require.Equal(t, c.crc, mp.CRCExtra())
 	}
@@ -207,7 +209,7 @@ func TestCRC(t *testing.T) {
 var casesReadWriter = []struct {
 	name   string
 	isV2   bool
-	parsed Message
+	parsed message.Message
 	raw    []byte
 }{
 	{
@@ -467,31 +469,31 @@ func (*MessageInvalid3) GetID() uint32 {
 }
 
 func TestNewReadWriterErrors(t *testing.T) {
-	_, err := NewReadWriter(&Invalid{})
+	_, err := message.NewReadWriter(&Invalid{})
 	require.EqualError(t, err, "struct name must begin with 'Message'")
 
-	_, err = NewReadWriter(&MessageInvalidEnum{})
+	_, err = message.NewReadWriter(&MessageInvalidEnum{})
 	require.EqualError(t, err, "an enum must be an uint64")
 
-	_, err = NewReadWriter(&MessageInvalidEnum2{})
+	_, err = message.NewReadWriter(&MessageInvalidEnum2{})
 	require.EqualError(t, err, "unsupported Go type: invalid")
 
-	_, err = NewReadWriter(&MessageInvalidEnum3{})
+	_, err = message.NewReadWriter(&MessageInvalidEnum3{})
 	require.EqualError(t, err, "type 'int64' cannot be used as enum")
 
-	_, err = NewReadWriter(&MessageInvalid2{})
+	_, err = message.NewReadWriter(&MessageInvalid2{})
 	require.EqualError(t, err, "unsupported Go type: ")
 
-	_, err = NewReadWriter(&MessageInvalid3{})
+	_, err = message.NewReadWriter(&MessageInvalid3{})
 	require.EqualError(t, err, "string has invalid length: invalid")
 }
 
 func TestRead(t *testing.T) {
 	for _, c := range casesReadWriter {
 		t.Run(c.name, func(t *testing.T) {
-			mp, err := NewReadWriter(c.parsed)
+			mp, err := message.NewReadWriter(c.parsed)
 			require.NoError(t, err)
-			msg, err := mp.Read(&MessageRaw{
+			msg, err := mp.Read(&message.MessageRaw{
 				ID:      c.parsed.GetID(),
 				Payload: c.raw,
 			}, c.isV2)
@@ -504,13 +506,37 @@ func TestRead(t *testing.T) {
 func TestWrite(t *testing.T) {
 	for _, c := range casesReadWriter {
 		t.Run(c.name, func(t *testing.T) {
-			mp, err := NewReadWriter(c.parsed)
+			mp, err := message.NewReadWriter(c.parsed)
 			require.NoError(t, err)
 			msgRaw := mp.Write(c.parsed, c.isV2)
-			require.Equal(t, &MessageRaw{
+			require.Equal(t, &message.MessageRaw{
 				ID:      c.parsed.GetID(),
 				Payload: c.raw,
 			}, msgRaw)
 		})
 	}
+}
+
+func FuzzReadWriter(f *testing.F) {
+	for _, ca := range casesReadWriter {
+		f.Add(ca.raw, ca.parsed.GetID(), false, false)
+	}
+
+	f.Fuzz(func(t *testing.T, raw []byte, msgID uint32, v2In bool, v2Out bool) {
+		if msgID >= uint32(len(ardupilotmega.Dialect.Messages)) {
+			return
+		}
+
+		rw := &message.ReadWriter{Message: ardupilotmega.Dialect.Messages[msgID]}
+		err := rw.Initialize()
+		require.NoError(t, err)
+
+		msg, err := rw.Read(&message.MessageRaw{
+			ID:      msgID,
+			Payload: raw,
+		}, v2In)
+		if err == nil {
+			rw.Write(msg, v2Out)
+		}
+	})
 }

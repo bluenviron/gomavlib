@@ -77,8 +77,8 @@ type Writer struct {
 	// private
 	//
 
-	bw                     []byte
-	curWriteSequenceNumber byte
+	bw            []byte
+	nextSeqNumber byte
 }
 
 // Initialize allocates a Writer.
@@ -123,12 +123,12 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 	// fill SequenceNumber, SystemID, ComponentID, CompatibilityFlag, IncompatibilityFlag
 	switch ff := fr.(type) {
 	case *V1Frame:
-		ff.SequenceNumber = w.curWriteSequenceNumber
+		ff.SequenceNumber = w.nextSeqNumber
 		ff.SystemID = w.OutSystemID
 		ff.ComponentID = w.OutComponentID
 
 	case *V2Frame:
-		ff.SequenceNumber = w.curWriteSequenceNumber
+		ff.SequenceNumber = w.nextSeqNumber
 		ff.SystemID = w.OutSystemID
 		ff.ComponentID = w.OutComponentID
 
@@ -139,7 +139,7 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 		}
 	}
 
-	w.curWriteSequenceNumber++
+	w.nextSeqNumber++
 
 	if w.DialectRW == nil {
 		return fmt.Errorf("dialect is nil")

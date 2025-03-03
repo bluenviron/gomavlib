@@ -81,6 +81,7 @@ func (f *V1Frame) unmarshal(br *bufio.Reader) error {
 	if err != nil {
 		return err
 	}
+
 	msgLen := buf[0]
 	f.SequenceNumber = buf[1]
 	f.SystemID = buf[2]

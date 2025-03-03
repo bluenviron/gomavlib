@@ -158,6 +158,7 @@ func (f *V2Frame) unmarshal(br *bufio.Reader) error {
 	if err != nil {
 		return err
 	}
+
 	msgLen := buf[0]
 	f.IncompatibilityFlag = buf[1]
 	f.CompatibilityFlag = buf[2]
@@ -198,6 +199,7 @@ func (f *V2Frame) unmarshal(br *bufio.Reader) error {
 		if err != nil {
 			return err
 		}
+
 		f.SignatureLinkID = buf[0]
 		f.SignatureTimestamp = uint48Decode(buf[1:])
 		f.Signature = new(V2Signature)

@@ -95,10 +95,13 @@ var testDialectRW = func() *dialect.ReadWriter {
 			&MessageOpticalFlow{},
 		},
 	}
-	de, err := dialect.NewReadWriter(d)
+
+	de := &dialect.ReadWriter{Dialect: d}
+	err := de.Initialize()
 	if err != nil {
 		panic(err)
 	}
+
 	return de
 }()
 
@@ -277,7 +280,7 @@ var casesReadWrite = []struct {
 
 func TestReaderNewErrors(t *testing.T) {
 	_, err := NewReader(ReaderConf{})
-	require.EqualError(t, err, "Reader not provided")
+	require.EqualError(t, err, "ByteReader not provided")
 }
 
 func TestReader(t *testing.T) {
@@ -420,7 +423,7 @@ func TestReaderErrorSignatureTimestamp(t *testing.T) {
 	}
 	f.Signature = f.GenerateSignature(NewV2Key(bytes.Repeat([]byte("\x4F"), 32)))
 	buf2 := make([]byte, 1024)
-	n, err := f.encodeTo(buf2, msgByts)
+	n, err := f.marshalTo(buf2, msgByts)
 	require.NoError(t, err)
 	buf.Write(buf2[:n])
 
@@ -440,7 +443,7 @@ func TestReaderErrorSignatureTimestamp(t *testing.T) {
 	}
 	f.Signature = f.GenerateSignature(NewV2Key(bytes.Repeat([]byte("\x4F"), 32)))
 	buf2 = make([]byte, 1024)
-	n, err = f.encodeTo(buf2, msgByts)
+	n, err = f.marshalTo(buf2, msgByts)
 	require.NoError(t, err)
 	buf.Write(buf2[:n])
 

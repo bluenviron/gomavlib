@@ -34,15 +34,16 @@ func main() {
 	}
 
 	// allocate the low-level frame.ReadWriter around a io.ReadWriter
-	rw, err := frame.NewReadWriter(frame.ReadWriterConf{
-		ReadWriter: &readWriter{
+	rw := &frame.ReadWriter{
+		ByteReadWriter: &readWriter{
 			Reader: inBuf,
 			Writer: outBuf,
 		},
 		DialectRW:   dialectRW,
 		OutVersion:  frame.V2, // change to V1 if you're unable to communicate with the target
 		OutSystemID: 10,
-	})
+	}
+	err = rw.Initialize()
 	if err != nil {
 		panic(err)
 	}

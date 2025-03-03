@@ -37,15 +37,17 @@ func TestEndpointClient(t *testing.T) {
 				require.NoError(t, err)
 				defer conn.Close()
 
-				dialectRW, err := dialect.NewReadWriter(testDialect)
+				dialectRW := &dialect.ReadWriter{Dialect: testDialect}
+				err = dialectRW.Initialize()
 				require.NoError(t, err)
 
-				rw, err := frame.NewReadWriter(frame.ReadWriterConf{
-					ReadWriter:  conn,
-					DialectRW:   dialectRW,
-					OutVersion:  frame.V2,
-					OutSystemID: 11,
-				})
+				rw := &frame.ReadWriter{
+					ByteReadWriter: conn,
+					DialectRW:      dialectRW,
+					OutVersion:     frame.V2,
+					OutSystemID:    11,
+				}
+				err = rw.Initialize()
 				require.NoError(t, err)
 
 				for i := 0; i < 3; i++ {
@@ -150,15 +152,17 @@ func TestEndpointClientIdleTimeout(t *testing.T) {
 				conn, err2 := ln.Accept()
 				require.NoError(t, err2)
 
-				dialectRW, err2 := dialect.NewReadWriter(testDialect)
+				dialectRW := &dialect.ReadWriter{Dialect: testDialect}
+				err2 = dialectRW.Initialize()
 				require.NoError(t, err2)
 
-				rw, err2 := frame.NewReadWriter(frame.ReadWriterConf{
-					ReadWriter:  conn,
-					DialectRW:   dialectRW,
-					OutVersion:  frame.V2,
-					OutSystemID: 11,
-				})
+				rw := &frame.ReadWriter{
+					ByteReadWriter: conn,
+					DialectRW:      dialectRW,
+					OutVersion:     frame.V2,
+					OutSystemID:    11,
+				}
+				err2 = rw.Initialize()
 				require.NoError(t, err2)
 
 				fr, err2 := rw.Read()

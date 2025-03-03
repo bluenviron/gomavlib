@@ -13,14 +13,15 @@ import (
 
 func main() {
 	// create a node which communicates with a UDP endpoint in server mode
-	node, err := gomavlib.NewNode(gomavlib.NodeConf{
+	node := &gomavlib.Node{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointUDPServer{Address: ":5600"},
 		},
 		Dialect:     ardupilotmega.Dialect,
 		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target
 		OutSystemID: 10,
-	})
+	}
+	err := node.Initialize()
 	if err != nil {
 		panic(err)
 	}

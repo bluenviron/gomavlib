@@ -100,7 +100,7 @@ func (conf EndpointUDPBroadcast) init(node *Node) (Endpoint, error) {
 	t := &endpointUDPBroadcast{
 		conf:          conf,
 		pc:            pc,
-		writeTimeout:  node.conf.WriteTimeout,
+		writeTimeout:  node.WriteTimeout,
 		broadcastAddr: &net.UDPAddr{IP: broadcastIP, Port: iport},
 		terminate:     make(chan struct{}),
 	}

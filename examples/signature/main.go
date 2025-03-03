@@ -19,7 +19,7 @@ func main() {
 	key := frame.NewV2Key([]byte("abcdef"))
 
 	// create a node.
-	node, err := gomavlib.NewNode(gomavlib.NodeConf{
+	node := &gomavlib.Node{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{
 				Device: "/dev/ttyUSB0",
@@ -31,7 +31,8 @@ func main() {
 		OutSystemID: 10,
 		InKey:       key,
 		OutKey:      key,
-	})
+	}
+	err := node.Initialize()
 	if err != nil {
 		panic(err)
 	}

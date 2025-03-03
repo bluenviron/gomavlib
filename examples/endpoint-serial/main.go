@@ -13,7 +13,7 @@ import (
 
 func main() {
 	// create a node which communicates with a serial endpoint
-	node, err := gomavlib.NewNode(gomavlib.NodeConf{
+	node := &gomavlib.Node{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{
 				Device: "/dev/ttyUSB0",
@@ -23,7 +23,8 @@ func main() {
 		Dialect:     ardupilotmega.Dialect,
 		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target
 		OutSystemID: 10,
-	})
+	}
+	err := node.Initialize()
 	if err != nil {
 		panic(err)
 	}

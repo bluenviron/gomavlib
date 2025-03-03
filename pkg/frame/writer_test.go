@@ -18,7 +18,7 @@ func TestWriterNewErrors(t *testing.T) {
 		OutVersion:  V2,
 		OutSystemID: 1,
 	})
-	require.EqualError(t, err, "Writer not provided")
+	require.EqualError(t, err, "ByteWriter not provided")
 
 	var buf bytes.Buffer
 

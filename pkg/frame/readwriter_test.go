@@ -22,7 +22,7 @@ func TestReadWriterErrors(t *testing.T) {
 		OutVersion:  V2,
 		OutSystemID: 1,
 	})
-	require.EqualError(t, err, "Reader not provided")
+	require.EqualError(t, err, "ByteReader not provided")
 
 	var buf bytes.Buffer
 	_, err = NewReadWriter(ReadWriterConf{

@@ -254,8 +254,19 @@ type decEncoderField struct {
 	isExtension bool
 }
 
+// NewReadWriter allocates a ReadWriter.
+//
+// Deprecated: replaced by ReadWriter.Initialize().
+func NewReadWriter(msg Message) (*ReadWriter, error) {
+	rw := &ReadWriter{Message: msg}
+	err := rw.Initialize()
+	return rw, err
+}
+
 // ReadWriter is a Message Reader and Writer.
 type ReadWriter struct {
+	Message Message
+
 	fields       []*decEncoderField
 	sizeNormal   byte
 	sizeExtended byte
@@ -263,22 +274,21 @@ type ReadWriter struct {
 	crcExtra     byte
 }
 
-// NewReadWriter allocates a ReadWriter.
-func NewReadWriter(msg Message) (*ReadWriter, error) {
-	mde := &ReadWriter{}
-	mde.elemType = reflect.TypeOf(msg).Elem()
+// Initialize initializes a ReadWriter.
+func (rw *ReadWriter) Initialize() error {
+	rw.elemType = reflect.TypeOf(rw.Message).Elem()
 
-	mde.fields = make([]*decEncoderField, mde.elemType.NumField())
+	rw.fields = make([]*decEncoderField, rw.elemType.NumField())
 
 	// get name
-	if !strings.HasPrefix(mde.elemType.Name(), "Message") {
-		return nil, fmt.Errorf("struct name must begin with 'Message'")
+	if !strings.HasPrefix(rw.elemType.Name(), "Message") {
+		return fmt.Errorf("struct name must begin with 'Message'")
 	}
-	msgName := msgGoToDef(mde.elemType.Name()[len("Message"):])
+	msgName := msgGoToDef(rw.elemType.Name()[len("Message"):])
 
 	// collect message fields
-	for i := 0; i < mde.elemType.NumField(); i++ {
-		field := mde.elemType.Field(i)
+	for i := 0; i < rw.elemType.NumField(); i++ {
+		field := rw.elemType.Field(i)
 		arrayLength := byte(0)
 		goType := field.Type
 
@@ -296,12 +306,12 @@ func NewReadWriter(msg Message) (*ReadWriter, error) {
 			isEnum = true
 
 			if goType.Kind() != reflect.Uint64 {
-				return nil, fmt.Errorf("an enum must be an uint64")
+				return fmt.Errorf("an enum must be an uint64")
 			}
 
 			dialectType = fieldTypeFromGo[tagEnum]
 			if dialectType == 0 {
-				return nil, fmt.Errorf("unsupported Go type: %v", tagEnum)
+				return fmt.Errorf("unsupported Go type: %v", tagEnum)
 			}
 
 			switch dialectType {
@@ -314,12 +324,12 @@ func NewReadWriter(msg Message) (*ReadWriter, error) {
 				break
 
 			default:
-				return nil, fmt.Errorf("type '%v' cannot be used as enum", tagEnum)
+				return fmt.Errorf("type '%v' cannot be used as enum", tagEnum)
 			}
 		} else {
 			dialectType = fieldTypeFromGo[goType.Name()]
 			if dialectType == 0 {
-				return nil, fmt.Errorf("unsupported Go type: %v", goType.Name())
+				return fmt.Errorf("unsupported Go type: %v", goType.Name())
 			}
 
 			// string or char
@@ -331,7 +341,7 @@ func NewReadWriter(msg Message) (*ReadWriter, error) {
 				} else { // string
 					slen, err := strconv.Atoi(tagLen)
 					if err != nil {
-						return nil, fmt.Errorf("string has invalid length: %v", tagLen)
+						return fmt.Errorf("string has invalid length: %v", tagLen)
 					}
 					arrayLength = byte(slen)
 				}
@@ -349,7 +359,7 @@ func NewReadWriter(msg Message) (*ReadWriter, error) {
 			size = fieldTypeSizes[dialectType]
 		}
 
-		mde.fields[i] = &decEncoderField{
+		rw.fields[i] = &decEncoderField{
 			isEnum: isEnum,
 			ftype:  dialectType,
 			name: func() string {
@@ -363,32 +373,32 @@ func NewReadWriter(msg Message) (*ReadWriter, error) {
 			isExtension: isExtension,
 		}
 
-		mde.sizeExtended += size
+		rw.sizeExtended += size
 		if !isExtension {
-			mde.sizeNormal += size
+			rw.sizeNormal += size
 		}
 	}
 
 	// reorder fields as described in
 	// https://mavlink.io/en/guide/serialization.html#field_reordering
-	sort.Slice(mde.fields, func(i, j int) bool {
+	sort.Slice(rw.fields, func(i, j int) bool {
 		// sort by weight if not extension
-		if !mde.fields[i].isExtension && !mde.fields[j].isExtension {
-			if w1, w2 := fieldTypeSizes[mde.fields[i].ftype], fieldTypeSizes[mde.fields[j].ftype]; w1 != w2 {
+		if !rw.fields[i].isExtension && !rw.fields[j].isExtension {
+			if w1, w2 := fieldTypeSizes[rw.fields[i].ftype], fieldTypeSizes[rw.fields[j].ftype]; w1 != w2 {
 				return w1 > w2
 			}
 		}
 		// sort by original index
-		return mde.fields[i].index < mde.fields[j].index
+		return rw.fields[i].index < rw.fields[j].index
 	})
 
 	// generate CRC extra
 	// https://mavlink.io/en/guide/serialization.html#crc_extra
-	mde.crcExtra = func() byte {
+	rw.crcExtra = func() byte {
 		h := x25.New()
 		h.Write([]byte(msgName + " "))
 
-		for _, f := range mde.fields {
+		for _, f := range rw.fields {
 			// skip extensions
 			if f.isExtension {
 				continue
@@ -405,34 +415,34 @@ func NewReadWriter(msg Message) (*ReadWriter, error) {
 		return byte((sum & 0xFF) ^ (sum >> 8))
 	}()
 
-	return mde, nil
+	return nil
 }
 
 // CRCExtra returns the CRC extra of the message.
-func (mde *ReadWriter) CRCExtra() byte {
-	return mde.crcExtra
+func (rw *ReadWriter) CRCExtra() byte {
+	return rw.crcExtra
 }
 
 // Read converts a *MessageRaw into a Message.
-func (mde *ReadWriter) Read(m *MessageRaw, isV2 bool) (Message, error) {
-	rmsg := reflect.New(mde.elemType)
+func (rw *ReadWriter) Read(m *MessageRaw, isV2 bool) (Message, error) {
+	rmsg := reflect.New(rw.elemType)
 
 	if isV2 {
 		// in V2 buffer length can be > message or < message
 		// in this latter case it must be filled with zeros to support empty-byte de-truncation
 		// and extension fields
-		if len(m.Payload) < int(mde.sizeExtended) {
-			m.Payload = append(m.Payload, bytes.Repeat([]byte{0x00}, int(mde.sizeExtended)-len(m.Payload))...)
+		if len(m.Payload) < int(rw.sizeExtended) {
+			m.Payload = append(m.Payload, bytes.Repeat([]byte{0x00}, int(rw.sizeExtended)-len(m.Payload))...)
 		}
 	} else {
 		// in V1 buffer must fit message perfectly
-		if len(m.Payload) != int(mde.sizeNormal) {
-			return nil, fmt.Errorf("wrong size: expected %d, got %d", mde.sizeNormal, len(m.Payload))
+		if len(m.Payload) != int(rw.sizeNormal) {
+			return nil, fmt.Errorf("wrong size: expected %d, got %d", rw.sizeNormal, len(m.Payload))
 		}
 	}
 
 	// decode field by field
-	for _, f := range mde.fields {
+	for _, f := range rw.fields {
 		// skip extensions in V1 frames
 		if !isV2 && f.isExtension {
 			continue
@@ -457,20 +467,20 @@ func (mde *ReadWriter) Read(m *MessageRaw, isV2 bool) (Message, error) {
 	return rmsg.Interface().(Message), nil
 }
 
-func (mde *ReadWriter) size(isV2 bool) uint8 {
+func (rw *ReadWriter) size(isV2 bool) uint8 {
 	if isV2 {
-		return mde.sizeExtended
+		return rw.sizeExtended
 	}
-	return mde.sizeNormal
+	return rw.sizeNormal
 }
 
 // Write converts a Message into a *MessageRaw.
-func (mde *ReadWriter) Write(msg Message, isV2 bool) *MessageRaw {
-	buf := make([]byte, mde.size(isV2))
+func (rw *ReadWriter) Write(msg Message, isV2 bool) *MessageRaw {
+	buf := make([]byte, rw.size(isV2))
 	start := buf
 
 	// encode field by field
-	for _, f := range mde.fields {
+	for _, f := range rw.fields {
 		// skip extensions in V1 frames
 		if !isV2 && f.isExtension {
 			continue

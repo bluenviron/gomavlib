@@ -9,7 +9,9 @@ import (
 )
 
 const (
-	streamRequestPeriod = 30 * time.Second
+	streamRequestPeriod  = 30 * time.Second
+	requestDataStreamID  = 66
+	requestDataStreamCRC = 148
 )
 
 type streamNode struct {
@@ -34,19 +36,19 @@ type nodeStreamRequest struct {
 
 func newNodeStreamRequest(n *Node) *nodeStreamRequest {
 	// module is disabled
-	if !n.conf.StreamRequestEnable {
+	if !n.StreamRequestEnable {
 		return nil
 	}
 
 	// dialect must be enabled
-	if n.conf.Dialect == nil {
+	if n.Dialect == nil {
 		return nil
 	}
 
 	// heartbeat message must exist in dialect and correspond to standard
 	msgHeartbeat := func() message.Message {
-		for _, m := range n.conf.Dialect.Messages {
-			if m.GetID() == 0 {
+		for _, m := range n.Dialect.Messages {
+			if m.GetID() == heartbeatID {
 				return m
 			}
 		}
@@ -55,15 +57,19 @@ func newNodeStreamRequest(n *Node) *nodeStreamRequest {
 	if msgHeartbeat == nil {
 		return nil
 	}
-	mde, err := message.NewReadWriter(msgHeartbeat)
-	if err != nil || mde.CRCExtra() != 50 {
+
+	mde := &message.ReadWriter{
+		Message: msgHeartbeat,
+	}
+	err := mde.Initialize()
+	if err != nil || mde.CRCExtra() != heartbeatCRC {
 		return nil
 	}
 
 	// request data stream message must exist in dialect and correspond to standard
 	msgRequestDataStream := func() message.Message {
-		for _, m := range n.conf.Dialect.Messages {
-			if m.GetID() == 66 {
+		for _, m := range n.Dialect.Messages {
+			if m.GetID() == requestDataStreamID {
 				return m
 			}
 		}
@@ -72,8 +78,12 @@ func newNodeStreamRequest(n *Node) *nodeStreamRequest {
 	if msgRequestDataStream == nil {
 		return nil
 	}
-	mde, err = message.NewReadWriter(msgRequestDataStream)
-	if err != nil || mde.CRCExtra() != 148 {
+
+	mde = &message.ReadWriter{
+		Message: msgRequestDataStream,
+	}
+	err = mde.Initialize()
+	if err != nil || mde.CRCExtra() != requestDataStreamCRC {
 		return nil
 	}
 
@@ -169,7 +179,7 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 			m.Elem().FieldByName("TargetSystem").SetUint(uint64(evt.SystemID()))
 			m.Elem().FieldByName("TargetComponent").SetUint(uint64(evt.ComponentID()))
 			m.Elem().FieldByName("ReqStreamId").SetUint(uint64(stream))
-			m.Elem().FieldByName("ReqMessageRate").SetUint(uint64(sr.n.conf.StreamRequestFrequency))
+			m.Elem().FieldByName("ReqMessageRate").SetUint(uint64(sr.n.StreamRequestFrequency))
 			m.Elem().FieldByName("StartStop").SetUint(uint64(1))
 			sr.n.WriteMessageTo(evt.Channel, m.Interface().(message.Message)) //nolint:errcheck
 		}

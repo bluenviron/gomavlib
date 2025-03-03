@@ -16,22 +16,22 @@ import (
 // this is an example struct that implements io.ReadWriteCloser.
 // it does not read anything and prints what it receives.
 // the only requirement is that Close() must release Read().
-type CustomEndpoint struct {
+type customEndpoint struct {
 	readChan chan []byte
 }
 
-func NewCustomEndpoint() *CustomEndpoint {
-	return &CustomEndpoint{
+func newCustomEndpoint() *customEndpoint {
+	return &customEndpoint{
 		readChan: make(chan []byte),
 	}
 }
 
-func (c *CustomEndpoint) Close() error {
+func (c *customEndpoint) Close() error {
 	close(c.readChan)
 	return nil
 }
 
-func (c *CustomEndpoint) Read(buf []byte) (int, error) {
+func (c *customEndpoint) Read(buf []byte) (int, error) {
 	read, ok := <-c.readChan
 	if !ok {
 		return 0, fmt.Errorf("all right")
@@ -41,23 +41,24 @@ func (c *CustomEndpoint) Read(buf []byte) (int, error) {
 	return n, nil
 }
 
-func (c *CustomEndpoint) Write(buf []byte) (int, error) {
+func (c *customEndpoint) Write(buf []byte) (int, error) {
 	return len(buf), nil
 }
 
 func main() {
 	// allocate the custom endpoint
-	endpoint := NewCustomEndpoint()
+	endpoint := newCustomEndpoint()
 
 	// create a node which communicates with the custom endpoint
-	node, err := gomavlib.NewNode(gomavlib.NodeConf{
+	node := &gomavlib.Node{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointCustom{ReadWriteCloser: endpoint},
 		},
 		Dialect:     ardupilotmega.Dialect,
 		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target
 		OutSystemID: 10,
-	})
+	}
+	err := node.Initialize()
 	if err != nil {
 		panic(err)
 	}

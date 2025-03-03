@@ -53,21 +53,22 @@ func newChannel(
 		return nil, err
 	}
 
-	frw, err := frame.NewReadWriter(frame.ReadWriterConf{
-		ReadWriter:  rwc,
-		DialectRW:   n.dialectRW,
-		InKey:       n.conf.InKey,
-		OutSystemID: n.conf.OutSystemID,
+	frw := &frame.ReadWriter{
+		ByteReadWriter: rwc,
+		DialectRW:      n.dialectRW,
+		InKey:          n.InKey,
+		OutSystemID:    n.OutSystemID,
 		OutVersion: func() frame.WriterOutVersion {
-			if n.conf.OutVersion == V2 {
+			if n.OutVersion == V2 {
 				return frame.V2
 			}
 			return frame.V1
 		}(),
-		OutComponentID:     n.conf.OutComponentID,
+		OutComponentID:     n.OutComponentID,
 		OutSignatureLinkID: linkID,
-		OutKey:             n.conf.OutKey,
-	})
+		OutKey:             n.OutKey,
+	}
+	err = frw.Initialize()
 	if err != nil {
 		return nil, err
 	}

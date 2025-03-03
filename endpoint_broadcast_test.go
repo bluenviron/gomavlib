@@ -45,11 +45,12 @@ func TestEndpointBroadcast(t *testing.T) {
 	require.NoError(t, err)
 	defer pc.Close()
 
-	dialectRW, err := dialect.NewReadWriter(testDialect)
+	dialectRW := &dialect.ReadWriter{Dialect: testDialect}
+	err = dialectRW.Initialize()
 	require.NoError(t, err)
 
-	rw, err := frame.NewReadWriter(frame.ReadWriterConf{
-		ReadWriter: &readWriterFromFuncs{
+	rw := &frame.ReadWriter{
+		ByteReadWriter: &readWriterFromFuncs{
 			readFunc: func(p []byte) (int, error) {
 				n, _, err2 := pc.ReadFrom(p)
 				return n, err2
@@ -64,7 +65,8 @@ func TestEndpointBroadcast(t *testing.T) {
 		DialectRW:   dialectRW,
 		OutVersion:  frame.V2,
 		OutSystemID: 11,
-	})
+	}
+	err = rw.Initialize()
 	require.NoError(t, err)
 
 	for i := 0; i < 3; i++ { //nolint:dupl

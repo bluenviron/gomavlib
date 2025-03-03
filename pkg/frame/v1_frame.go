@@ -75,7 +75,7 @@ func (f V1Frame) GenerateChecksum(crcExtra byte) uint16 {
 	return h.Sum16()
 }
 
-func (f *V1Frame) decode(br *bufio.Reader) error {
+func (f *V1Frame) unmarshal(br *bufio.Reader) error {
 	// header
 	buf, err := peekAndDiscard(br, 5)
 	if err != nil {
@@ -111,7 +111,7 @@ func (f *V1Frame) decode(br *bufio.Reader) error {
 	return nil
 }
 
-func (f V1Frame) encodeTo(buf []byte, msgEncoded []byte) (int, error) {
+func (f V1Frame) marshalTo(buf []byte, msgEncoded []byte) (int, error) {
 	if f.Message.GetID() > 0xFF {
 		return 0, fmt.Errorf("cannot send a message with an ID greater than 255 with a V1 frame")
 	}

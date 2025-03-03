@@ -15,7 +15,7 @@ import (
 
 func main() {
 	// create a node
-	node, err := gomavlib.NewNode(gomavlib.NodeConf{
+	node := &gomavlib.Node{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{
 				Device: "/dev/ttyUSB0",
@@ -26,7 +26,8 @@ func main() {
 		OutVersion:          gomavlib.V1, // Ardupilot uses V1
 		OutSystemID:         10,
 		StreamRequestEnable: true,
-	})
+	}
+	err := node.Initialize()
 	if err != nil {
 		panic(err)
 	}

@@ -33,6 +33,8 @@ func newError(format string, args ...interface{}) ReadError {
 }
 
 // ReaderConf is the configuration of a Reader.
+//
+// Deprecated: configuration has been moved into Reader.
 type ReaderConf struct {
 	// the underlying bytes reader.
 	Reader io.Reader
@@ -46,23 +48,48 @@ type ReaderConf struct {
 	InKey *V2Key
 }
 
+// NewReader allocates a Reader.
+//
+// Deprecated: replaced by Reader.Initialize().
+func NewReader(conf ReaderConf) (*Reader, error) {
+	r := &Reader{
+		ByteReader: conf.Reader,
+		DialectRW:  conf.DialectRW,
+		InKey:      conf.InKey,
+	}
+	err := r.Initialize()
+	return r, err
+}
+
 // Reader is a Frame reader.
 type Reader struct {
-	conf                 ReaderConf
+	// underlying byte reader.
+	ByteReader io.Reader
+
+	// (optional) dialect which contains the messages that will be read.
+	// If not provided, messages are decoded into the MessageRaw struct.
+	DialectRW *dialect.ReadWriter
+
+	// (optional) secret key used to validate incoming frames.
+	// Non-signed frames are discarded. This feature requires v2 frames.
+	InKey *V2Key
+
+	//
+	// private
+	//
+
 	br                   *bufio.Reader
 	curReadSignatureTime uint64
 }
 
-// NewReader allocates a Reader.
-func NewReader(conf ReaderConf) (*Reader, error) {
-	if conf.Reader == nil {
-		return nil, fmt.Errorf("Reader not provided")
+// Initialize initializes a Reader.
+func (r *Reader) Initialize() error {
+	if r.ByteReader == nil {
+		return fmt.Errorf("ByteReader not provided")
 	}
 
-	return &Reader{
-		conf: conf,
-		br:   bufio.NewReaderSize(conf.Reader, bufferSize),
-	}, nil
+	r.br = bufio.NewReaderSize(r.ByteReader, bufferSize)
+	return nil
 }
 
 // Read reads a Frame from the reader.
@@ -88,18 +115,18 @@ func (r *Reader) Read() (Frame, error) {
 		return nil, err
 	}
 
-	err = f.decode(r.br)
+	err = f.unmarshal(r.br)
 	if err != nil {
 		return nil, newError("%s", err.Error())
 	}
 
-	if r.conf.InKey != nil {
+	if r.InKey != nil {
 		ff, ok := f.(*V2Frame)
 		if !ok {
 			return nil, newError("signature required but packet is not v2")
 		}
 
-		if sig := ff.GenerateSignature(r.conf.InKey); *sig != *ff.Signature {
+		if sig := ff.GenerateSignature(r.InKey); *sig != *ff.Signature {
 			return nil, newError("wrong signature")
 		}
 
@@ -116,8 +143,8 @@ func (r *Reader) Read() (Frame, error) {
 	}
 
 	// decode message if in dialect and validate checksum
-	if r.conf.DialectRW != nil {
-		if mp := r.conf.DialectRW.GetMessage(f.GetMessage().GetID()); mp != nil {
+	if r.DialectRW != nil {
+		if mp := r.DialectRW.GetMessage(f.GetMessage().GetID()); mp != nil {
 			if sum := f.GenerateChecksum(mp.CRCExtra()); sum != f.GetChecksum() {
 				return nil, newError("wrong checksum, expected %.4x, got %.4x, message id is %d",
 					sum, f.GetChecksum(), f.GetMessage().GetID())

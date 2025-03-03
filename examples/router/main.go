@@ -7,16 +7,13 @@ import (
 )
 
 // this example shows how to:
-// 1) create a node which communicates with a serial endpoint.
+// 1) create a node which communicates with multiple endpoints.
 // 2) print incoming frames.
-// 3) route received frames to every other channel.
+// 3) route incoming frames to every other channel.
 
 func main() {
-	// create a node which communicates with a serial endpoint
-	// - communicates with multiple endpoints
-	// -
-	// - writes messages with given system id
-	node, err := gomavlib.NewNode(gomavlib.NodeConf{
+	// create a node which communicates with multiple endpoints
+	node := &gomavlib.Node{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{
 				Device: "/dev/ttyUSB0",
@@ -27,7 +24,8 @@ func main() {
 		Dialect:     nil,         // do not use a dialect and do not attempt to decode messages (in a router it is preferable)
 		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target
 		OutSystemID: 10,
-	})
+	}
+	err := node.Initialize()
 	if err != nil {
 		panic(err)
 	}

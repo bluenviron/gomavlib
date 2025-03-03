@@ -80,15 +80,17 @@ func TestEndpointCustom(t *testing.T) {
 		Channel: evt.(*EventChannelOpen).Channel,
 	}, evt)
 
-	dialectRW, err := dialect.NewReadWriter(testDialect)
+	dialectRW := &dialect.ReadWriter{Dialect: testDialect}
+	err = dialectRW.Initialize()
 	require.NoError(t, err)
 
-	rw, err := frame.NewReadWriter(frame.ReadWriterConf{
-		ReadWriter:  local,
-		DialectRW:   dialectRW,
-		OutVersion:  frame.V2,
-		OutSystemID: 11,
-	})
+	rw := &frame.ReadWriter{
+		ByteReadWriter: local,
+		DialectRW:      dialectRW,
+		OutVersion:     frame.V2,
+		OutSystemID:    11,
+	}
+	err = rw.Initialize()
 	require.NoError(t, err)
 
 	for i := 0; i < 3; i++ { //nolint:dupl

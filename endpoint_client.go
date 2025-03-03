@@ -79,7 +79,7 @@ func initEndpointClient(node *Node, conf endpointClientConf) (Endpoint, error) {
 
 				// in UDP, the only possible error is a DNS failure
 				// in TCP, the handshake must be completed
-				timedContext, timedContextClose := context.WithTimeout(ctx, node.conf.ReadTimeout)
+				timedContext, timedContextClose := context.WithTimeout(ctx, node.ReadTimeout)
 				nconn, err := (&net.Dialer{}).DialContext(timedContext, network, conf.getAddress())
 				timedContextClose()
 
@@ -88,8 +88,8 @@ func initEndpointClient(node *Node, conf endpointClientConf) (Endpoint, error) {
 				}
 
 				return timednetconn.New(
-					node.conf.IdleTimeout,
-					node.conf.WriteTimeout,
+					node.IdleTimeout,
+					node.WriteTimeout,
 					nconn,
 				), nil
 			},

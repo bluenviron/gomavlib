@@ -8,14 +8,14 @@ import (
 )
 
 // this example shows how to:
-// 1) create a node which communicates with a serial endpoint.
+// 1) create a node which communicates with multiple endpoints.
 // 2) print incoming frames.
 // 3) edit messages of a specific kind.
 // 4) recompute the frame checksum and signature.
 // 5) route frame to every other channel.
 
 func main() {
-	// create a node which communicates with a serial endpoint
+	// create a node which communicates with multiple endpoints.
 	node := &gomavlib.Node{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{

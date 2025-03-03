@@ -280,7 +280,7 @@ var casesReadWrite = []struct {
 
 func TestReaderNewErrors(t *testing.T) {
 	_, err := NewReader(ReaderConf{})
-	require.EqualError(t, err, "ByteReader not provided")
+	require.EqualError(t, err, "BufByteReader not provided")
 }
 
 func TestReader(t *testing.T) {

@@ -27,10 +27,8 @@ type Writer struct {
 // Initialize initializes Writer.
 func (w *Writer) Initialize() error {
 	w.frameWriter = &frame.Writer{
-		ByteWriter:  w.ByteWriter,
-		DialectRW:   w.DialectRW,
-		OutVersion:  frame.V1, // unused
-		OutSystemID: 1,        // unused
+		ByteWriter: w.ByteWriter,
+		DialectRW:  w.DialectRW,
 	}
 	err := w.frameWriter.Initialize()
 	if err != nil {
@@ -58,7 +56,7 @@ func (w *Writer) Write(entry *Entry) error {
 		return err
 	}
 
-	err = w.frameWriter.WriteFrame(entry.Frame)
+	err = w.frameWriter.Write(entry.Frame)
 	if err != nil {
 		return err
 	}

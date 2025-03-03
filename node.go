@@ -284,7 +284,13 @@ func (n *Node) Initialize() error {
 			n.channelProviders[ca] = struct{}{}
 
 		case endpointChannelSingle:
-			ch, err := newChannel(n, ttp, ttp.label(), ttp)
+			ch := &Channel{
+				node:     n,
+				endpoint: ttp,
+				label:    ttp.label(),
+				rwc:      ttp,
+			}
+			err := ch.initialize()
 			if err != nil {
 				closeExisting()
 				return err

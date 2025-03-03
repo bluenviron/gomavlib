@@ -9,6 +9,7 @@ import (
 
 	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
 	"github.com/bluenviron/gomavlib/v3/pkg/frame"
+	"github.com/bluenviron/gomavlib/v3/pkg/streamwriter"
 )
 
 var _ endpointChannelProvider = (*endpointServer)(nil)
@@ -44,10 +45,16 @@ func TestEndpointServer(t *testing.T) {
 			rw := &frame.ReadWriter{
 				ByteReadWriter: conn,
 				DialectRW:      dialectRW,
-				OutVersion:     frame.V2,
-				OutSystemID:    11,
 			}
 			err = rw.Initialize()
+			require.NoError(t, err)
+
+			sw := &streamwriter.Writer{
+				FrameWriter: rw.Writer,
+				Version:     streamwriter.V2,
+				SystemID:    11,
+			}
+			err = sw.Initialize()
 			require.NoError(t, err)
 
 			for i := 0; i < 3; i++ {
@@ -59,7 +66,7 @@ func TestEndpointServer(t *testing.T) {
 					SystemStatus:   4,
 					MavlinkVersion: 5,
 				}
-				err = rw.WriteMessage(msg)
+				err = sw.Write(msg)
 				require.NoError(t, err)
 
 				if i == 0 {
@@ -138,10 +145,16 @@ func TestEndpointServerIdleTimeout(t *testing.T) {
 			rw := &frame.ReadWriter{
 				ByteReadWriter: conn,
 				DialectRW:      dialectRW,
-				OutVersion:     frame.V2,
-				OutSystemID:    11,
 			}
 			err = rw.Initialize()
+			require.NoError(t, err)
+
+			sw := &streamwriter.Writer{
+				FrameWriter: rw.Writer,
+				Version:     streamwriter.V2,
+				SystemID:    11,
+			}
+			err = sw.Initialize()
 			require.NoError(t, err)
 
 			msg := &MessageHeartbeat{
@@ -152,7 +165,7 @@ func TestEndpointServerIdleTimeout(t *testing.T) {
 				SystemStatus:   4,
 				MavlinkVersion: 5,
 			}
-			err = rw.WriteMessage(msg)
+			err = sw.Write(msg)
 			require.NoError(t, err)
 
 			evt := <-node.Events()

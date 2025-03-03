@@ -8,6 +8,7 @@ import (
 
 	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
 	"github.com/bluenviron/gomavlib/v3/pkg/frame"
+	"github.com/bluenviron/gomavlib/v3/pkg/streamwriter"
 )
 
 var _ endpointChannelSingle = (*endpointUDPBroadcast)(nil)
@@ -62,11 +63,17 @@ func TestEndpointBroadcast(t *testing.T) {
 				})
 			},
 		},
-		DialectRW:   dialectRW,
-		OutVersion:  frame.V2,
-		OutSystemID: 11,
+		DialectRW: dialectRW,
 	}
 	err = rw.Initialize()
+	require.NoError(t, err)
+
+	sw := &streamwriter.Writer{
+		FrameWriter: rw.Writer,
+		Version:     streamwriter.V2,
+		SystemID:    11,
+	}
+	err = sw.Initialize()
 	require.NoError(t, err)
 
 	for i := 0; i < 3; i++ { //nolint:dupl
@@ -78,7 +85,7 @@ func TestEndpointBroadcast(t *testing.T) {
 			SystemStatus:   4,
 			MavlinkVersion: 5,
 		}
-		err = rw.WriteMessage(msg)
+		err = sw.Write(msg)
 		require.NoError(t, err)
 
 		evt = <-node.Events()

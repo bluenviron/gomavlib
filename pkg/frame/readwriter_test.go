@@ -25,13 +25,6 @@ func TestReadWriterNewErrors(t *testing.T) {
 		OutSystemID: 1,
 	})
 	require.EqualError(t, err, "BufByteReader not provided")
-
-	var buf bytes.Buffer
-	_, err = NewReadWriter(ReadWriterConf{
-		ReadWriter:  &buf,
-		OutSystemID: 1,
-	})
-	require.EqualError(t, err, "OutVersion not provided")
 }
 
 func FuzzReadWriter(f *testing.F) {
@@ -71,7 +64,7 @@ func FuzzReadWriter(f *testing.F) {
 
 		fr, err := rw.Read()
 		if err == nil {
-			rw.WriteFrame(fr) //nolint:errcheck
+			rw.Write(fr) //nolint:errcheck
 		}
 	})
 }

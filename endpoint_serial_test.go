@@ -8,6 +8,7 @@ import (
 
 	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
 	"github.com/bluenviron/gomavlib/v3/pkg/frame"
+	"github.com/bluenviron/gomavlib/v3/pkg/streamwriter"
 )
 
 var _ endpointChannelProvider = (*endpointSerial)(nil)
@@ -38,14 +39,20 @@ func TestEndpointSerial(t *testing.T) {
 			rw := &frame.ReadWriter{
 				ByteReadWriter: local,
 				DialectRW:      dialectRW,
-				OutVersion:     frame.V2,
-				OutSystemID:    11,
 			}
 			err = rw.Initialize()
 			require.NoError(t, err)
 
+			sw := &streamwriter.Writer{
+				FrameWriter: rw.Writer,
+				Version:     streamwriter.V2,
+				SystemID:    11,
+			}
+			err = sw.Initialize()
+			require.NoError(t, err)
+
 			for i := 0; i < 3; i++ {
-				err = rw.WriteMessage(&MessageHeartbeat{
+				err = sw.Write(&MessageHeartbeat{
 					Type:           1,
 					Autopilot:      2,
 					BaseMode:       3,
@@ -150,13 +157,19 @@ func TestEndpointSerialReconnect(t *testing.T) {
 				rw := &frame.ReadWriter{
 					ByteReadWriter: local,
 					DialectRW:      dialectRW,
-					OutVersion:     frame.V2,
-					OutSystemID:    11,
 				}
 				err = rw.Initialize()
 				require.NoError(t, err)
 
-				err = rw.WriteMessage(&MessageHeartbeat{
+				sw := &streamwriter.Writer{
+					FrameWriter: rw.Writer,
+					Version:     streamwriter.V2,
+					SystemID:    11,
+				}
+				err = sw.Initialize()
+				require.NoError(t, err)
+
+				err = sw.Write(&MessageHeartbeat{
 					Type:           1,
 					Autopilot:      2,
 					BaseMode:       3,
@@ -192,11 +205,9 @@ func TestEndpointSerialReconnect(t *testing.T) {
 				err := dialectRW.Initialize()
 				require.NoError(t, err)
 
-				rw := &frame.ReadWriter{
-					ByteReadWriter: local,
-					DialectRW:      dialectRW,
-					OutVersion:     frame.V2,
-					OutSystemID:    11,
+				rw := &frame.Reader{
+					ByteReader: local,
+					DialectRW:  dialectRW,
 				}
 				err = rw.Initialize()
 				require.NoError(t, err)

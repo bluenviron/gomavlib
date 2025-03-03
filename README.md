@@ -27,6 +27,7 @@ Features:
   * Ready-to-use standard dialects are available in directory `dialects/`.
   * Custom dialects can be defined. Aa dialect generator is available in order to convert XML definitions into their Go representation.
   * Use no dialect at all. Messages can be routed without having their content decoded.
+* Read and write telemetry logs (tlog)
 
 ## Table of contents
 
@@ -75,6 +76,7 @@ Features:
 * [node-serial-to-json](examples/node-serial-to-json/main.go)
 * [node-stream-requests](examples/node-stream-requests/main.go)
 * [frame-read-writer](examples/frame-read-writer/main.go)
+* [telemetry-log](examples/telemetry-log/main.go)
 
 ## API Documentation
 

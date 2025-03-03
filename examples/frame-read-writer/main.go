@@ -28,12 +28,14 @@ func main() {
 		[]byte("\xfd\t\x01\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x01\x02\x03\x05\x03\xd9\xd1\x01\x02\x00\x00\x00\x00\x00\x0eG\x04\x0c\xef\x9b"))
 	outBuf := bytes.NewBuffer(nil)
 
-	dialectRW, err := dialect.NewReadWriter(ardupilotmega.Dialect)
+	// allocate dialect reader / writer.
+	dialectRW := &dialect.ReadWriter{Dialect: ardupilotmega.Dialect}
+	err := dialectRW.Initialize()
 	if err != nil {
 		panic(err)
 	}
 
-	// allocate the low-level frame.ReadWriter around a io.ReadWriter
+	// allocate frame.ReadWriter around a io.ReadWriter.
 	rw := &frame.ReadWriter{
 		ByteReadWriter: &readWriter{
 			Reader: inBuf,

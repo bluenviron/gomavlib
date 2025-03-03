@@ -38,45 +38,45 @@ type writeExceptReq struct {
 //
 // Deprecated: configuration has been moved inside Node.
 type NodeConf struct {
-	// the endpoints with which this node will
+	// endpoints with which this node will
 	// communicate. Each endpoint contains zero or more channels
 	Endpoints []EndpointConf
 
-	// (optional) the dialect which contains the messages that will be encoded and decoded.
+	// (optional) dialect which contains the messages that will be encoded and decoded.
 	// If not provided, messages are decoded in the MessageRaw struct.
 	Dialect *dialect.Dialect
 
-	// (optional) the secret key used to validate incoming frames.
+	// (optional) secret key used to validate incoming frames.
 	// Non signed frames are discarded, as well as frames with a version < 2.0.
 	InKey *frame.V2Key
 
 	// Mavlink version used to encode messages. See Version
 	// for the available options.
 	OutVersion Version
-	// the system id, added to every outgoing frame and used to identify this
+	// system id, added to every outgoing frame and used to identify this
 	// node in the network.
 	OutSystemID byte
-	// (optional) the component id, added to every outgoing frame, defaults to 1.
+	// (optional) component id, added to every outgoing frame, defaults to 1.
 	OutComponentID byte
-	// (optional) the secret key used to sign outgoing frames.
+	// (optional) secret key used to sign outgoing frames.
 	// This feature requires a version >= 2.0.
 	OutKey *frame.V2Key
 
 	// (optional) disables the periodic sending of heartbeats to open channels.
 	HeartbeatDisable bool
-	// (optional) the period between heartbeats. It defaults to 5 seconds.
+	// (optional) period between heartbeats. It defaults to 5 seconds.
 	HeartbeatPeriod time.Duration
-	// (optional) the system type advertised by heartbeats.
+	// (optional) system type advertised by heartbeats.
 	// It defaults to MAV_TYPE_GCS
 	HeartbeatSystemType int
-	// (optional) the autopilot type advertised by heartbeats.
+	// (optional) autopilot type advertised by heartbeats.
 	// It defaults to MAV_AUTOPILOT_GENERIC
 	HeartbeatAutopilotType int
 
 	// (optional) automatically request streams to detected Ardupilot devices,
 	// that need an explicit request in order to emit telemetry stream.
 	StreamRequestEnable bool
-	// (optional) the requested stream frequency in Hz. It defaults to 4.
+	// (optional) requested stream frequency in Hz. It defaults to 4.
 	StreamRequestFrequency int
 
 	// (optional) read timeout.
@@ -118,45 +118,45 @@ func NewNode(conf NodeConf) (*Node, error) {
 
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
 type Node struct {
-	// the endpoints with which this node will
+	// endpoints with which this node will
 	// communicate. Each endpoint contains zero or more channels
 	Endpoints []EndpointConf
 
-	// (optional) the dialect which contains the messages that will be encoded and decoded.
+	// (optional) dialect which contains the messages that will be encoded and decoded.
 	// If not provided, messages are decoded in the MessageRaw struct.
 	Dialect *dialect.Dialect
 
-	// (optional) the secret key used to validate incoming frames.
+	// (optional) secret key used to validate incoming frames.
 	// Non signed frames are discarded, as well as frames with a version < 2.0.
 	InKey *frame.V2Key
 
 	// Mavlink version used to encode messages. See Version
 	// for the available options.
 	OutVersion Version
-	// the system id, added to every outgoing frame and used to identify this
+	// system id, added to every outgoing frame and used to identify this
 	// node in the network.
 	OutSystemID byte
-	// (optional) the component id, added to every outgoing frame, defaults to 1.
+	// (optional) component id, added to every outgoing frame, defaults to 1.
 	OutComponentID byte
-	// (optional) the secret key used to sign outgoing frames.
+	// (optional) secret key used to sign outgoing frames.
 	// This feature requires a version >= 2.0.
 	OutKey *frame.V2Key
 
 	// (optional) disables the periodic sending of heartbeats to open channels.
 	HeartbeatDisable bool
-	// (optional) the period between heartbeats. It defaults to 5 seconds.
+	// (optional) period between heartbeats. It defaults to 5 seconds.
 	HeartbeatPeriod time.Duration
-	// (optional) the system type advertised by heartbeats.
+	// (optional) system type advertised by heartbeats.
 	// It defaults to MAV_TYPE_GCS
 	HeartbeatSystemType int
-	// (optional) the autopilot type advertised by heartbeats.
+	// (optional) autopilot type advertised by heartbeats.
 	// It defaults to MAV_AUTOPILOT_GENERIC
 	HeartbeatAutopilotType int
 
 	// (optional) automatically request streams to detected Ardupilot devices,
 	// that need an explicit request in order to emit telemetry stream.
 	StreamRequestEnable bool
-	// (optional) the requested stream frequency in Hz. It defaults to 4.
+	// (optional) requested stream frequency in Hz. It defaults to 4.
 	StreamRequestFrequency int
 
 	// (optional) read timeout.

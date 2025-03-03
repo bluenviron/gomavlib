@@ -26,10 +26,10 @@ func (*EventChannelClose) isEventOut() {}
 
 // EventFrame is the event fired when a frame is received.
 type EventFrame struct {
-	// the frame
+	// frame
 	Frame frame.Frame
 
-	// the channel from which the frame was received
+	// channel from which the frame was received
 	Channel *Channel
 }
 
@@ -52,10 +52,10 @@ func (res *EventFrame) Message() message.Message {
 
 // EventParseError is the event fired when a parse error occurs.
 type EventParseError struct {
-	// the error
+	// error
 	Error error
 
-	// the channel used to send the frame
+	// channel used to send the frame
 	Channel *Channel
 }
 
@@ -63,11 +63,11 @@ func (*EventParseError) isEventOut() {}
 
 // EventStreamRequested is the event fired when an automatic stream request is sent.
 type EventStreamRequested struct {
-	// the channel to which the stream request is addressed
+	// channel to which the stream request is addressed
 	Channel *Channel
-	// the system id to which the stream requests is addressed
+	// system id to which the stream requests is addressed
 	SystemID byte
-	// the component id to which the stream requests is addressed
+	// component id to which the stream requests is addressed
 	ComponentID byte
 }
 

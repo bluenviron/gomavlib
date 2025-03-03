@@ -28,7 +28,7 @@ var serialOpenFunc = func(device string, baud int) (io.ReadWriteCloser, error) {
 
 // EndpointSerial sets up a endpoint that works with a serial port.
 type EndpointSerial struct {
-	// the name of the device of the serial port (i.e: /dev/ttyUSB0)
+	// name of the device of the serial port (i.e: /dev/ttyUSB0)
 	Device string
 
 	// baud rate (i.e: 57600)

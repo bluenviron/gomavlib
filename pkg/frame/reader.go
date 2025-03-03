@@ -36,14 +36,14 @@ func newError(format string, args ...interface{}) ReadError {
 //
 // Deprecated: configuration has been moved into Reader.
 type ReaderConf struct {
-	// the underlying bytes reader.
+	// underlying bytes reader.
 	Reader io.Reader
 
-	// (optional) the dialect which contains the messages that will be read.
+	// (optional) dialect which contains the messages that will be read.
 	// If not provided, messages are decoded into the MessageRaw struct.
 	DialectRW *dialect.ReadWriter
 
-	// (optional) the secret key used to validate incoming frames.
+	// (optional) secret key used to validate incoming frames.
 	// Non-signed frames are discarded. This feature requires v2 frames.
 	InKey *V2Key
 }

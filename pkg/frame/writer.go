@@ -13,23 +13,23 @@ import (
 //
 // Deprecated: configuration has been moved inside Writer.
 type WriterConf struct {
-	// the underlying bytes writer.
+	// underlying bytes writer.
 	Writer io.Writer
 
-	// (optional) the dialect which contains the messages that will be written.
+	// (optional) dialect which contains the messages that will be written.
 	DialectRW *dialect.ReadWriter
 
 	// Mavlink version used to encode messages.
 	OutVersion WriterOutVersion
-	// the system id, added to every outgoing frame and used to identify this
+	// system id, added to every outgoing frame and used to identify this
 	// node in the network.
 	OutSystemID byte
-	// (optional) the component id, added to every outgoing frame, defaults to 1.
+	// (optional) component id, added to every outgoing frame, defaults to 1.
 	OutComponentID byte
-	// (optional) the value to insert into the signature link id.
+	// (optional) value to insert into the signature link id.
 	// This feature requires v2 frames.
 	OutSignatureLinkID byte
-	// (optional) the secret key used to sign outgoing frames.
+	// (optional) secret key used to sign outgoing frames.
 	// This feature requires v2 frames.
 	OutKey *V2Key
 }

@@ -7,7 +7,7 @@ import (
 // EndpointCustom sets up a endpoint that works with a custom interface
 // that provides the Read(), Write() and Close() functions.
 type EndpointCustom struct {
-	// the struct or interface implementing Read(), Write() and Close()
+	// struct or interface implementing Read(), Write() and Close()
 	ReadWriteCloser io.ReadWriteCloser
 }
 

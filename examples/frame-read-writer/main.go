@@ -37,31 +37,31 @@ func main() {
 	}
 
 	// allocate frame.ReadWriter around a io.ReadWriter.
-	rw := &frame.ReadWriter{
+	frameRW := &frame.ReadWriter{
 		ByteReadWriter: &readWriter{
 			Reader: inBuf,
 			Writer: outBuf,
 		},
 		DialectRW: dialectRW,
 	}
-	err = rw.Initialize()
+	err = frameRW.Initialize()
 	if err != nil {
 		panic(err)
 	}
 
 	// allocate streamwriter.Writer around frame.ReadWriter.
-	nw := &streamwriter.Writer{
-		FrameWriter: rw.Writer,
+	streamWriter := &streamwriter.Writer{
+		FrameWriter: frameRW.Writer,
 		Version:     streamwriter.V2, // change to V1 if you're unable to communicate with the target
 		SystemID:    10,
 	}
-	err = nw.Initialize()
+	err = streamWriter.Initialize()
 	if err != nil {
 		panic(err)
 	}
 
 	// read a frame, that contains a message
-	frame, err := rw.Read()
+	frame, err := frameRW.Read()
 	if err != nil {
 		panic(err)
 	}
@@ -69,7 +69,7 @@ func main() {
 	log.Printf("decoded: %+v\n", frame)
 
 	// write a message, that is automatically wrapped in a frame
-	err = nw.Write(&ardupilotmega.MessageParamValue{
+	err = streamWriter.Write(&ardupilotmega.MessageParamValue{
 		ParamId:    "test_parameter",
 		ParamValue: 123456,
 		ParamType:  ardupilotmega.MAV_PARAM_TYPE_UINT32,

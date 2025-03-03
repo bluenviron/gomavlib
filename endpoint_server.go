@@ -95,8 +95,8 @@ func initEndpointServer(node *Node, conf endpointServerConf) (Endpoint, error) {
 
 	t := &endpointServer{
 		conf:         conf,
-		writeTimeout: node.conf.WriteTimeout,
-		idleTimeout:  node.conf.IdleTimeout,
+		writeTimeout: node.WriteTimeout,
+		idleTimeout:  node.IdleTimeout,
 		listener:     ln,
 		terminate:    make(chan struct{}),
 	}

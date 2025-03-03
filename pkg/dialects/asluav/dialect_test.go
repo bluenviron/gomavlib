@@ -11,6 +11,7 @@ import (
 )
 
 func TestDialect(t *testing.T) {
-	_, err := dialect.NewReadWriter(Dialect)
+	d := &dialect.ReadWriter{Dialect: Dialect}
+	err := d.Initialize()
 	require.NoError(t, err)
 }

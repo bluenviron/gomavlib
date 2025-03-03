@@ -37,15 +37,17 @@ func TestEndpointServer(t *testing.T) {
 			require.NoError(t, err)
 			defer conn.Close()
 
-			dialectRW, err := dialect.NewReadWriter(testDialect)
+			dialectRW := &dialect.ReadWriter{Dialect: testDialect}
+			err = dialectRW.Initialize()
 			require.NoError(t, err)
 
-			rw, err := frame.NewReadWriter(frame.ReadWriterConf{
-				ReadWriter:  conn,
-				DialectRW:   dialectRW,
-				OutVersion:  frame.V2,
-				OutSystemID: 11,
-			})
+			rw := &frame.ReadWriter{
+				ByteReadWriter: conn,
+				DialectRW:      dialectRW,
+				OutVersion:     frame.V2,
+				OutSystemID:    11,
+			}
+			err = rw.Initialize()
 			require.NoError(t, err)
 
 			for i := 0; i < 3; i++ {
@@ -129,15 +131,17 @@ func TestEndpointServerIdleTimeout(t *testing.T) {
 			require.NoError(t, err)
 			defer conn.Close()
 
-			dialectRW, err := dialect.NewReadWriter(testDialect)
+			dialectRW := &dialect.ReadWriter{Dialect: testDialect}
+			err = dialectRW.Initialize()
 			require.NoError(t, err)
 
-			rw, err := frame.NewReadWriter(frame.ReadWriterConf{
-				ReadWriter:  conn,
-				DialectRW:   dialectRW,
-				OutVersion:  frame.V2,
-				OutSystemID: 11,
-			})
+			rw := &frame.ReadWriter{
+				ByteReadWriter: conn,
+				DialectRW:      dialectRW,
+				OutVersion:     frame.V2,
+				OutSystemID:    11,
+			}
+			err = rw.Initialize()
 			require.NoError(t, err)
 
 			msg := &MessageHeartbeat{

@@ -35,6 +35,8 @@ type writeExceptReq struct {
 }
 
 // NodeConf allows to configure a Node.
+//
+// Deprecated: configuration has been moved inside Node.
 type NodeConf struct {
 	// the endpoints with which this node will
 	// communicate. Each endpoint contains zero or more channels
@@ -88,9 +90,89 @@ type NodeConf struct {
 	IdleTimeout time.Duration
 }
 
+// NewNode allocates a Node. See NodeConf for the options.
+//
+// Deprecated: replaced by Node.Initialize().
+func NewNode(conf NodeConf) (*Node, error) {
+	n := &Node{
+		Endpoints:              conf.Endpoints,
+		Dialect:                conf.Dialect,
+		InKey:                  conf.InKey,
+		OutVersion:             conf.OutVersion,
+		OutSystemID:            conf.OutSystemID,
+		OutComponentID:         conf.OutComponentID,
+		OutKey:                 conf.OutKey,
+		HeartbeatDisable:       conf.HeartbeatDisable,
+		HeartbeatPeriod:        conf.HeartbeatPeriod,
+		HeartbeatSystemType:    conf.HeartbeatSystemType,
+		HeartbeatAutopilotType: conf.HeartbeatAutopilotType,
+		StreamRequestEnable:    conf.StreamRequestEnable,
+		StreamRequestFrequency: conf.StreamRequestFrequency,
+		ReadTimeout:            conf.ReadTimeout,
+		WriteTimeout:           conf.WriteTimeout,
+		IdleTimeout:            conf.IdleTimeout,
+	}
+	err := n.Initialize()
+	return n, err
+}
+
 // Node is a high-level Mavlink encoder and decoder that works with endpoints.
 type Node struct {
-	conf              NodeConf
+	// the endpoints with which this node will
+	// communicate. Each endpoint contains zero or more channels
+	Endpoints []EndpointConf
+
+	// (optional) the dialect which contains the messages that will be encoded and decoded.
+	// If not provided, messages are decoded in the MessageRaw struct.
+	Dialect *dialect.Dialect
+
+	// (optional) the secret key used to validate incoming frames.
+	// Non signed frames are discarded, as well as frames with a version < 2.0.
+	InKey *frame.V2Key
+
+	// Mavlink version used to encode messages. See Version
+	// for the available options.
+	OutVersion Version
+	// the system id, added to every outgoing frame and used to identify this
+	// node in the network.
+	OutSystemID byte
+	// (optional) the component id, added to every outgoing frame, defaults to 1.
+	OutComponentID byte
+	// (optional) the secret key used to sign outgoing frames.
+	// This feature requires a version >= 2.0.
+	OutKey *frame.V2Key
+
+	// (optional) disables the periodic sending of heartbeats to open channels.
+	HeartbeatDisable bool
+	// (optional) the period between heartbeats. It defaults to 5 seconds.
+	HeartbeatPeriod time.Duration
+	// (optional) the system type advertised by heartbeats.
+	// It defaults to MAV_TYPE_GCS
+	HeartbeatSystemType int
+	// (optional) the autopilot type advertised by heartbeats.
+	// It defaults to MAV_AUTOPILOT_GENERIC
+	HeartbeatAutopilotType int
+
+	// (optional) automatically request streams to detected Ardupilot devices,
+	// that need an explicit request in order to emit telemetry stream.
+	StreamRequestEnable bool
+	// (optional) the requested stream frequency in Hz. It defaults to 4.
+	StreamRequestFrequency int
+
+	// (optional) read timeout.
+	// It defaults to 10 seconds.
+	ReadTimeout time.Duration
+	// (optional) write timeout.
+	// It defaults to 10 seconds.
+	WriteTimeout time.Duration
+	// (optional) timeout before closing idle connections.
+	// It defaults to 60 seconds.
+	IdleTimeout time.Duration
+
+	//
+	// private
+	//
+
 	dialectRW         *dialect.ReadWriter
 	wg                sync.WaitGroup
 	channelProviders  map[*channelProvider]struct{}
@@ -111,72 +193,68 @@ type Node struct {
 	done    chan struct{}
 }
 
-// NewNode allocates a Node. See NodeConf for the options.
-func NewNode(conf NodeConf) (*Node, error) {
-	if len(conf.Endpoints) == 0 {
-		return nil, fmt.Errorf("at least one endpoint must be provided")
+// Initialize initializes a Node.
+func (n *Node) Initialize() error {
+	if len(n.Endpoints) == 0 {
+		return fmt.Errorf("at least one endpoint must be provided")
 	}
-	if conf.HeartbeatPeriod == 0 {
-		conf.HeartbeatPeriod = 5 * time.Second
+	if n.HeartbeatPeriod == 0 {
+		n.HeartbeatPeriod = 5 * time.Second
 	}
-	if conf.HeartbeatSystemType == 0 {
-		conf.HeartbeatSystemType = 6 // MAV_TYPE_GCS
+	if n.HeartbeatSystemType == 0 {
+		n.HeartbeatSystemType = 6 // MAV_TYPE_GCS
 	}
-	if conf.HeartbeatAutopilotType == 0 {
-		conf.HeartbeatAutopilotType = 0 // MAV_AUTOPILOT_GENERIC
+	if n.HeartbeatAutopilotType == 0 {
+		n.HeartbeatAutopilotType = 0 // MAV_AUTOPILOT_GENERIC
 	}
-	if conf.StreamRequestFrequency == 0 {
-		conf.StreamRequestFrequency = 4
+	if n.StreamRequestFrequency == 0 {
+		n.StreamRequestFrequency = 4
 	}
 
 	// check Transceiver configuration here, since Transceiver is created dynamically
-	if conf.OutVersion == 0 {
-		return nil, fmt.Errorf("OutVersion not provided")
+	if n.OutVersion == 0 {
+		return fmt.Errorf("OutVersion not provided")
 	}
-	if conf.OutSystemID < 1 {
-		return nil, fmt.Errorf("OutSystemID must be greater than one")
+	if n.OutSystemID < 1 {
+		return fmt.Errorf("OutSystemID must be greater than one")
 	}
-	if conf.OutComponentID < 1 {
-		conf.OutComponentID = 1
+	if n.OutComponentID < 1 {
+		n.OutComponentID = 1
 	}
-	if conf.OutKey != nil && conf.OutVersion != V2 {
-		return nil, fmt.Errorf("OutKey requires V2 frames")
-	}
-
-	if conf.ReadTimeout == 0 {
-		conf.ReadTimeout = 10 * time.Second
-	}
-	if conf.WriteTimeout == 0 {
-		conf.WriteTimeout = 10 * time.Second
-	}
-	if conf.IdleTimeout == 0 {
-		conf.IdleTimeout = 60 * time.Second
+	if n.OutKey != nil && n.OutVersion != V2 {
+		return fmt.Errorf("OutKey requires V2 frames")
 	}
 
-	dialectRW, err := func() (*dialect.ReadWriter, error) {
-		if conf.Dialect == nil {
-			return nil, nil
+	if n.ReadTimeout == 0 {
+		n.ReadTimeout = 10 * time.Second
+	}
+	if n.WriteTimeout == 0 {
+		n.WriteTimeout = 10 * time.Second
+	}
+	if n.IdleTimeout == 0 {
+		n.IdleTimeout = 60 * time.Second
+	}
+
+	var dialectRW *dialect.ReadWriter
+	if n.Dialect != nil {
+		dialectRW = &dialect.ReadWriter{Dialect: n.Dialect}
+		err := dialectRW.Initialize()
+		if err != nil {
+			return err
 		}
-		return dialect.NewReadWriter(conf.Dialect)
-	}()
-	if err != nil {
-		return nil, err
 	}
 
-	n := &Node{
-		conf:             conf,
-		dialectRW:        dialectRW,
-		channelProviders: make(map[*channelProvider]struct{}),
-		channels:         make(map[*Channel]struct{}),
-		chNewChannel:     make(chan *Channel),
-		chCloseChannel:   make(chan *Channel),
-		chWriteTo:        make(chan writeToReq),
-		chWriteAll:       make(chan interface{}),
-		chWriteExcept:    make(chan writeExceptReq),
-		terminate:        make(chan struct{}),
-		chEvent:          make(chan Event),
-		done:             make(chan struct{}),
-	}
+	n.dialectRW = dialectRW
+	n.channelProviders = make(map[*channelProvider]struct{})
+	n.channels = make(map[*Channel]struct{})
+	n.chNewChannel = make(chan *Channel)
+	n.chCloseChannel = make(chan *Channel)
+	n.chWriteTo = make(chan writeToReq)
+	n.chWriteAll = make(chan interface{})
+	n.chWriteExcept = make(chan writeExceptReq)
+	n.terminate = make(chan struct{})
+	n.chEvent = make(chan Event)
+	n.done = make(chan struct{})
 
 	closeExisting := func() {
 		for ch := range n.channels {
@@ -188,11 +266,11 @@ func NewNode(conf NodeConf) (*Node, error) {
 	}
 
 	// endpoints
-	for _, tconf := range conf.Endpoints {
+	for _, tconf := range n.Endpoints {
 		tp, err := tconf.init(n)
 		if err != nil {
 			closeExisting()
-			return nil, err
+			return err
 		}
 
 		switch ttp := tp.(type) {
@@ -200,7 +278,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 			ca, err := newChannelProvider(n, ttp)
 			if err != nil {
 				closeExisting()
-				return nil, err
+				return err
 			}
 
 			n.channelProviders[ca] = struct{}{}
@@ -209,7 +287,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 			ch, err := newChannel(n, ttp, ttp.label(), ttp)
 			if err != nil {
 				closeExisting()
-				return nil, err
+				return err
 			}
 
 			n.channels[ch] = struct{}{}
@@ -240,7 +318,7 @@ func NewNode(conf NodeConf) (*Node, error) {
 
 	go n.run()
 
-	return n, nil
+	return nil
 }
 
 // Close halts node operations and waits for all routines to return.
@@ -332,8 +410,8 @@ func (n *Node) FixFrame(fr frame.Frame) error {
 	}
 
 	// fill Signature if v2
-	if ff, ok := fr.(*frame.V2Frame); ok && n.conf.OutKey != nil {
-		ff.Signature = ff.GenerateSignature(n.conf.OutKey)
+	if ff, ok := fr.(*frame.V2Frame); ok && n.OutKey != nil {
+		ff.Signature = ff.GenerateSignature(n.OutKey)
 	}
 
 	return nil
@@ -375,7 +453,7 @@ func (n *Node) encodeMessage(msg message.Message) (message.Message, error) {
 			return nil, fmt.Errorf("message is not in the dialect")
 		}
 
-		msgRaw := mp.Write(msg, n.conf.OutVersion == V2)
+		msgRaw := mp.Write(msg, n.OutVersion == V2)
 		return msgRaw, nil
 	}
 

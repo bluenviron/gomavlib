@@ -31,15 +31,17 @@ func TestEndpointSerial(t *testing.T) {
 		}
 
 		go func() {
-			dialectRW, err := dialect.NewReadWriter(testDialect)
+			dialectRW := &dialect.ReadWriter{Dialect: testDialect}
+			err := dialectRW.Initialize()
 			require.NoError(t, err)
 
-			rw, err := frame.NewReadWriter(frame.ReadWriterConf{
-				ReadWriter:  local,
-				DialectRW:   dialectRW,
-				OutVersion:  frame.V2,
-				OutSystemID: 11,
-			})
+			rw := &frame.ReadWriter{
+				ByteReadWriter: local,
+				DialectRW:      dialectRW,
+				OutVersion:     frame.V2,
+				OutSystemID:    11,
+			}
+			err = rw.Initialize()
 			require.NoError(t, err)
 
 			for i := 0; i < 3; i++ {
@@ -141,15 +143,17 @@ func TestEndpointSerialReconnect(t *testing.T) {
 
 		case 1:
 			go func() {
-				dialectRW, err := dialect.NewReadWriter(testDialect)
+				dialectRW := &dialect.ReadWriter{Dialect: testDialect}
+				err := dialectRW.Initialize()
 				require.NoError(t, err)
 
-				rw, err := frame.NewReadWriter(frame.ReadWriterConf{
-					ReadWriter:  local,
-					DialectRW:   dialectRW,
-					OutVersion:  frame.V2,
-					OutSystemID: 11,
-				})
+				rw := &frame.ReadWriter{
+					ByteReadWriter: local,
+					DialectRW:      dialectRW,
+					OutVersion:     frame.V2,
+					OutSystemID:    11,
+				}
+				err = rw.Initialize()
 				require.NoError(t, err)
 
 				err = rw.WriteMessage(&MessageHeartbeat{
@@ -184,15 +188,17 @@ func TestEndpointSerialReconnect(t *testing.T) {
 
 		case 2:
 			go func() {
-				dialectRW, err := dialect.NewReadWriter(testDialect)
+				dialectRW := &dialect.ReadWriter{Dialect: testDialect}
+				err := dialectRW.Initialize()
 				require.NoError(t, err)
 
-				rw, err := frame.NewReadWriter(frame.ReadWriterConf{
-					ReadWriter:  local,
-					DialectRW:   dialectRW,
-					OutVersion:  frame.V2,
-					OutSystemID: 11,
-				})
+				rw := &frame.ReadWriter{
+					ByteReadWriter: local,
+					DialectRW:      dialectRW,
+					OutVersion:     frame.V2,
+					OutSystemID:    11,
+				}
+				err = rw.Initialize()
 				require.NoError(t, err)
 
 				fr, err := rw.Read()

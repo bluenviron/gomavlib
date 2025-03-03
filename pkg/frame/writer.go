@@ -10,6 +10,8 @@ import (
 )
 
 // WriterConf is the configuration of a Writer.
+//
+// Deprecated: configuration has been moved inside Writer.
 type WriterConf struct {
 	// the underlying bytes writer.
 	Writer io.Writer
@@ -32,43 +34,82 @@ type WriterConf struct {
 	OutKey *V2Key
 }
 
+// NewWriter allocates a Writer.
+//
+// Deprecated: replaced by Writer.Initialize().
+func NewWriter(conf WriterConf) (*Writer, error) {
+	w := &Writer{
+		ByteWriter:         conf.Writer,
+		DialectRW:          conf.DialectRW,
+		OutVersion:         conf.OutVersion,
+		OutSystemID:        conf.OutSystemID,
+		OutComponentID:     conf.OutComponentID,
+		OutSignatureLinkID: conf.OutSignatureLinkID,
+		OutKey:             conf.OutKey,
+	}
+	err := w.Initialize()
+	return w, err
+}
+
 // Writer is a Frame writer.
 type Writer struct {
-	conf                   WriterConf
+	// underlying byte writer.
+	ByteWriter io.Writer
+
+	// (optional) dialect which contains the messages that will be written.
+	DialectRW *dialect.ReadWriter
+
+	// Mavlink version used to encode messages.
+	OutVersion WriterOutVersion
+	// system id, added to every outgoing frame and used to identify this
+	// node in the network.
+	OutSystemID byte
+	// (optional) component id, added to every outgoing frame, defaults to 1.
+	OutComponentID byte
+	// (optional) value to insert into the signature link id.
+	// This feature requires v2 frames.
+	OutSignatureLinkID byte
+	// (optional) secret key used to sign outgoing frames.
+	// This feature requires v2 frames.
+	OutKey *V2Key
+
+	//
+	// private
+	//
+
 	bw                     []byte
 	curWriteSequenceNumber byte
 }
 
-// NewWriter allocates a Writer.
-func NewWriter(conf WriterConf) (*Writer, error) {
-	if conf.Writer == nil {
-		return nil, fmt.Errorf("Writer not provided")
+// Initialize allocates a Writer.
+func (w *Writer) Initialize() error {
+	if w.ByteWriter == nil {
+		return fmt.Errorf("ByteWriter not provided")
 	}
 
-	if conf.OutVersion == 0 {
-		return nil, fmt.Errorf("OutVersion not provided")
+	if w.OutVersion == 0 {
+		return fmt.Errorf("OutVersion not provided")
 	}
-	if conf.OutSystemID < 1 {
-		return nil, fmt.Errorf("OutSystemID must be greater than one")
+	if w.OutSystemID < 1 {
+		return fmt.Errorf("OutSystemID must be greater than one")
 	}
-	if conf.OutComponentID < 1 {
-		conf.OutComponentID = 1
+	if w.OutComponentID < 1 {
+		w.OutComponentID = 1
 	}
-	if conf.OutKey != nil && conf.OutVersion != V2 {
-		return nil, fmt.Errorf("OutKey requires V2 frames")
+	if w.OutKey != nil && w.OutVersion != V2 {
+		return fmt.Errorf("OutKey requires V2 frames")
 	}
 
-	return &Writer{
-		conf: conf,
-		bw:   make([]byte, bufferSize),
-	}, nil
+	w.bw = make([]byte, bufferSize)
+
+	return nil
 }
 
 // WriteMessage writes a Message.
 // The Message is wrapped into a Frame whose fields are filled automatically.
 // It must not be called by multiple routines in parallel.
 func (w *Writer) WriteMessage(m message.Message) error {
-	if w.conf.OutVersion == V1 {
+	if w.OutVersion == V1 {
 		return w.writeFrameAndFill(&V1Frame{Message: m})
 	}
 	return w.writeFrameAndFill(&V2Frame{Message: m})
@@ -83,28 +124,28 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 	switch ff := fr.(type) {
 	case *V1Frame:
 		ff.SequenceNumber = w.curWriteSequenceNumber
-		ff.SystemID = w.conf.OutSystemID
-		ff.ComponentID = w.conf.OutComponentID
+		ff.SystemID = w.OutSystemID
+		ff.ComponentID = w.OutComponentID
 
 	case *V2Frame:
 		ff.SequenceNumber = w.curWriteSequenceNumber
-		ff.SystemID = w.conf.OutSystemID
-		ff.ComponentID = w.conf.OutComponentID
+		ff.SystemID = w.OutSystemID
+		ff.ComponentID = w.OutComponentID
 
 		ff.CompatibilityFlag = 0
 		ff.IncompatibilityFlag = 0
-		if w.conf.OutKey != nil {
+		if w.OutKey != nil {
 			ff.IncompatibilityFlag |= V2FlagSigned
 		}
 	}
 
 	w.curWriteSequenceNumber++
 
-	if w.conf.DialectRW == nil {
+	if w.DialectRW == nil {
 		return fmt.Errorf("dialect is nil")
 	}
 
-	mp := w.conf.DialectRW.GetMessage(fr.GetMessage().GetID())
+	mp := w.DialectRW.GetMessage(fr.GetMessage().GetID())
 	if mp == nil {
 		return fmt.Errorf("message is not in the dialect")
 	}
@@ -123,11 +164,11 @@ func (w *Writer) writeFrameAndFill(fr Frame) error {
 	}
 
 	// fill SignatureLinkID, SignatureTimestamp, Signature if v2
-	if ff, ok := fr.(*V2Frame); ok && w.conf.OutKey != nil {
-		ff.SignatureLinkID = w.conf.OutSignatureLinkID
+	if ff, ok := fr.(*V2Frame); ok && w.OutKey != nil {
+		ff.SignatureLinkID = w.OutSignatureLinkID
 		// Timestamp in 10 microsecond units since 1st January 2015 GMT time
 		ff.SignatureTimestamp = uint64(time.Since(signatureReferenceDate)) / 10000
-		ff.Signature = ff.GenerateSignature(w.conf.OutKey)
+		ff.Signature = ff.GenerateSignature(w.OutKey)
 	}
 
 	return w.writeFrameInner(fr)
@@ -144,11 +185,11 @@ func (w *Writer) WriteFrame(fr Frame) error {
 
 	// encode message if it is not already encoded
 	if _, ok := fr.GetMessage().(*message.MessageRaw); !ok {
-		if w.conf.DialectRW == nil {
+		if w.DialectRW == nil {
 			return fmt.Errorf("dialect is nil")
 		}
 
-		mp := w.conf.DialectRW.GetMessage(fr.GetMessage().GetID())
+		mp := w.DialectRW.GetMessage(fr.GetMessage().GetID())
 		if mp == nil {
 			return fmt.Errorf("message is not in the dialect")
 		}
@@ -172,13 +213,13 @@ func (w *Writer) encodeMessageInFrame(fr Frame, mp *message.ReadWriter) {
 }
 
 func (w *Writer) writeFrameInner(fr Frame) error {
-	n, err := fr.encodeTo(w.bw, fr.GetMessage().(*message.MessageRaw).Payload)
+	n, err := fr.marshalTo(w.bw, fr.GetMessage().(*message.MessageRaw).Payload)
 	if err != nil {
 		return err
 	}
 
 	// do not check n, since io.Writer is not allowed to return n < len(buf)
 	// without throwing an error
-	_, err = w.conf.Writer.Write(w.bw[:n])
+	_, err = w.ByteWriter.Write(w.bw[:n])
 	return err
 }

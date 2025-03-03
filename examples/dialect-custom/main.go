@@ -27,12 +27,15 @@ func (*MessageCustom) GetID() uint32 {
 
 func main() {
 	// create a custom dialect from a list of messages
-	dialect := &dialect.Dialect{Version: 3, Messages: []message.Message{
-		&MessageCustom{},
-	}}
+	dialect := &dialect.Dialect{
+		Version: 3,
+		Messages: []message.Message{
+			&MessageCustom{},
+		},
+	}
 
 	// create a node which understands the custom dialect
-	node, err := gomavlib.NewNode(gomavlib.NodeConf{
+	node := &gomavlib.Node{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{
 				Device: "/dev/ttyUSB0",
@@ -42,7 +45,8 @@ func main() {
 		Dialect:     dialect,
 		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target
 		OutSystemID: 10,
-	})
+	}
+	err := node.Initialize()
 	if err != nil {
 		panic(err)
 	}

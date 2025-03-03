@@ -27,6 +27,6 @@ type Frame interface {
 	// generates the checksum of the frame.
 	GenerateChecksum(byte) uint16
 
-	decode(*bufio.Reader) error
-	encodeTo([]byte, []byte) (int, error)
+	unmarshal(*bufio.Reader) error
+	marshalTo([]byte, []byte) (int, error)
 }

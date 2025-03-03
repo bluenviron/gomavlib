@@ -133,6 +133,10 @@ func (r *Reader) Read() (Frame, error) {
 			return nil, newError("signature required but packet is not v2")
 		}
 
+		if ff.Signature == nil {
+			return nil, newError("signature not present")
+		}
+
 		if sig := ff.GenerateSignature(r.InKey); *sig != *ff.Signature {
 			return nil, newError("wrong signature")
 		}

@@ -12,7 +12,7 @@ type MessageParamValueArray struct {
 	ParamArrayLen uint8
 	// Flags.
 	Flags uint16
-	// Parameters buffer. Contains a series of variable length parameter blocks, one per parameter, with format as specifed elsewhere.
+	// Parameters buffer. Contains a series of variable length parameter blocks, one per parameter, with format as specified elsewhere.
 	PacketBuf [248]uint8
 }
 

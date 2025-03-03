@@ -64,6 +64,11 @@ func NewReader(conf ReaderConf) (*Reader, error) {
 // Reader is a Frame reader.
 type Reader struct {
 	// underlying byte reader.
+	BufByteReader *bufio.Reader
+
+	// underlying byte reader.
+	//
+	// Deprecated: replaced by BufByteReader
 	ByteReader io.Reader
 
 	// (optional) dialect which contains the messages that will be read.
@@ -78,24 +83,26 @@ type Reader struct {
 	// private
 	//
 
-	br                   *bufio.Reader
 	curReadSignatureTime uint64
 }
 
 // Initialize initializes a Reader.
 func (r *Reader) Initialize() error {
-	if r.ByteReader == nil {
-		return fmt.Errorf("ByteReader not provided")
+	if r.ByteReader != nil {
+		r.BufByteReader = bufio.NewReaderSize(r.ByteReader, bufferSize)
 	}
 
-	r.br = bufio.NewReaderSize(r.ByteReader, bufferSize)
+	if r.BufByteReader == nil {
+		return fmt.Errorf("BufByteReader not provided")
+	}
+
 	return nil
 }
 
 // Read reads a Frame from the reader.
 // It must not be called by multiple routines in parallel.
 func (r *Reader) Read() (Frame, error) {
-	magicByte, err := r.br.ReadByte()
+	magicByte, err := r.BufByteReader.ReadByte()
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +122,7 @@ func (r *Reader) Read() (Frame, error) {
 		return nil, err
 	}
 
-	err = f.unmarshal(r.br)
+	err = f.unmarshal(r.BufByteReader)
 	if err != nil {
 		return nil, newError("%s", err.Error())
 	}

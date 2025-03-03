@@ -12,7 +12,7 @@ import (
 // 3) route incoming frames to every other channel.
 
 func main() {
-	// create a node which communicates with multiple endpoints
+	// create a node which communicates with multiple endpoints.
 	node := &gomavlib.Node{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointSerial{

@@ -107,19 +107,17 @@ func (r *Reader) Read() (Frame, error) {
 		return nil, err
 	}
 
-	f, err := func() (Frame, error) {
-		switch magicByte {
-		case V1MagicByte:
-			return &V1Frame{}, nil
+	var f Frame
 
-		case V2MagicByte:
-			return &V2Frame{}, nil
-		}
+	switch magicByte {
+	case V1MagicByte:
+		f = &V1Frame{}
 
+	case V2MagicByte:
+		f = &V2Frame{}
+
+	default:
 		return nil, newError("invalid magic byte: %x", magicByte)
-	}()
-	if err != nil {
-		return nil, err
 	}
 
 	err = f.unmarshal(r.BufByteReader)

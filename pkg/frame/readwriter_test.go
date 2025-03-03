@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
 	"github.com/stretchr/testify/require"
 )
 
@@ -17,7 +19,7 @@ func TestReadWriter(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func TestReadWriterErrors(t *testing.T) {
+func TestReadWriterNewErrors(t *testing.T) {
 	_, err := NewReadWriter(ReadWriterConf{
 		OutVersion:  V2,
 		OutSystemID: 1,
@@ -30,4 +32,46 @@ func TestReadWriterErrors(t *testing.T) {
 		OutSystemID: 1,
 	})
 	require.EqualError(t, err, "OutVersion not provided")
+}
+
+func FuzzReadWriter(f *testing.F) {
+	for _, ca := range casesReadWrite {
+		f.Add(ca.raw, false, false)
+	}
+
+	dialectRW := &dialect.ReadWriter{Dialect: ardupilotmega.Dialect}
+	err := dialectRW.Initialize()
+	if err != nil {
+		panic(err)
+	}
+
+	f.Fuzz(func(t *testing.T, a []byte, k bool, v2 bool) {
+		var key *V2Key
+		if k {
+			key = NewV2Key(bytes.Repeat([]byte("\x4F"), 32))
+		}
+
+		var outv WriterOutVersion
+		if v2 {
+			outv = V2
+		} else {
+			outv = V1
+		}
+
+		buf := bytes.NewBuffer(a)
+		rw := &ReadWriter{
+			ByteReadWriter: buf,
+			DialectRW:      dialectRW,
+			InKey:          key,
+			OutVersion:     outv,
+			OutSystemID:    1,
+		}
+		err := rw.Initialize()
+		require.NoError(t, err)
+
+		fr, err := rw.Read()
+		if err == nil {
+			rw.WriteFrame(fr) //nolint:errcheck
+		}
+	})
 }

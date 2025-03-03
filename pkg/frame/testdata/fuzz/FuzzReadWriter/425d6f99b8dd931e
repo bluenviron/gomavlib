@@ -1,0 +1,4 @@
+go test fuzz v1
+[]byte("\xfd")
+bool(true)
+bool(true)

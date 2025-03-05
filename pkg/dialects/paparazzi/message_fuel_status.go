@@ -7,7 +7,7 @@ import (
 )
 
 // Fuel status.
-// This message provides "generic" fuel level information for display in a GCS and for triggering failsafes in an autopilot.
+// This message provides "generic" fuel level information for  in a GCS and for triggering failsafes in an autopilot.
 // The fuel type and associated units for fields in this message are defined in the enum MAV_FUEL_TYPE.
 // The reported `consumed_fuel` and `remaining_fuel` must only be supplied if measured: they must not be inferred from the `maximum_fuel` and the other value.
 // A recipient can assume that if these fields are supplied they are accurate.

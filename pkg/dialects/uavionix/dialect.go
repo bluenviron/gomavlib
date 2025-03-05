@@ -251,5 +251,10 @@ var dial = &dialect.Dialect{
 		&MessageUavionixAdsbOutCfg{},
 		&MessageUavionixAdsbOutDynamic{},
 		&MessageUavionixAdsbTransceiverHealthReport{},
+		&MessageUavionixAdsbOutCfgRegistration{},
+		&MessageUavionixAdsbOutCfgFlightid{},
+		&MessageUavionixAdsbGet{},
+		&MessageUavionixAdsbOutControl{},
+		&MessageUavionixAdsbOutStatus{},
 	},
 }

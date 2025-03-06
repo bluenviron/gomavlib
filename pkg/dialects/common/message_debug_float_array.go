@@ -6,7 +6,7 @@ package common
 type MessageDebugFloatArray struct {
 	// Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.
 	TimeUsec uint64
-	// Name, for human-friendly  in a Ground Control Station
+	// Name, for human-friendly display in a Ground Control Station
 	Name string `mavlen:"10"`
 	// Unique ID used to discriminate between arrays
 	ArrayId uint16

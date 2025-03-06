@@ -111,9 +111,13 @@ const (
 	// If specified, the item defines the waypoint at which the return segment starts.
 	// If sent using as a command, the vehicle will perform a mission landing (using the land segment if defined) or reject the command if mission landings are not supported, or no mission landing is defined. When used as a command any position information in the command is ignored.
 	MAV_CMD_DO_RETURN_PATH_START MAV_CMD = common.MAV_CMD_DO_RETURN_PATH_START
-	// Mission command to perform a landing. This is used as a marker in a mission to tell the autopilot where a sequence of mission items that represents a landing starts.
-	// It may also be sent via a COMMAND_LONG to trigger a landing, in which case the nearest (geographically) landing sequence in the mission will be used.
-	// The Latitude/Longitude/Altitude is optional, and may be set to 0 if not needed. If specified then it will be used to help find the closest landing sequence.
+	// Mission item to mark the start of a mission landing pattern, or a command to land with a mission landing pattern.
+	// When used in a mission, this is a marker for the start of a sequence of mission items that represent a landing pattern.
+	// It should be followed by a navigation item that defines the first waypoint of the landing sequence.
+	// The start marker positional params are used only for selecting what landing pattern to use if several are defined in the mission (the selected pattern will be the one with the marker position that is closest to the vehicle when a landing is commanded).
+	// If the marker item position has zero-values for latitude, longitude, and altitude, then landing pattern selection is instead based on the position of the first waypoint in the landing sequence.
+	// When sent as a command it triggers a landing using a mission landing pattern.
+	// The location parameters are not used in this case, and should be set to 0.
 	MAV_CMD_DO_LAND_START MAV_CMD = common.MAV_CMD_DO_LAND_START
 	// Mission command to perform a landing from a rally point.
 	MAV_CMD_DO_RALLY_LAND MAV_CMD = common.MAV_CMD_DO_RALLY_LAND

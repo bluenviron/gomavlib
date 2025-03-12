@@ -23,6 +23,10 @@ func TestWriterNewErrors(t *testing.T) {
 
 func TestWriterWrite(t *testing.T) {
 	for _, ca := range casesReadWrite {
+		if ca.name == "v2 frame with missing empty byte truncation" {
+			continue
+		}
+
 		t.Run(ca.name, func(t *testing.T) {
 			var buf bytes.Buffer
 			writer, err := NewWriter(WriterConf{

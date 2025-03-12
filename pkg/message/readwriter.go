@@ -72,6 +72,16 @@ var fieldTypeSizes = map[fieldType]byte{
 	typeChar:   1,
 }
 
+func removeEmptyBytes(buf []byte) []byte {
+	// even with truncation, message length must be at least 1 byte
+	// https://github.com/mavlink/c_library_v2/blob/7ea034366ee7f09f3991a5b82f51f0c259023b38/mavlink_helpers.h#L113
+	end := len(buf)
+	for end > 1 && buf[end-1] == 0x00 {
+		end--
+	}
+	return buf[:end]
+}
+
 func fieldGoToDef(in string) string {
 	re := regexp.MustCompile("([A-Z])")
 	in = re.ReplaceAllString(in, "_${1}")
@@ -505,15 +515,8 @@ func (rw *ReadWriter) Write(msg Message, isV2 bool) *MessageRaw {
 
 	buf = start
 
-	// empty-byte truncation
-	// even with truncation, message length must be at least 1 byte
-	// https://github.com/mavlink/c_library_v2/blob/master/mavlink_helpers.h#L103
 	if isV2 {
-		end := len(buf)
-		for end > 1 && buf[end-1] == 0x00 {
-			end--
-		}
-		buf = buf[:end]
+		buf = removeEmptyBytes(buf)
 	}
 
 	return &MessageRaw{

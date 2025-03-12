@@ -84,6 +84,38 @@ func (*MessageOpticalFlow) GetID() uint32 {
 	return 100
 }
 
+type MAV_CMD uint64 //nolint:revive
+
+type MessageCommandLong struct {
+	// System which should execute the command
+	TargetSystem uint8
+	// Component which should execute the command, 0 for all components
+	TargetComponent uint8
+	// Command ID (of command to send).
+	Command MAV_CMD `mavenum:"uint16"`
+	// 0: First transmission of this command. 1-255: Confirmation transmissions (e.g. for kill command)
+	Confirmation uint8
+	// Parameter 1 (for the specific command).
+	Param1 float32
+	// Parameter 2 (for the specific command).
+	Param2 float32
+	// Parameter 3 (for the specific command).
+	Param3 float32
+	// Parameter 4 (for the specific command).
+	Param4 float32
+	// Parameter 5 (for the specific command).
+	Param5 float32
+	// Parameter 6 (for the specific command).
+	Param6 float32
+	// Parameter 7 (for the specific command).
+	Param7 float32
+}
+
+// GetID implements the message.Message interface.
+func (*MessageCommandLong) GetID() uint32 {
+	return 76
+}
+
 var testDialectRW = func() *dialect.ReadWriter {
 	d := &dialect.Dialect{
 		Version: 3,
@@ -275,6 +307,46 @@ var casesReadWrite = []struct {
 			"\x07\x00\x00\x00\x00\x00\x00\x80\x3f" +
 			"\x77\xfb\x03\x04\x00\x00\x00\x00\x00" +
 			"\xa8\x88\x09\x39\xb2\x60"),
+	},
+	{
+		"v2 frame with missing empty byte truncation",
+		func() *dialect.ReadWriter {
+			d := &dialect.Dialect{
+				Version: 3,
+				Messages: []message.Message{
+					&MessageCommandLong{},
+				},
+			}
+
+			drw := &dialect.ReadWriter{Dialect: d}
+			err := drw.Initialize()
+			if err != nil {
+				panic(err)
+			}
+
+			return drw
+		}(),
+		nil,
+		&V2Frame{
+			SequenceNumber: 11,
+			SystemID:       255,
+			ComponentID:    220,
+			Message: &MessageCommandLong{
+				TargetSystem:    1,
+				TargetComponent: 1,
+				Command:         176,
+				Param1:          1,
+			},
+			Checksum: 51683,
+		},
+		[]byte{
+			0xfd, 0x21, 0x00, 0x00, 0x0b, 0xff, 0xdc, 0x4c,
+			0x00, 0x00, 0x00, 0x00, 0x80, 0x3f, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xb0, 0x00,
+			0x01, 0x01, 0x00, 0xc4, 0x75,
+		},
 	},
 }
 

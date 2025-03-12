@@ -4,11 +4,26 @@ package development
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_GPS_JAMMING_STATE(t *testing.T) {
-	var e GPS_JAMMING_STATE
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e GPS_JAMMING_STATE
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := GPS_JAMMING_STATE_UNKNOWN.MarshalText()
+		require.NoError(t, err)
+
+		var dec GPS_JAMMING_STATE
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, GPS_JAMMING_STATE_UNKNOWN, dec)
+	})
 }

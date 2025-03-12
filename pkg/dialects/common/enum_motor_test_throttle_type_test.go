@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_MOTOR_TEST_THROTTLE_TYPE(t *testing.T) {
-	var e MOTOR_TEST_THROTTLE_TYPE
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e MOTOR_TEST_THROTTLE_TYPE
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := MOTOR_TEST_THROTTLE_PERCENT.MarshalText()
+		require.NoError(t, err)
+
+		var dec MOTOR_TEST_THROTTLE_TYPE
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, MOTOR_TEST_THROTTLE_PERCENT, dec)
+	})
 }

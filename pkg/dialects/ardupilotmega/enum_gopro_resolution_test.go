@@ -4,11 +4,26 @@ package ardupilotmega
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_GOPRO_RESOLUTION(t *testing.T) {
-	var e GOPRO_RESOLUTION
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e GOPRO_RESOLUTION
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := GOPRO_RESOLUTION_480p.MarshalText()
+		require.NoError(t, err)
+
+		var dec GOPRO_RESOLUTION
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, GOPRO_RESOLUTION_480p, dec)
+	})
 }

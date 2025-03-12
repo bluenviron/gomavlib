@@ -4,11 +4,26 @@ package ardupilotmega
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_GOPRO_FIELD_OF_VIEW(t *testing.T) {
-	var e GOPRO_FIELD_OF_VIEW
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e GOPRO_FIELD_OF_VIEW
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := GOPRO_FIELD_OF_VIEW_WIDE.MarshalText()
+		require.NoError(t, err)
+
+		var dec GOPRO_FIELD_OF_VIEW
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, GOPRO_FIELD_OF_VIEW_WIDE, dec)
+	})
 }

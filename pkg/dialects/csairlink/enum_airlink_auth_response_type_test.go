@@ -4,11 +4,26 @@ package csairlink
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_AIRLINK_AUTH_RESPONSE_TYPE(t *testing.T) {
-	var e AIRLINK_AUTH_RESPONSE_TYPE
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e AIRLINK_AUTH_RESPONSE_TYPE
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := AIRLINK_ERROR_LOGIN_OR_PASS.MarshalText()
+		require.NoError(t, err)
+
+		var dec AIRLINK_AUTH_RESPONSE_TYPE
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, AIRLINK_ERROR_LOGIN_OR_PASS, dec)
+	})
 }

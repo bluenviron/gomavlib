@@ -4,11 +4,26 @@ package ardupilotmega
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_GOPRO_CAPTURE_MODE(t *testing.T) {
-	var e GOPRO_CAPTURE_MODE
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e GOPRO_CAPTURE_MODE
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := GOPRO_CAPTURE_MODE_VIDEO.MarshalText()
+		require.NoError(t, err)
+
+		var dec GOPRO_CAPTURE_MODE
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, GOPRO_CAPTURE_MODE_VIDEO, dec)
+	})
 }

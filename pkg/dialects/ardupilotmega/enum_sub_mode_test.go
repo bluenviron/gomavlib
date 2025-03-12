@@ -4,11 +4,26 @@ package ardupilotmega
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_SUB_MODE(t *testing.T) {
-	var e SUB_MODE
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e SUB_MODE
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := SUB_MODE_STABILIZE.MarshalText()
+		require.NoError(t, err)
+
+		var dec SUB_MODE
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, SUB_MODE_STABILIZE, dec)
+	})
 }

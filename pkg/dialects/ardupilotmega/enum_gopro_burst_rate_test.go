@@ -4,11 +4,26 @@ package ardupilotmega
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_GOPRO_BURST_RATE(t *testing.T) {
-	var e GOPRO_BURST_RATE
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e GOPRO_BURST_RATE
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := GOPRO_BURST_RATE_3_IN_1_SECOND.MarshalText()
+		require.NoError(t, err)
+
+		var dec GOPRO_BURST_RATE
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, GOPRO_BURST_RATE_3_IN_1_SECOND, dec)
+	})
 }

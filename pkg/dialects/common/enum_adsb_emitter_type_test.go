@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_ADSB_EMITTER_TYPE(t *testing.T) {
-	var e ADSB_EMITTER_TYPE
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e ADSB_EMITTER_TYPE
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := ADSB_EMITTER_TYPE_NO_INFO.MarshalText()
+		require.NoError(t, err)
+
+		var dec ADSB_EMITTER_TYPE
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, ADSB_EMITTER_TYPE_NO_INFO, dec)
+	})
 }

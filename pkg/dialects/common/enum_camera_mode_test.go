@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_CAMERA_MODE(t *testing.T) {
-	var e CAMERA_MODE
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e CAMERA_MODE
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := CAMERA_MODE_IMAGE.MarshalText()
+		require.NoError(t, err)
+
+		var dec CAMERA_MODE
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, CAMERA_MODE_IMAGE, dec)
+	})
 }

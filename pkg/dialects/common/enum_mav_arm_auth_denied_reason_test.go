@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_MAV_ARM_AUTH_DENIED_REASON(t *testing.T) {
-	var e MAV_ARM_AUTH_DENIED_REASON
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e MAV_ARM_AUTH_DENIED_REASON
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := MAV_ARM_AUTH_DENIED_REASON_GENERIC.MarshalText()
+		require.NoError(t, err)
+
+		var dec MAV_ARM_AUTH_DENIED_REASON
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, MAV_ARM_AUTH_DENIED_REASON_GENERIC, dec)
+	})
 }

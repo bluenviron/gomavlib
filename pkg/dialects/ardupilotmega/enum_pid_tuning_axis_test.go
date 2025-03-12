@@ -4,11 +4,26 @@ package ardupilotmega
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_PID_TUNING_AXIS(t *testing.T) {
-	var e PID_TUNING_AXIS
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e PID_TUNING_AXIS
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := PID_TUNING_ROLL.MarshalText()
+		require.NoError(t, err)
+
+		var dec PID_TUNING_AXIS
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, PID_TUNING_ROLL, dec)
+	})
 }

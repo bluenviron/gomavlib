@@ -4,11 +4,26 @@ package ardupilotmega
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_GOPRO_PROTUNE_GAIN(t *testing.T) {
-	var e GOPRO_PROTUNE_GAIN
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e GOPRO_PROTUNE_GAIN
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := GOPRO_PROTUNE_GAIN_400.MarshalText()
+		require.NoError(t, err)
+
+		var dec GOPRO_PROTUNE_GAIN
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, GOPRO_PROTUNE_GAIN_400, dec)
+	})
 }

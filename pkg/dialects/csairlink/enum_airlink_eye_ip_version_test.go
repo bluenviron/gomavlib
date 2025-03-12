@@ -4,11 +4,26 @@ package csairlink
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_AIRLINK_EYE_IP_VERSION(t *testing.T) {
-	var e AIRLINK_EYE_IP_VERSION
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e AIRLINK_EYE_IP_VERSION
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := AIRLINK_IP_V4.MarshalText()
+		require.NoError(t, err)
+
+		var dec AIRLINK_EYE_IP_VERSION
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, AIRLINK_IP_V4, dec)
+	})
 }

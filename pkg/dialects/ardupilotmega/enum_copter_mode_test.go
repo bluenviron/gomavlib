@@ -4,11 +4,26 @@ package ardupilotmega
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_COPTER_MODE(t *testing.T) {
-	var e COPTER_MODE
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e COPTER_MODE
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := COPTER_MODE_STABILIZE.MarshalText()
+		require.NoError(t, err)
+
+		var dec COPTER_MODE
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, COPTER_MODE_STABILIZE, dec)
+	})
 }

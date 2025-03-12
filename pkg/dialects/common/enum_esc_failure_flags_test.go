@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_ESC_FAILURE_FLAGS(t *testing.T) {
-	var e ESC_FAILURE_FLAGS
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e ESC_FAILURE_FLAGS
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := ESC_FAILURE_OVER_CURRENT.MarshalText()
+		require.NoError(t, err)
+
+		var dec ESC_FAILURE_FLAGS
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, ESC_FAILURE_OVER_CURRENT, dec)
+	})
 }

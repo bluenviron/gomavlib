@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_UAVCAN_NODE_HEALTH(t *testing.T) {
-	var e UAVCAN_NODE_HEALTH
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e UAVCAN_NODE_HEALTH
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := UAVCAN_NODE_HEALTH_OK.MarshalText()
+		require.NoError(t, err)
+
+		var dec UAVCAN_NODE_HEALTH
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, UAVCAN_NODE_HEALTH_OK, dec)
+	})
 }

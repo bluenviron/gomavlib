@@ -4,11 +4,26 @@ package avssuas
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_MAV_AVSS_COMMAND_FAILURE_REASON(t *testing.T) {
-	var e MAV_AVSS_COMMAND_FAILURE_REASON
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e MAV_AVSS_COMMAND_FAILURE_REASON
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := PRS_NOT_STEADY.MarshalText()
+		require.NoError(t, err)
+
+		var dec MAV_AVSS_COMMAND_FAILURE_REASON
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, PRS_NOT_STEADY, dec)
+	})
 }

@@ -4,11 +4,26 @@ package ardupilotmega
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_OSD_PARAM_CONFIG_ERROR(t *testing.T) {
-	var e OSD_PARAM_CONFIG_ERROR
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e OSD_PARAM_CONFIG_ERROR
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := OSD_PARAM_SUCCESS.MarshalText()
+		require.NoError(t, err)
+
+		var dec OSD_PARAM_CONFIG_ERROR
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, OSD_PARAM_SUCCESS, dec)
+	})
 }

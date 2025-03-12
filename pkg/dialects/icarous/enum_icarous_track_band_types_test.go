@@ -4,11 +4,26 @@ package icarous
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_ICAROUS_TRACK_BAND_TYPES(t *testing.T) {
-	var e ICAROUS_TRACK_BAND_TYPES
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e ICAROUS_TRACK_BAND_TYPES
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := ICAROUS_TRACK_BAND_TYPE_NONE.MarshalText()
+		require.NoError(t, err)
+
+		var dec ICAROUS_TRACK_BAND_TYPES
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, ICAROUS_TRACK_BAND_TYPE_NONE, dec)
+	})
 }

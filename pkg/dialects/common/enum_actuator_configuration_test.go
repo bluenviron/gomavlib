@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_ACTUATOR_CONFIGURATION(t *testing.T) {
-	var e ACTUATOR_CONFIGURATION
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e ACTUATOR_CONFIGURATION
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := ACTUATOR_CONFIGURATION_NONE.MarshalText()
+		require.NoError(t, err)
+
+		var dec ACTUATOR_CONFIGURATION
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, ACTUATOR_CONFIGURATION_NONE, dec)
+	})
 }

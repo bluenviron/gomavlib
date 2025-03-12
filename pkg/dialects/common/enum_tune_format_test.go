@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_TUNE_FORMAT(t *testing.T) {
-	var e TUNE_FORMAT
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e TUNE_FORMAT
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := TUNE_FORMAT_QBASIC1_1.MarshalText()
+		require.NoError(t, err)
+
+		var dec TUNE_FORMAT
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, TUNE_FORMAT_QBASIC1_1, dec)
+	})
 }

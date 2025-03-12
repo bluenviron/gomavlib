@@ -493,12 +493,17 @@ func TestRead(t *testing.T) {
 		t.Run(c.name, func(t *testing.T) {
 			mp, err := message.NewReadWriter(c.parsed)
 			require.NoError(t, err)
-			msg, err := mp.Read(&message.MessageRaw{
+
+			rawMsg := &message.MessageRaw{
 				ID:      c.parsed.GetID(),
 				Payload: c.raw,
-			}, c.isV2)
+			}
+
+			msg, err := mp.Read(rawMsg, c.isV2)
 			require.NoError(t, err)
 			require.Equal(t, c.parsed, msg)
+
+			require.Equal(t, c.raw, rawMsg.Payload)
 		})
 	}
 }

@@ -425,19 +425,20 @@ func (rw *ReadWriter) CRCExtra() byte {
 
 // Read converts a *MessageRaw into a Message.
 func (rw *ReadWriter) Read(m *MessageRaw, isV2 bool) (Message, error) {
+	payload := m.Payload
 	rmsg := reflect.New(rw.elemType)
 
 	if isV2 {
 		// in V2 buffer length can be > message or < message
 		// in this latter case it must be filled with zeros to support empty-byte de-truncation
 		// and extension fields
-		if len(m.Payload) < int(rw.sizeExtended) {
-			m.Payload = append(m.Payload, bytes.Repeat([]byte{0x00}, int(rw.sizeExtended)-len(m.Payload))...)
+		if len(payload) < int(rw.sizeExtended) {
+			payload = append(payload, bytes.Repeat([]byte{0x00}, int(rw.sizeExtended)-len(payload))...)
 		}
 	} else {
 		// in V1 buffer must fit message perfectly
-		if len(m.Payload) != int(rw.sizeNormal) {
-			return nil, fmt.Errorf("wrong size: expected %d, got %d", rw.sizeNormal, len(m.Payload))
+		if len(payload) != int(rw.sizeNormal) {
+			return nil, fmt.Errorf("wrong size: expected %d, got %d", rw.sizeNormal, len(payload))
 		}
 	}
 
@@ -454,13 +455,13 @@ func (rw *ReadWriter) Read(m *MessageRaw, isV2 bool) (Message, error) {
 		case reflect.Array:
 			length := target.Len()
 			for i := 0; i < length; i++ {
-				n := readValue(target.Index(i), m.Payload, f)
-				m.Payload = m.Payload[n:]
+				n := readValue(target.Index(i), payload, f)
+				payload = payload[n:]
 			}
 
 		default:
-			n := readValue(target, m.Payload, f)
-			m.Payload = m.Payload[n:]
+			n := readValue(target, payload, f)
+			payload = payload[n:]
 		}
 	}
 

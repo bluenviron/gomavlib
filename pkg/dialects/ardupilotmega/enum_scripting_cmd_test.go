@@ -4,11 +4,26 @@ package ardupilotmega
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_SCRIPTING_CMD(t *testing.T) {
-	var e SCRIPTING_CMD
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e SCRIPTING_CMD
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := SCRIPTING_CMD_REPL_START.MarshalText()
+		require.NoError(t, err)
+
+		var dec SCRIPTING_CMD
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, SCRIPTING_CMD_REPL_START, dec)
+	})
 }

@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_SAFETY_SWITCH_STATE(t *testing.T) {
-	var e SAFETY_SWITCH_STATE
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e SAFETY_SWITCH_STATE
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := SAFETY_SWITCH_STATE_SAFE.MarshalText()
+		require.NoError(t, err)
+
+		var dec SAFETY_SWITCH_STATE
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, SAFETY_SWITCH_STATE_SAFE, dec)
+	})
 }

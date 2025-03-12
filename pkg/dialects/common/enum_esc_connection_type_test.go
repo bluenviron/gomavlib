@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_ESC_CONNECTION_TYPE(t *testing.T) {
-	var e ESC_CONNECTION_TYPE
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e ESC_CONNECTION_TYPE
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := ESC_CONNECTION_TYPE_PPM.MarshalText()
+		require.NoError(t, err)
+
+		var dec ESC_CONNECTION_TYPE
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, ESC_CONNECTION_TYPE_PPM, dec)
+	})
 }

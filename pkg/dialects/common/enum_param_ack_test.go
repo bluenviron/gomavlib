@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_PARAM_ACK(t *testing.T) {
-	var e PARAM_ACK
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e PARAM_ACK
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := PARAM_ACK_ACCEPTED.MarshalText()
+		require.NoError(t, err)
+
+		var dec PARAM_ACK
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, PARAM_ACK_ACCEPTED, dec)
+	})
 }

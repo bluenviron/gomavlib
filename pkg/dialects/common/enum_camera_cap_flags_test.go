@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_CAMERA_CAP_FLAGS(t *testing.T) {
-	var e CAMERA_CAP_FLAGS
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e CAMERA_CAP_FLAGS
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := CAMERA_CAP_FLAGS_CAPTURE_VIDEO.MarshalText()
+		require.NoError(t, err)
+
+		var dec CAMERA_CAP_FLAGS
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, CAMERA_CAP_FLAGS_CAPTURE_VIDEO, dec)
+	})
 }

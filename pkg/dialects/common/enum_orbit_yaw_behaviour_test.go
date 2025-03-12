@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_ORBIT_YAW_BEHAVIOUR(t *testing.T) {
-	var e ORBIT_YAW_BEHAVIOUR
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e ORBIT_YAW_BEHAVIOUR
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TO_CIRCLE_CENTER.MarshalText()
+		require.NoError(t, err)
+
+		var dec ORBIT_YAW_BEHAVIOUR
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, ORBIT_YAW_BEHAVIOUR_HOLD_FRONT_TO_CIRCLE_CENTER, dec)
+	})
 }

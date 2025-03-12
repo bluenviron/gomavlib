@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_RC_SUB_TYPE(t *testing.T) {
-	var e RC_SUB_TYPE
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e RC_SUB_TYPE
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := RC_SUB_TYPE_SPEKTRUM_DSM2.MarshalText()
+		require.NoError(t, err)
+
+		var dec RC_SUB_TYPE
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, RC_SUB_TYPE_SPEKTRUM_DSM2, dec)
+	})
 }

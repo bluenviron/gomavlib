@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_ATTITUDE_TARGET_TYPEMASK(t *testing.T) {
-	var e ATTITUDE_TARGET_TYPEMASK
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e ATTITUDE_TARGET_TYPEMASK
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE.MarshalText()
+		require.NoError(t, err)
+
+		var dec ATTITUDE_TARGET_TYPEMASK
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE, dec)
+	})
 }

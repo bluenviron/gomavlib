@@ -4,11 +4,26 @@ package ardupilotmega
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_CAMERA_STATUS_TYPES(t *testing.T) {
-	var e CAMERA_STATUS_TYPES
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e CAMERA_STATUS_TYPES
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := CAMERA_STATUS_TYPE_HEARTBEAT.MarshalText()
+		require.NoError(t, err)
+
+		var dec CAMERA_STATUS_TYPES
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, CAMERA_STATUS_TYPE_HEARTBEAT, dec)
+	})
 }

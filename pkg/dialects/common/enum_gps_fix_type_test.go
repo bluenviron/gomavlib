@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_GPS_FIX_TYPE(t *testing.T) {
-	var e GPS_FIX_TYPE
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e GPS_FIX_TYPE
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := GPS_FIX_TYPE_NO_GPS.MarshalText()
+		require.NoError(t, err)
+
+		var dec GPS_FIX_TYPE
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, GPS_FIX_TYPE_NO_GPS, dec)
+	})
 }

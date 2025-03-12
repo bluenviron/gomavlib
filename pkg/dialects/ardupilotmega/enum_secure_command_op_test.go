@@ -4,11 +4,26 @@ package ardupilotmega
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_SECURE_COMMAND_OP(t *testing.T) {
-	var e SECURE_COMMAND_OP
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e SECURE_COMMAND_OP
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := SECURE_COMMAND_GET_SESSION_KEY.MarshalText()
+		require.NoError(t, err)
+
+		var dec SECURE_COMMAND_OP
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, SECURE_COMMAND_GET_SESSION_KEY, dec)
+	})
 }

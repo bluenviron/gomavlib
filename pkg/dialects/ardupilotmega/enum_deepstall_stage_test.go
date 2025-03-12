@@ -4,11 +4,26 @@ package ardupilotmega
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_DEEPSTALL_STAGE(t *testing.T) {
-	var e DEEPSTALL_STAGE
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e DEEPSTALL_STAGE
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := DEEPSTALL_STAGE_FLY_TO_LANDING.MarshalText()
+		require.NoError(t, err)
+
+		var dec DEEPSTALL_STAGE
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, DEEPSTALL_STAGE_FLY_TO_LANDING, dec)
+	})
 }

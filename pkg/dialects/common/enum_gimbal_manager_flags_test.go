@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_GIMBAL_MANAGER_FLAGS(t *testing.T) {
-	var e GIMBAL_MANAGER_FLAGS
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e GIMBAL_MANAGER_FLAGS
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := GIMBAL_MANAGER_FLAGS_RETRACT.MarshalText()
+		require.NoError(t, err)
+
+		var dec GIMBAL_MANAGER_FLAGS
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, GIMBAL_MANAGER_FLAGS_RETRACT, dec)
+	})
 }

@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_HIGHRES_IMU_UPDATED_FLAGS(t *testing.T) {
-	var e HIGHRES_IMU_UPDATED_FLAGS
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e HIGHRES_IMU_UPDATED_FLAGS
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := HIGHRES_IMU_UPDATED_XACC.MarshalText()
+		require.NoError(t, err)
+
+		var dec HIGHRES_IMU_UPDATED_FLAGS
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, HIGHRES_IMU_UPDATED_XACC, dec)
+	})
 }

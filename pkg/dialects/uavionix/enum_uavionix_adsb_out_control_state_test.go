@@ -4,11 +4,26 @@ package uavionix
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_UAVIONIX_ADSB_OUT_CONTROL_STATE(t *testing.T) {
-	var e UAVIONIX_ADSB_OUT_CONTROL_STATE
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e UAVIONIX_ADSB_OUT_CONTROL_STATE
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := UAVIONIX_ADSB_OUT_CONTROL_STATE_EXTERNAL_BARO_CROSSCHECKED.MarshalText()
+		require.NoError(t, err)
+
+		var dec UAVIONIX_ADSB_OUT_CONTROL_STATE
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, UAVIONIX_ADSB_OUT_CONTROL_STATE_EXTERNAL_BARO_CROSSCHECKED, dec)
+	})
 }

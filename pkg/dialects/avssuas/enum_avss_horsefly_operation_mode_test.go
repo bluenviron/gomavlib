@@ -4,11 +4,26 @@ package avssuas
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_AVSS_HORSEFLY_OPERATION_MODE(t *testing.T) {
-	var e AVSS_HORSEFLY_OPERATION_MODE
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e AVSS_HORSEFLY_OPERATION_MODE
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := MODE_HORSEFLY_MANUAL_CTRL.MarshalText()
+		require.NoError(t, err)
+
+		var dec AVSS_HORSEFLY_OPERATION_MODE
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, MODE_HORSEFLY_MANUAL_CTRL, dec)
+	})
 }

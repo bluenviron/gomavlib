@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_COMP_METADATA_TYPE(t *testing.T) {
-	var e COMP_METADATA_TYPE
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e COMP_METADATA_TYPE
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := COMP_METADATA_TYPE_GENERAL.MarshalText()
+		require.NoError(t, err)
+
+		var dec COMP_METADATA_TYPE
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, COMP_METADATA_TYPE_GENERAL, dec)
+	})
 }

@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_FENCE_ACTION(t *testing.T) {
-	var e FENCE_ACTION
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e FENCE_ACTION
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := FENCE_ACTION_NONE.MarshalText()
+		require.NoError(t, err)
+
+		var dec FENCE_ACTION
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, FENCE_ACTION_NONE, dec)
+	})
 }

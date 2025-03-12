@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"text/template"
 )
@@ -93,13 +94,27 @@ package {{ .PkgName }}
 
 import (
 	"testing"
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_{{ .Name }}(t *testing.T) {
-	var e {{ .Name }}
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e {{ .Name }}
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := {{ .FirstEntry }}.MarshalText()
+		require.NoError(t, err)
+
+		var dec {{ .Name }}
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, {{ .FirstEntry }}, dec)
+	})
 }
 `))
 
@@ -178,6 +193,14 @@ func processDialect(commit string, name string) error {
 			continue
 		}
 
+		rx := regexp.MustCompile("const \\(\\n" +
+			"(\\t// .+?\\n)*" +
+			"\\t(.*?) (.*?) = (.*?)\\n")
+		matches := rx.FindStringSubmatch(str)
+		if matches == nil {
+			return fmt.Errorf("first entry of " + f.Name() + " not found")
+		}
+
 		enumName := f.Name()
 		enumName = enumName[len("enum_"):]
 		enumName = enumName[:len(enumName)-len(".go")]
@@ -187,8 +210,9 @@ func processDialect(commit string, name string) error {
 			"./"+pkgName+"/"+strings.ReplaceAll(f.Name(), ".go", "_test.go"),
 			tplEnumTest,
 			map[string]interface{}{
-				"PkgName": pkgName,
-				"Name":    enumName,
+				"PkgName":    pkgName,
+				"Name":       enumName,
+				"FirstEntry": matches[2],
 			})
 		if err != nil {
 			return err

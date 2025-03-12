@@ -4,11 +4,26 @@ package common
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_NAV_VTOL_LAND_OPTIONS(t *testing.T) {
-	var e NAV_VTOL_LAND_OPTIONS
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e NAV_VTOL_LAND_OPTIONS
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := NAV_VTOL_LAND_OPTIONS_DEFAULT.MarshalText()
+		require.NoError(t, err)
+
+		var dec NAV_VTOL_LAND_OPTIONS
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, NAV_VTOL_LAND_OPTIONS_DEFAULT, dec)
+	})
 }

@@ -4,11 +4,26 @@ package uavionix
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX(t *testing.T) {
-	var e UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_0.MarshalText()
+		require.NoError(t, err)
+
+		var dec UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_0, dec)
+	})
 }

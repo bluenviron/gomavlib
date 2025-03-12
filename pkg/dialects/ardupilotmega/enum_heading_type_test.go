@@ -4,11 +4,26 @@ package ardupilotmega
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnum_HEADING_TYPE(t *testing.T) {
-	var e HEADING_TYPE
-	e.UnmarshalText([]byte{})
-	e.MarshalText()
-	e.String()
+	t.Run("zero", func(t *testing.T) {
+		var e HEADING_TYPE
+		e.UnmarshalText([]byte{})
+		e.MarshalText()
+		e.String()
+	})
+
+	t.Run("first entry", func(t *testing.T) {
+		enc, err := HEADING_TYPE_COURSE_OVER_GROUND.MarshalText()
+		require.NoError(t, err)
+
+		var dec HEADING_TYPE
+		err = dec.UnmarshalText(enc)
+		require.NoError(t, err)
+
+		require.Equal(t, HEADING_TYPE_COURSE_OVER_GROUND, dec)
+	})
 }

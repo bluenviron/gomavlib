@@ -212,7 +212,7 @@ const (
 	MAV_CMD_DO_SET_STANDARD_MODE MAV_CMD = common.MAV_CMD_DO_SET_STANDARD_MODE
 	// start running a mission
 	MAV_CMD_MISSION_START MAV_CMD = common.MAV_CMD_MISSION_START
-	// Actuator testing command. This is similar to MAV_CMD_DO_MOTOR_TEST but operates on the level of output functions, i.e. it is possible to test Motor1 independent from which output it is configured on. Autopilots typically refuse this command while armed.
+	// Actuator testing command. This is similar to MAV_CMD_DO_MOTOR_TEST but operates on the level of output functions, i.e. it is possible to test Motor1 independent from which output it is configured on. Autopilots must NACK this command with MAV_RESULT_TEMPORARILY_REJECTED while armed.
 	MAV_CMD_ACTUATOR_TEST MAV_CMD = common.MAV_CMD_ACTUATOR_TEST
 	// Actuator configuration command.
 	MAV_CMD_CONFIGURE_ACTUATOR MAV_CMD = common.MAV_CMD_CONFIGURE_ACTUATOR

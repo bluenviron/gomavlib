@@ -34,7 +34,12 @@ func (conf EndpointTCPClient) getAddress() string {
 }
 
 func (conf EndpointTCPClient) init(node *Node) (Endpoint, error) {
-	return initEndpointClient(node, conf)
+	e := &endpointClient{
+		node: node,
+		conf: conf,
+	}
+	err := e.initialize()
+	return e, err
 }
 
 // EndpointUDPClient sets up a endpoint that works with a UDP client.
@@ -52,81 +57,85 @@ func (conf EndpointUDPClient) getAddress() string {
 }
 
 func (conf EndpointUDPClient) init(node *Node) (Endpoint, error) {
-	return initEndpointClient(node, conf)
+	e := &endpointClient{
+		node: node,
+		conf: conf,
+	}
+	err := e.initialize()
+	return e, err
 }
 
 type endpointClient struct {
-	conf        endpointClientConf
+	node *Node
+	conf endpointClientConf
+
 	reconnector *reconnector.Reconnector
 }
 
-func initEndpointClient(node *Node, conf endpointClientConf) (Endpoint, error) {
-	_, _, err := net.SplitHostPort(conf.getAddress())
+func (e *endpointClient) initialize() error {
+	_, _, err := net.SplitHostPort(e.conf.getAddress())
 	if err != nil {
-		return nil, fmt.Errorf("invalid address")
+		return fmt.Errorf("invalid address")
 	}
 
-	t := &endpointClient{
-		conf: conf,
-		reconnector: reconnector.New(
-			func(ctx context.Context) (io.ReadWriteCloser, error) {
-				network := func() string {
-					if conf.isUDP() {
-						return "udp4"
-					}
-					return "tcp4"
-				}()
-
-				// in UDP, the only possible error is a DNS failure
-				// in TCP, the handshake must be completed
-				timedContext, timedContextClose := context.WithTimeout(ctx, node.ReadTimeout)
-				nconn, err := (&net.Dialer{}).DialContext(timedContext, network, conf.getAddress())
-				timedContextClose()
-
-				if err != nil {
-					return nil, err
+	e.reconnector = reconnector.New(
+		func(ctx context.Context) (io.ReadWriteCloser, error) {
+			network := func() string {
+				if e.conf.isUDP() {
+					return "udp4"
 				}
+				return "tcp4"
+			}()
 
-				return timednetconn.New(
-					node.IdleTimeout,
-					node.WriteTimeout,
-					nconn,
-				), nil
-			},
-		),
-	}
+			// in UDP, the only possible error is a DNS failure
+			// in TCP, the handshake must be completed
+			timedContext, timedContextClose := context.WithTimeout(ctx, e.node.ReadTimeout)
+			nconn, err := (&net.Dialer{}).DialContext(timedContext, network, e.conf.getAddress())
+			timedContextClose()
 
-	return t, nil
+			if err != nil {
+				return nil, err
+			}
+
+			return timednetconn.New(
+				e.node.IdleTimeout,
+				e.node.WriteTimeout,
+				nconn,
+			), nil
+		},
+	)
+
+	return nil
 }
 
-func (t *endpointClient) isEndpoint() {}
+func (e *endpointClient) isEndpoint() {}
 
-func (t *endpointClient) Conf() EndpointConf {
-	return t.conf
+func (e *endpointClient) Conf() EndpointConf {
+	return e.conf
 }
 
-func (t *endpointClient) close() {
-	t.reconnector.Close()
+func (e *endpointClient) close() {
+	e.reconnector.Close()
 }
 
-func (t *endpointClient) oneChannelAtAtime() bool {
+func (e *endpointClient) oneChannelAtAtime() bool {
 	return true
 }
 
-func (t *endpointClient) provide() (string, io.ReadWriteCloser, error) {
-	conn, ok := t.reconnector.Reconnect()
+func (e *endpointClient) provide() (string, io.ReadWriteCloser, error) {
+	conn, ok := e.reconnector.Reconnect()
 	if !ok {
 		return "", nil, errTerminated
 	}
 
-	return t.label(), conn, nil
+	return e.label(), conn, nil
 }
 
-func (t *endpointClient) label() string {
+func (e *endpointClient) label() string {
 	return fmt.Sprintf("%s:%s", func() string {
-		if t.conf.isUDP() {
+		if e.conf.isUDP() {
 			return "udp"
 		}
 		return "tcp"
-	}(), t.conf.getAddress())
+	}(), e.conf.getAddress())
 }

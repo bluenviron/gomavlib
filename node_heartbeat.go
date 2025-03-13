@@ -13,7 +13,8 @@ const (
 )
 
 type nodeHeartbeat struct {
-	n            *Node
+	node *Node
+
 	msgHeartbeat message.Message
 
 	// in
@@ -23,46 +24,42 @@ type nodeHeartbeat struct {
 	done chan struct{}
 }
 
-func newNodeHeartbeat(n *Node) *nodeHeartbeat {
+func (h *nodeHeartbeat) initialize() error {
 	// module is disabled
-	if n.HeartbeatDisable {
-		return nil
+	if h.node.HeartbeatDisable {
+		return errSkip
 	}
 
 	// dialect must be enabled
-	if n.Dialect == nil {
-		return nil
+	if h.node.Dialect == nil {
+		return errSkip
 	}
 
 	// heartbeat message must exist in dialect and correspond to standard
-	msgHeartbeat := func() message.Message {
-		for _, m := range n.Dialect.Messages {
+	h.msgHeartbeat = func() message.Message {
+		for _, m := range h.node.Dialect.Messages {
 			if m.GetID() == heartbeatID {
 				return m
 			}
 		}
 		return nil
 	}()
-	if msgHeartbeat == nil {
-		return nil
+	if h.msgHeartbeat == nil {
+		return errSkip
 	}
 
 	mde := &message.ReadWriter{
-		Message: msgHeartbeat,
+		Message: h.msgHeartbeat,
 	}
 	err := mde.Initialize()
 	if err != nil || mde.CRCExtra() != heartbeatCRC {
-		return nil
+		return errSkip
 	}
 
-	h := &nodeHeartbeat{
-		n:            n,
-		msgHeartbeat: msgHeartbeat,
-		terminate:    make(chan struct{}),
-		done:         make(chan struct{}),
-	}
+	h.terminate = make(chan struct{})
+	h.done = make(chan struct{})
 
-	return h
+	return nil
 }
 
 func (h *nodeHeartbeat) close() {
@@ -73,20 +70,20 @@ func (h *nodeHeartbeat) close() {
 func (h *nodeHeartbeat) run() {
 	defer close(h.done)
 
-	ticker := time.NewTicker(h.n.HeartbeatPeriod)
+	ticker := time.NewTicker(h.node.HeartbeatPeriod)
 	defer ticker.Stop()
 
 	for {
 		select {
 		case <-ticker.C:
 			m := reflect.New(reflect.TypeOf(h.msgHeartbeat).Elem())
-			m.Elem().FieldByName("Type").SetUint(uint64(h.n.HeartbeatSystemType))
-			m.Elem().FieldByName("Autopilot").SetUint(uint64(h.n.HeartbeatAutopilotType))
+			m.Elem().FieldByName("Type").SetUint(uint64(h.node.HeartbeatSystemType))
+			m.Elem().FieldByName("Autopilot").SetUint(uint64(h.node.HeartbeatAutopilotType))
 			m.Elem().FieldByName("BaseMode").SetUint(0)
 			m.Elem().FieldByName("CustomMode").SetUint(0)
 			m.Elem().FieldByName("SystemStatus").SetUint(4) // MAV_STATE_ACTIVE
-			m.Elem().FieldByName("MavlinkVersion").SetUint(uint64(h.n.Dialect.Version))
-			h.n.WriteMessageAll(m.Interface().(message.Message)) //nolint:errcheck
+			m.Elem().FieldByName("MavlinkVersion").SetUint(uint64(h.node.Dialect.Version))
+			h.node.WriteMessageAll(m.Interface().(message.Message)) //nolint:errcheck
 
 		case <-h.terminate:
 			return

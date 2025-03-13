@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"net"
-	"time"
 
 	"github.com/pion/transport/v2/udp"
 
@@ -34,6 +33,15 @@ func (conf EndpointTCPServer) getAddress() string {
 	return conf.Address
 }
 
+func (conf EndpointTCPServer) init(node *Node) (Endpoint, error) {
+	e := &endpointServer{
+		node: node,
+		conf: conf,
+	}
+	err := e.initialize()
+	return e, err
+}
+
 // EndpointUDPServer sets up a endpoint that works with an UDP server.
 // This is the most appropriate way for transferring frames from a UAV to a GCS
 // if they are connected to the same network.
@@ -50,92 +58,87 @@ func (conf EndpointUDPServer) getAddress() string {
 	return conf.Address
 }
 
+func (conf EndpointUDPServer) init(node *Node) (Endpoint, error) {
+	e := &endpointServer{
+		node: node,
+		conf: conf,
+	}
+	err := e.initialize()
+	return e, err
+}
+
 type endpointServer struct {
-	conf         endpointServerConf
-	listener     net.Listener
-	writeTimeout time.Duration
-	idleTimeout  time.Duration
+	node *Node
+	conf endpointServerConf
+
+	listener net.Listener
 
 	// in
 	terminate chan struct{}
 }
 
-func (conf EndpointTCPServer) init(node *Node) (Endpoint, error) {
-	return initEndpointServer(node, conf)
-}
-
-func (conf EndpointUDPServer) init(node *Node) (Endpoint, error) {
-	return initEndpointServer(node, conf)
-}
-
-func initEndpointServer(node *Node, conf endpointServerConf) (Endpoint, error) {
-	_, _, err := net.SplitHostPort(conf.getAddress())
+func (e *endpointServer) initialize() error {
+	_, _, err := net.SplitHostPort(e.conf.getAddress())
 	if err != nil {
-		return nil, fmt.Errorf("invalid address")
+		return fmt.Errorf("invalid address")
 	}
 
-	var ln net.Listener
-	if conf.isUDP() {
+	if e.conf.isUDP() {
 		var addr *net.UDPAddr
-		addr, err = net.ResolveUDPAddr("udp4", conf.getAddress())
+		addr, err = net.ResolveUDPAddr("udp4", e.conf.getAddress())
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		ln, err = udp.Listen("udp4", addr)
+		e.listener, err = udp.Listen("udp4", addr)
 		if err != nil {
-			return nil, err
+			return err
 		}
 	} else {
-		ln, err = net.Listen("tcp4", conf.getAddress())
+		e.listener, err = net.Listen("tcp4", e.conf.getAddress())
 		if err != nil {
-			return nil, err
+			return err
 		}
 	}
 
-	t := &endpointServer{
-		conf:         conf,
-		writeTimeout: node.WriteTimeout,
-		idleTimeout:  node.IdleTimeout,
-		listener:     ln,
-		terminate:    make(chan struct{}),
-	}
-	return t, nil
+	e.terminate = make(chan struct{})
+
+	return nil
 }
 
-func (t *endpointServer) isEndpoint() {}
+func (e *endpointServer) isEndpoint() {}
 
-func (t *endpointServer) Conf() EndpointConf {
-	return t.conf
+func (e *endpointServer) Conf() EndpointConf {
+	return e.conf
 }
 
-func (t *endpointServer) close() {
-	close(t.terminate)
-	t.listener.Close()
+func (e *endpointServer) close() {
+	close(e.terminate)
+	e.listener.Close()
 }
 
-func (t *endpointServer) oneChannelAtAtime() bool {
+func (e *endpointServer) oneChannelAtAtime() bool {
 	return false
 }
 
-func (t *endpointServer) provide() (string, io.ReadWriteCloser, error) {
-	nconn, err := t.listener.Accept()
+func (e *endpointServer) provide() (string, io.ReadWriteCloser, error) {
+	nconn, err := e.listener.Accept()
 	// wait termination, do not report errors
 	if err != nil {
-		<-t.terminate
+		<-e.terminate
 		return "", nil, errTerminated
 	}
 
 	label := fmt.Sprintf("%s:%s", func() string {
-		if t.conf.isUDP() {
+		if e.conf.isUDP() {
 			return "udp"
 		}
 		return "tcp"
 	}(), nconn.RemoteAddr())
 
 	conn := timednetconn.New(
-		t.idleTimeout,
-		t.writeTimeout,
+		e.node.IdleTimeout,
+		e.node.WriteTimeout,
 		nconn)
 
 	return label, conn, nil

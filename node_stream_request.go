@@ -21,7 +21,8 @@ type streamNode struct {
 }
 
 type nodeStreamRequest struct {
-	n                    *Node
+	node *Node
+
 	msgHeartbeat         message.Message
 	msgRequestDataStream message.Message
 	lastRequestsMutex    sync.Mutex
@@ -34,69 +35,64 @@ type nodeStreamRequest struct {
 	done chan struct{}
 }
 
-func newNodeStreamRequest(n *Node) *nodeStreamRequest {
+func (sr *nodeStreamRequest) initialize() error {
 	// module is disabled
-	if !n.StreamRequestEnable {
-		return nil
+	if !sr.node.StreamRequestEnable {
+		return errSkip
 	}
 
 	// dialect must be enabled
-	if n.Dialect == nil {
-		return nil
+	if sr.node.Dialect == nil {
+		return errSkip
 	}
 
 	// heartbeat message must exist in dialect and correspond to standard
-	msgHeartbeat := func() message.Message {
-		for _, m := range n.Dialect.Messages {
+	sr.msgHeartbeat = func() message.Message {
+		for _, m := range sr.node.Dialect.Messages {
 			if m.GetID() == heartbeatID {
 				return m
 			}
 		}
 		return nil
 	}()
-	if msgHeartbeat == nil {
-		return nil
+	if sr.msgHeartbeat == nil {
+		return errSkip
 	}
 
 	mde := &message.ReadWriter{
-		Message: msgHeartbeat,
+		Message: sr.msgHeartbeat,
 	}
 	err := mde.Initialize()
 	if err != nil || mde.CRCExtra() != heartbeatCRC {
-		return nil
+		return errSkip
 	}
 
 	// request data stream message must exist in dialect and correspond to standard
-	msgRequestDataStream := func() message.Message {
-		for _, m := range n.Dialect.Messages {
+	sr.msgRequestDataStream = func() message.Message {
+		for _, m := range sr.node.Dialect.Messages {
 			if m.GetID() == requestDataStreamID {
 				return m
 			}
 		}
 		return nil
 	}()
-	if msgRequestDataStream == nil {
-		return nil
+	if sr.msgRequestDataStream == nil {
+		return errSkip
 	}
 
 	mde = &message.ReadWriter{
-		Message: msgRequestDataStream,
+		Message: sr.msgRequestDataStream,
 	}
 	err = mde.Initialize()
 	if err != nil || mde.CRCExtra() != requestDataStreamCRC {
-		return nil
+		return errSkip
 	}
 
-	sr := &nodeStreamRequest{
-		n:                    n,
-		msgHeartbeat:         msgHeartbeat,
-		msgRequestDataStream: msgRequestDataStream,
-		lastRequests:         make(map[streamNode]time.Time),
-		terminate:            make(chan struct{}),
-		done:                 make(chan struct{}),
-	}
+	sr.lastRequests = make(map[streamNode]time.Time)
+	sr.terminate = make(chan struct{})
+	sr.done = make(chan struct{})
 
-	return sr
+	return nil
 }
 
 func (sr *nodeStreamRequest) close() {
@@ -179,12 +175,12 @@ func (sr *nodeStreamRequest) onEventFrame(evt *EventFrame) {
 			m.Elem().FieldByName("TargetSystem").SetUint(uint64(evt.SystemID()))
 			m.Elem().FieldByName("TargetComponent").SetUint(uint64(evt.ComponentID()))
 			m.Elem().FieldByName("ReqStreamId").SetUint(uint64(stream))
-			m.Elem().FieldByName("ReqMessageRate").SetUint(uint64(sr.n.StreamRequestFrequency))
+			m.Elem().FieldByName("ReqMessageRate").SetUint(uint64(sr.node.StreamRequestFrequency))
 			m.Elem().FieldByName("StartStop").SetUint(uint64(1))
-			sr.n.WriteMessageTo(evt.Channel, m.Interface().(message.Message)) //nolint:errcheck
+			sr.node.WriteMessageTo(evt.Channel, m.Interface().(message.Message)) //nolint:errcheck
 		}
 
-		sr.n.pushEvent(&EventStreamRequested{
+		sr.node.pushEvent(&EventStreamRequested{
 			Channel:     evt.Channel,
 			SystemID:    evt.SystemID(),
 			ComponentID: evt.ComponentID(),

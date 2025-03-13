@@ -6,18 +6,15 @@ import (
 )
 
 type channelProvider struct {
-	n   *Node
-	eca endpointChannelProvider
+	node *Node
+	eca  endpointChannelProvider
 
 	terminate chan struct{}
 }
 
-func newChannelProvider(n *Node, eca endpointChannelProvider) (*channelProvider, error) {
-	return &channelProvider{
-		n:         n,
-		eca:       eca,
-		terminate: make(chan struct{}),
-	}, nil
+func (cp *channelProvider) initialize() error {
+	cp.terminate = make(chan struct{})
+	return nil
 }
 
 func (cp *channelProvider) close() {
@@ -26,12 +23,12 @@ func (cp *channelProvider) close() {
 }
 
 func (cp *channelProvider) start() {
-	cp.n.wg.Add(1)
+	cp.node.wg.Add(1)
 	go cp.run()
 }
 
 func (cp *channelProvider) run() {
-	defer cp.n.wg.Done()
+	defer cp.node.wg.Done()
 
 	for {
 		label, rwc, err := cp.eca.provide()
@@ -43,7 +40,7 @@ func (cp *channelProvider) run() {
 		}
 
 		ch := &Channel{
-			node:     cp.n,
+			node:     cp.node,
 			endpoint: cp.eca,
 			label:    label,
 			rwc:      rwc,
@@ -53,7 +50,7 @@ func (cp *channelProvider) run() {
 			panic(fmt.Errorf("newChannel unexpected error: %w", err))
 		}
 
-		cp.n.newChannel(ch)
+		cp.node.newChannel(ch)
 
 		if cp.eca.oneChannelAtAtime() {
 			// wait the channel to emit EventChannelClose

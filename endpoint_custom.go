@@ -11,25 +11,33 @@ type EndpointCustom struct {
 	ReadWriteCloser io.ReadWriteCloser
 }
 
+func (conf EndpointCustom) init(node *Node) (Endpoint, error) {
+	e := &endpointCustom{
+		node: node,
+		conf: conf,
+	}
+	err := e.initialize()
+	return e, err
+}
+
 type endpointCustom struct {
+	node *Node
 	conf EndpointCustom
+
 	io.ReadWriteCloser
 }
 
-func (conf EndpointCustom) init(_ *Node) (Endpoint, error) {
-	t := &endpointCustom{
-		conf:            conf,
-		ReadWriteCloser: conf.ReadWriteCloser,
-	}
-	return t, nil
+func (e *endpointCustom) initialize() error {
+	e.ReadWriteCloser = e.conf.ReadWriteCloser
+	return nil
 }
 
-func (t *endpointCustom) isEndpoint() {}
+func (e *endpointCustom) isEndpoint() {}
 
-func (t *endpointCustom) Conf() EndpointConf {
-	return t.conf
+func (e *endpointCustom) Conf() EndpointConf {
+	return e.conf
 }
 
-func (t *endpointCustom) label() string {
+func (e *endpointCustom) label() string {
 	return "custom"
 }

@@ -35,47 +35,55 @@ type EndpointSerial struct {
 	Baud int
 }
 
+func (conf EndpointSerial) init(node *Node) (Endpoint, error) {
+	e := &endpointSerial{
+		node: node,
+		conf: conf,
+	}
+	err := e.initialize()
+	return e, err
+}
+
 type endpointSerial struct {
-	conf        EndpointConf
+	node *Node
+	conf EndpointSerial
+
 	reconnector *reconnector.Reconnector
 }
 
-func (conf EndpointSerial) init(_ *Node) (Endpoint, error) {
+func (e *endpointSerial) initialize() error {
 	// check device existence
-	test, err := serialOpenFunc(conf.Device, conf.Baud)
+	test, err := serialOpenFunc(e.conf.Device, e.conf.Baud)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	test.Close()
 
-	t := &endpointSerial{
-		conf: conf,
-		reconnector: reconnector.New(
-			func(_ context.Context) (io.ReadWriteCloser, error) {
-				return serialOpenFunc(conf.Device, conf.Baud)
-			},
-		),
-	}
+	e.reconnector = reconnector.New(
+		func(_ context.Context) (io.ReadWriteCloser, error) {
+			return serialOpenFunc(e.conf.Device, e.conf.Baud)
+		},
+	)
 
-	return t, nil
+	return nil
 }
 
-func (t *endpointSerial) isEndpoint() {}
+func (e *endpointSerial) isEndpoint() {}
 
-func (t *endpointSerial) Conf() EndpointConf {
-	return t.conf
+func (e *endpointSerial) Conf() EndpointConf {
+	return e.conf
 }
 
-func (t *endpointSerial) close() {
-	t.reconnector.Close()
+func (e *endpointSerial) close() {
+	e.reconnector.Close()
 }
 
-func (t *endpointSerial) oneChannelAtAtime() bool {
+func (e *endpointSerial) oneChannelAtAtime() bool {
 	return true
 }
 
-func (t *endpointSerial) provide() (string, io.ReadWriteCloser, error) {
-	conn, ok := t.reconnector.Reconnect()
+func (e *endpointSerial) provide() (string, io.ReadWriteCloser, error) {
+	conn, ok := e.reconnector.Reconnect()
 	if !ok {
 		return "", nil, errTerminated
 	}

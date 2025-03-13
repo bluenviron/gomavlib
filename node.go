@@ -13,6 +13,7 @@ Examples are available at https://github.com/bluenviron/gomavlib/tree/main/examp
 package gomavlib
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -22,7 +23,10 @@ import (
 	"github.com/bluenviron/gomavlib/v3/pkg/message"
 )
 
-var errTerminated = fmt.Errorf("terminated")
+var (
+	errTerminated = fmt.Errorf("terminated")
+	errSkip       = fmt.Errorf("skip")
+)
 
 type writeToReq struct {
 	ch   *Channel
@@ -275,7 +279,11 @@ func (n *Node) Initialize() error {
 
 		switch ttp := tp.(type) {
 		case endpointChannelProvider:
-			ca, err := newChannelProvider(n, ttp)
+			ca := &channelProvider{
+				node: n,
+				eca:  ttp,
+			}
+			err := ca.initialize()
 			if err != nil {
 				closeExisting()
 				return err
@@ -303,8 +311,29 @@ func (n *Node) Initialize() error {
 		}
 	}
 
-	n.nodeHeartbeat = newNodeHeartbeat(n)
-	n.nodeStreamRequest = newNodeStreamRequest(n)
+	n.nodeHeartbeat = &nodeHeartbeat{
+		node: n,
+	}
+	err := n.nodeHeartbeat.initialize()
+	if err != nil {
+		if errors.Is(err, errSkip) {
+			n.nodeHeartbeat = nil
+		} else {
+			return err
+		}
+	}
+
+	n.nodeStreamRequest = &nodeStreamRequest{
+		node: n,
+	}
+	err = n.nodeStreamRequest.initialize()
+	if err != nil {
+		if errors.Is(err, errSkip) {
+			n.nodeStreamRequest = nil
+		} else {
+			return err
+		}
+	}
 
 	if n.nodeHeartbeat != nil {
 		go n.nodeHeartbeat.run()

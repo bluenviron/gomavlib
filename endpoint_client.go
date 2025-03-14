@@ -73,6 +73,7 @@ type endpointClient struct {
 
 	ctx       context.Context
 	ctxCancel func()
+	first     bool
 }
 
 func (e *endpointClient) initialize() error {
@@ -126,6 +127,16 @@ func (e *endpointClient) connect() (io.ReadWriteCloser, error) {
 }
 
 func (e *endpointClient) provide() (string, io.ReadWriteCloser, error) {
+	if !e.first {
+		e.first = true
+	} else {
+		select {
+		case <-time.After(reconnectPeriod):
+		case <-e.ctx.Done():
+			return "", nil, errTerminated
+		}
+	}
+
 	for {
 		conn, err := e.connect()
 		if err != nil {

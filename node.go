@@ -261,54 +261,30 @@ func (n *Node) Initialize() error {
 	n.done = make(chan struct{})
 
 	closeExisting := func() {
-		for ch := range n.channels {
-			ch.close()
-		}
 		for ca := range n.channelProviders {
 			ca.close()
 		}
 	}
 
 	// endpoints
-	for _, tconf := range n.Endpoints {
-		tp, err := tconf.init(n)
+	for _, conf := range n.Endpoints {
+		endpoint, err := conf.init(n)
 		if err != nil {
 			closeExisting()
 			return err
 		}
 
-		switch ttp := tp.(type) {
-		case endpointChannelProvider:
-			ca := &channelProvider{
-				node: n,
-				eca:  ttp,
-			}
-			err := ca.initialize()
-			if err != nil {
-				closeExisting()
-				return err
-			}
-
-			n.channelProviders[ca] = struct{}{}
-
-		case endpointChannelSingle:
-			ch := &Channel{
-				node:     n,
-				endpoint: ttp,
-				label:    ttp.label(),
-				rwc:      ttp,
-			}
-			err := ch.initialize()
-			if err != nil {
-				closeExisting()
-				return err
-			}
-
-			n.channels[ch] = struct{}{}
-
-		default:
-			panic(fmt.Errorf("endpoint %T does not implement any interface", tp))
+		ca := &channelProvider{
+			node:     n,
+			endpoint: endpoint,
 		}
+		err = ca.initialize()
+		if err != nil {
+			closeExisting()
+			return err
+		}
+
+		n.channelProviders[ca] = struct{}{}
 	}
 
 	n.nodeHeartbeat = &nodeHeartbeat{
@@ -341,10 +317,6 @@ func (n *Node) Initialize() error {
 
 	if n.nodeStreamRequest != nil {
 		go n.nodeStreamRequest.run()
-	}
-
-	for ch := range n.channels {
-		ch.start()
 	}
 
 	for ca := range n.channelProviders {

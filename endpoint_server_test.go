@@ -12,8 +12,6 @@ import (
 	"github.com/bluenviron/gomavlib/v3/pkg/streamwriter"
 )
 
-var _ endpointChannelProvider = (*endpointServer)(nil)
-
 func TestEndpointServer(t *testing.T) {
 	for _, ca := range []string{"tcp", "udp"} {
 		t.Run(ca, func(t *testing.T) {

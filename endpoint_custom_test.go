@@ -12,8 +12,6 @@ import (
 	"github.com/bluenviron/gomavlib/v3/pkg/streamwriter"
 )
 
-var _ endpointChannelSingle = (*endpointCustom)(nil)
-
 type dummyReadWriter struct {
 	chOut     chan []byte
 	chIn      chan []byte

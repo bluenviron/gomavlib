@@ -3,10 +3,9 @@ package gomavlib
 import (
 	"context"
 	"io"
+	"time"
 
 	"go.bug.st/serial"
-
-	"github.com/bluenviron/gomavlib/v3/pkg/reconnector"
 )
 
 var serialOpenFunc = func(device string, baud int) (io.ReadWriteCloser, error) {
@@ -48,7 +47,8 @@ type endpointSerial struct {
 	node *Node
 	conf EndpointSerial
 
-	reconnector *reconnector.Reconnector
+	ctx       context.Context
+	ctxCancel func()
 }
 
 func (e *endpointSerial) initialize() error {
@@ -59,11 +59,7 @@ func (e *endpointSerial) initialize() error {
 	}
 	test.Close()
 
-	e.reconnector = reconnector.New(
-		func(_ context.Context) (io.ReadWriteCloser, error) {
-			return serialOpenFunc(e.conf.Device, e.conf.Baud)
-		},
-	)
+	e.ctx, e.ctxCancel = context.WithCancel(context.Background())
 
 	return nil
 }
@@ -75,18 +71,29 @@ func (e *endpointSerial) Conf() EndpointConf {
 }
 
 func (e *endpointSerial) close() {
-	e.reconnector.Close()
+	e.ctxCancel()
 }
 
 func (e *endpointSerial) oneChannelAtAtime() bool {
 	return true
 }
 
-func (e *endpointSerial) provide() (string, io.ReadWriteCloser, error) {
-	conn, ok := e.reconnector.Reconnect()
-	if !ok {
-		return "", nil, errTerminated
-	}
+func (e *endpointSerial) connect() (io.ReadWriteCloser, error) {
+	return serialOpenFunc(e.conf.Device, e.conf.Baud)
+}
 
-	return "serial", conn, nil
+func (e *endpointSerial) provide() (string, io.ReadWriteCloser, error) {
+	for {
+		conn, err := e.connect()
+		if err != nil {
+			select {
+			case <-time.After(reconnectPeriod):
+				continue
+			case <-e.ctx.Done():
+				return "", nil, errTerminated
+			}
+		}
+
+		return "serial", conn, nil
+	}
 }

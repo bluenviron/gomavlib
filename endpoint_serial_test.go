@@ -11,8 +11,6 @@ import (
 	"github.com/bluenviron/gomavlib/v3/pkg/streamwriter"
 )
 
-var _ endpointChannelProvider = (*endpointSerial)(nil)
-
 func TestEndpointSerial(t *testing.T) {
 	done := make(chan struct{})
 	n := 0

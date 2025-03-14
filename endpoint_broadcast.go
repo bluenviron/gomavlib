@@ -2,6 +2,7 @@ package gomavlib
 
 import (
 	"fmt"
+	"io"
 	"net"
 	"reflect"
 	"strconv"
@@ -44,6 +45,31 @@ func ipByBroadcastIP(target net.IP) net.IP {
 	return nil
 }
 
+type wrappedPacketConn struct {
+	pc            net.PacketConn
+	writeTimeout  time.Duration
+	broadcastAddr net.Addr
+}
+
+func (r *wrappedPacketConn) Read(p []byte) (int, error) {
+	// read WITHOUT deadline. Long periods without packets are normal since
+	// we're not directly connected to someone.
+	n, _, err := r.pc.ReadFrom(p)
+	return n, err
+}
+
+func (r *wrappedPacketConn) Write(p []byte) (int, error) {
+	err := r.pc.SetWriteDeadline(time.Now().Add(r.writeTimeout))
+	if err != nil {
+		return 0, err
+	}
+	return r.pc.WriteTo(p, r.broadcastAddr)
+}
+
+func (r *wrappedPacketConn) Close() error {
+	return nil
+}
+
 // EndpointUDPBroadcast sets up a endpoint that works with UDP broadcast packets.
 type EndpointUDPBroadcast struct {
 	// broadcast address to which sending outgoing frames, example: 192.168.5.255:5600
@@ -69,8 +95,6 @@ type endpointUDPBroadcast struct {
 
 	pc            net.PacketConn
 	broadcastAddr net.Addr
-
-	terminate chan struct{}
 }
 
 func (e *endpointUDPBroadcast) initialize() error {
@@ -108,7 +132,6 @@ func (e *endpointUDPBroadcast) initialize() error {
 	iport, _ := strconv.Atoi(port)
 
 	e.broadcastAddr = &net.UDPAddr{IP: broadcastIP, Port: iport}
-	e.terminate = make(chan struct{})
 
 	return nil
 }
@@ -123,29 +146,18 @@ func (e *endpointUDPBroadcast) label() string {
 	return fmt.Sprintf("udp:%s", e.broadcastAddr)
 }
 
-func (e *endpointUDPBroadcast) Close() error {
-	close(e.terminate)
+func (e *endpointUDPBroadcast) close() {
 	e.pc.Close()
-	return nil
 }
 
-func (e *endpointUDPBroadcast) Read(buf []byte) (int, error) {
-	// read WITHOUT deadline. Long periods without packets are normal since
-	// we're not directly connected to someone.
-	n, _, err := e.pc.ReadFrom(buf)
-	// wait termination, do not report errors
-	if err != nil {
-		<-e.terminate
-		return 0, errTerminated
-	}
-
-	return n, nil
+func (e *endpointUDPBroadcast) oneChannelAtAtime() bool {
+	return true
 }
 
-func (e *endpointUDPBroadcast) Write(buf []byte) (int, error) {
-	err := e.pc.SetWriteDeadline(time.Now().Add(e.node.WriteTimeout))
-	if err != nil {
-		return 0, err
-	}
-	return e.pc.WriteTo(buf, e.broadcastAddr)
+func (e *endpointUDPBroadcast) provide() (string, io.ReadWriteCloser, error) {
+	return e.label(), &wrappedPacketConn{
+		pc:            e.pc,
+		writeTimeout:  e.node.WriteTimeout,
+		broadcastAddr: e.broadcastAddr,
+	}, nil
 }

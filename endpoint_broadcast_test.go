@@ -11,8 +11,6 @@ import (
 	"github.com/bluenviron/gomavlib/v3/pkg/streamwriter"
 )
 
-var _ endpointChannelSingle = (*endpointUDPBroadcast)(nil)
-
 type readWriterFromFuncs struct {
 	readFunc  func([]byte) (int, error)
 	writeFunc func([]byte) (int, error)

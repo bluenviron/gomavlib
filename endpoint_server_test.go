@@ -178,6 +178,7 @@ func TestEndpointServerIdleTimeout(t *testing.T) {
 			evt = <-node.Events()
 			require.Equal(t, &EventChannelClose{
 				Channel: ch,
+				Error:   evt.(*EventChannelClose).Error,
 			}, evt)
 		})
 	}

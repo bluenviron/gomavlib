@@ -102,15 +102,21 @@ func (ch *Channel) run() {
 	defer close(ch.done)
 	defer ch.node.wg.Done()
 
-	readerDone := make(chan struct{})
-	go ch.runReader(readerDone)
+	readerDone := make(chan error)
+	go func() {
+		readerDone <- ch.runReader()
+	}()
 
 	writerTerminate := make(chan struct{})
-	writerDone := make(chan struct{})
-	go ch.runWriter(writerTerminate, writerDone)
+	writerDone := make(chan error)
+	go func() {
+		writerDone <- ch.runWriter(writerTerminate)
+	}()
+
+	var err error
 
 	select {
-	case <-readerDone:
+	case err = <-readerDone:
 		ch.rwc.Close()
 
 		close(writerTerminate)
@@ -126,13 +132,14 @@ func (ch *Channel) run() {
 
 	ch.ctxCancel()
 
-	ch.node.pushEvent(&EventChannelClose{ch})
+	ch.node.pushEvent(&EventChannelClose{
+		Channel: ch,
+		Error:   err,
+	})
 	ch.node.closeChannel(ch)
 }
 
-func (ch *Channel) runReader(readerDone chan struct{}) {
-	defer close(readerDone)
-
+func (ch *Channel) runReader() error {
 	// wait client here, in order to allow the writer goroutine to start
 	// and allow clients to write messages before starting listening to events
 	ch.node.pushEvent(&EventChannelOpen{ch})
@@ -145,7 +152,7 @@ func (ch *Channel) runReader(readerDone chan struct{}) {
 				ch.node.pushEvent(&EventParseError{err, ch})
 				continue
 			}
-			return
+			return err
 		}
 
 		evt := &EventFrame{fr, ch}
@@ -158,22 +165,26 @@ func (ch *Channel) runReader(readerDone chan struct{}) {
 	}
 }
 
-func (ch *Channel) runWriter(writerTerminate chan struct{}, writerDone chan struct{}) {
-	defer close(writerDone)
-
+func (ch *Channel) runWriter(writerTerminate chan struct{}) error {
 	for {
 		select {
 		case what := <-ch.chWrite:
 			switch wh := what.(type) {
 			case message.Message:
-				ch.streamWriter.Write(wh) //nolint:errcheck
+				err := ch.streamWriter.Write(wh)
+				if err != nil {
+					return err
+				}
 
 			case frame.Frame:
-				ch.frameWriter.Write(wh) //nolint:errcheck
+				err := ch.frameWriter.Write(wh)
+				if err != nil {
+					return err
+				}
 			}
 
 		case <-writerTerminate:
-			return
+			return nil
 		}
 	}
 }

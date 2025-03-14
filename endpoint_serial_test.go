@@ -285,6 +285,7 @@ func TestEndpointSerialReconnect(t *testing.T) {
 	evt = <-node.Events()
 	require.Equal(t, &EventChannelClose{
 		Channel: evt.(*EventChannelClose).Channel,
+		Error:   evt.(*EventChannelClose).Error,
 	}, evt)
 
 	evt = <-node.Events()

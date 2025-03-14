@@ -20,6 +20,7 @@ func (*EventChannelOpen) isEventOut() {}
 // EventChannelClose is the event fired when a channel gets closed.
 type EventChannelClose struct {
 	Channel *Channel
+	Error   error
 }
 
 func (*EventChannelClose) isEventOut() {}

@@ -49,6 +49,7 @@ type endpointSerial struct {
 
 	ctx       context.Context
 	ctxCancel func()
+	first     bool
 }
 
 func (e *endpointSerial) initialize() error {
@@ -83,6 +84,16 @@ func (e *endpointSerial) connect() (io.ReadWriteCloser, error) {
 }
 
 func (e *endpointSerial) provide() (string, io.ReadWriteCloser, error) {
+	if !e.first {
+		e.first = true
+	} else {
+		select {
+		case <-time.After(reconnectPeriod):
+		case <-e.ctx.Done():
+			return "", nil, errTerminated
+		}
+	}
+
 	for {
 		conn, err := e.connect()
 		if err != nil {

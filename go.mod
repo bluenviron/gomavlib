@@ -1,6 +1,7 @@
 module github.com/bluenviron/gomavlib/v3
 
 go 1.21.0
+toolchain go1.23.7
 
 require (
 	bou.ke/monkey v1.0.2
@@ -16,7 +17,7 @@ require (
 	github.com/pion/logging v0.2.2 // indirect
 	github.com/pion/transport/v3 v3.0.6 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	golang.org/x/net v0.33.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/net v0.36.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

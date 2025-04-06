@@ -1,17 +1,26 @@
 package gomavlib
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net"
 
-	"github.com/pion/transport/v2/udp"
-
 	"github.com/bluenviron/gomavlib/v3/pkg/timednetconn"
+	"github.com/pion/transport/v2/udp"
+)
+
+// Enum for specifying what protocol the endpoint uses
+type EndpointServerType int
+
+const (
+	EndpointServerType_TCP EndpointServerType = iota
+	EndpointServerType_UDP
+	EndpointServerType_CUSTOM
 )
 
 type endpointServerConf interface {
-	isUDP() bool
+	serverType() EndpointServerType
 	getAddress() string
 	init(*Node) (Endpoint, error)
 }
@@ -25,8 +34,8 @@ type EndpointTCPServer struct {
 	Address string
 }
 
-func (EndpointTCPServer) isUDP() bool {
-	return false
+func (EndpointTCPServer) serverType() EndpointServerType {
+	return EndpointServerType_TCP
 }
 
 func (conf EndpointTCPServer) getAddress() string {
@@ -50,8 +59,8 @@ type EndpointUDPServer struct {
 	Address string
 }
 
-func (EndpointUDPServer) isUDP() bool {
-	return true
+func (EndpointUDPServer) serverType() EndpointServerType {
+	return EndpointServerType_UDP
 }
 
 func (conf EndpointUDPServer) getAddress() string {
@@ -59,6 +68,31 @@ func (conf EndpointUDPServer) getAddress() string {
 }
 
 func (conf EndpointUDPServer) init(node *Node) (Endpoint, error) {
+	e := &endpointServer{
+		node: node,
+		conf: conf,
+	}
+	err := e.initialize()
+	return e, err
+}
+
+// EndpointCustomServer sets up a endpoint that works with a provided net.listner.
+// This allows you to use custom protocols that conform to the net.listner.
+// A use case could be to add encrypted protocol implementations like DTLS or TCP with TLS.
+type EndpointCustomServer struct {
+	Listener net.Listener
+	Label    string
+}
+
+func (EndpointCustomServer) serverType() EndpointServerType {
+	return EndpointServerType_CUSTOM
+}
+
+func (conf EndpointCustomServer) getAddress() string {
+	return conf.Listener.Addr().String()
+}
+
+func (conf EndpointCustomServer) init(node *Node) (Endpoint, error) {
 	e := &endpointServer{
 		node: node,
 		conf: conf,
@@ -83,7 +117,8 @@ func (e *endpointServer) initialize() error {
 		return fmt.Errorf("invalid address")
 	}
 
-	if e.conf.isUDP() {
+	switch e.conf.serverType() {
+	case EndpointServerType_UDP:
 		var addr *net.UDPAddr
 		addr, err = net.ResolveUDPAddr("udp4", e.conf.getAddress())
 		if err != nil {
@@ -92,13 +127,21 @@ func (e *endpointServer) initialize() error {
 
 		e.listener, err = udp.Listen("udp4", addr)
 		if err != nil {
-			return err
+			return fmt.Errorf("error starting UDP listener: %v", err)
 		}
-	} else {
+	case EndpointServerType_TCP:
 		e.listener, err = net.Listen("tcp4", e.conf.getAddress())
 		if err != nil {
 			return err
 		}
+	case EndpointServerType_CUSTOM:
+		if customConf, ok := e.conf.(EndpointCustomServer); ok {
+			e.listener = customConf.Listener
+		} else {
+			return errors.New("type assertion error to endpointcustomserver")
+		}
+	default:
+		return errors.New("unsupported server-type")
 	}
 
 	e.terminate = make(chan struct{})
@@ -130,10 +173,21 @@ func (e *endpointServer) provide() (string, io.ReadWriteCloser, error) {
 	}
 
 	label := fmt.Sprintf("%s:%s", func() string {
-		if e.conf.isUDP() {
+		switch e.conf.serverType() {
+		case EndpointServerType_TCP:
+			return "tcp"
+		case EndpointServerType_UDP:
 			return "udp"
+		case EndpointServerType_CUSTOM:
+			if customConf, ok := e.conf.(EndpointCustomServer); ok {
+				if customConf.Label != "" {
+					return customConf.Label
+				}
+			}
+			return "cust"
+		default:
+			return "unk"
 		}
-		return "tcp"
 	}(), nconn.RemoteAddr())
 
 	conn := timednetconn.New(

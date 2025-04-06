@@ -68,11 +68,15 @@ func (conf EndpointUDPClient) init(node *Node) (Endpoint, error) {
 	return e, err
 }
 
+// EndpointCustomClient sets up a endpoint that works with a custom implementation
+// by providing a Connect func that returns a net.Conn.
 type EndpointCustomClient struct {
 	// domain name or IP of the server to connect to, example: 1.2.3.4:5600
 	Address string
 	// custom connect function that connects to the provided address
 	Connect func(address string) (net.Conn, error)
+	// the label of the protocol
+	Label string
 }
 
 func (EndpointCustomClient) clientType() EndpointServerType {
@@ -197,9 +201,20 @@ func (e *endpointClient) provide() (string, io.ReadWriteCloser, error) {
 
 func (e *endpointClient) label() string {
 	return fmt.Sprintf("%s:%s", func() string {
-		if e.conf.clientType() == EndpointServerType_UDP {
+		switch e.conf.clientType() {
+		case EndpointServerType_TCP:
+			return "tcp"
+		case EndpointServerType_UDP:
 			return "udp"
+		case EndpointServerType_CUSTOM:
+			if customConf, ok := e.conf.(EndpointCustomClient); ok {
+				if customConf.Label != "" {
+					return customConf.Label
+				}
+			}
+			return "cust"
+		default:
+			return "unk"
 		}
-		return "tcp"
 	}(), e.conf.getAddress())
 }

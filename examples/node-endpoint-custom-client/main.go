@@ -22,15 +22,9 @@ func main() {
 				Connect: func(address string) (net.Conn, error) {
 					tlsConfig := &tls.Config{
 						InsecureSkipVerify: true, // skip checking the certificate against a CA (just set to true for simplicity of this example)
-						MinVersion:         tls.VersionTLS12,
 					}
 
-					conn, err := tls.Dial("tcp", address, tlsConfig)
-					if err != nil {
-						return nil, err
-					}
-
-					return conn, nil
+					return tls.Dial("tcp", address, tlsConfig)
 				},
 				Label: "TCP/TLS",
 			},

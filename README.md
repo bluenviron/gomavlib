@@ -65,6 +65,8 @@ Features:
 * [node-endpoint-tcp-server](examples/node-endpoint-tcp-server/main.go)
 * [node-endpoint-tcp-client](examples/node-endpoint-tcp-client/main.go)
 * [node-endpoint-custom](examples/node-endpoint-custom/main.go)
+* [node-endpoint-custom-client](examples/node-endpoint-custom-client/main.go)
+* [node-endpoint-custom-server](examples/node-endpoint-custom-server/main.go)
 * [node-message-read](examples/node-message-read/main.go)
 * [node-message-write](examples/node-message-write/main.go)
 * [node-signature](examples/node-signature/main.go)

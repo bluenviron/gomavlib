@@ -76,12 +76,17 @@ func (conf EndpointUDPServer) init(node *Node) (Endpoint, error) {
 	return e, err
 }
 
-// EndpointCustomServer sets up a endpoint that works with a provided net.listner.
+// EndpointCustomServer sets up a endpoint that works with custom implementations
+// by providing a custom Listen func that returns a net.Listener.
 // This allows you to use custom protocols that conform to the net.listner.
 // A use case could be to add encrypted protocol implementations like DTLS or TCP with TLS.
 type EndpointCustomServer struct {
-	Listener net.Listener
-	Label    string
+	// listen address, example: 0.0.0.0:5600
+	Address string
+	// function to invoke when server should start listening
+	Listen func(address string) (net.Listener, error)
+	// the label of the protocol
+	Label string
 }
 
 func (EndpointCustomServer) serverType() EndpointServerType {
@@ -89,7 +94,7 @@ func (EndpointCustomServer) serverType() EndpointServerType {
 }
 
 func (conf EndpointCustomServer) getAddress() string {
-	return conf.Listener.Addr().String()
+	return conf.Address
 }
 
 func (conf EndpointCustomServer) init(node *Node) (Endpoint, error) {
@@ -127,7 +132,7 @@ func (e *endpointServer) initialize() error {
 
 		e.listener, err = udp.Listen("udp4", addr)
 		if err != nil {
-			return fmt.Errorf("error starting UDP listener: %v", err)
+			return err
 		}
 	case EndpointServerType_TCP:
 		e.listener, err = net.Listen("tcp4", e.conf.getAddress())
@@ -136,7 +141,10 @@ func (e *endpointServer) initialize() error {
 		}
 	case EndpointServerType_CUSTOM:
 		if customConf, ok := e.conf.(EndpointCustomServer); ok {
-			e.listener = customConf.Listener
+			e.listener, err = customConf.Listen(e.conf.getAddress())
+			if err != nil {
+				return err
+			}
 		} else {
 			return errors.New("type assertion error to endpointcustomserver")
 		}

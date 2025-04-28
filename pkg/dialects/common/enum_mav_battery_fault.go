@@ -62,10 +62,9 @@ func (e MAV_BATTERY_FAULT) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 9; i++ {
-		mask := MAV_BATTERY_FAULT(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_MAV_BATTERY_FAULT[mask])
+	for val, label := range labels_MAV_BATTERY_FAULT {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

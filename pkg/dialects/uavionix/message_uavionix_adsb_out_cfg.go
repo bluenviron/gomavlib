@@ -18,7 +18,7 @@ type MessageUavionixAdsbOutCfg struct {
 	Gpsoffsetlon UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON `mavenum:"uint8" mavname:"gpsOffsetLon"`
 	// Aircraft stall speed in cm/s
 	Stallspeed uint16 `mavname:"stallSpeed"`
-	// ADS-B transponder receiver and transmit enable flags
+	// ADS-B transponder reciever and transmit enable flags
 	Rfselect UAVIONIX_ADSB_OUT_RF_SELECT `mavenum:"uint8" mavname:"rfSelect"`
 }
 

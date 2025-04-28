@@ -46,10 +46,9 @@ func (e SERIAL_CONTROL_FLAG) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 5; i++ {
-		mask := SERIAL_CONTROL_FLAG(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_SERIAL_CONTROL_FLAG[mask])
+	for val, label := range labels_SERIAL_CONTROL_FLAG {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

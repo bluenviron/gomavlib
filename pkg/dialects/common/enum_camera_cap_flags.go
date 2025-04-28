@@ -78,10 +78,9 @@ func (e CAMERA_CAP_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 13; i++ {
-		mask := CAMERA_CAP_FLAGS(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_CAMERA_CAP_FLAGS[mask])
+	for val, label := range labels_CAMERA_CAP_FLAGS {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

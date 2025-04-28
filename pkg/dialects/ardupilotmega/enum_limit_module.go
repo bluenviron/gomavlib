@@ -37,10 +37,9 @@ func (e LIMIT_MODULE) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 3; i++ {
-		mask := LIMIT_MODULE(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_LIMIT_MODULE[mask])
+	for val, label := range labels_LIMIT_MODULE {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

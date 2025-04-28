@@ -74,10 +74,9 @@ func (e EKF_STATUS_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 12; i++ {
-		mask := EKF_STATUS_FLAGS(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_EKF_STATUS_FLAGS[mask])
+	for val, label := range labels_EKF_STATUS_FLAGS {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

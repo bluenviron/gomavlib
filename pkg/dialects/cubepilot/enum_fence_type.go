@@ -6,11 +6,12 @@ import (
 	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
+// Fence types to enable or disable when using MAV_CMD_DO_FENCE_ENABLE.
+// Note that at least one of these flags must be set in MAV_CMD_DO_FENCE_ENABLE.param2.
+// If none are set, the flight stack will ignore the field and enable/disable its default set of fences (usually all of them).
 type FENCE_TYPE = common.FENCE_TYPE
 
 const (
-	// All fence types
-	FENCE_TYPE_ALL FENCE_TYPE = common.FENCE_TYPE_ALL
 	// Maximum altitude fence
 	FENCE_TYPE_ALT_MAX FENCE_TYPE = common.FENCE_TYPE_ALT_MAX
 	// Circle fence

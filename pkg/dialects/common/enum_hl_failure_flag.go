@@ -82,10 +82,9 @@ func (e HL_FAILURE_FLAG) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 14; i++ {
-		mask := HL_FAILURE_FLAG(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_HL_FAILURE_FLAG[mask])
+	for val, label := range labels_HL_FAILURE_FLAG {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

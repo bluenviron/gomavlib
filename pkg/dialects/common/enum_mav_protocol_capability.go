@@ -110,10 +110,9 @@ func (e MAV_PROTOCOL_CAPABILITY) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 20; i++ {
-		mask := MAV_PROTOCOL_CAPABILITY(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_MAV_PROTOCOL_CAPABILITY[mask])
+	for val, label := range labels_MAV_PROTOCOL_CAPABILITY {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

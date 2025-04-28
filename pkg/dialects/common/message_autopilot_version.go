@@ -6,7 +6,8 @@ package common
 type MessageAutopilotVersion struct {
 	// Bitmap of capabilities
 	Capabilities MAV_PROTOCOL_CAPABILITY `mavenum:"uint64"`
-	// Firmware version number
+	// Firmware version number.
+	// The field must be encoded as 4 bytes, where each byte (shown from MSB to LSB) is part of a semantic version: (major) (minor) (patch) (FIRMWARE_VERSION_TYPE).
 	FlightSwVersion uint32
 	// Middleware version number
 	MiddlewareSwVersion uint32

@@ -57,10 +57,9 @@ func (e GPS_INPUT_IGNORE_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 8; i++ {
-		mask := GPS_INPUT_IGNORE_FLAGS(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_GPS_INPUT_IGNORE_FLAGS[mask])
+	for val, label := range labels_GPS_INPUT_IGNORE_FLAGS {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

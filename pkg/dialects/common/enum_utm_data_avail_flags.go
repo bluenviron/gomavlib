@@ -58,10 +58,9 @@ func (e UTM_DATA_AVAIL_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 8; i++ {
-		mask := UTM_DATA_AVAIL_FLAGS(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_UTM_DATA_AVAIL_FLAGS[mask])
+	for val, label := range labels_UTM_DATA_AVAIL_FLAGS {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

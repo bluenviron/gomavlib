@@ -42,10 +42,9 @@ func (e STORAGE_USAGE_FLAG) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 4; i++ {
-		mask := STORAGE_USAGE_FLAG(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_STORAGE_USAGE_FLAG[mask])
+	for val, label := range labels_STORAGE_USAGE_FLAG {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

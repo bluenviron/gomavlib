@@ -82,10 +82,9 @@ func (e HIL_SENSOR_UPDATED_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 14; i++ {
-		mask := HIL_SENSOR_UPDATED_FLAGS(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_HIL_SENSOR_UPDATED_FLAGS[mask])
+	for val, label := range labels_HIL_SENSOR_UPDATED_FLAGS {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

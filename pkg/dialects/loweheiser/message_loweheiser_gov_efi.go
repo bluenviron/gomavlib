@@ -28,7 +28,7 @@ type MessageLoweheiserGovEfi struct {
 	EfiBatt float32
 	// Motor RPM.
 	EfiRpm float32
-	// Injector pulse-width in milliseconds.
+	// Injector pulse-width in miliseconds.
 	EfiPw float32
 	// Fuel flow rate in litres/hour.
 	EfiFuelFlow float32

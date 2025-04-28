@@ -17,13 +17,13 @@ func TestEnum_FENCE_TYPE(t *testing.T) {
 	})
 
 	t.Run("first entry", func(t *testing.T) {
-		enc, err := FENCE_TYPE_ALL.MarshalText()
+		enc, err := FENCE_TYPE_ALT_MAX.MarshalText()
 		require.NoError(t, err)
 
 		var dec FENCE_TYPE
 		err = dec.UnmarshalText(enc)
 		require.NoError(t, err)
 
-		require.Equal(t, FENCE_TYPE_ALL, dec)
+		require.Equal(t, FENCE_TYPE_ALT_MAX, dec)
 	})
 }

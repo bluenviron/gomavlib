@@ -427,6 +427,12 @@ const (
 	// This allows moving of a system and all its components to a new system id, or moving a particular component to a new system/component id.
 	// Recipients must reject command addressed to broadcast system ID.
 	MAV_CMD_DO_SET_SYS_CMP_ID MAV_CMD = 610
+	// Sets the GNSS coordinates of the vehicle local origin (0,0,0) position.
+	// Vehicle should emit GPS_GLOBAL_ORIGIN irrespective of whether the origin is changed.
+	// This enables transform between the local coordinate frame and the global (GNSS) coordinate frame, which may be necessary when (for example) indoor and outdoor settings are connected and the MAV should move from in- to outdoor.
+	// This command supersedes SET_GPS_GLOBAL_ORIGIN.
+	// Should be sent in a COMMAND_INT (Expected frame is MAV_FRAME_GLOBAL, and this should be assumed when sent in COMMAND_LONG).
+	MAV_CMD_DO_SET_GLOBAL_ORIGIN MAV_CMD = 611
 	// Used to manually set/unset emergency status for remote id.
 	// This is for compliance with MOC ASTM docs, specifically F358 section 7.7: "Emergency Status Indicator".
 	// The requirement can also be satisfied by automatic setting of the emergency status by flight stack, and that approach is preferred.
@@ -631,6 +637,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_DO_UPGRADE:                         "MAV_CMD_DO_UPGRADE",
 	MAV_CMD_SET_AT_S_PARAM:                     "MAV_CMD_SET_AT_S_PARAM",
 	MAV_CMD_DO_SET_SYS_CMP_ID:                  "MAV_CMD_DO_SET_SYS_CMP_ID",
+	MAV_CMD_DO_SET_GLOBAL_ORIGIN:               "MAV_CMD_DO_SET_GLOBAL_ORIGIN",
 	MAV_CMD_ODID_SET_EMERGENCY:                 "MAV_CMD_ODID_SET_EMERGENCY",
 	MAV_CMD_EXTERNAL_WIND_ESTIMATE:             "MAV_CMD_EXTERNAL_WIND_ESTIMATE",
 	MAV_CMD_REQUEST_OPERATOR_CONTROL:           "MAV_CMD_REQUEST_OPERATOR_CONTROL",
@@ -806,6 +813,7 @@ var values_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_DO_UPGRADE":                         MAV_CMD_DO_UPGRADE,
 	"MAV_CMD_SET_AT_S_PARAM":                     MAV_CMD_SET_AT_S_PARAM,
 	"MAV_CMD_DO_SET_SYS_CMP_ID":                  MAV_CMD_DO_SET_SYS_CMP_ID,
+	"MAV_CMD_DO_SET_GLOBAL_ORIGIN":               MAV_CMD_DO_SET_GLOBAL_ORIGIN,
 	"MAV_CMD_ODID_SET_EMERGENCY":                 MAV_CMD_ODID_SET_EMERGENCY,
 	"MAV_CMD_EXTERNAL_WIND_ESTIMATE":             MAV_CMD_EXTERNAL_WIND_ESTIMATE,
 	"MAV_CMD_REQUEST_OPERATOR_CONTROL":           MAV_CMD_REQUEST_OPERATOR_CONTROL,

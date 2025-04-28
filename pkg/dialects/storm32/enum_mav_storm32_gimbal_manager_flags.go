@@ -74,10 +74,9 @@ func (e MAV_STORM32_GIMBAL_MANAGER_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 12; i++ {
-		mask := MAV_STORM32_GIMBAL_MANAGER_FLAGS(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_MAV_STORM32_GIMBAL_MANAGER_FLAGS[mask])
+	for val, label := range labels_MAV_STORM32_GIMBAL_MANAGER_FLAGS {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

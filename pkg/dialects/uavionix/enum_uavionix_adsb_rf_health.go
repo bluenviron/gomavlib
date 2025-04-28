@@ -38,10 +38,9 @@ func (e UAVIONIX_ADSB_RF_HEALTH) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 4; i++ {
-		mask := UAVIONIX_ADSB_RF_HEALTH(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_UAVIONIX_ADSB_RF_HEALTH[mask])
+	for val, label := range labels_UAVIONIX_ADSB_RF_HEALTH {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

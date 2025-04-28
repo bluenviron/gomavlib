@@ -50,10 +50,9 @@ func (e ATTITUDE_TARGET_TYPEMASK) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 6; i++ {
-		mask := ATTITUDE_TARGET_TYPEMASK(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_ATTITUDE_TARGET_TYPEMASK[mask])
+	for val, label := range labels_ATTITUDE_TARGET_TYPEMASK {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

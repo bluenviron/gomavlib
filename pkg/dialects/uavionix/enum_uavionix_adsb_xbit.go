@@ -5,6 +5,7 @@ package uavionix
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 // State flags for X-Bit and reserved fields.
@@ -24,21 +25,32 @@ var values_UAVIONIX_ADSB_XBIT = map[string]UAVIONIX_ADSB_XBIT{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_XBIT) MarshalText() ([]byte, error) {
-	if name, ok := labels_UAVIONIX_ADSB_XBIT[e]; ok {
-		return []byte(name), nil
+	if e == 0 {
+		return []byte("0"), nil
 	}
-	return []byte(strconv.Itoa(int(e))), nil
+	var names []string
+	for val, label := range labels_UAVIONIX_ADSB_XBIT {
+		if e&val == val {
+			names = append(names, label)
+		}
+	}
+	return []byte(strings.Join(names, " | ")), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_XBIT) UnmarshalText(text []byte) error {
-	if value, ok := values_UAVIONIX_ADSB_XBIT[string(text)]; ok {
-		*e = value
-	} else if value, err := strconv.Atoi(string(text)); err == nil {
-		*e = UAVIONIX_ADSB_XBIT(value)
-	} else {
-		return fmt.Errorf("invalid label '%s'", text)
+	labels := strings.Split(string(text), " | ")
+	var mask UAVIONIX_ADSB_XBIT
+	for _, label := range labels {
+		if value, ok := values_UAVIONIX_ADSB_XBIT[label]; ok {
+			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= UAVIONIX_ADSB_XBIT(value)
+		} else {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
+	*e = mask
 	return nil
 }
 

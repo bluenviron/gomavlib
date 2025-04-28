@@ -118,10 +118,9 @@ func (e MAV_GENERATOR_STATUS_FLAG) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 23; i++ {
-		mask := MAV_GENERATOR_STATUS_FLAG(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_MAV_GENERATOR_STATUS_FLAG[mask])
+	for val, label := range labels_MAV_GENERATOR_STATUS_FLAG {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

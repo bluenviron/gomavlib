@@ -50,10 +50,9 @@ func (e MAV_POWER_STATUS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 6; i++ {
-		mask := MAV_POWER_STATUS(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_MAV_POWER_STATUS[mask])
+	for val, label := range labels_MAV_POWER_STATUS {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

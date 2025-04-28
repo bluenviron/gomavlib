@@ -6,12 +6,11 @@ import (
 	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
-// Enable axes that will be tuned via autotuning. Used in MAV_CMD_DO_AUTOTUNE_ENABLE.
+// Axes that will be autotuned by MAV_CMD_DO_AUTOTUNE_ENABLE.
+// Note that at least one flag must be set in MAV_CMD_DO_AUTOTUNE_ENABLE.param2: if none are set, the flight stack will tune its default set of axes.
 type AUTOTUNE_AXIS = common.AUTOTUNE_AXIS
 
 const (
-	// Flight stack tunes axis according to its default settings.
-	AUTOTUNE_AXIS_DEFAULT AUTOTUNE_AXIS = common.AUTOTUNE_AXIS_DEFAULT
 	// Autotune roll axis.
 	AUTOTUNE_AXIS_ROLL AUTOTUNE_AXIS = common.AUTOTUNE_AXIS_ROLL
 	// Autotune pitch axis.

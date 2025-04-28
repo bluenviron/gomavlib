@@ -34,10 +34,9 @@ func (e RADIO_RC_CHANNELS_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 2; i++ {
-		mask := RADIO_RC_CHANNELS_FLAGS(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_RADIO_RC_CHANNELS_FLAGS[mask])
+	for val, label := range labels_RADIO_RC_CHANNELS_FLAGS {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

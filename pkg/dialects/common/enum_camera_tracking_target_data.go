@@ -38,10 +38,9 @@ func (e CAMERA_TRACKING_TARGET_DATA) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < 3; i++ {
-		mask := CAMERA_TRACKING_TARGET_DATA(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_CAMERA_TRACKING_TARGET_DATA[mask])
+	for val, label := range labels_CAMERA_TRACKING_TARGET_DATA {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

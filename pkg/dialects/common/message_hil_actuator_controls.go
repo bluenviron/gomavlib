@@ -10,8 +10,8 @@ type MessageHilActuatorControls struct {
 	Controls [16]float32
 	// System mode. Includes arming state.
 	Mode MAV_MODE_FLAG `mavenum:"uint8"`
-	// Flags as bitfield, 1: indicate simulation using lockstep.
-	Flags uint64
+	// Flags bitmask.
+	Flags HIL_ACTUATOR_CONTROLS_FLAGS `mavenum:"uint64"`
 }
 
 // GetID implements the message.Message interface.

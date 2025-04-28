@@ -120,10 +120,9 @@ func (e {{ .Enum.Name }}) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for i := 0; i < {{ len .Enum.Values }}; i++ {
-		mask := {{ .Enum.Name }}(1 << i)
-		if e&mask == mask {
-			names = append(names, labels_{{ .Enum.Name }}[mask])
+	for val, label := range labels_{{ .Enum.Name }} {
+		if e&val == val {
+			names = append(names, label)
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil

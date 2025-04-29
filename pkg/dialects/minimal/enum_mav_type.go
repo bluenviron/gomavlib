@@ -103,7 +103,7 @@ const (
 	MAV_TYPE_ILLUMINATOR MAV_TYPE = 44
 )
 
-var labels_MAV_TYPE = map[MAV_TYPE]string{
+var value_to_label_MAV_TYPE = map[MAV_TYPE]string{
 	MAV_TYPE_GENERIC:                   "MAV_TYPE_GENERIC",
 	MAV_TYPE_FIXED_WING:                "MAV_TYPE_FIXED_WING",
 	MAV_TYPE_QUADROTOR:                 "MAV_TYPE_QUADROTOR",
@@ -151,7 +151,7 @@ var labels_MAV_TYPE = map[MAV_TYPE]string{
 	MAV_TYPE_ILLUMINATOR:               "MAV_TYPE_ILLUMINATOR",
 }
 
-var values_MAV_TYPE = map[string]MAV_TYPE{
+var label_to_value_MAV_TYPE = map[string]MAV_TYPE{
 	"MAV_TYPE_GENERIC":                   MAV_TYPE_GENERIC,
 	"MAV_TYPE_FIXED_WING":                MAV_TYPE_FIXED_WING,
 	"MAV_TYPE_QUADROTOR":                 MAV_TYPE_QUADROTOR,
@@ -201,7 +201,7 @@ var values_MAV_TYPE = map[string]MAV_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_TYPE[e]; ok {
+	if name, ok := value_to_label_MAV_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -209,7 +209,7 @@ func (e MAV_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_MAV_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_TYPE(value)

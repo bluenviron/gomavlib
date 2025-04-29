@@ -23,7 +23,7 @@ const (
 	CELLULAR_CONFIG_BLOCKED_PUK_REQUIRED CELLULAR_CONFIG_RESPONSE = 4
 )
 
-var labels_CELLULAR_CONFIG_RESPONSE = map[CELLULAR_CONFIG_RESPONSE]string{
+var value_to_label_CELLULAR_CONFIG_RESPONSE = map[CELLULAR_CONFIG_RESPONSE]string{
 	CELLULAR_CONFIG_RESPONSE_ACCEPTED:    "CELLULAR_CONFIG_RESPONSE_ACCEPTED",
 	CELLULAR_CONFIG_RESPONSE_APN_ERROR:   "CELLULAR_CONFIG_RESPONSE_APN_ERROR",
 	CELLULAR_CONFIG_RESPONSE_PIN_ERROR:   "CELLULAR_CONFIG_RESPONSE_PIN_ERROR",
@@ -31,7 +31,7 @@ var labels_CELLULAR_CONFIG_RESPONSE = map[CELLULAR_CONFIG_RESPONSE]string{
 	CELLULAR_CONFIG_BLOCKED_PUK_REQUIRED: "CELLULAR_CONFIG_BLOCKED_PUK_REQUIRED",
 }
 
-var values_CELLULAR_CONFIG_RESPONSE = map[string]CELLULAR_CONFIG_RESPONSE{
+var label_to_value_CELLULAR_CONFIG_RESPONSE = map[string]CELLULAR_CONFIG_RESPONSE{
 	"CELLULAR_CONFIG_RESPONSE_ACCEPTED":    CELLULAR_CONFIG_RESPONSE_ACCEPTED,
 	"CELLULAR_CONFIG_RESPONSE_APN_ERROR":   CELLULAR_CONFIG_RESPONSE_APN_ERROR,
 	"CELLULAR_CONFIG_RESPONSE_PIN_ERROR":   CELLULAR_CONFIG_RESPONSE_PIN_ERROR,
@@ -41,7 +41,7 @@ var values_CELLULAR_CONFIG_RESPONSE = map[string]CELLULAR_CONFIG_RESPONSE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CELLULAR_CONFIG_RESPONSE) MarshalText() ([]byte, error) {
-	if name, ok := labels_CELLULAR_CONFIG_RESPONSE[e]; ok {
+	if name, ok := value_to_label_CELLULAR_CONFIG_RESPONSE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -49,7 +49,7 @@ func (e CELLULAR_CONFIG_RESPONSE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CELLULAR_CONFIG_RESPONSE) UnmarshalText(text []byte) error {
-	if value, ok := values_CELLULAR_CONFIG_RESPONSE[string(text)]; ok {
+	if value, ok := label_to_value_CELLULAR_CONFIG_RESPONSE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = CELLULAR_CONFIG_RESPONSE(value)

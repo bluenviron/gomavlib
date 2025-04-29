@@ -101,13 +101,21 @@ const (
 {{- end }}
 )
 
-var labels_{{ .Enum.Name }} = map[{{ .Enum.Name }}]string{
+{{- if .Enum.Bitmask }}
+var values_{{ .Enum.Name }} = []{{ .Enum.Name }}{
+{{- range .Enum.Values }}
+	{{ .Name }},
+{{- end }}
+}
+{{- end }}
+
+var value_to_label_{{ .Enum.Name }} = map[{{ .Enum.Name }}]string{
 {{- range .Enum.Values }}
 	{{ .Name }}: "{{ .Name }}",
 {{- end }}
 }
 
-var values_{{ .Enum.Name }} = map[string]{{ .Enum.Name }}{
+var label_to_value_{{ .Enum.Name }} = map[string]{{ .Enum.Name }}{
 {{- range .Enum.Values }}
 	"{{ .Name }}": {{ .Name }},
 {{- end }}
@@ -120,14 +128,14 @@ func (e {{ .Enum.Name }}) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_{{ .Enum.Name }} {
+	for _, val := range values_{{ .Enum.Name }} {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_{{ .Enum.Name }}[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
 {{- else }}
-	if name, ok := labels_{{ .Enum.Name }}[e]; ok {
+	if name, ok := value_to_label_{{ .Enum.Name }}[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -140,7 +148,7 @@ func (e *{{ .Enum.Name }}) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask {{ .Enum.Name }}
 	for _, label := range labels {
-		if value, ok := values_{{ .Enum.Name }}[label]; ok {
+		if value, ok := label_to_value_{{ .Enum.Name }}[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= {{ .Enum.Name }}(value)
@@ -150,7 +158,7 @@ func (e *{{ .Enum.Name }}) UnmarshalText(text []byte) error {
 	}
 	*e = mask
 {{- else }}
-	if value, ok := values_{{ .Enum.Name }}[string(text)]; ok {
+	if value, ok := label_to_value_{{ .Enum.Name }}[string(text)]; ok {
 	   *e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 	   *e = {{ .Enum.Name }}(value)

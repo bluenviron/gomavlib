@@ -20,13 +20,13 @@ const (
 	MISSION_RESET_DEFAULT PREFLIGHT_STORAGE_MISSION_ACTION = 2
 )
 
-var labels_PREFLIGHT_STORAGE_MISSION_ACTION = map[PREFLIGHT_STORAGE_MISSION_ACTION]string{
+var value_to_label_PREFLIGHT_STORAGE_MISSION_ACTION = map[PREFLIGHT_STORAGE_MISSION_ACTION]string{
 	MISSION_READ_PERSISTENT:  "MISSION_READ_PERSISTENT",
 	MISSION_WRITE_PERSISTENT: "MISSION_WRITE_PERSISTENT",
 	MISSION_RESET_DEFAULT:    "MISSION_RESET_DEFAULT",
 }
 
-var values_PREFLIGHT_STORAGE_MISSION_ACTION = map[string]PREFLIGHT_STORAGE_MISSION_ACTION{
+var label_to_value_PREFLIGHT_STORAGE_MISSION_ACTION = map[string]PREFLIGHT_STORAGE_MISSION_ACTION{
 	"MISSION_READ_PERSISTENT":  MISSION_READ_PERSISTENT,
 	"MISSION_WRITE_PERSISTENT": MISSION_WRITE_PERSISTENT,
 	"MISSION_RESET_DEFAULT":    MISSION_RESET_DEFAULT,
@@ -34,7 +34,7 @@ var values_PREFLIGHT_STORAGE_MISSION_ACTION = map[string]PREFLIGHT_STORAGE_MISSI
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e PREFLIGHT_STORAGE_MISSION_ACTION) MarshalText() ([]byte, error) {
-	if name, ok := labels_PREFLIGHT_STORAGE_MISSION_ACTION[e]; ok {
+	if name, ok := value_to_label_PREFLIGHT_STORAGE_MISSION_ACTION[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -42,7 +42,7 @@ func (e PREFLIGHT_STORAGE_MISSION_ACTION) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *PREFLIGHT_STORAGE_MISSION_ACTION) UnmarshalText(text []byte) error {
-	if value, ok := values_PREFLIGHT_STORAGE_MISSION_ACTION[string(text)]; ok {
+	if value, ok := label_to_value_PREFLIGHT_STORAGE_MISSION_ACTION[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = PREFLIGHT_STORAGE_MISSION_ACTION(value)

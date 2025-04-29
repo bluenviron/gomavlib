@@ -42,7 +42,24 @@ const (
 	HL_FAILURE_FLAG_MISSION HL_FAILURE_FLAG = 8192
 )
 
-var labels_HL_FAILURE_FLAG = map[HL_FAILURE_FLAG]string{
+var values_HL_FAILURE_FLAG = []HL_FAILURE_FLAG{
+	HL_FAILURE_FLAG_GPS,
+	HL_FAILURE_FLAG_DIFFERENTIAL_PRESSURE,
+	HL_FAILURE_FLAG_ABSOLUTE_PRESSURE,
+	HL_FAILURE_FLAG_3D_ACCEL,
+	HL_FAILURE_FLAG_3D_GYRO,
+	HL_FAILURE_FLAG_3D_MAG,
+	HL_FAILURE_FLAG_TERRAIN,
+	HL_FAILURE_FLAG_BATTERY,
+	HL_FAILURE_FLAG_RC_RECEIVER,
+	HL_FAILURE_FLAG_OFFBOARD_LINK,
+	HL_FAILURE_FLAG_ENGINE,
+	HL_FAILURE_FLAG_GEOFENCE,
+	HL_FAILURE_FLAG_ESTIMATOR,
+	HL_FAILURE_FLAG_MISSION,
+}
+
+var value_to_label_HL_FAILURE_FLAG = map[HL_FAILURE_FLAG]string{
 	HL_FAILURE_FLAG_GPS:                   "HL_FAILURE_FLAG_GPS",
 	HL_FAILURE_FLAG_DIFFERENTIAL_PRESSURE: "HL_FAILURE_FLAG_DIFFERENTIAL_PRESSURE",
 	HL_FAILURE_FLAG_ABSOLUTE_PRESSURE:     "HL_FAILURE_FLAG_ABSOLUTE_PRESSURE",
@@ -59,7 +76,7 @@ var labels_HL_FAILURE_FLAG = map[HL_FAILURE_FLAG]string{
 	HL_FAILURE_FLAG_MISSION:               "HL_FAILURE_FLAG_MISSION",
 }
 
-var values_HL_FAILURE_FLAG = map[string]HL_FAILURE_FLAG{
+var label_to_value_HL_FAILURE_FLAG = map[string]HL_FAILURE_FLAG{
 	"HL_FAILURE_FLAG_GPS":                   HL_FAILURE_FLAG_GPS,
 	"HL_FAILURE_FLAG_DIFFERENTIAL_PRESSURE": HL_FAILURE_FLAG_DIFFERENTIAL_PRESSURE,
 	"HL_FAILURE_FLAG_ABSOLUTE_PRESSURE":     HL_FAILURE_FLAG_ABSOLUTE_PRESSURE,
@@ -82,9 +99,9 @@ func (e HL_FAILURE_FLAG) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_HL_FAILURE_FLAG {
+	for _, val := range values_HL_FAILURE_FLAG {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_HL_FAILURE_FLAG[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -95,7 +112,7 @@ func (e *HL_FAILURE_FLAG) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask HL_FAILURE_FLAG
 	for _, label := range labels {
-		if value, ok := values_HL_FAILURE_FLAG[label]; ok {
+		if value, ok := label_to_value_HL_FAILURE_FLAG[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= HL_FAILURE_FLAG(value)

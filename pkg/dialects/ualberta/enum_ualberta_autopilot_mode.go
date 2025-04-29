@@ -20,7 +20,7 @@ const (
 	MODE_AUTO_PID_POS  UALBERTA_AUTOPILOT_MODE = 5
 )
 
-var labels_UALBERTA_AUTOPILOT_MODE = map[UALBERTA_AUTOPILOT_MODE]string{
+var value_to_label_UALBERTA_AUTOPILOT_MODE = map[UALBERTA_AUTOPILOT_MODE]string{
 	MODE_MANUAL_DIRECT: "MODE_MANUAL_DIRECT",
 	MODE_MANUAL_SCALED: "MODE_MANUAL_SCALED",
 	MODE_AUTO_PID_ATT:  "MODE_AUTO_PID_ATT",
@@ -28,7 +28,7 @@ var labels_UALBERTA_AUTOPILOT_MODE = map[UALBERTA_AUTOPILOT_MODE]string{
 	MODE_AUTO_PID_POS:  "MODE_AUTO_PID_POS",
 }
 
-var values_UALBERTA_AUTOPILOT_MODE = map[string]UALBERTA_AUTOPILOT_MODE{
+var label_to_value_UALBERTA_AUTOPILOT_MODE = map[string]UALBERTA_AUTOPILOT_MODE{
 	"MODE_MANUAL_DIRECT": MODE_MANUAL_DIRECT,
 	"MODE_MANUAL_SCALED": MODE_MANUAL_SCALED,
 	"MODE_AUTO_PID_ATT":  MODE_AUTO_PID_ATT,
@@ -38,7 +38,7 @@ var values_UALBERTA_AUTOPILOT_MODE = map[string]UALBERTA_AUTOPILOT_MODE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UALBERTA_AUTOPILOT_MODE) MarshalText() ([]byte, error) {
-	if name, ok := labels_UALBERTA_AUTOPILOT_MODE[e]; ok {
+	if name, ok := value_to_label_UALBERTA_AUTOPILOT_MODE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -46,7 +46,7 @@ func (e UALBERTA_AUTOPILOT_MODE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UALBERTA_AUTOPILOT_MODE) UnmarshalText(text []byte) error {
-	if value, ok := values_UALBERTA_AUTOPILOT_MODE[string(text)]; ok {
+	if value, ok := label_to_value_UALBERTA_AUTOPILOT_MODE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = UALBERTA_AUTOPILOT_MODE(value)

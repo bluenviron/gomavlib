@@ -19,13 +19,13 @@ const (
 	NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT NAV_VTOL_LAND_OPTIONS = 2
 )
 
-var labels_NAV_VTOL_LAND_OPTIONS = map[NAV_VTOL_LAND_OPTIONS]string{
+var value_to_label_NAV_VTOL_LAND_OPTIONS = map[NAV_VTOL_LAND_OPTIONS]string{
 	NAV_VTOL_LAND_OPTIONS_DEFAULT:       "NAV_VTOL_LAND_OPTIONS_DEFAULT",
 	NAV_VTOL_LAND_OPTIONS_FW_DESCENT:    "NAV_VTOL_LAND_OPTIONS_FW_DESCENT",
 	NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT: "NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT",
 }
 
-var values_NAV_VTOL_LAND_OPTIONS = map[string]NAV_VTOL_LAND_OPTIONS{
+var label_to_value_NAV_VTOL_LAND_OPTIONS = map[string]NAV_VTOL_LAND_OPTIONS{
 	"NAV_VTOL_LAND_OPTIONS_DEFAULT":       NAV_VTOL_LAND_OPTIONS_DEFAULT,
 	"NAV_VTOL_LAND_OPTIONS_FW_DESCENT":    NAV_VTOL_LAND_OPTIONS_FW_DESCENT,
 	"NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT": NAV_VTOL_LAND_OPTIONS_HOVER_DESCENT,
@@ -33,7 +33,7 @@ var values_NAV_VTOL_LAND_OPTIONS = map[string]NAV_VTOL_LAND_OPTIONS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e NAV_VTOL_LAND_OPTIONS) MarshalText() ([]byte, error) {
-	if name, ok := labels_NAV_VTOL_LAND_OPTIONS[e]; ok {
+	if name, ok := value_to_label_NAV_VTOL_LAND_OPTIONS[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -41,7 +41,7 @@ func (e NAV_VTOL_LAND_OPTIONS) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *NAV_VTOL_LAND_OPTIONS) UnmarshalText(text []byte) error {
-	if value, ok := values_NAV_VTOL_LAND_OPTIONS[string(text)]; ok {
+	if value, ok := label_to_value_NAV_VTOL_LAND_OPTIONS[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = NAV_VTOL_LAND_OPTIONS(value)

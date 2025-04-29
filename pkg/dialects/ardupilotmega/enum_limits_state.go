@@ -24,7 +24,7 @@ const (
 	LIMITS_RECOVERED LIMITS_STATE = 5
 )
 
-var labels_LIMITS_STATE = map[LIMITS_STATE]string{
+var value_to_label_LIMITS_STATE = map[LIMITS_STATE]string{
 	LIMITS_INIT:       "LIMITS_INIT",
 	LIMITS_DISABLED:   "LIMITS_DISABLED",
 	LIMITS_ENABLED:    "LIMITS_ENABLED",
@@ -33,7 +33,7 @@ var labels_LIMITS_STATE = map[LIMITS_STATE]string{
 	LIMITS_RECOVERED:  "LIMITS_RECOVERED",
 }
 
-var values_LIMITS_STATE = map[string]LIMITS_STATE{
+var label_to_value_LIMITS_STATE = map[string]LIMITS_STATE{
 	"LIMITS_INIT":       LIMITS_INIT,
 	"LIMITS_DISABLED":   LIMITS_DISABLED,
 	"LIMITS_ENABLED":    LIMITS_ENABLED,
@@ -44,7 +44,7 @@ var values_LIMITS_STATE = map[string]LIMITS_STATE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e LIMITS_STATE) MarshalText() ([]byte, error) {
-	if name, ok := labels_LIMITS_STATE[e]; ok {
+	if name, ok := value_to_label_LIMITS_STATE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -52,7 +52,7 @@ func (e LIMITS_STATE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *LIMITS_STATE) UnmarshalText(text []byte) error {
-	if value, ok := values_LIMITS_STATE[string(text)]; ok {
+	if value, ok := label_to_value_LIMITS_STATE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = LIMITS_STATE(value)

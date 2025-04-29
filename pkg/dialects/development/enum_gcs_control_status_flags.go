@@ -18,12 +18,17 @@ const (
 	GCS_CONTROL_STATUS_FLAGS_TAKEOVER_ALLOWED GCS_CONTROL_STATUS_FLAGS = 2
 )
 
-var labels_GCS_CONTROL_STATUS_FLAGS = map[GCS_CONTROL_STATUS_FLAGS]string{
+var values_GCS_CONTROL_STATUS_FLAGS = []GCS_CONTROL_STATUS_FLAGS{
+	GCS_CONTROL_STATUS_FLAGS_SYSTEM_MANAGER,
+	GCS_CONTROL_STATUS_FLAGS_TAKEOVER_ALLOWED,
+}
+
+var value_to_label_GCS_CONTROL_STATUS_FLAGS = map[GCS_CONTROL_STATUS_FLAGS]string{
 	GCS_CONTROL_STATUS_FLAGS_SYSTEM_MANAGER:   "GCS_CONTROL_STATUS_FLAGS_SYSTEM_MANAGER",
 	GCS_CONTROL_STATUS_FLAGS_TAKEOVER_ALLOWED: "GCS_CONTROL_STATUS_FLAGS_TAKEOVER_ALLOWED",
 }
 
-var values_GCS_CONTROL_STATUS_FLAGS = map[string]GCS_CONTROL_STATUS_FLAGS{
+var label_to_value_GCS_CONTROL_STATUS_FLAGS = map[string]GCS_CONTROL_STATUS_FLAGS{
 	"GCS_CONTROL_STATUS_FLAGS_SYSTEM_MANAGER":   GCS_CONTROL_STATUS_FLAGS_SYSTEM_MANAGER,
 	"GCS_CONTROL_STATUS_FLAGS_TAKEOVER_ALLOWED": GCS_CONTROL_STATUS_FLAGS_TAKEOVER_ALLOWED,
 }
@@ -34,9 +39,9 @@ func (e GCS_CONTROL_STATUS_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_GCS_CONTROL_STATUS_FLAGS {
+	for _, val := range values_GCS_CONTROL_STATUS_FLAGS {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_GCS_CONTROL_STATUS_FLAGS[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -47,7 +52,7 @@ func (e *GCS_CONTROL_STATUS_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask GCS_CONTROL_STATUS_FLAGS
 	for _, label := range labels {
-		if value, ok := values_GCS_CONTROL_STATUS_FLAGS[label]; ok {
+		if value, ok := label_to_value_GCS_CONTROL_STATUS_FLAGS[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= GCS_CONTROL_STATUS_FLAGS(value)

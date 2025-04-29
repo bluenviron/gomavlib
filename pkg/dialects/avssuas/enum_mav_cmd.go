@@ -426,7 +426,7 @@ const (
 	MAV_CMD_PRS_SHUTDOWN MAV_CMD = 60072
 )
 
-var labels_MAV_CMD = map[MAV_CMD]string{
+var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_NAV_WAYPOINT:                       "MAV_CMD_NAV_WAYPOINT",
 	MAV_CMD_NAV_LOITER_UNLIM:                   "MAV_CMD_NAV_LOITER_UNLIM",
 	MAV_CMD_NAV_LOITER_TURNS:                   "MAV_CMD_NAV_LOITER_TURNS",
@@ -601,7 +601,7 @@ var labels_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_PRS_SHUTDOWN:                       "MAV_CMD_PRS_SHUTDOWN",
 }
 
-var values_MAV_CMD = map[string]MAV_CMD{
+var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_NAV_WAYPOINT":                       MAV_CMD_NAV_WAYPOINT,
 	"MAV_CMD_NAV_LOITER_UNLIM":                   MAV_CMD_NAV_LOITER_UNLIM,
 	"MAV_CMD_NAV_LOITER_TURNS":                   MAV_CMD_NAV_LOITER_TURNS,
@@ -778,7 +778,7 @@ var values_MAV_CMD = map[string]MAV_CMD{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_CMD) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_CMD[e]; ok {
+	if name, ok := value_to_label_MAV_CMD[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -786,7 +786,7 @@ func (e MAV_CMD) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_CMD) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_CMD[string(text)]; ok {
+	if value, ok := label_to_value_MAV_CMD[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_CMD(value)

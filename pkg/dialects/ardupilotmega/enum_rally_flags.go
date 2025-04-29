@@ -22,14 +22,21 @@ const (
 	ALT_FRAME RALLY_FLAGS = 24
 )
 
-var labels_RALLY_FLAGS = map[RALLY_FLAGS]string{
+var values_RALLY_FLAGS = []RALLY_FLAGS{
+	FAVORABLE_WIND,
+	LAND_IMMEDIATELY,
+	ALT_FRAME_VALID,
+	ALT_FRAME,
+}
+
+var value_to_label_RALLY_FLAGS = map[RALLY_FLAGS]string{
 	FAVORABLE_WIND:   "FAVORABLE_WIND",
 	LAND_IMMEDIATELY: "LAND_IMMEDIATELY",
 	ALT_FRAME_VALID:  "ALT_FRAME_VALID",
 	ALT_FRAME:        "ALT_FRAME",
 }
 
-var values_RALLY_FLAGS = map[string]RALLY_FLAGS{
+var label_to_value_RALLY_FLAGS = map[string]RALLY_FLAGS{
 	"FAVORABLE_WIND":   FAVORABLE_WIND,
 	"LAND_IMMEDIATELY": LAND_IMMEDIATELY,
 	"ALT_FRAME_VALID":  ALT_FRAME_VALID,
@@ -42,9 +49,9 @@ func (e RALLY_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_RALLY_FLAGS {
+	for _, val := range values_RALLY_FLAGS {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_RALLY_FLAGS[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -55,7 +62,7 @@ func (e *RALLY_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask RALLY_FLAGS
 	for _, label := range labels {
-		if value, ok := values_RALLY_FLAGS[label]; ok {
+		if value, ok := label_to_value_RALLY_FLAGS[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= RALLY_FLAGS(value)

@@ -19,13 +19,13 @@ const (
 	PRECISION_LAND_MODE_REQUIRED PRECISION_LAND_MODE = 2
 )
 
-var labels_PRECISION_LAND_MODE = map[PRECISION_LAND_MODE]string{
+var value_to_label_PRECISION_LAND_MODE = map[PRECISION_LAND_MODE]string{
 	PRECISION_LAND_MODE_DISABLED:      "PRECISION_LAND_MODE_DISABLED",
 	PRECISION_LAND_MODE_OPPORTUNISTIC: "PRECISION_LAND_MODE_OPPORTUNISTIC",
 	PRECISION_LAND_MODE_REQUIRED:      "PRECISION_LAND_MODE_REQUIRED",
 }
 
-var values_PRECISION_LAND_MODE = map[string]PRECISION_LAND_MODE{
+var label_to_value_PRECISION_LAND_MODE = map[string]PRECISION_LAND_MODE{
 	"PRECISION_LAND_MODE_DISABLED":      PRECISION_LAND_MODE_DISABLED,
 	"PRECISION_LAND_MODE_OPPORTUNISTIC": PRECISION_LAND_MODE_OPPORTUNISTIC,
 	"PRECISION_LAND_MODE_REQUIRED":      PRECISION_LAND_MODE_REQUIRED,
@@ -33,7 +33,7 @@ var values_PRECISION_LAND_MODE = map[string]PRECISION_LAND_MODE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e PRECISION_LAND_MODE) MarshalText() ([]byte, error) {
-	if name, ok := labels_PRECISION_LAND_MODE[e]; ok {
+	if name, ok := value_to_label_PRECISION_LAND_MODE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -41,7 +41,7 @@ func (e PRECISION_LAND_MODE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *PRECISION_LAND_MODE) UnmarshalText(text []byte) error {
-	if value, ok := values_PRECISION_LAND_MODE[string(text)]; ok {
+	if value, ok := label_to_value_PRECISION_LAND_MODE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = PRECISION_LAND_MODE(value)

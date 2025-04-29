@@ -19,13 +19,19 @@ const (
 	LIMIT_ALTITUDE LIMIT_MODULE = 4
 )
 
-var labels_LIMIT_MODULE = map[LIMIT_MODULE]string{
+var values_LIMIT_MODULE = []LIMIT_MODULE{
+	LIMIT_GPSLOCK,
+	LIMIT_GEOFENCE,
+	LIMIT_ALTITUDE,
+}
+
+var value_to_label_LIMIT_MODULE = map[LIMIT_MODULE]string{
 	LIMIT_GPSLOCK:  "LIMIT_GPSLOCK",
 	LIMIT_GEOFENCE: "LIMIT_GEOFENCE",
 	LIMIT_ALTITUDE: "LIMIT_ALTITUDE",
 }
 
-var values_LIMIT_MODULE = map[string]LIMIT_MODULE{
+var label_to_value_LIMIT_MODULE = map[string]LIMIT_MODULE{
 	"LIMIT_GPSLOCK":  LIMIT_GPSLOCK,
 	"LIMIT_GEOFENCE": LIMIT_GEOFENCE,
 	"LIMIT_ALTITUDE": LIMIT_ALTITUDE,
@@ -37,9 +43,9 @@ func (e LIMIT_MODULE) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_LIMIT_MODULE {
+	for _, val := range values_LIMIT_MODULE {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_LIMIT_MODULE[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -50,7 +56,7 @@ func (e *LIMIT_MODULE) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask LIMIT_MODULE
 	for _, label := range labels {
-		if value, ok := values_LIMIT_MODULE[label]; ok {
+		if value, ok := label_to_value_LIMIT_MODULE[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= LIMIT_MODULE(value)

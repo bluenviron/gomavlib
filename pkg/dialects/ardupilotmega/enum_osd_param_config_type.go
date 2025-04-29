@@ -22,7 +22,7 @@ const (
 	OSD_PARAM_NUM_TYPES         OSD_PARAM_CONFIG_TYPE = 8
 )
 
-var labels_OSD_PARAM_CONFIG_TYPE = map[OSD_PARAM_CONFIG_TYPE]string{
+var value_to_label_OSD_PARAM_CONFIG_TYPE = map[OSD_PARAM_CONFIG_TYPE]string{
 	OSD_PARAM_NONE:              "OSD_PARAM_NONE",
 	OSD_PARAM_SERIAL_PROTOCOL:   "OSD_PARAM_SERIAL_PROTOCOL",
 	OSD_PARAM_SERVO_FUNCTION:    "OSD_PARAM_SERVO_FUNCTION",
@@ -34,7 +34,7 @@ var labels_OSD_PARAM_CONFIG_TYPE = map[OSD_PARAM_CONFIG_TYPE]string{
 	OSD_PARAM_NUM_TYPES:         "OSD_PARAM_NUM_TYPES",
 }
 
-var values_OSD_PARAM_CONFIG_TYPE = map[string]OSD_PARAM_CONFIG_TYPE{
+var label_to_value_OSD_PARAM_CONFIG_TYPE = map[string]OSD_PARAM_CONFIG_TYPE{
 	"OSD_PARAM_NONE":              OSD_PARAM_NONE,
 	"OSD_PARAM_SERIAL_PROTOCOL":   OSD_PARAM_SERIAL_PROTOCOL,
 	"OSD_PARAM_SERVO_FUNCTION":    OSD_PARAM_SERVO_FUNCTION,
@@ -48,7 +48,7 @@ var values_OSD_PARAM_CONFIG_TYPE = map[string]OSD_PARAM_CONFIG_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e OSD_PARAM_CONFIG_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_OSD_PARAM_CONFIG_TYPE[e]; ok {
+	if name, ok := value_to_label_OSD_PARAM_CONFIG_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -56,7 +56,7 @@ func (e OSD_PARAM_CONFIG_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *OSD_PARAM_CONFIG_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_OSD_PARAM_CONFIG_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_OSD_PARAM_CONFIG_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = OSD_PARAM_CONFIG_TYPE(value)

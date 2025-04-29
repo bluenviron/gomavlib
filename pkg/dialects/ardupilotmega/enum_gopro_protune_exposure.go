@@ -54,7 +54,7 @@ const (
 	GOPRO_PROTUNE_EXPOSURE_POS_5_0 GOPRO_PROTUNE_EXPOSURE = 20
 )
 
-var labels_GOPRO_PROTUNE_EXPOSURE = map[GOPRO_PROTUNE_EXPOSURE]string{
+var value_to_label_GOPRO_PROTUNE_EXPOSURE = map[GOPRO_PROTUNE_EXPOSURE]string{
 	GOPRO_PROTUNE_EXPOSURE_NEG_5_0: "GOPRO_PROTUNE_EXPOSURE_NEG_5_0",
 	GOPRO_PROTUNE_EXPOSURE_NEG_4_5: "GOPRO_PROTUNE_EXPOSURE_NEG_4_5",
 	GOPRO_PROTUNE_EXPOSURE_NEG_4_0: "GOPRO_PROTUNE_EXPOSURE_NEG_4_0",
@@ -78,7 +78,7 @@ var labels_GOPRO_PROTUNE_EXPOSURE = map[GOPRO_PROTUNE_EXPOSURE]string{
 	GOPRO_PROTUNE_EXPOSURE_POS_5_0: "GOPRO_PROTUNE_EXPOSURE_POS_5_0",
 }
 
-var values_GOPRO_PROTUNE_EXPOSURE = map[string]GOPRO_PROTUNE_EXPOSURE{
+var label_to_value_GOPRO_PROTUNE_EXPOSURE = map[string]GOPRO_PROTUNE_EXPOSURE{
 	"GOPRO_PROTUNE_EXPOSURE_NEG_5_0": GOPRO_PROTUNE_EXPOSURE_NEG_5_0,
 	"GOPRO_PROTUNE_EXPOSURE_NEG_4_5": GOPRO_PROTUNE_EXPOSURE_NEG_4_5,
 	"GOPRO_PROTUNE_EXPOSURE_NEG_4_0": GOPRO_PROTUNE_EXPOSURE_NEG_4_0,
@@ -104,7 +104,7 @@ var values_GOPRO_PROTUNE_EXPOSURE = map[string]GOPRO_PROTUNE_EXPOSURE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_PROTUNE_EXPOSURE) MarshalText() ([]byte, error) {
-	if name, ok := labels_GOPRO_PROTUNE_EXPOSURE[e]; ok {
+	if name, ok := value_to_label_GOPRO_PROTUNE_EXPOSURE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -112,7 +112,7 @@ func (e GOPRO_PROTUNE_EXPOSURE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_PROTUNE_EXPOSURE) UnmarshalText(text []byte) error {
-	if value, ok := values_GOPRO_PROTUNE_EXPOSURE[string(text)]; ok {
+	if value, ok := label_to_value_GOPRO_PROTUNE_EXPOSURE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = GOPRO_PROTUNE_EXPOSURE(value)

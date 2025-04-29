@@ -17,19 +17,19 @@ const (
 	RTK_BASELINE_COORDINATE_SYSTEM_NED RTK_BASELINE_COORDINATE_SYSTEM = 1
 )
 
-var labels_RTK_BASELINE_COORDINATE_SYSTEM = map[RTK_BASELINE_COORDINATE_SYSTEM]string{
+var value_to_label_RTK_BASELINE_COORDINATE_SYSTEM = map[RTK_BASELINE_COORDINATE_SYSTEM]string{
 	RTK_BASELINE_COORDINATE_SYSTEM_ECEF: "RTK_BASELINE_COORDINATE_SYSTEM_ECEF",
 	RTK_BASELINE_COORDINATE_SYSTEM_NED:  "RTK_BASELINE_COORDINATE_SYSTEM_NED",
 }
 
-var values_RTK_BASELINE_COORDINATE_SYSTEM = map[string]RTK_BASELINE_COORDINATE_SYSTEM{
+var label_to_value_RTK_BASELINE_COORDINATE_SYSTEM = map[string]RTK_BASELINE_COORDINATE_SYSTEM{
 	"RTK_BASELINE_COORDINATE_SYSTEM_ECEF": RTK_BASELINE_COORDINATE_SYSTEM_ECEF,
 	"RTK_BASELINE_COORDINATE_SYSTEM_NED":  RTK_BASELINE_COORDINATE_SYSTEM_NED,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e RTK_BASELINE_COORDINATE_SYSTEM) MarshalText() ([]byte, error) {
-	if name, ok := labels_RTK_BASELINE_COORDINATE_SYSTEM[e]; ok {
+	if name, ok := value_to_label_RTK_BASELINE_COORDINATE_SYSTEM[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -37,7 +37,7 @@ func (e RTK_BASELINE_COORDINATE_SYSTEM) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *RTK_BASELINE_COORDINATE_SYSTEM) UnmarshalText(text []byte) error {
-	if value, ok := values_RTK_BASELINE_COORDINATE_SYSTEM[string(text)]; ok {
+	if value, ok := label_to_value_RTK_BASELINE_COORDINATE_SYSTEM[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = RTK_BASELINE_COORDINATE_SYSTEM(value)

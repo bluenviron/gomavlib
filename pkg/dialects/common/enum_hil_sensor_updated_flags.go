@@ -42,7 +42,24 @@ const (
 	HIL_SENSOR_UPDATED_RESET HIL_SENSOR_UPDATED_FLAGS = 2147483648
 )
 
-var labels_HIL_SENSOR_UPDATED_FLAGS = map[HIL_SENSOR_UPDATED_FLAGS]string{
+var values_HIL_SENSOR_UPDATED_FLAGS = []HIL_SENSOR_UPDATED_FLAGS{
+	HIL_SENSOR_UPDATED_XACC,
+	HIL_SENSOR_UPDATED_YACC,
+	HIL_SENSOR_UPDATED_ZACC,
+	HIL_SENSOR_UPDATED_XGYRO,
+	HIL_SENSOR_UPDATED_YGYRO,
+	HIL_SENSOR_UPDATED_ZGYRO,
+	HIL_SENSOR_UPDATED_XMAG,
+	HIL_SENSOR_UPDATED_YMAG,
+	HIL_SENSOR_UPDATED_ZMAG,
+	HIL_SENSOR_UPDATED_ABS_PRESSURE,
+	HIL_SENSOR_UPDATED_DIFF_PRESSURE,
+	HIL_SENSOR_UPDATED_PRESSURE_ALT,
+	HIL_SENSOR_UPDATED_TEMPERATURE,
+	HIL_SENSOR_UPDATED_RESET,
+}
+
+var value_to_label_HIL_SENSOR_UPDATED_FLAGS = map[HIL_SENSOR_UPDATED_FLAGS]string{
 	HIL_SENSOR_UPDATED_XACC:          "HIL_SENSOR_UPDATED_XACC",
 	HIL_SENSOR_UPDATED_YACC:          "HIL_SENSOR_UPDATED_YACC",
 	HIL_SENSOR_UPDATED_ZACC:          "HIL_SENSOR_UPDATED_ZACC",
@@ -59,7 +76,7 @@ var labels_HIL_SENSOR_UPDATED_FLAGS = map[HIL_SENSOR_UPDATED_FLAGS]string{
 	HIL_SENSOR_UPDATED_RESET:         "HIL_SENSOR_UPDATED_RESET",
 }
 
-var values_HIL_SENSOR_UPDATED_FLAGS = map[string]HIL_SENSOR_UPDATED_FLAGS{
+var label_to_value_HIL_SENSOR_UPDATED_FLAGS = map[string]HIL_SENSOR_UPDATED_FLAGS{
 	"HIL_SENSOR_UPDATED_XACC":          HIL_SENSOR_UPDATED_XACC,
 	"HIL_SENSOR_UPDATED_YACC":          HIL_SENSOR_UPDATED_YACC,
 	"HIL_SENSOR_UPDATED_ZACC":          HIL_SENSOR_UPDATED_ZACC,
@@ -82,9 +99,9 @@ func (e HIL_SENSOR_UPDATED_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_HIL_SENSOR_UPDATED_FLAGS {
+	for _, val := range values_HIL_SENSOR_UPDATED_FLAGS {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_HIL_SENSOR_UPDATED_FLAGS[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -95,7 +112,7 @@ func (e *HIL_SENSOR_UPDATED_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask HIL_SENSOR_UPDATED_FLAGS
 	for _, label := range labels {
-		if value, ok := values_HIL_SENSOR_UPDATED_FLAGS[label]; ok {
+		if value, ok := label_to_value_HIL_SENSOR_UPDATED_FLAGS[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= HIL_SENSOR_UPDATED_FLAGS(value)

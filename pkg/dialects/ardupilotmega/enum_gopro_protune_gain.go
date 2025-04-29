@@ -22,7 +22,7 @@ const (
 	GOPRO_PROTUNE_GAIN_6400 GOPRO_PROTUNE_GAIN = 4
 )
 
-var labels_GOPRO_PROTUNE_GAIN = map[GOPRO_PROTUNE_GAIN]string{
+var value_to_label_GOPRO_PROTUNE_GAIN = map[GOPRO_PROTUNE_GAIN]string{
 	GOPRO_PROTUNE_GAIN_400:  "GOPRO_PROTUNE_GAIN_400",
 	GOPRO_PROTUNE_GAIN_800:  "GOPRO_PROTUNE_GAIN_800",
 	GOPRO_PROTUNE_GAIN_1600: "GOPRO_PROTUNE_GAIN_1600",
@@ -30,7 +30,7 @@ var labels_GOPRO_PROTUNE_GAIN = map[GOPRO_PROTUNE_GAIN]string{
 	GOPRO_PROTUNE_GAIN_6400: "GOPRO_PROTUNE_GAIN_6400",
 }
 
-var values_GOPRO_PROTUNE_GAIN = map[string]GOPRO_PROTUNE_GAIN{
+var label_to_value_GOPRO_PROTUNE_GAIN = map[string]GOPRO_PROTUNE_GAIN{
 	"GOPRO_PROTUNE_GAIN_400":  GOPRO_PROTUNE_GAIN_400,
 	"GOPRO_PROTUNE_GAIN_800":  GOPRO_PROTUNE_GAIN_800,
 	"GOPRO_PROTUNE_GAIN_1600": GOPRO_PROTUNE_GAIN_1600,
@@ -40,7 +40,7 @@ var values_GOPRO_PROTUNE_GAIN = map[string]GOPRO_PROTUNE_GAIN{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_PROTUNE_GAIN) MarshalText() ([]byte, error) {
-	if name, ok := labels_GOPRO_PROTUNE_GAIN[e]; ok {
+	if name, ok := value_to_label_GOPRO_PROTUNE_GAIN[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -48,7 +48,7 @@ func (e GOPRO_PROTUNE_GAIN) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_PROTUNE_GAIN) UnmarshalText(text []byte) error {
-	if value, ok := values_GOPRO_PROTUNE_GAIN[string(text)]; ok {
+	if value, ok := label_to_value_GOPRO_PROTUNE_GAIN[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = GOPRO_PROTUNE_GAIN(value)

@@ -18,13 +18,13 @@ const (
 	MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_HIGH MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL = 2
 )
 
-var labels_MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL = map[MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL]string{
+var value_to_label_MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL = map[MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL]string{
 	MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_LOW:    "MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_LOW",
 	MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_MIDDLE: "MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_MIDDLE",
 	MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_HIGH:   "MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_HIGH",
 }
 
-var values_MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL = map[string]MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL{
+var label_to_value_MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL = map[string]MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL{
 	"MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_LOW":    MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_LOW,
 	"MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_MIDDLE": MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_MIDDLE,
 	"MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_HIGH":   MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL_HIGH,
@@ -32,7 +32,7 @@ var values_MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL = map[string]MAV_CMD_DO_AUX_FUNC
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL[e]; ok {
+	if name, ok := value_to_label_MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -40,7 +40,7 @@ func (e MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL[string(text)]; ok {
+	if value, ok := label_to_value_MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL(value)

@@ -17,13 +17,19 @@ const (
 	UAVIONIX_ADSB_OUT_RF_SELECT_TX_ENABLED UAVIONIX_ADSB_OUT_RF_SELECT = 2
 )
 
-var labels_UAVIONIX_ADSB_OUT_RF_SELECT = map[UAVIONIX_ADSB_OUT_RF_SELECT]string{
+var values_UAVIONIX_ADSB_OUT_RF_SELECT = []UAVIONIX_ADSB_OUT_RF_SELECT{
+	UAVIONIX_ADSB_OUT_RF_SELECT_STANDBY,
+	UAVIONIX_ADSB_OUT_RF_SELECT_RX_ENABLED,
+	UAVIONIX_ADSB_OUT_RF_SELECT_TX_ENABLED,
+}
+
+var value_to_label_UAVIONIX_ADSB_OUT_RF_SELECT = map[UAVIONIX_ADSB_OUT_RF_SELECT]string{
 	UAVIONIX_ADSB_OUT_RF_SELECT_STANDBY:    "UAVIONIX_ADSB_OUT_RF_SELECT_STANDBY",
 	UAVIONIX_ADSB_OUT_RF_SELECT_RX_ENABLED: "UAVIONIX_ADSB_OUT_RF_SELECT_RX_ENABLED",
 	UAVIONIX_ADSB_OUT_RF_SELECT_TX_ENABLED: "UAVIONIX_ADSB_OUT_RF_SELECT_TX_ENABLED",
 }
 
-var values_UAVIONIX_ADSB_OUT_RF_SELECT = map[string]UAVIONIX_ADSB_OUT_RF_SELECT{
+var label_to_value_UAVIONIX_ADSB_OUT_RF_SELECT = map[string]UAVIONIX_ADSB_OUT_RF_SELECT{
 	"UAVIONIX_ADSB_OUT_RF_SELECT_STANDBY":    UAVIONIX_ADSB_OUT_RF_SELECT_STANDBY,
 	"UAVIONIX_ADSB_OUT_RF_SELECT_RX_ENABLED": UAVIONIX_ADSB_OUT_RF_SELECT_RX_ENABLED,
 	"UAVIONIX_ADSB_OUT_RF_SELECT_TX_ENABLED": UAVIONIX_ADSB_OUT_RF_SELECT_TX_ENABLED,
@@ -35,9 +41,9 @@ func (e UAVIONIX_ADSB_OUT_RF_SELECT) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_UAVIONIX_ADSB_OUT_RF_SELECT {
+	for _, val := range values_UAVIONIX_ADSB_OUT_RF_SELECT {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_UAVIONIX_ADSB_OUT_RF_SELECT[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -48,7 +54,7 @@ func (e *UAVIONIX_ADSB_OUT_RF_SELECT) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask UAVIONIX_ADSB_OUT_RF_SELECT
 	for _, label := range labels {
-		if value, ok := values_UAVIONIX_ADSB_OUT_RF_SELECT[label]; ok {
+		if value, ok := label_to_value_UAVIONIX_ADSB_OUT_RF_SELECT[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= UAVIONIX_ADSB_OUT_RF_SELECT(value)

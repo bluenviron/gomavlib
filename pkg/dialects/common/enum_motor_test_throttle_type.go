@@ -21,14 +21,14 @@ const (
 	MOTOR_TEST_COMPASS_CAL MOTOR_TEST_THROTTLE_TYPE = 3
 )
 
-var labels_MOTOR_TEST_THROTTLE_TYPE = map[MOTOR_TEST_THROTTLE_TYPE]string{
+var value_to_label_MOTOR_TEST_THROTTLE_TYPE = map[MOTOR_TEST_THROTTLE_TYPE]string{
 	MOTOR_TEST_THROTTLE_PERCENT: "MOTOR_TEST_THROTTLE_PERCENT",
 	MOTOR_TEST_THROTTLE_PWM:     "MOTOR_TEST_THROTTLE_PWM",
 	MOTOR_TEST_THROTTLE_PILOT:   "MOTOR_TEST_THROTTLE_PILOT",
 	MOTOR_TEST_COMPASS_CAL:      "MOTOR_TEST_COMPASS_CAL",
 }
 
-var values_MOTOR_TEST_THROTTLE_TYPE = map[string]MOTOR_TEST_THROTTLE_TYPE{
+var label_to_value_MOTOR_TEST_THROTTLE_TYPE = map[string]MOTOR_TEST_THROTTLE_TYPE{
 	"MOTOR_TEST_THROTTLE_PERCENT": MOTOR_TEST_THROTTLE_PERCENT,
 	"MOTOR_TEST_THROTTLE_PWM":     MOTOR_TEST_THROTTLE_PWM,
 	"MOTOR_TEST_THROTTLE_PILOT":   MOTOR_TEST_THROTTLE_PILOT,
@@ -37,7 +37,7 @@ var values_MOTOR_TEST_THROTTLE_TYPE = map[string]MOTOR_TEST_THROTTLE_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MOTOR_TEST_THROTTLE_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_MOTOR_TEST_THROTTLE_TYPE[e]; ok {
+	if name, ok := value_to_label_MOTOR_TEST_THROTTLE_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -45,7 +45,7 @@ func (e MOTOR_TEST_THROTTLE_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MOTOR_TEST_THROTTLE_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_MOTOR_TEST_THROTTLE_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_MOTOR_TEST_THROTTLE_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MOTOR_TEST_THROTTLE_TYPE(value)

@@ -36,7 +36,7 @@ const (
 	MAV_FTP_ERR_FILENOTFOUND MAV_FTP_ERR = 10
 )
 
-var labels_MAV_FTP_ERR = map[MAV_FTP_ERR]string{
+var value_to_label_MAV_FTP_ERR = map[MAV_FTP_ERR]string{
 	MAV_FTP_ERR_NONE:                "MAV_FTP_ERR_NONE",
 	MAV_FTP_ERR_FAIL:                "MAV_FTP_ERR_FAIL",
 	MAV_FTP_ERR_FAILERRNO:           "MAV_FTP_ERR_FAILERRNO",
@@ -50,7 +50,7 @@ var labels_MAV_FTP_ERR = map[MAV_FTP_ERR]string{
 	MAV_FTP_ERR_FILENOTFOUND:        "MAV_FTP_ERR_FILENOTFOUND",
 }
 
-var values_MAV_FTP_ERR = map[string]MAV_FTP_ERR{
+var label_to_value_MAV_FTP_ERR = map[string]MAV_FTP_ERR{
 	"MAV_FTP_ERR_NONE":                MAV_FTP_ERR_NONE,
 	"MAV_FTP_ERR_FAIL":                MAV_FTP_ERR_FAIL,
 	"MAV_FTP_ERR_FAILERRNO":           MAV_FTP_ERR_FAILERRNO,
@@ -66,7 +66,7 @@ var values_MAV_FTP_ERR = map[string]MAV_FTP_ERR{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_FTP_ERR) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_FTP_ERR[e]; ok {
+	if name, ok := value_to_label_MAV_FTP_ERR[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -74,7 +74,7 @@ func (e MAV_FTP_ERR) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_FTP_ERR) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_FTP_ERR[string(text)]; ok {
+	if value, ok := label_to_value_MAV_FTP_ERR[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_FTP_ERR(value)

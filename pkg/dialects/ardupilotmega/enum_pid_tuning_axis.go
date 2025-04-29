@@ -18,7 +18,7 @@ const (
 	PID_TUNING_LANDING PID_TUNING_AXIS = 6
 )
 
-var labels_PID_TUNING_AXIS = map[PID_TUNING_AXIS]string{
+var value_to_label_PID_TUNING_AXIS = map[PID_TUNING_AXIS]string{
 	PID_TUNING_ROLL:    "PID_TUNING_ROLL",
 	PID_TUNING_PITCH:   "PID_TUNING_PITCH",
 	PID_TUNING_YAW:     "PID_TUNING_YAW",
@@ -27,7 +27,7 @@ var labels_PID_TUNING_AXIS = map[PID_TUNING_AXIS]string{
 	PID_TUNING_LANDING: "PID_TUNING_LANDING",
 }
 
-var values_PID_TUNING_AXIS = map[string]PID_TUNING_AXIS{
+var label_to_value_PID_TUNING_AXIS = map[string]PID_TUNING_AXIS{
 	"PID_TUNING_ROLL":    PID_TUNING_ROLL,
 	"PID_TUNING_PITCH":   PID_TUNING_PITCH,
 	"PID_TUNING_YAW":     PID_TUNING_YAW,
@@ -38,7 +38,7 @@ var values_PID_TUNING_AXIS = map[string]PID_TUNING_AXIS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e PID_TUNING_AXIS) MarshalText() ([]byte, error) {
-	if name, ok := labels_PID_TUNING_AXIS[e]; ok {
+	if name, ok := value_to_label_PID_TUNING_AXIS[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -46,7 +46,7 @@ func (e PID_TUNING_AXIS) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *PID_TUNING_AXIS) UnmarshalText(text []byte) error {
-	if value, ok := values_PID_TUNING_AXIS[string(text)]; ok {
+	if value, ok := label_to_value_PID_TUNING_AXIS[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = PID_TUNING_AXIS(value)

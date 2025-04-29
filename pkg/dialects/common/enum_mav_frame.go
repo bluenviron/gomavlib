@@ -68,7 +68,7 @@ const (
 	MAV_FRAME_LOCAL_FLU MAV_FRAME = 21
 )
 
-var labels_MAV_FRAME = map[MAV_FRAME]string{
+var value_to_label_MAV_FRAME = map[MAV_FRAME]string{
 	MAV_FRAME_GLOBAL:                  "MAV_FRAME_GLOBAL",
 	MAV_FRAME_LOCAL_NED:               "MAV_FRAME_LOCAL_NED",
 	MAV_FRAME_MISSION:                 "MAV_FRAME_MISSION",
@@ -93,7 +93,7 @@ var labels_MAV_FRAME = map[MAV_FRAME]string{
 	MAV_FRAME_LOCAL_FLU:               "MAV_FRAME_LOCAL_FLU",
 }
 
-var values_MAV_FRAME = map[string]MAV_FRAME{
+var label_to_value_MAV_FRAME = map[string]MAV_FRAME{
 	"MAV_FRAME_GLOBAL":                  MAV_FRAME_GLOBAL,
 	"MAV_FRAME_LOCAL_NED":               MAV_FRAME_LOCAL_NED,
 	"MAV_FRAME_MISSION":                 MAV_FRAME_MISSION,
@@ -120,7 +120,7 @@ var values_MAV_FRAME = map[string]MAV_FRAME{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_FRAME) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_FRAME[e]; ok {
+	if name, ok := value_to_label_MAV_FRAME[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -128,7 +128,7 @@ func (e MAV_FRAME) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_FRAME) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_FRAME[string(text)]; ok {
+	if value, ok := label_to_value_MAV_FRAME[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_FRAME(value)

@@ -21,14 +21,14 @@ const (
 	GPS_JAMMING_STATE_DETECTED GPS_JAMMING_STATE = 3
 )
 
-var labels_GPS_JAMMING_STATE = map[GPS_JAMMING_STATE]string{
+var value_to_label_GPS_JAMMING_STATE = map[GPS_JAMMING_STATE]string{
 	GPS_JAMMING_STATE_UNKNOWN:   "GPS_JAMMING_STATE_UNKNOWN",
 	GPS_JAMMING_STATE_OK:        "GPS_JAMMING_STATE_OK",
 	GPS_JAMMING_STATE_MITIGATED: "GPS_JAMMING_STATE_MITIGATED",
 	GPS_JAMMING_STATE_DETECTED:  "GPS_JAMMING_STATE_DETECTED",
 }
 
-var values_GPS_JAMMING_STATE = map[string]GPS_JAMMING_STATE{
+var label_to_value_GPS_JAMMING_STATE = map[string]GPS_JAMMING_STATE{
 	"GPS_JAMMING_STATE_UNKNOWN":   GPS_JAMMING_STATE_UNKNOWN,
 	"GPS_JAMMING_STATE_OK":        GPS_JAMMING_STATE_OK,
 	"GPS_JAMMING_STATE_MITIGATED": GPS_JAMMING_STATE_MITIGATED,
@@ -37,7 +37,7 @@ var values_GPS_JAMMING_STATE = map[string]GPS_JAMMING_STATE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GPS_JAMMING_STATE) MarshalText() ([]byte, error) {
-	if name, ok := labels_GPS_JAMMING_STATE[e]; ok {
+	if name, ok := value_to_label_GPS_JAMMING_STATE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -45,7 +45,7 @@ func (e GPS_JAMMING_STATE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GPS_JAMMING_STATE) UnmarshalText(text []byte) error {
-	if value, ok := values_GPS_JAMMING_STATE[string(text)]; ok {
+	if value, ok := label_to_value_GPS_JAMMING_STATE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = GPS_JAMMING_STATE(value)

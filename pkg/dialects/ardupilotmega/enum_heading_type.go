@@ -15,13 +15,13 @@ const (
 	HEADING_TYPE_DEFAULT            HEADING_TYPE = 2
 )
 
-var labels_HEADING_TYPE = map[HEADING_TYPE]string{
+var value_to_label_HEADING_TYPE = map[HEADING_TYPE]string{
 	HEADING_TYPE_COURSE_OVER_GROUND: "HEADING_TYPE_COURSE_OVER_GROUND",
 	HEADING_TYPE_HEADING:            "HEADING_TYPE_HEADING",
 	HEADING_TYPE_DEFAULT:            "HEADING_TYPE_DEFAULT",
 }
 
-var values_HEADING_TYPE = map[string]HEADING_TYPE{
+var label_to_value_HEADING_TYPE = map[string]HEADING_TYPE{
 	"HEADING_TYPE_COURSE_OVER_GROUND": HEADING_TYPE_COURSE_OVER_GROUND,
 	"HEADING_TYPE_HEADING":            HEADING_TYPE_HEADING,
 	"HEADING_TYPE_DEFAULT":            HEADING_TYPE_DEFAULT,
@@ -29,7 +29,7 @@ var values_HEADING_TYPE = map[string]HEADING_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e HEADING_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_HEADING_TYPE[e]; ok {
+	if name, ok := value_to_label_HEADING_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -37,7 +37,7 @@ func (e HEADING_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *HEADING_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_HEADING_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_HEADING_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = HEADING_TYPE(value)

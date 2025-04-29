@@ -35,7 +35,7 @@ const (
 	UAVIONIX_ADSB_NACP_EPU_3_M     UAVIONIX_ADSB_OUT_STATUS_NIC_NACP = 176
 )
 
-var labels_UAVIONIX_ADSB_OUT_STATUS_NIC_NACP = map[UAVIONIX_ADSB_OUT_STATUS_NIC_NACP]string{
+var value_to_label_UAVIONIX_ADSB_OUT_STATUS_NIC_NACP = map[UAVIONIX_ADSB_OUT_STATUS_NIC_NACP]string{
 	UAVIONIX_ADSB_NIC_CR_20_NM:     "UAVIONIX_ADSB_NIC_CR_20_NM",
 	UAVIONIX_ADSB_NIC_CR_8_NM:      "UAVIONIX_ADSB_NIC_CR_8_NM",
 	UAVIONIX_ADSB_NIC_CR_4_NM:      "UAVIONIX_ADSB_NIC_CR_4_NM",
@@ -60,7 +60,7 @@ var labels_UAVIONIX_ADSB_OUT_STATUS_NIC_NACP = map[UAVIONIX_ADSB_OUT_STATUS_NIC_
 	UAVIONIX_ADSB_NACP_EPU_3_M:     "UAVIONIX_ADSB_NACP_EPU_3_M",
 }
 
-var values_UAVIONIX_ADSB_OUT_STATUS_NIC_NACP = map[string]UAVIONIX_ADSB_OUT_STATUS_NIC_NACP{
+var label_to_value_UAVIONIX_ADSB_OUT_STATUS_NIC_NACP = map[string]UAVIONIX_ADSB_OUT_STATUS_NIC_NACP{
 	"UAVIONIX_ADSB_NIC_CR_20_NM":     UAVIONIX_ADSB_NIC_CR_20_NM,
 	"UAVIONIX_ADSB_NIC_CR_8_NM":      UAVIONIX_ADSB_NIC_CR_8_NM,
 	"UAVIONIX_ADSB_NIC_CR_4_NM":      UAVIONIX_ADSB_NIC_CR_4_NM,
@@ -87,7 +87,7 @@ var values_UAVIONIX_ADSB_OUT_STATUS_NIC_NACP = map[string]UAVIONIX_ADSB_OUT_STAT
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_OUT_STATUS_NIC_NACP) MarshalText() ([]byte, error) {
-	if name, ok := labels_UAVIONIX_ADSB_OUT_STATUS_NIC_NACP[e]; ok {
+	if name, ok := value_to_label_UAVIONIX_ADSB_OUT_STATUS_NIC_NACP[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -95,7 +95,7 @@ func (e UAVIONIX_ADSB_OUT_STATUS_NIC_NACP) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_OUT_STATUS_NIC_NACP) UnmarshalText(text []byte) error {
-	if value, ok := values_UAVIONIX_ADSB_OUT_STATUS_NIC_NACP[string(text)]; ok {
+	if value, ok := label_to_value_UAVIONIX_ADSB_OUT_STATUS_NIC_NACP[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = UAVIONIX_ADSB_OUT_STATUS_NIC_NACP(value)

@@ -20,14 +20,14 @@ const (
 	NAV_INS_GPS UALBERTA_NAV_MODE = 4
 )
 
-var labels_UALBERTA_NAV_MODE = map[UALBERTA_NAV_MODE]string{
+var value_to_label_UALBERTA_NAV_MODE = map[UALBERTA_NAV_MODE]string{
 	NAV_AHRS_INIT:    "NAV_AHRS_INIT",
 	NAV_AHRS:         "NAV_AHRS",
 	NAV_INS_GPS_INIT: "NAV_INS_GPS_INIT",
 	NAV_INS_GPS:      "NAV_INS_GPS",
 }
 
-var values_UALBERTA_NAV_MODE = map[string]UALBERTA_NAV_MODE{
+var label_to_value_UALBERTA_NAV_MODE = map[string]UALBERTA_NAV_MODE{
 	"NAV_AHRS_INIT":    NAV_AHRS_INIT,
 	"NAV_AHRS":         NAV_AHRS,
 	"NAV_INS_GPS_INIT": NAV_INS_GPS_INIT,
@@ -36,7 +36,7 @@ var values_UALBERTA_NAV_MODE = map[string]UALBERTA_NAV_MODE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UALBERTA_NAV_MODE) MarshalText() ([]byte, error) {
-	if name, ok := labels_UALBERTA_NAV_MODE[e]; ok {
+	if name, ok := value_to_label_UALBERTA_NAV_MODE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -44,7 +44,7 @@ func (e UALBERTA_NAV_MODE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UALBERTA_NAV_MODE) UnmarshalText(text []byte) error {
-	if value, ok := values_UALBERTA_NAV_MODE[string(text)]; ok {
+	if value, ok := label_to_value_UALBERTA_NAV_MODE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = UALBERTA_NAV_MODE(value)

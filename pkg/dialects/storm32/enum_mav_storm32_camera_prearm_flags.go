@@ -16,11 +16,15 @@ const (
 	MAV_STORM32_CAMERA_PREARM_FLAGS_CONNECTED MAV_STORM32_CAMERA_PREARM_FLAGS = 1
 )
 
-var labels_MAV_STORM32_CAMERA_PREARM_FLAGS = map[MAV_STORM32_CAMERA_PREARM_FLAGS]string{
+var values_MAV_STORM32_CAMERA_PREARM_FLAGS = []MAV_STORM32_CAMERA_PREARM_FLAGS{
+	MAV_STORM32_CAMERA_PREARM_FLAGS_CONNECTED,
+}
+
+var value_to_label_MAV_STORM32_CAMERA_PREARM_FLAGS = map[MAV_STORM32_CAMERA_PREARM_FLAGS]string{
 	MAV_STORM32_CAMERA_PREARM_FLAGS_CONNECTED: "MAV_STORM32_CAMERA_PREARM_FLAGS_CONNECTED",
 }
 
-var values_MAV_STORM32_CAMERA_PREARM_FLAGS = map[string]MAV_STORM32_CAMERA_PREARM_FLAGS{
+var label_to_value_MAV_STORM32_CAMERA_PREARM_FLAGS = map[string]MAV_STORM32_CAMERA_PREARM_FLAGS{
 	"MAV_STORM32_CAMERA_PREARM_FLAGS_CONNECTED": MAV_STORM32_CAMERA_PREARM_FLAGS_CONNECTED,
 }
 
@@ -30,9 +34,9 @@ func (e MAV_STORM32_CAMERA_PREARM_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_MAV_STORM32_CAMERA_PREARM_FLAGS {
+	for _, val := range values_MAV_STORM32_CAMERA_PREARM_FLAGS {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_MAV_STORM32_CAMERA_PREARM_FLAGS[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -43,7 +47,7 @@ func (e *MAV_STORM32_CAMERA_PREARM_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask MAV_STORM32_CAMERA_PREARM_FLAGS
 	for _, label := range labels {
-		if value, ok := values_MAV_STORM32_CAMERA_PREARM_FLAGS[label]; ok {
+		if value, ok := label_to_value_MAV_STORM32_CAMERA_PREARM_FLAGS[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= MAV_STORM32_CAMERA_PREARM_FLAGS(value)

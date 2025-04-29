@@ -16,11 +16,15 @@ const (
 	MAV_DO_REPOSITION_FLAGS_CHANGE_MODE MAV_DO_REPOSITION_FLAGS = 1
 )
 
-var labels_MAV_DO_REPOSITION_FLAGS = map[MAV_DO_REPOSITION_FLAGS]string{
+var values_MAV_DO_REPOSITION_FLAGS = []MAV_DO_REPOSITION_FLAGS{
+	MAV_DO_REPOSITION_FLAGS_CHANGE_MODE,
+}
+
+var value_to_label_MAV_DO_REPOSITION_FLAGS = map[MAV_DO_REPOSITION_FLAGS]string{
 	MAV_DO_REPOSITION_FLAGS_CHANGE_MODE: "MAV_DO_REPOSITION_FLAGS_CHANGE_MODE",
 }
 
-var values_MAV_DO_REPOSITION_FLAGS = map[string]MAV_DO_REPOSITION_FLAGS{
+var label_to_value_MAV_DO_REPOSITION_FLAGS = map[string]MAV_DO_REPOSITION_FLAGS{
 	"MAV_DO_REPOSITION_FLAGS_CHANGE_MODE": MAV_DO_REPOSITION_FLAGS_CHANGE_MODE,
 }
 
@@ -30,9 +34,9 @@ func (e MAV_DO_REPOSITION_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_MAV_DO_REPOSITION_FLAGS {
+	for _, val := range values_MAV_DO_REPOSITION_FLAGS {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_MAV_DO_REPOSITION_FLAGS[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -43,7 +47,7 @@ func (e *MAV_DO_REPOSITION_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask MAV_DO_REPOSITION_FLAGS
 	for _, label := range labels {
-		if value, ok := values_MAV_DO_REPOSITION_FLAGS[label]; ok {
+		if value, ok := label_to_value_MAV_DO_REPOSITION_FLAGS[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= MAV_DO_REPOSITION_FLAGS(value)

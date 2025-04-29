@@ -25,7 +25,7 @@ const (
 	MAV_ROI_TARGET MAV_ROI = 4
 )
 
-var labels_MAV_ROI = map[MAV_ROI]string{
+var value_to_label_MAV_ROI = map[MAV_ROI]string{
 	MAV_ROI_NONE:     "MAV_ROI_NONE",
 	MAV_ROI_WPNEXT:   "MAV_ROI_WPNEXT",
 	MAV_ROI_WPINDEX:  "MAV_ROI_WPINDEX",
@@ -33,7 +33,7 @@ var labels_MAV_ROI = map[MAV_ROI]string{
 	MAV_ROI_TARGET:   "MAV_ROI_TARGET",
 }
 
-var values_MAV_ROI = map[string]MAV_ROI{
+var label_to_value_MAV_ROI = map[string]MAV_ROI{
 	"MAV_ROI_NONE":     MAV_ROI_NONE,
 	"MAV_ROI_WPNEXT":   MAV_ROI_WPNEXT,
 	"MAV_ROI_WPINDEX":  MAV_ROI_WPINDEX,
@@ -43,7 +43,7 @@ var values_MAV_ROI = map[string]MAV_ROI{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ROI) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_ROI[e]; ok {
+	if name, ok := value_to_label_MAV_ROI[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -51,7 +51,7 @@ func (e MAV_ROI) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ROI) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_ROI[string(text)]; ok {
+	if value, ok := label_to_value_MAV_ROI[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_ROI(value)

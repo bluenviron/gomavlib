@@ -29,7 +29,7 @@ const (
 	MAV_SEVERITY_DEBUG MAV_SEVERITY = 7
 )
 
-var labels_MAV_SEVERITY = map[MAV_SEVERITY]string{
+var value_to_label_MAV_SEVERITY = map[MAV_SEVERITY]string{
 	MAV_SEVERITY_EMERGENCY: "MAV_SEVERITY_EMERGENCY",
 	MAV_SEVERITY_ALERT:     "MAV_SEVERITY_ALERT",
 	MAV_SEVERITY_CRITICAL:  "MAV_SEVERITY_CRITICAL",
@@ -40,7 +40,7 @@ var labels_MAV_SEVERITY = map[MAV_SEVERITY]string{
 	MAV_SEVERITY_DEBUG:     "MAV_SEVERITY_DEBUG",
 }
 
-var values_MAV_SEVERITY = map[string]MAV_SEVERITY{
+var label_to_value_MAV_SEVERITY = map[string]MAV_SEVERITY{
 	"MAV_SEVERITY_EMERGENCY": MAV_SEVERITY_EMERGENCY,
 	"MAV_SEVERITY_ALERT":     MAV_SEVERITY_ALERT,
 	"MAV_SEVERITY_CRITICAL":  MAV_SEVERITY_CRITICAL,
@@ -53,7 +53,7 @@ var values_MAV_SEVERITY = map[string]MAV_SEVERITY{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_SEVERITY) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_SEVERITY[e]; ok {
+	if name, ok := value_to_label_MAV_SEVERITY[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -61,7 +61,7 @@ func (e MAV_SEVERITY) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_SEVERITY) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_SEVERITY[string(text)]; ok {
+	if value, ok := label_to_value_MAV_SEVERITY[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_SEVERITY(value)

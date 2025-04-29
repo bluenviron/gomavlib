@@ -19,13 +19,13 @@ const (
 	ILLUMINATOR_MODE_EXTERNAL_SYNC ILLUMINATOR_MODE = 2
 )
 
-var labels_ILLUMINATOR_MODE = map[ILLUMINATOR_MODE]string{
+var value_to_label_ILLUMINATOR_MODE = map[ILLUMINATOR_MODE]string{
 	ILLUMINATOR_MODE_UNKNOWN:          "ILLUMINATOR_MODE_UNKNOWN",
 	ILLUMINATOR_MODE_INTERNAL_CONTROL: "ILLUMINATOR_MODE_INTERNAL_CONTROL",
 	ILLUMINATOR_MODE_EXTERNAL_SYNC:    "ILLUMINATOR_MODE_EXTERNAL_SYNC",
 }
 
-var values_ILLUMINATOR_MODE = map[string]ILLUMINATOR_MODE{
+var label_to_value_ILLUMINATOR_MODE = map[string]ILLUMINATOR_MODE{
 	"ILLUMINATOR_MODE_UNKNOWN":          ILLUMINATOR_MODE_UNKNOWN,
 	"ILLUMINATOR_MODE_INTERNAL_CONTROL": ILLUMINATOR_MODE_INTERNAL_CONTROL,
 	"ILLUMINATOR_MODE_EXTERNAL_SYNC":    ILLUMINATOR_MODE_EXTERNAL_SYNC,
@@ -33,7 +33,7 @@ var values_ILLUMINATOR_MODE = map[string]ILLUMINATOR_MODE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ILLUMINATOR_MODE) MarshalText() ([]byte, error) {
-	if name, ok := labels_ILLUMINATOR_MODE[e]; ok {
+	if name, ok := value_to_label_ILLUMINATOR_MODE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -41,7 +41,7 @@ func (e ILLUMINATOR_MODE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ILLUMINATOR_MODE) UnmarshalText(text []byte) error {
-	if value, ok := values_ILLUMINATOR_MODE[string(text)]; ok {
+	if value, ok := label_to_value_ILLUMINATOR_MODE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = ILLUMINATOR_MODE(value)

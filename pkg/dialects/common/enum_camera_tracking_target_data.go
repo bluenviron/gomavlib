@@ -20,13 +20,19 @@ const (
 	CAMERA_TRACKING_TARGET_DATA_IN_STATUS CAMERA_TRACKING_TARGET_DATA = 4
 )
 
-var labels_CAMERA_TRACKING_TARGET_DATA = map[CAMERA_TRACKING_TARGET_DATA]string{
+var values_CAMERA_TRACKING_TARGET_DATA = []CAMERA_TRACKING_TARGET_DATA{
+	CAMERA_TRACKING_TARGET_DATA_EMBEDDED,
+	CAMERA_TRACKING_TARGET_DATA_RENDERED,
+	CAMERA_TRACKING_TARGET_DATA_IN_STATUS,
+}
+
+var value_to_label_CAMERA_TRACKING_TARGET_DATA = map[CAMERA_TRACKING_TARGET_DATA]string{
 	CAMERA_TRACKING_TARGET_DATA_EMBEDDED:  "CAMERA_TRACKING_TARGET_DATA_EMBEDDED",
 	CAMERA_TRACKING_TARGET_DATA_RENDERED:  "CAMERA_TRACKING_TARGET_DATA_RENDERED",
 	CAMERA_TRACKING_TARGET_DATA_IN_STATUS: "CAMERA_TRACKING_TARGET_DATA_IN_STATUS",
 }
 
-var values_CAMERA_TRACKING_TARGET_DATA = map[string]CAMERA_TRACKING_TARGET_DATA{
+var label_to_value_CAMERA_TRACKING_TARGET_DATA = map[string]CAMERA_TRACKING_TARGET_DATA{
 	"CAMERA_TRACKING_TARGET_DATA_EMBEDDED":  CAMERA_TRACKING_TARGET_DATA_EMBEDDED,
 	"CAMERA_TRACKING_TARGET_DATA_RENDERED":  CAMERA_TRACKING_TARGET_DATA_RENDERED,
 	"CAMERA_TRACKING_TARGET_DATA_IN_STATUS": CAMERA_TRACKING_TARGET_DATA_IN_STATUS,
@@ -38,9 +44,9 @@ func (e CAMERA_TRACKING_TARGET_DATA) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_CAMERA_TRACKING_TARGET_DATA {
+	for _, val := range values_CAMERA_TRACKING_TARGET_DATA {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_CAMERA_TRACKING_TARGET_DATA[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -51,7 +57,7 @@ func (e *CAMERA_TRACKING_TARGET_DATA) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask CAMERA_TRACKING_TARGET_DATA
 	for _, label := range labels {
-		if value, ok := values_CAMERA_TRACKING_TARGET_DATA[label]; ok {
+		if value, ok := label_to_value_CAMERA_TRACKING_TARGET_DATA[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= CAMERA_TRACKING_TARGET_DATA(value)

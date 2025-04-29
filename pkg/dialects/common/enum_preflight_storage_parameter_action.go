@@ -24,7 +24,7 @@ const (
 	PARAM_RESET_ALL_DEFAULT PREFLIGHT_STORAGE_PARAMETER_ACTION = 4
 )
 
-var labels_PREFLIGHT_STORAGE_PARAMETER_ACTION = map[PREFLIGHT_STORAGE_PARAMETER_ACTION]string{
+var value_to_label_PREFLIGHT_STORAGE_PARAMETER_ACTION = map[PREFLIGHT_STORAGE_PARAMETER_ACTION]string{
 	PARAM_READ_PERSISTENT:      "PARAM_READ_PERSISTENT",
 	PARAM_WRITE_PERSISTENT:     "PARAM_WRITE_PERSISTENT",
 	PARAM_RESET_CONFIG_DEFAULT: "PARAM_RESET_CONFIG_DEFAULT",
@@ -32,7 +32,7 @@ var labels_PREFLIGHT_STORAGE_PARAMETER_ACTION = map[PREFLIGHT_STORAGE_PARAMETER_
 	PARAM_RESET_ALL_DEFAULT:    "PARAM_RESET_ALL_DEFAULT",
 }
 
-var values_PREFLIGHT_STORAGE_PARAMETER_ACTION = map[string]PREFLIGHT_STORAGE_PARAMETER_ACTION{
+var label_to_value_PREFLIGHT_STORAGE_PARAMETER_ACTION = map[string]PREFLIGHT_STORAGE_PARAMETER_ACTION{
 	"PARAM_READ_PERSISTENT":      PARAM_READ_PERSISTENT,
 	"PARAM_WRITE_PERSISTENT":     PARAM_WRITE_PERSISTENT,
 	"PARAM_RESET_CONFIG_DEFAULT": PARAM_RESET_CONFIG_DEFAULT,
@@ -42,7 +42,7 @@ var values_PREFLIGHT_STORAGE_PARAMETER_ACTION = map[string]PREFLIGHT_STORAGE_PAR
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e PREFLIGHT_STORAGE_PARAMETER_ACTION) MarshalText() ([]byte, error) {
-	if name, ok := labels_PREFLIGHT_STORAGE_PARAMETER_ACTION[e]; ok {
+	if name, ok := value_to_label_PREFLIGHT_STORAGE_PARAMETER_ACTION[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -50,7 +50,7 @@ func (e PREFLIGHT_STORAGE_PARAMETER_ACTION) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *PREFLIGHT_STORAGE_PARAMETER_ACTION) UnmarshalText(text []byte) error {
-	if value, ok := values_PREFLIGHT_STORAGE_PARAMETER_ACTION[string(text)]; ok {
+	if value, ok := label_to_value_PREFLIGHT_STORAGE_PARAMETER_ACTION[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = PREFLIGHT_STORAGE_PARAMETER_ACTION(value)

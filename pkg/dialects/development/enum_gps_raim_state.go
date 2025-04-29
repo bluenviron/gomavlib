@@ -21,14 +21,14 @@ const (
 	GPS_RAIM_STATE_FAILED GPS_RAIM_STATE = 3
 )
 
-var labels_GPS_RAIM_STATE = map[GPS_RAIM_STATE]string{
+var value_to_label_GPS_RAIM_STATE = map[GPS_RAIM_STATE]string{
 	GPS_RAIM_STATE_UNKNOWN:  "GPS_RAIM_STATE_UNKNOWN",
 	GPS_RAIM_STATE_DISABLED: "GPS_RAIM_STATE_DISABLED",
 	GPS_RAIM_STATE_OK:       "GPS_RAIM_STATE_OK",
 	GPS_RAIM_STATE_FAILED:   "GPS_RAIM_STATE_FAILED",
 }
 
-var values_GPS_RAIM_STATE = map[string]GPS_RAIM_STATE{
+var label_to_value_GPS_RAIM_STATE = map[string]GPS_RAIM_STATE{
 	"GPS_RAIM_STATE_UNKNOWN":  GPS_RAIM_STATE_UNKNOWN,
 	"GPS_RAIM_STATE_DISABLED": GPS_RAIM_STATE_DISABLED,
 	"GPS_RAIM_STATE_OK":       GPS_RAIM_STATE_OK,
@@ -37,7 +37,7 @@ var values_GPS_RAIM_STATE = map[string]GPS_RAIM_STATE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GPS_RAIM_STATE) MarshalText() ([]byte, error) {
-	if name, ok := labels_GPS_RAIM_STATE[e]; ok {
+	if name, ok := value_to_label_GPS_RAIM_STATE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -45,7 +45,7 @@ func (e GPS_RAIM_STATE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GPS_RAIM_STATE) UnmarshalText(text []byte) error {
-	if value, ok := values_GPS_RAIM_STATE[string(text)]; ok {
+	if value, ok := label_to_value_GPS_RAIM_STATE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = GPS_RAIM_STATE(value)

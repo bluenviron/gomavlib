@@ -19,13 +19,13 @@ const (
 	MAV_BATTERY_MODE_HOT_SWAP MAV_BATTERY_MODE = 2
 )
 
-var labels_MAV_BATTERY_MODE = map[MAV_BATTERY_MODE]string{
+var value_to_label_MAV_BATTERY_MODE = map[MAV_BATTERY_MODE]string{
 	MAV_BATTERY_MODE_UNKNOWN:          "MAV_BATTERY_MODE_UNKNOWN",
 	MAV_BATTERY_MODE_AUTO_DISCHARGING: "MAV_BATTERY_MODE_AUTO_DISCHARGING",
 	MAV_BATTERY_MODE_HOT_SWAP:         "MAV_BATTERY_MODE_HOT_SWAP",
 }
 
-var values_MAV_BATTERY_MODE = map[string]MAV_BATTERY_MODE{
+var label_to_value_MAV_BATTERY_MODE = map[string]MAV_BATTERY_MODE{
 	"MAV_BATTERY_MODE_UNKNOWN":          MAV_BATTERY_MODE_UNKNOWN,
 	"MAV_BATTERY_MODE_AUTO_DISCHARGING": MAV_BATTERY_MODE_AUTO_DISCHARGING,
 	"MAV_BATTERY_MODE_HOT_SWAP":         MAV_BATTERY_MODE_HOT_SWAP,
@@ -33,7 +33,7 @@ var values_MAV_BATTERY_MODE = map[string]MAV_BATTERY_MODE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_BATTERY_MODE) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_BATTERY_MODE[e]; ok {
+	if name, ok := value_to_label_MAV_BATTERY_MODE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -41,7 +41,7 @@ func (e MAV_BATTERY_MODE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_BATTERY_MODE) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_BATTERY_MODE[string(text)]; ok {
+	if value, ok := label_to_value_MAV_BATTERY_MODE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_BATTERY_MODE(value)

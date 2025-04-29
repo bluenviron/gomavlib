@@ -19,7 +19,7 @@ const (
 	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_RTK    UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = 5
 )
 
-var labels_UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = map[UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX]string{
+var value_to_label_UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = map[UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX]string{
 	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_0: "UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_0",
 	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_1: "UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_1",
 	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_2D:     "UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_2D",
@@ -28,7 +28,7 @@ var labels_UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = map[UAVIONIX_ADSB_OUT_DYNAMIC_GPS
 	UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_RTK:    "UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_RTK",
 }
 
-var values_UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = map[string]UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX{
+var label_to_value_UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = map[string]UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX{
 	"UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_0": UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_0,
 	"UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_1": UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_NONE_1,
 	"UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_2D":     UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX_2D,
@@ -39,7 +39,7 @@ var values_UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX = map[string]UAVIONIX_ADSB_OUT_DYNA
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX) MarshalText() ([]byte, error) {
-	if name, ok := labels_UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX[e]; ok {
+	if name, ok := value_to_label_UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -47,7 +47,7 @@ func (e UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX) UnmarshalText(text []byte) error {
-	if value, ok := values_UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX[string(text)]; ok {
+	if value, ok := label_to_value_UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = UAVIONIX_ADSB_OUT_DYNAMIC_GPS_FIX(value)

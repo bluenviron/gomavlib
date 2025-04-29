@@ -25,7 +25,7 @@ const (
 	ESC_CONNECTION_TYPE_DSHOT ESC_CONNECTION_TYPE = 5
 )
 
-var labels_ESC_CONNECTION_TYPE = map[ESC_CONNECTION_TYPE]string{
+var value_to_label_ESC_CONNECTION_TYPE = map[ESC_CONNECTION_TYPE]string{
 	ESC_CONNECTION_TYPE_PPM:     "ESC_CONNECTION_TYPE_PPM",
 	ESC_CONNECTION_TYPE_SERIAL:  "ESC_CONNECTION_TYPE_SERIAL",
 	ESC_CONNECTION_TYPE_ONESHOT: "ESC_CONNECTION_TYPE_ONESHOT",
@@ -34,7 +34,7 @@ var labels_ESC_CONNECTION_TYPE = map[ESC_CONNECTION_TYPE]string{
 	ESC_CONNECTION_TYPE_DSHOT:   "ESC_CONNECTION_TYPE_DSHOT",
 }
 
-var values_ESC_CONNECTION_TYPE = map[string]ESC_CONNECTION_TYPE{
+var label_to_value_ESC_CONNECTION_TYPE = map[string]ESC_CONNECTION_TYPE{
 	"ESC_CONNECTION_TYPE_PPM":     ESC_CONNECTION_TYPE_PPM,
 	"ESC_CONNECTION_TYPE_SERIAL":  ESC_CONNECTION_TYPE_SERIAL,
 	"ESC_CONNECTION_TYPE_ONESHOT": ESC_CONNECTION_TYPE_ONESHOT,
@@ -45,7 +45,7 @@ var values_ESC_CONNECTION_TYPE = map[string]ESC_CONNECTION_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ESC_CONNECTION_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_ESC_CONNECTION_TYPE[e]; ok {
+	if name, ok := value_to_label_ESC_CONNECTION_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -53,7 +53,7 @@ func (e ESC_CONNECTION_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ESC_CONNECTION_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_ESC_CONNECTION_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_ESC_CONNECTION_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = ESC_CONNECTION_TYPE(value)

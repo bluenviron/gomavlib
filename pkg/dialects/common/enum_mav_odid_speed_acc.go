@@ -22,7 +22,7 @@ const (
 	MAV_ODID_SPEED_ACC_0_3_METERS_PER_SECOND MAV_ODID_SPEED_ACC = 4
 )
 
-var labels_MAV_ODID_SPEED_ACC = map[MAV_ODID_SPEED_ACC]string{
+var value_to_label_MAV_ODID_SPEED_ACC = map[MAV_ODID_SPEED_ACC]string{
 	MAV_ODID_SPEED_ACC_UNKNOWN:               "MAV_ODID_SPEED_ACC_UNKNOWN",
 	MAV_ODID_SPEED_ACC_10_METERS_PER_SECOND:  "MAV_ODID_SPEED_ACC_10_METERS_PER_SECOND",
 	MAV_ODID_SPEED_ACC_3_METERS_PER_SECOND:   "MAV_ODID_SPEED_ACC_3_METERS_PER_SECOND",
@@ -30,7 +30,7 @@ var labels_MAV_ODID_SPEED_ACC = map[MAV_ODID_SPEED_ACC]string{
 	MAV_ODID_SPEED_ACC_0_3_METERS_PER_SECOND: "MAV_ODID_SPEED_ACC_0_3_METERS_PER_SECOND",
 }
 
-var values_MAV_ODID_SPEED_ACC = map[string]MAV_ODID_SPEED_ACC{
+var label_to_value_MAV_ODID_SPEED_ACC = map[string]MAV_ODID_SPEED_ACC{
 	"MAV_ODID_SPEED_ACC_UNKNOWN":               MAV_ODID_SPEED_ACC_UNKNOWN,
 	"MAV_ODID_SPEED_ACC_10_METERS_PER_SECOND":  MAV_ODID_SPEED_ACC_10_METERS_PER_SECOND,
 	"MAV_ODID_SPEED_ACC_3_METERS_PER_SECOND":   MAV_ODID_SPEED_ACC_3_METERS_PER_SECOND,
@@ -40,7 +40,7 @@ var values_MAV_ODID_SPEED_ACC = map[string]MAV_ODID_SPEED_ACC{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_SPEED_ACC) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_ODID_SPEED_ACC[e]; ok {
+	if name, ok := value_to_label_MAV_ODID_SPEED_ACC[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -48,7 +48,7 @@ func (e MAV_ODID_SPEED_ACC) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_SPEED_ACC) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_ODID_SPEED_ACC[string(text)]; ok {
+	if value, ok := label_to_value_MAV_ODID_SPEED_ACC[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_ODID_SPEED_ACC(value)

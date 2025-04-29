@@ -30,7 +30,7 @@ const (
 	GOPRO_BURST_RATE_30_IN_6_SECOND GOPRO_BURST_RATE = 8
 )
 
-var labels_GOPRO_BURST_RATE = map[GOPRO_BURST_RATE]string{
+var value_to_label_GOPRO_BURST_RATE = map[GOPRO_BURST_RATE]string{
 	GOPRO_BURST_RATE_3_IN_1_SECOND:  "GOPRO_BURST_RATE_3_IN_1_SECOND",
 	GOPRO_BURST_RATE_5_IN_1_SECOND:  "GOPRO_BURST_RATE_5_IN_1_SECOND",
 	GOPRO_BURST_RATE_10_IN_1_SECOND: "GOPRO_BURST_RATE_10_IN_1_SECOND",
@@ -42,7 +42,7 @@ var labels_GOPRO_BURST_RATE = map[GOPRO_BURST_RATE]string{
 	GOPRO_BURST_RATE_30_IN_6_SECOND: "GOPRO_BURST_RATE_30_IN_6_SECOND",
 }
 
-var values_GOPRO_BURST_RATE = map[string]GOPRO_BURST_RATE{
+var label_to_value_GOPRO_BURST_RATE = map[string]GOPRO_BURST_RATE{
 	"GOPRO_BURST_RATE_3_IN_1_SECOND":  GOPRO_BURST_RATE_3_IN_1_SECOND,
 	"GOPRO_BURST_RATE_5_IN_1_SECOND":  GOPRO_BURST_RATE_5_IN_1_SECOND,
 	"GOPRO_BURST_RATE_10_IN_1_SECOND": GOPRO_BURST_RATE_10_IN_1_SECOND,
@@ -56,7 +56,7 @@ var values_GOPRO_BURST_RATE = map[string]GOPRO_BURST_RATE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_BURST_RATE) MarshalText() ([]byte, error) {
-	if name, ok := labels_GOPRO_BURST_RATE[e]; ok {
+	if name, ok := value_to_label_GOPRO_BURST_RATE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -64,7 +64,7 @@ func (e GOPRO_BURST_RATE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_BURST_RATE) UnmarshalText(text []byte) error {
-	if value, ok := values_GOPRO_BURST_RATE[string(text)]; ok {
+	if value, ok := label_to_value_GOPRO_BURST_RATE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = GOPRO_BURST_RATE(value)

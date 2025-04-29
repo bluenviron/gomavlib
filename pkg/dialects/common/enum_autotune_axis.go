@@ -21,13 +21,19 @@ const (
 	AUTOTUNE_AXIS_YAW AUTOTUNE_AXIS = 4
 )
 
-var labels_AUTOTUNE_AXIS = map[AUTOTUNE_AXIS]string{
+var values_AUTOTUNE_AXIS = []AUTOTUNE_AXIS{
+	AUTOTUNE_AXIS_ROLL,
+	AUTOTUNE_AXIS_PITCH,
+	AUTOTUNE_AXIS_YAW,
+}
+
+var value_to_label_AUTOTUNE_AXIS = map[AUTOTUNE_AXIS]string{
 	AUTOTUNE_AXIS_ROLL:  "AUTOTUNE_AXIS_ROLL",
 	AUTOTUNE_AXIS_PITCH: "AUTOTUNE_AXIS_PITCH",
 	AUTOTUNE_AXIS_YAW:   "AUTOTUNE_AXIS_YAW",
 }
 
-var values_AUTOTUNE_AXIS = map[string]AUTOTUNE_AXIS{
+var label_to_value_AUTOTUNE_AXIS = map[string]AUTOTUNE_AXIS{
 	"AUTOTUNE_AXIS_ROLL":  AUTOTUNE_AXIS_ROLL,
 	"AUTOTUNE_AXIS_PITCH": AUTOTUNE_AXIS_PITCH,
 	"AUTOTUNE_AXIS_YAW":   AUTOTUNE_AXIS_YAW,
@@ -39,9 +45,9 @@ func (e AUTOTUNE_AXIS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_AUTOTUNE_AXIS {
+	for _, val := range values_AUTOTUNE_AXIS {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_AUTOTUNE_AXIS[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -52,7 +58,7 @@ func (e *AUTOTUNE_AXIS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask AUTOTUNE_AXIS
 	for _, label := range labels {
-		if value, ok := values_AUTOTUNE_AXIS[label]; ok {
+		if value, ok := label_to_value_AUTOTUNE_AXIS[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= AUTOTUNE_AXIS(value)

@@ -23,7 +23,7 @@ const (
 	MAV_LANDED_STATE_LANDING MAV_LANDED_STATE = 4
 )
 
-var labels_MAV_LANDED_STATE = map[MAV_LANDED_STATE]string{
+var value_to_label_MAV_LANDED_STATE = map[MAV_LANDED_STATE]string{
 	MAV_LANDED_STATE_UNDEFINED: "MAV_LANDED_STATE_UNDEFINED",
 	MAV_LANDED_STATE_ON_GROUND: "MAV_LANDED_STATE_ON_GROUND",
 	MAV_LANDED_STATE_IN_AIR:    "MAV_LANDED_STATE_IN_AIR",
@@ -31,7 +31,7 @@ var labels_MAV_LANDED_STATE = map[MAV_LANDED_STATE]string{
 	MAV_LANDED_STATE_LANDING:   "MAV_LANDED_STATE_LANDING",
 }
 
-var values_MAV_LANDED_STATE = map[string]MAV_LANDED_STATE{
+var label_to_value_MAV_LANDED_STATE = map[string]MAV_LANDED_STATE{
 	"MAV_LANDED_STATE_UNDEFINED": MAV_LANDED_STATE_UNDEFINED,
 	"MAV_LANDED_STATE_ON_GROUND": MAV_LANDED_STATE_ON_GROUND,
 	"MAV_LANDED_STATE_IN_AIR":    MAV_LANDED_STATE_IN_AIR,
@@ -41,7 +41,7 @@ var values_MAV_LANDED_STATE = map[string]MAV_LANDED_STATE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_LANDED_STATE) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_LANDED_STATE[e]; ok {
+	if name, ok := value_to_label_MAV_LANDED_STATE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -49,7 +49,7 @@ func (e MAV_LANDED_STATE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_LANDED_STATE) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_LANDED_STATE[string(text)]; ok {
+	if value, ok := label_to_value_MAV_LANDED_STATE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_LANDED_STATE(value)

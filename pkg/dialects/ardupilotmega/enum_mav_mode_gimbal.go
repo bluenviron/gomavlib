@@ -26,7 +26,7 @@ const (
 	MAV_MODE_GIMBAL_RATE_CMD_TIMEOUT MAV_MODE_GIMBAL = 6
 )
 
-var labels_MAV_MODE_GIMBAL = map[MAV_MODE_GIMBAL]string{
+var value_to_label_MAV_MODE_GIMBAL = map[MAV_MODE_GIMBAL]string{
 	MAV_MODE_GIMBAL_UNINITIALIZED:     "MAV_MODE_GIMBAL_UNINITIALIZED",
 	MAV_MODE_GIMBAL_CALIBRATING_PITCH: "MAV_MODE_GIMBAL_CALIBRATING_PITCH",
 	MAV_MODE_GIMBAL_CALIBRATING_ROLL:  "MAV_MODE_GIMBAL_CALIBRATING_ROLL",
@@ -36,7 +36,7 @@ var labels_MAV_MODE_GIMBAL = map[MAV_MODE_GIMBAL]string{
 	MAV_MODE_GIMBAL_RATE_CMD_TIMEOUT:  "MAV_MODE_GIMBAL_RATE_CMD_TIMEOUT",
 }
 
-var values_MAV_MODE_GIMBAL = map[string]MAV_MODE_GIMBAL{
+var label_to_value_MAV_MODE_GIMBAL = map[string]MAV_MODE_GIMBAL{
 	"MAV_MODE_GIMBAL_UNINITIALIZED":     MAV_MODE_GIMBAL_UNINITIALIZED,
 	"MAV_MODE_GIMBAL_CALIBRATING_PITCH": MAV_MODE_GIMBAL_CALIBRATING_PITCH,
 	"MAV_MODE_GIMBAL_CALIBRATING_ROLL":  MAV_MODE_GIMBAL_CALIBRATING_ROLL,
@@ -48,7 +48,7 @@ var values_MAV_MODE_GIMBAL = map[string]MAV_MODE_GIMBAL{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MODE_GIMBAL) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_MODE_GIMBAL[e]; ok {
+	if name, ok := value_to_label_MAV_MODE_GIMBAL[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -56,7 +56,7 @@ func (e MAV_MODE_GIMBAL) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_MODE_GIMBAL) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_MODE_GIMBAL[string(text)]; ok {
+	if value, ok := label_to_value_MAV_MODE_GIMBAL[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_MODE_GIMBAL(value)

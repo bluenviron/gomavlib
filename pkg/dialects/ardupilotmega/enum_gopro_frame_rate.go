@@ -40,7 +40,7 @@ const (
 	GOPRO_FRAME_RATE_12_5 GOPRO_FRAME_RATE = 13
 )
 
-var labels_GOPRO_FRAME_RATE = map[GOPRO_FRAME_RATE]string{
+var value_to_label_GOPRO_FRAME_RATE = map[GOPRO_FRAME_RATE]string{
 	GOPRO_FRAME_RATE_12:   "GOPRO_FRAME_RATE_12",
 	GOPRO_FRAME_RATE_15:   "GOPRO_FRAME_RATE_15",
 	GOPRO_FRAME_RATE_24:   "GOPRO_FRAME_RATE_24",
@@ -57,7 +57,7 @@ var labels_GOPRO_FRAME_RATE = map[GOPRO_FRAME_RATE]string{
 	GOPRO_FRAME_RATE_12_5: "GOPRO_FRAME_RATE_12_5",
 }
 
-var values_GOPRO_FRAME_RATE = map[string]GOPRO_FRAME_RATE{
+var label_to_value_GOPRO_FRAME_RATE = map[string]GOPRO_FRAME_RATE{
 	"GOPRO_FRAME_RATE_12":   GOPRO_FRAME_RATE_12,
 	"GOPRO_FRAME_RATE_15":   GOPRO_FRAME_RATE_15,
 	"GOPRO_FRAME_RATE_24":   GOPRO_FRAME_RATE_24,
@@ -76,7 +76,7 @@ var values_GOPRO_FRAME_RATE = map[string]GOPRO_FRAME_RATE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_FRAME_RATE) MarshalText() ([]byte, error) {
-	if name, ok := labels_GOPRO_FRAME_RATE[e]; ok {
+	if name, ok := value_to_label_GOPRO_FRAME_RATE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -84,7 +84,7 @@ func (e GOPRO_FRAME_RATE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_FRAME_RATE) UnmarshalText(text []byte) error {
-	if value, ok := values_GOPRO_FRAME_RATE[string(text)]; ok {
+	if value, ok := label_to_value_GOPRO_FRAME_RATE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = GOPRO_FRAME_RATE(value)

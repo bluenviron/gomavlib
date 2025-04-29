@@ -45,7 +45,7 @@ const (
 	MAV_MISSION_OPERATION_CANCELLED MAV_MISSION_RESULT = 15
 )
 
-var labels_MAV_MISSION_RESULT = map[MAV_MISSION_RESULT]string{
+var value_to_label_MAV_MISSION_RESULT = map[MAV_MISSION_RESULT]string{
 	MAV_MISSION_ACCEPTED:            "MAV_MISSION_ACCEPTED",
 	MAV_MISSION_ERROR:               "MAV_MISSION_ERROR",
 	MAV_MISSION_UNSUPPORTED_FRAME:   "MAV_MISSION_UNSUPPORTED_FRAME",
@@ -64,7 +64,7 @@ var labels_MAV_MISSION_RESULT = map[MAV_MISSION_RESULT]string{
 	MAV_MISSION_OPERATION_CANCELLED: "MAV_MISSION_OPERATION_CANCELLED",
 }
 
-var values_MAV_MISSION_RESULT = map[string]MAV_MISSION_RESULT{
+var label_to_value_MAV_MISSION_RESULT = map[string]MAV_MISSION_RESULT{
 	"MAV_MISSION_ACCEPTED":            MAV_MISSION_ACCEPTED,
 	"MAV_MISSION_ERROR":               MAV_MISSION_ERROR,
 	"MAV_MISSION_UNSUPPORTED_FRAME":   MAV_MISSION_UNSUPPORTED_FRAME,
@@ -85,7 +85,7 @@ var values_MAV_MISSION_RESULT = map[string]MAV_MISSION_RESULT{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MISSION_RESULT) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_MISSION_RESULT[e]; ok {
+	if name, ok := value_to_label_MAV_MISSION_RESULT[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -93,7 +93,7 @@ func (e MAV_MISSION_RESULT) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_MISSION_RESULT) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_MISSION_RESULT[string(text)]; ok {
+	if value, ok := label_to_value_MAV_MISSION_RESULT[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_MISSION_RESULT(value)

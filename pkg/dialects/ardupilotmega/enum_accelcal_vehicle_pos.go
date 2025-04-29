@@ -20,7 +20,7 @@ const (
 	ACCELCAL_VEHICLE_POS_FAILED   ACCELCAL_VEHICLE_POS = 16777216
 )
 
-var labels_ACCELCAL_VEHICLE_POS = map[ACCELCAL_VEHICLE_POS]string{
+var value_to_label_ACCELCAL_VEHICLE_POS = map[ACCELCAL_VEHICLE_POS]string{
 	ACCELCAL_VEHICLE_POS_LEVEL:    "ACCELCAL_VEHICLE_POS_LEVEL",
 	ACCELCAL_VEHICLE_POS_LEFT:     "ACCELCAL_VEHICLE_POS_LEFT",
 	ACCELCAL_VEHICLE_POS_RIGHT:    "ACCELCAL_VEHICLE_POS_RIGHT",
@@ -31,7 +31,7 @@ var labels_ACCELCAL_VEHICLE_POS = map[ACCELCAL_VEHICLE_POS]string{
 	ACCELCAL_VEHICLE_POS_FAILED:   "ACCELCAL_VEHICLE_POS_FAILED",
 }
 
-var values_ACCELCAL_VEHICLE_POS = map[string]ACCELCAL_VEHICLE_POS{
+var label_to_value_ACCELCAL_VEHICLE_POS = map[string]ACCELCAL_VEHICLE_POS{
 	"ACCELCAL_VEHICLE_POS_LEVEL":    ACCELCAL_VEHICLE_POS_LEVEL,
 	"ACCELCAL_VEHICLE_POS_LEFT":     ACCELCAL_VEHICLE_POS_LEFT,
 	"ACCELCAL_VEHICLE_POS_RIGHT":    ACCELCAL_VEHICLE_POS_RIGHT,
@@ -44,7 +44,7 @@ var values_ACCELCAL_VEHICLE_POS = map[string]ACCELCAL_VEHICLE_POS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ACCELCAL_VEHICLE_POS) MarshalText() ([]byte, error) {
-	if name, ok := labels_ACCELCAL_VEHICLE_POS[e]; ok {
+	if name, ok := value_to_label_ACCELCAL_VEHICLE_POS[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -52,7 +52,7 @@ func (e ACCELCAL_VEHICLE_POS) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ACCELCAL_VEHICLE_POS) UnmarshalText(text []byte) error {
-	if value, ok := values_ACCELCAL_VEHICLE_POS[string(text)]; ok {
+	if value, ok := label_to_value_ACCELCAL_VEHICLE_POS[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = ACCELCAL_VEHICLE_POS(value)

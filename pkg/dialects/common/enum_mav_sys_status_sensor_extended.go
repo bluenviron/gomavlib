@@ -16,11 +16,15 @@ const (
 	MAV_SYS_STATUS_RECOVERY_SYSTEM MAV_SYS_STATUS_SENSOR_EXTENDED = 1
 )
 
-var labels_MAV_SYS_STATUS_SENSOR_EXTENDED = map[MAV_SYS_STATUS_SENSOR_EXTENDED]string{
+var values_MAV_SYS_STATUS_SENSOR_EXTENDED = []MAV_SYS_STATUS_SENSOR_EXTENDED{
+	MAV_SYS_STATUS_RECOVERY_SYSTEM,
+}
+
+var value_to_label_MAV_SYS_STATUS_SENSOR_EXTENDED = map[MAV_SYS_STATUS_SENSOR_EXTENDED]string{
 	MAV_SYS_STATUS_RECOVERY_SYSTEM: "MAV_SYS_STATUS_RECOVERY_SYSTEM",
 }
 
-var values_MAV_SYS_STATUS_SENSOR_EXTENDED = map[string]MAV_SYS_STATUS_SENSOR_EXTENDED{
+var label_to_value_MAV_SYS_STATUS_SENSOR_EXTENDED = map[string]MAV_SYS_STATUS_SENSOR_EXTENDED{
 	"MAV_SYS_STATUS_RECOVERY_SYSTEM": MAV_SYS_STATUS_RECOVERY_SYSTEM,
 }
 
@@ -30,9 +34,9 @@ func (e MAV_SYS_STATUS_SENSOR_EXTENDED) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_MAV_SYS_STATUS_SENSOR_EXTENDED {
+	for _, val := range values_MAV_SYS_STATUS_SENSOR_EXTENDED {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_MAV_SYS_STATUS_SENSOR_EXTENDED[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -43,7 +47,7 @@ func (e *MAV_SYS_STATUS_SENSOR_EXTENDED) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask MAV_SYS_STATUS_SENSOR_EXTENDED
 	for _, label := range labels {
-		if value, ok := values_MAV_SYS_STATUS_SENSOR_EXTENDED[label]; ok {
+		if value, ok := label_to_value_MAV_SYS_STATUS_SENSOR_EXTENDED[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= MAV_SYS_STATUS_SENSOR_EXTENDED(value)

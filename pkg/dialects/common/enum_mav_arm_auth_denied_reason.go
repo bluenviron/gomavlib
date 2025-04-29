@@ -24,7 +24,7 @@ const (
 	MAV_ARM_AUTH_DENIED_REASON_BAD_WEATHER MAV_ARM_AUTH_DENIED_REASON = 5
 )
 
-var labels_MAV_ARM_AUTH_DENIED_REASON = map[MAV_ARM_AUTH_DENIED_REASON]string{
+var value_to_label_MAV_ARM_AUTH_DENIED_REASON = map[MAV_ARM_AUTH_DENIED_REASON]string{
 	MAV_ARM_AUTH_DENIED_REASON_GENERIC:          "MAV_ARM_AUTH_DENIED_REASON_GENERIC",
 	MAV_ARM_AUTH_DENIED_REASON_NONE:             "MAV_ARM_AUTH_DENIED_REASON_NONE",
 	MAV_ARM_AUTH_DENIED_REASON_INVALID_WAYPOINT: "MAV_ARM_AUTH_DENIED_REASON_INVALID_WAYPOINT",
@@ -33,7 +33,7 @@ var labels_MAV_ARM_AUTH_DENIED_REASON = map[MAV_ARM_AUTH_DENIED_REASON]string{
 	MAV_ARM_AUTH_DENIED_REASON_BAD_WEATHER:      "MAV_ARM_AUTH_DENIED_REASON_BAD_WEATHER",
 }
 
-var values_MAV_ARM_AUTH_DENIED_REASON = map[string]MAV_ARM_AUTH_DENIED_REASON{
+var label_to_value_MAV_ARM_AUTH_DENIED_REASON = map[string]MAV_ARM_AUTH_DENIED_REASON{
 	"MAV_ARM_AUTH_DENIED_REASON_GENERIC":          MAV_ARM_AUTH_DENIED_REASON_GENERIC,
 	"MAV_ARM_AUTH_DENIED_REASON_NONE":             MAV_ARM_AUTH_DENIED_REASON_NONE,
 	"MAV_ARM_AUTH_DENIED_REASON_INVALID_WAYPOINT": MAV_ARM_AUTH_DENIED_REASON_INVALID_WAYPOINT,
@@ -44,7 +44,7 @@ var values_MAV_ARM_AUTH_DENIED_REASON = map[string]MAV_ARM_AUTH_DENIED_REASON{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ARM_AUTH_DENIED_REASON) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_ARM_AUTH_DENIED_REASON[e]; ok {
+	if name, ok := value_to_label_MAV_ARM_AUTH_DENIED_REASON[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -52,7 +52,7 @@ func (e MAV_ARM_AUTH_DENIED_REASON) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ARM_AUTH_DENIED_REASON) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_ARM_AUTH_DENIED_REASON[string(text)]; ok {
+	if value, ok := label_to_value_MAV_ARM_AUTH_DENIED_REASON[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_ARM_AUTH_DENIED_REASON(value)

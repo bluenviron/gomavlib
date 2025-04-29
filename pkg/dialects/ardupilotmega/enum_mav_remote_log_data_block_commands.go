@@ -17,19 +17,19 @@ const (
 	MAV_REMOTE_LOG_DATA_BLOCK_START MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS = 2147483646
 )
 
-var labels_MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS = map[MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS]string{
+var value_to_label_MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS = map[MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS]string{
 	MAV_REMOTE_LOG_DATA_BLOCK_STOP:  "MAV_REMOTE_LOG_DATA_BLOCK_STOP",
 	MAV_REMOTE_LOG_DATA_BLOCK_START: "MAV_REMOTE_LOG_DATA_BLOCK_START",
 }
 
-var values_MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS = map[string]MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS{
+var label_to_value_MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS = map[string]MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS{
 	"MAV_REMOTE_LOG_DATA_BLOCK_STOP":  MAV_REMOTE_LOG_DATA_BLOCK_STOP,
 	"MAV_REMOTE_LOG_DATA_BLOCK_START": MAV_REMOTE_LOG_DATA_BLOCK_START,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS[e]; ok {
+	if name, ok := value_to_label_MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -37,7 +37,7 @@ func (e MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS[string(text)]; ok {
+	if value, ok := label_to_value_MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_REMOTE_LOG_DATA_BLOCK_COMMANDS(value)

@@ -21,14 +21,14 @@ const (
 	LANDING_TARGET_TYPE_VISION_OTHER LANDING_TARGET_TYPE = 3
 )
 
-var labels_LANDING_TARGET_TYPE = map[LANDING_TARGET_TYPE]string{
+var value_to_label_LANDING_TARGET_TYPE = map[LANDING_TARGET_TYPE]string{
 	LANDING_TARGET_TYPE_LIGHT_BEACON:    "LANDING_TARGET_TYPE_LIGHT_BEACON",
 	LANDING_TARGET_TYPE_RADIO_BEACON:    "LANDING_TARGET_TYPE_RADIO_BEACON",
 	LANDING_TARGET_TYPE_VISION_FIDUCIAL: "LANDING_TARGET_TYPE_VISION_FIDUCIAL",
 	LANDING_TARGET_TYPE_VISION_OTHER:    "LANDING_TARGET_TYPE_VISION_OTHER",
 }
 
-var values_LANDING_TARGET_TYPE = map[string]LANDING_TARGET_TYPE{
+var label_to_value_LANDING_TARGET_TYPE = map[string]LANDING_TARGET_TYPE{
 	"LANDING_TARGET_TYPE_LIGHT_BEACON":    LANDING_TARGET_TYPE_LIGHT_BEACON,
 	"LANDING_TARGET_TYPE_RADIO_BEACON":    LANDING_TARGET_TYPE_RADIO_BEACON,
 	"LANDING_TARGET_TYPE_VISION_FIDUCIAL": LANDING_TARGET_TYPE_VISION_FIDUCIAL,
@@ -37,7 +37,7 @@ var values_LANDING_TARGET_TYPE = map[string]LANDING_TARGET_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e LANDING_TARGET_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_LANDING_TARGET_TYPE[e]; ok {
+	if name, ok := value_to_label_LANDING_TARGET_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -45,7 +45,7 @@ func (e LANDING_TARGET_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *LANDING_TARGET_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_LANDING_TARGET_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_LANDING_TARGET_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = LANDING_TARGET_TYPE(value)

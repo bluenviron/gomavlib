@@ -17,19 +17,19 @@ const (
 	DEVICE_OP_BUSTYPE_SPI DEVICE_OP_BUSTYPE = 1
 )
 
-var labels_DEVICE_OP_BUSTYPE = map[DEVICE_OP_BUSTYPE]string{
+var value_to_label_DEVICE_OP_BUSTYPE = map[DEVICE_OP_BUSTYPE]string{
 	DEVICE_OP_BUSTYPE_I2C: "DEVICE_OP_BUSTYPE_I2C",
 	DEVICE_OP_BUSTYPE_SPI: "DEVICE_OP_BUSTYPE_SPI",
 }
 
-var values_DEVICE_OP_BUSTYPE = map[string]DEVICE_OP_BUSTYPE{
+var label_to_value_DEVICE_OP_BUSTYPE = map[string]DEVICE_OP_BUSTYPE{
 	"DEVICE_OP_BUSTYPE_I2C": DEVICE_OP_BUSTYPE_I2C,
 	"DEVICE_OP_BUSTYPE_SPI": DEVICE_OP_BUSTYPE_SPI,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e DEVICE_OP_BUSTYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_DEVICE_OP_BUSTYPE[e]; ok {
+	if name, ok := value_to_label_DEVICE_OP_BUSTYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -37,7 +37,7 @@ func (e DEVICE_OP_BUSTYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *DEVICE_OP_BUSTYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_DEVICE_OP_BUSTYPE[string(text)]; ok {
+	if value, ok := label_to_value_DEVICE_OP_BUSTYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = DEVICE_OP_BUSTYPE(value)

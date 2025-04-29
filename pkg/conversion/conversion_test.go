@@ -105,7 +105,7 @@ const (
 	BIT63 A_TYPE = 9223372036854775808
 )
 
-var labels_A_TYPE = map[A_TYPE]string{
+var value_to_label_A_TYPE = map[A_TYPE]string{
 	A: "A",
 	B: "B",
 	C: "C",
@@ -121,7 +121,7 @@ var labels_A_TYPE = map[A_TYPE]string{
 	BIT63: "BIT63",
 }
 
-var values_A_TYPE = map[string]A_TYPE{
+var label_to_value_A_TYPE = map[string]A_TYPE{
 	"A": A,
 	"B": B,
 	"C": C,
@@ -139,7 +139,7 @@ var values_A_TYPE = map[string]A_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e A_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_A_TYPE[e]; ok {
+	if name, ok := value_to_label_A_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -147,7 +147,7 @@ func (e A_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *A_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_A_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_A_TYPE[string(text)]; ok {
 	   *e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 	   *e = A_TYPE(value)

@@ -22,7 +22,7 @@ const (
 	GSM_LINK_TYPE_4G GSM_LINK_TYPE = 4
 )
 
-var labels_GSM_LINK_TYPE = map[GSM_LINK_TYPE]string{
+var value_to_label_GSM_LINK_TYPE = map[GSM_LINK_TYPE]string{
 	GSM_LINK_TYPE_NONE:    "GSM_LINK_TYPE_NONE",
 	GSM_LINK_TYPE_UNKNOWN: "GSM_LINK_TYPE_UNKNOWN",
 	GSM_LINK_TYPE_2G:      "GSM_LINK_TYPE_2G",
@@ -30,7 +30,7 @@ var labels_GSM_LINK_TYPE = map[GSM_LINK_TYPE]string{
 	GSM_LINK_TYPE_4G:      "GSM_LINK_TYPE_4G",
 }
 
-var values_GSM_LINK_TYPE = map[string]GSM_LINK_TYPE{
+var label_to_value_GSM_LINK_TYPE = map[string]GSM_LINK_TYPE{
 	"GSM_LINK_TYPE_NONE":    GSM_LINK_TYPE_NONE,
 	"GSM_LINK_TYPE_UNKNOWN": GSM_LINK_TYPE_UNKNOWN,
 	"GSM_LINK_TYPE_2G":      GSM_LINK_TYPE_2G,
@@ -40,7 +40,7 @@ var values_GSM_LINK_TYPE = map[string]GSM_LINK_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GSM_LINK_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_GSM_LINK_TYPE[e]; ok {
+	if name, ok := value_to_label_GSM_LINK_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -48,7 +48,7 @@ func (e GSM_LINK_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GSM_LINK_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_GSM_LINK_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_GSM_LINK_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = GSM_LINK_TYPE(value)

@@ -23,7 +23,7 @@ const (
 	VTOL_TRANSITION_HEADING_ANY VTOL_TRANSITION_HEADING = 4
 )
 
-var labels_VTOL_TRANSITION_HEADING = map[VTOL_TRANSITION_HEADING]string{
+var value_to_label_VTOL_TRANSITION_HEADING = map[VTOL_TRANSITION_HEADING]string{
 	VTOL_TRANSITION_HEADING_VEHICLE_DEFAULT: "VTOL_TRANSITION_HEADING_VEHICLE_DEFAULT",
 	VTOL_TRANSITION_HEADING_NEXT_WAYPOINT:   "VTOL_TRANSITION_HEADING_NEXT_WAYPOINT",
 	VTOL_TRANSITION_HEADING_TAKEOFF:         "VTOL_TRANSITION_HEADING_TAKEOFF",
@@ -31,7 +31,7 @@ var labels_VTOL_TRANSITION_HEADING = map[VTOL_TRANSITION_HEADING]string{
 	VTOL_TRANSITION_HEADING_ANY:             "VTOL_TRANSITION_HEADING_ANY",
 }
 
-var values_VTOL_TRANSITION_HEADING = map[string]VTOL_TRANSITION_HEADING{
+var label_to_value_VTOL_TRANSITION_HEADING = map[string]VTOL_TRANSITION_HEADING{
 	"VTOL_TRANSITION_HEADING_VEHICLE_DEFAULT": VTOL_TRANSITION_HEADING_VEHICLE_DEFAULT,
 	"VTOL_TRANSITION_HEADING_NEXT_WAYPOINT":   VTOL_TRANSITION_HEADING_NEXT_WAYPOINT,
 	"VTOL_TRANSITION_HEADING_TAKEOFF":         VTOL_TRANSITION_HEADING_TAKEOFF,
@@ -41,7 +41,7 @@ var values_VTOL_TRANSITION_HEADING = map[string]VTOL_TRANSITION_HEADING{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e VTOL_TRANSITION_HEADING) MarshalText() ([]byte, error) {
-	if name, ok := labels_VTOL_TRANSITION_HEADING[e]; ok {
+	if name, ok := value_to_label_VTOL_TRANSITION_HEADING[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -49,7 +49,7 @@ func (e VTOL_TRANSITION_HEADING) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *VTOL_TRANSITION_HEADING) UnmarshalText(text []byte) error {
-	if value, ok := values_VTOL_TRANSITION_HEADING[string(text)]; ok {
+	if value, ok := label_to_value_VTOL_TRANSITION_HEADING[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = VTOL_TRANSITION_HEADING(value)

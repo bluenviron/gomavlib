@@ -28,7 +28,7 @@ const (
 	SECURE_COMMAND_FLASH_BOOTLOADER SECURE_COMMAND_OP = 7
 )
 
-var labels_SECURE_COMMAND_OP = map[SECURE_COMMAND_OP]string{
+var value_to_label_SECURE_COMMAND_OP = map[SECURE_COMMAND_OP]string{
 	SECURE_COMMAND_GET_SESSION_KEY:          "SECURE_COMMAND_GET_SESSION_KEY",
 	SECURE_COMMAND_GET_REMOTEID_SESSION_KEY: "SECURE_COMMAND_GET_REMOTEID_SESSION_KEY",
 	SECURE_COMMAND_REMOVE_PUBLIC_KEYS:       "SECURE_COMMAND_REMOVE_PUBLIC_KEYS",
@@ -39,7 +39,7 @@ var labels_SECURE_COMMAND_OP = map[SECURE_COMMAND_OP]string{
 	SECURE_COMMAND_FLASH_BOOTLOADER:         "SECURE_COMMAND_FLASH_BOOTLOADER",
 }
 
-var values_SECURE_COMMAND_OP = map[string]SECURE_COMMAND_OP{
+var label_to_value_SECURE_COMMAND_OP = map[string]SECURE_COMMAND_OP{
 	"SECURE_COMMAND_GET_SESSION_KEY":          SECURE_COMMAND_GET_SESSION_KEY,
 	"SECURE_COMMAND_GET_REMOTEID_SESSION_KEY": SECURE_COMMAND_GET_REMOTEID_SESSION_KEY,
 	"SECURE_COMMAND_REMOVE_PUBLIC_KEYS":       SECURE_COMMAND_REMOVE_PUBLIC_KEYS,
@@ -52,7 +52,7 @@ var values_SECURE_COMMAND_OP = map[string]SECURE_COMMAND_OP{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e SECURE_COMMAND_OP) MarshalText() ([]byte, error) {
-	if name, ok := labels_SECURE_COMMAND_OP[e]; ok {
+	if name, ok := value_to_label_SECURE_COMMAND_OP[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -60,7 +60,7 @@ func (e SECURE_COMMAND_OP) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *SECURE_COMMAND_OP) UnmarshalText(text []byte) error {
-	if value, ok := values_SECURE_COMMAND_OP[string(text)]; ok {
+	if value, ok := label_to_value_SECURE_COMMAND_OP[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = SECURE_COMMAND_OP(value)

@@ -49,7 +49,7 @@ const (
 	MAV_FTP_OPCODE_NAK MAV_FTP_OPCODE = 129
 )
 
-var labels_MAV_FTP_OPCODE = map[MAV_FTP_OPCODE]string{
+var value_to_label_MAV_FTP_OPCODE = map[MAV_FTP_OPCODE]string{
 	MAV_FTP_OPCODE_NONE:             "MAV_FTP_OPCODE_NONE",
 	MAV_FTP_OPCODE_TERMINATESESSION: "MAV_FTP_OPCODE_TERMINATESESSION",
 	MAV_FTP_OPCODE_RESETSESSION:     "MAV_FTP_OPCODE_RESETSESSION",
@@ -70,7 +70,7 @@ var labels_MAV_FTP_OPCODE = map[MAV_FTP_OPCODE]string{
 	MAV_FTP_OPCODE_NAK:              "MAV_FTP_OPCODE_NAK",
 }
 
-var values_MAV_FTP_OPCODE = map[string]MAV_FTP_OPCODE{
+var label_to_value_MAV_FTP_OPCODE = map[string]MAV_FTP_OPCODE{
 	"MAV_FTP_OPCODE_NONE":             MAV_FTP_OPCODE_NONE,
 	"MAV_FTP_OPCODE_TERMINATESESSION": MAV_FTP_OPCODE_TERMINATESESSION,
 	"MAV_FTP_OPCODE_RESETSESSION":     MAV_FTP_OPCODE_RESETSESSION,
@@ -93,7 +93,7 @@ var values_MAV_FTP_OPCODE = map[string]MAV_FTP_OPCODE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_FTP_OPCODE) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_FTP_OPCODE[e]; ok {
+	if name, ok := value_to_label_MAV_FTP_OPCODE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -101,7 +101,7 @@ func (e MAV_FTP_OPCODE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_FTP_OPCODE) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_FTP_OPCODE[string(text)]; ok {
+	if value, ok := label_to_value_MAV_FTP_OPCODE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_FTP_OPCODE(value)

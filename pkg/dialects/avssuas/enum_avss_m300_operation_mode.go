@@ -40,7 +40,7 @@ const (
 	MODE_M300_ENGINE_START AVSS_M300_OPERATION_MODE = 41
 )
 
-var labels_AVSS_M300_OPERATION_MODE = map[AVSS_M300_OPERATION_MODE]string{
+var value_to_label_AVSS_M300_OPERATION_MODE = map[AVSS_M300_OPERATION_MODE]string{
 	MODE_M300_MANUAL_CTRL:        "MODE_M300_MANUAL_CTRL",
 	MODE_M300_ATTITUDE:           "MODE_M300_ATTITUDE",
 	MODE_M300_P_GPS:              "MODE_M300_P_GPS",
@@ -57,7 +57,7 @@ var labels_AVSS_M300_OPERATION_MODE = map[AVSS_M300_OPERATION_MODE]string{
 	MODE_M300_ENGINE_START:       "MODE_M300_ENGINE_START",
 }
 
-var values_AVSS_M300_OPERATION_MODE = map[string]AVSS_M300_OPERATION_MODE{
+var label_to_value_AVSS_M300_OPERATION_MODE = map[string]AVSS_M300_OPERATION_MODE{
 	"MODE_M300_MANUAL_CTRL":        MODE_M300_MANUAL_CTRL,
 	"MODE_M300_ATTITUDE":           MODE_M300_ATTITUDE,
 	"MODE_M300_P_GPS":              MODE_M300_P_GPS,
@@ -76,7 +76,7 @@ var values_AVSS_M300_OPERATION_MODE = map[string]AVSS_M300_OPERATION_MODE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e AVSS_M300_OPERATION_MODE) MarshalText() ([]byte, error) {
-	if name, ok := labels_AVSS_M300_OPERATION_MODE[e]; ok {
+	if name, ok := value_to_label_AVSS_M300_OPERATION_MODE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -84,7 +84,7 @@ func (e AVSS_M300_OPERATION_MODE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *AVSS_M300_OPERATION_MODE) UnmarshalText(text []byte) error {
-	if value, ok := values_AVSS_M300_OPERATION_MODE[string(text)]; ok {
+	if value, ok := label_to_value_AVSS_M300_OPERATION_MODE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = AVSS_M300_OPERATION_MODE(value)

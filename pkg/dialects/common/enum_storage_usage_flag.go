@@ -22,14 +22,21 @@ const (
 	STORAGE_USAGE_FLAG_LOGS STORAGE_USAGE_FLAG = 8
 )
 
-var labels_STORAGE_USAGE_FLAG = map[STORAGE_USAGE_FLAG]string{
+var values_STORAGE_USAGE_FLAG = []STORAGE_USAGE_FLAG{
+	STORAGE_USAGE_FLAG_SET,
+	STORAGE_USAGE_FLAG_PHOTO,
+	STORAGE_USAGE_FLAG_VIDEO,
+	STORAGE_USAGE_FLAG_LOGS,
+}
+
+var value_to_label_STORAGE_USAGE_FLAG = map[STORAGE_USAGE_FLAG]string{
 	STORAGE_USAGE_FLAG_SET:   "STORAGE_USAGE_FLAG_SET",
 	STORAGE_USAGE_FLAG_PHOTO: "STORAGE_USAGE_FLAG_PHOTO",
 	STORAGE_USAGE_FLAG_VIDEO: "STORAGE_USAGE_FLAG_VIDEO",
 	STORAGE_USAGE_FLAG_LOGS:  "STORAGE_USAGE_FLAG_LOGS",
 }
 
-var values_STORAGE_USAGE_FLAG = map[string]STORAGE_USAGE_FLAG{
+var label_to_value_STORAGE_USAGE_FLAG = map[string]STORAGE_USAGE_FLAG{
 	"STORAGE_USAGE_FLAG_SET":   STORAGE_USAGE_FLAG_SET,
 	"STORAGE_USAGE_FLAG_PHOTO": STORAGE_USAGE_FLAG_PHOTO,
 	"STORAGE_USAGE_FLAG_VIDEO": STORAGE_USAGE_FLAG_VIDEO,
@@ -42,9 +49,9 @@ func (e STORAGE_USAGE_FLAG) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_STORAGE_USAGE_FLAG {
+	for _, val := range values_STORAGE_USAGE_FLAG {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_STORAGE_USAGE_FLAG[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -55,7 +62,7 @@ func (e *STORAGE_USAGE_FLAG) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask STORAGE_USAGE_FLAG
 	for _, label := range labels {
-		if value, ok := values_STORAGE_USAGE_FLAG[label]; ok {
+		if value, ok := label_to_value_STORAGE_USAGE_FLAG[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= STORAGE_USAGE_FLAG(value)

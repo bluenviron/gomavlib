@@ -17,19 +17,19 @@ const (
 	RC_TYPE_CRSF RC_TYPE = 1
 )
 
-var labels_RC_TYPE = map[RC_TYPE]string{
+var value_to_label_RC_TYPE = map[RC_TYPE]string{
 	RC_TYPE_SPEKTRUM: "RC_TYPE_SPEKTRUM",
 	RC_TYPE_CRSF:     "RC_TYPE_CRSF",
 }
 
-var values_RC_TYPE = map[string]RC_TYPE{
+var label_to_value_RC_TYPE = map[string]RC_TYPE{
 	"RC_TYPE_SPEKTRUM": RC_TYPE_SPEKTRUM,
 	"RC_TYPE_CRSF":     RC_TYPE_CRSF,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e RC_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_RC_TYPE[e]; ok {
+	if name, ok := value_to_label_RC_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -37,7 +37,7 @@ func (e RC_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *RC_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_RC_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_RC_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = RC_TYPE(value)

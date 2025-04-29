@@ -20,14 +20,14 @@ const (
 	FENCE_BREACH_BOUNDARY FENCE_BREACH = 3
 )
 
-var labels_FENCE_BREACH = map[FENCE_BREACH]string{
+var value_to_label_FENCE_BREACH = map[FENCE_BREACH]string{
 	FENCE_BREACH_NONE:     "FENCE_BREACH_NONE",
 	FENCE_BREACH_MINALT:   "FENCE_BREACH_MINALT",
 	FENCE_BREACH_MAXALT:   "FENCE_BREACH_MAXALT",
 	FENCE_BREACH_BOUNDARY: "FENCE_BREACH_BOUNDARY",
 }
 
-var values_FENCE_BREACH = map[string]FENCE_BREACH{
+var label_to_value_FENCE_BREACH = map[string]FENCE_BREACH{
 	"FENCE_BREACH_NONE":     FENCE_BREACH_NONE,
 	"FENCE_BREACH_MINALT":   FENCE_BREACH_MINALT,
 	"FENCE_BREACH_MAXALT":   FENCE_BREACH_MAXALT,
@@ -36,7 +36,7 @@ var values_FENCE_BREACH = map[string]FENCE_BREACH{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FENCE_BREACH) MarshalText() ([]byte, error) {
-	if name, ok := labels_FENCE_BREACH[e]; ok {
+	if name, ok := value_to_label_FENCE_BREACH[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -44,7 +44,7 @@ func (e FENCE_BREACH) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FENCE_BREACH) UnmarshalText(text []byte) error {
-	if value, ok := values_FENCE_BREACH[string(text)]; ok {
+	if value, ok := label_to_value_FENCE_BREACH[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = FENCE_BREACH(value)

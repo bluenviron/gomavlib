@@ -18,7 +18,7 @@ const (
 	CELLULAR_NETWORK_RADIO_TYPE_LTE   CELLULAR_NETWORK_RADIO_TYPE = 4
 )
 
-var labels_CELLULAR_NETWORK_RADIO_TYPE = map[CELLULAR_NETWORK_RADIO_TYPE]string{
+var value_to_label_CELLULAR_NETWORK_RADIO_TYPE = map[CELLULAR_NETWORK_RADIO_TYPE]string{
 	CELLULAR_NETWORK_RADIO_TYPE_NONE:  "CELLULAR_NETWORK_RADIO_TYPE_NONE",
 	CELLULAR_NETWORK_RADIO_TYPE_GSM:   "CELLULAR_NETWORK_RADIO_TYPE_GSM",
 	CELLULAR_NETWORK_RADIO_TYPE_CDMA:  "CELLULAR_NETWORK_RADIO_TYPE_CDMA",
@@ -26,7 +26,7 @@ var labels_CELLULAR_NETWORK_RADIO_TYPE = map[CELLULAR_NETWORK_RADIO_TYPE]string{
 	CELLULAR_NETWORK_RADIO_TYPE_LTE:   "CELLULAR_NETWORK_RADIO_TYPE_LTE",
 }
 
-var values_CELLULAR_NETWORK_RADIO_TYPE = map[string]CELLULAR_NETWORK_RADIO_TYPE{
+var label_to_value_CELLULAR_NETWORK_RADIO_TYPE = map[string]CELLULAR_NETWORK_RADIO_TYPE{
 	"CELLULAR_NETWORK_RADIO_TYPE_NONE":  CELLULAR_NETWORK_RADIO_TYPE_NONE,
 	"CELLULAR_NETWORK_RADIO_TYPE_GSM":   CELLULAR_NETWORK_RADIO_TYPE_GSM,
 	"CELLULAR_NETWORK_RADIO_TYPE_CDMA":  CELLULAR_NETWORK_RADIO_TYPE_CDMA,
@@ -36,7 +36,7 @@ var values_CELLULAR_NETWORK_RADIO_TYPE = map[string]CELLULAR_NETWORK_RADIO_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CELLULAR_NETWORK_RADIO_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_CELLULAR_NETWORK_RADIO_TYPE[e]; ok {
+	if name, ok := value_to_label_CELLULAR_NETWORK_RADIO_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -44,7 +44,7 @@ func (e CELLULAR_NETWORK_RADIO_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CELLULAR_NETWORK_RADIO_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_CELLULAR_NETWORK_RADIO_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_CELLULAR_NETWORK_RADIO_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = CELLULAR_NETWORK_RADIO_TYPE(value)

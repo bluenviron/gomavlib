@@ -97,7 +97,7 @@ const (
 	MAV_SENSOR_ROTATION_CUSTOM MAV_SENSOR_ORIENTATION = 100
 )
 
-var labels_MAV_SENSOR_ORIENTATION = map[MAV_SENSOR_ORIENTATION]string{
+var value_to_label_MAV_SENSOR_ORIENTATION = map[MAV_SENSOR_ORIENTATION]string{
 	MAV_SENSOR_ROTATION_NONE:                     "MAV_SENSOR_ROTATION_NONE",
 	MAV_SENSOR_ROTATION_YAW_45:                   "MAV_SENSOR_ROTATION_YAW_45",
 	MAV_SENSOR_ROTATION_YAW_90:                   "MAV_SENSOR_ROTATION_YAW_90",
@@ -142,7 +142,7 @@ var labels_MAV_SENSOR_ORIENTATION = map[MAV_SENSOR_ORIENTATION]string{
 	MAV_SENSOR_ROTATION_CUSTOM:                   "MAV_SENSOR_ROTATION_CUSTOM",
 }
 
-var values_MAV_SENSOR_ORIENTATION = map[string]MAV_SENSOR_ORIENTATION{
+var label_to_value_MAV_SENSOR_ORIENTATION = map[string]MAV_SENSOR_ORIENTATION{
 	"MAV_SENSOR_ROTATION_NONE":                     MAV_SENSOR_ROTATION_NONE,
 	"MAV_SENSOR_ROTATION_YAW_45":                   MAV_SENSOR_ROTATION_YAW_45,
 	"MAV_SENSOR_ROTATION_YAW_90":                   MAV_SENSOR_ROTATION_YAW_90,
@@ -189,7 +189,7 @@ var values_MAV_SENSOR_ORIENTATION = map[string]MAV_SENSOR_ORIENTATION{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_SENSOR_ORIENTATION) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_SENSOR_ORIENTATION[e]; ok {
+	if name, ok := value_to_label_MAV_SENSOR_ORIENTATION[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -197,7 +197,7 @@ func (e MAV_SENSOR_ORIENTATION) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_SENSOR_ORIENTATION) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_SENSOR_ORIENTATION[string(text)]; ok {
+	if value, ok := label_to_value_MAV_SENSOR_ORIENTATION[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_SENSOR_ORIENTATION(value)

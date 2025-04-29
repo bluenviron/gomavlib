@@ -23,7 +23,7 @@ const (
 	MAV_DISTANCE_SENSOR_UNKNOWN MAV_DISTANCE_SENSOR = 4
 )
 
-var labels_MAV_DISTANCE_SENSOR = map[MAV_DISTANCE_SENSOR]string{
+var value_to_label_MAV_DISTANCE_SENSOR = map[MAV_DISTANCE_SENSOR]string{
 	MAV_DISTANCE_SENSOR_LASER:      "MAV_DISTANCE_SENSOR_LASER",
 	MAV_DISTANCE_SENSOR_ULTRASOUND: "MAV_DISTANCE_SENSOR_ULTRASOUND",
 	MAV_DISTANCE_SENSOR_INFRARED:   "MAV_DISTANCE_SENSOR_INFRARED",
@@ -31,7 +31,7 @@ var labels_MAV_DISTANCE_SENSOR = map[MAV_DISTANCE_SENSOR]string{
 	MAV_DISTANCE_SENSOR_UNKNOWN:    "MAV_DISTANCE_SENSOR_UNKNOWN",
 }
 
-var values_MAV_DISTANCE_SENSOR = map[string]MAV_DISTANCE_SENSOR{
+var label_to_value_MAV_DISTANCE_SENSOR = map[string]MAV_DISTANCE_SENSOR{
 	"MAV_DISTANCE_SENSOR_LASER":      MAV_DISTANCE_SENSOR_LASER,
 	"MAV_DISTANCE_SENSOR_ULTRASOUND": MAV_DISTANCE_SENSOR_ULTRASOUND,
 	"MAV_DISTANCE_SENSOR_INFRARED":   MAV_DISTANCE_SENSOR_INFRARED,
@@ -41,7 +41,7 @@ var values_MAV_DISTANCE_SENSOR = map[string]MAV_DISTANCE_SENSOR{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_DISTANCE_SENSOR) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_DISTANCE_SENSOR[e]; ok {
+	if name, ok := value_to_label_MAV_DISTANCE_SENSOR[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -49,7 +49,7 @@ func (e MAV_DISTANCE_SENSOR) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_DISTANCE_SENSOR) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_DISTANCE_SENSOR[string(text)]; ok {
+	if value, ok := label_to_value_MAV_DISTANCE_SENSOR[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_DISTANCE_SENSOR(value)

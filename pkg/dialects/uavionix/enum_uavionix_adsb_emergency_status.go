@@ -21,7 +21,7 @@ const (
 	UAVIONIX_ADSB_OUT_RESERVED                        UAVIONIX_ADSB_EMERGENCY_STATUS = 7
 )
 
-var labels_UAVIONIX_ADSB_EMERGENCY_STATUS = map[UAVIONIX_ADSB_EMERGENCY_STATUS]string{
+var value_to_label_UAVIONIX_ADSB_EMERGENCY_STATUS = map[UAVIONIX_ADSB_EMERGENCY_STATUS]string{
 	UAVIONIX_ADSB_OUT_NO_EMERGENCY:                    "UAVIONIX_ADSB_OUT_NO_EMERGENCY",
 	UAVIONIX_ADSB_OUT_GENERAL_EMERGENCY:               "UAVIONIX_ADSB_OUT_GENERAL_EMERGENCY",
 	UAVIONIX_ADSB_OUT_LIFEGUARD_EMERGENCY:             "UAVIONIX_ADSB_OUT_LIFEGUARD_EMERGENCY",
@@ -32,7 +32,7 @@ var labels_UAVIONIX_ADSB_EMERGENCY_STATUS = map[UAVIONIX_ADSB_EMERGENCY_STATUS]s
 	UAVIONIX_ADSB_OUT_RESERVED:                        "UAVIONIX_ADSB_OUT_RESERVED",
 }
 
-var values_UAVIONIX_ADSB_EMERGENCY_STATUS = map[string]UAVIONIX_ADSB_EMERGENCY_STATUS{
+var label_to_value_UAVIONIX_ADSB_EMERGENCY_STATUS = map[string]UAVIONIX_ADSB_EMERGENCY_STATUS{
 	"UAVIONIX_ADSB_OUT_NO_EMERGENCY":                    UAVIONIX_ADSB_OUT_NO_EMERGENCY,
 	"UAVIONIX_ADSB_OUT_GENERAL_EMERGENCY":               UAVIONIX_ADSB_OUT_GENERAL_EMERGENCY,
 	"UAVIONIX_ADSB_OUT_LIFEGUARD_EMERGENCY":             UAVIONIX_ADSB_OUT_LIFEGUARD_EMERGENCY,
@@ -45,7 +45,7 @@ var values_UAVIONIX_ADSB_EMERGENCY_STATUS = map[string]UAVIONIX_ADSB_EMERGENCY_S
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_EMERGENCY_STATUS) MarshalText() ([]byte, error) {
-	if name, ok := labels_UAVIONIX_ADSB_EMERGENCY_STATUS[e]; ok {
+	if name, ok := value_to_label_UAVIONIX_ADSB_EMERGENCY_STATUS[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -53,7 +53,7 @@ func (e UAVIONIX_ADSB_EMERGENCY_STATUS) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_EMERGENCY_STATUS) UnmarshalText(text []byte) error {
-	if value, ok := values_UAVIONIX_ADSB_EMERGENCY_STATUS[string(text)]; ok {
+	if value, ok := label_to_value_UAVIONIX_ADSB_EMERGENCY_STATUS[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = UAVIONIX_ADSB_EMERGENCY_STATUS(value)

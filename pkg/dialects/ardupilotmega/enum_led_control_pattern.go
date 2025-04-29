@@ -18,13 +18,13 @@ const (
 	LED_CONTROL_PATTERN_CUSTOM LED_CONTROL_PATTERN = 255
 )
 
-var labels_LED_CONTROL_PATTERN = map[LED_CONTROL_PATTERN]string{
+var value_to_label_LED_CONTROL_PATTERN = map[LED_CONTROL_PATTERN]string{
 	LED_CONTROL_PATTERN_OFF:            "LED_CONTROL_PATTERN_OFF",
 	LED_CONTROL_PATTERN_FIRMWAREUPDATE: "LED_CONTROL_PATTERN_FIRMWAREUPDATE",
 	LED_CONTROL_PATTERN_CUSTOM:         "LED_CONTROL_PATTERN_CUSTOM",
 }
 
-var values_LED_CONTROL_PATTERN = map[string]LED_CONTROL_PATTERN{
+var label_to_value_LED_CONTROL_PATTERN = map[string]LED_CONTROL_PATTERN{
 	"LED_CONTROL_PATTERN_OFF":            LED_CONTROL_PATTERN_OFF,
 	"LED_CONTROL_PATTERN_FIRMWAREUPDATE": LED_CONTROL_PATTERN_FIRMWAREUPDATE,
 	"LED_CONTROL_PATTERN_CUSTOM":         LED_CONTROL_PATTERN_CUSTOM,
@@ -32,7 +32,7 @@ var values_LED_CONTROL_PATTERN = map[string]LED_CONTROL_PATTERN{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e LED_CONTROL_PATTERN) MarshalText() ([]byte, error) {
-	if name, ok := labels_LED_CONTROL_PATTERN[e]; ok {
+	if name, ok := value_to_label_LED_CONTROL_PATTERN[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -40,7 +40,7 @@ func (e LED_CONTROL_PATTERN) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *LED_CONTROL_PATTERN) UnmarshalText(text []byte) error {
-	if value, ok := values_LED_CONTROL_PATTERN[string(text)]; ok {
+	if value, ok := label_to_value_LED_CONTROL_PATTERN[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = LED_CONTROL_PATTERN(value)

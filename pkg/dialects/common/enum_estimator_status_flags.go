@@ -38,7 +38,22 @@ const (
 	ESTIMATOR_ACCEL_ERROR ESTIMATOR_STATUS_FLAGS = 2048
 )
 
-var labels_ESTIMATOR_STATUS_FLAGS = map[ESTIMATOR_STATUS_FLAGS]string{
+var values_ESTIMATOR_STATUS_FLAGS = []ESTIMATOR_STATUS_FLAGS{
+	ESTIMATOR_ATTITUDE,
+	ESTIMATOR_VELOCITY_HORIZ,
+	ESTIMATOR_VELOCITY_VERT,
+	ESTIMATOR_POS_HORIZ_REL,
+	ESTIMATOR_POS_HORIZ_ABS,
+	ESTIMATOR_POS_VERT_ABS,
+	ESTIMATOR_POS_VERT_AGL,
+	ESTIMATOR_CONST_POS_MODE,
+	ESTIMATOR_PRED_POS_HORIZ_REL,
+	ESTIMATOR_PRED_POS_HORIZ_ABS,
+	ESTIMATOR_GPS_GLITCH,
+	ESTIMATOR_ACCEL_ERROR,
+}
+
+var value_to_label_ESTIMATOR_STATUS_FLAGS = map[ESTIMATOR_STATUS_FLAGS]string{
 	ESTIMATOR_ATTITUDE:           "ESTIMATOR_ATTITUDE",
 	ESTIMATOR_VELOCITY_HORIZ:     "ESTIMATOR_VELOCITY_HORIZ",
 	ESTIMATOR_VELOCITY_VERT:      "ESTIMATOR_VELOCITY_VERT",
@@ -53,7 +68,7 @@ var labels_ESTIMATOR_STATUS_FLAGS = map[ESTIMATOR_STATUS_FLAGS]string{
 	ESTIMATOR_ACCEL_ERROR:        "ESTIMATOR_ACCEL_ERROR",
 }
 
-var values_ESTIMATOR_STATUS_FLAGS = map[string]ESTIMATOR_STATUS_FLAGS{
+var label_to_value_ESTIMATOR_STATUS_FLAGS = map[string]ESTIMATOR_STATUS_FLAGS{
 	"ESTIMATOR_ATTITUDE":           ESTIMATOR_ATTITUDE,
 	"ESTIMATOR_VELOCITY_HORIZ":     ESTIMATOR_VELOCITY_HORIZ,
 	"ESTIMATOR_VELOCITY_VERT":      ESTIMATOR_VELOCITY_VERT,
@@ -74,9 +89,9 @@ func (e ESTIMATOR_STATUS_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_ESTIMATOR_STATUS_FLAGS {
+	for _, val := range values_ESTIMATOR_STATUS_FLAGS {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_ESTIMATOR_STATUS_FLAGS[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -87,7 +102,7 @@ func (e *ESTIMATOR_STATUS_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask ESTIMATOR_STATUS_FLAGS
 	for _, label := range labels {
-		if value, ok := values_ESTIMATOR_STATUS_FLAGS[label]; ok {
+		if value, ok := label_to_value_ESTIMATOR_STATUS_FLAGS[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= ESTIMATOR_STATUS_FLAGS(value)

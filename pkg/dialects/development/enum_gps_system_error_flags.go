@@ -28,7 +28,17 @@ const (
 	GPS_SYSTEM_ERROR_OUTPUT_CONGESTION GPS_SYSTEM_ERROR_FLAGS = 64
 )
 
-var labels_GPS_SYSTEM_ERROR_FLAGS = map[GPS_SYSTEM_ERROR_FLAGS]string{
+var values_GPS_SYSTEM_ERROR_FLAGS = []GPS_SYSTEM_ERROR_FLAGS{
+	GPS_SYSTEM_ERROR_INCOMING_CORRECTIONS,
+	GPS_SYSTEM_ERROR_CONFIGURATION,
+	GPS_SYSTEM_ERROR_SOFTWARE,
+	GPS_SYSTEM_ERROR_ANTENNA,
+	GPS_SYSTEM_ERROR_EVENT_CONGESTION,
+	GPS_SYSTEM_ERROR_CPU_OVERLOAD,
+	GPS_SYSTEM_ERROR_OUTPUT_CONGESTION,
+}
+
+var value_to_label_GPS_SYSTEM_ERROR_FLAGS = map[GPS_SYSTEM_ERROR_FLAGS]string{
 	GPS_SYSTEM_ERROR_INCOMING_CORRECTIONS: "GPS_SYSTEM_ERROR_INCOMING_CORRECTIONS",
 	GPS_SYSTEM_ERROR_CONFIGURATION:        "GPS_SYSTEM_ERROR_CONFIGURATION",
 	GPS_SYSTEM_ERROR_SOFTWARE:             "GPS_SYSTEM_ERROR_SOFTWARE",
@@ -38,7 +48,7 @@ var labels_GPS_SYSTEM_ERROR_FLAGS = map[GPS_SYSTEM_ERROR_FLAGS]string{
 	GPS_SYSTEM_ERROR_OUTPUT_CONGESTION:    "GPS_SYSTEM_ERROR_OUTPUT_CONGESTION",
 }
 
-var values_GPS_SYSTEM_ERROR_FLAGS = map[string]GPS_SYSTEM_ERROR_FLAGS{
+var label_to_value_GPS_SYSTEM_ERROR_FLAGS = map[string]GPS_SYSTEM_ERROR_FLAGS{
 	"GPS_SYSTEM_ERROR_INCOMING_CORRECTIONS": GPS_SYSTEM_ERROR_INCOMING_CORRECTIONS,
 	"GPS_SYSTEM_ERROR_CONFIGURATION":        GPS_SYSTEM_ERROR_CONFIGURATION,
 	"GPS_SYSTEM_ERROR_SOFTWARE":             GPS_SYSTEM_ERROR_SOFTWARE,
@@ -54,9 +64,9 @@ func (e GPS_SYSTEM_ERROR_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_GPS_SYSTEM_ERROR_FLAGS {
+	for _, val := range values_GPS_SYSTEM_ERROR_FLAGS {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_GPS_SYSTEM_ERROR_FLAGS[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -67,7 +77,7 @@ func (e *GPS_SYSTEM_ERROR_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask GPS_SYSTEM_ERROR_FLAGS
 	for _, label := range labels {
-		if value, ok := values_GPS_SYSTEM_ERROR_FLAGS[label]; ok {
+		if value, ok := label_to_value_GPS_SYSTEM_ERROR_FLAGS[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= GPS_SYSTEM_ERROR_FLAGS(value)

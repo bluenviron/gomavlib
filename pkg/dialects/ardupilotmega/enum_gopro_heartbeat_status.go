@@ -20,14 +20,14 @@ const (
 	GOPRO_HEARTBEAT_STATUS_ERROR GOPRO_HEARTBEAT_STATUS = 3
 )
 
-var labels_GOPRO_HEARTBEAT_STATUS = map[GOPRO_HEARTBEAT_STATUS]string{
+var value_to_label_GOPRO_HEARTBEAT_STATUS = map[GOPRO_HEARTBEAT_STATUS]string{
 	GOPRO_HEARTBEAT_STATUS_DISCONNECTED: "GOPRO_HEARTBEAT_STATUS_DISCONNECTED",
 	GOPRO_HEARTBEAT_STATUS_INCOMPATIBLE: "GOPRO_HEARTBEAT_STATUS_INCOMPATIBLE",
 	GOPRO_HEARTBEAT_STATUS_CONNECTED:    "GOPRO_HEARTBEAT_STATUS_CONNECTED",
 	GOPRO_HEARTBEAT_STATUS_ERROR:        "GOPRO_HEARTBEAT_STATUS_ERROR",
 }
 
-var values_GOPRO_HEARTBEAT_STATUS = map[string]GOPRO_HEARTBEAT_STATUS{
+var label_to_value_GOPRO_HEARTBEAT_STATUS = map[string]GOPRO_HEARTBEAT_STATUS{
 	"GOPRO_HEARTBEAT_STATUS_DISCONNECTED": GOPRO_HEARTBEAT_STATUS_DISCONNECTED,
 	"GOPRO_HEARTBEAT_STATUS_INCOMPATIBLE": GOPRO_HEARTBEAT_STATUS_INCOMPATIBLE,
 	"GOPRO_HEARTBEAT_STATUS_CONNECTED":    GOPRO_HEARTBEAT_STATUS_CONNECTED,
@@ -36,7 +36,7 @@ var values_GOPRO_HEARTBEAT_STATUS = map[string]GOPRO_HEARTBEAT_STATUS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_HEARTBEAT_STATUS) MarshalText() ([]byte, error) {
-	if name, ok := labels_GOPRO_HEARTBEAT_STATUS[e]; ok {
+	if name, ok := value_to_label_GOPRO_HEARTBEAT_STATUS[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -44,7 +44,7 @@ func (e GOPRO_HEARTBEAT_STATUS) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_HEARTBEAT_STATUS) UnmarshalText(text []byte) error {
-	if value, ok := values_GOPRO_HEARTBEAT_STATUS[string(text)]; ok {
+	if value, ok := label_to_value_GOPRO_HEARTBEAT_STATUS[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = GOPRO_HEARTBEAT_STATUS(value)

@@ -65,7 +65,7 @@ const (
 	PLANE_MODE_AUTOLAND PLANE_MODE = 26
 )
 
-var labels_PLANE_MODE = map[PLANE_MODE]string{
+var value_to_label_PLANE_MODE = map[PLANE_MODE]string{
 	PLANE_MODE_MANUAL:           "PLANE_MODE_MANUAL",
 	PLANE_MODE_CIRCLE:           "PLANE_MODE_CIRCLE",
 	PLANE_MODE_STABILIZE:        "PLANE_MODE_STABILIZE",
@@ -94,7 +94,7 @@ var labels_PLANE_MODE = map[PLANE_MODE]string{
 	PLANE_MODE_AUTOLAND:         "PLANE_MODE_AUTOLAND",
 }
 
-var values_PLANE_MODE = map[string]PLANE_MODE{
+var label_to_value_PLANE_MODE = map[string]PLANE_MODE{
 	"PLANE_MODE_MANUAL":           PLANE_MODE_MANUAL,
 	"PLANE_MODE_CIRCLE":           PLANE_MODE_CIRCLE,
 	"PLANE_MODE_STABILIZE":        PLANE_MODE_STABILIZE,
@@ -125,7 +125,7 @@ var values_PLANE_MODE = map[string]PLANE_MODE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e PLANE_MODE) MarshalText() ([]byte, error) {
-	if name, ok := labels_PLANE_MODE[e]; ok {
+	if name, ok := value_to_label_PLANE_MODE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -133,7 +133,7 @@ func (e PLANE_MODE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *PLANE_MODE) UnmarshalText(text []byte) error {
-	if value, ok := values_PLANE_MODE[string(text)]; ok {
+	if value, ok := label_to_value_PLANE_MODE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = PLANE_MODE(value)

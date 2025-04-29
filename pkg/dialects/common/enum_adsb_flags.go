@@ -24,7 +24,20 @@ const (
 	ADSB_FLAGS_SOURCE_UAT              ADSB_FLAGS = 32768
 )
 
-var labels_ADSB_FLAGS = map[ADSB_FLAGS]string{
+var values_ADSB_FLAGS = []ADSB_FLAGS{
+	ADSB_FLAGS_VALID_COORDS,
+	ADSB_FLAGS_VALID_ALTITUDE,
+	ADSB_FLAGS_VALID_HEADING,
+	ADSB_FLAGS_VALID_VELOCITY,
+	ADSB_FLAGS_VALID_CALLSIGN,
+	ADSB_FLAGS_VALID_SQUAWK,
+	ADSB_FLAGS_SIMULATED,
+	ADSB_FLAGS_VERTICAL_VELOCITY_VALID,
+	ADSB_FLAGS_BARO_VALID,
+	ADSB_FLAGS_SOURCE_UAT,
+}
+
+var value_to_label_ADSB_FLAGS = map[ADSB_FLAGS]string{
 	ADSB_FLAGS_VALID_COORDS:            "ADSB_FLAGS_VALID_COORDS",
 	ADSB_FLAGS_VALID_ALTITUDE:          "ADSB_FLAGS_VALID_ALTITUDE",
 	ADSB_FLAGS_VALID_HEADING:           "ADSB_FLAGS_VALID_HEADING",
@@ -37,7 +50,7 @@ var labels_ADSB_FLAGS = map[ADSB_FLAGS]string{
 	ADSB_FLAGS_SOURCE_UAT:              "ADSB_FLAGS_SOURCE_UAT",
 }
 
-var values_ADSB_FLAGS = map[string]ADSB_FLAGS{
+var label_to_value_ADSB_FLAGS = map[string]ADSB_FLAGS{
 	"ADSB_FLAGS_VALID_COORDS":            ADSB_FLAGS_VALID_COORDS,
 	"ADSB_FLAGS_VALID_ALTITUDE":          ADSB_FLAGS_VALID_ALTITUDE,
 	"ADSB_FLAGS_VALID_HEADING":           ADSB_FLAGS_VALID_HEADING,
@@ -56,9 +69,9 @@ func (e ADSB_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_ADSB_FLAGS {
+	for _, val := range values_ADSB_FLAGS {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_ADSB_FLAGS[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -69,7 +82,7 @@ func (e *ADSB_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask ADSB_FLAGS
 	for _, label := range labels {
-		if value, ok := values_ADSB_FLAGS[label]; ok {
+		if value, ok := label_to_value_ADSB_FLAGS[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= ADSB_FLAGS(value)

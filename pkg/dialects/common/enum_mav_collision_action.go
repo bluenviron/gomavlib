@@ -27,7 +27,7 @@ const (
 	MAV_COLLISION_ACTION_HOVER MAV_COLLISION_ACTION = 6
 )
 
-var labels_MAV_COLLISION_ACTION = map[MAV_COLLISION_ACTION]string{
+var value_to_label_MAV_COLLISION_ACTION = map[MAV_COLLISION_ACTION]string{
 	MAV_COLLISION_ACTION_NONE:               "MAV_COLLISION_ACTION_NONE",
 	MAV_COLLISION_ACTION_REPORT:             "MAV_COLLISION_ACTION_REPORT",
 	MAV_COLLISION_ACTION_ASCEND_OR_DESCEND:  "MAV_COLLISION_ACTION_ASCEND_OR_DESCEND",
@@ -37,7 +37,7 @@ var labels_MAV_COLLISION_ACTION = map[MAV_COLLISION_ACTION]string{
 	MAV_COLLISION_ACTION_HOVER:              "MAV_COLLISION_ACTION_HOVER",
 }
 
-var values_MAV_COLLISION_ACTION = map[string]MAV_COLLISION_ACTION{
+var label_to_value_MAV_COLLISION_ACTION = map[string]MAV_COLLISION_ACTION{
 	"MAV_COLLISION_ACTION_NONE":               MAV_COLLISION_ACTION_NONE,
 	"MAV_COLLISION_ACTION_REPORT":             MAV_COLLISION_ACTION_REPORT,
 	"MAV_COLLISION_ACTION_ASCEND_OR_DESCEND":  MAV_COLLISION_ACTION_ASCEND_OR_DESCEND,
@@ -49,7 +49,7 @@ var values_MAV_COLLISION_ACTION = map[string]MAV_COLLISION_ACTION{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_COLLISION_ACTION) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_COLLISION_ACTION[e]; ok {
+	if name, ok := value_to_label_MAV_COLLISION_ACTION[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -57,7 +57,7 @@ func (e MAV_COLLISION_ACTION) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_COLLISION_ACTION) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_COLLISION_ACTION[string(text)]; ok {
+	if value, ok := label_to_value_MAV_COLLISION_ACTION[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_COLLISION_ACTION(value)

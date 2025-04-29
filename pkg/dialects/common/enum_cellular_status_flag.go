@@ -39,7 +39,7 @@ const (
 	CELLULAR_STATUS_FLAG_CONNECTED CELLULAR_STATUS_FLAG = 12
 )
 
-var labels_CELLULAR_STATUS_FLAG = map[CELLULAR_STATUS_FLAG]string{
+var value_to_label_CELLULAR_STATUS_FLAG = map[CELLULAR_STATUS_FLAG]string{
 	CELLULAR_STATUS_FLAG_UNKNOWN:       "CELLULAR_STATUS_FLAG_UNKNOWN",
 	CELLULAR_STATUS_FLAG_FAILED:        "CELLULAR_STATUS_FLAG_FAILED",
 	CELLULAR_STATUS_FLAG_INITIALIZING:  "CELLULAR_STATUS_FLAG_INITIALIZING",
@@ -55,7 +55,7 @@ var labels_CELLULAR_STATUS_FLAG = map[CELLULAR_STATUS_FLAG]string{
 	CELLULAR_STATUS_FLAG_CONNECTED:     "CELLULAR_STATUS_FLAG_CONNECTED",
 }
 
-var values_CELLULAR_STATUS_FLAG = map[string]CELLULAR_STATUS_FLAG{
+var label_to_value_CELLULAR_STATUS_FLAG = map[string]CELLULAR_STATUS_FLAG{
 	"CELLULAR_STATUS_FLAG_UNKNOWN":       CELLULAR_STATUS_FLAG_UNKNOWN,
 	"CELLULAR_STATUS_FLAG_FAILED":        CELLULAR_STATUS_FLAG_FAILED,
 	"CELLULAR_STATUS_FLAG_INITIALIZING":  CELLULAR_STATUS_FLAG_INITIALIZING,
@@ -73,7 +73,7 @@ var values_CELLULAR_STATUS_FLAG = map[string]CELLULAR_STATUS_FLAG{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CELLULAR_STATUS_FLAG) MarshalText() ([]byte, error) {
-	if name, ok := labels_CELLULAR_STATUS_FLAG[e]; ok {
+	if name, ok := value_to_label_CELLULAR_STATUS_FLAG[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -81,7 +81,7 @@ func (e CELLULAR_STATUS_FLAG) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CELLULAR_STATUS_FLAG) UnmarshalText(text []byte) error {
-	if value, ok := values_CELLULAR_STATUS_FLAG[string(text)]; ok {
+	if value, ok := label_to_value_CELLULAR_STATUS_FLAG[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = CELLULAR_STATUS_FLAG(value)

@@ -21,14 +21,14 @@ const (
 	WIFI_CONFIG_AP_MODE_DISABLED WIFI_CONFIG_AP_MODE = 3
 )
 
-var labels_WIFI_CONFIG_AP_MODE = map[WIFI_CONFIG_AP_MODE]string{
+var value_to_label_WIFI_CONFIG_AP_MODE = map[WIFI_CONFIG_AP_MODE]string{
 	WIFI_CONFIG_AP_MODE_UNDEFINED: "WIFI_CONFIG_AP_MODE_UNDEFINED",
 	WIFI_CONFIG_AP_MODE_AP:        "WIFI_CONFIG_AP_MODE_AP",
 	WIFI_CONFIG_AP_MODE_STATION:   "WIFI_CONFIG_AP_MODE_STATION",
 	WIFI_CONFIG_AP_MODE_DISABLED:  "WIFI_CONFIG_AP_MODE_DISABLED",
 }
 
-var values_WIFI_CONFIG_AP_MODE = map[string]WIFI_CONFIG_AP_MODE{
+var label_to_value_WIFI_CONFIG_AP_MODE = map[string]WIFI_CONFIG_AP_MODE{
 	"WIFI_CONFIG_AP_MODE_UNDEFINED": WIFI_CONFIG_AP_MODE_UNDEFINED,
 	"WIFI_CONFIG_AP_MODE_AP":        WIFI_CONFIG_AP_MODE_AP,
 	"WIFI_CONFIG_AP_MODE_STATION":   WIFI_CONFIG_AP_MODE_STATION,
@@ -37,7 +37,7 @@ var values_WIFI_CONFIG_AP_MODE = map[string]WIFI_CONFIG_AP_MODE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e WIFI_CONFIG_AP_MODE) MarshalText() ([]byte, error) {
-	if name, ok := labels_WIFI_CONFIG_AP_MODE[e]; ok {
+	if name, ok := value_to_label_WIFI_CONFIG_AP_MODE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -45,7 +45,7 @@ func (e WIFI_CONFIG_AP_MODE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *WIFI_CONFIG_AP_MODE) UnmarshalText(text []byte) error {
-	if value, ok := values_WIFI_CONFIG_AP_MODE[string(text)]; ok {
+	if value, ok := label_to_value_WIFI_CONFIG_AP_MODE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = WIFI_CONFIG_AP_MODE(value)

@@ -23,7 +23,7 @@ const (
 	UTM_FLIGHT_STATE_NOCTRL UTM_FLIGHT_STATE = 32
 )
 
-var labels_UTM_FLIGHT_STATE = map[UTM_FLIGHT_STATE]string{
+var value_to_label_UTM_FLIGHT_STATE = map[UTM_FLIGHT_STATE]string{
 	UTM_FLIGHT_STATE_UNKNOWN:   "UTM_FLIGHT_STATE_UNKNOWN",
 	UTM_FLIGHT_STATE_GROUND:    "UTM_FLIGHT_STATE_GROUND",
 	UTM_FLIGHT_STATE_AIRBORNE:  "UTM_FLIGHT_STATE_AIRBORNE",
@@ -31,7 +31,7 @@ var labels_UTM_FLIGHT_STATE = map[UTM_FLIGHT_STATE]string{
 	UTM_FLIGHT_STATE_NOCTRL:    "UTM_FLIGHT_STATE_NOCTRL",
 }
 
-var values_UTM_FLIGHT_STATE = map[string]UTM_FLIGHT_STATE{
+var label_to_value_UTM_FLIGHT_STATE = map[string]UTM_FLIGHT_STATE{
 	"UTM_FLIGHT_STATE_UNKNOWN":   UTM_FLIGHT_STATE_UNKNOWN,
 	"UTM_FLIGHT_STATE_GROUND":    UTM_FLIGHT_STATE_GROUND,
 	"UTM_FLIGHT_STATE_AIRBORNE":  UTM_FLIGHT_STATE_AIRBORNE,
@@ -41,7 +41,7 @@ var values_UTM_FLIGHT_STATE = map[string]UTM_FLIGHT_STATE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UTM_FLIGHT_STATE) MarshalText() ([]byte, error) {
-	if name, ok := labels_UTM_FLIGHT_STATE[e]; ok {
+	if name, ok := value_to_label_UTM_FLIGHT_STATE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -49,7 +49,7 @@ func (e UTM_FLIGHT_STATE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UTM_FLIGHT_STATE) UnmarshalText(text []byte) error {
-	if value, ok := values_UTM_FLIGHT_STATE[string(text)]; ok {
+	if value, ok := label_to_value_UTM_FLIGHT_STATE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = UTM_FLIGHT_STATE(value)

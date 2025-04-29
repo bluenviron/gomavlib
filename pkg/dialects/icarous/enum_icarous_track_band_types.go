@@ -15,13 +15,13 @@ const (
 	ICAROUS_TRACK_BAND_TYPE_RECOVERY ICAROUS_TRACK_BAND_TYPES = 2
 )
 
-var labels_ICAROUS_TRACK_BAND_TYPES = map[ICAROUS_TRACK_BAND_TYPES]string{
+var value_to_label_ICAROUS_TRACK_BAND_TYPES = map[ICAROUS_TRACK_BAND_TYPES]string{
 	ICAROUS_TRACK_BAND_TYPE_NONE:     "ICAROUS_TRACK_BAND_TYPE_NONE",
 	ICAROUS_TRACK_BAND_TYPE_NEAR:     "ICAROUS_TRACK_BAND_TYPE_NEAR",
 	ICAROUS_TRACK_BAND_TYPE_RECOVERY: "ICAROUS_TRACK_BAND_TYPE_RECOVERY",
 }
 
-var values_ICAROUS_TRACK_BAND_TYPES = map[string]ICAROUS_TRACK_BAND_TYPES{
+var label_to_value_ICAROUS_TRACK_BAND_TYPES = map[string]ICAROUS_TRACK_BAND_TYPES{
 	"ICAROUS_TRACK_BAND_TYPE_NONE":     ICAROUS_TRACK_BAND_TYPE_NONE,
 	"ICAROUS_TRACK_BAND_TYPE_NEAR":     ICAROUS_TRACK_BAND_TYPE_NEAR,
 	"ICAROUS_TRACK_BAND_TYPE_RECOVERY": ICAROUS_TRACK_BAND_TYPE_RECOVERY,
@@ -29,7 +29,7 @@ var values_ICAROUS_TRACK_BAND_TYPES = map[string]ICAROUS_TRACK_BAND_TYPES{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ICAROUS_TRACK_BAND_TYPES) MarshalText() ([]byte, error) {
-	if name, ok := labels_ICAROUS_TRACK_BAND_TYPES[e]; ok {
+	if name, ok := value_to_label_ICAROUS_TRACK_BAND_TYPES[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -37,7 +37,7 @@ func (e ICAROUS_TRACK_BAND_TYPES) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ICAROUS_TRACK_BAND_TYPES) UnmarshalText(text []byte) error {
-	if value, ok := values_ICAROUS_TRACK_BAND_TYPES[string(text)]; ok {
+	if value, ok := label_to_value_ICAROUS_TRACK_BAND_TYPES[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = ICAROUS_TRACK_BAND_TYPES(value)

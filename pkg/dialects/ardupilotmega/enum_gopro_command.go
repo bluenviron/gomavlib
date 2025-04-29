@@ -46,7 +46,7 @@ const (
 	GOPRO_COMMAND_CHARGING GOPRO_COMMAND = 16
 )
 
-var labels_GOPRO_COMMAND = map[GOPRO_COMMAND]string{
+var value_to_label_GOPRO_COMMAND = map[GOPRO_COMMAND]string{
 	GOPRO_COMMAND_POWER:                 "GOPRO_COMMAND_POWER",
 	GOPRO_COMMAND_CAPTURE_MODE:          "GOPRO_COMMAND_CAPTURE_MODE",
 	GOPRO_COMMAND_SHUTTER:               "GOPRO_COMMAND_SHUTTER",
@@ -66,7 +66,7 @@ var labels_GOPRO_COMMAND = map[GOPRO_COMMAND]string{
 	GOPRO_COMMAND_CHARGING:              "GOPRO_COMMAND_CHARGING",
 }
 
-var values_GOPRO_COMMAND = map[string]GOPRO_COMMAND{
+var label_to_value_GOPRO_COMMAND = map[string]GOPRO_COMMAND{
 	"GOPRO_COMMAND_POWER":                 GOPRO_COMMAND_POWER,
 	"GOPRO_COMMAND_CAPTURE_MODE":          GOPRO_COMMAND_CAPTURE_MODE,
 	"GOPRO_COMMAND_SHUTTER":               GOPRO_COMMAND_SHUTTER,
@@ -88,7 +88,7 @@ var values_GOPRO_COMMAND = map[string]GOPRO_COMMAND{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_COMMAND) MarshalText() ([]byte, error) {
-	if name, ok := labels_GOPRO_COMMAND[e]; ok {
+	if name, ok := value_to_label_GOPRO_COMMAND[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -96,7 +96,7 @@ func (e GOPRO_COMMAND) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_COMMAND) UnmarshalText(text []byte) error {
-	if value, ok := values_GOPRO_COMMAND[string(text)]; ok {
+	if value, ok := label_to_value_GOPRO_COMMAND[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = GOPRO_COMMAND(value)

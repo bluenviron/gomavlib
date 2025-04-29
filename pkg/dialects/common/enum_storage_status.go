@@ -21,14 +21,14 @@ const (
 	STORAGE_STATUS_NOT_SUPPORTED STORAGE_STATUS = 3
 )
 
-var labels_STORAGE_STATUS = map[STORAGE_STATUS]string{
+var value_to_label_STORAGE_STATUS = map[STORAGE_STATUS]string{
 	STORAGE_STATUS_EMPTY:         "STORAGE_STATUS_EMPTY",
 	STORAGE_STATUS_UNFORMATTED:   "STORAGE_STATUS_UNFORMATTED",
 	STORAGE_STATUS_READY:         "STORAGE_STATUS_READY",
 	STORAGE_STATUS_NOT_SUPPORTED: "STORAGE_STATUS_NOT_SUPPORTED",
 }
 
-var values_STORAGE_STATUS = map[string]STORAGE_STATUS{
+var label_to_value_STORAGE_STATUS = map[string]STORAGE_STATUS{
 	"STORAGE_STATUS_EMPTY":         STORAGE_STATUS_EMPTY,
 	"STORAGE_STATUS_UNFORMATTED":   STORAGE_STATUS_UNFORMATTED,
 	"STORAGE_STATUS_READY":         STORAGE_STATUS_READY,
@@ -37,7 +37,7 @@ var values_STORAGE_STATUS = map[string]STORAGE_STATUS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e STORAGE_STATUS) MarshalText() ([]byte, error) {
-	if name, ok := labels_STORAGE_STATUS[e]; ok {
+	if name, ok := value_to_label_STORAGE_STATUS[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -45,7 +45,7 @@ func (e STORAGE_STATUS) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *STORAGE_STATUS) UnmarshalText(text []byte) error {
-	if value, ok := values_STORAGE_STATUS[string(text)]; ok {
+	if value, ok := label_to_value_STORAGE_STATUS[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = STORAGE_STATUS(value)

@@ -22,7 +22,7 @@ const (
 	GOPRO_MODEL_HERO_4_BLACK GOPRO_MODEL = 4
 )
 
-var labels_GOPRO_MODEL = map[GOPRO_MODEL]string{
+var value_to_label_GOPRO_MODEL = map[GOPRO_MODEL]string{
 	GOPRO_MODEL_UNKNOWN:            "GOPRO_MODEL_UNKNOWN",
 	GOPRO_MODEL_HERO_3_PLUS_SILVER: "GOPRO_MODEL_HERO_3_PLUS_SILVER",
 	GOPRO_MODEL_HERO_3_PLUS_BLACK:  "GOPRO_MODEL_HERO_3_PLUS_BLACK",
@@ -30,7 +30,7 @@ var labels_GOPRO_MODEL = map[GOPRO_MODEL]string{
 	GOPRO_MODEL_HERO_4_BLACK:       "GOPRO_MODEL_HERO_4_BLACK",
 }
 
-var values_GOPRO_MODEL = map[string]GOPRO_MODEL{
+var label_to_value_GOPRO_MODEL = map[string]GOPRO_MODEL{
 	"GOPRO_MODEL_UNKNOWN":            GOPRO_MODEL_UNKNOWN,
 	"GOPRO_MODEL_HERO_3_PLUS_SILVER": GOPRO_MODEL_HERO_3_PLUS_SILVER,
 	"GOPRO_MODEL_HERO_3_PLUS_BLACK":  GOPRO_MODEL_HERO_3_PLUS_BLACK,
@@ -40,7 +40,7 @@ var values_GOPRO_MODEL = map[string]GOPRO_MODEL{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_MODEL) MarshalText() ([]byte, error) {
-	if name, ok := labels_GOPRO_MODEL[e]; ok {
+	if name, ok := value_to_label_GOPRO_MODEL[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -48,7 +48,7 @@ func (e GOPRO_MODEL) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_MODEL) UnmarshalText(text []byte) error {
-	if value, ok := values_GOPRO_MODEL[string(text)]; ok {
+	if value, ok := label_to_value_GOPRO_MODEL[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = GOPRO_MODEL(value)

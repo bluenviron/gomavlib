@@ -34,7 +34,20 @@ const (
 	GIMBAL_MANAGER_FLAGS_RC_MIXED GIMBAL_MANAGER_FLAGS = 512
 )
 
-var labels_GIMBAL_MANAGER_FLAGS = map[GIMBAL_MANAGER_FLAGS]string{
+var values_GIMBAL_MANAGER_FLAGS = []GIMBAL_MANAGER_FLAGS{
+	GIMBAL_MANAGER_FLAGS_RETRACT,
+	GIMBAL_MANAGER_FLAGS_NEUTRAL,
+	GIMBAL_MANAGER_FLAGS_ROLL_LOCK,
+	GIMBAL_MANAGER_FLAGS_PITCH_LOCK,
+	GIMBAL_MANAGER_FLAGS_YAW_LOCK,
+	GIMBAL_MANAGER_FLAGS_YAW_IN_VEHICLE_FRAME,
+	GIMBAL_MANAGER_FLAGS_YAW_IN_EARTH_FRAME,
+	GIMBAL_MANAGER_FLAGS_ACCEPTS_YAW_IN_EARTH_FRAME,
+	GIMBAL_MANAGER_FLAGS_RC_EXCLUSIVE,
+	GIMBAL_MANAGER_FLAGS_RC_MIXED,
+}
+
+var value_to_label_GIMBAL_MANAGER_FLAGS = map[GIMBAL_MANAGER_FLAGS]string{
 	GIMBAL_MANAGER_FLAGS_RETRACT:                    "GIMBAL_MANAGER_FLAGS_RETRACT",
 	GIMBAL_MANAGER_FLAGS_NEUTRAL:                    "GIMBAL_MANAGER_FLAGS_NEUTRAL",
 	GIMBAL_MANAGER_FLAGS_ROLL_LOCK:                  "GIMBAL_MANAGER_FLAGS_ROLL_LOCK",
@@ -47,7 +60,7 @@ var labels_GIMBAL_MANAGER_FLAGS = map[GIMBAL_MANAGER_FLAGS]string{
 	GIMBAL_MANAGER_FLAGS_RC_MIXED:                   "GIMBAL_MANAGER_FLAGS_RC_MIXED",
 }
 
-var values_GIMBAL_MANAGER_FLAGS = map[string]GIMBAL_MANAGER_FLAGS{
+var label_to_value_GIMBAL_MANAGER_FLAGS = map[string]GIMBAL_MANAGER_FLAGS{
 	"GIMBAL_MANAGER_FLAGS_RETRACT":                    GIMBAL_MANAGER_FLAGS_RETRACT,
 	"GIMBAL_MANAGER_FLAGS_NEUTRAL":                    GIMBAL_MANAGER_FLAGS_NEUTRAL,
 	"GIMBAL_MANAGER_FLAGS_ROLL_LOCK":                  GIMBAL_MANAGER_FLAGS_ROLL_LOCK,
@@ -66,9 +79,9 @@ func (e GIMBAL_MANAGER_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_GIMBAL_MANAGER_FLAGS {
+	for _, val := range values_GIMBAL_MANAGER_FLAGS {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_GIMBAL_MANAGER_FLAGS[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -79,7 +92,7 @@ func (e *GIMBAL_MANAGER_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask GIMBAL_MANAGER_FLAGS
 	for _, label := range labels {
-		if value, ok := values_GIMBAL_MANAGER_FLAGS[label]; ok {
+		if value, ok := label_to_value_GIMBAL_MANAGER_FLAGS[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= GIMBAL_MANAGER_FLAGS(value)

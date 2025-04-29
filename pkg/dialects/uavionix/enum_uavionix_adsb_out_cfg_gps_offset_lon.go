@@ -15,19 +15,19 @@ const (
 	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_APPLIED_BY_SENSOR UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON = 1
 )
 
-var labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON = map[UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON]string{
+var value_to_label_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON = map[UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON]string{
 	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_NO_DATA:           "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_NO_DATA",
 	UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_APPLIED_BY_SENSOR: "UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_APPLIED_BY_SENSOR",
 }
 
-var values_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON = map[string]UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON{
+var label_to_value_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON = map[string]UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON{
 	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_NO_DATA":           UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_NO_DATA,
 	"UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_APPLIED_BY_SENSOR": UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON_APPLIED_BY_SENSOR,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON) MarshalText() ([]byte, error) {
-	if name, ok := labels_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON[e]; ok {
+	if name, ok := value_to_label_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -35,7 +35,7 @@ func (e UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON) UnmarshalText(text []byte) error {
-	if value, ok := values_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON[string(text)]; ok {
+	if value, ok := label_to_value_UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = UAVIONIX_ADSB_OUT_CFG_GPS_OFFSET_LON(value)

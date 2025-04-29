@@ -18,7 +18,7 @@ const (
 	ICAROUS_FMS_STATE_LAND     ICAROUS_FMS_STATE = 5
 )
 
-var labels_ICAROUS_FMS_STATE = map[ICAROUS_FMS_STATE]string{
+var value_to_label_ICAROUS_FMS_STATE = map[ICAROUS_FMS_STATE]string{
 	ICAROUS_FMS_STATE_IDLE:     "ICAROUS_FMS_STATE_IDLE",
 	ICAROUS_FMS_STATE_TAKEOFF:  "ICAROUS_FMS_STATE_TAKEOFF",
 	ICAROUS_FMS_STATE_CLIMB:    "ICAROUS_FMS_STATE_CLIMB",
@@ -27,7 +27,7 @@ var labels_ICAROUS_FMS_STATE = map[ICAROUS_FMS_STATE]string{
 	ICAROUS_FMS_STATE_LAND:     "ICAROUS_FMS_STATE_LAND",
 }
 
-var values_ICAROUS_FMS_STATE = map[string]ICAROUS_FMS_STATE{
+var label_to_value_ICAROUS_FMS_STATE = map[string]ICAROUS_FMS_STATE{
 	"ICAROUS_FMS_STATE_IDLE":     ICAROUS_FMS_STATE_IDLE,
 	"ICAROUS_FMS_STATE_TAKEOFF":  ICAROUS_FMS_STATE_TAKEOFF,
 	"ICAROUS_FMS_STATE_CLIMB":    ICAROUS_FMS_STATE_CLIMB,
@@ -38,7 +38,7 @@ var values_ICAROUS_FMS_STATE = map[string]ICAROUS_FMS_STATE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ICAROUS_FMS_STATE) MarshalText() ([]byte, error) {
-	if name, ok := labels_ICAROUS_FMS_STATE[e]; ok {
+	if name, ok := value_to_label_ICAROUS_FMS_STATE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -46,7 +46,7 @@ func (e ICAROUS_FMS_STATE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ICAROUS_FMS_STATE) UnmarshalText(text []byte) error {
-	if value, ok := values_ICAROUS_FMS_STATE[string(text)]; ok {
+	if value, ok := label_to_value_ICAROUS_FMS_STATE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = ICAROUS_FMS_STATE(value)

@@ -23,7 +23,7 @@ const (
 	FIRMWARE_VERSION_TYPE_OFFICIAL FIRMWARE_VERSION_TYPE = 255
 )
 
-var labels_FIRMWARE_VERSION_TYPE = map[FIRMWARE_VERSION_TYPE]string{
+var value_to_label_FIRMWARE_VERSION_TYPE = map[FIRMWARE_VERSION_TYPE]string{
 	FIRMWARE_VERSION_TYPE_DEV:      "FIRMWARE_VERSION_TYPE_DEV",
 	FIRMWARE_VERSION_TYPE_ALPHA:    "FIRMWARE_VERSION_TYPE_ALPHA",
 	FIRMWARE_VERSION_TYPE_BETA:     "FIRMWARE_VERSION_TYPE_BETA",
@@ -31,7 +31,7 @@ var labels_FIRMWARE_VERSION_TYPE = map[FIRMWARE_VERSION_TYPE]string{
 	FIRMWARE_VERSION_TYPE_OFFICIAL: "FIRMWARE_VERSION_TYPE_OFFICIAL",
 }
 
-var values_FIRMWARE_VERSION_TYPE = map[string]FIRMWARE_VERSION_TYPE{
+var label_to_value_FIRMWARE_VERSION_TYPE = map[string]FIRMWARE_VERSION_TYPE{
 	"FIRMWARE_VERSION_TYPE_DEV":      FIRMWARE_VERSION_TYPE_DEV,
 	"FIRMWARE_VERSION_TYPE_ALPHA":    FIRMWARE_VERSION_TYPE_ALPHA,
 	"FIRMWARE_VERSION_TYPE_BETA":     FIRMWARE_VERSION_TYPE_BETA,
@@ -41,7 +41,7 @@ var values_FIRMWARE_VERSION_TYPE = map[string]FIRMWARE_VERSION_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FIRMWARE_VERSION_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_FIRMWARE_VERSION_TYPE[e]; ok {
+	if name, ok := value_to_label_FIRMWARE_VERSION_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -49,7 +49,7 @@ func (e FIRMWARE_VERSION_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FIRMWARE_VERSION_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_FIRMWARE_VERSION_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_FIRMWARE_VERSION_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = FIRMWARE_VERSION_TYPE(value)

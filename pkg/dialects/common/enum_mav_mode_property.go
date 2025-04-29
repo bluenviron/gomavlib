@@ -24,13 +24,19 @@ const (
 	MAV_MODE_PROPERTY_AUTO_MODE MAV_MODE_PROPERTY = 4
 )
 
-var labels_MAV_MODE_PROPERTY = map[MAV_MODE_PROPERTY]string{
+var values_MAV_MODE_PROPERTY = []MAV_MODE_PROPERTY{
+	MAV_MODE_PROPERTY_ADVANCED,
+	MAV_MODE_PROPERTY_NOT_USER_SELECTABLE,
+	MAV_MODE_PROPERTY_AUTO_MODE,
+}
+
+var value_to_label_MAV_MODE_PROPERTY = map[MAV_MODE_PROPERTY]string{
 	MAV_MODE_PROPERTY_ADVANCED:            "MAV_MODE_PROPERTY_ADVANCED",
 	MAV_MODE_PROPERTY_NOT_USER_SELECTABLE: "MAV_MODE_PROPERTY_NOT_USER_SELECTABLE",
 	MAV_MODE_PROPERTY_AUTO_MODE:           "MAV_MODE_PROPERTY_AUTO_MODE",
 }
 
-var values_MAV_MODE_PROPERTY = map[string]MAV_MODE_PROPERTY{
+var label_to_value_MAV_MODE_PROPERTY = map[string]MAV_MODE_PROPERTY{
 	"MAV_MODE_PROPERTY_ADVANCED":            MAV_MODE_PROPERTY_ADVANCED,
 	"MAV_MODE_PROPERTY_NOT_USER_SELECTABLE": MAV_MODE_PROPERTY_NOT_USER_SELECTABLE,
 	"MAV_MODE_PROPERTY_AUTO_MODE":           MAV_MODE_PROPERTY_AUTO_MODE,
@@ -42,9 +48,9 @@ func (e MAV_MODE_PROPERTY) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_MAV_MODE_PROPERTY {
+	for _, val := range values_MAV_MODE_PROPERTY {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_MAV_MODE_PROPERTY[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -55,7 +61,7 @@ func (e *MAV_MODE_PROPERTY) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask MAV_MODE_PROPERTY
 	for _, label := range labels {
-		if value, ok := values_MAV_MODE_PROPERTY[label]; ok {
+		if value, ok := label_to_value_MAV_MODE_PROPERTY[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= MAV_MODE_PROPERTY(value)

@@ -27,7 +27,7 @@ const (
 	MAV_PFS_CMD_DO_NOTHING MAV_PREFLIGHT_STORAGE_ACTION = 6
 )
 
-var labels_MAV_PREFLIGHT_STORAGE_ACTION = map[MAV_PREFLIGHT_STORAGE_ACTION]string{
+var value_to_label_MAV_PREFLIGHT_STORAGE_ACTION = map[MAV_PREFLIGHT_STORAGE_ACTION]string{
 	MAV_PFS_CMD_READ_ALL:       "MAV_PFS_CMD_READ_ALL",
 	MAV_PFS_CMD_WRITE_ALL:      "MAV_PFS_CMD_WRITE_ALL",
 	MAV_PFS_CMD_CLEAR_ALL:      "MAV_PFS_CMD_CLEAR_ALL",
@@ -37,7 +37,7 @@ var labels_MAV_PREFLIGHT_STORAGE_ACTION = map[MAV_PREFLIGHT_STORAGE_ACTION]strin
 	MAV_PFS_CMD_DO_NOTHING:     "MAV_PFS_CMD_DO_NOTHING",
 }
 
-var values_MAV_PREFLIGHT_STORAGE_ACTION = map[string]MAV_PREFLIGHT_STORAGE_ACTION{
+var label_to_value_MAV_PREFLIGHT_STORAGE_ACTION = map[string]MAV_PREFLIGHT_STORAGE_ACTION{
 	"MAV_PFS_CMD_READ_ALL":       MAV_PFS_CMD_READ_ALL,
 	"MAV_PFS_CMD_WRITE_ALL":      MAV_PFS_CMD_WRITE_ALL,
 	"MAV_PFS_CMD_CLEAR_ALL":      MAV_PFS_CMD_CLEAR_ALL,
@@ -49,7 +49,7 @@ var values_MAV_PREFLIGHT_STORAGE_ACTION = map[string]MAV_PREFLIGHT_STORAGE_ACTIO
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_PREFLIGHT_STORAGE_ACTION) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_PREFLIGHT_STORAGE_ACTION[e]; ok {
+	if name, ok := value_to_label_MAV_PREFLIGHT_STORAGE_ACTION[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -57,7 +57,7 @@ func (e MAV_PREFLIGHT_STORAGE_ACTION) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_PREFLIGHT_STORAGE_ACTION) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_PREFLIGHT_STORAGE_ACTION[string(text)]; ok {
+	if value, ok := label_to_value_MAV_PREFLIGHT_STORAGE_ACTION[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_PREFLIGHT_STORAGE_ACTION(value)

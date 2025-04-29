@@ -21,14 +21,14 @@ const (
 	MAV_MISSION_TYPE_ALL MAV_MISSION_TYPE = 255
 )
 
-var labels_MAV_MISSION_TYPE = map[MAV_MISSION_TYPE]string{
+var value_to_label_MAV_MISSION_TYPE = map[MAV_MISSION_TYPE]string{
 	MAV_MISSION_TYPE_MISSION: "MAV_MISSION_TYPE_MISSION",
 	MAV_MISSION_TYPE_FENCE:   "MAV_MISSION_TYPE_FENCE",
 	MAV_MISSION_TYPE_RALLY:   "MAV_MISSION_TYPE_RALLY",
 	MAV_MISSION_TYPE_ALL:     "MAV_MISSION_TYPE_ALL",
 }
 
-var values_MAV_MISSION_TYPE = map[string]MAV_MISSION_TYPE{
+var label_to_value_MAV_MISSION_TYPE = map[string]MAV_MISSION_TYPE{
 	"MAV_MISSION_TYPE_MISSION": MAV_MISSION_TYPE_MISSION,
 	"MAV_MISSION_TYPE_FENCE":   MAV_MISSION_TYPE_FENCE,
 	"MAV_MISSION_TYPE_RALLY":   MAV_MISSION_TYPE_RALLY,
@@ -37,7 +37,7 @@ var values_MAV_MISSION_TYPE = map[string]MAV_MISSION_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MISSION_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_MISSION_TYPE[e]; ok {
+	if name, ok := value_to_label_MAV_MISSION_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -45,7 +45,7 @@ func (e MAV_MISSION_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_MISSION_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_MISSION_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_MAV_MISSION_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_MISSION_TYPE(value)

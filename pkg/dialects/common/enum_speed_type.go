@@ -21,14 +21,14 @@ const (
 	SPEED_TYPE_DESCENT_SPEED SPEED_TYPE = 3
 )
 
-var labels_SPEED_TYPE = map[SPEED_TYPE]string{
+var value_to_label_SPEED_TYPE = map[SPEED_TYPE]string{
 	SPEED_TYPE_AIRSPEED:      "SPEED_TYPE_AIRSPEED",
 	SPEED_TYPE_GROUNDSPEED:   "SPEED_TYPE_GROUNDSPEED",
 	SPEED_TYPE_CLIMB_SPEED:   "SPEED_TYPE_CLIMB_SPEED",
 	SPEED_TYPE_DESCENT_SPEED: "SPEED_TYPE_DESCENT_SPEED",
 }
 
-var values_SPEED_TYPE = map[string]SPEED_TYPE{
+var label_to_value_SPEED_TYPE = map[string]SPEED_TYPE{
 	"SPEED_TYPE_AIRSPEED":      SPEED_TYPE_AIRSPEED,
 	"SPEED_TYPE_GROUNDSPEED":   SPEED_TYPE_GROUNDSPEED,
 	"SPEED_TYPE_CLIMB_SPEED":   SPEED_TYPE_CLIMB_SPEED,
@@ -37,7 +37,7 @@ var values_SPEED_TYPE = map[string]SPEED_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e SPEED_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_SPEED_TYPE[e]; ok {
+	if name, ok := value_to_label_SPEED_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -45,7 +45,7 @@ func (e SPEED_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *SPEED_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_SPEED_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_SPEED_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = SPEED_TYPE(value)

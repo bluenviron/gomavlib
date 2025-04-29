@@ -15,13 +15,13 @@ const (
 	CAN_FILTER_REMOVE  CAN_FILTER_OP = 2
 )
 
-var labels_CAN_FILTER_OP = map[CAN_FILTER_OP]string{
+var value_to_label_CAN_FILTER_OP = map[CAN_FILTER_OP]string{
 	CAN_FILTER_REPLACE: "CAN_FILTER_REPLACE",
 	CAN_FILTER_ADD:     "CAN_FILTER_ADD",
 	CAN_FILTER_REMOVE:  "CAN_FILTER_REMOVE",
 }
 
-var values_CAN_FILTER_OP = map[string]CAN_FILTER_OP{
+var label_to_value_CAN_FILTER_OP = map[string]CAN_FILTER_OP{
 	"CAN_FILTER_REPLACE": CAN_FILTER_REPLACE,
 	"CAN_FILTER_ADD":     CAN_FILTER_ADD,
 	"CAN_FILTER_REMOVE":  CAN_FILTER_REMOVE,
@@ -29,7 +29,7 @@ var values_CAN_FILTER_OP = map[string]CAN_FILTER_OP{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAN_FILTER_OP) MarshalText() ([]byte, error) {
-	if name, ok := labels_CAN_FILTER_OP[e]; ok {
+	if name, ok := value_to_label_CAN_FILTER_OP[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -37,7 +37,7 @@ func (e CAN_FILTER_OP) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CAN_FILTER_OP) UnmarshalText(text []byte) error {
-	if value, ok := values_CAN_FILTER_OP[string(text)]; ok {
+	if value, ok := label_to_value_CAN_FILTER_OP[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = CAN_FILTER_OP(value)

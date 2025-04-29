@@ -55,7 +55,7 @@ const (
 	MAV_AUTOPILOT_REFLEX MAV_AUTOPILOT = 20
 )
 
-var labels_MAV_AUTOPILOT = map[MAV_AUTOPILOT]string{
+var value_to_label_MAV_AUTOPILOT = map[MAV_AUTOPILOT]string{
 	MAV_AUTOPILOT_GENERIC:                                      "MAV_AUTOPILOT_GENERIC",
 	MAV_AUTOPILOT_RESERVED:                                     "MAV_AUTOPILOT_RESERVED",
 	MAV_AUTOPILOT_SLUGS:                                        "MAV_AUTOPILOT_SLUGS",
@@ -79,7 +79,7 @@ var labels_MAV_AUTOPILOT = map[MAV_AUTOPILOT]string{
 	MAV_AUTOPILOT_REFLEX:                                       "MAV_AUTOPILOT_REFLEX",
 }
 
-var values_MAV_AUTOPILOT = map[string]MAV_AUTOPILOT{
+var label_to_value_MAV_AUTOPILOT = map[string]MAV_AUTOPILOT{
 	"MAV_AUTOPILOT_GENERIC":                                      MAV_AUTOPILOT_GENERIC,
 	"MAV_AUTOPILOT_RESERVED":                                     MAV_AUTOPILOT_RESERVED,
 	"MAV_AUTOPILOT_SLUGS":                                        MAV_AUTOPILOT_SLUGS,
@@ -105,7 +105,7 @@ var values_MAV_AUTOPILOT = map[string]MAV_AUTOPILOT{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_AUTOPILOT) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_AUTOPILOT[e]; ok {
+	if name, ok := value_to_label_MAV_AUTOPILOT[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -113,7 +113,7 @@ func (e MAV_AUTOPILOT) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_AUTOPILOT) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_AUTOPILOT[string(text)]; ok {
+	if value, ok := label_to_value_MAV_AUTOPILOT[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_AUTOPILOT(value)

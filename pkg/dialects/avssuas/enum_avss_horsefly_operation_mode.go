@@ -22,7 +22,7 @@ const (
 	MODE_HORSEFLY_DROP AVSS_HORSEFLY_OPERATION_MODE = 4
 )
 
-var labels_AVSS_HORSEFLY_OPERATION_MODE = map[AVSS_HORSEFLY_OPERATION_MODE]string{
+var value_to_label_AVSS_HORSEFLY_OPERATION_MODE = map[AVSS_HORSEFLY_OPERATION_MODE]string{
 	MODE_HORSEFLY_MANUAL_CTRL:  "MODE_HORSEFLY_MANUAL_CTRL",
 	MODE_HORSEFLY_AUTO_TAKEOFF: "MODE_HORSEFLY_AUTO_TAKEOFF",
 	MODE_HORSEFLY_AUTO_LANDING: "MODE_HORSEFLY_AUTO_LANDING",
@@ -30,7 +30,7 @@ var labels_AVSS_HORSEFLY_OPERATION_MODE = map[AVSS_HORSEFLY_OPERATION_MODE]strin
 	MODE_HORSEFLY_DROP:         "MODE_HORSEFLY_DROP",
 }
 
-var values_AVSS_HORSEFLY_OPERATION_MODE = map[string]AVSS_HORSEFLY_OPERATION_MODE{
+var label_to_value_AVSS_HORSEFLY_OPERATION_MODE = map[string]AVSS_HORSEFLY_OPERATION_MODE{
 	"MODE_HORSEFLY_MANUAL_CTRL":  MODE_HORSEFLY_MANUAL_CTRL,
 	"MODE_HORSEFLY_AUTO_TAKEOFF": MODE_HORSEFLY_AUTO_TAKEOFF,
 	"MODE_HORSEFLY_AUTO_LANDING": MODE_HORSEFLY_AUTO_LANDING,
@@ -40,7 +40,7 @@ var values_AVSS_HORSEFLY_OPERATION_MODE = map[string]AVSS_HORSEFLY_OPERATION_MOD
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e AVSS_HORSEFLY_OPERATION_MODE) MarshalText() ([]byte, error) {
-	if name, ok := labels_AVSS_HORSEFLY_OPERATION_MODE[e]; ok {
+	if name, ok := value_to_label_AVSS_HORSEFLY_OPERATION_MODE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -48,7 +48,7 @@ func (e AVSS_HORSEFLY_OPERATION_MODE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *AVSS_HORSEFLY_OPERATION_MODE) UnmarshalText(text []byte) error {
-	if value, ok := values_AVSS_HORSEFLY_OPERATION_MODE[string(text)]; ok {
+	if value, ok := label_to_value_AVSS_HORSEFLY_OPERATION_MODE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = AVSS_HORSEFLY_OPERATION_MODE(value)

@@ -40,7 +40,23 @@ const (
 	HIGHRES_IMU_UPDATED_TEMPERATURE HIGHRES_IMU_UPDATED_FLAGS = 4096
 )
 
-var labels_HIGHRES_IMU_UPDATED_FLAGS = map[HIGHRES_IMU_UPDATED_FLAGS]string{
+var values_HIGHRES_IMU_UPDATED_FLAGS = []HIGHRES_IMU_UPDATED_FLAGS{
+	HIGHRES_IMU_UPDATED_XACC,
+	HIGHRES_IMU_UPDATED_YACC,
+	HIGHRES_IMU_UPDATED_ZACC,
+	HIGHRES_IMU_UPDATED_XGYRO,
+	HIGHRES_IMU_UPDATED_YGYRO,
+	HIGHRES_IMU_UPDATED_ZGYRO,
+	HIGHRES_IMU_UPDATED_XMAG,
+	HIGHRES_IMU_UPDATED_YMAG,
+	HIGHRES_IMU_UPDATED_ZMAG,
+	HIGHRES_IMU_UPDATED_ABS_PRESSURE,
+	HIGHRES_IMU_UPDATED_DIFF_PRESSURE,
+	HIGHRES_IMU_UPDATED_PRESSURE_ALT,
+	HIGHRES_IMU_UPDATED_TEMPERATURE,
+}
+
+var value_to_label_HIGHRES_IMU_UPDATED_FLAGS = map[HIGHRES_IMU_UPDATED_FLAGS]string{
 	HIGHRES_IMU_UPDATED_XACC:          "HIGHRES_IMU_UPDATED_XACC",
 	HIGHRES_IMU_UPDATED_YACC:          "HIGHRES_IMU_UPDATED_YACC",
 	HIGHRES_IMU_UPDATED_ZACC:          "HIGHRES_IMU_UPDATED_ZACC",
@@ -56,7 +72,7 @@ var labels_HIGHRES_IMU_UPDATED_FLAGS = map[HIGHRES_IMU_UPDATED_FLAGS]string{
 	HIGHRES_IMU_UPDATED_TEMPERATURE:   "HIGHRES_IMU_UPDATED_TEMPERATURE",
 }
 
-var values_HIGHRES_IMU_UPDATED_FLAGS = map[string]HIGHRES_IMU_UPDATED_FLAGS{
+var label_to_value_HIGHRES_IMU_UPDATED_FLAGS = map[string]HIGHRES_IMU_UPDATED_FLAGS{
 	"HIGHRES_IMU_UPDATED_XACC":          HIGHRES_IMU_UPDATED_XACC,
 	"HIGHRES_IMU_UPDATED_YACC":          HIGHRES_IMU_UPDATED_YACC,
 	"HIGHRES_IMU_UPDATED_ZACC":          HIGHRES_IMU_UPDATED_ZACC,
@@ -78,9 +94,9 @@ func (e HIGHRES_IMU_UPDATED_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_HIGHRES_IMU_UPDATED_FLAGS {
+	for _, val := range values_HIGHRES_IMU_UPDATED_FLAGS {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_HIGHRES_IMU_UPDATED_FLAGS[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -91,7 +107,7 @@ func (e *HIGHRES_IMU_UPDATED_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask HIGHRES_IMU_UPDATED_FLAGS
 	for _, label := range labels {
-		if value, ok := values_HIGHRES_IMU_UPDATED_FLAGS[label]; ok {
+		if value, ok := label_to_value_HIGHRES_IMU_UPDATED_FLAGS[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= HIGHRES_IMU_UPDATED_FLAGS(value)

@@ -17,19 +17,19 @@ const (
 	MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT MAV_COLLISION_SRC = 1
 )
 
-var labels_MAV_COLLISION_SRC = map[MAV_COLLISION_SRC]string{
+var value_to_label_MAV_COLLISION_SRC = map[MAV_COLLISION_SRC]string{
 	MAV_COLLISION_SRC_ADSB:                   "MAV_COLLISION_SRC_ADSB",
 	MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT: "MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT",
 }
 
-var values_MAV_COLLISION_SRC = map[string]MAV_COLLISION_SRC{
+var label_to_value_MAV_COLLISION_SRC = map[string]MAV_COLLISION_SRC{
 	"MAV_COLLISION_SRC_ADSB":                   MAV_COLLISION_SRC_ADSB,
 	"MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT": MAV_COLLISION_SRC_MAVLINK_GPS_GLOBAL_INT,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_COLLISION_SRC) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_COLLISION_SRC[e]; ok {
+	if name, ok := value_to_label_MAV_COLLISION_SRC[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -37,7 +37,7 @@ func (e MAV_COLLISION_SRC) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_COLLISION_SRC) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_COLLISION_SRC[string(text)]; ok {
+	if value, ok := label_to_value_MAV_COLLISION_SRC[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_COLLISION_SRC(value)

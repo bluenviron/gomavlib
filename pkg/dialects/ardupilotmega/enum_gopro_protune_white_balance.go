@@ -22,7 +22,7 @@ const (
 	GOPRO_PROTUNE_WHITE_BALANCE_RAW GOPRO_PROTUNE_WHITE_BALANCE = 4
 )
 
-var labels_GOPRO_PROTUNE_WHITE_BALANCE = map[GOPRO_PROTUNE_WHITE_BALANCE]string{
+var value_to_label_GOPRO_PROTUNE_WHITE_BALANCE = map[GOPRO_PROTUNE_WHITE_BALANCE]string{
 	GOPRO_PROTUNE_WHITE_BALANCE_AUTO:  "GOPRO_PROTUNE_WHITE_BALANCE_AUTO",
 	GOPRO_PROTUNE_WHITE_BALANCE_3000K: "GOPRO_PROTUNE_WHITE_BALANCE_3000K",
 	GOPRO_PROTUNE_WHITE_BALANCE_5500K: "GOPRO_PROTUNE_WHITE_BALANCE_5500K",
@@ -30,7 +30,7 @@ var labels_GOPRO_PROTUNE_WHITE_BALANCE = map[GOPRO_PROTUNE_WHITE_BALANCE]string{
 	GOPRO_PROTUNE_WHITE_BALANCE_RAW:   "GOPRO_PROTUNE_WHITE_BALANCE_RAW",
 }
 
-var values_GOPRO_PROTUNE_WHITE_BALANCE = map[string]GOPRO_PROTUNE_WHITE_BALANCE{
+var label_to_value_GOPRO_PROTUNE_WHITE_BALANCE = map[string]GOPRO_PROTUNE_WHITE_BALANCE{
 	"GOPRO_PROTUNE_WHITE_BALANCE_AUTO":  GOPRO_PROTUNE_WHITE_BALANCE_AUTO,
 	"GOPRO_PROTUNE_WHITE_BALANCE_3000K": GOPRO_PROTUNE_WHITE_BALANCE_3000K,
 	"GOPRO_PROTUNE_WHITE_BALANCE_5500K": GOPRO_PROTUNE_WHITE_BALANCE_5500K,
@@ -40,7 +40,7 @@ var values_GOPRO_PROTUNE_WHITE_BALANCE = map[string]GOPRO_PROTUNE_WHITE_BALANCE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_PROTUNE_WHITE_BALANCE) MarshalText() ([]byte, error) {
-	if name, ok := labels_GOPRO_PROTUNE_WHITE_BALANCE[e]; ok {
+	if name, ok := value_to_label_GOPRO_PROTUNE_WHITE_BALANCE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -48,7 +48,7 @@ func (e GOPRO_PROTUNE_WHITE_BALANCE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_PROTUNE_WHITE_BALANCE) UnmarshalText(text []byte) error {
-	if value, ok := values_GOPRO_PROTUNE_WHITE_BALANCE[string(text)]; ok {
+	if value, ok := label_to_value_GOPRO_PROTUNE_WHITE_BALANCE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = GOPRO_PROTUNE_WHITE_BALANCE(value)

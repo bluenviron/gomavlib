@@ -17,19 +17,19 @@ const (
 	SAFETY_SWITCH_STATE_DANGEROUS SAFETY_SWITCH_STATE = 1
 )
 
-var labels_SAFETY_SWITCH_STATE = map[SAFETY_SWITCH_STATE]string{
+var value_to_label_SAFETY_SWITCH_STATE = map[SAFETY_SWITCH_STATE]string{
 	SAFETY_SWITCH_STATE_SAFE:      "SAFETY_SWITCH_STATE_SAFE",
 	SAFETY_SWITCH_STATE_DANGEROUS: "SAFETY_SWITCH_STATE_DANGEROUS",
 }
 
-var values_SAFETY_SWITCH_STATE = map[string]SAFETY_SWITCH_STATE{
+var label_to_value_SAFETY_SWITCH_STATE = map[string]SAFETY_SWITCH_STATE{
 	"SAFETY_SWITCH_STATE_SAFE":      SAFETY_SWITCH_STATE_SAFE,
 	"SAFETY_SWITCH_STATE_DANGEROUS": SAFETY_SWITCH_STATE_DANGEROUS,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e SAFETY_SWITCH_STATE) MarshalText() ([]byte, error) {
-	if name, ok := labels_SAFETY_SWITCH_STATE[e]; ok {
+	if name, ok := value_to_label_SAFETY_SWITCH_STATE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -37,7 +37,7 @@ func (e SAFETY_SWITCH_STATE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *SAFETY_SWITCH_STATE) UnmarshalText(text []byte) error {
-	if value, ok := values_SAFETY_SWITCH_STATE[string(text)]; ok {
+	if value, ok := label_to_value_SAFETY_SWITCH_STATE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = SAFETY_SWITCH_STATE(value)

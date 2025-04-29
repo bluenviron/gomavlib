@@ -28,7 +28,7 @@ const (
 	FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL  FAILURE_UNIT = 105
 )
 
-var labels_FAILURE_UNIT = map[FAILURE_UNIT]string{
+var value_to_label_FAILURE_UNIT = map[FAILURE_UNIT]string{
 	FAILURE_UNIT_SENSOR_GYRO:            "FAILURE_UNIT_SENSOR_GYRO",
 	FAILURE_UNIT_SENSOR_ACCEL:           "FAILURE_UNIT_SENSOR_ACCEL",
 	FAILURE_UNIT_SENSOR_MAG:             "FAILURE_UNIT_SENSOR_MAG",
@@ -46,7 +46,7 @@ var labels_FAILURE_UNIT = map[FAILURE_UNIT]string{
 	FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL:  "FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL",
 }
 
-var values_FAILURE_UNIT = map[string]FAILURE_UNIT{
+var label_to_value_FAILURE_UNIT = map[string]FAILURE_UNIT{
 	"FAILURE_UNIT_SENSOR_GYRO":            FAILURE_UNIT_SENSOR_GYRO,
 	"FAILURE_UNIT_SENSOR_ACCEL":           FAILURE_UNIT_SENSOR_ACCEL,
 	"FAILURE_UNIT_SENSOR_MAG":             FAILURE_UNIT_SENSOR_MAG,
@@ -66,7 +66,7 @@ var values_FAILURE_UNIT = map[string]FAILURE_UNIT{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FAILURE_UNIT) MarshalText() ([]byte, error) {
-	if name, ok := labels_FAILURE_UNIT[e]; ok {
+	if name, ok := value_to_label_FAILURE_UNIT[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -74,7 +74,7 @@ func (e FAILURE_UNIT) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FAILURE_UNIT) UnmarshalText(text []byte) error {
-	if value, ok := values_FAILURE_UNIT[string(text)]; ok {
+	if value, ok := label_to_value_FAILURE_UNIT[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = FAILURE_UNIT(value)

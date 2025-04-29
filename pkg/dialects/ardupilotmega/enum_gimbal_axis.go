@@ -18,13 +18,13 @@ const (
 	GIMBAL_AXIS_ROLL GIMBAL_AXIS = 2
 )
 
-var labels_GIMBAL_AXIS = map[GIMBAL_AXIS]string{
+var value_to_label_GIMBAL_AXIS = map[GIMBAL_AXIS]string{
 	GIMBAL_AXIS_YAW:   "GIMBAL_AXIS_YAW",
 	GIMBAL_AXIS_PITCH: "GIMBAL_AXIS_PITCH",
 	GIMBAL_AXIS_ROLL:  "GIMBAL_AXIS_ROLL",
 }
 
-var values_GIMBAL_AXIS = map[string]GIMBAL_AXIS{
+var label_to_value_GIMBAL_AXIS = map[string]GIMBAL_AXIS{
 	"GIMBAL_AXIS_YAW":   GIMBAL_AXIS_YAW,
 	"GIMBAL_AXIS_PITCH": GIMBAL_AXIS_PITCH,
 	"GIMBAL_AXIS_ROLL":  GIMBAL_AXIS_ROLL,
@@ -32,7 +32,7 @@ var values_GIMBAL_AXIS = map[string]GIMBAL_AXIS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GIMBAL_AXIS) MarshalText() ([]byte, error) {
-	if name, ok := labels_GIMBAL_AXIS[e]; ok {
+	if name, ok := value_to_label_GIMBAL_AXIS[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -40,7 +40,7 @@ func (e GIMBAL_AXIS) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GIMBAL_AXIS) UnmarshalText(text []byte) error {
-	if value, ok := values_GIMBAL_AXIS[string(text)]; ok {
+	if value, ok := label_to_value_GIMBAL_AXIS[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = GIMBAL_AXIS(value)

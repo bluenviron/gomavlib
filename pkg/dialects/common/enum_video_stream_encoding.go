@@ -19,13 +19,13 @@ const (
 	VIDEO_STREAM_ENCODING_H265 VIDEO_STREAM_ENCODING = 2
 )
 
-var labels_VIDEO_STREAM_ENCODING = map[VIDEO_STREAM_ENCODING]string{
+var value_to_label_VIDEO_STREAM_ENCODING = map[VIDEO_STREAM_ENCODING]string{
 	VIDEO_STREAM_ENCODING_UNKNOWN: "VIDEO_STREAM_ENCODING_UNKNOWN",
 	VIDEO_STREAM_ENCODING_H264:    "VIDEO_STREAM_ENCODING_H264",
 	VIDEO_STREAM_ENCODING_H265:    "VIDEO_STREAM_ENCODING_H265",
 }
 
-var values_VIDEO_STREAM_ENCODING = map[string]VIDEO_STREAM_ENCODING{
+var label_to_value_VIDEO_STREAM_ENCODING = map[string]VIDEO_STREAM_ENCODING{
 	"VIDEO_STREAM_ENCODING_UNKNOWN": VIDEO_STREAM_ENCODING_UNKNOWN,
 	"VIDEO_STREAM_ENCODING_H264":    VIDEO_STREAM_ENCODING_H264,
 	"VIDEO_STREAM_ENCODING_H265":    VIDEO_STREAM_ENCODING_H265,
@@ -33,7 +33,7 @@ var values_VIDEO_STREAM_ENCODING = map[string]VIDEO_STREAM_ENCODING{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e VIDEO_STREAM_ENCODING) MarshalText() ([]byte, error) {
-	if name, ok := labels_VIDEO_STREAM_ENCODING[e]; ok {
+	if name, ok := value_to_label_VIDEO_STREAM_ENCODING[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -41,7 +41,7 @@ func (e VIDEO_STREAM_ENCODING) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *VIDEO_STREAM_ENCODING) UnmarshalText(text []byte) error {
-	if value, ok := values_VIDEO_STREAM_ENCODING[string(text)]; ok {
+	if value, ok := label_to_value_VIDEO_STREAM_ENCODING[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = VIDEO_STREAM_ENCODING(value)

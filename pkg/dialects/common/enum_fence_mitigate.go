@@ -19,13 +19,13 @@ const (
 	FENCE_MITIGATE_VEL_LIMIT FENCE_MITIGATE = 2
 )
 
-var labels_FENCE_MITIGATE = map[FENCE_MITIGATE]string{
+var value_to_label_FENCE_MITIGATE = map[FENCE_MITIGATE]string{
 	FENCE_MITIGATE_UNKNOWN:   "FENCE_MITIGATE_UNKNOWN",
 	FENCE_MITIGATE_NONE:      "FENCE_MITIGATE_NONE",
 	FENCE_MITIGATE_VEL_LIMIT: "FENCE_MITIGATE_VEL_LIMIT",
 }
 
-var values_FENCE_MITIGATE = map[string]FENCE_MITIGATE{
+var label_to_value_FENCE_MITIGATE = map[string]FENCE_MITIGATE{
 	"FENCE_MITIGATE_UNKNOWN":   FENCE_MITIGATE_UNKNOWN,
 	"FENCE_MITIGATE_NONE":      FENCE_MITIGATE_NONE,
 	"FENCE_MITIGATE_VEL_LIMIT": FENCE_MITIGATE_VEL_LIMIT,
@@ -33,7 +33,7 @@ var values_FENCE_MITIGATE = map[string]FENCE_MITIGATE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e FENCE_MITIGATE) MarshalText() ([]byte, error) {
-	if name, ok := labels_FENCE_MITIGATE[e]; ok {
+	if name, ok := value_to_label_FENCE_MITIGATE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -41,7 +41,7 @@ func (e FENCE_MITIGATE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *FENCE_MITIGATE) UnmarshalText(text []byte) error {
-	if value, ok := values_FENCE_MITIGATE[string(text)]; ok {
+	if value, ok := label_to_value_FENCE_MITIGATE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = FENCE_MITIGATE(value)

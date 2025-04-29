@@ -26,7 +26,16 @@ const (
 	MAV_POWER_STATUS_CHANGED MAV_POWER_STATUS = 32
 )
 
-var labels_MAV_POWER_STATUS = map[MAV_POWER_STATUS]string{
+var values_MAV_POWER_STATUS = []MAV_POWER_STATUS{
+	MAV_POWER_STATUS_BRICK_VALID,
+	MAV_POWER_STATUS_SERVO_VALID,
+	MAV_POWER_STATUS_USB_CONNECTED,
+	MAV_POWER_STATUS_PERIPH_OVERCURRENT,
+	MAV_POWER_STATUS_PERIPH_HIPOWER_OVERCURRENT,
+	MAV_POWER_STATUS_CHANGED,
+}
+
+var value_to_label_MAV_POWER_STATUS = map[MAV_POWER_STATUS]string{
 	MAV_POWER_STATUS_BRICK_VALID:                "MAV_POWER_STATUS_BRICK_VALID",
 	MAV_POWER_STATUS_SERVO_VALID:                "MAV_POWER_STATUS_SERVO_VALID",
 	MAV_POWER_STATUS_USB_CONNECTED:              "MAV_POWER_STATUS_USB_CONNECTED",
@@ -35,7 +44,7 @@ var labels_MAV_POWER_STATUS = map[MAV_POWER_STATUS]string{
 	MAV_POWER_STATUS_CHANGED:                    "MAV_POWER_STATUS_CHANGED",
 }
 
-var values_MAV_POWER_STATUS = map[string]MAV_POWER_STATUS{
+var label_to_value_MAV_POWER_STATUS = map[string]MAV_POWER_STATUS{
 	"MAV_POWER_STATUS_BRICK_VALID":                MAV_POWER_STATUS_BRICK_VALID,
 	"MAV_POWER_STATUS_SERVO_VALID":                MAV_POWER_STATUS_SERVO_VALID,
 	"MAV_POWER_STATUS_USB_CONNECTED":              MAV_POWER_STATUS_USB_CONNECTED,
@@ -50,9 +59,9 @@ func (e MAV_POWER_STATUS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_MAV_POWER_STATUS {
+	for _, val := range values_MAV_POWER_STATUS {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_MAV_POWER_STATUS[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -63,7 +72,7 @@ func (e *MAV_POWER_STATUS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask MAV_POWER_STATUS
 	for _, label := range labels {
-		if value, ok := values_MAV_POWER_STATUS[label]; ok {
+		if value, ok := label_to_value_MAV_POWER_STATUS[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= MAV_POWER_STATUS(value)

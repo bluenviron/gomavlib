@@ -15,11 +15,15 @@ const (
 	UAVIONIX_ADSB_XBIT_ENABLED UAVIONIX_ADSB_XBIT = 128
 )
 
-var labels_UAVIONIX_ADSB_XBIT = map[UAVIONIX_ADSB_XBIT]string{
+var values_UAVIONIX_ADSB_XBIT = []UAVIONIX_ADSB_XBIT{
+	UAVIONIX_ADSB_XBIT_ENABLED,
+}
+
+var value_to_label_UAVIONIX_ADSB_XBIT = map[UAVIONIX_ADSB_XBIT]string{
 	UAVIONIX_ADSB_XBIT_ENABLED: "UAVIONIX_ADSB_XBIT_ENABLED",
 }
 
-var values_UAVIONIX_ADSB_XBIT = map[string]UAVIONIX_ADSB_XBIT{
+var label_to_value_UAVIONIX_ADSB_XBIT = map[string]UAVIONIX_ADSB_XBIT{
 	"UAVIONIX_ADSB_XBIT_ENABLED": UAVIONIX_ADSB_XBIT_ENABLED,
 }
 
@@ -29,9 +33,9 @@ func (e UAVIONIX_ADSB_XBIT) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_UAVIONIX_ADSB_XBIT {
+	for _, val := range values_UAVIONIX_ADSB_XBIT {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_UAVIONIX_ADSB_XBIT[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -42,7 +46,7 @@ func (e *UAVIONIX_ADSB_XBIT) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask UAVIONIX_ADSB_XBIT
 	for _, label := range labels {
-		if value, ok := values_UAVIONIX_ADSB_XBIT[label]; ok {
+		if value, ok := label_to_value_UAVIONIX_ADSB_XBIT[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= UAVIONIX_ADSB_XBIT(value)

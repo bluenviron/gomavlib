@@ -79,7 +79,7 @@ const (
 	ACTUATOR_OUTPUT_FUNCTION_SERVO16 ACTUATOR_OUTPUT_FUNCTION = 48
 )
 
-var labels_ACTUATOR_OUTPUT_FUNCTION = map[ACTUATOR_OUTPUT_FUNCTION]string{
+var value_to_label_ACTUATOR_OUTPUT_FUNCTION = map[ACTUATOR_OUTPUT_FUNCTION]string{
 	ACTUATOR_OUTPUT_FUNCTION_NONE:    "ACTUATOR_OUTPUT_FUNCTION_NONE",
 	ACTUATOR_OUTPUT_FUNCTION_MOTOR1:  "ACTUATOR_OUTPUT_FUNCTION_MOTOR1",
 	ACTUATOR_OUTPUT_FUNCTION_MOTOR2:  "ACTUATOR_OUTPUT_FUNCTION_MOTOR2",
@@ -115,7 +115,7 @@ var labels_ACTUATOR_OUTPUT_FUNCTION = map[ACTUATOR_OUTPUT_FUNCTION]string{
 	ACTUATOR_OUTPUT_FUNCTION_SERVO16: "ACTUATOR_OUTPUT_FUNCTION_SERVO16",
 }
 
-var values_ACTUATOR_OUTPUT_FUNCTION = map[string]ACTUATOR_OUTPUT_FUNCTION{
+var label_to_value_ACTUATOR_OUTPUT_FUNCTION = map[string]ACTUATOR_OUTPUT_FUNCTION{
 	"ACTUATOR_OUTPUT_FUNCTION_NONE":    ACTUATOR_OUTPUT_FUNCTION_NONE,
 	"ACTUATOR_OUTPUT_FUNCTION_MOTOR1":  ACTUATOR_OUTPUT_FUNCTION_MOTOR1,
 	"ACTUATOR_OUTPUT_FUNCTION_MOTOR2":  ACTUATOR_OUTPUT_FUNCTION_MOTOR2,
@@ -153,7 +153,7 @@ var values_ACTUATOR_OUTPUT_FUNCTION = map[string]ACTUATOR_OUTPUT_FUNCTION{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ACTUATOR_OUTPUT_FUNCTION) MarshalText() ([]byte, error) {
-	if name, ok := labels_ACTUATOR_OUTPUT_FUNCTION[e]; ok {
+	if name, ok := value_to_label_ACTUATOR_OUTPUT_FUNCTION[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -161,7 +161,7 @@ func (e ACTUATOR_OUTPUT_FUNCTION) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ACTUATOR_OUTPUT_FUNCTION) UnmarshalText(text []byte) error {
-	if value, ok := values_ACTUATOR_OUTPUT_FUNCTION[string(text)]; ok {
+	if value, ok := label_to_value_ACTUATOR_OUTPUT_FUNCTION[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = ACTUATOR_OUTPUT_FUNCTION(value)

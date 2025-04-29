@@ -15,17 +15,17 @@ const (
 	MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET MAV_EVENT_CURRENT_SEQUENCE_FLAGS = 1
 )
 
-var labels_MAV_EVENT_CURRENT_SEQUENCE_FLAGS = map[MAV_EVENT_CURRENT_SEQUENCE_FLAGS]string{
+var value_to_label_MAV_EVENT_CURRENT_SEQUENCE_FLAGS = map[MAV_EVENT_CURRENT_SEQUENCE_FLAGS]string{
 	MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET: "MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET",
 }
 
-var values_MAV_EVENT_CURRENT_SEQUENCE_FLAGS = map[string]MAV_EVENT_CURRENT_SEQUENCE_FLAGS{
+var label_to_value_MAV_EVENT_CURRENT_SEQUENCE_FLAGS = map[string]MAV_EVENT_CURRENT_SEQUENCE_FLAGS{
 	"MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET": MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_EVENT_CURRENT_SEQUENCE_FLAGS) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_EVENT_CURRENT_SEQUENCE_FLAGS[e]; ok {
+	if name, ok := value_to_label_MAV_EVENT_CURRENT_SEQUENCE_FLAGS[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -33,7 +33,7 @@ func (e MAV_EVENT_CURRENT_SEQUENCE_FLAGS) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_EVENT_CURRENT_SEQUENCE_FLAGS) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_EVENT_CURRENT_SEQUENCE_FLAGS[string(text)]; ok {
+	if value, ok := label_to_value_MAV_EVENT_CURRENT_SEQUENCE_FLAGS[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_EVENT_CURRENT_SEQUENCE_FLAGS(value)

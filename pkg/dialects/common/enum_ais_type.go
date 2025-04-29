@@ -121,7 +121,7 @@ const (
 	AIS_TYPE_OTHER_UNKNOWN         AIS_TYPE = 99
 )
 
-var labels_AIS_TYPE = map[AIS_TYPE]string{
+var value_to_label_AIS_TYPE = map[AIS_TYPE]string{
 	AIS_TYPE_UNKNOWN:               "AIS_TYPE_UNKNOWN",
 	AIS_TYPE_RESERVED_1:            "AIS_TYPE_RESERVED_1",
 	AIS_TYPE_RESERVED_2:            "AIS_TYPE_RESERVED_2",
@@ -224,7 +224,7 @@ var labels_AIS_TYPE = map[AIS_TYPE]string{
 	AIS_TYPE_OTHER_UNKNOWN:         "AIS_TYPE_OTHER_UNKNOWN",
 }
 
-var values_AIS_TYPE = map[string]AIS_TYPE{
+var label_to_value_AIS_TYPE = map[string]AIS_TYPE{
 	"AIS_TYPE_UNKNOWN":               AIS_TYPE_UNKNOWN,
 	"AIS_TYPE_RESERVED_1":            AIS_TYPE_RESERVED_1,
 	"AIS_TYPE_RESERVED_2":            AIS_TYPE_RESERVED_2,
@@ -329,7 +329,7 @@ var values_AIS_TYPE = map[string]AIS_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e AIS_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_AIS_TYPE[e]; ok {
+	if name, ok := value_to_label_AIS_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -337,7 +337,7 @@ func (e AIS_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *AIS_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_AIS_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_AIS_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = AIS_TYPE(value)

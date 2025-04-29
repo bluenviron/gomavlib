@@ -31,7 +31,7 @@ const (
 	STORAGE_TYPE_OTHER STORAGE_TYPE = 254
 )
 
-var labels_STORAGE_TYPE = map[STORAGE_TYPE]string{
+var value_to_label_STORAGE_TYPE = map[STORAGE_TYPE]string{
 	STORAGE_TYPE_UNKNOWN:   "STORAGE_TYPE_UNKNOWN",
 	STORAGE_TYPE_USB_STICK: "STORAGE_TYPE_USB_STICK",
 	STORAGE_TYPE_SD:        "STORAGE_TYPE_SD",
@@ -43,7 +43,7 @@ var labels_STORAGE_TYPE = map[STORAGE_TYPE]string{
 	STORAGE_TYPE_OTHER:     "STORAGE_TYPE_OTHER",
 }
 
-var values_STORAGE_TYPE = map[string]STORAGE_TYPE{
+var label_to_value_STORAGE_TYPE = map[string]STORAGE_TYPE{
 	"STORAGE_TYPE_UNKNOWN":   STORAGE_TYPE_UNKNOWN,
 	"STORAGE_TYPE_USB_STICK": STORAGE_TYPE_USB_STICK,
 	"STORAGE_TYPE_SD":        STORAGE_TYPE_SD,
@@ -57,7 +57,7 @@ var values_STORAGE_TYPE = map[string]STORAGE_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e STORAGE_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_STORAGE_TYPE[e]; ok {
+	if name, ok := value_to_label_STORAGE_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -65,7 +65,7 @@ func (e STORAGE_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *STORAGE_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_STORAGE_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_STORAGE_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = STORAGE_TYPE(value)

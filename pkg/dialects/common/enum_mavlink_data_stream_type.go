@@ -18,7 +18,7 @@ const (
 	MAVLINK_DATA_STREAM_IMG_PNG    MAVLINK_DATA_STREAM_TYPE = 5
 )
 
-var labels_MAVLINK_DATA_STREAM_TYPE = map[MAVLINK_DATA_STREAM_TYPE]string{
+var value_to_label_MAVLINK_DATA_STREAM_TYPE = map[MAVLINK_DATA_STREAM_TYPE]string{
 	MAVLINK_DATA_STREAM_IMG_JPEG:   "MAVLINK_DATA_STREAM_IMG_JPEG",
 	MAVLINK_DATA_STREAM_IMG_BMP:    "MAVLINK_DATA_STREAM_IMG_BMP",
 	MAVLINK_DATA_STREAM_IMG_RAW8U:  "MAVLINK_DATA_STREAM_IMG_RAW8U",
@@ -27,7 +27,7 @@ var labels_MAVLINK_DATA_STREAM_TYPE = map[MAVLINK_DATA_STREAM_TYPE]string{
 	MAVLINK_DATA_STREAM_IMG_PNG:    "MAVLINK_DATA_STREAM_IMG_PNG",
 }
 
-var values_MAVLINK_DATA_STREAM_TYPE = map[string]MAVLINK_DATA_STREAM_TYPE{
+var label_to_value_MAVLINK_DATA_STREAM_TYPE = map[string]MAVLINK_DATA_STREAM_TYPE{
 	"MAVLINK_DATA_STREAM_IMG_JPEG":   MAVLINK_DATA_STREAM_IMG_JPEG,
 	"MAVLINK_DATA_STREAM_IMG_BMP":    MAVLINK_DATA_STREAM_IMG_BMP,
 	"MAVLINK_DATA_STREAM_IMG_RAW8U":  MAVLINK_DATA_STREAM_IMG_RAW8U,
@@ -38,7 +38,7 @@ var values_MAVLINK_DATA_STREAM_TYPE = map[string]MAVLINK_DATA_STREAM_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAVLINK_DATA_STREAM_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAVLINK_DATA_STREAM_TYPE[e]; ok {
+	if name, ok := value_to_label_MAVLINK_DATA_STREAM_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -46,7 +46,7 @@ func (e MAVLINK_DATA_STREAM_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAVLINK_DATA_STREAM_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_MAVLINK_DATA_STREAM_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_MAVLINK_DATA_STREAM_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAVLINK_DATA_STREAM_TYPE(value)

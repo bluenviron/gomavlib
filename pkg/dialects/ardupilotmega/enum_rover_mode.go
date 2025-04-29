@@ -41,7 +41,7 @@ const (
 	ROVER_MODE_INITIALIZING ROVER_MODE = 16
 )
 
-var labels_ROVER_MODE = map[ROVER_MODE]string{
+var value_to_label_ROVER_MODE = map[ROVER_MODE]string{
 	ROVER_MODE_MANUAL:       "ROVER_MODE_MANUAL",
 	ROVER_MODE_ACRO:         "ROVER_MODE_ACRO",
 	ROVER_MODE_STEERING:     "ROVER_MODE_STEERING",
@@ -58,7 +58,7 @@ var labels_ROVER_MODE = map[ROVER_MODE]string{
 	ROVER_MODE_INITIALIZING: "ROVER_MODE_INITIALIZING",
 }
 
-var values_ROVER_MODE = map[string]ROVER_MODE{
+var label_to_value_ROVER_MODE = map[string]ROVER_MODE{
 	"ROVER_MODE_MANUAL":       ROVER_MODE_MANUAL,
 	"ROVER_MODE_ACRO":         ROVER_MODE_ACRO,
 	"ROVER_MODE_STEERING":     ROVER_MODE_STEERING,
@@ -77,7 +77,7 @@ var values_ROVER_MODE = map[string]ROVER_MODE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ROVER_MODE) MarshalText() ([]byte, error) {
-	if name, ok := labels_ROVER_MODE[e]; ok {
+	if name, ok := value_to_label_ROVER_MODE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -85,7 +85,7 @@ func (e ROVER_MODE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ROVER_MODE) UnmarshalText(text []byte) error {
-	if value, ok := values_ROVER_MODE[string(text)]; ok {
+	if value, ok := label_to_value_ROVER_MODE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = ROVER_MODE(value)

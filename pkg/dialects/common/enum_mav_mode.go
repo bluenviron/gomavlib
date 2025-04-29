@@ -36,7 +36,7 @@ const (
 	MAV_MODE_TEST_ARMED MAV_MODE = 194
 )
 
-var labels_MAV_MODE = map[MAV_MODE]string{
+var value_to_label_MAV_MODE = map[MAV_MODE]string{
 	MAV_MODE_PREFLIGHT:          "MAV_MODE_PREFLIGHT",
 	MAV_MODE_STABILIZE_DISARMED: "MAV_MODE_STABILIZE_DISARMED",
 	MAV_MODE_STABILIZE_ARMED:    "MAV_MODE_STABILIZE_ARMED",
@@ -50,7 +50,7 @@ var labels_MAV_MODE = map[MAV_MODE]string{
 	MAV_MODE_TEST_ARMED:         "MAV_MODE_TEST_ARMED",
 }
 
-var values_MAV_MODE = map[string]MAV_MODE{
+var label_to_value_MAV_MODE = map[string]MAV_MODE{
 	"MAV_MODE_PREFLIGHT":          MAV_MODE_PREFLIGHT,
 	"MAV_MODE_STABILIZE_DISARMED": MAV_MODE_STABILIZE_DISARMED,
 	"MAV_MODE_STABILIZE_ARMED":    MAV_MODE_STABILIZE_ARMED,
@@ -66,7 +66,7 @@ var values_MAV_MODE = map[string]MAV_MODE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_MODE) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_MODE[e]; ok {
+	if name, ok := value_to_label_MAV_MODE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -74,7 +74,7 @@ func (e MAV_MODE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_MODE) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_MODE[string(text)]; ok {
+	if value, ok := label_to_value_MAV_MODE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_MODE(value)

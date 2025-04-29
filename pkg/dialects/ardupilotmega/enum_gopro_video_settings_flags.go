@@ -15,11 +15,15 @@ const (
 	GOPRO_VIDEO_SETTINGS_TV_MODE GOPRO_VIDEO_SETTINGS_FLAGS = 1
 )
 
-var labels_GOPRO_VIDEO_SETTINGS_FLAGS = map[GOPRO_VIDEO_SETTINGS_FLAGS]string{
+var values_GOPRO_VIDEO_SETTINGS_FLAGS = []GOPRO_VIDEO_SETTINGS_FLAGS{
+	GOPRO_VIDEO_SETTINGS_TV_MODE,
+}
+
+var value_to_label_GOPRO_VIDEO_SETTINGS_FLAGS = map[GOPRO_VIDEO_SETTINGS_FLAGS]string{
 	GOPRO_VIDEO_SETTINGS_TV_MODE: "GOPRO_VIDEO_SETTINGS_TV_MODE",
 }
 
-var values_GOPRO_VIDEO_SETTINGS_FLAGS = map[string]GOPRO_VIDEO_SETTINGS_FLAGS{
+var label_to_value_GOPRO_VIDEO_SETTINGS_FLAGS = map[string]GOPRO_VIDEO_SETTINGS_FLAGS{
 	"GOPRO_VIDEO_SETTINGS_TV_MODE": GOPRO_VIDEO_SETTINGS_TV_MODE,
 }
 
@@ -29,9 +33,9 @@ func (e GOPRO_VIDEO_SETTINGS_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_GOPRO_VIDEO_SETTINGS_FLAGS {
+	for _, val := range values_GOPRO_VIDEO_SETTINGS_FLAGS {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_GOPRO_VIDEO_SETTINGS_FLAGS[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -42,7 +46,7 @@ func (e *GOPRO_VIDEO_SETTINGS_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask GOPRO_VIDEO_SETTINGS_FLAGS
 	for _, label := range labels {
-		if value, ok := values_GOPRO_VIDEO_SETTINGS_FLAGS[label]; ok {
+		if value, ok := label_to_value_GOPRO_VIDEO_SETTINGS_FLAGS[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= GOPRO_VIDEO_SETTINGS_FLAGS(value)

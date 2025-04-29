@@ -38,7 +38,22 @@ const (
 	EKF_UNINITIALIZED EKF_STATUS_FLAGS = 1024
 )
 
-var labels_EKF_STATUS_FLAGS = map[EKF_STATUS_FLAGS]string{
+var values_EKF_STATUS_FLAGS = []EKF_STATUS_FLAGS{
+	EKF_ATTITUDE,
+	EKF_VELOCITY_HORIZ,
+	EKF_VELOCITY_VERT,
+	EKF_POS_HORIZ_REL,
+	EKF_POS_HORIZ_ABS,
+	EKF_POS_VERT_ABS,
+	EKF_POS_VERT_AGL,
+	EKF_CONST_POS_MODE,
+	EKF_PRED_POS_HORIZ_REL,
+	EKF_PRED_POS_HORIZ_ABS,
+	EKF_GPS_GLITCHING,
+	EKF_UNINITIALIZED,
+}
+
+var value_to_label_EKF_STATUS_FLAGS = map[EKF_STATUS_FLAGS]string{
 	EKF_ATTITUDE:           "EKF_ATTITUDE",
 	EKF_VELOCITY_HORIZ:     "EKF_VELOCITY_HORIZ",
 	EKF_VELOCITY_VERT:      "EKF_VELOCITY_VERT",
@@ -53,7 +68,7 @@ var labels_EKF_STATUS_FLAGS = map[EKF_STATUS_FLAGS]string{
 	EKF_UNINITIALIZED:      "EKF_UNINITIALIZED",
 }
 
-var values_EKF_STATUS_FLAGS = map[string]EKF_STATUS_FLAGS{
+var label_to_value_EKF_STATUS_FLAGS = map[string]EKF_STATUS_FLAGS{
 	"EKF_ATTITUDE":           EKF_ATTITUDE,
 	"EKF_VELOCITY_HORIZ":     EKF_VELOCITY_HORIZ,
 	"EKF_VELOCITY_VERT":      EKF_VELOCITY_VERT,
@@ -74,9 +89,9 @@ func (e EKF_STATUS_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_EKF_STATUS_FLAGS {
+	for _, val := range values_EKF_STATUS_FLAGS {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_EKF_STATUS_FLAGS[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -87,7 +102,7 @@ func (e *EKF_STATUS_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask EKF_STATUS_FLAGS
 	for _, label := range labels {
-		if value, ok := values_EKF_STATUS_FLAGS[label]; ok {
+		if value, ok := label_to_value_EKF_STATUS_FLAGS[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= EKF_STATUS_FLAGS(value)

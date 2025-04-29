@@ -17,19 +17,19 @@ const (
 	GRIPPER_ACTION_GRAB GRIPPER_ACTIONS = 1
 )
 
-var labels_GRIPPER_ACTIONS = map[GRIPPER_ACTIONS]string{
+var value_to_label_GRIPPER_ACTIONS = map[GRIPPER_ACTIONS]string{
 	GRIPPER_ACTION_RELEASE: "GRIPPER_ACTION_RELEASE",
 	GRIPPER_ACTION_GRAB:    "GRIPPER_ACTION_GRAB",
 }
 
-var values_GRIPPER_ACTIONS = map[string]GRIPPER_ACTIONS{
+var label_to_value_GRIPPER_ACTIONS = map[string]GRIPPER_ACTIONS{
 	"GRIPPER_ACTION_RELEASE": GRIPPER_ACTION_RELEASE,
 	"GRIPPER_ACTION_GRAB":    GRIPPER_ACTION_GRAB,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GRIPPER_ACTIONS) MarshalText() ([]byte, error) {
-	if name, ok := labels_GRIPPER_ACTIONS[e]; ok {
+	if name, ok := value_to_label_GRIPPER_ACTIONS[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -37,7 +37,7 @@ func (e GRIPPER_ACTIONS) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GRIPPER_ACTIONS) UnmarshalText(text []byte) error {
-	if value, ok := values_GRIPPER_ACTIONS[string(text)]; ok {
+	if value, ok := label_to_value_GRIPPER_ACTIONS[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = GRIPPER_ACTIONS(value)

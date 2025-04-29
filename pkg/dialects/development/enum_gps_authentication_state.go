@@ -23,7 +23,7 @@ const (
 	GPS_AUTHENTICATION_STATE_DISABLED GPS_AUTHENTICATION_STATE = 4
 )
 
-var labels_GPS_AUTHENTICATION_STATE = map[GPS_AUTHENTICATION_STATE]string{
+var value_to_label_GPS_AUTHENTICATION_STATE = map[GPS_AUTHENTICATION_STATE]string{
 	GPS_AUTHENTICATION_STATE_UNKNOWN:      "GPS_AUTHENTICATION_STATE_UNKNOWN",
 	GPS_AUTHENTICATION_STATE_INITIALIZING: "GPS_AUTHENTICATION_STATE_INITIALIZING",
 	GPS_AUTHENTICATION_STATE_ERROR:        "GPS_AUTHENTICATION_STATE_ERROR",
@@ -31,7 +31,7 @@ var labels_GPS_AUTHENTICATION_STATE = map[GPS_AUTHENTICATION_STATE]string{
 	GPS_AUTHENTICATION_STATE_DISABLED:     "GPS_AUTHENTICATION_STATE_DISABLED",
 }
 
-var values_GPS_AUTHENTICATION_STATE = map[string]GPS_AUTHENTICATION_STATE{
+var label_to_value_GPS_AUTHENTICATION_STATE = map[string]GPS_AUTHENTICATION_STATE{
 	"GPS_AUTHENTICATION_STATE_UNKNOWN":      GPS_AUTHENTICATION_STATE_UNKNOWN,
 	"GPS_AUTHENTICATION_STATE_INITIALIZING": GPS_AUTHENTICATION_STATE_INITIALIZING,
 	"GPS_AUTHENTICATION_STATE_ERROR":        GPS_AUTHENTICATION_STATE_ERROR,
@@ -41,7 +41,7 @@ var values_GPS_AUTHENTICATION_STATE = map[string]GPS_AUTHENTICATION_STATE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GPS_AUTHENTICATION_STATE) MarshalText() ([]byte, error) {
-	if name, ok := labels_GPS_AUTHENTICATION_STATE[e]; ok {
+	if name, ok := value_to_label_GPS_AUTHENTICATION_STATE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -49,7 +49,7 @@ func (e GPS_AUTHENTICATION_STATE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GPS_AUTHENTICATION_STATE) UnmarshalText(text []byte) error {
-	if value, ok := values_GPS_AUTHENTICATION_STATE[string(text)]; ok {
+	if value, ok := label_to_value_GPS_AUTHENTICATION_STATE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = GPS_AUTHENTICATION_STATE(value)

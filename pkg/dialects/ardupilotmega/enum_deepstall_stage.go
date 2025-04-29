@@ -27,7 +27,7 @@ const (
 	DEEPSTALL_STAGE_LAND DEEPSTALL_STAGE = 6
 )
 
-var labels_DEEPSTALL_STAGE = map[DEEPSTALL_STAGE]string{
+var value_to_label_DEEPSTALL_STAGE = map[DEEPSTALL_STAGE]string{
 	DEEPSTALL_STAGE_FLY_TO_LANDING:    "DEEPSTALL_STAGE_FLY_TO_LANDING",
 	DEEPSTALL_STAGE_ESTIMATE_WIND:     "DEEPSTALL_STAGE_ESTIMATE_WIND",
 	DEEPSTALL_STAGE_WAIT_FOR_BREAKOUT: "DEEPSTALL_STAGE_WAIT_FOR_BREAKOUT",
@@ -37,7 +37,7 @@ var labels_DEEPSTALL_STAGE = map[DEEPSTALL_STAGE]string{
 	DEEPSTALL_STAGE_LAND:              "DEEPSTALL_STAGE_LAND",
 }
 
-var values_DEEPSTALL_STAGE = map[string]DEEPSTALL_STAGE{
+var label_to_value_DEEPSTALL_STAGE = map[string]DEEPSTALL_STAGE{
 	"DEEPSTALL_STAGE_FLY_TO_LANDING":    DEEPSTALL_STAGE_FLY_TO_LANDING,
 	"DEEPSTALL_STAGE_ESTIMATE_WIND":     DEEPSTALL_STAGE_ESTIMATE_WIND,
 	"DEEPSTALL_STAGE_WAIT_FOR_BREAKOUT": DEEPSTALL_STAGE_WAIT_FOR_BREAKOUT,
@@ -49,7 +49,7 @@ var values_DEEPSTALL_STAGE = map[string]DEEPSTALL_STAGE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e DEEPSTALL_STAGE) MarshalText() ([]byte, error) {
-	if name, ok := labels_DEEPSTALL_STAGE[e]; ok {
+	if name, ok := value_to_label_DEEPSTALL_STAGE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -57,7 +57,7 @@ func (e DEEPSTALL_STAGE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *DEEPSTALL_STAGE) UnmarshalText(text []byte) error {
-	if value, ok := values_DEEPSTALL_STAGE[string(text)]; ok {
+	if value, ok := label_to_value_DEEPSTALL_STAGE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = DEEPSTALL_STAGE(value)

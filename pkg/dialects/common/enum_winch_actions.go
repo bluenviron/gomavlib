@@ -33,7 +33,7 @@ const (
 	WINCH_LOAD_PAYLOAD WINCH_ACTIONS = 9
 )
 
-var labels_WINCH_ACTIONS = map[WINCH_ACTIONS]string{
+var value_to_label_WINCH_ACTIONS = map[WINCH_ACTIONS]string{
 	WINCH_RELAXED:                 "WINCH_RELAXED",
 	WINCH_RELATIVE_LENGTH_CONTROL: "WINCH_RELATIVE_LENGTH_CONTROL",
 	WINCH_RATE_CONTROL:            "WINCH_RATE_CONTROL",
@@ -46,7 +46,7 @@ var labels_WINCH_ACTIONS = map[WINCH_ACTIONS]string{
 	WINCH_LOAD_PAYLOAD:            "WINCH_LOAD_PAYLOAD",
 }
 
-var values_WINCH_ACTIONS = map[string]WINCH_ACTIONS{
+var label_to_value_WINCH_ACTIONS = map[string]WINCH_ACTIONS{
 	"WINCH_RELAXED":                 WINCH_RELAXED,
 	"WINCH_RELATIVE_LENGTH_CONTROL": WINCH_RELATIVE_LENGTH_CONTROL,
 	"WINCH_RATE_CONTROL":            WINCH_RATE_CONTROL,
@@ -61,7 +61,7 @@ var values_WINCH_ACTIONS = map[string]WINCH_ACTIONS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e WINCH_ACTIONS) MarshalText() ([]byte, error) {
-	if name, ok := labels_WINCH_ACTIONS[e]; ok {
+	if name, ok := value_to_label_WINCH_ACTIONS[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -69,7 +69,7 @@ func (e WINCH_ACTIONS) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *WINCH_ACTIONS) UnmarshalText(text []byte) error {
-	if value, ok := values_WINCH_ACTIONS[string(text)]; ok {
+	if value, ok := label_to_value_WINCH_ACTIONS[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = WINCH_ACTIONS(value)

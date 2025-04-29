@@ -34,7 +34,23 @@ const (
 	AIS_FLAGS_VALID_NAME                AIS_FLAGS = 4096
 )
 
-var labels_AIS_FLAGS = map[AIS_FLAGS]string{
+var values_AIS_FLAGS = []AIS_FLAGS{
+	AIS_FLAGS_POSITION_ACCURACY,
+	AIS_FLAGS_VALID_COG,
+	AIS_FLAGS_VALID_VELOCITY,
+	AIS_FLAGS_HIGH_VELOCITY,
+	AIS_FLAGS_VALID_TURN_RATE,
+	AIS_FLAGS_TURN_RATE_SIGN_ONLY,
+	AIS_FLAGS_VALID_DIMENSIONS,
+	AIS_FLAGS_LARGE_BOW_DIMENSION,
+	AIS_FLAGS_LARGE_STERN_DIMENSION,
+	AIS_FLAGS_LARGE_PORT_DIMENSION,
+	AIS_FLAGS_LARGE_STARBOARD_DIMENSION,
+	AIS_FLAGS_VALID_CALLSIGN,
+	AIS_FLAGS_VALID_NAME,
+}
+
+var value_to_label_AIS_FLAGS = map[AIS_FLAGS]string{
 	AIS_FLAGS_POSITION_ACCURACY:         "AIS_FLAGS_POSITION_ACCURACY",
 	AIS_FLAGS_VALID_COG:                 "AIS_FLAGS_VALID_COG",
 	AIS_FLAGS_VALID_VELOCITY:            "AIS_FLAGS_VALID_VELOCITY",
@@ -50,7 +66,7 @@ var labels_AIS_FLAGS = map[AIS_FLAGS]string{
 	AIS_FLAGS_VALID_NAME:                "AIS_FLAGS_VALID_NAME",
 }
 
-var values_AIS_FLAGS = map[string]AIS_FLAGS{
+var label_to_value_AIS_FLAGS = map[string]AIS_FLAGS{
 	"AIS_FLAGS_POSITION_ACCURACY":         AIS_FLAGS_POSITION_ACCURACY,
 	"AIS_FLAGS_VALID_COG":                 AIS_FLAGS_VALID_COG,
 	"AIS_FLAGS_VALID_VELOCITY":            AIS_FLAGS_VALID_VELOCITY,
@@ -72,9 +88,9 @@ func (e AIS_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_AIS_FLAGS {
+	for _, val := range values_AIS_FLAGS {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_AIS_FLAGS[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -85,7 +101,7 @@ func (e *AIS_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask AIS_FLAGS
 	for _, label := range labels {
-		if value, ok := values_AIS_FLAGS[label]; ok {
+		if value, ok := label_to_value_AIS_FLAGS[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= AIS_FLAGS(value)

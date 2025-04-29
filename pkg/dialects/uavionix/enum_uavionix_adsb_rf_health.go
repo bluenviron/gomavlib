@@ -18,14 +18,21 @@ const (
 	UAVIONIX_ADSB_RF_HEALTH_FAIL_RX      UAVIONIX_ADSB_RF_HEALTH = 16
 )
 
-var labels_UAVIONIX_ADSB_RF_HEALTH = map[UAVIONIX_ADSB_RF_HEALTH]string{
+var values_UAVIONIX_ADSB_RF_HEALTH = []UAVIONIX_ADSB_RF_HEALTH{
+	UAVIONIX_ADSB_RF_HEALTH_INITIALIZING,
+	UAVIONIX_ADSB_RF_HEALTH_OK,
+	UAVIONIX_ADSB_RF_HEALTH_FAIL_TX,
+	UAVIONIX_ADSB_RF_HEALTH_FAIL_RX,
+}
+
+var value_to_label_UAVIONIX_ADSB_RF_HEALTH = map[UAVIONIX_ADSB_RF_HEALTH]string{
 	UAVIONIX_ADSB_RF_HEALTH_INITIALIZING: "UAVIONIX_ADSB_RF_HEALTH_INITIALIZING",
 	UAVIONIX_ADSB_RF_HEALTH_OK:           "UAVIONIX_ADSB_RF_HEALTH_OK",
 	UAVIONIX_ADSB_RF_HEALTH_FAIL_TX:      "UAVIONIX_ADSB_RF_HEALTH_FAIL_TX",
 	UAVIONIX_ADSB_RF_HEALTH_FAIL_RX:      "UAVIONIX_ADSB_RF_HEALTH_FAIL_RX",
 }
 
-var values_UAVIONIX_ADSB_RF_HEALTH = map[string]UAVIONIX_ADSB_RF_HEALTH{
+var label_to_value_UAVIONIX_ADSB_RF_HEALTH = map[string]UAVIONIX_ADSB_RF_HEALTH{
 	"UAVIONIX_ADSB_RF_HEALTH_INITIALIZING": UAVIONIX_ADSB_RF_HEALTH_INITIALIZING,
 	"UAVIONIX_ADSB_RF_HEALTH_OK":           UAVIONIX_ADSB_RF_HEALTH_OK,
 	"UAVIONIX_ADSB_RF_HEALTH_FAIL_TX":      UAVIONIX_ADSB_RF_HEALTH_FAIL_TX,
@@ -38,9 +45,9 @@ func (e UAVIONIX_ADSB_RF_HEALTH) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_UAVIONIX_ADSB_RF_HEALTH {
+	for _, val := range values_UAVIONIX_ADSB_RF_HEALTH {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_UAVIONIX_ADSB_RF_HEALTH[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -51,7 +58,7 @@ func (e *UAVIONIX_ADSB_RF_HEALTH) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask UAVIONIX_ADSB_RF_HEALTH
 	for _, label := range labels {
-		if value, ok := values_UAVIONIX_ADSB_RF_HEALTH[label]; ok {
+		if value, ok := label_to_value_UAVIONIX_ADSB_RF_HEALTH[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= UAVIONIX_ADSB_RF_HEALTH(value)

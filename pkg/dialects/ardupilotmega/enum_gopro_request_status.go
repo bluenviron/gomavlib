@@ -16,19 +16,19 @@ const (
 	GOPRO_REQUEST_FAILED GOPRO_REQUEST_STATUS = 1
 )
 
-var labels_GOPRO_REQUEST_STATUS = map[GOPRO_REQUEST_STATUS]string{
+var value_to_label_GOPRO_REQUEST_STATUS = map[GOPRO_REQUEST_STATUS]string{
 	GOPRO_REQUEST_SUCCESS: "GOPRO_REQUEST_SUCCESS",
 	GOPRO_REQUEST_FAILED:  "GOPRO_REQUEST_FAILED",
 }
 
-var values_GOPRO_REQUEST_STATUS = map[string]GOPRO_REQUEST_STATUS{
+var label_to_value_GOPRO_REQUEST_STATUS = map[string]GOPRO_REQUEST_STATUS{
 	"GOPRO_REQUEST_SUCCESS": GOPRO_REQUEST_SUCCESS,
 	"GOPRO_REQUEST_FAILED":  GOPRO_REQUEST_FAILED,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_REQUEST_STATUS) MarshalText() ([]byte, error) {
-	if name, ok := labels_GOPRO_REQUEST_STATUS[e]; ok {
+	if name, ok := value_to_label_GOPRO_REQUEST_STATUS[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -36,7 +36,7 @@ func (e GOPRO_REQUEST_STATUS) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_REQUEST_STATUS) UnmarshalText(text []byte) error {
-	if value, ok := values_GOPRO_REQUEST_STATUS[string(text)]; ok {
+	if value, ok := label_to_value_GOPRO_REQUEST_STATUS[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = GOPRO_REQUEST_STATUS(value)

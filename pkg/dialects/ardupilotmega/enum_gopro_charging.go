@@ -16,19 +16,19 @@ const (
 	GOPRO_CHARGING_ENABLED GOPRO_CHARGING = 1
 )
 
-var labels_GOPRO_CHARGING = map[GOPRO_CHARGING]string{
+var value_to_label_GOPRO_CHARGING = map[GOPRO_CHARGING]string{
 	GOPRO_CHARGING_DISABLED: "GOPRO_CHARGING_DISABLED",
 	GOPRO_CHARGING_ENABLED:  "GOPRO_CHARGING_ENABLED",
 }
 
-var values_GOPRO_CHARGING = map[string]GOPRO_CHARGING{
+var label_to_value_GOPRO_CHARGING = map[string]GOPRO_CHARGING{
 	"GOPRO_CHARGING_DISABLED": GOPRO_CHARGING_DISABLED,
 	"GOPRO_CHARGING_ENABLED":  GOPRO_CHARGING_ENABLED,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_CHARGING) MarshalText() ([]byte, error) {
-	if name, ok := labels_GOPRO_CHARGING[e]; ok {
+	if name, ok := value_to_label_GOPRO_CHARGING[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -36,7 +36,7 @@ func (e GOPRO_CHARGING) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_CHARGING) UnmarshalText(text []byte) error {
-	if value, ok := values_GOPRO_CHARGING[string(text)]; ok {
+	if value, ok := label_to_value_GOPRO_CHARGING[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = GOPRO_CHARGING(value)

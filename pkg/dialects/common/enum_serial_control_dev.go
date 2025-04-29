@@ -43,7 +43,7 @@ const (
 	SERIAL_CONTROL_SERIAL9 SERIAL_CONTROL_DEV = 109
 )
 
-var labels_SERIAL_CONTROL_DEV = map[SERIAL_CONTROL_DEV]string{
+var value_to_label_SERIAL_CONTROL_DEV = map[SERIAL_CONTROL_DEV]string{
 	SERIAL_CONTROL_DEV_TELEM1: "SERIAL_CONTROL_DEV_TELEM1",
 	SERIAL_CONTROL_DEV_TELEM2: "SERIAL_CONTROL_DEV_TELEM2",
 	SERIAL_CONTROL_DEV_GPS1:   "SERIAL_CONTROL_DEV_GPS1",
@@ -61,7 +61,7 @@ var labels_SERIAL_CONTROL_DEV = map[SERIAL_CONTROL_DEV]string{
 	SERIAL_CONTROL_SERIAL9:    "SERIAL_CONTROL_SERIAL9",
 }
 
-var values_SERIAL_CONTROL_DEV = map[string]SERIAL_CONTROL_DEV{
+var label_to_value_SERIAL_CONTROL_DEV = map[string]SERIAL_CONTROL_DEV{
 	"SERIAL_CONTROL_DEV_TELEM1": SERIAL_CONTROL_DEV_TELEM1,
 	"SERIAL_CONTROL_DEV_TELEM2": SERIAL_CONTROL_DEV_TELEM2,
 	"SERIAL_CONTROL_DEV_GPS1":   SERIAL_CONTROL_DEV_GPS1,
@@ -81,7 +81,7 @@ var values_SERIAL_CONTROL_DEV = map[string]SERIAL_CONTROL_DEV{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e SERIAL_CONTROL_DEV) MarshalText() ([]byte, error) {
-	if name, ok := labels_SERIAL_CONTROL_DEV[e]; ok {
+	if name, ok := value_to_label_SERIAL_CONTROL_DEV[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -89,7 +89,7 @@ func (e SERIAL_CONTROL_DEV) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *SERIAL_CONTROL_DEV) UnmarshalText(text []byte) error {
-	if value, ok := values_SERIAL_CONTROL_DEV[string(text)]; ok {
+	if value, ok := label_to_value_SERIAL_CONTROL_DEV[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = SERIAL_CONTROL_DEV(value)

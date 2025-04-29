@@ -20,14 +20,14 @@ const (
 	SCRIPTING_CMD_STOP_AND_RESTART SCRIPTING_CMD = 3
 )
 
-var labels_SCRIPTING_CMD = map[SCRIPTING_CMD]string{
+var value_to_label_SCRIPTING_CMD = map[SCRIPTING_CMD]string{
 	SCRIPTING_CMD_REPL_START:       "SCRIPTING_CMD_REPL_START",
 	SCRIPTING_CMD_REPL_STOP:        "SCRIPTING_CMD_REPL_STOP",
 	SCRIPTING_CMD_STOP:             "SCRIPTING_CMD_STOP",
 	SCRIPTING_CMD_STOP_AND_RESTART: "SCRIPTING_CMD_STOP_AND_RESTART",
 }
 
-var values_SCRIPTING_CMD = map[string]SCRIPTING_CMD{
+var label_to_value_SCRIPTING_CMD = map[string]SCRIPTING_CMD{
 	"SCRIPTING_CMD_REPL_START":       SCRIPTING_CMD_REPL_START,
 	"SCRIPTING_CMD_REPL_STOP":        SCRIPTING_CMD_REPL_STOP,
 	"SCRIPTING_CMD_STOP":             SCRIPTING_CMD_STOP,
@@ -36,7 +36,7 @@ var values_SCRIPTING_CMD = map[string]SCRIPTING_CMD{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e SCRIPTING_CMD) MarshalText() ([]byte, error) {
-	if name, ok := labels_SCRIPTING_CMD[e]; ok {
+	if name, ok := value_to_label_SCRIPTING_CMD[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -44,7 +44,7 @@ func (e SCRIPTING_CMD) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *SCRIPTING_CMD) UnmarshalText(text []byte) error {
-	if value, ok := values_SCRIPTING_CMD[string(text)]; ok {
+	if value, ok := label_to_value_SCRIPTING_CMD[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = SCRIPTING_CMD(value)

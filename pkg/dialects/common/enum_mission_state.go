@@ -27,7 +27,7 @@ const (
 	MISSION_STATE_COMPLETE MISSION_STATE = 5
 )
 
-var labels_MISSION_STATE = map[MISSION_STATE]string{
+var value_to_label_MISSION_STATE = map[MISSION_STATE]string{
 	MISSION_STATE_UNKNOWN:     "MISSION_STATE_UNKNOWN",
 	MISSION_STATE_NO_MISSION:  "MISSION_STATE_NO_MISSION",
 	MISSION_STATE_NOT_STARTED: "MISSION_STATE_NOT_STARTED",
@@ -36,7 +36,7 @@ var labels_MISSION_STATE = map[MISSION_STATE]string{
 	MISSION_STATE_COMPLETE:    "MISSION_STATE_COMPLETE",
 }
 
-var values_MISSION_STATE = map[string]MISSION_STATE{
+var label_to_value_MISSION_STATE = map[string]MISSION_STATE{
 	"MISSION_STATE_UNKNOWN":     MISSION_STATE_UNKNOWN,
 	"MISSION_STATE_NO_MISSION":  MISSION_STATE_NO_MISSION,
 	"MISSION_STATE_NOT_STARTED": MISSION_STATE_NOT_STARTED,
@@ -47,7 +47,7 @@ var values_MISSION_STATE = map[string]MISSION_STATE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MISSION_STATE) MarshalText() ([]byte, error) {
-	if name, ok := labels_MISSION_STATE[e]; ok {
+	if name, ok := value_to_label_MISSION_STATE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -55,7 +55,7 @@ func (e MISSION_STATE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MISSION_STATE) UnmarshalText(text []byte) error {
-	if value, ok := values_MISSION_STATE[string(text)]; ok {
+	if value, ok := label_to_value_MISSION_STATE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MISSION_STATE(value)

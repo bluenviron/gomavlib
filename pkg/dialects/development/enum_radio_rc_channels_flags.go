@@ -18,12 +18,17 @@ const (
 	RADIO_RC_CHANNELS_FLAGS_OUTDATED RADIO_RC_CHANNELS_FLAGS = 2
 )
 
-var labels_RADIO_RC_CHANNELS_FLAGS = map[RADIO_RC_CHANNELS_FLAGS]string{
+var values_RADIO_RC_CHANNELS_FLAGS = []RADIO_RC_CHANNELS_FLAGS{
+	RADIO_RC_CHANNELS_FLAGS_FAILSAFE,
+	RADIO_RC_CHANNELS_FLAGS_OUTDATED,
+}
+
+var value_to_label_RADIO_RC_CHANNELS_FLAGS = map[RADIO_RC_CHANNELS_FLAGS]string{
 	RADIO_RC_CHANNELS_FLAGS_FAILSAFE: "RADIO_RC_CHANNELS_FLAGS_FAILSAFE",
 	RADIO_RC_CHANNELS_FLAGS_OUTDATED: "RADIO_RC_CHANNELS_FLAGS_OUTDATED",
 }
 
-var values_RADIO_RC_CHANNELS_FLAGS = map[string]RADIO_RC_CHANNELS_FLAGS{
+var label_to_value_RADIO_RC_CHANNELS_FLAGS = map[string]RADIO_RC_CHANNELS_FLAGS{
 	"RADIO_RC_CHANNELS_FLAGS_FAILSAFE": RADIO_RC_CHANNELS_FLAGS_FAILSAFE,
 	"RADIO_RC_CHANNELS_FLAGS_OUTDATED": RADIO_RC_CHANNELS_FLAGS_OUTDATED,
 }
@@ -34,9 +39,9 @@ func (e RADIO_RC_CHANNELS_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_RADIO_RC_CHANNELS_FLAGS {
+	for _, val := range values_RADIO_RC_CHANNELS_FLAGS {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_RADIO_RC_CHANNELS_FLAGS[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -47,7 +52,7 @@ func (e *RADIO_RC_CHANNELS_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask RADIO_RC_CHANNELS_FLAGS
 	for _, label := range labels {
-		if value, ok := values_RADIO_RC_CHANNELS_FLAGS[label]; ok {
+		if value, ok := label_to_value_RADIO_RC_CHANNELS_FLAGS[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= RADIO_RC_CHANNELS_FLAGS(value)

@@ -18,12 +18,17 @@ const (
 	AIRSPEED_SENSOR_USING AIRSPEED_SENSOR_FLAGS = 2
 )
 
-var labels_AIRSPEED_SENSOR_FLAGS = map[AIRSPEED_SENSOR_FLAGS]string{
+var values_AIRSPEED_SENSOR_FLAGS = []AIRSPEED_SENSOR_FLAGS{
+	AIRSPEED_SENSOR_UNHEALTHY,
+	AIRSPEED_SENSOR_USING,
+}
+
+var value_to_label_AIRSPEED_SENSOR_FLAGS = map[AIRSPEED_SENSOR_FLAGS]string{
 	AIRSPEED_SENSOR_UNHEALTHY: "AIRSPEED_SENSOR_UNHEALTHY",
 	AIRSPEED_SENSOR_USING:     "AIRSPEED_SENSOR_USING",
 }
 
-var values_AIRSPEED_SENSOR_FLAGS = map[string]AIRSPEED_SENSOR_FLAGS{
+var label_to_value_AIRSPEED_SENSOR_FLAGS = map[string]AIRSPEED_SENSOR_FLAGS{
 	"AIRSPEED_SENSOR_UNHEALTHY": AIRSPEED_SENSOR_UNHEALTHY,
 	"AIRSPEED_SENSOR_USING":     AIRSPEED_SENSOR_USING,
 }
@@ -34,9 +39,9 @@ func (e AIRSPEED_SENSOR_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_AIRSPEED_SENSOR_FLAGS {
+	for _, val := range values_AIRSPEED_SENSOR_FLAGS {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_AIRSPEED_SENSOR_FLAGS[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -47,7 +52,7 @@ func (e *AIRSPEED_SENSOR_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask AIRSPEED_SENSOR_FLAGS
 	for _, label := range labels {
-		if value, ok := values_AIRSPEED_SENSOR_FLAGS[label]; ok {
+		if value, ok := label_to_value_AIRSPEED_SENSOR_FLAGS[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= AIRSPEED_SENSOR_FLAGS(value)

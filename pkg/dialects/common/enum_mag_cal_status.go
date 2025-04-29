@@ -20,7 +20,7 @@ const (
 	MAG_CAL_BAD_RADIUS       MAG_CAL_STATUS = 7
 )
 
-var labels_MAG_CAL_STATUS = map[MAG_CAL_STATUS]string{
+var value_to_label_MAG_CAL_STATUS = map[MAG_CAL_STATUS]string{
 	MAG_CAL_NOT_STARTED:      "MAG_CAL_NOT_STARTED",
 	MAG_CAL_WAITING_TO_START: "MAG_CAL_WAITING_TO_START",
 	MAG_CAL_RUNNING_STEP_ONE: "MAG_CAL_RUNNING_STEP_ONE",
@@ -31,7 +31,7 @@ var labels_MAG_CAL_STATUS = map[MAG_CAL_STATUS]string{
 	MAG_CAL_BAD_RADIUS:       "MAG_CAL_BAD_RADIUS",
 }
 
-var values_MAG_CAL_STATUS = map[string]MAG_CAL_STATUS{
+var label_to_value_MAG_CAL_STATUS = map[string]MAG_CAL_STATUS{
 	"MAG_CAL_NOT_STARTED":      MAG_CAL_NOT_STARTED,
 	"MAG_CAL_WAITING_TO_START": MAG_CAL_WAITING_TO_START,
 	"MAG_CAL_RUNNING_STEP_ONE": MAG_CAL_RUNNING_STEP_ONE,
@@ -44,7 +44,7 @@ var values_MAG_CAL_STATUS = map[string]MAG_CAL_STATUS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAG_CAL_STATUS) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAG_CAL_STATUS[e]; ok {
+	if name, ok := value_to_label_MAG_CAL_STATUS[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -52,7 +52,7 @@ func (e MAG_CAL_STATUS) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAG_CAL_STATUS) UnmarshalText(text []byte) error {
-	if value, ok := values_MAG_CAL_STATUS[string(text)]; ok {
+	if value, ok := label_to_value_MAG_CAL_STATUS[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAG_CAL_STATUS(value)

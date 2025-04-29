@@ -65,7 +65,7 @@ const (
 	COPTER_MODE_TURTLE COPTER_MODE = 28
 )
 
-var labels_COPTER_MODE = map[COPTER_MODE]string{
+var value_to_label_COPTER_MODE = map[COPTER_MODE]string{
 	COPTER_MODE_STABILIZE:    "COPTER_MODE_STABILIZE",
 	COPTER_MODE_ACRO:         "COPTER_MODE_ACRO",
 	COPTER_MODE_ALT_HOLD:     "COPTER_MODE_ALT_HOLD",
@@ -94,7 +94,7 @@ var labels_COPTER_MODE = map[COPTER_MODE]string{
 	COPTER_MODE_TURTLE:       "COPTER_MODE_TURTLE",
 }
 
-var values_COPTER_MODE = map[string]COPTER_MODE{
+var label_to_value_COPTER_MODE = map[string]COPTER_MODE{
 	"COPTER_MODE_STABILIZE":    COPTER_MODE_STABILIZE,
 	"COPTER_MODE_ACRO":         COPTER_MODE_ACRO,
 	"COPTER_MODE_ALT_HOLD":     COPTER_MODE_ALT_HOLD,
@@ -125,7 +125,7 @@ var values_COPTER_MODE = map[string]COPTER_MODE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e COPTER_MODE) MarshalText() ([]byte, error) {
-	if name, ok := labels_COPTER_MODE[e]; ok {
+	if name, ok := value_to_label_COPTER_MODE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -133,7 +133,7 @@ func (e COPTER_MODE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *COPTER_MODE) UnmarshalText(text []byte) error {
-	if value, ok := values_COPTER_MODE[string(text)]; ok {
+	if value, ok := label_to_value_COPTER_MODE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = COPTER_MODE(value)

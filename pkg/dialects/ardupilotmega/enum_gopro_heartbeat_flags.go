@@ -15,11 +15,15 @@ const (
 	GOPRO_FLAG_RECORDING GOPRO_HEARTBEAT_FLAGS = 1
 )
 
-var labels_GOPRO_HEARTBEAT_FLAGS = map[GOPRO_HEARTBEAT_FLAGS]string{
+var values_GOPRO_HEARTBEAT_FLAGS = []GOPRO_HEARTBEAT_FLAGS{
+	GOPRO_FLAG_RECORDING,
+}
+
+var value_to_label_GOPRO_HEARTBEAT_FLAGS = map[GOPRO_HEARTBEAT_FLAGS]string{
 	GOPRO_FLAG_RECORDING: "GOPRO_FLAG_RECORDING",
 }
 
-var values_GOPRO_HEARTBEAT_FLAGS = map[string]GOPRO_HEARTBEAT_FLAGS{
+var label_to_value_GOPRO_HEARTBEAT_FLAGS = map[string]GOPRO_HEARTBEAT_FLAGS{
 	"GOPRO_FLAG_RECORDING": GOPRO_FLAG_RECORDING,
 }
 
@@ -29,9 +33,9 @@ func (e GOPRO_HEARTBEAT_FLAGS) MarshalText() ([]byte, error) {
 		return []byte("0"), nil
 	}
 	var names []string
-	for val, label := range labels_GOPRO_HEARTBEAT_FLAGS {
+	for _, val := range values_GOPRO_HEARTBEAT_FLAGS {
 		if e&val == val {
-			names = append(names, label)
+			names = append(names, value_to_label_GOPRO_HEARTBEAT_FLAGS[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
@@ -42,7 +46,7 @@ func (e *GOPRO_HEARTBEAT_FLAGS) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
 	var mask GOPRO_HEARTBEAT_FLAGS
 	for _, label := range labels {
-		if value, ok := values_GOPRO_HEARTBEAT_FLAGS[label]; ok {
+		if value, ok := label_to_value_GOPRO_HEARTBEAT_FLAGS[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
 			mask |= GOPRO_HEARTBEAT_FLAGS(value)

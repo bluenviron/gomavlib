@@ -19,13 +19,13 @@ const (
 	CAMERA_MODE_IMAGE_SURVEY CAMERA_MODE = 2
 )
 
-var labels_CAMERA_MODE = map[CAMERA_MODE]string{
+var value_to_label_CAMERA_MODE = map[CAMERA_MODE]string{
 	CAMERA_MODE_IMAGE:        "CAMERA_MODE_IMAGE",
 	CAMERA_MODE_VIDEO:        "CAMERA_MODE_VIDEO",
 	CAMERA_MODE_IMAGE_SURVEY: "CAMERA_MODE_IMAGE_SURVEY",
 }
 
-var values_CAMERA_MODE = map[string]CAMERA_MODE{
+var label_to_value_CAMERA_MODE = map[string]CAMERA_MODE{
 	"CAMERA_MODE_IMAGE":        CAMERA_MODE_IMAGE,
 	"CAMERA_MODE_VIDEO":        CAMERA_MODE_VIDEO,
 	"CAMERA_MODE_IMAGE_SURVEY": CAMERA_MODE_IMAGE_SURVEY,
@@ -33,7 +33,7 @@ var values_CAMERA_MODE = map[string]CAMERA_MODE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAMERA_MODE) MarshalText() ([]byte, error) {
-	if name, ok := labels_CAMERA_MODE[e]; ok {
+	if name, ok := value_to_label_CAMERA_MODE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -41,7 +41,7 @@ func (e CAMERA_MODE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CAMERA_MODE) UnmarshalText(text []byte) error {
-	if value, ok := values_CAMERA_MODE[string(text)]; ok {
+	if value, ok := label_to_value_CAMERA_MODE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = CAMERA_MODE(value)

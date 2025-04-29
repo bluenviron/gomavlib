@@ -19,13 +19,13 @@ const (
 	CAMERA_TRACKING_STATUS_FLAGS_ERROR CAMERA_TRACKING_STATUS_FLAGS = 2
 )
 
-var labels_CAMERA_TRACKING_STATUS_FLAGS = map[CAMERA_TRACKING_STATUS_FLAGS]string{
+var value_to_label_CAMERA_TRACKING_STATUS_FLAGS = map[CAMERA_TRACKING_STATUS_FLAGS]string{
 	CAMERA_TRACKING_STATUS_FLAGS_IDLE:   "CAMERA_TRACKING_STATUS_FLAGS_IDLE",
 	CAMERA_TRACKING_STATUS_FLAGS_ACTIVE: "CAMERA_TRACKING_STATUS_FLAGS_ACTIVE",
 	CAMERA_TRACKING_STATUS_FLAGS_ERROR:  "CAMERA_TRACKING_STATUS_FLAGS_ERROR",
 }
 
-var values_CAMERA_TRACKING_STATUS_FLAGS = map[string]CAMERA_TRACKING_STATUS_FLAGS{
+var label_to_value_CAMERA_TRACKING_STATUS_FLAGS = map[string]CAMERA_TRACKING_STATUS_FLAGS{
 	"CAMERA_TRACKING_STATUS_FLAGS_IDLE":   CAMERA_TRACKING_STATUS_FLAGS_IDLE,
 	"CAMERA_TRACKING_STATUS_FLAGS_ACTIVE": CAMERA_TRACKING_STATUS_FLAGS_ACTIVE,
 	"CAMERA_TRACKING_STATUS_FLAGS_ERROR":  CAMERA_TRACKING_STATUS_FLAGS_ERROR,
@@ -33,7 +33,7 @@ var values_CAMERA_TRACKING_STATUS_FLAGS = map[string]CAMERA_TRACKING_STATUS_FLAG
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAMERA_TRACKING_STATUS_FLAGS) MarshalText() ([]byte, error) {
-	if name, ok := labels_CAMERA_TRACKING_STATUS_FLAGS[e]; ok {
+	if name, ok := value_to_label_CAMERA_TRACKING_STATUS_FLAGS[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -41,7 +41,7 @@ func (e CAMERA_TRACKING_STATUS_FLAGS) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CAMERA_TRACKING_STATUS_FLAGS) UnmarshalText(text []byte) error {
-	if value, ok := values_CAMERA_TRACKING_STATUS_FLAGS[string(text)]; ok {
+	if value, ok := label_to_value_CAMERA_TRACKING_STATUS_FLAGS[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = CAMERA_TRACKING_STATUS_FLAGS(value)

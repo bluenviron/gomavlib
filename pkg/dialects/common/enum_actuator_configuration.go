@@ -25,7 +25,7 @@ const (
 	ACTUATOR_CONFIGURATION_SPIN_DIRECTION2 ACTUATOR_CONFIGURATION = 5
 )
 
-var labels_ACTUATOR_CONFIGURATION = map[ACTUATOR_CONFIGURATION]string{
+var value_to_label_ACTUATOR_CONFIGURATION = map[ACTUATOR_CONFIGURATION]string{
 	ACTUATOR_CONFIGURATION_NONE:            "ACTUATOR_CONFIGURATION_NONE",
 	ACTUATOR_CONFIGURATION_BEEP:            "ACTUATOR_CONFIGURATION_BEEP",
 	ACTUATOR_CONFIGURATION_3D_MODE_ON:      "ACTUATOR_CONFIGURATION_3D_MODE_ON",
@@ -34,7 +34,7 @@ var labels_ACTUATOR_CONFIGURATION = map[ACTUATOR_CONFIGURATION]string{
 	ACTUATOR_CONFIGURATION_SPIN_DIRECTION2: "ACTUATOR_CONFIGURATION_SPIN_DIRECTION2",
 }
 
-var values_ACTUATOR_CONFIGURATION = map[string]ACTUATOR_CONFIGURATION{
+var label_to_value_ACTUATOR_CONFIGURATION = map[string]ACTUATOR_CONFIGURATION{
 	"ACTUATOR_CONFIGURATION_NONE":            ACTUATOR_CONFIGURATION_NONE,
 	"ACTUATOR_CONFIGURATION_BEEP":            ACTUATOR_CONFIGURATION_BEEP,
 	"ACTUATOR_CONFIGURATION_3D_MODE_ON":      ACTUATOR_CONFIGURATION_3D_MODE_ON,
@@ -45,7 +45,7 @@ var values_ACTUATOR_CONFIGURATION = map[string]ACTUATOR_CONFIGURATION{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ACTUATOR_CONFIGURATION) MarshalText() ([]byte, error) {
-	if name, ok := labels_ACTUATOR_CONFIGURATION[e]; ok {
+	if name, ok := value_to_label_ACTUATOR_CONFIGURATION[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -53,7 +53,7 @@ func (e ACTUATOR_CONFIGURATION) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ACTUATOR_CONFIGURATION) UnmarshalText(text []byte) error {
-	if value, ok := values_ACTUATOR_CONFIGURATION[string(text)]; ok {
+	if value, ok := label_to_value_ACTUATOR_CONFIGURATION[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = ACTUATOR_CONFIGURATION(value)

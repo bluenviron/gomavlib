@@ -33,7 +33,7 @@ const (
 	MAV_QSHOT_MODE_HOME_TARGETING MAV_QSHOT_MODE = 9
 )
 
-var labels_MAV_QSHOT_MODE = map[MAV_QSHOT_MODE]string{
+var value_to_label_MAV_QSHOT_MODE = map[MAV_QSHOT_MODE]string{
 	MAV_QSHOT_MODE_UNDEFINED:         "MAV_QSHOT_MODE_UNDEFINED",
 	MAV_QSHOT_MODE_DEFAULT:           "MAV_QSHOT_MODE_DEFAULT",
 	MAV_QSHOT_MODE_GIMBAL_RETRACT:    "MAV_QSHOT_MODE_GIMBAL_RETRACT",
@@ -46,7 +46,7 @@ var labels_MAV_QSHOT_MODE = map[MAV_QSHOT_MODE]string{
 	MAV_QSHOT_MODE_HOME_TARGETING:    "MAV_QSHOT_MODE_HOME_TARGETING",
 }
 
-var values_MAV_QSHOT_MODE = map[string]MAV_QSHOT_MODE{
+var label_to_value_MAV_QSHOT_MODE = map[string]MAV_QSHOT_MODE{
 	"MAV_QSHOT_MODE_UNDEFINED":         MAV_QSHOT_MODE_UNDEFINED,
 	"MAV_QSHOT_MODE_DEFAULT":           MAV_QSHOT_MODE_DEFAULT,
 	"MAV_QSHOT_MODE_GIMBAL_RETRACT":    MAV_QSHOT_MODE_GIMBAL_RETRACT,
@@ -61,7 +61,7 @@ var values_MAV_QSHOT_MODE = map[string]MAV_QSHOT_MODE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_QSHOT_MODE) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_QSHOT_MODE[e]; ok {
+	if name, ok := value_to_label_MAV_QSHOT_MODE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -69,7 +69,7 @@ func (e MAV_QSHOT_MODE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_QSHOT_MODE) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_QSHOT_MODE[string(text)]; ok {
+	if value, ok := label_to_value_MAV_QSHOT_MODE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_QSHOT_MODE(value)

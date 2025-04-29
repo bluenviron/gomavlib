@@ -17,13 +17,13 @@ const (
 	PILOT_ROTO UALBERTA_PILOT_MODE = 3
 )
 
-var labels_UALBERTA_PILOT_MODE = map[UALBERTA_PILOT_MODE]string{
+var value_to_label_UALBERTA_PILOT_MODE = map[UALBERTA_PILOT_MODE]string{
 	PILOT_MANUAL: "PILOT_MANUAL",
 	PILOT_AUTO:   "PILOT_AUTO",
 	PILOT_ROTO:   "PILOT_ROTO",
 }
 
-var values_UALBERTA_PILOT_MODE = map[string]UALBERTA_PILOT_MODE{
+var label_to_value_UALBERTA_PILOT_MODE = map[string]UALBERTA_PILOT_MODE{
 	"PILOT_MANUAL": PILOT_MANUAL,
 	"PILOT_AUTO":   PILOT_AUTO,
 	"PILOT_ROTO":   PILOT_ROTO,
@@ -31,7 +31,7 @@ var values_UALBERTA_PILOT_MODE = map[string]UALBERTA_PILOT_MODE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UALBERTA_PILOT_MODE) MarshalText() ([]byte, error) {
-	if name, ok := labels_UALBERTA_PILOT_MODE[e]; ok {
+	if name, ok := value_to_label_UALBERTA_PILOT_MODE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -39,7 +39,7 @@ func (e UALBERTA_PILOT_MODE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UALBERTA_PILOT_MODE) UnmarshalText(text []byte) error {
-	if value, ok := values_UALBERTA_PILOT_MODE[string(text)]; ok {
+	if value, ok := label_to_value_UALBERTA_PILOT_MODE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = UALBERTA_PILOT_MODE(value)

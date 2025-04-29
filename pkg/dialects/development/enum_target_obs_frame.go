@@ -21,14 +21,14 @@ const (
 	TARGET_OBS_FRAME_OTHER TARGET_OBS_FRAME = 3
 )
 
-var labels_TARGET_OBS_FRAME = map[TARGET_OBS_FRAME]string{
+var value_to_label_TARGET_OBS_FRAME = map[TARGET_OBS_FRAME]string{
 	TARGET_OBS_FRAME_LOCAL_NED:        "TARGET_OBS_FRAME_LOCAL_NED",
 	TARGET_OBS_FRAME_BODY_FRD:         "TARGET_OBS_FRAME_BODY_FRD",
 	TARGET_OBS_FRAME_LOCAL_OFFSET_NED: "TARGET_OBS_FRAME_LOCAL_OFFSET_NED",
 	TARGET_OBS_FRAME_OTHER:            "TARGET_OBS_FRAME_OTHER",
 }
 
-var values_TARGET_OBS_FRAME = map[string]TARGET_OBS_FRAME{
+var label_to_value_TARGET_OBS_FRAME = map[string]TARGET_OBS_FRAME{
 	"TARGET_OBS_FRAME_LOCAL_NED":        TARGET_OBS_FRAME_LOCAL_NED,
 	"TARGET_OBS_FRAME_BODY_FRD":         TARGET_OBS_FRAME_BODY_FRD,
 	"TARGET_OBS_FRAME_LOCAL_OFFSET_NED": TARGET_OBS_FRAME_LOCAL_OFFSET_NED,
@@ -37,7 +37,7 @@ var values_TARGET_OBS_FRAME = map[string]TARGET_OBS_FRAME{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e TARGET_OBS_FRAME) MarshalText() ([]byte, error) {
-	if name, ok := labels_TARGET_OBS_FRAME[e]; ok {
+	if name, ok := value_to_label_TARGET_OBS_FRAME[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -45,7 +45,7 @@ func (e TARGET_OBS_FRAME) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *TARGET_OBS_FRAME) UnmarshalText(text []byte) error {
-	if value, ok := values_TARGET_OBS_FRAME[string(text)]; ok {
+	if value, ok := label_to_value_TARGET_OBS_FRAME[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = TARGET_OBS_FRAME(value)

@@ -21,14 +21,14 @@ const (
 	UAVCAN_NODE_HEALTH_CRITICAL UAVCAN_NODE_HEALTH = 3
 )
 
-var labels_UAVCAN_NODE_HEALTH = map[UAVCAN_NODE_HEALTH]string{
+var value_to_label_UAVCAN_NODE_HEALTH = map[UAVCAN_NODE_HEALTH]string{
 	UAVCAN_NODE_HEALTH_OK:       "UAVCAN_NODE_HEALTH_OK",
 	UAVCAN_NODE_HEALTH_WARNING:  "UAVCAN_NODE_HEALTH_WARNING",
 	UAVCAN_NODE_HEALTH_ERROR:    "UAVCAN_NODE_HEALTH_ERROR",
 	UAVCAN_NODE_HEALTH_CRITICAL: "UAVCAN_NODE_HEALTH_CRITICAL",
 }
 
-var values_UAVCAN_NODE_HEALTH = map[string]UAVCAN_NODE_HEALTH{
+var label_to_value_UAVCAN_NODE_HEALTH = map[string]UAVCAN_NODE_HEALTH{
 	"UAVCAN_NODE_HEALTH_OK":       UAVCAN_NODE_HEALTH_OK,
 	"UAVCAN_NODE_HEALTH_WARNING":  UAVCAN_NODE_HEALTH_WARNING,
 	"UAVCAN_NODE_HEALTH_ERROR":    UAVCAN_NODE_HEALTH_ERROR,
@@ -37,7 +37,7 @@ var values_UAVCAN_NODE_HEALTH = map[string]UAVCAN_NODE_HEALTH{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e UAVCAN_NODE_HEALTH) MarshalText() ([]byte, error) {
-	if name, ok := labels_UAVCAN_NODE_HEALTH[e]; ok {
+	if name, ok := value_to_label_UAVCAN_NODE_HEALTH[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -45,7 +45,7 @@ func (e UAVCAN_NODE_HEALTH) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *UAVCAN_NODE_HEALTH) UnmarshalText(text []byte) error {
-	if value, ok := values_UAVCAN_NODE_HEALTH[string(text)]; ok {
+	if value, ok := label_to_value_UAVCAN_NODE_HEALTH[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = UAVCAN_NODE_HEALTH(value)

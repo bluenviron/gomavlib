@@ -33,7 +33,7 @@ const (
 	ADSB_EMITTER_TYPE_POINT_OBSTACLE    ADSB_EMITTER_TYPE = 19
 )
 
-var labels_ADSB_EMITTER_TYPE = map[ADSB_EMITTER_TYPE]string{
+var value_to_label_ADSB_EMITTER_TYPE = map[ADSB_EMITTER_TYPE]string{
 	ADSB_EMITTER_TYPE_NO_INFO:           "ADSB_EMITTER_TYPE_NO_INFO",
 	ADSB_EMITTER_TYPE_LIGHT:             "ADSB_EMITTER_TYPE_LIGHT",
 	ADSB_EMITTER_TYPE_SMALL:             "ADSB_EMITTER_TYPE_SMALL",
@@ -56,7 +56,7 @@ var labels_ADSB_EMITTER_TYPE = map[ADSB_EMITTER_TYPE]string{
 	ADSB_EMITTER_TYPE_POINT_OBSTACLE:    "ADSB_EMITTER_TYPE_POINT_OBSTACLE",
 }
 
-var values_ADSB_EMITTER_TYPE = map[string]ADSB_EMITTER_TYPE{
+var label_to_value_ADSB_EMITTER_TYPE = map[string]ADSB_EMITTER_TYPE{
 	"ADSB_EMITTER_TYPE_NO_INFO":           ADSB_EMITTER_TYPE_NO_INFO,
 	"ADSB_EMITTER_TYPE_LIGHT":             ADSB_EMITTER_TYPE_LIGHT,
 	"ADSB_EMITTER_TYPE_SMALL":             ADSB_EMITTER_TYPE_SMALL,
@@ -81,7 +81,7 @@ var values_ADSB_EMITTER_TYPE = map[string]ADSB_EMITTER_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e ADSB_EMITTER_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_ADSB_EMITTER_TYPE[e]; ok {
+	if name, ok := value_to_label_ADSB_EMITTER_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -89,7 +89,7 @@ func (e ADSB_EMITTER_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *ADSB_EMITTER_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_ADSB_EMITTER_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_ADSB_EMITTER_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = ADSB_EMITTER_TYPE(value)

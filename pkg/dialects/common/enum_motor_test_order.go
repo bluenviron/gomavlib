@@ -19,13 +19,13 @@ const (
 	MOTOR_TEST_ORDER_BOARD MOTOR_TEST_ORDER = 2
 )
 
-var labels_MOTOR_TEST_ORDER = map[MOTOR_TEST_ORDER]string{
+var value_to_label_MOTOR_TEST_ORDER = map[MOTOR_TEST_ORDER]string{
 	MOTOR_TEST_ORDER_DEFAULT:  "MOTOR_TEST_ORDER_DEFAULT",
 	MOTOR_TEST_ORDER_SEQUENCE: "MOTOR_TEST_ORDER_SEQUENCE",
 	MOTOR_TEST_ORDER_BOARD:    "MOTOR_TEST_ORDER_BOARD",
 }
 
-var values_MOTOR_TEST_ORDER = map[string]MOTOR_TEST_ORDER{
+var label_to_value_MOTOR_TEST_ORDER = map[string]MOTOR_TEST_ORDER{
 	"MOTOR_TEST_ORDER_DEFAULT":  MOTOR_TEST_ORDER_DEFAULT,
 	"MOTOR_TEST_ORDER_SEQUENCE": MOTOR_TEST_ORDER_SEQUENCE,
 	"MOTOR_TEST_ORDER_BOARD":    MOTOR_TEST_ORDER_BOARD,
@@ -33,7 +33,7 @@ var values_MOTOR_TEST_ORDER = map[string]MOTOR_TEST_ORDER{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MOTOR_TEST_ORDER) MarshalText() ([]byte, error) {
-	if name, ok := labels_MOTOR_TEST_ORDER[e]; ok {
+	if name, ok := value_to_label_MOTOR_TEST_ORDER[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -41,7 +41,7 @@ func (e MOTOR_TEST_ORDER) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MOTOR_TEST_ORDER) UnmarshalText(text []byte) error {
-	if value, ok := values_MOTOR_TEST_ORDER[string(text)]; ok {
+	if value, ok := label_to_value_MOTOR_TEST_ORDER[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MOTOR_TEST_ORDER(value)

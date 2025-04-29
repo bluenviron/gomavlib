@@ -33,7 +33,7 @@ const (
 	MAV_DATA_STREAM_EXTRA3 MAV_DATA_STREAM = 12
 )
 
-var labels_MAV_DATA_STREAM = map[MAV_DATA_STREAM]string{
+var value_to_label_MAV_DATA_STREAM = map[MAV_DATA_STREAM]string{
 	MAV_DATA_STREAM_ALL:             "MAV_DATA_STREAM_ALL",
 	MAV_DATA_STREAM_RAW_SENSORS:     "MAV_DATA_STREAM_RAW_SENSORS",
 	MAV_DATA_STREAM_EXTENDED_STATUS: "MAV_DATA_STREAM_EXTENDED_STATUS",
@@ -45,7 +45,7 @@ var labels_MAV_DATA_STREAM = map[MAV_DATA_STREAM]string{
 	MAV_DATA_STREAM_EXTRA3:          "MAV_DATA_STREAM_EXTRA3",
 }
 
-var values_MAV_DATA_STREAM = map[string]MAV_DATA_STREAM{
+var label_to_value_MAV_DATA_STREAM = map[string]MAV_DATA_STREAM{
 	"MAV_DATA_STREAM_ALL":             MAV_DATA_STREAM_ALL,
 	"MAV_DATA_STREAM_RAW_SENSORS":     MAV_DATA_STREAM_RAW_SENSORS,
 	"MAV_DATA_STREAM_EXTENDED_STATUS": MAV_DATA_STREAM_EXTENDED_STATUS,
@@ -59,7 +59,7 @@ var values_MAV_DATA_STREAM = map[string]MAV_DATA_STREAM{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_DATA_STREAM) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_DATA_STREAM[e]; ok {
+	if name, ok := value_to_label_MAV_DATA_STREAM[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -67,7 +67,7 @@ func (e MAV_DATA_STREAM) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_DATA_STREAM) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_DATA_STREAM[string(text)]; ok {
+	if value, ok := label_to_value_MAV_DATA_STREAM[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_DATA_STREAM(value)

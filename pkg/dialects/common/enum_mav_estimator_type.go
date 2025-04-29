@@ -31,7 +31,7 @@ const (
 	MAV_ESTIMATOR_TYPE_AUTOPILOT MAV_ESTIMATOR_TYPE = 8
 )
 
-var labels_MAV_ESTIMATOR_TYPE = map[MAV_ESTIMATOR_TYPE]string{
+var value_to_label_MAV_ESTIMATOR_TYPE = map[MAV_ESTIMATOR_TYPE]string{
 	MAV_ESTIMATOR_TYPE_UNKNOWN:   "MAV_ESTIMATOR_TYPE_UNKNOWN",
 	MAV_ESTIMATOR_TYPE_NAIVE:     "MAV_ESTIMATOR_TYPE_NAIVE",
 	MAV_ESTIMATOR_TYPE_VISION:    "MAV_ESTIMATOR_TYPE_VISION",
@@ -43,7 +43,7 @@ var labels_MAV_ESTIMATOR_TYPE = map[MAV_ESTIMATOR_TYPE]string{
 	MAV_ESTIMATOR_TYPE_AUTOPILOT: "MAV_ESTIMATOR_TYPE_AUTOPILOT",
 }
 
-var values_MAV_ESTIMATOR_TYPE = map[string]MAV_ESTIMATOR_TYPE{
+var label_to_value_MAV_ESTIMATOR_TYPE = map[string]MAV_ESTIMATOR_TYPE{
 	"MAV_ESTIMATOR_TYPE_UNKNOWN":   MAV_ESTIMATOR_TYPE_UNKNOWN,
 	"MAV_ESTIMATOR_TYPE_NAIVE":     MAV_ESTIMATOR_TYPE_NAIVE,
 	"MAV_ESTIMATOR_TYPE_VISION":    MAV_ESTIMATOR_TYPE_VISION,
@@ -57,7 +57,7 @@ var values_MAV_ESTIMATOR_TYPE = map[string]MAV_ESTIMATOR_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ESTIMATOR_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_ESTIMATOR_TYPE[e]; ok {
+	if name, ok := value_to_label_MAV_ESTIMATOR_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -65,7 +65,7 @@ func (e MAV_ESTIMATOR_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ESTIMATOR_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_ESTIMATOR_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_MAV_ESTIMATOR_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_ESTIMATOR_TYPE(value)

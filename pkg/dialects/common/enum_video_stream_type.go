@@ -21,14 +21,14 @@ const (
 	VIDEO_STREAM_TYPE_MPEG_TS VIDEO_STREAM_TYPE = 3
 )
 
-var labels_VIDEO_STREAM_TYPE = map[VIDEO_STREAM_TYPE]string{
+var value_to_label_VIDEO_STREAM_TYPE = map[VIDEO_STREAM_TYPE]string{
 	VIDEO_STREAM_TYPE_RTSP:     "VIDEO_STREAM_TYPE_RTSP",
 	VIDEO_STREAM_TYPE_RTPUDP:   "VIDEO_STREAM_TYPE_RTPUDP",
 	VIDEO_STREAM_TYPE_TCP_MPEG: "VIDEO_STREAM_TYPE_TCP_MPEG",
 	VIDEO_STREAM_TYPE_MPEG_TS:  "VIDEO_STREAM_TYPE_MPEG_TS",
 }
 
-var values_VIDEO_STREAM_TYPE = map[string]VIDEO_STREAM_TYPE{
+var label_to_value_VIDEO_STREAM_TYPE = map[string]VIDEO_STREAM_TYPE{
 	"VIDEO_STREAM_TYPE_RTSP":     VIDEO_STREAM_TYPE_RTSP,
 	"VIDEO_STREAM_TYPE_RTPUDP":   VIDEO_STREAM_TYPE_RTPUDP,
 	"VIDEO_STREAM_TYPE_TCP_MPEG": VIDEO_STREAM_TYPE_TCP_MPEG,
@@ -37,7 +37,7 @@ var values_VIDEO_STREAM_TYPE = map[string]VIDEO_STREAM_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e VIDEO_STREAM_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_VIDEO_STREAM_TYPE[e]; ok {
+	if name, ok := value_to_label_VIDEO_STREAM_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -45,7 +45,7 @@ func (e VIDEO_STREAM_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *VIDEO_STREAM_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_VIDEO_STREAM_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_VIDEO_STREAM_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = VIDEO_STREAM_TYPE(value)

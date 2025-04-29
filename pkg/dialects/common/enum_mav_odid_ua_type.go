@@ -44,7 +44,7 @@ const (
 	MAV_ODID_UA_TYPE_OTHER MAV_ODID_UA_TYPE = 15
 )
 
-var labels_MAV_ODID_UA_TYPE = map[MAV_ODID_UA_TYPE]string{
+var value_to_label_MAV_ODID_UA_TYPE = map[MAV_ODID_UA_TYPE]string{
 	MAV_ODID_UA_TYPE_NONE:                      "MAV_ODID_UA_TYPE_NONE",
 	MAV_ODID_UA_TYPE_AEROPLANE:                 "MAV_ODID_UA_TYPE_AEROPLANE",
 	MAV_ODID_UA_TYPE_HELICOPTER_OR_MULTIROTOR:  "MAV_ODID_UA_TYPE_HELICOPTER_OR_MULTIROTOR",
@@ -63,7 +63,7 @@ var labels_MAV_ODID_UA_TYPE = map[MAV_ODID_UA_TYPE]string{
 	MAV_ODID_UA_TYPE_OTHER:                     "MAV_ODID_UA_TYPE_OTHER",
 }
 
-var values_MAV_ODID_UA_TYPE = map[string]MAV_ODID_UA_TYPE{
+var label_to_value_MAV_ODID_UA_TYPE = map[string]MAV_ODID_UA_TYPE{
 	"MAV_ODID_UA_TYPE_NONE":                      MAV_ODID_UA_TYPE_NONE,
 	"MAV_ODID_UA_TYPE_AEROPLANE":                 MAV_ODID_UA_TYPE_AEROPLANE,
 	"MAV_ODID_UA_TYPE_HELICOPTER_OR_MULTIROTOR":  MAV_ODID_UA_TYPE_HELICOPTER_OR_MULTIROTOR,
@@ -84,7 +84,7 @@ var values_MAV_ODID_UA_TYPE = map[string]MAV_ODID_UA_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_ODID_UA_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_MAV_ODID_UA_TYPE[e]; ok {
+	if name, ok := value_to_label_MAV_ODID_UA_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -92,7 +92,7 @@ func (e MAV_ODID_UA_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_ODID_UA_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_MAV_ODID_UA_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_MAV_ODID_UA_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = MAV_ODID_UA_TYPE(value)

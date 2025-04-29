@@ -40,7 +40,7 @@ const (
 	GOPRO_RESOLUTION_4k_SUPERVIEW GOPRO_RESOLUTION = 13
 )
 
-var labels_GOPRO_RESOLUTION = map[GOPRO_RESOLUTION]string{
+var value_to_label_GOPRO_RESOLUTION = map[GOPRO_RESOLUTION]string{
 	GOPRO_RESOLUTION_480p:            "GOPRO_RESOLUTION_480p",
 	GOPRO_RESOLUTION_720p:            "GOPRO_RESOLUTION_720p",
 	GOPRO_RESOLUTION_960p:            "GOPRO_RESOLUTION_960p",
@@ -57,7 +57,7 @@ var labels_GOPRO_RESOLUTION = map[GOPRO_RESOLUTION]string{
 	GOPRO_RESOLUTION_4k_SUPERVIEW:    "GOPRO_RESOLUTION_4k_SUPERVIEW",
 }
 
-var values_GOPRO_RESOLUTION = map[string]GOPRO_RESOLUTION{
+var label_to_value_GOPRO_RESOLUTION = map[string]GOPRO_RESOLUTION{
 	"GOPRO_RESOLUTION_480p":            GOPRO_RESOLUTION_480p,
 	"GOPRO_RESOLUTION_720p":            GOPRO_RESOLUTION_720p,
 	"GOPRO_RESOLUTION_960p":            GOPRO_RESOLUTION_960p,
@@ -76,7 +76,7 @@ var values_GOPRO_RESOLUTION = map[string]GOPRO_RESOLUTION{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GOPRO_RESOLUTION) MarshalText() ([]byte, error) {
-	if name, ok := labels_GOPRO_RESOLUTION[e]; ok {
+	if name, ok := value_to_label_GOPRO_RESOLUTION[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -84,7 +84,7 @@ func (e GOPRO_RESOLUTION) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GOPRO_RESOLUTION) UnmarshalText(text []byte) error {
-	if value, ok := values_GOPRO_RESOLUTION[string(text)]; ok {
+	if value, ok := label_to_value_GOPRO_RESOLUTION[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = GOPRO_RESOLUTION(value)

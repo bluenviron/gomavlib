@@ -26,7 +26,7 @@ const (
 	CAMERA_STATUS_TYPE_LOWSTOREV CAMERA_STATUS_TYPES = 6
 )
 
-var labels_CAMERA_STATUS_TYPES = map[CAMERA_STATUS_TYPES]string{
+var value_to_label_CAMERA_STATUS_TYPES = map[CAMERA_STATUS_TYPES]string{
 	CAMERA_STATUS_TYPE_HEARTBEAT:  "CAMERA_STATUS_TYPE_HEARTBEAT",
 	CAMERA_STATUS_TYPE_TRIGGER:    "CAMERA_STATUS_TYPE_TRIGGER",
 	CAMERA_STATUS_TYPE_DISCONNECT: "CAMERA_STATUS_TYPE_DISCONNECT",
@@ -36,7 +36,7 @@ var labels_CAMERA_STATUS_TYPES = map[CAMERA_STATUS_TYPES]string{
 	CAMERA_STATUS_TYPE_LOWSTOREV:  "CAMERA_STATUS_TYPE_LOWSTOREV",
 }
 
-var values_CAMERA_STATUS_TYPES = map[string]CAMERA_STATUS_TYPES{
+var label_to_value_CAMERA_STATUS_TYPES = map[string]CAMERA_STATUS_TYPES{
 	"CAMERA_STATUS_TYPE_HEARTBEAT":  CAMERA_STATUS_TYPE_HEARTBEAT,
 	"CAMERA_STATUS_TYPE_TRIGGER":    CAMERA_STATUS_TYPE_TRIGGER,
 	"CAMERA_STATUS_TYPE_DISCONNECT": CAMERA_STATUS_TYPE_DISCONNECT,
@@ -48,7 +48,7 @@ var values_CAMERA_STATUS_TYPES = map[string]CAMERA_STATUS_TYPES{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAMERA_STATUS_TYPES) MarshalText() ([]byte, error) {
-	if name, ok := labels_CAMERA_STATUS_TYPES[e]; ok {
+	if name, ok := value_to_label_CAMERA_STATUS_TYPES[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -56,7 +56,7 @@ func (e CAMERA_STATUS_TYPES) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CAMERA_STATUS_TYPES) UnmarshalText(text []byte) error {
-	if value, ok := values_CAMERA_STATUS_TYPES[string(text)]; ok {
+	if value, ok := label_to_value_CAMERA_STATUS_TYPES[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = CAMERA_STATUS_TYPES(value)

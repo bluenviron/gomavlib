@@ -31,7 +31,7 @@ const (
 	GPS_FIX_TYPE_PPP GPS_FIX_TYPE = 8
 )
 
-var labels_GPS_FIX_TYPE = map[GPS_FIX_TYPE]string{
+var value_to_label_GPS_FIX_TYPE = map[GPS_FIX_TYPE]string{
 	GPS_FIX_TYPE_NO_GPS:    "GPS_FIX_TYPE_NO_GPS",
 	GPS_FIX_TYPE_NO_FIX:    "GPS_FIX_TYPE_NO_FIX",
 	GPS_FIX_TYPE_2D_FIX:    "GPS_FIX_TYPE_2D_FIX",
@@ -43,7 +43,7 @@ var labels_GPS_FIX_TYPE = map[GPS_FIX_TYPE]string{
 	GPS_FIX_TYPE_PPP:       "GPS_FIX_TYPE_PPP",
 }
 
-var values_GPS_FIX_TYPE = map[string]GPS_FIX_TYPE{
+var label_to_value_GPS_FIX_TYPE = map[string]GPS_FIX_TYPE{
 	"GPS_FIX_TYPE_NO_GPS":    GPS_FIX_TYPE_NO_GPS,
 	"GPS_FIX_TYPE_NO_FIX":    GPS_FIX_TYPE_NO_FIX,
 	"GPS_FIX_TYPE_2D_FIX":    GPS_FIX_TYPE_2D_FIX,
@@ -57,7 +57,7 @@ var values_GPS_FIX_TYPE = map[string]GPS_FIX_TYPE{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e GPS_FIX_TYPE) MarshalText() ([]byte, error) {
-	if name, ok := labels_GPS_FIX_TYPE[e]; ok {
+	if name, ok := value_to_label_GPS_FIX_TYPE[e]; ok {
 		return []byte(name), nil
 	}
 	return []byte(strconv.Itoa(int(e))), nil
@@ -65,7 +65,7 @@ func (e GPS_FIX_TYPE) MarshalText() ([]byte, error) {
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *GPS_FIX_TYPE) UnmarshalText(text []byte) error {
-	if value, ok := values_GPS_FIX_TYPE[string(text)]; ok {
+	if value, ok := label_to_value_GPS_FIX_TYPE[string(text)]; ok {
 		*e = value
 	} else if value, err := strconv.Atoi(string(text)); err == nil {
 		*e = GPS_FIX_TYPE(value)

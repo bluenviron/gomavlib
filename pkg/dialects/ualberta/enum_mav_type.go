@@ -100,4 +100,6 @@ const (
 	MAV_TYPE_GENERIC_MULTIROTOR MAV_TYPE = minimal.MAV_TYPE_GENERIC_MULTIROTOR
 	// Illuminator. An illuminator is a light source that is used for lighting up dark areas external to the sytstem: e.g. a torch or searchlight (as opposed to a light source for illuminating the system itself, e.g. an indicator light).
 	MAV_TYPE_ILLUMINATOR MAV_TYPE = minimal.MAV_TYPE_ILLUMINATOR
+	// Satellite. Used for satellite-like systems (orbiting satellites, space stations). For rockets (or landers) use MAV_TYPE_ROCKET.
+	MAV_TYPE_SATELLITE MAV_TYPE = minimal.MAV_TYPE_SATELLITE
 )

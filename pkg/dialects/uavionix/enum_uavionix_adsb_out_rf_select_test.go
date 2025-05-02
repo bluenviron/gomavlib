@@ -17,13 +17,13 @@ func TestEnum_UAVIONIX_ADSB_OUT_RF_SELECT(t *testing.T) {
 	})
 
 	t.Run("first entry", func(t *testing.T) {
-		enc, err := UAVIONIX_ADSB_OUT_RF_SELECT_STANDBY.MarshalText()
+		enc, err := UAVIONIX_ADSB_OUT_RF_SELECT_RX_ENABLED.MarshalText()
 		require.NoError(t, err)
 
 		var dec UAVIONIX_ADSB_OUT_RF_SELECT
 		err = dec.UnmarshalText(enc)
 		require.NoError(t, err)
 
-		require.Equal(t, UAVIONIX_ADSB_OUT_RF_SELECT_STANDBY, dec)
+		require.Equal(t, UAVIONIX_ADSB_OUT_RF_SELECT_RX_ENABLED, dec)
 	})
 }

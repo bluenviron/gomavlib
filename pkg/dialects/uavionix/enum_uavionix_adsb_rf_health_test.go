@@ -17,13 +17,13 @@ func TestEnum_UAVIONIX_ADSB_RF_HEALTH(t *testing.T) {
 	})
 
 	t.Run("first entry", func(t *testing.T) {
-		enc, err := UAVIONIX_ADSB_RF_HEALTH_INITIALIZING.MarshalText()
+		enc, err := UAVIONIX_ADSB_RF_HEALTH_OK.MarshalText()
 		require.NoError(t, err)
 
 		var dec UAVIONIX_ADSB_RF_HEALTH
 		err = dec.UnmarshalText(enc)
 		require.NoError(t, err)
 
-		require.Equal(t, UAVIONIX_ADSB_RF_HEALTH_INITIALIZING, dec)
+		require.Equal(t, UAVIONIX_ADSB_RF_HEALTH_OK, dec)
 	})
 }

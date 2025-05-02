@@ -5,7 +5,6 @@ package ardupilotmega
 import (
 	"fmt"
 	"strconv"
-	"strings"
 )
 
 // Flags in RALLY_POINT message.
@@ -21,13 +20,6 @@ const (
 	// 2 bit value representing altitude frame. 0: absolute, 1: relative home, 2: relative origin, 3: relative terrain
 	ALT_FRAME RALLY_FLAGS = 24
 )
-
-var values_RALLY_FLAGS = []RALLY_FLAGS{
-	FAVORABLE_WIND,
-	LAND_IMMEDIATELY,
-	ALT_FRAME_VALID,
-	ALT_FRAME,
-}
 
 var value_to_label_RALLY_FLAGS = map[RALLY_FLAGS]string{
 	FAVORABLE_WIND:   "FAVORABLE_WIND",
@@ -45,32 +37,21 @@ var label_to_value_RALLY_FLAGS = map[string]RALLY_FLAGS{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e RALLY_FLAGS) MarshalText() ([]byte, error) {
-	if e == 0 {
-		return []byte("0"), nil
+	if name, ok := value_to_label_RALLY_FLAGS[e]; ok {
+		return []byte(name), nil
 	}
-	var names []string
-	for _, val := range values_RALLY_FLAGS {
-		if e&val == val {
-			names = append(names, value_to_label_RALLY_FLAGS[val])
-		}
-	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(strconv.Itoa(int(e))), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *RALLY_FLAGS) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask RALLY_FLAGS
-	for _, label := range labels {
-		if value, ok := label_to_value_RALLY_FLAGS[label]; ok {
-			mask |= value
-		} else if value, err := strconv.Atoi(label); err == nil {
-			mask |= RALLY_FLAGS(value)
-		} else {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	if value, ok := label_to_value_RALLY_FLAGS[string(text)]; ok {
+		*e = value
+	} else if value, err := strconv.Atoi(string(text)); err == nil {
+		*e = RALLY_FLAGS(value)
+	} else {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
 	return nil
 }
 

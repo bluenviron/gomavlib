@@ -396,8 +396,12 @@ var dial = &dialect.Dialect{
 		&MessageStorm32GimbalManagerControlPitchyaw{},
 		&MessageStorm32GimbalManagerCorrectRoll{},
 		&MessageQshotStatus{},
+		&MessageAutopilotStateForGimbalDeviceExt{},
 		&MessageFrskyPassthroughArray{},
 		&MessageParamValueArray{},
+		&MessageMlrsRadioLinkStats{},
+		&MessageMlrsRadioLinkInformation{},
+		&MessageMlrsRadioLinkFlowControl{},
 		// avssuas
 		&MessageAvssPrsSysStatus{},
 		&MessageAvssDronePosition{},

@@ -8,22 +8,22 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestEnum_MAV_STORM32_GIMBAL_PREARM_FLAGS(t *testing.T) {
+func TestEnum_MLRS_RADIO_LINK_TYPE(t *testing.T) {
 	t.Run("zero", func(t *testing.T) {
-		var e MAV_STORM32_GIMBAL_PREARM_FLAGS
+		var e MLRS_RADIO_LINK_TYPE
 		e.UnmarshalText([]byte{})
 		e.MarshalText()
 		e.String()
 	})
 
 	t.Run("first entry", func(t *testing.T) {
-		enc, err := MAV_STORM32_GIMBAL_PREARM_FLAGS_IS_NORMAL.MarshalText()
+		enc, err := MLRS_RADIO_LINK_TYPE_GENERIC.MarshalText()
 		require.NoError(t, err)
 
-		var dec MAV_STORM32_GIMBAL_PREARM_FLAGS
+		var dec MLRS_RADIO_LINK_TYPE
 		err = dec.UnmarshalText(enc)
 		require.NoError(t, err)
 
-		require.Equal(t, MAV_STORM32_GIMBAL_PREARM_FLAGS_IS_NORMAL, dec)
+		require.Equal(t, MLRS_RADIO_LINK_TYPE_GENERIC, dec)
 	})
 }

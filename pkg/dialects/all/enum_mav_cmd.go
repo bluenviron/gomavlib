@@ -556,6 +556,9 @@ const (
 	MAV_CMD_PRS_GET_ARM_ALTI MAV_CMD = 60071
 	// AVSS defined command. Shuts down the PRS system.
 	MAV_CMD_PRS_SHUTDOWN MAV_CMD = 60072
+	// Dummy/temporary MAV_CMD that causes all.xml to correctly import all commands from both ardupilotmega.xml and development.xml (otherwise only one is imported, for the reasons given in https://github.com/ArduPilot/pymavlink/pull/544#discussion_r2069976980).
+	// It not be used, and will be removed when the toolchain is fixed.
+	MAV_CMD_DUMMY_ALL MAV_CMD = 393
 )
 
 var value_to_label_MAV_CMD = map[MAV_CMD]string{
@@ -777,6 +780,7 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_PRS_SET_ARM_ALTI:                           "MAV_CMD_PRS_SET_ARM_ALTI",
 	MAV_CMD_PRS_GET_ARM_ALTI:                           "MAV_CMD_PRS_GET_ARM_ALTI",
 	MAV_CMD_PRS_SHUTDOWN:                               "MAV_CMD_PRS_SHUTDOWN",
+	MAV_CMD_DUMMY_ALL:                                  "MAV_CMD_DUMMY_ALL",
 }
 
 var label_to_value_MAV_CMD = map[string]MAV_CMD{
@@ -998,6 +1002,7 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_PRS_SET_ARM_ALTI":                           MAV_CMD_PRS_SET_ARM_ALTI,
 	"MAV_CMD_PRS_GET_ARM_ALTI":                           MAV_CMD_PRS_GET_ARM_ALTI,
 	"MAV_CMD_PRS_SHUTDOWN":                               MAV_CMD_PRS_SHUTDOWN,
+	"MAV_CMD_DUMMY_ALL":                                  MAV_CMD_DUMMY_ALL,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.

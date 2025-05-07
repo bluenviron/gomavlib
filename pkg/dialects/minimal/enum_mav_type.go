@@ -101,8 +101,8 @@ const (
 	MAV_TYPE_GENERIC_MULTIROTOR MAV_TYPE = 43
 	// Illuminator. An illuminator is a light source that is used for lighting up dark areas external to the sytstem: e.g. a torch or searchlight (as opposed to a light source for illuminating the system itself, e.g. an indicator light).
 	MAV_TYPE_ILLUMINATOR MAV_TYPE = 44
-	// Satellite. Used for satellite-like systems (orbiting satellites, space stations). For rockets (or landers) use MAV_TYPE_ROCKET.
-	MAV_TYPE_SATELLITE MAV_TYPE = 45
+	// Orbiter spacecraft. Includes satellites orbiting terrestrial and extra-terrestrial bodies. Follows NASA Spacecraft Classification.
+	MAV_TYPE_SPACECRAFT_ORBITER MAV_TYPE = 45
 )
 
 var value_to_label_MAV_TYPE = map[MAV_TYPE]string{
@@ -151,7 +151,7 @@ var value_to_label_MAV_TYPE = map[MAV_TYPE]string{
 	MAV_TYPE_WINCH:                     "MAV_TYPE_WINCH",
 	MAV_TYPE_GENERIC_MULTIROTOR:        "MAV_TYPE_GENERIC_MULTIROTOR",
 	MAV_TYPE_ILLUMINATOR:               "MAV_TYPE_ILLUMINATOR",
-	MAV_TYPE_SATELLITE:                 "MAV_TYPE_SATELLITE",
+	MAV_TYPE_SPACECRAFT_ORBITER:        "MAV_TYPE_SPACECRAFT_ORBITER",
 }
 
 var label_to_value_MAV_TYPE = map[string]MAV_TYPE{
@@ -200,7 +200,7 @@ var label_to_value_MAV_TYPE = map[string]MAV_TYPE{
 	"MAV_TYPE_WINCH":                     MAV_TYPE_WINCH,
 	"MAV_TYPE_GENERIC_MULTIROTOR":        MAV_TYPE_GENERIC_MULTIROTOR,
 	"MAV_TYPE_ILLUMINATOR":               MAV_TYPE_ILLUMINATOR,
-	"MAV_TYPE_SATELLITE":                 MAV_TYPE_SATELLITE,
+	"MAV_TYPE_SPACECRAFT_ORBITER":        MAV_TYPE_SPACECRAFT_ORBITER,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.

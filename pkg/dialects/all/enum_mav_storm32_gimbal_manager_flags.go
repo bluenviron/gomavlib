@@ -10,8 +10,6 @@ import (
 type MAV_STORM32_GIMBAL_MANAGER_FLAGS = storm32.MAV_STORM32_GIMBAL_MANAGER_FLAGS
 
 const (
-	// 0 = ignore.
-	MAV_STORM32_GIMBAL_MANAGER_FLAGS_NONE MAV_STORM32_GIMBAL_MANAGER_FLAGS = storm32.MAV_STORM32_GIMBAL_MANAGER_FLAGS_NONE
 	// Request to set RC input to active, or report RC input is active. Implies RC mixed. RC exclusive is achieved by setting all clients to inactive.
 	MAV_STORM32_GIMBAL_MANAGER_FLAGS_RC_ACTIVE MAV_STORM32_GIMBAL_MANAGER_FLAGS = storm32.MAV_STORM32_GIMBAL_MANAGER_FLAGS_RC_ACTIVE
 	// Request to set onboard/companion computer client to active, or report this client is active.

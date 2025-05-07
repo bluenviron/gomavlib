@@ -17,13 +17,13 @@ func TestEnum_MAV_STORM32_GIMBAL_MANAGER_FLAGS(t *testing.T) {
 	})
 
 	t.Run("first entry", func(t *testing.T) {
-		enc, err := MAV_STORM32_GIMBAL_MANAGER_FLAGS_NONE.MarshalText()
+		enc, err := MAV_STORM32_GIMBAL_MANAGER_FLAGS_RC_ACTIVE.MarshalText()
 		require.NoError(t, err)
 
 		var dec MAV_STORM32_GIMBAL_MANAGER_FLAGS
 		err = dec.UnmarshalText(enc)
 		require.NoError(t, err)
 
-		require.Equal(t, MAV_STORM32_GIMBAL_MANAGER_FLAGS_NONE, dec)
+		require.Equal(t, MAV_STORM32_GIMBAL_MANAGER_FLAGS_RC_ACTIVE, dec)
 	})
 }

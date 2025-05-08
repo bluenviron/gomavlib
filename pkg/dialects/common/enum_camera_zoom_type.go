@@ -13,7 +13,7 @@ type CAMERA_ZOOM_TYPE uint64
 const (
 	// Zoom one step increment (-1 for wide, 1 for tele)
 	ZOOM_TYPE_STEP CAMERA_ZOOM_TYPE = 0
-	// Continuous zoom up/down until stopped (-1 for wide, 1 for tele, 0 to stop zooming)
+	// Continuous normalized zoom in/out rate until stopped. Range -1..1, negative: wide, positive: narrow/tele, 0 to stop zooming. Other values should be clipped to the range.
 	ZOOM_TYPE_CONTINUOUS CAMERA_ZOOM_TYPE = 1
 	// Zoom value as proportion of full camera range (a percentage value between 0.0 and 100.0)
 	ZOOM_TYPE_RANGE CAMERA_ZOOM_TYPE = 2

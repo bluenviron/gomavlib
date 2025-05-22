@@ -102,4 +102,6 @@ const (
 	MAV_TYPE_ILLUMINATOR MAV_TYPE = minimal.MAV_TYPE_ILLUMINATOR
 	// Orbiter spacecraft. Includes satellites orbiting terrestrial and extra-terrestrial bodies. Follows NASA Spacecraft Classification.
 	MAV_TYPE_SPACECRAFT_ORBITER MAV_TYPE = minimal.MAV_TYPE_SPACECRAFT_ORBITER
+	// A generic four-legged ground vehicle (e.g., a robot dog).
+	MAV_TYPE_GROUND_QUADRUPED MAV_TYPE = minimal.MAV_TYPE_GROUND_QUADRUPED
 )

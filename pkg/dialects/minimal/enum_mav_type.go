@@ -103,6 +103,8 @@ const (
 	MAV_TYPE_ILLUMINATOR MAV_TYPE = 44
 	// Orbiter spacecraft. Includes satellites orbiting terrestrial and extra-terrestrial bodies. Follows NASA Spacecraft Classification.
 	MAV_TYPE_SPACECRAFT_ORBITER MAV_TYPE = 45
+	// A generic four-legged ground vehicle (e.g., a robot dog).
+	MAV_TYPE_GROUND_QUADRUPED MAV_TYPE = 46
 )
 
 var value_to_label_MAV_TYPE = map[MAV_TYPE]string{
@@ -152,6 +154,7 @@ var value_to_label_MAV_TYPE = map[MAV_TYPE]string{
 	MAV_TYPE_GENERIC_MULTIROTOR:        "MAV_TYPE_GENERIC_MULTIROTOR",
 	MAV_TYPE_ILLUMINATOR:               "MAV_TYPE_ILLUMINATOR",
 	MAV_TYPE_SPACECRAFT_ORBITER:        "MAV_TYPE_SPACECRAFT_ORBITER",
+	MAV_TYPE_GROUND_QUADRUPED:          "MAV_TYPE_GROUND_QUADRUPED",
 }
 
 var label_to_value_MAV_TYPE = map[string]MAV_TYPE{
@@ -201,6 +204,7 @@ var label_to_value_MAV_TYPE = map[string]MAV_TYPE{
 	"MAV_TYPE_GENERIC_MULTIROTOR":        MAV_TYPE_GENERIC_MULTIROTOR,
 	"MAV_TYPE_ILLUMINATOR":               MAV_TYPE_ILLUMINATOR,
 	"MAV_TYPE_SPACECRAFT_ORBITER":        MAV_TYPE_SPACECRAFT_ORBITER,
+	"MAV_TYPE_GROUND_QUADRUPED":          MAV_TYPE_GROUND_QUADRUPED,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.

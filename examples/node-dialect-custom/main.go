@@ -1,3 +1,4 @@
+// Package main contains an example.
 package main
 
 import (
@@ -13,7 +14,7 @@ import (
 // 2) create a node which understands the custom dialect.
 // 3) print incoming messages.
 
-// this is a custom message.
+// MessageCustom is a custom message.
 // It must be prefixed with "Message" and implement the message.Message interface.
 type MessageCustom struct {
 	Param1 uint8
@@ -21,6 +22,7 @@ type MessageCustom struct {
 	Param3 uint32
 }
 
+// GetID implements the message.Message interface.
 func (*MessageCustom) GetID() uint32 {
 	return 304
 }

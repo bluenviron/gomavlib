@@ -15,11 +15,12 @@ func filterFloats(obj any) interface{} {
 	}
 
 	convert := func(f float64) interface{} {
-		if math.IsNaN(f) {
+		switch {
+		case math.IsNaN(f):
 			return "NaN"
-		} else if math.IsInf(f, 1) {
+		case math.IsInf(f, 1):
 			return "+Inf"
-		} else if math.IsInf(f, -1) {
+		case math.IsInf(f, -1):
 			return "-Inf"
 		}
 		return f

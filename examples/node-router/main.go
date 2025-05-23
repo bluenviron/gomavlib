@@ -1,3 +1,4 @@
+// Package main contains an example.
 package main
 
 import (
@@ -37,7 +38,10 @@ func main() {
 			log.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())
 
 			// route frame to every other channel
-			node.WriteFrameExcept(frm.Channel, frm.Frame)
+			err := node.WriteFrameExcept(frm.Channel, frm.Frame)
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 }

@@ -1,3 +1,4 @@
+// Package main contains an example.
 package main
 
 import (
@@ -40,13 +41,15 @@ func main() {
 				msg.TargetSystem == 10 &&
 				msg.TargetComponent == 1 &&
 				msg.ParamId == "test_parameter" {
-
 				// reply to sender (and no one else) and provide the requested parameter
-				node.WriteMessageTo(frm.Channel, &ardupilotmega.MessageParamValue{
+				err := node.WriteMessageTo(frm.Channel, &ardupilotmega.MessageParamValue{
 					ParamId:    "test_parameter",
 					ParamValue: 123456,
 					ParamType:  ardupilotmega.MAV_PARAM_TYPE_UINT32,
 				})
+				if err != nil {
+					panic(err)
+				}
 			}
 		}
 	}

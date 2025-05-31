@@ -540,8 +540,10 @@ func FuzzReadWriter(f *testing.F) {
 			ID:      msgID,
 			Payload: raw,
 		}, v2In)
-		if err == nil {
-			rw.Write(msg, v2Out)
+		if err != nil {
+			return
 		}
+
+		rw.Write(msg, v2Out)
 	})
 }

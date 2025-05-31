@@ -63,8 +63,11 @@ func FuzzReadWriter(f *testing.F) {
 		require.NoError(t, err)
 
 		fr, err := rw.Read()
-		if err == nil {
-			rw.Write(fr) //nolint:errcheck
+		if err != nil {
+			return
 		}
+
+		err = rw.Write(fr)
+		require.NoError(t, err)
 	})
 }

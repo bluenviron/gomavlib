@@ -8,12 +8,10 @@ help:
 	@echo ""
 	@echo "available actions:"
 	@echo ""
-	@echo "  mod-tidy              run go mod tidy"
 	@echo "  format                format source files"
 	@echo "  test                  run tests"
 	@echo "  lint                  run linter"
 	@echo "  dialects              generate dialects"
-	@echo "  run-example E=[name]  run example by name"
 	@echo ""
 
 blank :=

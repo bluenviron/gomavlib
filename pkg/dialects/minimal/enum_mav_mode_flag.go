@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-// These flags encode the MAV mode.
+// These flags encode the MAV mode, see MAV_MODE enum for useful combinations.
 type MAV_MODE_FLAG uint64
 
 const (
@@ -26,7 +26,7 @@ const (
 	MAV_MODE_FLAG_AUTO_ENABLED MAV_MODE_FLAG = 4
 	// 0b00000010 system has a test mode enabled. This flag is intended for temporary system tests and should not be used for stable implementations.
 	MAV_MODE_FLAG_TEST_ENABLED MAV_MODE_FLAG = 2
-	// 0b00000001 Reserved for future use.
+	// 0b00000001 system-specific custom mode is enabled. When using this flag to enable a custom mode all other flags should be ignored.
 	MAV_MODE_FLAG_CUSTOM_MODE_ENABLED MAV_MODE_FLAG = 1
 )
 

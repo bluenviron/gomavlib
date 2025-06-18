@@ -12,4 +12,6 @@ type MAV_DO_REPOSITION_FLAGS = common.MAV_DO_REPOSITION_FLAGS
 const (
 	// The aircraft should immediately transition into guided. This should not be set for follow me applications
 	MAV_DO_REPOSITION_FLAGS_CHANGE_MODE MAV_DO_REPOSITION_FLAGS = common.MAV_DO_REPOSITION_FLAGS_CHANGE_MODE
+	// Yaw relative to the vehicle current heading (if not set, relative to North).
+	MAV_DO_REPOSITION_FLAGS_RELATIVE_YAW MAV_DO_REPOSITION_FLAGS = common.MAV_DO_REPOSITION_FLAGS_RELATIVE_YAW
 )

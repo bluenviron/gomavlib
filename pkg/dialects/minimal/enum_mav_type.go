@@ -107,6 +107,8 @@ const (
 	MAV_TYPE_GROUND_QUADRUPED MAV_TYPE = 46
 	// VTOL hybrid of helicopter and autogyro. It has a main rotor for lift and separate propellers for forward flight. The rotor must be powered for hover but can autorotate in cruise flight. See: https://en.wikipedia.org/wiki/Gyrodyne
 	MAV_TYPE_VTOL_GYRODYNE MAV_TYPE = 47
+	// Gripper
+	MAV_TYPE_GRIPPER MAV_TYPE = 48
 )
 
 var value_to_label_MAV_TYPE = map[MAV_TYPE]string{
@@ -158,6 +160,7 @@ var value_to_label_MAV_TYPE = map[MAV_TYPE]string{
 	MAV_TYPE_SPACECRAFT_ORBITER:        "MAV_TYPE_SPACECRAFT_ORBITER",
 	MAV_TYPE_GROUND_QUADRUPED:          "MAV_TYPE_GROUND_QUADRUPED",
 	MAV_TYPE_VTOL_GYRODYNE:             "MAV_TYPE_VTOL_GYRODYNE",
+	MAV_TYPE_GRIPPER:                   "MAV_TYPE_GRIPPER",
 }
 
 var label_to_value_MAV_TYPE = map[string]MAV_TYPE{
@@ -209,6 +212,7 @@ var label_to_value_MAV_TYPE = map[string]MAV_TYPE{
 	"MAV_TYPE_SPACECRAFT_ORBITER":        MAV_TYPE_SPACECRAFT_ORBITER,
 	"MAV_TYPE_GROUND_QUADRUPED":          MAV_TYPE_GROUND_QUADRUPED,
 	"MAV_TYPE_VTOL_GYRODYNE":             MAV_TYPE_VTOL_GYRODYNE,
+	"MAV_TYPE_GRIPPER":                   MAV_TYPE_GRIPPER,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.

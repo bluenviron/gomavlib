@@ -51,7 +51,7 @@ const (
 	MAV_CMD_NAV_VTOL_TAKEOFF MAV_CMD = 84
 	// Land using VTOL mode
 	MAV_CMD_NAV_VTOL_LAND MAV_CMD = 85
-	// hand control over to an external controller
+	// Hand control over to an external controller
 	MAV_CMD_NAV_GUIDED_ENABLE MAV_CMD = 92
 	// Delay the next navigation command a number of seconds or until a specified time
 	MAV_CMD_NAV_DELAY MAV_CMD = 93

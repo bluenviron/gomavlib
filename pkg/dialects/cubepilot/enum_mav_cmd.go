@@ -50,7 +50,7 @@ const (
 	MAV_CMD_NAV_VTOL_TAKEOFF MAV_CMD = common.MAV_CMD_NAV_VTOL_TAKEOFF
 	// Land using VTOL mode
 	MAV_CMD_NAV_VTOL_LAND MAV_CMD = common.MAV_CMD_NAV_VTOL_LAND
-	// hand control over to an external controller
+	// Hand control over to an external controller
 	MAV_CMD_NAV_GUIDED_ENABLE MAV_CMD = common.MAV_CMD_NAV_GUIDED_ENABLE
 	// Delay the next navigation command a number of seconds or until a specified time
 	MAV_CMD_NAV_DELAY MAV_CMD = common.MAV_CMD_NAV_DELAY

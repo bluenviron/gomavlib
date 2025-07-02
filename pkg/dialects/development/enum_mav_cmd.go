@@ -51,7 +51,7 @@ const (
 	MAV_CMD_NAV_VTOL_TAKEOFF MAV_CMD = 84
 	// Land using VTOL mode
 	MAV_CMD_NAV_VTOL_LAND MAV_CMD = 85
-	// hand control over to an external controller
+	// Hand control over to an external controller
 	MAV_CMD_NAV_GUIDED_ENABLE MAV_CMD = 92
 	// Delay the next navigation command a number of seconds or until a specified time
 	MAV_CMD_NAV_DELAY MAV_CMD = 93
@@ -421,8 +421,6 @@ const (
 	// The system doing the upgrade will report progress using the normal command protocol sequence for a long running operation.
 	// Command protocol information: https://mavlink.io/en/services/command.html.
 	MAV_CMD_DO_UPGRADE MAV_CMD = 247
-	// Allows setting an AT S command of an SiK radio.
-	MAV_CMD_SET_AT_S_PARAM MAV_CMD = 550
 	// Set system and component id.
 	// This allows moving of a system and all its components to a new system id, or moving a particular component to a new system/component id.
 	// Recipients must reject command addressed to broadcast system ID.
@@ -635,7 +633,6 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_CAN_FORWARD:                        "MAV_CMD_CAN_FORWARD",
 	MAV_CMD_DO_FIGURE_EIGHT:                    "MAV_CMD_DO_FIGURE_EIGHT",
 	MAV_CMD_DO_UPGRADE:                         "MAV_CMD_DO_UPGRADE",
-	MAV_CMD_SET_AT_S_PARAM:                     "MAV_CMD_SET_AT_S_PARAM",
 	MAV_CMD_DO_SET_SYS_CMP_ID:                  "MAV_CMD_DO_SET_SYS_CMP_ID",
 	MAV_CMD_DO_SET_GLOBAL_ORIGIN:               "MAV_CMD_DO_SET_GLOBAL_ORIGIN",
 	MAV_CMD_ODID_SET_EMERGENCY:                 "MAV_CMD_ODID_SET_EMERGENCY",
@@ -811,7 +808,6 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_CAN_FORWARD":                        MAV_CMD_CAN_FORWARD,
 	"MAV_CMD_DO_FIGURE_EIGHT":                    MAV_CMD_DO_FIGURE_EIGHT,
 	"MAV_CMD_DO_UPGRADE":                         MAV_CMD_DO_UPGRADE,
-	"MAV_CMD_SET_AT_S_PARAM":                     MAV_CMD_SET_AT_S_PARAM,
 	"MAV_CMD_DO_SET_SYS_CMP_ID":                  MAV_CMD_DO_SET_SYS_CMP_ID,
 	"MAV_CMD_DO_SET_GLOBAL_ORIGIN":               MAV_CMD_DO_SET_GLOBAL_ORIGIN,
 	"MAV_CMD_ODID_SET_EMERGENCY":                 MAV_CMD_ODID_SET_EMERGENCY,

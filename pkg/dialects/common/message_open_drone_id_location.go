@@ -22,7 +22,7 @@ type MessageOpenDroneIdLocation struct {
 	Latitude int32
 	// Current longitude of the unmanned aircraft. If unknown: 0 (both Lat/Lon).
 	Longitude int32
-	// The altitude calculated from the barometric pressue. Reference is against 29.92inHg or 1013.2mb. If unknown: -1000 m.
+	// The altitude calculated from the barometric pressure. Reference is against 29.92inHg or 1013.2mb. If unknown: -1000 m.
 	AltitudeBarometric float32
 	// The geodetic altitude as defined by WGS84. If unknown: -1000 m.
 	AltitudeGeodetic float32

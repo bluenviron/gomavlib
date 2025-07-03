@@ -4,7 +4,7 @@ package common
 
 // The autopilot is requesting a resource (file, binary, other type of data)
 type MessageResourceRequest struct {
-	// Request ID. This ID should be re-used when sending back URI contents
+	// Request ID. This ID should be reused when sending back URI contents
 	RequestId uint8
 	// The type of requested URI. 0 = a file via URL. 1 = a UAVCAN binary
 	UriType uint8

@@ -6,7 +6,7 @@ package storm32
 type MessageMlrsRadioLinkFlowControl struct {
 	// Transmitted bytes per second, UINT16_MAX: invalid/unknown.
 	TxSerRate uint16
-	// Recieved bytes per second, UINT16_MAX: invalid/unknown.
+	// Received bytes per second, UINT16_MAX: invalid/unknown.
 	RxSerRate uint16
 	// Transmit bandwidth consumption. Values: 0..100, UINT8_MAX: invalid/unknown.
 	TxUsedSerBandwidth uint8

@@ -30,8 +30,8 @@ type MessageLandingTarget struct {
 	Q [4]float32 `mavext:"true"`
 	// Type of landing target
 	Type LANDING_TARGET_TYPE `mavenum:"uint8" mavext:"true"`
-	// Position fields (x, y, z, q, type) contain valid target position information (BOOL_FALSE: invalid values). Values not equal to 0 or 1 are invalid.
-	PositionValid BOOL `mavenum:"uint8" mavext:"true"`
+	// Position fields (x, y, z, q, type) contain valid target position information (MAV_BOOL_FALSE: invalid values). Values not equal to 0 or 1 are invalid.
+	PositionValid MAV_BOOL `mavenum:"uint8" mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

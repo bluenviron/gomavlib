@@ -28,8 +28,8 @@ type MessageCameraImageCaptured struct {
 	Q [4]float32
 	// Zero based index of this image (i.e. a new image will have index CAMERA_CAPTURE_STATUS.image count -1)
 	ImageIndex int32
-	// Image was captured successfully (BOOL_TRUE). Values not equal to 0 or 1 are invalid.
-	CaptureResult BOOL `mavenum:"int8"`
+	// Image was captured successfully (MAV_BOOL_TRUE). Values not equal to 0 or 1 are invalid.
+	CaptureResult MAV_BOOL `mavenum:"int8"`
 	// URL of image taken. Either local storage or http://foo.jpg if camera provides an HTTP interface.
 	FileUrl string `mavlen:"205"`
 }

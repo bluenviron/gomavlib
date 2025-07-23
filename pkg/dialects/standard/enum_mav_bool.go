@@ -9,53 +9,53 @@ import (
 )
 
 // Enum used to indicate true or false (also: success or failure, enabled or disabled, active or inactive).
-type BOOL uint64
+type MAV_BOOL uint64
 
 const (
 	// False.
-	BOOL_FALSE BOOL = 0
+	MAV_BOOL_FALSE MAV_BOOL = 0
 	// True.
-	BOOL_TRUE BOOL = 1
+	MAV_BOOL_TRUE MAV_BOOL = 1
 )
 
-var values_BOOL = []BOOL{
-	BOOL_FALSE,
-	BOOL_TRUE,
+var values_MAV_BOOL = []MAV_BOOL{
+	MAV_BOOL_FALSE,
+	MAV_BOOL_TRUE,
 }
 
-var value_to_label_BOOL = map[BOOL]string{
-	BOOL_FALSE: "BOOL_FALSE",
-	BOOL_TRUE:  "BOOL_TRUE",
+var value_to_label_MAV_BOOL = map[MAV_BOOL]string{
+	MAV_BOOL_FALSE: "MAV_BOOL_FALSE",
+	MAV_BOOL_TRUE:  "MAV_BOOL_TRUE",
 }
 
-var label_to_value_BOOL = map[string]BOOL{
-	"BOOL_FALSE": BOOL_FALSE,
-	"BOOL_TRUE":  BOOL_TRUE,
+var label_to_value_MAV_BOOL = map[string]MAV_BOOL{
+	"MAV_BOOL_FALSE": MAV_BOOL_FALSE,
+	"MAV_BOOL_TRUE":  MAV_BOOL_TRUE,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.
-func (e BOOL) MarshalText() ([]byte, error) {
+func (e MAV_BOOL) MarshalText() ([]byte, error) {
 	if e == 0 {
 		return []byte("0"), nil
 	}
 	var names []string
-	for _, val := range values_BOOL {
+	for _, val := range values_MAV_BOOL {
 		if e&val == val {
-			names = append(names, value_to_label_BOOL[val])
+			names = append(names, value_to_label_MAV_BOOL[val])
 		}
 	}
 	return []byte(strings.Join(names, " | ")), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
-func (e *BOOL) UnmarshalText(text []byte) error {
+func (e *MAV_BOOL) UnmarshalText(text []byte) error {
 	labels := strings.Split(string(text), " | ")
-	var mask BOOL
+	var mask MAV_BOOL
 	for _, label := range labels {
-		if value, ok := label_to_value_BOOL[label]; ok {
+		if value, ok := label_to_value_MAV_BOOL[label]; ok {
 			mask |= value
 		} else if value, err := strconv.Atoi(label); err == nil {
-			mask |= BOOL(value)
+			mask |= MAV_BOOL(value)
 		} else {
 			return fmt.Errorf("invalid label '%s'", label)
 		}
@@ -65,7 +65,7 @@ func (e *BOOL) UnmarshalText(text []byte) error {
 }
 
 // String implements the fmt.Stringer interface.
-func (e BOOL) String() string {
+func (e MAV_BOOL) String() string {
 	val, _ := e.MarshalText()
 	return string(val)
 }

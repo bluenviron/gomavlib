@@ -8,22 +8,22 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestEnum_BOOL(t *testing.T) {
+func TestEnum_MAV_BOOL(t *testing.T) {
 	t.Run("zero", func(t *testing.T) {
-		var e BOOL
+		var e MAV_BOOL
 		e.UnmarshalText([]byte{})
 		e.MarshalText()
 		e.String()
 	})
 
 	t.Run("first entry", func(t *testing.T) {
-		enc, err := BOOL_FALSE.MarshalText()
+		enc, err := MAV_BOOL_FALSE.MarshalText()
 		require.NoError(t, err)
 
-		var dec BOOL
+		var dec MAV_BOOL
 		err = dec.UnmarshalText(enc)
 		require.NoError(t, err)
 
-		require.Equal(t, BOOL_FALSE, dec)
+		require.Equal(t, MAV_BOOL_FALSE, dec)
 	})
 }

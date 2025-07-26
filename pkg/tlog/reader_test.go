@@ -70,7 +70,8 @@ func TestReader(t *testing.T) {
 			i := 0
 
 			for {
-				entry, err := r.Read()
+				var entry *Entry
+				entry, err = r.Read()
 				if errors.Is(err, io.EOF) {
 					break
 				}

@@ -176,7 +176,8 @@ func (r *Reader) Read() (Frame, error) {
 			_, isV2 := f.(*V2Frame)
 			rawMessage := f.GetMessage().(*message.MessageRaw)
 
-			msg, err := mp.Read(rawMessage, isV2)
+			var msg message.Message
+			msg, err = mp.Read(rawMessage, isV2)
 			if err != nil {
 				return nil, newError("unable to decode message: %s", err.Error())
 			}

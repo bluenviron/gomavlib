@@ -37,12 +37,12 @@ func main() {
 			log.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())
 
 			// if message is a parameter read request addressed to this node
-			if msg, ok := frm.Message().(*ardupilotmega.MessageParamRequestRead); ok &&
+			if msg, ok2 := frm.Message().(*ardupilotmega.MessageParamRequestRead); ok2 &&
 				msg.TargetSystem == 10 &&
 				msg.TargetComponent == 1 &&
 				msg.ParamId == "test_parameter" {
 				// reply to sender (and no one else) and provide the requested parameter
-				err := node.WriteMessageTo(frm.Channel, &ardupilotmega.MessageParamValue{
+				err = node.WriteMessageTo(frm.Channel, &ardupilotmega.MessageParamValue{
 					ParamId:    "test_parameter",
 					ParamValue: 123456,
 					ParamType:  ardupilotmega.MAV_PARAM_TYPE_UINT32,

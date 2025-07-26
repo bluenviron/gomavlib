@@ -56,7 +56,8 @@ func TestEndpointClient(t *testing.T) {
 				require.NoError(t, err)
 
 				for i := 0; i < 3; i++ {
-					fr, err := rw.Read()
+					var fr frame.Frame
+					fr, err = rw.Read()
 					require.NoError(t, err)
 					require.Equal(t, &frame.V2Frame{
 						SequenceNumber: byte(i),
@@ -108,7 +109,7 @@ func TestEndpointClient(t *testing.T) {
 			}, evt)
 
 			for i := 0; i < 3; i++ {
-				err := node.WriteMessageAll(&MessageHeartbeat{
+				err = node.WriteMessageAll(&MessageHeartbeat{
 					Type:           1,
 					Autopilot:      2,
 					BaseMode:       3,

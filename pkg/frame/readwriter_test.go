@@ -59,15 +59,15 @@ func FuzzReadWriter(f *testing.F) {
 			OutVersion:     outv,
 			OutSystemID:    1,
 		}
-		err := rw.Initialize()
-		require.NoError(t, err)
+		err2 := rw.Initialize()
+		require.NoError(t, err2)
 
-		fr, err := rw.Read()
-		if err != nil {
+		fr, err2 := rw.Read()
+		if err2 != nil {
 			return
 		}
 
-		err = rw.Write(fr)
-		require.NoError(t, err)
+		err2 = rw.Write(fr)
+		require.NoError(t, err2)
 	})
 }

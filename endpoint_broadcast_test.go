@@ -106,10 +106,11 @@ func TestEndpointBroadcast(t *testing.T) {
 			SystemStatus:   2,
 			MavlinkVersion: 1,
 		}
-		err := node.WriteMessageAll(msg)
+		err = node.WriteMessageAll(msg)
 		require.NoError(t, err)
 
-		fr, err := rw.Read()
+		var fr frame.Frame
+		fr, err = rw.Read()
 		require.NoError(t, err)
 		require.Equal(t, &frame.V2Frame{
 			SequenceNumber: byte(i),

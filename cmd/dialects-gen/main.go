@@ -183,7 +183,8 @@ func processDialect(commit string, name string) error {
 			continue
 		}
 
-		buf, err := os.ReadFile(filepath.Join(pkgName, f.Name()))
+		var buf []byte
+		buf, err = os.ReadFile(filepath.Join(pkgName, f.Name()))
 		if err != nil {
 			return err
 		}

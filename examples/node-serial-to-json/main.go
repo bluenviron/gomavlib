@@ -37,7 +37,8 @@ func main() {
 	for evt := range node.Events() {
 		if frm, ok := evt.(*gomavlib.EventFrame); ok {
 			// encode incoming messages
-			enc, err := json.Marshal(struct {
+			var enc []byte
+			enc, err = json.Marshal(struct {
 				Type    string
 				Content interface{}
 			}{

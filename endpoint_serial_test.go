@@ -60,7 +60,8 @@ func TestEndpointSerial(t *testing.T) {
 				})
 				require.NoError(t, err)
 
-				fr, err := rw.Read()
+				var fr frame.Frame
+				fr, err = rw.Read()
 				require.NoError(t, err)
 				require.Equal(t, &frame.V2Frame{
 					SequenceNumber: byte(i),
@@ -103,7 +104,7 @@ func TestEndpointSerial(t *testing.T) {
 	}, evt)
 
 	for i := 0; i < 3; i++ {
-		evt := <-node.Events()
+		evt = <-node.Events()
 		require.Equal(t, &EventFrame{
 			Frame: &frame.V2Frame{
 				SequenceNumber: byte(i),
@@ -122,7 +123,7 @@ func TestEndpointSerial(t *testing.T) {
 			Channel: evt.(*EventFrame).Channel,
 		}, evt)
 
-		err := node.WriteMessageAll(&MessageHeartbeat{
+		err = node.WriteMessageAll(&MessageHeartbeat{
 			Type:           6,
 			Autopilot:      5,
 			BaseMode:       4,

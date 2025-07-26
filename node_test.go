@@ -130,7 +130,8 @@ func TestNodeWriteAll(t *testing.T) {
 			wg.Add(5)
 
 			for i := 0; i < 5; i++ {
-				client, err := NewNode(NodeConf{
+				var client *Node
+				client, err = NewNode(NodeConf{
 					Dialect:     testDialect,
 					OutVersion:  V2,
 					OutSystemID: 11,
@@ -172,10 +173,10 @@ func TestNodeWriteAll(t *testing.T) {
 			}
 
 			if ca == "message" {
-				err := server.WriteMessageAll(testMessage)
+				err = server.WriteMessageAll(testMessage)
 				require.NoError(t, err)
 			} else {
-				err := server.WriteFrameAll(&frame.V2Frame{
+				err = server.WriteFrameAll(&frame.V2Frame{
 					SequenceNumber: 0,
 					SystemID:       11,
 					ComponentID:    1,
@@ -208,7 +209,8 @@ func TestNodeWriteExcept(t *testing.T) {
 			wg.Add(4)
 
 			for i := 0; i < 5; i++ {
-				client, err := NewNode(NodeConf{
+				var client *Node
+				client, err = NewNode(NodeConf{
 					Dialect:     testDialect,
 					OutVersion:  V2,
 					OutSystemID: 11,
@@ -254,10 +256,10 @@ func TestNodeWriteExcept(t *testing.T) {
 			}
 
 			if ca == "message" {
-				err := server.WriteMessageExcept(except, testMessage)
+				err = server.WriteMessageExcept(except, testMessage)
 				require.NoError(t, err)
 			} else {
-				err := server.WriteFrameExcept(except, &frame.V2Frame{
+				err = server.WriteFrameExcept(except, &frame.V2Frame{
 					SequenceNumber: 0,
 					SystemID:       11,
 					ComponentID:    1,
@@ -289,7 +291,8 @@ func TestNodeWriteTo(t *testing.T) {
 			recv := make(chan struct{})
 
 			for i := 0; i < 5; i++ {
-				client, err := NewNode(NodeConf{
+				var client *Node
+				client, err = NewNode(NodeConf{
 					Dialect:     testDialect,
 					OutVersion:  V2,
 					OutSystemID: 11,
@@ -335,10 +338,10 @@ func TestNodeWriteTo(t *testing.T) {
 			}
 
 			if ca == "message" {
-				err := server.WriteMessageTo(except, testMessage)
+				err = server.WriteMessageTo(except, testMessage)
 				require.NoError(t, err)
 			} else {
-				err := server.WriteFrameTo(except, &frame.V2Frame{
+				err = server.WriteFrameTo(except, &frame.V2Frame{
 					SequenceNumber: 0,
 					SystemID:       11,
 					ComponentID:    1,
@@ -388,7 +391,7 @@ func TestNodeWriteMessageInLoop(t *testing.T) {
 	for evt := range node1.Events() {
 		if _, ok := evt.(*EventChannelOpen); ok {
 			for i := 0; i < 10; i++ {
-				err := node1.WriteMessageAll(testMessage)
+				err = node1.WriteMessageAll(testMessage)
 				require.NoError(t, err)
 			}
 			break
@@ -671,7 +674,8 @@ func TestNodeWriteSameToMultiple(t *testing.T) {
 
 	for i := 0; i < 2; i++ {
 		evt = <-server.Events()
-		fr, ok := evt.(*EventFrame)
+		var fr *EventFrame
+		fr, ok = evt.(*EventFrame)
 		require.Equal(t, true, ok)
 		require.Equal(t, &EventFrame{
 			Frame: &frame.V2Frame{

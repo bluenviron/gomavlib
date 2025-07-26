@@ -41,12 +41,12 @@ func main() {
 			log.Printf("received: id=%d, %+v\n", frm.Message().GetID(), frm.Message())
 
 			// if incoming message is a heartbeat
-			if msg, ok := frm.Message().(*ardupilotmega.MessageHeartbeat); ok {
+			if msg, ok2 := frm.Message().(*ardupilotmega.MessageHeartbeat); ok2 {
 				// edit a field
 				msg.Type = ardupilotmega.MAV_TYPE_SUBMARINE
 
 				// since we changed the frame content, recompute checksum and signature
-				err := node.FixFrame(frm.Frame)
+				err = node.FixFrame(frm.Frame)
 				if err != nil {
 					log.Printf("ERR: %v", err)
 					continue
@@ -54,7 +54,7 @@ func main() {
 			}
 
 			// route frame to every other channel
-			err := node.WriteFrameExcept(frm.Channel, frm.Frame)
+			err = node.WriteFrameExcept(frm.Channel, frm.Frame)
 			if err != nil {
 				panic(err)
 			}

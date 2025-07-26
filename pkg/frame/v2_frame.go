@@ -195,7 +195,7 @@ func (f *V2Frame) unmarshal(br *bufio.Reader) error {
 
 	// signature
 	if f.IsSigned() {
-		buf, err := peekAndDiscard(br, 13)
+		buf, err = peekAndDiscard(br, 13)
 		if err != nil {
 			return err
 		}

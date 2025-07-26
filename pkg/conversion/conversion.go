@@ -354,7 +354,8 @@ func processDefinition(
 		if isRemote {
 			subDefAddr = addrPath + subDefAddr
 		}
-		subDefs, err := processDefinition(version, processedDefs, isRemote, subDefAddr)
+		var subDefs []*outDefinition
+		subDefs, err = processDefinition(version, processedDefs, isRemote, subDefAddr)
 		if err != nil {
 			return nil, err
 		}
@@ -384,14 +385,16 @@ func processDefinition(
 
 			switch {
 			case strings.HasPrefix(entry.Value, "0b"):
-				tmp, err := strconv.ParseUint(entry.Value[2:], 2, 64)
+				var tmp uint64
+				tmp, err = strconv.ParseUint(entry.Value[2:], 2, 64)
 				if err != nil {
 					return nil, err
 				}
 				v = tmp
 
 			case strings.HasPrefix(entry.Value, "0x"):
-				tmp, err := strconv.ParseUint(entry.Value[2:], 16, 64)
+				var tmp uint64
+				tmp, err = strconv.ParseUint(entry.Value[2:], 16, 64)
 				if err != nil {
 					return nil, err
 				}
@@ -400,12 +403,14 @@ func processDefinition(
 			case strings.Contains(entry.Value, "**"):
 				parts := strings.SplitN(entry.Value, "**", 2)
 
-				x, err := strconv.ParseUint(parts[0], 10, 64)
+				var x uint64
+				x, err = strconv.ParseUint(parts[0], 10, 64)
 				if err != nil {
 					return nil, err
 				}
 
-				y, err := strconv.ParseUint(parts[1], 10, 64)
+				var y uint64
+				y, err = strconv.ParseUint(parts[1], 10, 64)
 				if err != nil {
 					return nil, err
 				}
@@ -413,7 +418,8 @@ func processDefinition(
 				v = uintPow(x, y)
 
 			default:
-				tmp, err := strconv.ParseUint(entry.Value, 10, 64)
+				var tmp uint64
+				tmp, err = strconv.ParseUint(entry.Value, 10, 64)
 				if err != nil {
 					return nil, err
 				}
@@ -432,7 +438,8 @@ func processDefinition(
 
 	// messages
 	for _, msg := range def.Messages {
-		outMsg, err := processMessage(outDef.Name, msg)
+		var outMsg *outMessage
+		outMsg, err = processMessage(outDef.Name, msg)
 		if err != nil {
 			return nil, err
 		}
@@ -670,7 +677,7 @@ func Convert(path string, link bool) error {
 	}
 
 	for _, enum := range enums {
-		err := writeEnum(defName, defName, enum, link)
+		err = writeEnum(defName, defName, enum, link)
 		if err != nil {
 			return err
 		}
@@ -678,7 +685,7 @@ func Convert(path string, link bool) error {
 
 	for _, def := range outDefs {
 		for _, msg := range def.Messages {
-			err := writeMessage(defName, defName, msg, link)
+			err = writeMessage(defName, defName, msg, link)
 			if err != nil {
 				return err
 			}

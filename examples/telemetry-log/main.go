@@ -41,7 +41,8 @@ func main() {
 
 	// print every telemetry log entry present inside the file.
 	for {
-		entry, err := dec.Read()
+		var entry *tlog.Entry
+		entry, err = dec.Read()
 		if err != nil {
 			panic(err)
 		}

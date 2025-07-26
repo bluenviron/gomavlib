@@ -17,7 +17,8 @@ func ipByBroadcastIP(target net.IP) net.IP {
 	}
 
 	for _, intf := range intfs {
-		addrs, err := intf.Addrs()
+		var addrs []net.Addr
+		addrs, err = intf.Addrs()
 		if err != nil {
 			continue
 		}

@@ -492,6 +492,12 @@ const (
 	// The system doing the upgrade will report progress using the normal command protocol sequence for a long running operation.
 	// Command protocol information: https://mavlink.io/en/services/command.html.
 	MAV_CMD_DO_UPGRADE MAV_CMD = 247
+	// Command to test groups of related actuators together.
+	// This might include groups such as the actuators that contribute to roll, pitch, or yaw torque, actuators that contribute to thrust in x, y, z axis, tilt mechanisms, flaps and spoilers, and so on.
+	// This is similar to MAV_CMD_ACTUATOR_TEST, except that multiple actuators may be affected.
+	// Different groups may also affect the same actuators (as in the case of controls that affect torque in different axes).
+	// Autopilots must NACK this command with MAV_RESULT_TEMPORARILY_REJECTED while armed.
+	MAV_CMD_ACTUATOR_GROUP_TEST MAV_CMD = 309
 	// Set system and component id.
 	// This allows moving of a system and all its components to a new system id, or moving a particular component to a new system/component id.
 	// Recipients must reject command addressed to broadcast system ID.
@@ -762,6 +768,7 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_PAYLOAD_CONTROL:                            "MAV_CMD_PAYLOAD_CONTROL",
 	MAV_CMD_DO_FIGURE_EIGHT:                            "MAV_CMD_DO_FIGURE_EIGHT",
 	MAV_CMD_DO_UPGRADE:                                 "MAV_CMD_DO_UPGRADE",
+	MAV_CMD_ACTUATOR_GROUP_TEST:                        "MAV_CMD_ACTUATOR_GROUP_TEST",
 	MAV_CMD_DO_SET_SYS_CMP_ID:                          "MAV_CMD_DO_SET_SYS_CMP_ID",
 	MAV_CMD_DO_SET_GLOBAL_ORIGIN:                       "MAV_CMD_DO_SET_GLOBAL_ORIGIN",
 	MAV_CMD_ODID_SET_EMERGENCY:                         "MAV_CMD_ODID_SET_EMERGENCY",
@@ -983,6 +990,7 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_PAYLOAD_CONTROL":                            MAV_CMD_PAYLOAD_CONTROL,
 	"MAV_CMD_DO_FIGURE_EIGHT":                            MAV_CMD_DO_FIGURE_EIGHT,
 	"MAV_CMD_DO_UPGRADE":                                 MAV_CMD_DO_UPGRADE,
+	"MAV_CMD_ACTUATOR_GROUP_TEST":                        MAV_CMD_ACTUATOR_GROUP_TEST,
 	"MAV_CMD_DO_SET_SYS_CMP_ID":                          MAV_CMD_DO_SET_SYS_CMP_ID,
 	"MAV_CMD_DO_SET_GLOBAL_ORIGIN":                       MAV_CMD_DO_SET_GLOBAL_ORIGIN,
 	"MAV_CMD_ODID_SET_EMERGENCY":                         MAV_CMD_ODID_SET_EMERGENCY,

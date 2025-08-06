@@ -16,7 +16,7 @@ type MessageAisVessel struct {
 	Heading uint16
 	// Speed over ground
 	Velocity uint16
-	// Turn rate
+	// Turn rate, 0.1 degrees per second
 	TurnRate int8
 	// Navigational status
 	NavigationalStatus AIS_NAV_STATUS `mavenum:"uint8"`

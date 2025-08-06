@@ -19,5 +19,6 @@ var dial = &dialect.Dialect{
 		&MessageHeartbeat{},
 		&MessageProtocolVersion{},
 		// standard
+		&MessageAutopilotVersion{},
 	},
 }

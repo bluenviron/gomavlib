@@ -19,6 +19,7 @@ var dial = &dialect.Dialect{
 		&MessageHeartbeat{},
 		&MessageProtocolVersion{},
 		// standard
+		&MessageAutopilotVersion{},
 		// common
 		&MessageSysStatus{},
 		&MessageSystemTime{},
@@ -136,7 +137,6 @@ var dial = &dialect.Dialect{
 		&MessageFollowTarget{},
 		&MessageControlSystemState{},
 		&MessageBatteryStatus{},
-		&MessageAutopilotVersion{},
 		&MessageLandingTarget{},
 		&MessageFenceStatus{},
 		&MessageMagCalReport{},

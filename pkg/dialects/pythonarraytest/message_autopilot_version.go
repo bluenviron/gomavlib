@@ -3,8 +3,8 @@
 package pythonarraytest
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/standard"
 )
 
 // Version and capability of autopilot software. This should be emitted in response to a request with MAV_CMD_REQUEST_MESSAGE.
-type MessageAutopilotVersion = common.MessageAutopilotVersion
+type MessageAutopilotVersion = standard.MessageAutopilotVersion

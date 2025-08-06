@@ -17,13 +17,13 @@ func TestEnum_AIS_NAV_STATUS(t *testing.T) {
 	})
 
 	t.Run("first entry", func(t *testing.T) {
-		enc, err := UNDER_WAY.MarshalText()
+		enc, err := AIS_NAV_STATUS_UNDER_WAY.MarshalText()
 		require.NoError(t, err)
 
 		var dec AIS_NAV_STATUS
 		err = dec.UnmarshalText(enc)
 		require.NoError(t, err)
 
-		require.Equal(t, UNDER_WAY, dec)
+		require.Equal(t, AIS_NAV_STATUS_UNDER_WAY, dec)
 	})
 }

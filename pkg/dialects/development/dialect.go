@@ -249,6 +249,7 @@ var dial = &dialect.Dialect{
 		&MessageHygrometerSensor{},
 		// development
 		&MessageAirspeed{},
+		&MessageGlobalPosition{},
 		&MessageSetVelocityLimits{},
 		&MessageVelocityLimits{},
 		&MessageFigureEightExecutionStatus{},

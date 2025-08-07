@@ -363,6 +363,7 @@ var dial = &dialect.Dialect{
 		&MessageSensorAirflowAngles{},
 		// development
 		&MessageAirspeed{},
+		&MessageGlobalPosition{},
 		&MessageSetVelocityLimits{},
 		&MessageVelocityLimits{},
 		&MessageFigureEightExecutionStatus{},

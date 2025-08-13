@@ -199,7 +199,7 @@ func processDialect(commit string, name string) error {
 			"\\t(.*?) (.*?) = (.*?)\\n")
 		matches := rx.FindStringSubmatch(str)
 		if matches == nil {
-			return fmt.Errorf("first entry of " + f.Name() + " not found")
+			return fmt.Errorf("first entry of %s not found", f.Name())
 		}
 
 		enumName := f.Name()

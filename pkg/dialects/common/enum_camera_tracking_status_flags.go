@@ -5,6 +5,7 @@ package common
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 // Camera tracking status flags
@@ -17,37 +18,64 @@ const (
 	CAMERA_TRACKING_STATUS_FLAGS_ACTIVE CAMERA_TRACKING_STATUS_FLAGS = 1
 	// Camera tracking in error state
 	CAMERA_TRACKING_STATUS_FLAGS_ERROR CAMERA_TRACKING_STATUS_FLAGS = 2
+	// Camera Moving Target Indicators (MTI) are active
+	CAMERA_TRACKING_STATUS_FLAGS_MTI CAMERA_TRACKING_STATUS_FLAGS = 4
+	// Camera tracking target is obscured and is being predicted
+	CAMERA_TRACKING_STATUS_FLAGS_COASTING CAMERA_TRACKING_STATUS_FLAGS = 8
 )
 
+var values_CAMERA_TRACKING_STATUS_FLAGS = []CAMERA_TRACKING_STATUS_FLAGS{
+	CAMERA_TRACKING_STATUS_FLAGS_IDLE,
+	CAMERA_TRACKING_STATUS_FLAGS_ACTIVE,
+	CAMERA_TRACKING_STATUS_FLAGS_ERROR,
+	CAMERA_TRACKING_STATUS_FLAGS_MTI,
+	CAMERA_TRACKING_STATUS_FLAGS_COASTING,
+}
+
 var value_to_label_CAMERA_TRACKING_STATUS_FLAGS = map[CAMERA_TRACKING_STATUS_FLAGS]string{
-	CAMERA_TRACKING_STATUS_FLAGS_IDLE:   "CAMERA_TRACKING_STATUS_FLAGS_IDLE",
-	CAMERA_TRACKING_STATUS_FLAGS_ACTIVE: "CAMERA_TRACKING_STATUS_FLAGS_ACTIVE",
-	CAMERA_TRACKING_STATUS_FLAGS_ERROR:  "CAMERA_TRACKING_STATUS_FLAGS_ERROR",
+	CAMERA_TRACKING_STATUS_FLAGS_IDLE:     "CAMERA_TRACKING_STATUS_FLAGS_IDLE",
+	CAMERA_TRACKING_STATUS_FLAGS_ACTIVE:   "CAMERA_TRACKING_STATUS_FLAGS_ACTIVE",
+	CAMERA_TRACKING_STATUS_FLAGS_ERROR:    "CAMERA_TRACKING_STATUS_FLAGS_ERROR",
+	CAMERA_TRACKING_STATUS_FLAGS_MTI:      "CAMERA_TRACKING_STATUS_FLAGS_MTI",
+	CAMERA_TRACKING_STATUS_FLAGS_COASTING: "CAMERA_TRACKING_STATUS_FLAGS_COASTING",
 }
 
 var label_to_value_CAMERA_TRACKING_STATUS_FLAGS = map[string]CAMERA_TRACKING_STATUS_FLAGS{
-	"CAMERA_TRACKING_STATUS_FLAGS_IDLE":   CAMERA_TRACKING_STATUS_FLAGS_IDLE,
-	"CAMERA_TRACKING_STATUS_FLAGS_ACTIVE": CAMERA_TRACKING_STATUS_FLAGS_ACTIVE,
-	"CAMERA_TRACKING_STATUS_FLAGS_ERROR":  CAMERA_TRACKING_STATUS_FLAGS_ERROR,
+	"CAMERA_TRACKING_STATUS_FLAGS_IDLE":     CAMERA_TRACKING_STATUS_FLAGS_IDLE,
+	"CAMERA_TRACKING_STATUS_FLAGS_ACTIVE":   CAMERA_TRACKING_STATUS_FLAGS_ACTIVE,
+	"CAMERA_TRACKING_STATUS_FLAGS_ERROR":    CAMERA_TRACKING_STATUS_FLAGS_ERROR,
+	"CAMERA_TRACKING_STATUS_FLAGS_MTI":      CAMERA_TRACKING_STATUS_FLAGS_MTI,
+	"CAMERA_TRACKING_STATUS_FLAGS_COASTING": CAMERA_TRACKING_STATUS_FLAGS_COASTING,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e CAMERA_TRACKING_STATUS_FLAGS) MarshalText() ([]byte, error) {
-	if name, ok := value_to_label_CAMERA_TRACKING_STATUS_FLAGS[e]; ok {
-		return []byte(name), nil
+	if e == 0 {
+		return []byte("0"), nil
 	}
-	return []byte(strconv.Itoa(int(e))), nil
+	var names []string
+	for _, val := range values_CAMERA_TRACKING_STATUS_FLAGS {
+		if e&val == val {
+			names = append(names, value_to_label_CAMERA_TRACKING_STATUS_FLAGS[val])
+		}
+	}
+	return []byte(strings.Join(names, " | ")), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *CAMERA_TRACKING_STATUS_FLAGS) UnmarshalText(text []byte) error {
-	if value, ok := label_to_value_CAMERA_TRACKING_STATUS_FLAGS[string(text)]; ok {
-		*e = value
-	} else if value, err := strconv.Atoi(string(text)); err == nil {
-		*e = CAMERA_TRACKING_STATUS_FLAGS(value)
-	} else {
-		return fmt.Errorf("invalid label '%s'", text)
+	labels := strings.Split(string(text), " | ")
+	var mask CAMERA_TRACKING_STATUS_FLAGS
+	for _, label := range labels {
+		if value, ok := label_to_value_CAMERA_TRACKING_STATUS_FLAGS[label]; ok {
+			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= CAMERA_TRACKING_STATUS_FLAGS(value)
+		} else {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
+	*e = mask
 	return nil
 }
 

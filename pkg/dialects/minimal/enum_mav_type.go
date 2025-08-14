@@ -109,6 +109,8 @@ const (
 	MAV_TYPE_VTOL_GYRODYNE MAV_TYPE = 47
 	// Gripper
 	MAV_TYPE_GRIPPER MAV_TYPE = 48
+	// Radio
+	MAV_TYPE_RADIO MAV_TYPE = 49
 )
 
 var value_to_label_MAV_TYPE = map[MAV_TYPE]string{
@@ -161,6 +163,7 @@ var value_to_label_MAV_TYPE = map[MAV_TYPE]string{
 	MAV_TYPE_GROUND_QUADRUPED:          "MAV_TYPE_GROUND_QUADRUPED",
 	MAV_TYPE_VTOL_GYRODYNE:             "MAV_TYPE_VTOL_GYRODYNE",
 	MAV_TYPE_GRIPPER:                   "MAV_TYPE_GRIPPER",
+	MAV_TYPE_RADIO:                     "MAV_TYPE_RADIO",
 }
 
 var label_to_value_MAV_TYPE = map[string]MAV_TYPE{
@@ -213,6 +216,7 @@ var label_to_value_MAV_TYPE = map[string]MAV_TYPE{
 	"MAV_TYPE_GROUND_QUADRUPED":          MAV_TYPE_GROUND_QUADRUPED,
 	"MAV_TYPE_VTOL_GYRODYNE":             MAV_TYPE_VTOL_GYRODYNE,
 	"MAV_TYPE_GRIPPER":                   MAV_TYPE_GRIPPER,
+	"MAV_TYPE_RADIO":                     MAV_TYPE_RADIO,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.

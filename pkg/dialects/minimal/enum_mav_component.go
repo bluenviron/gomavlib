@@ -184,6 +184,12 @@ const (
 	MAV_COMP_ID_CAMERA5 MAV_COMPONENT = 104
 	// Camera #6.
 	MAV_COMP_ID_CAMERA6 MAV_COMPONENT = 105
+	// Radio #1.
+	MAV_COMP_ID_RADIO MAV_COMPONENT = 110
+	// Radio #2.
+	MAV_COMP_ID_RADIO2 MAV_COMPONENT = 111
+	// Radio #3.
+	MAV_COMP_ID_RADIO3 MAV_COMPONENT = 112
 	// Servo #1.
 	MAV_COMP_ID_SERVO1 MAV_COMPONENT = 140
 	// Servo #2.
@@ -376,6 +382,9 @@ var value_to_label_MAV_COMPONENT = map[MAV_COMPONENT]string{
 	MAV_COMP_ID_CAMERA4:                  "MAV_COMP_ID_CAMERA4",
 	MAV_COMP_ID_CAMERA5:                  "MAV_COMP_ID_CAMERA5",
 	MAV_COMP_ID_CAMERA6:                  "MAV_COMP_ID_CAMERA6",
+	MAV_COMP_ID_RADIO:                    "MAV_COMP_ID_RADIO",
+	MAV_COMP_ID_RADIO2:                   "MAV_COMP_ID_RADIO2",
+	MAV_COMP_ID_RADIO3:                   "MAV_COMP_ID_RADIO3",
 	MAV_COMP_ID_SERVO1:                   "MAV_COMP_ID_SERVO1",
 	MAV_COMP_ID_SERVO2:                   "MAV_COMP_ID_SERVO2",
 	MAV_COMP_ID_SERVO3:                   "MAV_COMP_ID_SERVO3",
@@ -515,6 +524,9 @@ var label_to_value_MAV_COMPONENT = map[string]MAV_COMPONENT{
 	"MAV_COMP_ID_CAMERA4":                  MAV_COMP_ID_CAMERA4,
 	"MAV_COMP_ID_CAMERA5":                  MAV_COMP_ID_CAMERA5,
 	"MAV_COMP_ID_CAMERA6":                  MAV_COMP_ID_CAMERA6,
+	"MAV_COMP_ID_RADIO":                    MAV_COMP_ID_RADIO,
+	"MAV_COMP_ID_RADIO2":                   MAV_COMP_ID_RADIO2,
+	"MAV_COMP_ID_RADIO3":                   MAV_COMP_ID_RADIO3,
 	"MAV_COMP_ID_SERVO1":                   MAV_COMP_ID_SERVO1,
 	"MAV_COMP_ID_SERVO2":                   MAV_COMP_ID_SERVO2,
 	"MAV_COMP_ID_SERVO3":                   MAV_COMP_ID_SERVO3,

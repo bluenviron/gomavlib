@@ -508,6 +508,11 @@ const (
 	// This command supersedes SET_GPS_GLOBAL_ORIGIN.
 	// Should be sent in a COMMAND_INT (Expected frame is MAV_FRAME_GLOBAL, and this should be assumed when sent in COMMAND_LONG).
 	MAV_CMD_DO_SET_GLOBAL_ORIGIN MAV_CMD = 611
+	// Enable Moving Target Indicators (MTI) on streamed video.
+	// Support for feature can be checked with CAMERA_CAP_FLAGS_HAS_MTI, and disabled with MAV_CMD_CAMERA_STOP_MTI.
+	MAV_CMD_CAMERA_START_MTI MAV_CMD = 2020
+	// Disable Moving Target Indicators (MTI) on streamed video.
+	MAV_CMD_CAMERA_STOP_MTI MAV_CMD = 2021
 	// Used to manually set/unset emergency status for remote id.
 	// This is for compliance with MOC ASTM docs, specifically F358 section 7.7: "Emergency Status Indicator".
 	// The requirement can also be satisfied by automatic setting of the emergency status by flight stack, and that approach is preferred.
@@ -771,6 +776,8 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_ACTUATOR_GROUP_TEST:                        "MAV_CMD_ACTUATOR_GROUP_TEST",
 	MAV_CMD_DO_SET_SYS_CMP_ID:                          "MAV_CMD_DO_SET_SYS_CMP_ID",
 	MAV_CMD_DO_SET_GLOBAL_ORIGIN:                       "MAV_CMD_DO_SET_GLOBAL_ORIGIN",
+	MAV_CMD_CAMERA_START_MTI:                           "MAV_CMD_CAMERA_START_MTI",
+	MAV_CMD_CAMERA_STOP_MTI:                            "MAV_CMD_CAMERA_STOP_MTI",
 	MAV_CMD_ODID_SET_EMERGENCY:                         "MAV_CMD_ODID_SET_EMERGENCY",
 	MAV_CMD_EXTERNAL_WIND_ESTIMATE:                     "MAV_CMD_EXTERNAL_WIND_ESTIMATE",
 	MAV_CMD_REQUEST_OPERATOR_CONTROL:                   "MAV_CMD_REQUEST_OPERATOR_CONTROL",
@@ -993,6 +1000,8 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_ACTUATOR_GROUP_TEST":                        MAV_CMD_ACTUATOR_GROUP_TEST,
 	"MAV_CMD_DO_SET_SYS_CMP_ID":                          MAV_CMD_DO_SET_SYS_CMP_ID,
 	"MAV_CMD_DO_SET_GLOBAL_ORIGIN":                       MAV_CMD_DO_SET_GLOBAL_ORIGIN,
+	"MAV_CMD_CAMERA_START_MTI":                           MAV_CMD_CAMERA_START_MTI,
+	"MAV_CMD_CAMERA_STOP_MTI":                            MAV_CMD_CAMERA_STOP_MTI,
 	"MAV_CMD_ODID_SET_EMERGENCY":                         MAV_CMD_ODID_SET_EMERGENCY,
 	"MAV_CMD_EXTERNAL_WIND_ESTIMATE":                     MAV_CMD_EXTERNAL_WIND_ESTIMATE,
 	"MAV_CMD_REQUEST_OPERATOR_CONTROL":                   MAV_CMD_REQUEST_OPERATOR_CONTROL,

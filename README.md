@@ -40,7 +40,7 @@ Features:
 
 ## Installation
 
-1. Install Go &ge; 1.23.
+1. Install Go &ge; 1.24.
 
 2. Create an empty folder, open a terminal in it and initialize the Go modules system:
 

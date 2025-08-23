@@ -521,6 +521,9 @@ const (
 	// Set an external estimate of wind direction and speed.
 	// This might be used to provide an initial wind estimate to the estimator (EKF) in the case where the vehicle is wind dead-reckoning, extending the time when operating without GPS before before position drift builds to an unsafe level. For this use case the command might reasonably be sent every few minutes when operating at altitude, and the value is cleared if the estimator resets itself.
 	MAV_CMD_EXTERNAL_WIND_ESTIMATE MAV_CMD = 43004
+	// Set an external estimate of vehicle attitude.
+	// This might be used to provide an initial attitude (especially heading) estimate to the estimator (EKF). Angles are defined in a 3-2-1 (yaw-pitch-roll) intrinsic Tait-Bryan sequence.
+	MAV_CMD_EXTERNAL_ATTITUDE_ESTIMATE MAV_CMD = 620
 	// Request GCS control of a system (or of a specific component in a system).
 	// A controlled system should only accept MAVLink commands and command-like messages that are sent by its controlling GCS, or from other components with the same system id.
 	// Commands from other systems should be rejected with MAV_RESULT_FAILED (except for this command, which may be acknowledged with MAV_RESULT_ACCEPTED if control is granted).
@@ -780,6 +783,7 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_CAMERA_STOP_MTI:                            "MAV_CMD_CAMERA_STOP_MTI",
 	MAV_CMD_ODID_SET_EMERGENCY:                         "MAV_CMD_ODID_SET_EMERGENCY",
 	MAV_CMD_EXTERNAL_WIND_ESTIMATE:                     "MAV_CMD_EXTERNAL_WIND_ESTIMATE",
+	MAV_CMD_EXTERNAL_ATTITUDE_ESTIMATE:                 "MAV_CMD_EXTERNAL_ATTITUDE_ESTIMATE",
 	MAV_CMD_REQUEST_OPERATOR_CONTROL:                   "MAV_CMD_REQUEST_OPERATOR_CONTROL",
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW: "MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW",
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP:            "MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP",
@@ -1004,6 +1008,7 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_CAMERA_STOP_MTI":                            MAV_CMD_CAMERA_STOP_MTI,
 	"MAV_CMD_ODID_SET_EMERGENCY":                         MAV_CMD_ODID_SET_EMERGENCY,
 	"MAV_CMD_EXTERNAL_WIND_ESTIMATE":                     MAV_CMD_EXTERNAL_WIND_ESTIMATE,
+	"MAV_CMD_EXTERNAL_ATTITUDE_ESTIMATE":                 MAV_CMD_EXTERNAL_ATTITUDE_ESTIMATE,
 	"MAV_CMD_REQUEST_OPERATOR_CONTROL":                   MAV_CMD_REQUEST_OPERATOR_CONTROL,
 	"MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW": MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW,
 	"MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP":            MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP,

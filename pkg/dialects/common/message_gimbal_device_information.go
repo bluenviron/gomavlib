@@ -12,9 +12,9 @@ type MessageGimbalDeviceInformation struct {
 	ModelName string `mavlen:"32"`
 	// Custom name of the gimbal given to it by the user.
 	CustomName string `mavlen:"32"`
-	// Version of the gimbal firmware, encoded as: `(Dev &amp; 0xff) &lt;&lt; 24 \| (Patch &amp; 0xff) &lt;&lt; 16 \| (Minor &amp; 0xff) &lt;&lt; 8 \| (Major &amp; 0xff)`.
+	// Version of the gimbal firmware, encoded as: `(Dev &amp; 0xff) &lt;&lt; 24 + (Patch &amp; 0xff) &lt;&lt; 16 + (Minor &amp; 0xff) &lt;&lt; 8 + (Major &amp; 0xff)`.
 	FirmwareVersion uint32
-	// Version of the gimbal hardware, encoded as: `(Dev &amp; 0xff) &lt;&lt; 24 \| (Patch &amp; 0xff) &lt;&lt; 16 \| (Minor &amp; 0xff) &lt;&lt; 8 \| (Major &amp; 0xff)`.
+	// Version of the gimbal hardware, encoded as: `(Dev &amp; 0xff) &lt;&lt; 24 + (Patch &amp; 0xff) &lt;&lt; 16 + (Minor &amp; 0xff) &lt;&lt; 8 + (Major &amp; 0xff)`.
 	HardwareVersion uint32
 	// UID of gimbal hardware (0 if unknown).
 	Uid uint64

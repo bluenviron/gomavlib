@@ -10,7 +10,7 @@ type MessageCameraInformation struct {
 	VendorName [32]uint8
 	// Name of the camera model
 	ModelName [32]uint8
-	// Version of the camera firmware, encoded as: `(Dev &amp; 0xff) &lt;&lt; 24 \| (Patch &amp; 0xff) &lt;&lt; 16 \| (Minor &amp; 0xff) &lt;&lt; 8 \| (Major &amp; 0xff)`. Use 0 if not known.
+	// Version of the camera firmware, encoded as: `(Dev &amp; 0xff) &lt;&lt; 24 + (Patch &amp; 0xff) &lt;&lt; 16 + (Minor &amp; 0xff) &lt;&lt; 8 + (Major &amp; 0xff)`. Use 0 if not known.
 	FirmwareVersion uint32
 	// Focal length. Use NaN if not known.
 	FocalLength float32

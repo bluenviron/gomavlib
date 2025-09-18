@@ -10,8 +10,10 @@ import (
 type GRIPPER_ACTIONS = common.GRIPPER_ACTIONS
 
 const (
-	// Gripper release cargo.
-	GRIPPER_ACTION_RELEASE GRIPPER_ACTIONS = common.GRIPPER_ACTION_RELEASE
-	// Gripper grab onto cargo.
-	GRIPPER_ACTION_GRAB GRIPPER_ACTIONS = common.GRIPPER_ACTION_GRAB
+	// Gripper commence open. Often used to release cargo.
+	GRIPPER_ACTION_OPEN GRIPPER_ACTIONS = common.GRIPPER_ACTION_OPEN
+	// Gripper commence close. Often used to grab onto cargo.
+	GRIPPER_ACTION_CLOSE GRIPPER_ACTIONS = common.GRIPPER_ACTION_CLOSE
+	// Gripper stop (maintain current grip position).
+	GRIPPER_ACTION_STOP GRIPPER_ACTIONS = common.GRIPPER_ACTION_STOP
 )

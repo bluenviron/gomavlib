@@ -17,13 +17,13 @@ func TestEnum_GRIPPER_ACTIONS(t *testing.T) {
 	})
 
 	t.Run("first entry", func(t *testing.T) {
-		enc, err := GRIPPER_ACTION_RELEASE.MarshalText()
+		enc, err := GRIPPER_ACTION_OPEN.MarshalText()
 		require.NoError(t, err)
 
 		var dec GRIPPER_ACTIONS
 		err = dec.UnmarshalText(enc)
 		require.NoError(t, err)
 
-		require.Equal(t, GRIPPER_ACTION_RELEASE, dec)
+		require.Equal(t, GRIPPER_ACTION_OPEN, dec)
 	})
 }

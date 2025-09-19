@@ -19,6 +19,7 @@ var dial = &dialect.Dialect{
 		&MessageHeartbeat{},
 		&MessageProtocolVersion{},
 		// standard
+		&MessageGlobalPositionInt{},
 		&MessageAutopilotVersion{},
 		// common
 		&MessageSysStatus{},
@@ -42,7 +43,6 @@ var dial = &dialect.Dialect{
 		&MessageAttitude{},
 		&MessageAttitudeQuaternion{},
 		&MessageLocalPositionNed{},
-		&MessageGlobalPositionInt{},
 		&MessageRcChannelsScaled{},
 		&MessageRcChannelsRaw{},
 		&MessageServoOutputRaw{},

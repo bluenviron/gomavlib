@@ -3,9 +3,8 @@
 package avssuas
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/standard"
 )
 
-// The filtered global position (e.g. fused GPS and accelerometers). The position is in GPS-frame (right-handed, Z-up). It
-// is designed as scaled integer message since the resolution of float is not sufficient.
-type MessageGlobalPositionInt = common.MessageGlobalPositionInt
+// The filtered global position (e.g. fused GPS and accelerometers). The position is in GPS-frame (right-handed, Z-up). It is designed as scaled integer message since the resolution of float is not sufficient.
+type MessageGlobalPositionInt = standard.MessageGlobalPositionInt

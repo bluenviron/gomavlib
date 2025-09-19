@@ -19,6 +19,7 @@ var dial = &dialect.Dialect{
 		&MessageHeartbeat{},
 		&MessageProtocolVersion{},
 		// standard
+		&MessageGlobalPositionInt{},
 		&MessageAutopilotVersion{},
 	},
 }

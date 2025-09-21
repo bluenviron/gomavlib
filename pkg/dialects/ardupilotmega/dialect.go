@@ -343,5 +343,6 @@ var dial = &dialect.Dialect{
 		&MessageEscTelemetry_21To_24{},
 		&MessageEscTelemetry_25To_28{},
 		&MessageEscTelemetry_29To_32{},
+		&MessageNamedValueString{},
 	},
 }

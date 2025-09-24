@@ -5,6 +5,7 @@ package common
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 // Flags for CURRENT_EVENT_SEQUENCE.
@@ -14,6 +15,10 @@ const (
 	// A sequence reset has happened (e.g. vehicle reboot).
 	MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET MAV_EVENT_CURRENT_SEQUENCE_FLAGS = 1
 )
+
+var values_MAV_EVENT_CURRENT_SEQUENCE_FLAGS = []MAV_EVENT_CURRENT_SEQUENCE_FLAGS{
+	MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET,
+}
 
 var value_to_label_MAV_EVENT_CURRENT_SEQUENCE_FLAGS = map[MAV_EVENT_CURRENT_SEQUENCE_FLAGS]string{
 	MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET: "MAV_EVENT_CURRENT_SEQUENCE_FLAGS_RESET",
@@ -25,21 +30,32 @@ var label_to_value_MAV_EVENT_CURRENT_SEQUENCE_FLAGS = map[string]MAV_EVENT_CURRE
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_EVENT_CURRENT_SEQUENCE_FLAGS) MarshalText() ([]byte, error) {
-	if name, ok := value_to_label_MAV_EVENT_CURRENT_SEQUENCE_FLAGS[e]; ok {
-		return []byte(name), nil
+	if e == 0 {
+		return []byte("0"), nil
 	}
-	return []byte(strconv.Itoa(int(e))), nil
+	var names []string
+	for _, val := range values_MAV_EVENT_CURRENT_SEQUENCE_FLAGS {
+		if e&val == val {
+			names = append(names, value_to_label_MAV_EVENT_CURRENT_SEQUENCE_FLAGS[val])
+		}
+	}
+	return []byte(strings.Join(names, " | ")), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_EVENT_CURRENT_SEQUENCE_FLAGS) UnmarshalText(text []byte) error {
-	if value, ok := label_to_value_MAV_EVENT_CURRENT_SEQUENCE_FLAGS[string(text)]; ok {
-		*e = value
-	} else if value, err := strconv.Atoi(string(text)); err == nil {
-		*e = MAV_EVENT_CURRENT_SEQUENCE_FLAGS(value)
-	} else {
-		return fmt.Errorf("invalid label '%s'", text)
+	labels := strings.Split(string(text), " | ")
+	var mask MAV_EVENT_CURRENT_SEQUENCE_FLAGS
+	for _, label := range labels {
+		if value, ok := label_to_value_MAV_EVENT_CURRENT_SEQUENCE_FLAGS[label]; ok {
+			mask |= value
+		} else if value, err := strconv.Atoi(label); err == nil {
+			mask |= MAV_EVENT_CURRENT_SEQUENCE_FLAGS(value)
+		} else {
+			return fmt.Errorf("invalid label '%s'", label)
+		}
 	}
+	*e = mask
 	return nil
 }
 

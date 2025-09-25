@@ -209,6 +209,7 @@ var dial = &dialect.Dialect{
 		&MessageCellularConfig{},
 		&MessageRawRpm{},
 		&MessageUtmGlobalPosition{},
+		&MessageParamError{},
 		&MessageDebugFloatArray{},
 		&MessageOrbitExecutionStatus{},
 		&MessageSmartBatteryInfo{},

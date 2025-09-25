@@ -44,6 +44,8 @@ type MessageOnboardComputerStatus struct {
 	LinkTxMax [6]uint32
 	// Network capacity to the component system. A value of UINT32_MAX implies the field is unused.
 	LinkRxMax [6]uint32
+	// Bitmap of status flags.
+	StatusFlags COMPUTER_STATUS_FLAGS `mavenum:"uint16" mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

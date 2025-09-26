@@ -30,4 +30,6 @@ const (
 	MAV_RESULT_COMMAND_INT_ONLY MAV_RESULT = common.MAV_RESULT_COMMAND_INT_ONLY
 	// Command is invalid because a frame is required and the specified frame is not supported.
 	MAV_RESULT_COMMAND_UNSUPPORTED_MAV_FRAME MAV_RESULT = common.MAV_RESULT_COMMAND_UNSUPPORTED_MAV_FRAME
+	// Command has been rejected because source system is not in control of the target system/component.
+	MAV_RESULT_NOT_IN_CONTROL MAV_RESULT = common.MAV_RESULT_NOT_IN_CONTROL
 )

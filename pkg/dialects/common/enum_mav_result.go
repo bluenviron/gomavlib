@@ -31,6 +31,8 @@ const (
 	MAV_RESULT_COMMAND_INT_ONLY MAV_RESULT = 8
 	// Command is invalid because a frame is required and the specified frame is not supported.
 	MAV_RESULT_COMMAND_UNSUPPORTED_MAV_FRAME MAV_RESULT = 9
+	// Command has been rejected because source system is not in control of the target system/component.
+	MAV_RESULT_NOT_IN_CONTROL MAV_RESULT = 10
 )
 
 var value_to_label_MAV_RESULT = map[MAV_RESULT]string{
@@ -44,6 +46,7 @@ var value_to_label_MAV_RESULT = map[MAV_RESULT]string{
 	MAV_RESULT_COMMAND_LONG_ONLY:             "MAV_RESULT_COMMAND_LONG_ONLY",
 	MAV_RESULT_COMMAND_INT_ONLY:              "MAV_RESULT_COMMAND_INT_ONLY",
 	MAV_RESULT_COMMAND_UNSUPPORTED_MAV_FRAME: "MAV_RESULT_COMMAND_UNSUPPORTED_MAV_FRAME",
+	MAV_RESULT_NOT_IN_CONTROL:                "MAV_RESULT_NOT_IN_CONTROL",
 }
 
 var label_to_value_MAV_RESULT = map[string]MAV_RESULT{
@@ -57,6 +60,7 @@ var label_to_value_MAV_RESULT = map[string]MAV_RESULT{
 	"MAV_RESULT_COMMAND_LONG_ONLY":             MAV_RESULT_COMMAND_LONG_ONLY,
 	"MAV_RESULT_COMMAND_INT_ONLY":              MAV_RESULT_COMMAND_INT_ONLY,
 	"MAV_RESULT_COMMAND_UNSUPPORTED_MAV_FRAME": MAV_RESULT_COMMAND_UNSUPPORTED_MAV_FRAME,
+	"MAV_RESULT_NOT_IN_CONTROL":                MAV_RESULT_NOT_IN_CONTROL,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.

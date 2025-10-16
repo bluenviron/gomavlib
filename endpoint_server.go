@@ -11,7 +11,6 @@ import (
 )
 
 type endpointServerConf interface {
-	getAddress() string
 	init(*Node) (Endpoint, error)
 }
 
@@ -22,10 +21,6 @@ type endpointServerConf interface {
 type EndpointTCPServer struct {
 	// listen address, example: 0.0.0.0:5600
 	Address string
-}
-
-func (conf EndpointTCPServer) getAddress() string {
-	return conf.Address
 }
 
 func (conf EndpointTCPServer) init(node *Node) (Endpoint, error) {
@@ -45,10 +40,6 @@ type EndpointUDPServer struct {
 	Address string
 }
 
-func (conf EndpointUDPServer) getAddress() string {
-	return conf.Address
-}
-
 func (conf EndpointUDPServer) init(node *Node) (Endpoint, error) {
 	e := &endpointServer{
 		node: node,
@@ -63,16 +54,11 @@ func (conf EndpointUDPServer) init(node *Node) (Endpoint, error) {
 // This allows you to use custom protocols that conform to the net.listner.
 // A use case could be to add encrypted protocol implementations like DTLS or TCP with TLS.
 type EndpointCustomServer struct {
-	// listen address, example: 0.0.0.0:5600
-	Address string
 	// function to invoke when server should start listening
-	Listen func(address string) (net.Listener, error)
+	Listen func() (net.Listener, error)
+
 	// the label of the protocol
 	Label string
-}
-
-func (conf EndpointCustomServer) getAddress() string {
-	return conf.Address
 }
 
 func (conf EndpointCustomServer) init(node *Node) (Endpoint, error) {
@@ -95,15 +81,9 @@ type endpointServer struct {
 }
 
 func (e *endpointServer) initialize() error {
-	_, _, err := net.SplitHostPort(e.conf.getAddress())
-	if err != nil {
-		return fmt.Errorf("invalid address")
-	}
-
 	switch conf := e.conf.(type) {
 	case EndpointUDPServer:
-		var addr *net.UDPAddr
-		addr, err = net.ResolveUDPAddr("udp4", e.conf.getAddress())
+		addr, err := net.ResolveUDPAddr("udp4", conf.Address)
 		if err != nil {
 			return err
 		}
@@ -114,13 +94,15 @@ func (e *endpointServer) initialize() error {
 		}
 
 	case EndpointTCPServer:
-		e.listener, err = net.Listen("tcp4", e.conf.getAddress())
+		var err error
+		e.listener, err = net.Listen("tcp4", conf.Address)
 		if err != nil {
 			return err
 		}
 
 	case EndpointCustomServer:
-		e.listener, err = conf.Listen(e.conf.getAddress())
+		var err error
+		e.listener, err = conf.Listen()
 		if err != nil {
 			return err
 		}

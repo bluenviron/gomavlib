@@ -2,6 +2,7 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"log"
 	"net"
@@ -19,16 +20,15 @@ func main() {
 	node := &gomavlib.Node{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointCustomClient{
-				Address: "127.0.0.1:5600",
-				Connect: func(address string) (net.Conn, error) {
+				Connect: func(ctx context.Context) (net.Conn, error) {
 					tlsConfig := &tls.Config{
 						// skip checking the certificate against a CA (just set to true for simplicity of this example)
 						InsecureSkipVerify: true,
 					}
 
-					return tls.Dial("tcp", address, tlsConfig)
+					return (&tls.Dialer{Config: tlsConfig}).DialContext(ctx, "tcp", "127.0.0.1:5600")
 				},
-				Label: "TCP/TLS",
+				Label: "TCP/TLS:127.0.0.1:5600",
 			},
 		},
 		Dialect:     ardupilotmega.Dialect,

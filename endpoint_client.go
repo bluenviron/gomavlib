@@ -14,7 +14,6 @@ import (
 var reconnectPeriod = 2 * time.Second
 
 type endpointClientConf interface {
-	clientType() endpointServerType
 	getAddress() string
 	init(*Node) (Endpoint, error)
 }
@@ -26,10 +25,6 @@ type endpointClientConf interface {
 type EndpointTCPClient struct {
 	// domain name or IP of the server to connect to, example: 1.2.3.4:5600
 	Address string
-}
-
-func (EndpointTCPClient) clientType() endpointServerType {
-	return endpointServerTypeTCP
 }
 
 func (conf EndpointTCPClient) getAddress() string {
@@ -49,10 +44,6 @@ func (conf EndpointTCPClient) init(node *Node) (Endpoint, error) {
 type EndpointUDPClient struct {
 	// domain name or IP of the server to connect to, example: 1.2.3.4:5600
 	Address string
-}
-
-func (EndpointUDPClient) clientType() endpointServerType {
-	return endpointServerTypeUDP
 }
 
 func (conf EndpointUDPClient) getAddress() string {
@@ -77,10 +68,6 @@ type EndpointCustomClient struct {
 	Connect func(address string) (net.Conn, error)
 	// the label of the protocol
 	Label string
-}
-
-func (EndpointCustomClient) clientType() endpointServerType {
-	return endpointServerTypeCustom
 }
 
 func (conf EndpointCustomClient) getAddress() string {
@@ -132,12 +119,12 @@ func (e *endpointClient) oneChannelAtAtime() bool {
 
 func (e *endpointClient) connect() (io.ReadWriteCloser, error) {
 	network := func() string {
-		switch e.conf.clientType() {
-		case endpointServerTypeTCP:
+		switch e.conf.(type) {
+		case EndpointTCPClient:
 			return "tcp4"
-		case endpointServerTypeUDP:
+		case EndpointUDPClient:
 			return "udp4"
-		case endpointServerTypeCustom:
+		case EndpointCustomClient:
 			return "cust"
 		default:
 			return ""
@@ -149,13 +136,11 @@ func (e *endpointClient) connect() (io.ReadWriteCloser, error) {
 	timedContext, timedContextClose := context.WithTimeout(e.ctx, e.node.ReadTimeout)
 	nconn, err := func() (net.Conn, error) {
 		if network == "cust" {
-			if customConf, ok := e.conf.(EndpointCustomClient); ok {
-				if customConf.Connect == nil {
-					return nil, errors.New("no connect function provided on custom endpoint")
-				}
-				return customConf.Connect(customConf.Address)
+			customConf := e.conf.(EndpointCustomClient)
+			if customConf.Connect == nil {
+				return nil, errors.New("no connect function provided on custom endpoint")
 			}
-			return nil, errors.New("failed type assertion to endpointcustomclient")
+			return customConf.Connect(customConf.Address)
 		}
 		return (&net.Dialer{}).DialContext(timedContext, network, e.conf.getAddress())
 	}()
@@ -200,20 +185,18 @@ func (e *endpointClient) provide() (string, io.ReadWriteCloser, error) {
 
 func (e *endpointClient) label() string {
 	return fmt.Sprintf("%s:%s", func() string {
-		switch e.conf.clientType() {
-		case endpointServerTypeTCP:
+		switch conf := e.conf.(type) {
+		case EndpointTCPClient:
 			return "tcp"
-		case endpointServerTypeUDP:
+		case EndpointUDPClient:
 			return "udp"
-		case endpointServerTypeCustom:
-			if customConf, ok := e.conf.(EndpointCustomClient); ok {
-				if customConf.Label != "" {
-					return customConf.Label
-				}
+		case EndpointCustomClient:
+			if conf.Label != "" {
+				return conf.Label
 			}
-			return "cust"
+			return "custom"
 		default:
-			return "unk"
+			return "unknown"
 		}
 	}(), e.conf.getAddress())
 }

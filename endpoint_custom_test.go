@@ -1,8 +1,6 @@
 package gomavlib
 
 import (
-	"errors"
-	"io"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -11,55 +9,6 @@ import (
 	"github.com/bluenviron/gomavlib/v3/pkg/frame"
 	"github.com/bluenviron/gomavlib/v3/pkg/streamwriter"
 )
-
-type dummyReadWriter struct {
-	chOut     chan []byte
-	chIn      chan []byte
-	chReadErr chan struct{}
-}
-
-func newDummyReadWriterPair() (*dummyReadWriter, *dummyReadWriter) {
-	one := &dummyReadWriter{
-		chOut:     make(chan []byte),
-		chIn:      make(chan []byte),
-		chReadErr: make(chan struct{}),
-	}
-
-	two := &dummyReadWriter{
-		chOut:     one.chIn,
-		chIn:      one.chOut,
-		chReadErr: make(chan struct{}),
-	}
-
-	return one, two
-}
-
-func (e *dummyReadWriter) simulateReadError() {
-	close(e.chReadErr)
-}
-
-func (e *dummyReadWriter) Close() error {
-	close(e.chOut)
-	close(e.chIn)
-	return nil
-}
-
-func (e *dummyReadWriter) Read(p []byte) (int, error) {
-	select {
-	case buf, ok := <-e.chOut:
-		if !ok {
-			return 0, io.EOF
-		}
-		return copy(p, buf), nil
-	case <-e.chReadErr:
-		return 0, errors.New("custom error")
-	}
-}
-
-func (e *dummyReadWriter) Write(p []byte) (int, error) {
-	e.chIn <- p
-	return len(p), nil
-}
 
 func TestEndpointCustom(t *testing.T) {
 	remote, local := newDummyReadWriterPair()

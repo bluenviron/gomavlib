@@ -1,6 +1,7 @@
 package gomavlib
 
 import (
+	"context"
 	"errors"
 	"io"
 	"net"
@@ -324,8 +325,7 @@ func TestEndpointCustomClient(t *testing.T) {
 		OutVersion:  V2,
 		OutSystemID: 10,
 		Endpoints: []EndpointConf{EndpointCustomClient{
-			Address: "1.2.3:5000",
-			Connect: func(_ string) (net.Conn, error) {
+			Connect: func(_ context.Context) (net.Conn, error) {
 				return remote, nil
 			},
 		}},

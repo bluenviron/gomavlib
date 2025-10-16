@@ -34,15 +34,14 @@ func main() {
 	node := &gomavlib.Node{
 		Endpoints: []gomavlib.EndpointConf{
 			gomavlib.EndpointCustomServer{
-				Address: ":5600",
-				Listen: func(address string) (net.Listener, error) {
+				Listen: func() (net.Listener, error) {
 					// Loads the certificate and key from the generated certs dir
 					cert, err := tls.LoadX509KeyPair("certs/cert.pem", "certs/key.pem")
 					if err != nil {
 						return nil, err
 					}
 
-					return tls.Listen("tcp", address, &tls.Config{
+					return tls.Listen("tcp", ":5600", &tls.Config{
 						Certificates: []tls.Certificate{cert},
 					})
 				},

@@ -10,18 +10,16 @@ import (
 	"github.com/pion/transport/v2/udp"
 )
 
-// EndpointServerType is an Enum for specifying what protocol the endpoint uses
-type EndpointServerType int
+type endpointServerType int
 
-// endpoint types
 const (
-	EndpointServerTypeTCP EndpointServerType = iota
-	EndpointServerTypeUDP
-	EndpointServerTypeCustom
+	endpointServerTypeTCP endpointServerType = iota
+	endpointServerTypeUDP
+	endpointServerTypeCustom
 )
 
 type endpointServerConf interface {
-	serverType() EndpointServerType
+	serverType() endpointServerType
 	getAddress() string
 	init(*Node) (Endpoint, error)
 }
@@ -35,8 +33,8 @@ type EndpointTCPServer struct {
 	Address string
 }
 
-func (EndpointTCPServer) serverType() EndpointServerType {
-	return EndpointServerTypeTCP
+func (EndpointTCPServer) serverType() endpointServerType {
+	return endpointServerTypeTCP
 }
 
 func (conf EndpointTCPServer) getAddress() string {
@@ -60,8 +58,8 @@ type EndpointUDPServer struct {
 	Address string
 }
 
-func (EndpointUDPServer) serverType() EndpointServerType {
-	return EndpointServerTypeUDP
+func (EndpointUDPServer) serverType() endpointServerType {
+	return endpointServerTypeUDP
 }
 
 func (conf EndpointUDPServer) getAddress() string {
@@ -90,8 +88,8 @@ type EndpointCustomServer struct {
 	Label string
 }
 
-func (EndpointCustomServer) serverType() EndpointServerType {
-	return EndpointServerTypeCustom
+func (EndpointCustomServer) serverType() endpointServerType {
+	return endpointServerTypeCustom
 }
 
 func (conf EndpointCustomServer) getAddress() string {
@@ -124,7 +122,7 @@ func (e *endpointServer) initialize() error {
 	}
 
 	switch e.conf.serverType() {
-	case EndpointServerTypeUDP:
+	case endpointServerTypeUDP:
 		var addr *net.UDPAddr
 		addr, err = net.ResolveUDPAddr("udp4", e.conf.getAddress())
 		if err != nil {
@@ -135,12 +133,12 @@ func (e *endpointServer) initialize() error {
 		if err != nil {
 			return err
 		}
-	case EndpointServerTypeTCP:
+	case endpointServerTypeTCP:
 		e.listener, err = net.Listen("tcp4", e.conf.getAddress())
 		if err != nil {
 			return err
 		}
-	case EndpointServerTypeCustom:
+	case endpointServerTypeCustom:
 		if customConf, ok := e.conf.(EndpointCustomServer); ok {
 			e.listener, err = customConf.Listen(e.conf.getAddress())
 			if err != nil {
@@ -183,11 +181,11 @@ func (e *endpointServer) provide() (string, io.ReadWriteCloser, error) {
 
 	label := fmt.Sprintf("%s:%s", func() string {
 		switch e.conf.serverType() {
-		case EndpointServerTypeTCP:
+		case endpointServerTypeTCP:
 			return "tcp"
-		case EndpointServerTypeUDP:
+		case endpointServerTypeUDP:
 			return "udp"
-		case EndpointServerTypeCustom:
+		case endpointServerTypeCustom:
 			if customConf, ok := e.conf.(EndpointCustomServer); ok {
 				if customConf.Label != "" {
 					return customConf.Label

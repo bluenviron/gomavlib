@@ -14,7 +14,7 @@ import (
 var reconnectPeriod = 2 * time.Second
 
 type endpointClientConf interface {
-	clientType() EndpointServerType
+	clientType() endpointServerType
 	getAddress() string
 	init(*Node) (Endpoint, error)
 }
@@ -28,8 +28,8 @@ type EndpointTCPClient struct {
 	Address string
 }
 
-func (EndpointTCPClient) clientType() EndpointServerType {
-	return EndpointServerTypeTCP
+func (EndpointTCPClient) clientType() endpointServerType {
+	return endpointServerTypeTCP
 }
 
 func (conf EndpointTCPClient) getAddress() string {
@@ -51,8 +51,8 @@ type EndpointUDPClient struct {
 	Address string
 }
 
-func (EndpointUDPClient) clientType() EndpointServerType {
-	return EndpointServerTypeUDP
+func (EndpointUDPClient) clientType() endpointServerType {
+	return endpointServerTypeUDP
 }
 
 func (conf EndpointUDPClient) getAddress() string {
@@ -79,8 +79,8 @@ type EndpointCustomClient struct {
 	Label string
 }
 
-func (EndpointCustomClient) clientType() EndpointServerType {
-	return EndpointServerTypeCustom
+func (EndpointCustomClient) clientType() endpointServerType {
+	return endpointServerTypeCustom
 }
 
 func (conf EndpointCustomClient) getAddress() string {
@@ -133,11 +133,11 @@ func (e *endpointClient) oneChannelAtAtime() bool {
 func (e *endpointClient) connect() (io.ReadWriteCloser, error) {
 	network := func() string {
 		switch e.conf.clientType() {
-		case EndpointServerTypeTCP:
+		case endpointServerTypeTCP:
 			return "tcp4"
-		case EndpointServerTypeUDP:
+		case endpointServerTypeUDP:
 			return "udp4"
-		case EndpointServerTypeCustom:
+		case endpointServerTypeCustom:
 			return "cust"
 		default:
 			return ""
@@ -201,11 +201,11 @@ func (e *endpointClient) provide() (string, io.ReadWriteCloser, error) {
 func (e *endpointClient) label() string {
 	return fmt.Sprintf("%s:%s", func() string {
 		switch e.conf.clientType() {
-		case EndpointServerTypeTCP:
+		case endpointServerTypeTCP:
 			return "tcp"
-		case EndpointServerTypeUDP:
+		case endpointServerTypeUDP:
 			return "udp"
-		case EndpointServerTypeCustom:
+		case endpointServerTypeCustom:
 			if customConf, ok := e.conf.(EndpointCustomClient); ok {
 				if customConf.Label != "" {
 					return customConf.Label

@@ -22,6 +22,8 @@ func (r *removeCloser) Close() error {
 
 // EndpointCustom sets up a endpoint that works with a custom interface
 // that provides the Read(), Write() and Close() functions.
+//
+// Deprecated: replaced by EndpointCustomClient, that also provides automatic reconnection.
 type EndpointCustom struct {
 	// struct or interface implementing Read(), Write() and Close()
 	ReadWriteCloser io.ReadWriteCloser

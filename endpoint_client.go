@@ -2,6 +2,7 @@ package gomavlib
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -13,7 +14,6 @@ import (
 var reconnectPeriod = 2 * time.Second
 
 type endpointClientConf interface {
-	isUDP() bool
 	getAddress() string
 	init(*Node) (Endpoint, error)
 }
@@ -25,10 +25,6 @@ type endpointClientConf interface {
 type EndpointTCPClient struct {
 	// domain name or IP of the server to connect to, example: 1.2.3.4:5600
 	Address string
-}
-
-func (EndpointTCPClient) isUDP() bool {
-	return false
 }
 
 func (conf EndpointTCPClient) getAddress() string {
@@ -50,15 +46,35 @@ type EndpointUDPClient struct {
 	Address string
 }
 
-func (EndpointUDPClient) isUDP() bool {
-	return true
-}
-
 func (conf EndpointUDPClient) getAddress() string {
 	return conf.Address
 }
 
 func (conf EndpointUDPClient) init(node *Node) (Endpoint, error) {
+	e := &endpointClient{
+		node: node,
+		conf: conf,
+	}
+	err := e.initialize()
+	return e, err
+}
+
+// EndpointCustomClient sets up a endpoint that works with a custom implementation
+// by providing a Connect func that returns a net.Conn.
+type EndpointCustomClient struct {
+	// domain name or IP of the server to connect to, example: 1.2.3.4:5600
+	Address string
+	// custom connect function that connects to the provided address
+	Connect func(address string) (net.Conn, error)
+	// the label of the protocol
+	Label string
+}
+
+func (conf EndpointCustomClient) getAddress() string {
+	return conf.Address
+}
+
+func (conf EndpointCustomClient) init(node *Node) (Endpoint, error) {
 	e := &endpointClient{
 		node: node,
 		conf: conf,
@@ -103,16 +119,31 @@ func (e *endpointClient) oneChannelAtAtime() bool {
 
 func (e *endpointClient) connect() (io.ReadWriteCloser, error) {
 	network := func() string {
-		if e.conf.isUDP() {
+		switch e.conf.(type) {
+		case EndpointTCPClient:
+			return "tcp4"
+		case EndpointUDPClient:
 			return "udp4"
+		case EndpointCustomClient:
+			return "cust"
+		default:
+			return ""
 		}
-		return "tcp4"
 	}()
 
 	// in UDP, the only possible error is a DNS failure
 	// in TCP, the handshake must be completed
 	timedContext, timedContextClose := context.WithTimeout(e.ctx, e.node.ReadTimeout)
-	nconn, err := (&net.Dialer{}).DialContext(timedContext, network, e.conf.getAddress())
+	nconn, err := func() (net.Conn, error) {
+		if network == "cust" {
+			customConf := e.conf.(EndpointCustomClient)
+			if customConf.Connect == nil {
+				return nil, errors.New("no connect function provided on custom endpoint")
+			}
+			return customConf.Connect(customConf.Address)
+		}
+		return (&net.Dialer{}).DialContext(timedContext, network, e.conf.getAddress())
+	}()
 	timedContextClose()
 
 	if err != nil {
@@ -154,9 +185,18 @@ func (e *endpointClient) provide() (string, io.ReadWriteCloser, error) {
 
 func (e *endpointClient) label() string {
 	return fmt.Sprintf("%s:%s", func() string {
-		if e.conf.isUDP() {
+		switch conf := e.conf.(type) {
+		case EndpointTCPClient:
+			return "tcp"
+		case EndpointUDPClient:
 			return "udp"
+		case EndpointCustomClient:
+			if conf.Label != "" {
+				return conf.Label
+			}
+			return "custom"
+		default:
+			return "unknown"
 		}
-		return "tcp"
 	}(), e.conf.getAddress())
 }

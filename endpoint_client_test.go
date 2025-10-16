@@ -306,7 +306,7 @@ func TestEndpointCustomClient(t *testing.T) {
 		OutSystemID: 10,
 		Endpoints: []EndpointConf{EndpointCustomClient{
 			Connect: func(_ context.Context) (net.Conn, error) {
-				return remote, nil
+				return &rwcToConn{remote}, nil
 			},
 		}},
 		HeartbeatDisable: true,

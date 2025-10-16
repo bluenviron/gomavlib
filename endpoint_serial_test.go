@@ -20,10 +20,10 @@ func TestEndpointSerial(t *testing.T) {
 
 		n++
 		switch n {
-		case 1:
+		case 0:
 			return remote, nil
 
-		case 2:
+		case 1:
 
 		default:
 			t.Errorf("should not happen")
@@ -145,9 +145,7 @@ func TestEndpointSerialReconnect(t *testing.T) {
 		remote, local := newDummyReadWriterPair()
 
 		switch count {
-		case 0: // skip first call to serialOpenFunc()
-
-		case 1:
+		case 0:
 			go func() {
 				dialectRW := &dialect.ReadWriter{Dialect: testDialect}
 				err := dialectRW.Initialize()
@@ -198,7 +196,7 @@ func TestEndpointSerialReconnect(t *testing.T) {
 				remote.simulateReadError()
 			}()
 
-		case 2:
+		case 1:
 			go func() {
 				dialectRW := &dialect.ReadWriter{Dialect: testDialect}
 				err := dialectRW.Initialize()

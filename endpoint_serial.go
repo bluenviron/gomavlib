@@ -3,6 +3,7 @@ package gomavlib
 import (
 	"context"
 	"io"
+	"net"
 	"time"
 
 	"go.bug.st/serial"
@@ -25,6 +26,30 @@ var serialOpenFunc = func(device string, baud int) (io.ReadWriteCloser, error) {
 	return dev, nil
 }
 
+type rwcToConn struct {
+	io.ReadWriteCloser
+}
+
+func (*rwcToConn) LocalAddr() net.Addr {
+	return nil
+}
+
+func (*rwcToConn) RemoteAddr() net.Addr {
+	return nil
+}
+
+func (*rwcToConn) SetDeadline(_ time.Time) error {
+	return nil
+}
+
+func (*rwcToConn) SetReadDeadline(_ time.Time) error {
+	return nil
+}
+
+func (*rwcToConn) SetWriteDeadline(_ time.Time) error {
+	return nil
+}
+
 // EndpointSerial sets up a endpoint that works with a serial port.
 type EndpointSerial struct {
 	// name of the device of the serial port (i.e: /dev/ttyUSB0)
@@ -35,76 +60,19 @@ type EndpointSerial struct {
 }
 
 func (conf EndpointSerial) init(node *Node) (Endpoint, error) {
-	e := &endpointSerial{
+	e := &endpointClient{
 		node: node,
-		conf: conf,
+		conf: EndpointCustomClient{
+			Connect: func(_ context.Context) (net.Conn, error) {
+				rwc, err := serialOpenFunc(conf.Device, conf.Baud)
+				if err != nil {
+					return nil, err
+				}
+				return &rwcToConn{rwc}, nil
+			},
+			Label: "serial",
+		},
 	}
 	err := e.initialize()
 	return e, err
-}
-
-type endpointSerial struct {
-	node *Node
-	conf EndpointSerial
-
-	ctx       context.Context
-	ctxCancel func()
-	first     bool
-}
-
-func (e *endpointSerial) initialize() error {
-	// check device existence
-	test, err := serialOpenFunc(e.conf.Device, e.conf.Baud)
-	if err != nil {
-		return err
-	}
-	test.Close()
-
-	e.ctx, e.ctxCancel = context.WithCancel(context.Background())
-
-	return nil
-}
-
-func (e *endpointSerial) isEndpoint() {}
-
-func (e *endpointSerial) Conf() EndpointConf {
-	return e.conf
-}
-
-func (e *endpointSerial) close() {
-	e.ctxCancel()
-}
-
-func (e *endpointSerial) oneChannelAtAtime() bool {
-	return true
-}
-
-func (e *endpointSerial) connect() (io.ReadWriteCloser, error) {
-	return serialOpenFunc(e.conf.Device, e.conf.Baud)
-}
-
-func (e *endpointSerial) provide() (string, io.ReadWriteCloser, error) {
-	if !e.first {
-		e.first = true
-	} else {
-		select {
-		case <-time.After(reconnectPeriod):
-		case <-e.ctx.Done():
-			return "", nil, errTerminated
-		}
-	}
-
-	for {
-		conn, err := e.connect()
-		if err != nil {
-			select {
-			case <-time.After(reconnectPeriod):
-				continue
-			case <-e.ctx.Done():
-				return "", nil, errTerminated
-			}
-		}
-
-		return "serial", conn, nil
-	}
 }

@@ -65,26 +65,6 @@ func (e *dummyReadWriter) Write(p []byte) (int, error) {
 	return len(p), nil
 }
 
-func (e *dummyReadWriter) LocalAddr() net.Addr {
-	return nil
-}
-
-func (e *dummyReadWriter) RemoteAddr() net.Addr {
-	return nil
-}
-
-func (e *dummyReadWriter) SetDeadline(_ time.Time) error {
-	return nil
-}
-
-func (e *dummyReadWriter) SetReadDeadline(_ time.Time) error {
-	return nil
-}
-
-func (e *dummyReadWriter) SetWriteDeadline(_ time.Time) error {
-	return nil
-}
-
 func TestEndpointClient(t *testing.T) {
 	for _, ca := range []string{"tcp", "udp"} {
 		t.Run(ca, func(t *testing.T) {
@@ -326,7 +306,7 @@ func TestEndpointCustomClient(t *testing.T) {
 		OutSystemID: 10,
 		Endpoints: []EndpointConf{EndpointCustomClient{
 			Connect: func(_ context.Context) (net.Conn, error) {
-				return remote, nil
+				return &rwcToConn{remote}, nil
 			},
 		}},
 		HeartbeatDisable: true,

@@ -3,6 +3,7 @@ package gomavlib
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"testing"
@@ -384,4 +385,65 @@ func TestEndpointCustomClient(t *testing.T) {
 			Checksum:       fr.GetChecksum(),
 		}, fr)
 	}
+}
+
+type dummyReadWriter2 struct {
+	terminate chan struct{}
+}
+
+func (r *dummyReadWriter2) Close() error {
+	close(r.terminate)
+	return nil
+}
+
+func (r *dummyReadWriter2) Read(_ []byte) (int, error) {
+	<-r.terminate
+	return 0, io.EOF
+}
+
+var errDummy = fmt.Errorf("dummy error")
+
+func (r *dummyReadWriter2) Write(_ []byte) (int, error) {
+	return 0, errDummy
+}
+
+func TestEndpointClientWriteError(t *testing.T) {
+	rwc := &dummyReadWriter2{
+		terminate: make(chan struct{}),
+	}
+
+	node, err := NewNode(NodeConf{
+		Dialect:     testDialect,
+		OutVersion:  V2,
+		OutSystemID: 10,
+		Endpoints: []EndpointConf{EndpointCustomClient{
+			Connect: func(_ context.Context) (net.Conn, error) {
+				return &rwcToConn{rwc}, nil
+			},
+		}},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer node.Close()
+
+	evt := <-node.Events()
+	require.Equal(t, &EventChannelOpen{
+		Channel: evt.(*EventChannelOpen).Channel,
+	}, evt)
+
+	err = node.WriteMessageAll(&MessageHeartbeat{
+		Type:           1,
+		Autopilot:      2,
+		BaseMode:       3,
+		CustomMode:     6,
+		SystemStatus:   4,
+		MavlinkVersion: 5,
+	})
+	require.NoError(t, err)
+
+	evt = <-node.Events()
+	require.Equal(t, &EventChannelClose{
+		Channel: evt.(*EventChannelClose).Channel,
+		Error:   errDummy,
+	}, evt)
 }

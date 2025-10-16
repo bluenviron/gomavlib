@@ -122,6 +122,10 @@ func (ch *Channel) run() {
 		close(writerTerminate)
 		<-writerDone
 
+	case err = <-writerDone:
+		ch.rwc.Close()
+		<-readerDone
+
 	case <-ch.ctx.Done():
 		close(writerTerminate)
 		<-writerDone

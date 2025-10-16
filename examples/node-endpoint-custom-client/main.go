@@ -1,3 +1,4 @@
+// Package main contains an example.
 package main
 
 import (
@@ -21,7 +22,8 @@ func main() {
 				Address: "127.0.0.1:5600",
 				Connect: func(address string) (net.Conn, error) {
 					tlsConfig := &tls.Config{
-						InsecureSkipVerify: true, // skip checking the certificate against a CA (just set to true for simplicity of this example)
+						// skip checking the certificate against a CA (just set to true for simplicity of this example)
+						InsecureSkipVerify: true,
 					}
 
 					return tls.Dial("tcp", address, tlsConfig)

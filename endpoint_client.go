@@ -29,7 +29,7 @@ type EndpointTCPClient struct {
 }
 
 func (EndpointTCPClient) clientType() EndpointServerType {
-	return EndpointServerType_TCP
+	return EndpointServerTypeTCP
 }
 
 func (conf EndpointTCPClient) getAddress() string {
@@ -52,7 +52,7 @@ type EndpointUDPClient struct {
 }
 
 func (EndpointUDPClient) clientType() EndpointServerType {
-	return EndpointServerType_UDP
+	return EndpointServerTypeUDP
 }
 
 func (conf EndpointUDPClient) getAddress() string {
@@ -80,7 +80,7 @@ type EndpointCustomClient struct {
 }
 
 func (EndpointCustomClient) clientType() EndpointServerType {
-	return EndpointServerType_CUSTOM
+	return EndpointServerTypeCustom
 }
 
 func (conf EndpointCustomClient) getAddress() string {
@@ -133,11 +133,11 @@ func (e *endpointClient) oneChannelAtAtime() bool {
 func (e *endpointClient) connect() (io.ReadWriteCloser, error) {
 	network := func() string {
 		switch e.conf.clientType() {
-		case EndpointServerType_TCP:
+		case EndpointServerTypeTCP:
 			return "tcp4"
-		case EndpointServerType_UDP:
+		case EndpointServerTypeUDP:
 			return "udp4"
-		case EndpointServerType_CUSTOM:
+		case EndpointServerTypeCustom:
 			return "cust"
 		default:
 			return ""
@@ -154,9 +154,8 @@ func (e *endpointClient) connect() (io.ReadWriteCloser, error) {
 					return nil, errors.New("no connect function provided on custom endpoint")
 				}
 				return customConf.Connect(customConf.Address)
-			} else {
-				return nil, errors.New("failed type assertion to endpointcustomclient")
 			}
+			return nil, errors.New("failed type assertion to endpointcustomclient")
 		}
 		return (&net.Dialer{}).DialContext(timedContext, network, e.conf.getAddress())
 	}()
@@ -202,11 +201,11 @@ func (e *endpointClient) provide() (string, io.ReadWriteCloser, error) {
 func (e *endpointClient) label() string {
 	return fmt.Sprintf("%s:%s", func() string {
 		switch e.conf.clientType() {
-		case EndpointServerType_TCP:
+		case EndpointServerTypeTCP:
 			return "tcp"
-		case EndpointServerType_UDP:
+		case EndpointServerTypeUDP:
 			return "udp"
-		case EndpointServerType_CUSTOM:
+		case EndpointServerTypeCustom:
 			if customConf, ok := e.conf.(EndpointCustomClient); ok {
 				if customConf.Label != "" {
 					return customConf.Label

@@ -10,13 +10,14 @@ import (
 	"github.com/pion/transport/v2/udp"
 )
 
-// Enum for specifying what protocol the endpoint uses
+// EndpointServerType is an Enum for specifying what protocol the endpoint uses
 type EndpointServerType int
 
+// endpoint types
 const (
-	EndpointServerType_TCP EndpointServerType = iota
-	EndpointServerType_UDP
-	EndpointServerType_CUSTOM
+	EndpointServerTypeTCP EndpointServerType = iota
+	EndpointServerTypeUDP
+	EndpointServerTypeCustom
 )
 
 type endpointServerConf interface {
@@ -35,7 +36,7 @@ type EndpointTCPServer struct {
 }
 
 func (EndpointTCPServer) serverType() EndpointServerType {
-	return EndpointServerType_TCP
+	return EndpointServerTypeTCP
 }
 
 func (conf EndpointTCPServer) getAddress() string {
@@ -60,7 +61,7 @@ type EndpointUDPServer struct {
 }
 
 func (EndpointUDPServer) serverType() EndpointServerType {
-	return EndpointServerType_UDP
+	return EndpointServerTypeUDP
 }
 
 func (conf EndpointUDPServer) getAddress() string {
@@ -90,7 +91,7 @@ type EndpointCustomServer struct {
 }
 
 func (EndpointCustomServer) serverType() EndpointServerType {
-	return EndpointServerType_CUSTOM
+	return EndpointServerTypeCustom
 }
 
 func (conf EndpointCustomServer) getAddress() string {
@@ -123,7 +124,7 @@ func (e *endpointServer) initialize() error {
 	}
 
 	switch e.conf.serverType() {
-	case EndpointServerType_UDP:
+	case EndpointServerTypeUDP:
 		var addr *net.UDPAddr
 		addr, err = net.ResolveUDPAddr("udp4", e.conf.getAddress())
 		if err != nil {
@@ -134,12 +135,12 @@ func (e *endpointServer) initialize() error {
 		if err != nil {
 			return err
 		}
-	case EndpointServerType_TCP:
+	case EndpointServerTypeTCP:
 		e.listener, err = net.Listen("tcp4", e.conf.getAddress())
 		if err != nil {
 			return err
 		}
-	case EndpointServerType_CUSTOM:
+	case EndpointServerTypeCustom:
 		if customConf, ok := e.conf.(EndpointCustomServer); ok {
 			e.listener, err = customConf.Listen(e.conf.getAddress())
 			if err != nil {
@@ -182,11 +183,11 @@ func (e *endpointServer) provide() (string, io.ReadWriteCloser, error) {
 
 	label := fmt.Sprintf("%s:%s", func() string {
 		switch e.conf.serverType() {
-		case EndpointServerType_TCP:
+		case EndpointServerTypeTCP:
 			return "tcp"
-		case EndpointServerType_UDP:
+		case EndpointServerTypeUDP:
 			return "udp"
-		case EndpointServerType_CUSTOM:
+		case EndpointServerTypeCustom:
 			if customConf, ok := e.conf.(EndpointCustomServer); ok {
 				if customConf.Label != "" {
 					return customConf.Label

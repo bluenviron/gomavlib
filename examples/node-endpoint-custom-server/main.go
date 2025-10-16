@@ -1,3 +1,4 @@
+// Package main contains an example.
 package main
 
 import (
@@ -92,13 +93,13 @@ func GenerateCertAndKey() error {
 	// Create the certs directory if it doesn't exist
 	err := os.MkdirAll("certs", os.ModePerm)
 	if err != nil {
-		return fmt.Errorf("failed to create certs directory: %v", err)
+		return fmt.Errorf("failed to create certs directory: %w", err)
 	}
 
 	// Generate RSA private key
 	priv, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
-		return fmt.Errorf("failed to generate private key: %v", err)
+		return fmt.Errorf("failed to generate private key: %w", err)
 	}
 
 	// Create certificate template
@@ -120,31 +121,31 @@ func GenerateCertAndKey() error {
 	// Create the certificate
 	certDER, err := x509.CreateCertificate(rand.Reader, &template, &template, &priv.PublicKey, priv)
 	if err != nil {
-		return fmt.Errorf("failed to create certificate: %v", err)
+		return fmt.Errorf("failed to create certificate: %w", err)
 	}
 
 	// Save the certificate
 	certOut, err := os.Create("certs/cert.pem")
 	if err != nil {
-		return fmt.Errorf("failed to create cert.pem: %v", err)
+		return fmt.Errorf("failed to create cert.pem: %w", err)
 	}
 	defer certOut.Close()
 
 	err = pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: certDER})
 	if err != nil {
-		return fmt.Errorf("failed to encode certificate to PEM: %v", err)
+		return fmt.Errorf("failed to encode certificate to PEM: %w", err)
 	}
 
 	// Save the private key
 	keyOut, err := os.Create("certs/key.pem")
 	if err != nil {
-		return fmt.Errorf("failed to create key.pem: %v", err)
+		return fmt.Errorf("failed to create key.pem: %w", err)
 	}
 	defer keyOut.Close()
 
 	err = pem.Encode(keyOut, &pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(priv)})
 	if err != nil {
-		return fmt.Errorf("failed to encode private key to PEM: %v", err)
+		return fmt.Errorf("failed to encode private key to PEM: %w", err)
 	}
 
 	fmt.Println("cert.pem and key.pem generated in the 'certs/' directory.")

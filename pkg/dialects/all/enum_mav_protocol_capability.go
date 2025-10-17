@@ -11,7 +11,7 @@ type MAV_PROTOCOL_CAPABILITY = standard.MAV_PROTOCOL_CAPABILITY
 
 const (
 	// Autopilot supports the MISSION_ITEM float message type.
-	// Note that MISSION_ITEM is deprecated, and autopilots should use MISSION_INT instead.
+	// Note that MISSION_ITEM is deprecated, and autopilots should use MISSION_ITEM_INT instead.
 	MAV_PROTOCOL_CAPABILITY_MISSION_FLOAT MAV_PROTOCOL_CAPABILITY = standard.MAV_PROTOCOL_CAPABILITY_MISSION_FLOAT
 	// Autopilot supports the new param float message type.
 	MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT MAV_PROTOCOL_CAPABILITY = standard.MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT

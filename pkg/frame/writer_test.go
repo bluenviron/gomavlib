@@ -23,7 +23,9 @@ func TestWriterNewErrors(t *testing.T) {
 
 func TestWriterWrite(t *testing.T) {
 	for _, ca := range casesReadWrite {
-		if ca.name == "v2 frame with missing empty byte truncation" {
+		switch ca.name {
+		case "v2 frame with missing empty byte truncation",
+			"v1 frame with junk after string termination":
 			continue
 		}
 

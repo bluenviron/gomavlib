@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"reflect"
 	"time"
 
 	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
@@ -17,18 +18,20 @@ const (
 // 1st January 2015 GMT
 var signatureReferenceDate = time.Date(2015, 0o1, 0o1, 0, 0, 0, 0, time.UTC)
 
-func hasEmptyBytes(buf []byte) bool {
-	return len(buf) > 1 && buf[len(buf)-1] == 0x00
+func hasStringFields(msg message.Message) bool {
+	typ := reflect.TypeOf(msg).Elem()
+
+	for i := range typ.NumField() {
+		if typ.Field(i).Type == reflect.TypeOf("") {
+			return true
+		}
+	}
+
+	return false
 }
 
-func removeEmptyBytes(buf []byte) []byte {
-	// even with truncation, message length must be at least 1 byte
-	// https://github.com/mavlink/c_library_v2/blob/7ea034366ee7f09f3991a5b82f51f0c259023b38/mavlink_helpers.h#L113
-	end := len(buf)
-	for end > 1 && buf[end-1] == 0x00 {
-		end--
-	}
-	return buf[:end]
+func hasEmptyBytes(buf []byte) bool {
+	return len(buf) > 1 && buf[len(buf)-1] == 0x00
 }
 
 // ReadError is the error returned in case of non-fatal parsing errors.
@@ -182,21 +185,28 @@ func (r *Reader) Read() (Frame, error) {
 				return nil, newError("unable to decode message: %s", err.Error())
 			}
 
+			// some libraries generate non-standard messages, in particular:
+			// - messages with junk after string termination
+			// - v2 messages with trailing empty bytes
+			// The specification says that we must support these messages (and we are)
+			// but there might be troubles when re-encoding them, since checksum is different.
+			// re-compute the checksum.
+			if hasStringFields(msg) || (isV2 && hasEmptyBytes(rawMessage.Payload)) {
+				raw2 := mp.Write(msg, isV2)
+				switch f := f.(type) {
+				case *V1Frame:
+					f.Message = raw2
+					f.Checksum = f.GenerateChecksum(mp.CRCExtra())
+				case *V2Frame:
+					f.Message = raw2
+					f.Checksum = f.GenerateChecksum(mp.CRCExtra())
+				}
+			}
+
 			switch f := f.(type) {
 			case *V1Frame:
 				f.Message = msg
 			case *V2Frame:
-				// Some libraries generate messages without removing trailing empty bytes.
-				// The specification says that we must support these messages (and we are)
-				// but there might be troubles when re-encoding them, since checksum is different.
-				// remove trailing empty bytes and re-compute the checksum.
-				// https://mavlink.io/en/guide/serialization.html#payload_truncation
-				// https://github.com/mavlink/rust-mavlink/issues/188#issuecomment-1670605245
-				if isV2 && hasEmptyBytes(rawMessage.Payload) {
-					rawMessage.Payload = removeEmptyBytes(rawMessage.Payload)
-					f.Checksum = f.GenerateChecksum(mp.CRCExtra())
-				}
-
 				f.Message = msg
 			}
 		}

@@ -116,6 +116,25 @@ func (*MessageCommandLong) GetID() uint32 {
 	return 76
 }
 
+type MAV_PARAM_TYPE uint64 //nolint:revive
+
+const (
+	MAV_PARAM_TYPE_INT16 MAV_PARAM_TYPE = 4 //nolint:revive
+)
+
+type MessageParamSet struct {
+	TargetSystem    uint8
+	TargetComponent uint8
+	ParamId         string `mavlen:"16"` //nolint:revive
+	ParamValue      float32
+	ParamType       MAV_PARAM_TYPE `mavenum:"uint8"`
+}
+
+// GetID implements the message.Message interface.
+func (*MessageParamSet) GetID() uint32 {
+	return 23
+}
+
 var testDialectRW = func() *dialect.ReadWriter {
 	d := &dialect.Dialect{
 		Version: 3,
@@ -346,6 +365,45 @@ var casesReadWrite = []struct {
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xb0, 0x00,
 			0x01, 0x01, 0x00, 0xc4, 0x75,
+		},
+	},
+	{
+		"v1 frame with junk after string termination",
+		func() *dialect.ReadWriter {
+			d := &dialect.Dialect{
+				Version: 3,
+				Messages: []message.Message{
+					&MessageParamSet{},
+				},
+			}
+
+			drw := &dialect.ReadWriter{Dialect: d}
+			err := drw.Initialize()
+			if err != nil {
+				panic(err)
+			}
+
+			return drw
+		}(),
+		nil,
+		&V1Frame{
+			SequenceNumber: 11,
+			SystemID:       255,
+			ComponentID:    220,
+			Message: &MessageParamSet{
+				TargetSystem:    12,
+				TargetComponent: 13,
+				ParamId:         "RTL_ALT",
+				ParamValue:      4936,
+				ParamType:       MAV_PARAM_TYPE_INT16,
+			},
+			Checksum: 0x745c,
+		},
+		[]byte{
+			0xfe, 0x17, 0x0b, 0xff, 0xdc, 0x17, 0x00, 0x40,
+			0x9a, 0x45, 0x0c, 0x0d, 0x52, 0x54, 0x4c, 0x5f,
+			0x41, 0x4c, 0x54, 0x00, 0x01, 0x02, 0x03, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x04, 0x51, 0x49,
 		},
 	},
 }

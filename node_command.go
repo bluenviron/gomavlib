@@ -5,6 +5,7 @@ import (
 	"errors"
 	"reflect"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/bluenviron/gomavlib/v3/pkg/message"
@@ -76,6 +77,7 @@ type commandKey struct {
 	targetSystem uint8
 	targetComp   uint8
 	commandID    uint32
+	sequence     uint64
 }
 
 // pendingCommand tracks a command awaiting response
@@ -114,6 +116,8 @@ type nodeCommand struct {
 	// State management
 	pendingMutex sync.RWMutex
 	pending      map[commandKey]*pendingCommand
+
+	sequenceCounter atomic.Uint64
 
 	// Control channels
 	chRequest chan *sendCommandReq
@@ -212,7 +216,7 @@ func (nc *nodeCommand) run() {
 	for {
 		select {
 		case req := <-nc.chRequest:
-			nc.handleSendCommand(req)
+			go nc.handleSendCommand(req)
 
 		case <-ticker.C:
 			nc.cleanupTimeouts()
@@ -230,6 +234,7 @@ func (nc *nodeCommand) handleSendCommand(req *sendCommandReq) {
 		targetSystem: req.targetSystem,
 		targetComp:   req.targetComp,
 		commandID:    req.commandID,
+		sequence:     nc.sequenceCounter.Add(1),
 	}
 
 	timeout := req.timeout
@@ -283,6 +288,9 @@ func (nc *nodeCommand) waitForResponse(pending *pendingCommand) {
 
 		// Only send timeout response if it was still pending
 		if stillPending {
+			if pending.progressCh != nil {
+				close(pending.progressCh)
+			}
 			select {
 			case pending.responseCh <- &CommandResponse{
 				Result:       0, // Could use a specific timeout result
@@ -351,19 +359,20 @@ func (nc *nodeCommand) onEventFrame(evt *EventFrame) {
 		resultParam2 = int32(field.Int())
 	}
 
-	// Match based on who SENT the ACK (should be who we sent the command TO)
-	key := commandKey{
-		channel:      evt.Channel,
-		targetSystem: evt.SystemID(),    // Who sent the ACK
-		targetComp:   evt.ComponentID(), // Who sent the ACK
-		commandID:    commandID,
-	}
-
 	nc.pendingMutex.RLock()
-	pending, exists := nc.pending[key]
+	var pending *pendingCommand
+	for key, p := range nc.pending {
+		if key.channel == evt.Channel &&
+			key.targetSystem == evt.SystemID() &&
+			key.targetComp == evt.ComponentID() &&
+			key.commandID == commandID {
+			pending = p
+			break
+		}
+	}
 	nc.pendingMutex.RUnlock()
 
-	if !exists {
+	if pending == nil {
 		return
 	}
 
@@ -386,8 +395,11 @@ func (nc *nodeCommand) onEventFrame(evt *EventFrame) {
 		return
 	}
 
-	// Final result
-	nc.removePending(key)
+	// Remove pending command and close progress channel then send response
+	if pending.progressCh != nil {
+		close(pending.progressCh)
+	}
+	nc.removePending(pending.key)
 
 	select {
 	case pending.responseCh <- response:

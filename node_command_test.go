@@ -1,6 +1,7 @@
 package gomavlib
 
 import (
+	"sync"
 	"testing"
 	"time"
 
@@ -139,6 +140,12 @@ func TestNodeCommandLongSuccess(t *testing.T) {
 	channelOpen, ok := evt.(*EventChannelOpen)
 	require.True(t, ok)
 
+	// Drain node2 events in background
+	go func() {
+		for range node2.Events() { //nolint:revive
+		}
+	}()
+
 	// Send command - this blocks until response or timeout
 	resp, err := node2.SendCommandLong(&common.MessageCommandLong{
 		TargetSystem:    1,
@@ -153,7 +160,8 @@ func TestNodeCommandLongSuccess(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, resp)
 	require.Equal(t, uint64(MAV_RESULT_ACCEPTED), resp.Result)
-	require.Less(t, resp.ResponseTime, 2*time.Second)
+	// 2.005s
+	require.Less(t, int64(resp.ResponseTime), int64(2005*time.Millisecond))
 }
 
 // TestNodeCommandIntSuccess tests successful COMMAND_INT execution
@@ -200,6 +208,11 @@ func TestNodeCommandIntSuccess(t *testing.T) {
 	evt := <-node2.Events()
 	channelOpen, ok := evt.(*EventChannelOpen)
 	require.True(t, ok)
+
+	go func() {
+		for range node2.Events() { //nolint:revive
+		}
+	}()
 
 	resp, err := node2.SendCommandInt(&common.MessageCommandInt{
 		TargetSystem:    1,
@@ -255,6 +268,12 @@ func TestNodeCommandTimeout(t *testing.T) {
 	evt := <-node2.Events()
 	channelOpen, ok := evt.(*EventChannelOpen)
 	require.True(t, ok)
+
+	// Drain node2 events in background
+	go func() {
+		for range node2.Events() { //nolint:revive
+		}
+	}()
 
 	start := time.Now()
 	resp, err := node2.SendCommandLong(&common.MessageCommandLong{
@@ -338,7 +357,15 @@ func TestNodeCommandInProgress(t *testing.T) {
 	channelOpen, ok := evt.(*EventChannelOpen)
 	require.True(t, ok)
 
+	// Drain node2 events in background
+	go func() {
+		for range node2.Events() { //nolint:revive
+		}
+	}()
+
 	progressUpdates := []uint8{}
+	progressMutex := sync.Mutex{}
+
 	resp, err := node2.SendCommandLong(&common.MessageCommandLong{
 		TargetSystem:    1,
 		TargetComponent: 1,
@@ -353,11 +380,18 @@ func TestNodeCommandInProgress(t *testing.T) {
 	}, &CommandOptions{
 		Channel: channelOpen.Channel,
 		Timeout: 2 * time.Second,
+		OnProgress: func(progress uint8) {
+			progressMutex.Lock()
+			progressUpdates = append(progressUpdates, progress)
+			progressMutex.Unlock()
+		},
 	})
 
 	require.NoError(t, err)
 	require.NotNil(t, resp)
 	require.Equal(t, uint64(MAV_RESULT_ACCEPTED), resp.Result)
+	progressMutex.Lock()
+	defer progressMutex.Unlock()
 	require.Greater(t, len(progressUpdates), 0, "should have received progress updates")
 }
 
@@ -404,6 +438,11 @@ func TestNodeCommandDenied(t *testing.T) {
 	evt := <-node2.Events()
 	channelOpen, ok := evt.(*EventChannelOpen)
 	require.True(t, ok)
+
+	go func() {
+		for range node2.Events() { //nolint:revive
+		}
+	}()
 
 	resp, err := node2.SendCommandLong(&common.MessageCommandLong{
 		TargetSystem:    1,

@@ -54,26 +54,33 @@ func main() {
 
 				// Send ARM command with progress tracking
 				log.Println("Sending ARM command...")
-				resp, err := node.SendCommandLong(&gomavlib.CommandLongRequest{
-					Channel:         targetChannel,
+				var resp *gomavlib.CommandResponse
+				var cmdErr error
+				resp, cmdErr = node.SendCommandLong(&common.MessageCommandLong{
 					TargetSystem:    e.SystemID(),
 					TargetComponent: e.ComponentID(),
-					Command:         uint64(common.MAV_CMD_COMPONENT_ARM_DISARM),
-					Params:          [7]float32{1, 0, 0, 0, 0, 0, 0}, // 1 = ARM
-					Options: &gomavlib.CommandOptions{
-						Timeout: 5 * time.Second,
-						OnProgress: func(progress uint8) {
-							if progress == 255 {
-								log.Println("Command in progress (progress unknown)")
-							} else {
-								log.Printf("Command progress: %d%%\n", progress)
-							}
-						},
+					Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+					Param1:          1,
+					Param2:          0,
+					Param3:          0,
+					Param4:          0,
+					Param5:          0,
+					Param6:          0,
+					Param7:          0,
+				}, &gomavlib.CommandOptions{
+					Timeout: 5 * time.Second,
+					OnProgress: func(progress uint8) {
+						if progress == 255 {
+							log.Println("Command in progress (progress unknown)")
+						} else {
+							log.Printf("Command progress: %d%%\n", progress)
+						}
 					},
 				})
 
-				if err != nil {
-					log.Fatalf("Command failed: %v\n", err)
+				if cmdErr != nil {
+					log.Printf("Command failed: %v\n", err)
+					return
 				}
 
 				// Check result
@@ -85,23 +92,30 @@ func main() {
 					// Example: Send another command (DISARM)
 					time.Sleep(2 * time.Second)
 					log.Println("Sending DISARM command...")
-					resp2, err := node.SendCommandLong(&gomavlib.CommandLongRequest{
-						Channel:         targetChannel,
+					resp, cmdErr = node.SendCommandLong(&common.MessageCommandLong{
 						TargetSystem:    e.SystemID(),
 						TargetComponent: e.ComponentID(),
-						Command:         uint64(common.MAV_CMD_COMPONENT_ARM_DISARM),
-						Params:          [7]float32{0, 0, 0, 0, 0, 0, 0}, // 0 = DISARM
-						Options: &gomavlib.CommandOptions{
-							Timeout: 5 * time.Second,
-						},
+						Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+						Param1:          0,
+						Param2:          0,
+						Param3:          0,
+						Param4:          0,
+						Param5:          0,
+						Param6:          0,
+						Param7:          0,
+					}, &gomavlib.CommandOptions{
+						Timeout: 5 * time.Second,
 					})
 
-					if err != nil {
-						log.Fatalf("DISARM command failed: %v\n", err)
+					if cmdErr != nil {
+						log.Printf("DISARM command failed: %v\n", err)
+						return
 					}
 
-					if resp2.Result == uint64(common.MAV_RESULT_ACCEPTED) {
+					if resp.Result == uint64(common.MAV_RESULT_ACCEPTED) {
 						log.Println("✓ Vehicle disarmed!")
+					} else {
+						log.Printf("DISARM command failed: %v\n", resp.Result)
 					}
 
 					return

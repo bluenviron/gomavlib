@@ -1,4 +1,3 @@
-// node_command.go
 package gomavlib
 
 import (
@@ -23,41 +22,27 @@ const (
 )
 
 var (
-	ErrCommandTimeout     = errors.New("command timeout")
-	ErrCommandRejected    = errors.New("command rejected")
-	ErrCommandFailed      = errors.New("command failed")
+	//nolint:revive
+	ErrCommandTimeout = errors.New("command timeout")
+	//nolint:revive
+	ErrCommandRejected = errors.New("command rejected")
+	//nolint:revive
+	ErrCommandFailed = errors.New("command failed")
+	//nolint:revive
 	ErrCommandUnsupported = errors.New("command unsupported")
-	ErrCommandDenied      = errors.New("command denied")
-	ErrCommandCancelled   = errors.New("command cancelled")
-	ErrNodeTerminated     = errors.New("node terminated")
+	//nolint:revive
+	ErrCommandDenied = errors.New("command denied")
+	//nolint:revive
+	ErrCommandCancelled = errors.New("command cancelled")
+	//nolint:revive
+	ErrNodeTerminated = errors.New("node terminated")
 )
-
-// CommandLongRequest represents a COMMAND_LONG to be sent.
-type CommandLongRequest struct {
-	Channel         *Channel
-	TargetSystem    uint8
-	TargetComponent uint8
-	Command         uint64 // MAV_CMD enum value
-	Params          [7]float32
-	Options         *CommandOptions
-}
-
-// CommandIntRequest represents a COMMAND_INT to be sent.
-type CommandIntRequest struct {
-	Channel         *Channel
-	TargetSystem    uint8
-	TargetComponent uint8
-	Frame           uint64     // MAV_FRAME enum value
-	Command         uint64     // MAV_CMD enum value
-	X               int32      // PARAM5 (latitude or x position)
-	Y               int32      // PARAM6 (longitude or y position)
-	Z               float32    // PARAM7 (altitude or z position)
-	Params          [4]float32 // PARAM1-4
-	Options         *CommandOptions
-}
 
 // CommandOptions configures command sending behavior.
 type CommandOptions struct {
+	// Channel to send the command on.
+	Channel *Channel
+
 	// Timeout for waiting for COMMAND_ACK response.
 	// Defaults to 5 seconds if not specified or zero.
 	Timeout time.Duration

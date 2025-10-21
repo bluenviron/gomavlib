@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 	"github.com/bluenviron/gomavlib/v3/pkg/message"
 )
 
@@ -17,17 +18,17 @@ type (
 )
 
 const (
-	MAV_RESULT_ACCEPTED             MAV_RESULT = 0
-	MAV_RESULT_TEMPORARILY_REJECTED MAV_RESULT = 1
-	MAV_RESULT_DENIED               MAV_RESULT = 2
-	MAV_RESULT_UNSUPPORTED          MAV_RESULT = 3
-	MAV_RESULT_FAILED               MAV_RESULT = 4
-	MAV_RESULT_IN_PROGRESS          MAV_RESULT = 5
+	MAV_RESULT_ACCEPTED             MAV_RESULT = 0 //nolint:revive
+	MAV_RESULT_TEMPORARILY_REJECTED MAV_RESULT = 1 //nolint:revive
+	MAV_RESULT_DENIED               MAV_RESULT = 2 //nolint:revive
+	MAV_RESULT_UNSUPPORTED          MAV_RESULT = 3 //nolint:revive
+	MAV_RESULT_FAILED               MAV_RESULT = 4 //nolint:revive
+	MAV_RESULT_IN_PROGRESS          MAV_RESULT = 5 //nolint:revive
 
-	MAV_CMD_COMPONENT_ARM_DISARM MAV_CMD = 400
-	MAV_CMD_NAV_WAYPOINT         MAV_CMD = 16
+	MAV_CMD_COMPONENT_ARM_DISARM MAV_CMD = 400 //nolint:revive
+	MAV_CMD_NAV_WAYPOINT         MAV_CMD = 16  //nolint:revive
 
-	MAV_FRAME_GLOBAL_RELATIVE_ALT MAV_FRAME = 3
+	MAV_FRAME_GLOBAL_RELATIVE_ALT MAV_FRAME = 3 //nolint:revive
 )
 
 type MessageCommandLong struct {
@@ -109,13 +110,13 @@ func TestNodeCommandLongSuccess(t *testing.T) {
 	go func() {
 		for evt := range node1.Events() {
 			if frm, ok := evt.(*EventFrame); ok {
-				if cmd, ok := frm.Message().(*MessageCommandLong); ok {
-					node1.WriteMessageTo(frm.Channel, &MessageCommandAck{
+				if cmd, cmdLongCastOk := frm.Message().(*MessageCommandLong); cmdLongCastOk {
+					require.NoError(t, node1.WriteMessageTo(frm.Channel, &MessageCommandAck{
 						Command:      cmd.Command,
 						Result:       MAV_RESULT_ACCEPTED,
 						TargetSystem: frm.SystemID(),
 						TargetComp:   frm.ComponentID(),
-					}) //nolint:errcheck
+					}))
 				}
 			}
 		}
@@ -139,15 +140,14 @@ func TestNodeCommandLongSuccess(t *testing.T) {
 	require.True(t, ok)
 
 	// Send command - this blocks until response or timeout
-	resp, err := node2.SendCommandLong(&CommandLongRequest{
-		Channel:         channelOpen.Channel,
+	resp, err := node2.SendCommandLong(&common.MessageCommandLong{
 		TargetSystem:    1,
 		TargetComponent: 1,
-		Command:         uint64(MAV_CMD_COMPONENT_ARM_DISARM),
-		Params:          [7]float32{1, 0, 0, 0, 0, 0, 0},
-		Options: &CommandOptions{
-			Timeout: 2 * time.Second,
-		},
+		Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+		Param1:          1, // ARM
+	}, &CommandOptions{
+		Channel: channelOpen.Channel,
+		Timeout: 2 * time.Second,
 	})
 
 	require.NoError(t, err)
@@ -173,13 +173,13 @@ func TestNodeCommandIntSuccess(t *testing.T) {
 	go func() {
 		for evt := range node1.Events() {
 			if frm, ok := evt.(*EventFrame); ok {
-				if cmd, ok := frm.Message().(*MessageCommandInt); ok && !responded {
-					node1.WriteMessageTo(frm.Channel, &MessageCommandAck{
+				if cmd, cmdIntCastOk := frm.Message().(*MessageCommandInt); cmdIntCastOk && !responded {
+					require.NoError(t, node1.WriteMessageTo(frm.Channel, &MessageCommandAck{
 						Command:      cmd.Command,
 						Result:       MAV_RESULT_ACCEPTED,
 						TargetSystem: frm.SystemID(),
 						TargetComp:   frm.ComponentID(),
-					}) //nolint:errcheck
+					}))
 					responded = true
 				}
 			}
@@ -201,19 +201,21 @@ func TestNodeCommandIntSuccess(t *testing.T) {
 	channelOpen, ok := evt.(*EventChannelOpen)
 	require.True(t, ok)
 
-	resp, err := node2.SendCommandInt(&CommandIntRequest{
-		Channel:         channelOpen.Channel,
+	resp, err := node2.SendCommandInt(&common.MessageCommandInt{
 		TargetSystem:    1,
 		TargetComponent: 1,
-		Frame:           uint64(MAV_FRAME_GLOBAL_RELATIVE_ALT),
-		Command:         uint64(MAV_CMD_NAV_WAYPOINT),
+		Frame:           common.MAV_FRAME_GLOBAL_RELATIVE_ALT,
+		Command:         common.MAV_CMD_NAV_WAYPOINT,
 		X:               -353621474, // lat * 1e7
 		Y:               1491651746, // lon * 1e7
-		Z:               100,        // altitude
-		Params:          [4]float32{0, 10, 0, 0},
-		Options: &CommandOptions{
-			Timeout: 2 * time.Second,
-		},
+		Z:               100,
+		Param1:          0,
+		Param2:          10,
+		Param3:          0,
+		Param4:          0,
+	}, &CommandOptions{
+		Channel: channelOpen.Channel,
+		Timeout: 2 * time.Second,
 	})
 
 	require.NoError(t, err)
@@ -255,15 +257,20 @@ func TestNodeCommandTimeout(t *testing.T) {
 	require.True(t, ok)
 
 	start := time.Now()
-	resp, err := node2.SendCommandLong(&CommandLongRequest{
-		Channel:         channelOpen.Channel,
+	resp, err := node2.SendCommandLong(&common.MessageCommandLong{
 		TargetSystem:    1,
 		TargetComponent: 1,
-		Command:         uint64(MAV_CMD_COMPONENT_ARM_DISARM),
-		Params:          [7]float32{1, 0, 0, 0, 0, 0, 0},
-		Options: &CommandOptions{
-			Timeout: 1 * time.Second,
-		},
+		Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+		Param1:          1,
+		Param2:          0,
+		Param3:          0,
+		Param4:          0,
+		Param5:          0,
+		Param6:          0,
+		Param7:          0,
+	}, &CommandOptions{
+		Channel: channelOpen.Channel,
+		Timeout: 1 * time.Second,
 	})
 	elapsed := time.Since(start)
 
@@ -291,26 +298,26 @@ func TestNodeCommandInProgress(t *testing.T) {
 	go func() {
 		for evt := range node1.Events() {
 			if frm, ok := evt.(*EventFrame); ok {
-				if cmd, ok := frm.Message().(*MessageCommandLong); ok && !responded {
+				if cmd, cmdLongCastOk := frm.Message().(*MessageCommandLong); cmdLongCastOk && !responded {
 					// Send IN_PROGRESS updates
 					for progress := uint8(0); progress <= 100; progress += 50 {
-						node1.WriteMessageTo(frm.Channel, &MessageCommandAck{
+						require.NoError(t, node1.WriteMessageTo(frm.Channel, &MessageCommandAck{
 							Command:      cmd.Command,
 							Result:       MAV_RESULT_IN_PROGRESS,
 							Progress:     progress,
 							TargetSystem: frm.SystemID(),
 							TargetComp:   frm.ComponentID(),
-						}) //nolint:errcheck
+						}))
 						time.Sleep(50 * time.Millisecond)
 					}
 
 					// Send final ACK
-					node1.WriteMessageTo(frm.Channel, &MessageCommandAck{
+					require.NoError(t, node1.WriteMessageTo(frm.Channel, &MessageCommandAck{
 						Command:      cmd.Command,
 						Result:       MAV_RESULT_ACCEPTED,
 						TargetSystem: frm.SystemID(),
 						TargetComp:   frm.ComponentID(),
-					}) //nolint:errcheck
+					}))
 					responded = true
 				}
 			}
@@ -332,18 +339,20 @@ func TestNodeCommandInProgress(t *testing.T) {
 	require.True(t, ok)
 
 	progressUpdates := []uint8{}
-	resp, err := node2.SendCommandLong(&CommandLongRequest{
-		Channel:         channelOpen.Channel,
+	resp, err := node2.SendCommandLong(&common.MessageCommandLong{
 		TargetSystem:    1,
 		TargetComponent: 1,
-		Command:         uint64(MAV_CMD_COMPONENT_ARM_DISARM),
-		Params:          [7]float32{1, 0, 0, 0, 0, 0, 0},
-		Options: &CommandOptions{
-			Timeout: 2 * time.Second,
-			OnProgress: func(progress uint8) {
-				progressUpdates = append(progressUpdates, progress)
-			},
-		},
+		Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+		Param1:          1,
+		Param2:          0,
+		Param3:          0,
+		Param4:          0,
+		Param5:          0,
+		Param6:          0,
+		Param7:          0,
+	}, &CommandOptions{
+		Channel: channelOpen.Channel,
+		Timeout: 2 * time.Second,
 	})
 
 	require.NoError(t, err)
@@ -368,14 +377,14 @@ func TestNodeCommandDenied(t *testing.T) {
 	go func() {
 		for evt := range node1.Events() {
 			if frm, ok := evt.(*EventFrame); ok {
-				if cmd, ok := frm.Message().(*MessageCommandLong); ok && !responded {
-					node1.WriteMessageTo(frm.Channel, &MessageCommandAck{
+				if cmd, cmdLongCastOk := frm.Message().(*MessageCommandLong); cmdLongCastOk && !responded {
+					require.NoError(t, node1.WriteMessageTo(frm.Channel, &MessageCommandAck{
 						Command:      cmd.Command,
 						Result:       MAV_RESULT_DENIED,
 						ResultParam2: 42, // Some error code
 						TargetSystem: frm.SystemID(),
 						TargetComp:   frm.ComponentID(),
-					}) //nolint:errcheck
+					}))
 					responded = true
 				}
 			}
@@ -396,15 +405,20 @@ func TestNodeCommandDenied(t *testing.T) {
 	channelOpen, ok := evt.(*EventChannelOpen)
 	require.True(t, ok)
 
-	resp, err := node2.SendCommandLong(&CommandLongRequest{
-		Channel:         channelOpen.Channel,
+	resp, err := node2.SendCommandLong(&common.MessageCommandLong{
 		TargetSystem:    1,
 		TargetComponent: 1,
-		Command:         uint64(MAV_CMD_COMPONENT_ARM_DISARM),
-		Params:          [7]float32{1, 0, 0, 0, 0, 0, 0},
-		Options: &CommandOptions{
-			Timeout: 2 * time.Second,
-		},
+		Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+		Param1:          1,
+		Param2:          0,
+		Param3:          0,
+		Param4:          0,
+		Param5:          0,
+		Param6:          0,
+		Param7:          0,
+	}, &CommandOptions{
+		Channel: channelOpen.Channel,
+		Timeout: 2 * time.Second,
 	})
 
 	require.NoError(t, err)
@@ -446,15 +460,20 @@ func TestNodeCommandWithoutDialect(t *testing.T) {
 	require.True(t, ok)
 
 	// Should fail because no dialect means no command manager
-	_, err = node2.SendCommandLong(&CommandLongRequest{
-		Channel:         channelOpen.Channel,
+	_, err = node2.SendCommandLong(&common.MessageCommandLong{
 		TargetSystem:    1,
 		TargetComponent: 1,
-		Command:         uint64(MAV_CMD_COMPONENT_ARM_DISARM),
-		Params:          [7]float32{1, 0, 0, 0, 0, 0, 0},
-		Options: &CommandOptions{
-			Timeout: 1 * time.Second,
-		},
+		Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+		Param1:          1,
+		Param2:          0,
+		Param3:          0,
+		Param4:          0,
+		Param5:          0,
+		Param6:          0,
+		Param7:          0,
+	}, &CommandOptions{
+		Channel: channelOpen.Channel,
+		Timeout: 1 * time.Second,
 	})
 
 	require.Error(t, err)
@@ -478,15 +497,15 @@ func TestNodeCommandMultipleSimultaneous(t *testing.T) {
 	go func() {
 		for evt := range node1.Events() {
 			if frm, ok := evt.(*EventFrame); ok {
-				if cmd, ok := frm.Message().(*MessageCommandLong); ok {
+				if cmd, cmdLongCastOk := frm.Message().(*MessageCommandLong); cmdLongCastOk {
 					// Small delay to simulate processing
 					time.Sleep(100 * time.Millisecond)
-					node1.WriteMessageTo(frm.Channel, &MessageCommandAck{
+					require.NoError(t, node1.WriteMessageTo(frm.Channel, &MessageCommandAck{
 						Command:      cmd.Command,
 						Result:       MAV_RESULT_ACCEPTED,
 						TargetSystem: frm.SystemID(),
 						TargetComp:   frm.ComponentID(),
-					}) //nolint:errcheck
+					}))
 					commandCount++
 					if commandCount >= 5 {
 						return // Exit after handling all commands
@@ -522,23 +541,30 @@ func TestNodeCommandMultipleSimultaneous(t *testing.T) {
 	errors := make(chan error, numCommands)
 
 	for i := 0; i < numCommands; i++ {
-		go func(cmdID MAV_CMD) {
-			resp, err := node2.SendCommandLong(&CommandLongRequest{
-				Channel:         channelOpen.Channel,
+		go func() {
+			var resp *CommandResponse
+			var cmdErr error
+			resp, cmdErr = node2.SendCommandLong(&common.MessageCommandLong{
 				TargetSystem:    1,
 				TargetComponent: 1,
-				Command:         uint64(cmdID),
-				Params:          [7]float32{0, 0, 0, 0, 0, 0, 0},
-				Options: &CommandOptions{
-					Timeout: 2 * time.Second,
-				},
+				Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+				Param1:          1,
+				Param2:          0,
+				Param3:          0,
+				Param4:          0,
+				Param5:          0,
+				Param6:          0,
+				Param7:          0,
+			}, &CommandOptions{
+				Channel: channelOpen.Channel,
+				Timeout: 2 * time.Second,
 			})
-			if err != nil {
-				errors <- err
+			if cmdErr != nil {
+				errors <- cmdErr
 			} else {
 				results <- resp
 			}
-		}(MAV_CMD(400 + i))
+		}()
 	}
 
 	// Collect all results
@@ -546,7 +572,7 @@ func TestNodeCommandMultipleSimultaneous(t *testing.T) {
 		select {
 		case resp := <-results:
 			require.Equal(t, uint64(MAV_RESULT_ACCEPTED), resp.Result)
-		case err := <-errors:
+		case err = <-errors:
 			require.NoError(t, err)
 		case <-time.After(5 * time.Second):
 			t.Fatalf("timeout waiting for command responses (got %d/%d)", i, numCommands)

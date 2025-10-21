@@ -68,6 +68,7 @@ Features:
 * [node-endpoint-custom-server](examples/node-endpoint-custom-server/main.go)
 * [node-message-read](examples/node-message-read/main.go)
 * [node-message-write](examples/node-message-write/main.go)
+* [node-command-protocol](examples/node-command-protocol/main.go)
 * [node-signature](examples/node-signature/main.go)
 * [node-dialect-absent](examples/node-dialect-absent/main.go)
 * [node-dialect-custom](examples/node-dialect-custom/main.go)

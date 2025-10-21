@@ -668,9 +668,12 @@ func (n *Node) sendCommand(
 	}
 
 	// Set up progress callback if provided
+	var progressWg sync.WaitGroup
 	if opts.OnProgress != nil {
 		req.progressCh = make(chan uint8, 10)
+		progressWg.Add(1)
 		go func() {
+			defer progressWg.Done()
 			for progress := range req.progressCh {
 				opts.OnProgress(progress)
 			}
@@ -688,6 +691,7 @@ func (n *Node) sendCommand(
 	if err := <-req.errorCh; err != nil {
 		if req.progressCh != nil {
 			close(req.progressCh)
+			progressWg.Wait()
 		}
 		return nil, fmt.Errorf("failed to send command: %w", err)
 	}
@@ -695,9 +699,10 @@ func (n *Node) sendCommand(
 	// BLOCK waiting for response (with timeout handled by command manager)
 	response := <-req.responseCh
 
-	if req.progressCh != nil {
-		close(req.progressCh)
-	}
+	// The progress channel gets closed and through that wg.Done() is called
+	//  by the command manager when the command is completed
+	// times out or is cancelled.
+	progressWg.Wait()
 
 	return response, nil
 }

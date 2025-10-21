@@ -15,6 +15,7 @@ package gomavlib
 import (
 	"errors"
 	"fmt"
+	"reflect"
 	"sync"
 	"time"
 
@@ -183,6 +184,7 @@ type Node struct {
 	channels          map[*Channel]struct{}
 	nodeHeartbeat     *nodeHeartbeat
 	nodeStreamRequest *nodeStreamRequest
+	nodeCommand       *nodeCommand
 
 	// in
 	chNewChannel   chan *Channel
@@ -311,12 +313,29 @@ func (n *Node) Initialize() error {
 		}
 	}
 
+	n.nodeCommand = &nodeCommand{
+		node: n,
+	}
+	err = n.nodeCommand.initialize()
+	if err != nil {
+		if errors.Is(err, errSkip) {
+			n.nodeCommand = nil
+		} else {
+			return err
+		}
+	}
+
 	if n.nodeHeartbeat != nil {
 		go n.nodeHeartbeat.run()
 	}
 
 	if n.nodeStreamRequest != nil {
 		go n.nodeStreamRequest.run()
+	}
+
+	if n.nodeCommand != nil {
+		n.wg.Add(1)
+		go n.nodeCommand.run()
 	}
 
 	for ca := range n.channelProviders {
@@ -376,6 +395,10 @@ outer:
 
 	if n.nodeStreamRequest != nil {
 		n.nodeStreamRequest.close()
+	}
+
+	if n.nodeCommand != nil {
+		n.nodeCommand.close()
 	}
 
 	for ca := range n.channelProviders {
@@ -574,6 +597,143 @@ func (n *Node) WriteFrameExcept(exceptChannel *Channel, fr frame.Frame) error {
 	}
 
 	return nil
+}
+
+// SendCommandLong sends a COMMAND_LONG and waits for COMMAND_ACK response.
+func (n *Node) SendCommandLong(req *CommandLongRequest) (*CommandResponse, error) {
+	if n.nodeCommand == nil {
+		return nil, fmt.Errorf("command manager not initialized (dialect required)")
+	}
+
+	if n.nodeCommand.msgCommandLong == nil {
+		return nil, fmt.Errorf("COMMAND_LONG not available in dialect")
+	}
+
+	// Build message using reflection (dialect-agnostic)
+	msg := reflect.New(reflect.TypeOf(n.nodeCommand.msgCommandLong).Elem())
+	elem := msg.Elem()
+
+	elem.FieldByName("TargetSystem").SetUint(uint64(req.TargetSystem))
+	elem.FieldByName("TargetComponent").SetUint(uint64(req.TargetComponent))
+	elem.FieldByName("Command").SetUint(req.Command)
+	elem.FieldByName("Confirmation").SetUint(0)
+
+	for i, param := range req.Params {
+		fieldName := fmt.Sprintf("Param%d", i+1)
+		elem.FieldByName(fieldName).SetFloat(float64(param))
+	}
+
+	return n.sendCommand(
+		req.Channel,
+		msg.Interface().(message.Message),
+		req.TargetSystem,
+		req.TargetComponent,
+		uint32(req.Command),
+		req.Options,
+	)
+}
+
+// SendCommandInt sends a COMMAND_INT and waits for COMMAND_ACK response.
+func (n *Node) SendCommandInt(req *CommandIntRequest) (*CommandResponse, error) {
+	if n.nodeCommand == nil {
+		return nil, fmt.Errorf("command manager not initialized (dialect required)")
+	}
+
+	if n.nodeCommand.msgCommandInt == nil {
+		return nil, fmt.Errorf("COMMAND_INT not available in dialect")
+	}
+
+	// Build message using reflection (dialect-agnostic)
+	msg := reflect.New(reflect.TypeOf(n.nodeCommand.msgCommandInt).Elem())
+	elem := msg.Elem()
+
+	elem.FieldByName("TargetSystem").SetUint(uint64(req.TargetSystem))
+	elem.FieldByName("TargetComponent").SetUint(uint64(req.TargetComponent))
+	elem.FieldByName("Frame").SetUint(req.Frame)
+	elem.FieldByName("Command").SetUint(req.Command)
+	elem.FieldByName("Current").SetUint(0)
+	elem.FieldByName("Autocontinue").SetUint(0)
+
+	for i, param := range req.Params {
+		fieldName := fmt.Sprintf("Param%d", i+1)
+		elem.FieldByName(fieldName).SetFloat(float64(param))
+	}
+
+	elem.FieldByName("X").SetInt(int64(req.X))
+	elem.FieldByName("Y").SetInt(int64(req.Y))
+	elem.FieldByName("Z").SetFloat(float64(req.Z))
+
+	return n.sendCommand(
+		req.Channel,
+		msg.Interface().(message.Message),
+		req.TargetSystem,
+		req.TargetComponent,
+		uint32(req.Command),
+		req.Options,
+	)
+}
+
+// sendCommand is the internal unified command sender used by both
+// SendCommandLong and SendCommandInt.
+func (n *Node) sendCommand(
+	channel *Channel,
+	msg message.Message,
+	targetSystem uint8,
+	targetComponent uint8,
+	commandID uint32,
+	opts *CommandOptions,
+) (*CommandResponse, error) {
+	if opts == nil {
+		opts = &CommandOptions{Timeout: defaultCommandTimeout}
+	}
+	if opts.Timeout == 0 {
+		opts.Timeout = defaultCommandTimeout
+	}
+
+	req := &sendCommandReq{
+		channel:      channel,
+		msg:          msg,
+		targetSystem: targetSystem,
+		targetComp:   targetComponent,
+		commandID:    commandID,
+		timeout:      opts.Timeout,
+		responseCh:   make(chan *CommandResponse, 1),
+		errorCh:      make(chan error, 1),
+	}
+
+	// Set up progress callback if provided
+	if opts.OnProgress != nil {
+		req.progressCh = make(chan uint8, 10)
+		go func() {
+			for progress := range req.progressCh {
+				opts.OnProgress(progress)
+			}
+		}()
+	}
+
+	// Send request to command manager goroutine
+	select {
+	case n.nodeCommand.chRequest <- req:
+	case <-n.terminate:
+		return nil, ErrNodeTerminated
+	}
+
+	// Wait for send confirmation
+	if err := <-req.errorCh; err != nil {
+		if req.progressCh != nil {
+			close(req.progressCh)
+		}
+		return nil, fmt.Errorf("failed to send command: %w", err)
+	}
+
+	// BLOCK waiting for response (with timeout handled by command manager)
+	response := <-req.responseCh
+
+	if req.progressCh != nil {
+		close(req.progressCh)
+	}
+
+	return response, nil
 }
 
 func (n *Node) pushEvent(evt Event) {

@@ -161,6 +161,10 @@ func (ch *Channel) runReader() error {
 
 		evt := &EventFrame{fr, ch}
 
+		if ch.node.nodeCommand != nil {
+			ch.node.nodeCommand.onEventFrame(evt)
+		}
+
 		if ch.node.nodeStreamRequest != nil {
 			ch.node.nodeStreamRequest.onEventFrame(evt)
 		}

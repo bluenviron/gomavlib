@@ -15,11 +15,11 @@ package gomavlib
 import (
 	"errors"
 	"fmt"
-	"reflect"
 	"sync"
 	"time"
 
 	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 	"github.com/bluenviron/gomavlib/v3/pkg/frame"
 	"github.com/bluenviron/gomavlib/v3/pkg/message"
 )
@@ -600,7 +600,7 @@ func (n *Node) WriteFrameExcept(exceptChannel *Channel, fr frame.Frame) error {
 }
 
 // SendCommandLong sends a COMMAND_LONG and waits for COMMAND_ACK response.
-func (n *Node) SendCommandLong(req *CommandLongRequest) (*CommandResponse, error) {
+func (n *Node) SendCommandLong(command *common.MessageCommandLong, options *CommandOptions) (*CommandResponse, error) {
 	if n.nodeCommand == nil {
 		return nil, fmt.Errorf("command manager not initialized (dialect required)")
 	}
@@ -609,32 +609,17 @@ func (n *Node) SendCommandLong(req *CommandLongRequest) (*CommandResponse, error
 		return nil, fmt.Errorf("COMMAND_LONG not available in dialect")
 	}
 
-	// Build message using reflection (dialect-agnostic)
-	msg := reflect.New(reflect.TypeOf(n.nodeCommand.msgCommandLong).Elem())
-	elem := msg.Elem()
-
-	elem.FieldByName("TargetSystem").SetUint(uint64(req.TargetSystem))
-	elem.FieldByName("TargetComponent").SetUint(uint64(req.TargetComponent))
-	elem.FieldByName("Command").SetUint(req.Command)
-	elem.FieldByName("Confirmation").SetUint(0)
-
-	for i, param := range req.Params {
-		fieldName := fmt.Sprintf("Param%d", i+1)
-		elem.FieldByName(fieldName).SetFloat(float64(param))
-	}
-
 	return n.sendCommand(
-		req.Channel,
-		msg.Interface().(message.Message),
-		req.TargetSystem,
-		req.TargetComponent,
-		uint32(req.Command),
-		req.Options,
+		command,
+		command.TargetSystem,
+		command.TargetComponent,
+		uint32(command.Command),
+		options,
 	)
 }
 
 // SendCommandInt sends a COMMAND_INT and waits for COMMAND_ACK response.
-func (n *Node) SendCommandInt(req *CommandIntRequest) (*CommandResponse, error) {
+func (n *Node) SendCommandInt(command *common.MessageCommandInt, options *CommandOptions) (*CommandResponse, error) {
 	if n.nodeCommand == nil {
 		return nil, fmt.Errorf("command manager not initialized (dialect required)")
 	}
@@ -643,40 +628,18 @@ func (n *Node) SendCommandInt(req *CommandIntRequest) (*CommandResponse, error) 
 		return nil, fmt.Errorf("COMMAND_INT not available in dialect")
 	}
 
-	// Build message using reflection (dialect-agnostic)
-	msg := reflect.New(reflect.TypeOf(n.nodeCommand.msgCommandInt).Elem())
-	elem := msg.Elem()
-
-	elem.FieldByName("TargetSystem").SetUint(uint64(req.TargetSystem))
-	elem.FieldByName("TargetComponent").SetUint(uint64(req.TargetComponent))
-	elem.FieldByName("Frame").SetUint(req.Frame)
-	elem.FieldByName("Command").SetUint(req.Command)
-	elem.FieldByName("Current").SetUint(0)
-	elem.FieldByName("Autocontinue").SetUint(0)
-
-	for i, param := range req.Params {
-		fieldName := fmt.Sprintf("Param%d", i+1)
-		elem.FieldByName(fieldName).SetFloat(float64(param))
-	}
-
-	elem.FieldByName("X").SetInt(int64(req.X))
-	elem.FieldByName("Y").SetInt(int64(req.Y))
-	elem.FieldByName("Z").SetFloat(float64(req.Z))
-
 	return n.sendCommand(
-		req.Channel,
-		msg.Interface().(message.Message),
-		req.TargetSystem,
-		req.TargetComponent,
-		uint32(req.Command),
-		req.Options,
+		command,
+		command.TargetSystem,
+		command.TargetComponent,
+		uint32(command.Command),
+		options,
 	)
 }
 
 // sendCommand is the internal unified command sender used by both
 // SendCommandLong and SendCommandInt.
 func (n *Node) sendCommand(
-	channel *Channel,
 	msg message.Message,
 	targetSystem uint8,
 	targetComponent uint8,
@@ -684,14 +647,17 @@ func (n *Node) sendCommand(
 	opts *CommandOptions,
 ) (*CommandResponse, error) {
 	if opts == nil {
-		opts = &CommandOptions{Timeout: defaultCommandTimeout}
+		return nil, fmt.Errorf("options is nil. Channel is required")
+	}
+	if opts.Channel == nil {
+		return nil, fmt.Errorf("need channel to send command on")
 	}
 	if opts.Timeout == 0 {
 		opts.Timeout = defaultCommandTimeout
 	}
 
 	req := &sendCommandReq{
-		channel:      channel,
+		channel:      opts.Channel,
 		msg:          msg,
 		targetSystem: targetSystem,
 		targetComp:   targetComponent,

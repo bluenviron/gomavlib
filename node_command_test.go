@@ -618,3 +618,577 @@ func TestNodeCommandMultipleSimultaneous(t *testing.T) {
 		}
 	}
 }
+
+// TestNodeCommandNilOptions tests that nil options returns error
+func TestNodeCommandNilOptions(t *testing.T) {
+	node, err := NewNode(NodeConf{
+		Dialect:          commandDialect,
+		OutVersion:       V2,
+		OutSystemID:      1,
+		Endpoints:        []EndpointConf{EndpointUDPServer{"127.0.0.1:5608"}},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer node.Close()
+
+	go func() {
+		for range node.Events() { //nolint:revive
+		}
+	}()
+
+	_, err = node.SendCommandLong(&common.MessageCommandLong{
+		TargetSystem:    1,
+		TargetComponent: 1,
+		Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+	}, nil)
+
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "options is nil")
+}
+
+// TestNodeCommandNilChannel tests that nil channel returns error
+func TestNodeCommandNilChannel(t *testing.T) {
+	node, err := NewNode(NodeConf{
+		Dialect:          commandDialect,
+		OutVersion:       V2,
+		OutSystemID:      1,
+		Endpoints:        []EndpointConf{EndpointUDPServer{"127.0.0.1:5609"}},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer node.Close()
+
+	go func() {
+		for range node.Events() { //nolint:revive
+		}
+	}()
+
+	_, err = node.SendCommandLong(&common.MessageCommandLong{
+		TargetSystem:    1,
+		TargetComponent: 1,
+		Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+	}, &CommandOptions{
+		Channel: nil,
+		Timeout: 1 * time.Second,
+	})
+
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "need channel")
+}
+
+// TestNodeCommandIntAllResultTypes tests different COMMAND_INT result types
+func TestNodeCommandIntAllResultTypes(t *testing.T) {
+	testCases := []struct {
+		name           string
+		result         MAV_RESULT
+		port           string
+		expectError    bool
+		expectedResult uint64
+	}{
+		{"Accepted", MAV_RESULT_ACCEPTED, "127.0.0.1:5611", false, uint64(MAV_RESULT_ACCEPTED)},
+		{"Rejected", MAV_RESULT_TEMPORARILY_REJECTED, "127.0.0.1:5612", false, uint64(MAV_RESULT_TEMPORARILY_REJECTED)},
+		{"Unsupported", MAV_RESULT_UNSUPPORTED, "127.0.0.1:5613", false, uint64(MAV_RESULT_UNSUPPORTED)},
+		{"Failed", MAV_RESULT_FAILED, "127.0.0.1:5614", false, uint64(MAV_RESULT_FAILED)},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			node1, err := NewNode(NodeConf{
+				Dialect:          commandDialect,
+				OutVersion:       V2,
+				OutSystemID:      1,
+				Endpoints:        []EndpointConf{EndpointUDPServer{tc.port}},
+				HeartbeatDisable: true,
+			})
+			require.NoError(t, err)
+			defer node1.Close()
+
+			responded := false
+			go func() {
+				for evt := range node1.Events() {
+					if frm, ok := evt.(*EventFrame); ok {
+						if cmd, cmdIntCastOk := frm.Message().(*MessageCommandInt); cmdIntCastOk && !responded {
+							require.NoError(t, node1.WriteMessageTo(frm.Channel, &MessageCommandAck{
+								Command:      cmd.Command,
+								Result:       tc.result,
+								TargetSystem: frm.SystemID(),
+								TargetComp:   frm.ComponentID(),
+							}))
+							responded = true
+						}
+					}
+				}
+			}()
+
+			node2, err := NewNode(NodeConf{
+				Dialect:          commandDialect,
+				OutVersion:       V2,
+				OutSystemID:      255,
+				Endpoints:        []EndpointConf{EndpointUDPClient{tc.port}},
+				HeartbeatDisable: true,
+			})
+			require.NoError(t, err)
+			defer node2.Close()
+
+			evt := <-node2.Events()
+			channelOpen, ok := evt.(*EventChannelOpen)
+			require.True(t, ok)
+
+			go func() {
+				for range node2.Events() { //nolint:revive
+				}
+			}()
+
+			resp, err := node2.SendCommandInt(&common.MessageCommandInt{
+				TargetSystem:    1,
+				TargetComponent: 1,
+				Command:         common.MAV_CMD_NAV_WAYPOINT,
+			}, &CommandOptions{
+				Channel: channelOpen.Channel,
+				Timeout: 1 * time.Second,
+			})
+
+			if tc.expectError {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.NotNil(t, resp)
+				require.Equal(t, tc.expectedResult, resp.Result)
+			}
+		})
+	}
+}
+
+// TestNodeCommandProgressChannelFull tests progress updates when channel is full
+func TestNodeCommandProgressChannelFull(t *testing.T) {
+	node1, err := NewNode(NodeConf{
+		Dialect:          commandDialect,
+		OutVersion:       V2,
+		OutSystemID:      1,
+		Endpoints:        []EndpointConf{EndpointUDPServer{"127.0.0.1:5616"}},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer node1.Close()
+
+	// Send many IN_PROGRESS updates rapidly
+	responded := false
+	go func() {
+		for evt := range node1.Events() {
+			if frm, ok := evt.(*EventFrame); ok {
+				if cmd, cmdLongCastOk := frm.Message().(*MessageCommandLong); cmdLongCastOk && !responded {
+					// Send 100 IN_PROGRESS updates rapidly to try to fill buffer
+					for progress := uint8(0); progress < 100; progress++ {
+						require.NoError(t, node1.WriteMessageTo(frm.Channel, &MessageCommandAck{
+							Command:      cmd.Command,
+							Result:       MAV_RESULT_IN_PROGRESS,
+							Progress:     progress,
+							TargetSystem: frm.SystemID(),
+							TargetComp:   frm.ComponentID(),
+						}))
+					}
+
+					// Send final ACK
+					require.NoError(t, node1.WriteMessageTo(frm.Channel, &MessageCommandAck{
+						Command:      cmd.Command,
+						Result:       MAV_RESULT_ACCEPTED,
+						TargetSystem: frm.SystemID(),
+						TargetComp:   frm.ComponentID(),
+					}))
+					responded = true
+				}
+			}
+		}
+	}()
+
+	node2, err := NewNode(NodeConf{
+		Dialect:          commandDialect,
+		OutVersion:       V2,
+		OutSystemID:      255,
+		Endpoints:        []EndpointConf{EndpointUDPClient{"127.0.0.1:5616"}},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer node2.Close()
+
+	evt := <-node2.Events()
+	channelOpen, ok := evt.(*EventChannelOpen)
+	require.True(t, ok)
+
+	go func() {
+		for range node2.Events() { //nolint:revive
+		}
+	}()
+
+	progressCount := 0
+	progressMutex := sync.Mutex{}
+
+	// Slow progress handler to cause buffer to fill
+	resp, err := node2.SendCommandLong(&common.MessageCommandLong{
+		TargetSystem:    1,
+		TargetComponent: 1,
+		Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+		Param1:          1,
+	}, &CommandOptions{
+		Channel: channelOpen.Channel,
+		Timeout: 3 * time.Second,
+		OnProgress: func(progress uint8) {
+			progressMutex.Lock()
+			progressCount++
+			progressMutex.Unlock()
+			time.Sleep(50 * time.Millisecond) // Slow handler
+		},
+	})
+
+	require.NoError(t, err)
+	require.NotNil(t, resp)
+	require.Equal(t, uint64(MAV_RESULT_ACCEPTED), resp.Result)
+	progressMutex.Lock()
+	defer progressMutex.Unlock()
+	// Should have received some progress updates, but not necessarily all due to buffer
+	require.Greater(t, progressCount, 0)
+}
+
+// TestNodeCommandDefaultTimeout tests that default timeout is applied when not specified
+func TestNodeCommandDefaultTimeout(t *testing.T) {
+	node1, err := NewNode(NodeConf{
+		Dialect:          commandDialect,
+		OutVersion:       V2,
+		OutSystemID:      1,
+		Endpoints:        []EndpointConf{EndpointUDPServer{"127.0.0.1:5617"}},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer node1.Close()
+
+	// Don't respond to commands
+	go func() {
+		for range node1.Events() { //nolint:revive
+		}
+	}()
+
+	node2, err := NewNode(NodeConf{
+		Dialect:          commandDialect,
+		OutVersion:       V2,
+		OutSystemID:      255,
+		Endpoints:        []EndpointConf{EndpointUDPClient{"127.0.0.1:5617"}},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer node2.Close()
+
+	evt := <-node2.Events()
+	channelOpen, ok := evt.(*EventChannelOpen)
+	require.True(t, ok)
+
+	go func() {
+		for range node2.Events() { //nolint:revive
+		}
+	}()
+
+	start := time.Now()
+	resp, err := node2.SendCommandLong(&common.MessageCommandLong{
+		TargetSystem:    1,
+		TargetComponent: 1,
+		Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+		Param1:          1,
+	}, &CommandOptions{
+		Channel: channelOpen.Channel,
+		Timeout: 0, // Should use default 5 second timeout
+	})
+	elapsed := time.Since(start)
+
+	require.NoError(t, err)
+	require.NotNil(t, resp)
+	// Should timeout with default 5 seconds
+	require.GreaterOrEqual(t, elapsed, 5*time.Second)
+	require.Less(t, elapsed, 6*time.Second)
+}
+
+// TestNodeCommandWithoutProgressCallback tests command without progress callback
+func TestNodeCommandWithoutProgressCallback(t *testing.T) {
+	node1, err := NewNode(NodeConf{
+		Dialect:          commandDialect,
+		OutVersion:       V2,
+		OutSystemID:      1,
+		Endpoints:        []EndpointConf{EndpointUDPServer{"127.0.0.1:5618"}},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer node1.Close()
+
+	responded := false
+	go func() {
+		for evt := range node1.Events() {
+			if frm, ok := evt.(*EventFrame); ok {
+				if cmd, cmdLongCastOk := frm.Message().(*MessageCommandLong); cmdLongCastOk && !responded {
+					// Send IN_PROGRESS updates even though client has no callback
+					for progress := uint8(0); progress <= 50; progress += 25 {
+						require.NoError(t, node1.WriteMessageTo(frm.Channel, &MessageCommandAck{
+							Command:      cmd.Command,
+							Result:       MAV_RESULT_IN_PROGRESS,
+							Progress:     progress,
+							TargetSystem: frm.SystemID(),
+							TargetComp:   frm.ComponentID(),
+						}))
+						time.Sleep(10 * time.Millisecond)
+					}
+
+					// Send final ACK
+					require.NoError(t, node1.WriteMessageTo(frm.Channel, &MessageCommandAck{
+						Command:      cmd.Command,
+						Result:       MAV_RESULT_ACCEPTED,
+						TargetSystem: frm.SystemID(),
+						TargetComp:   frm.ComponentID(),
+					}))
+					responded = true
+				}
+			}
+		}
+	}()
+
+	node2, err := NewNode(NodeConf{
+		Dialect:          commandDialect,
+		OutVersion:       V2,
+		OutSystemID:      255,
+		Endpoints:        []EndpointConf{EndpointUDPClient{"127.0.0.1:5618"}},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer node2.Close()
+
+	evt := <-node2.Events()
+	channelOpen, ok := evt.(*EventChannelOpen)
+	require.True(t, ok)
+
+	go func() {
+		for range node2.Events() { //nolint:revive
+		}
+	}()
+
+	// No OnProgress callback
+	resp, err := node2.SendCommandLong(&common.MessageCommandLong{
+		TargetSystem:    1,
+		TargetComponent: 1,
+		Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+		Param1:          1,
+	}, &CommandOptions{
+		Channel: channelOpen.Channel,
+		Timeout: 2 * time.Second,
+	})
+
+	require.NoError(t, err)
+	require.NotNil(t, resp)
+	require.Equal(t, uint64(MAV_RESULT_ACCEPTED), resp.Result)
+}
+
+// TestNodeCommandIntNotAvailable tests SendCommandInt when COMMAND_INT not in dialect
+func TestNodeCommandIntNotAvailable(t *testing.T) {
+	// Create dialect without COMMAND_INT
+	dialectNoInt := &dialect.Dialect{
+		Version: 3,
+		Messages: []message.Message{
+			&MessageHeartbeat{},
+			&MessageCommandLong{},
+			&MessageCommandAck{},
+			// No MessageCommandInt
+		},
+	}
+
+	node, err := NewNode(NodeConf{
+		Dialect:          dialectNoInt,
+		OutVersion:       V2,
+		OutSystemID:      1,
+		Endpoints:        []EndpointConf{EndpointUDPServer{"127.0.0.1:5619"}},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer node.Close()
+
+	go func() {
+		for range node.Events() { //nolint:revive
+		}
+	}()
+
+	// Should fail immediately without needing a channel
+	// When COMMAND_INT is missing, nodeCommand doesn't initialize at all
+	_, err = node.SendCommandInt(&common.MessageCommandInt{
+		TargetSystem:    1,
+		TargetComponent: 1,
+		Command:         common.MAV_CMD_NAV_WAYPOINT,
+	}, &CommandOptions{
+		Channel: &Channel{}, // Dummy channel - won't be used
+		Timeout: 1 * time.Second,
+	})
+
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "command manager not initialized")
+}
+
+// TestNodeCommandLongNotAvailable tests SendCommandLong when COMMAND_LONG not in dialect
+func TestNodeCommandLongNotAvailable(t *testing.T) {
+	// Create dialect without COMMAND_LONG
+	dialectNoLong := &dialect.Dialect{
+		Version: 3,
+		Messages: []message.Message{
+			&MessageHeartbeat{},
+			&MessageCommandInt{},
+			&MessageCommandAck{},
+			// No MessageCommandLong
+		},
+	}
+
+	node, err := NewNode(NodeConf{
+		Dialect:          dialectNoLong,
+		OutVersion:       V2,
+		OutSystemID:      1,
+		Endpoints:        []EndpointConf{EndpointUDPServer{"127.0.0.1:5620"}},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer node.Close()
+
+	go func() {
+		for range node.Events() { //nolint:revive
+		}
+	}()
+
+	// Should fail immediately without needing a channel
+	// When COMMAND_LONG is missing, nodeCommand doesn't initialize at all
+	_, err = node.SendCommandLong(&common.MessageCommandLong{
+		TargetSystem:    1,
+		TargetComponent: 1,
+		Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+	}, &CommandOptions{
+		Channel: &Channel{}, // Dummy channel - won't be used
+		Timeout: 1 * time.Second,
+	})
+
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "command manager not initialized")
+}
+
+// TestNodeCommandAckWithExtensionFields tests that extension fields are properly handled
+func TestNodeCommandAckWithExtensionFields(t *testing.T) {
+	node1, err := NewNode(NodeConf{
+		Dialect:          commandDialect,
+		OutVersion:       V2,
+		OutSystemID:      1,
+		Endpoints:        []EndpointConf{EndpointUDPServer{"127.0.0.1:5621"}},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer node1.Close()
+
+	responded := false
+	go func() {
+		for evt := range node1.Events() {
+			if frm, ok := evt.(*EventFrame); ok {
+				if cmd, cmdLongCastOk := frm.Message().(*MessageCommandLong); cmdLongCastOk && !responded {
+					// Send ACK with all extension fields populated
+					require.NoError(t, node1.WriteMessageTo(frm.Channel, &MessageCommandAck{
+						Command:      cmd.Command,
+						Result:       MAV_RESULT_ACCEPTED,
+						Progress:     75,
+						ResultParam2: 12345,
+						TargetSystem: frm.SystemID(),
+						TargetComp:   frm.ComponentID(),
+					}))
+					responded = true
+				}
+			}
+		}
+	}()
+
+	node2, err := NewNode(NodeConf{
+		Dialect:          commandDialect,
+		OutVersion:       V2,
+		OutSystemID:      255,
+		Endpoints:        []EndpointConf{EndpointUDPClient{"127.0.0.1:5621"}},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer node2.Close()
+
+	evt := <-node2.Events()
+	channelOpen, ok := evt.(*EventChannelOpen)
+	require.True(t, ok)
+
+	go func() {
+		for range node2.Events() { //nolint:revive
+		}
+	}()
+
+	resp, err := node2.SendCommandLong(&common.MessageCommandLong{
+		TargetSystem:    1,
+		TargetComponent: 1,
+		Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+		Param1:          1,
+	}, &CommandOptions{
+		Channel: channelOpen.Channel,
+		Timeout: 2 * time.Second,
+	})
+
+	require.NoError(t, err)
+	require.NotNil(t, resp)
+	require.Equal(t, uint64(MAV_RESULT_ACCEPTED), resp.Result)
+	require.Equal(t, uint8(75), resp.Progress)
+	require.Equal(t, int32(12345), resp.ResultParam2)
+}
+
+// TestNodeCommandCancelOnClose tests that cancelAllPending is called when node closes
+func TestNodeCommandCancelOnClose(t *testing.T) {
+	node1, err := NewNode(NodeConf{
+		Dialect:          commandDialect,
+		OutVersion:       V2,
+		OutSystemID:      1,
+		Endpoints:        []EndpointConf{EndpointUDPServer{"127.0.0.1:5622"}},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+
+	// Don't respond to commands - they'll be pending when we close
+	go func() {
+		for range node1.Events() { //nolint:revive
+		}
+	}()
+
+	node2, err := NewNode(NodeConf{
+		Dialect:          commandDialect,
+		OutVersion:       V2,
+		OutSystemID:      255,
+		Endpoints:        []EndpointConf{EndpointUDPClient{"127.0.0.1:5622"}},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+
+	evt := <-node2.Events()
+	channelOpen, ok := evt.(*EventChannelOpen)
+	require.True(t, ok)
+
+	// Send multiple commands that won't get responses
+	// These will timeout eventually (testing cancelAllPending coverage)
+	numCommands := 3
+	for i := 0; i < numCommands; i++ {
+		go func() {
+			// Use short timeout so test doesn't hang
+			_, _ = node2.SendCommandLong(&common.MessageCommandLong{
+				TargetSystem:    1,
+				TargetComponent: 1,
+				Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+				Param1:          1,
+			}, &CommandOptions{
+				Channel: channelOpen.Channel,
+				Timeout: 500 * time.Millisecond,
+			})
+		}()
+	}
+
+	// Give commands time to be sent and become pending
+	time.Sleep(50 * time.Millisecond)
+
+	// Close nodes - this calls cancelAllPending to clean up pending commands
+	// The test passes if Close() returns (doesn't hang)
+	node2.Close()
+	node1.Close()
+}

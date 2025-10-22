@@ -210,16 +210,10 @@ func (nc *nodeCommand) run() {
 	defer close(nc.done)
 	defer nc.node.wg.Done()
 
-	ticker := time.NewTicker(1 * time.Second)
-	defer ticker.Stop()
-
 	for {
 		select {
 		case req := <-nc.chRequest:
 			go nc.handleSendCommand(req)
-
-		case <-ticker.C:
-			nc.cleanupTimeouts()
 
 		case <-nc.terminate:
 			nc.cancelAllPending()
@@ -291,27 +285,10 @@ func (nc *nodeCommand) waitForResponse(pending *pendingCommand) {
 			if pending.progressCh != nil {
 				close(pending.progressCh)
 			}
-			select {
-			case pending.responseCh <- &CommandResponse{
+			pending.responseCh <- &CommandResponse{
 				Result:       0, // Could use a specific timeout result
 				ResponseTime: time.Since(pending.sentAt),
-			}:
-			default:
 			}
-		}
-	}
-}
-
-func (nc *nodeCommand) cleanupTimeouts() {
-	now := time.Now()
-
-	nc.pendingMutex.Lock()
-	defer nc.pendingMutex.Unlock()
-
-	for key, pending := range nc.pending {
-		if now.Sub(pending.sentAt) > pending.timeout {
-			delete(nc.pending, key)
-			pending.cancel()
 		}
 	}
 }
@@ -401,8 +378,5 @@ func (nc *nodeCommand) onEventFrame(evt *EventFrame) {
 	}
 	nc.removePending(pending.key)
 
-	select {
-	case pending.responseCh <- response:
-	default:
-	}
+	pending.responseCh <- response
 }

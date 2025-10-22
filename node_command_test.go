@@ -832,7 +832,7 @@ func TestNodeCommandProgressChannelFull(t *testing.T) {
 	}, &CommandOptions{
 		Channel: channelOpen.Channel,
 		Timeout: 3 * time.Second,
-		OnProgress: func(progress uint8) {
+		OnProgress: func(_ uint8) {
 			progressMutex.Lock()
 			progressCount++
 			progressMutex.Unlock()

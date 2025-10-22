@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 
 	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 	"github.com/bluenviron/gomavlib/v3/pkg/frame"
 	"github.com/bluenviron/gomavlib/v3/pkg/message"
 )
@@ -688,4 +690,97 @@ func TestNodeWriteSameToMultiple(t *testing.T) {
 			Channel: fr.Channel,
 		}, evt)
 	}
+}
+
+// TestNodeSendCommandWithErrors tests command error paths in node.go
+func TestNodeSendCommandWithErrors(t *testing.T) {
+	// Test 1: sendCommand with nil options
+	t.Run("NilOptions", func(t *testing.T) {
+		node, err := NewNode(NodeConf{
+			Dialect:     testDialect,
+			OutVersion:  V2,
+			OutSystemID: 11,
+			Endpoints: []EndpointConf{
+				EndpointTCPServer{"127.0.0.1:5701"},
+			},
+			HeartbeatDisable: true,
+		})
+		require.NoError(t, err)
+		defer node.Close()
+
+		// Test the sendCommand error path with nil options
+		// Using a real MessageCommandLong but node won't have nodeCommand initialized
+		result, err := node.sendCommand(&common.MessageCommandLong{
+			TargetSystem:    1,
+			TargetComponent: 1,
+			Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+		}, 1, 1, uint32(common.MAV_CMD_COMPONENT_ARM_DISARM), nil)
+		require.Error(t, err)
+		require.Nil(t, result)
+		require.Contains(t, err.Error(), "options is nil")
+	})
+
+	// Test 2: sendCommand with nil channel
+	t.Run("NilChannel", func(t *testing.T) {
+		node, err := NewNode(NodeConf{
+			Dialect:     testDialect,
+			OutVersion:  V2,
+			OutSystemID: 11,
+			Endpoints: []EndpointConf{
+				EndpointTCPServer{"127.0.0.1:5702"},
+			},
+			HeartbeatDisable: true,
+		})
+		require.NoError(t, err)
+		defer node.Close()
+
+		// Test the sendCommand error path with nil channel
+		result, err := node.sendCommand(&common.MessageCommandLong{
+			TargetSystem:    1,
+			TargetComponent: 1,
+			Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+		}, 1, 1, uint32(common.MAV_CMD_COMPONENT_ARM_DISARM), &CommandOptions{
+			Channel: nil,
+			Timeout: 1 * time.Second,
+		})
+		require.Error(t, err)
+		require.Nil(t, result)
+		require.Contains(t, err.Error(), "need channel")
+	})
+}
+
+// TestNodeCommandManagerNotInitialized tests commands when nodeCommand is nil
+func TestNodeCommandManagerNotInitialized(t *testing.T) {
+	// Create node without a dialect that has command messages
+	node, err := NewNode(NodeConf{
+		Dialect:     testDialect, // testDialect doesn't have command messages
+		OutVersion:  V2,
+		OutSystemID: 11,
+		Endpoints: []EndpointConf{
+			EndpointTCPServer{"127.0.0.1:5703"},
+		},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer node.Close()
+
+	// Get a channel for the test
+	go func() {
+		for range node.Events() { //nolint:revive
+		}
+	}()
+
+	// Try to send command - should fail because nodeCommand wasn't initialized
+	// (testDialect doesn't have COMMAND_LONG, COMMAND_INT, or COMMAND_ACK)
+	_, err = node.SendCommandLong(&common.MessageCommandLong{
+		TargetSystem:    1,
+		TargetComponent: 1,
+		Command:         common.MAV_CMD_COMPONENT_ARM_DISARM,
+	}, &CommandOptions{
+		Channel: &Channel{},
+		Timeout: 1 * time.Second,
+	})
+
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "command manager not initialized")
 }

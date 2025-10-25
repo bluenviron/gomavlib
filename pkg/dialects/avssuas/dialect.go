@@ -191,6 +191,7 @@ var dial = &dialect.Dialect{
 		&MessageGimbalManagerSetManualControl{},
 		&MessageEscInfo{},
 		&MessageEscStatus{},
+		&MessageAirspeed{},
 		&MessageWifiConfigAp{},
 		&MessageAisVessel{},
 		&MessageUavcanNodeStatus{},

@@ -3,8 +3,8 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/development"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Airspeed information from a sensor.
-type MessageAirspeed = development.MessageAirspeed
+type MessageAirspeed = common.MessageAirspeed

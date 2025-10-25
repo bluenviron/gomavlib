@@ -3,15 +3,15 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/development"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
 // Airspeed sensor flags
-type AIRSPEED_SENSOR_FLAGS = development.AIRSPEED_SENSOR_FLAGS
+type AIRSPEED_SENSOR_FLAGS = common.AIRSPEED_SENSOR_FLAGS
 
 const (
 	// Airspeed sensor is unhealthy
-	AIRSPEED_SENSOR_UNHEALTHY AIRSPEED_SENSOR_FLAGS = development.AIRSPEED_SENSOR_UNHEALTHY
+	AIRSPEED_SENSOR_UNHEALTHY AIRSPEED_SENSOR_FLAGS = common.AIRSPEED_SENSOR_UNHEALTHY
 	// True if the data from this sensor is being actively used by the flight controller for guidance, navigation or control.
-	AIRSPEED_SENSOR_USING AIRSPEED_SENSOR_FLAGS = development.AIRSPEED_SENSOR_USING
+	AIRSPEED_SENSOR_USING AIRSPEED_SENSOR_FLAGS = common.AIRSPEED_SENSOR_USING
 )

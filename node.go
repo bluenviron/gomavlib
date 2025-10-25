@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 	"github.com/bluenviron/gomavlib/v3/pkg/frame"
 	"github.com/bluenviron/gomavlib/v3/pkg/message"
 )
@@ -183,6 +184,7 @@ type Node struct {
 	channels          map[*Channel]struct{}
 	nodeHeartbeat     *nodeHeartbeat
 	nodeStreamRequest *nodeStreamRequest
+	nodeCommand       *nodeCommand
 
 	// in
 	chNewChannel   chan *Channel
@@ -311,12 +313,29 @@ func (n *Node) Initialize() error {
 		}
 	}
 
+	n.nodeCommand = &nodeCommand{
+		node: n,
+	}
+	err = n.nodeCommand.initialize()
+	if err != nil {
+		if errors.Is(err, errSkip) {
+			n.nodeCommand = nil
+		} else {
+			return err
+		}
+	}
+
 	if n.nodeHeartbeat != nil {
 		go n.nodeHeartbeat.run()
 	}
 
 	if n.nodeStreamRequest != nil {
 		go n.nodeStreamRequest.run()
+	}
+
+	if n.nodeCommand != nil {
+		n.wg.Add(1)
+		go n.nodeCommand.run()
 	}
 
 	for ca := range n.channelProviders {
@@ -376,6 +395,10 @@ outer:
 
 	if n.nodeStreamRequest != nil {
 		n.nodeStreamRequest.close()
+	}
+
+	if n.nodeCommand != nil {
+		n.nodeCommand.close()
 	}
 
 	for ca := range n.channelProviders {
@@ -574,6 +597,114 @@ func (n *Node) WriteFrameExcept(exceptChannel *Channel, fr frame.Frame) error {
 	}
 
 	return nil
+}
+
+// SendCommandLong sends a COMMAND_LONG and waits for COMMAND_ACK response.
+func (n *Node) SendCommandLong(command *common.MessageCommandLong, options *CommandOptions) (*CommandResponse, error) {
+	if n.nodeCommand == nil {
+		return nil, fmt.Errorf("command manager not initialized (dialect required)")
+	}
+
+	if n.nodeCommand.msgCommandLong == nil {
+		return nil, fmt.Errorf("COMMAND_LONG not available in dialect")
+	}
+
+	return n.sendCommand(
+		command,
+		command.TargetSystem,
+		command.TargetComponent,
+		uint32(command.Command),
+		options,
+	)
+}
+
+// SendCommandInt sends a COMMAND_INT and waits for COMMAND_ACK response.
+func (n *Node) SendCommandInt(command *common.MessageCommandInt, options *CommandOptions) (*CommandResponse, error) {
+	if n.nodeCommand == nil {
+		return nil, fmt.Errorf("command manager not initialized (dialect required)")
+	}
+
+	if n.nodeCommand.msgCommandInt == nil {
+		return nil, fmt.Errorf("COMMAND_INT not available in dialect")
+	}
+
+	return n.sendCommand(
+		command,
+		command.TargetSystem,
+		command.TargetComponent,
+		uint32(command.Command),
+		options,
+	)
+}
+
+// sendCommand is the internal unified command sender used by both
+// SendCommandLong and SendCommandInt.
+func (n *Node) sendCommand(
+	msg message.Message,
+	targetSystem uint8,
+	targetComponent uint8,
+	commandID uint32,
+	opts *CommandOptions,
+) (*CommandResponse, error) {
+	if opts == nil {
+		return nil, fmt.Errorf("options is nil. Channel is required")
+	}
+	if opts.Channel == nil {
+		return nil, fmt.Errorf("need channel to send command on")
+	}
+	if opts.Timeout == 0 {
+		opts.Timeout = defaultCommandTimeout
+	}
+
+	req := &sendCommandReq{
+		channel:      opts.Channel,
+		msg:          msg,
+		targetSystem: targetSystem,
+		targetComp:   targetComponent,
+		commandID:    commandID,
+		timeout:      opts.Timeout,
+		responseCh:   make(chan *CommandResponse, 1),
+		errorCh:      make(chan error, 1),
+	}
+
+	// Set up progress callback if provided
+	var progressWg sync.WaitGroup
+	if opts.OnProgress != nil {
+		req.progressCh = make(chan uint8, 10)
+		progressWg.Add(1)
+		go func() {
+			defer progressWg.Done()
+			for progress := range req.progressCh {
+				opts.OnProgress(progress)
+			}
+		}()
+	}
+
+	// Send request to command manager goroutine
+	select {
+	case n.nodeCommand.chRequest <- req:
+	case <-n.terminate:
+		return nil, ErrNodeTerminated
+	}
+
+	// Wait for send confirmation
+	if err := <-req.errorCh; err != nil {
+		if req.progressCh != nil {
+			close(req.progressCh)
+			progressWg.Wait()
+		}
+		return nil, fmt.Errorf("failed to send command: %w", err)
+	}
+
+	// BLOCK waiting for response (with timeout handled by command manager)
+	response := <-req.responseCh
+
+	// The progress channel gets closed and through that wg.Done() is called
+	//  by the command manager when the command is completed
+	// times out or is cancelled.
+	progressWg.Wait()
+
+	return response, nil
 }
 
 func (n *Node) pushEvent(evt Event) {

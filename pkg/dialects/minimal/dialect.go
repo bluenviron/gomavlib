@@ -17,6 +17,5 @@ var dial = &dialect.Dialect{
 	Messages: []message.Message{
 		// minimal
 		&MessageHeartbeat{},
-		&MessageProtocolVersion{},
 	},
 }

@@ -17,7 +17,6 @@ var dial = &dialect.Dialect{
 	Messages: []message.Message{
 		// minimal
 		&MessageHeartbeat{},
-		&MessageProtocolVersion{},
 		// standard
 		&MessageGlobalPositionInt{},
 		&MessageAutopilotVersion{},
@@ -193,6 +192,7 @@ var dial = &dialect.Dialect{
 		&MessageEscStatus{},
 		&MessageAirspeed{},
 		&MessageWifiConfigAp{},
+		&MessageProtocolVersion{},
 		&MessageAisVessel{},
 		&MessageUavcanNodeStatus{},
 		&MessageUavcanNodeInfo{},

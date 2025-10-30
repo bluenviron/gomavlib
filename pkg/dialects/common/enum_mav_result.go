@@ -15,7 +15,7 @@ const (
 	MAV_RESULT_ACCEPTED MAV_RESULT = 0
 	// Command is valid, but cannot be executed at this time. This is used to indicate a problem that should be fixed just by waiting (e.g. a state machine is busy, can't arm because have not got GPS lock, etc.). Retrying later should work.
 	MAV_RESULT_TEMPORARILY_REJECTED MAV_RESULT = 1
-	// Command is invalid (is supported but has invalid parameters). Retrying same command and parameters will not work.
+	// Command is invalid; it is supported but one or more parameter values are invalid (i.e. parameter reserved, value allowed by spec but not supported by flight stack, and so on). Retrying the same command and parameters will not work.
 	MAV_RESULT_DENIED MAV_RESULT = 2
 	// Command is not supported (unknown).
 	MAV_RESULT_UNSUPPORTED MAV_RESULT = 3

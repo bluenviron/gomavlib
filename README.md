@@ -17,9 +17,9 @@ Features:
 
 * Create Mavlink nodes able to communicate with other nodes.
   * Supported transports: serial, UDP (server, client or broadcast mode), TCP (server or client mode), custom reader/writer.
+  * Support both domain names and IPs.
   * Emit heartbeats automatically.
   * Send automatic stream requests to Ardupilot devices (disabled by default).
-  * Use both domain names and IPs.
 * Decode and encode Mavlink v2.0 and v1.0.
   * Compute and validate checksums.
   * Support all v2 features: empty-byte truncation, signatures, message extensions.
@@ -68,6 +68,7 @@ Features:
 * [node-endpoint-custom-server](examples/node-endpoint-custom-server/main.go)
 * [node-message-read](examples/node-message-read/main.go)
 * [node-message-write](examples/node-message-write/main.go)
+* [node-command-microservice](examples/node-command-microservice/main.go)
 * [node-signature](examples/node-signature/main.go)
 * [node-dialect-absent](examples/node-dialect-absent/main.go)
 * [node-dialect-custom](examples/node-dialect-custom/main.go)

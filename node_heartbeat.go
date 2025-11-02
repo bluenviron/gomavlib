@@ -12,6 +12,20 @@ const (
 	heartbeatCRC = 50
 )
 
+func findMsgHeartbeat(messages []message.Message) message.Message {
+	for _, m := range messages {
+		if m.GetID() == heartbeatID {
+			rw := &message.ReadWriter{Message: m}
+			err := rw.Initialize()
+			if err != nil || rw.CRCExtra() != heartbeatCRC {
+				return nil
+			}
+			return m
+		}
+	}
+	return nil
+}
+
 type nodeHeartbeat struct {
 	node *Node
 
@@ -35,24 +49,8 @@ func (h *nodeHeartbeat) initialize() error {
 		return errSkip
 	}
 
-	// heartbeat message must exist in dialect and correspond to standard
-	h.msgHeartbeat = func() message.Message {
-		for _, m := range h.node.Dialect.Messages {
-			if m.GetID() == heartbeatID {
-				return m
-			}
-		}
-		return nil
-	}()
+	h.msgHeartbeat = findMsgHeartbeat(h.node.Dialect.Messages)
 	if h.msgHeartbeat == nil {
-		return errSkip
-	}
-
-	mde := &message.ReadWriter{
-		Message: h.msgHeartbeat,
-	}
-	err := mde.Initialize()
-	if err != nil || mde.CRCExtra() != heartbeatCRC {
 		return errSkip
 	}
 

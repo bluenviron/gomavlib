@@ -14,6 +14,20 @@ const (
 	requestDataStreamCRC = 148
 )
 
+func findMsgRequestDataStream(messages []message.Message) message.Message {
+	for _, m := range messages {
+		if m.GetID() == requestDataStreamID {
+			rw := &message.ReadWriter{Message: m}
+			err := rw.Initialize()
+			if err != nil || rw.CRCExtra() != requestDataStreamCRC {
+				return nil
+			}
+			return m
+		}
+	}
+	return nil
+}
+
 type streamNode struct {
 	Channel     *Channel
 	SystemID    byte
@@ -46,45 +60,13 @@ func (sr *nodeStreamRequest) initialize() error {
 		return errSkip
 	}
 
-	// heartbeat message must exist in dialect and correspond to standard
-	sr.msgHeartbeat = func() message.Message {
-		for _, m := range sr.node.Dialect.Messages {
-			if m.GetID() == heartbeatID {
-				return m
-			}
-		}
-		return nil
-	}()
+	sr.msgHeartbeat = findMsgHeartbeat(sr.node.Dialect.Messages)
 	if sr.msgHeartbeat == nil {
 		return errSkip
 	}
 
-	mde := &message.ReadWriter{
-		Message: sr.msgHeartbeat,
-	}
-	err := mde.Initialize()
-	if err != nil || mde.CRCExtra() != heartbeatCRC {
-		return errSkip
-	}
-
-	// request data stream message must exist in dialect and correspond to standard
-	sr.msgRequestDataStream = func() message.Message {
-		for _, m := range sr.node.Dialect.Messages {
-			if m.GetID() == requestDataStreamID {
-				return m
-			}
-		}
-		return nil
-	}()
+	sr.msgRequestDataStream = findMsgRequestDataStream(sr.node.Dialect.Messages)
 	if sr.msgRequestDataStream == nil {
-		return errSkip
-	}
-
-	mde = &message.ReadWriter{
-		Message: sr.msgRequestDataStream,
-	}
-	err = mde.Initialize()
-	if err != nil || mde.CRCExtra() != requestDataStreamCRC {
 		return errSkip
 	}
 

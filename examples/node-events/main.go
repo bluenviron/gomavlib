@@ -34,18 +34,18 @@ func main() {
 	// print incoming events.
 	// gomavlib provides different kinds of events.
 	for evt := range node.Events() {
-		switch ee := evt.(type) {
+		switch evt := evt.(type) {
 		case *gomavlib.EventFrame:
-			log.Printf("frame received: %v\n", ee)
+			log.Printf("frame received: %v\n", evt)
 
 		case *gomavlib.EventParseError:
-			log.Printf("parse error: %v\n", ee)
+			log.Printf("parse error: %v\n", evt)
 
 		case *gomavlib.EventChannelOpen:
-			log.Printf("channel opened: %v\n", ee)
+			log.Printf("channel opened: %v\n", evt)
 
 		case *gomavlib.EventChannelClose:
-			log.Printf("channel closed: %v\n", ee)
+			log.Printf("channel closed: %v\n", evt)
 		}
 	}
 }

@@ -260,7 +260,7 @@ func dialectNameDefToGo(in string) string {
 func parseDescription(in string) []string {
 	var lines []string
 
-	for _, line := range strings.Split(in, "\n") {
+	for line := range strings.SplitSeq(in, "\n") {
 		line = strings.TrimSpace(line)
 		if line != "" {
 			lines = append(lines, line)
@@ -583,7 +583,7 @@ func writeDialect(
 	enums map[string]*outEnum,
 ) error {
 	var buf bytes.Buffer
-	err := tplDialect.Execute(&buf, map[string]interface{}{
+	err := tplDialect.Execute(&buf, map[string]any{
 		"PkgName": defName,
 		"Version": func() int {
 			ret, _ := strconv.Atoi(version)
@@ -606,7 +606,7 @@ func writeEnum(
 	link bool,
 ) error {
 	var buf bytes.Buffer
-	err := tplEnum.Execute(&buf, map[string]interface{}{
+	err := tplEnum.Execute(&buf, map[string]any{
 		"PkgName": defName,
 		"Enum":    enum,
 		"Link":    link && defName != enum.DefName,
@@ -625,7 +625,7 @@ func writeMessage(
 	link bool,
 ) error {
 	var buf bytes.Buffer
-	err := tplMessage.Execute(&buf, map[string]interface{}{
+	err := tplMessage.Execute(&buf, map[string]any{
 		"PkgName": defName,
 		"Msg":     msg,
 		"Link":    link && defName != msg.DefName,

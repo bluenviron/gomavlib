@@ -107,7 +107,7 @@ func TestEndpointClient(t *testing.T) {
 				err = sw.Initialize()
 				require.NoError(t, err)
 
-				for i := 0; i < 3; i++ {
+				for i := range 3 {
 					var fr frame.Frame
 					fr, err = rw.Read()
 					require.NoError(t, err)
@@ -160,7 +160,7 @@ func TestEndpointClient(t *testing.T) {
 				Channel: evt.(*EventChannelOpen).Channel,
 			}, evt)
 
-			for i := 0; i < 3; i++ {
+			for i := range 3 {
 				err = node.WriteMessageAll(&MessageHeartbeat{
 					Type:           1,
 					Autopilot:      2,

@@ -8,13 +8,13 @@ import (
 
 // float values "NaN", "+Inf", "-Inf" cannot be converted into JSON numbers.
 // convert them to string before performing the JSON encoding.
-func filterFloats(obj any) interface{} {
+func filterFloats(obj any) any {
 	v := reflect.ValueOf(obj)
 	if v.Kind() == reflect.Pointer {
 		v = v.Elem()
 	}
 
-	convert := func(f float64) interface{} {
+	convert := func(f float64) any {
 		switch {
 		case math.IsNaN(f):
 			return "NaN"
@@ -39,8 +39,8 @@ func filterFloats(obj any) interface{} {
 
 	case reflect.Array:
 		nl := v.Len()
-		out := make([]interface{}, nl)
-		for i := 0; i < nl; i++ {
+		out := make([]any, nl)
+		for i := range nl {
 			out[i] = filterFloats(v.Index(i).Interface())
 		}
 		return out
@@ -48,8 +48,8 @@ func filterFloats(obj any) interface{} {
 	case reflect.Struct:
 		t := v.Type()
 		nf := t.NumField()
-		out := make(map[string]interface{}, nf)
-		for i := 0; i < nf; i++ {
+		out := make(map[string]any, nf)
+		for i := range nf {
 			out[t.Field(i).Name] = filterFloats(v.Field(i).Interface())
 		}
 		return out

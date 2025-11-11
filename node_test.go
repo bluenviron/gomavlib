@@ -129,7 +129,7 @@ func TestNodeWriteAll(t *testing.T) {
 			var wg sync.WaitGroup
 			wg.Add(5)
 
-			for i := 0; i < 5; i++ {
+			for range 5 {
 				var client *Node
 				client, err = NewNode(NodeConf{
 					Dialect:     testDialect,
@@ -208,7 +208,7 @@ func TestNodeWriteExcept(t *testing.T) {
 			var wg sync.WaitGroup
 			wg.Add(4)
 
-			for i := 0; i < 5; i++ {
+			for range 5 {
 				var client *Node
 				client, err = NewNode(NodeConf{
 					Dialect:     testDialect,
@@ -290,7 +290,7 @@ func TestNodeWriteTo(t *testing.T) {
 
 			recv := make(chan struct{})
 
-			for i := 0; i < 5; i++ {
+			for range 5 {
 				var client *Node
 				client, err = NewNode(NodeConf{
 					Dialect:     testDialect,
@@ -390,7 +390,7 @@ func TestNodeWriteMessageInLoop(t *testing.T) {
 
 	for evt := range node1.Events() {
 		if _, ok := evt.(*EventChannelOpen); ok {
-			for i := 0; i < 10; i++ {
+			for range 10 {
 				err = node1.WriteMessageAll(testMessage)
 				require.NoError(t, err)
 			}
@@ -672,7 +672,7 @@ func TestNodeWriteSameToMultiple(t *testing.T) {
 	err = client2.WriteFrameAll(fr)
 	require.NoError(t, err)
 
-	for i := 0; i < 2; i++ {
+	for range 2 {
 		evt = <-server.Events()
 		var fr *EventFrame
 		fr, ok = evt.(*EventFrame)

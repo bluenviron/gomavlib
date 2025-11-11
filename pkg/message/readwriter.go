@@ -464,7 +464,7 @@ func (rw *ReadWriter) Read(m *MessageRaw, isV2 bool) (Message, error) {
 		switch target.Kind() {
 		case reflect.Array:
 			length := target.Len()
-			for i := 0; i < length; i++ {
+			for i := range length {
 				n := readValue(target.Index(i), payload, f)
 				payload = payload[n:]
 			}
@@ -502,7 +502,7 @@ func (rw *ReadWriter) Write(msg Message, isV2 bool) *MessageRaw {
 		switch target.Kind() {
 		case reflect.Array:
 			length := target.Len()
-			for i := 0; i < length; i++ {
+			for i := range length {
 				n := writeValue(buf, target.Index(i), f)
 				buf = buf[n:]
 			}

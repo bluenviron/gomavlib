@@ -118,7 +118,7 @@ func TestEnum_{{ .Name }}(t *testing.T) {
 }
 `))
 
-func writeTemplate(fpath string, tpl *template.Template, args map[string]interface{}) error {
+func writeTemplate(fpath string, tpl *template.Template, args map[string]any) error {
 	f, err := os.Create(fpath)
 	if err != nil {
 		return err
@@ -136,7 +136,7 @@ func shellCommand(cmdstr string) error {
 	return cmd.Run()
 }
 
-func downloadJSON(addr string, data interface{}) error {
+func downloadJSON(addr string, data any) error {
 	req, err := http.NewRequest(http.MethodGet, addr, nil)
 	if err != nil {
 		return err
@@ -166,7 +166,7 @@ func processDialect(commit string, name string) error {
 	err = writeTemplate(
 		"./"+pkgName+"/dialect_test.go",
 		tplDialectTest,
-		map[string]interface{}{
+		map[string]any{
 			"PkgName": pkgName,
 		})
 	if err != nil {
@@ -210,7 +210,7 @@ func processDialect(commit string, name string) error {
 		err = writeTemplate(
 			"./"+pkgName+"/"+strings.ReplaceAll(f.Name(), ".go", "_test.go"),
 			tplEnumTest,
-			map[string]interface{}{
+			map[string]any{
 				"PkgName":    pkgName,
 				"Name":       enumName,
 				"FirstEntry": matches[2],
@@ -265,7 +265,7 @@ func run() error {
 	err = writeTemplate(
 		"package_test.go",
 		tplTest,
-		map[string]interface{}{})
+		map[string]any{})
 	if err != nil {
 		return err
 	}

@@ -38,7 +38,7 @@ type Channel struct {
 	running      bool
 
 	// in
-	chWrite chan interface{}
+	chWrite chan any
 
 	// out
 	done chan struct{}
@@ -79,7 +79,7 @@ func (ch *Channel) initialize() error {
 	}
 
 	ch.ctx, ch.ctxCancel = context.WithCancel(context.Background())
-	ch.chWrite = make(chan interface{}, writeBufferSize)
+	ch.chWrite = make(chan any, writeBufferSize)
 	ch.done = make(chan struct{})
 
 	return nil
@@ -203,7 +203,7 @@ func (ch *Channel) Endpoint() Endpoint {
 	return ch.endpoint
 }
 
-func (ch *Channel) write(what interface{}) {
+func (ch *Channel) write(what any) {
 	select {
 	case ch.chWrite <- what:
 	case <-ch.ctx.Done():

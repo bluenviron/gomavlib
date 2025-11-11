@@ -22,7 +22,7 @@ func hasStringFields(msg message.Message) bool {
 	typ := reflect.TypeOf(msg).Elem()
 
 	for i := range typ.NumField() {
-		if typ.Field(i).Type == reflect.TypeOf("") {
+		if typ.Field(i).Type == reflect.TypeFor[string]() {
 			return true
 		}
 	}
@@ -43,7 +43,7 @@ func (e ReadError) Error() string {
 	return e.str
 }
 
-func newError(format string, args ...interface{}) ReadError {
+func newError(format string, args ...any) ReadError {
 	return ReadError{
 		str: fmt.Sprintf(format, args...),
 	}

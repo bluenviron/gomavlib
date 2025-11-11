@@ -55,7 +55,7 @@ func TestEndpointServer(t *testing.T) {
 			err = sw.Initialize()
 			require.NoError(t, err)
 
-			for i := 0; i < 3; i++ {
+			for i := range 3 {
 				msg := &MessageHeartbeat{
 					Type:           1,
 					Autopilot:      2,

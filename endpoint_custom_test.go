@@ -47,7 +47,7 @@ func TestEndpointCustom(t *testing.T) {
 	err = sw.Initialize()
 	require.NoError(t, err)
 
-	for i := 0; i < 3; i++ { //nolint:dupl
+	for i := range 3 { //nolint:dupl
 		msg := &MessageHeartbeat{
 			Type:           1,
 			Autopilot:      2,

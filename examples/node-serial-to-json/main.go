@@ -40,7 +40,7 @@ func main() {
 			var enc []byte
 			enc, err = json.Marshal(struct {
 				Type    string
-				Content interface{}
+				Content any
 			}{
 				Type:    fmt.Sprintf("%T", frm.Message()),
 				Content: filterFloats(frm.Message()),

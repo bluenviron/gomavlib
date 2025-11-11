@@ -30,12 +30,12 @@ var (
 
 type writeToReq struct {
 	ch   *Channel
-	what interface{}
+	what any
 }
 
 type writeExceptReq struct {
 	except *Channel
-	what   interface{}
+	what   any
 }
 
 // NodeConf allows to configure a Node.
@@ -188,7 +188,7 @@ type Node struct {
 	chNewChannel   chan *Channel
 	chCloseChannel chan *Channel
 	chWriteTo      chan writeToReq
-	chWriteAll     chan interface{}
+	chWriteAll     chan any
 	chWriteExcept  chan writeExceptReq
 	terminate      chan struct{}
 
@@ -254,7 +254,7 @@ func (n *Node) Initialize() error {
 	n.chNewChannel = make(chan *Channel)
 	n.chCloseChannel = make(chan *Channel)
 	n.chWriteTo = make(chan writeToReq)
-	n.chWriteAll = make(chan interface{})
+	n.chWriteAll = make(chan any)
 	n.chWriteExcept = make(chan writeExceptReq)
 	n.terminate = make(chan struct{})
 	n.chEvent = make(chan Event)

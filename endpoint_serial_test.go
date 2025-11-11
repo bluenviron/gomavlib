@@ -49,7 +49,7 @@ func TestEndpointSerial(t *testing.T) {
 			err = sw.Initialize()
 			require.NoError(t, err)
 
-			for i := 0; i < 3; i++ {
+			for i := range 3 {
 				err = sw.Write(&MessageHeartbeat{
 					Type:           1,
 					Autopilot:      2,
@@ -103,7 +103,7 @@ func TestEndpointSerial(t *testing.T) {
 		Channel: evt.(*EventChannelOpen).Channel,
 	}, evt)
 
-	for i := 0; i < 3; i++ {
+	for i := range 3 {
 		evt = <-node.Events()
 		require.Equal(t, &EventFrame{
 			Frame: &frame.V2Frame{

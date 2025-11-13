@@ -41,6 +41,12 @@ const (
 	MAV_CMD_DO_FOLLOW_REPOSITION MAV_CMD = 33
 	// Start orbiting on the circumference of a circle defined by the parameters. Setting values to NaN/INT32_MAX (as appropriate) results in using defaults.
 	MAV_CMD_DO_ORBIT MAV_CMD = 34
+	// Fly a figure eight path as defined by the parameters.
+	// Set parameters to NaN/INT32_MAX (as appropriate) to use system-default values.
+	// The command is intended for fixed wing vehicles (and VTOL hybrids flying in fixed-wing mode), allowing POI tracking for gimbals that don't support infinite rotation.
+	// This command only defines the flight path. Speed should be set independently (use e.g. MAV_CMD_DO_CHANGE_SPEED).
+	// Yaw and other degrees of freedom are not specified, and will be flight-stack specific (on vehicles where they can be controlled independent of the heading).
+	MAV_CMD_DO_FIGURE_EIGHT MAV_CMD = 35
 	// Sets the region of interest (ROI) for a sensor set or the vehicle itself. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras.
 	MAV_CMD_NAV_ROI MAV_CMD = 80
 	// Control autonomous path planning on the MAV.
@@ -430,6 +436,7 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_DO_FOLLOW:                          "MAV_CMD_DO_FOLLOW",
 	MAV_CMD_DO_FOLLOW_REPOSITION:               "MAV_CMD_DO_FOLLOW_REPOSITION",
 	MAV_CMD_DO_ORBIT:                           "MAV_CMD_DO_ORBIT",
+	MAV_CMD_DO_FIGURE_EIGHT:                    "MAV_CMD_DO_FIGURE_EIGHT",
 	MAV_CMD_NAV_ROI:                            "MAV_CMD_NAV_ROI",
 	MAV_CMD_NAV_PATHPLANNING:                   "MAV_CMD_NAV_PATHPLANNING",
 	MAV_CMD_NAV_SPLINE_WAYPOINT:                "MAV_CMD_NAV_SPLINE_WAYPOINT",
@@ -599,6 +606,7 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_DO_FOLLOW":                          MAV_CMD_DO_FOLLOW,
 	"MAV_CMD_DO_FOLLOW_REPOSITION":               MAV_CMD_DO_FOLLOW_REPOSITION,
 	"MAV_CMD_DO_ORBIT":                           MAV_CMD_DO_ORBIT,
+	"MAV_CMD_DO_FIGURE_EIGHT":                    MAV_CMD_DO_FIGURE_EIGHT,
 	"MAV_CMD_NAV_ROI":                            MAV_CMD_NAV_ROI,
 	"MAV_CMD_NAV_PATHPLANNING":                   MAV_CMD_NAV_PATHPLANNING,
 	"MAV_CMD_NAV_SPLINE_WAYPOINT":                MAV_CMD_NAV_SPLINE_WAYPOINT,

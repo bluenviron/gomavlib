@@ -41,6 +41,12 @@ const (
 	MAV_CMD_DO_FOLLOW_REPOSITION MAV_CMD = 33
 	// Start orbiting on the circumference of a circle defined by the parameters. Setting values to NaN/INT32_MAX (as appropriate) results in using defaults.
 	MAV_CMD_DO_ORBIT MAV_CMD = 34
+	// Fly a figure eight path as defined by the parameters.
+	// Set parameters to NaN/INT32_MAX (as appropriate) to use system-default values.
+	// The command is intended for fixed wing vehicles (and VTOL hybrids flying in fixed-wing mode), allowing POI tracking for gimbals that don't support infinite rotation.
+	// This command only defines the flight path. Speed should be set independently (use e.g. MAV_CMD_DO_CHANGE_SPEED).
+	// Yaw and other degrees of freedom are not specified, and will be flight-stack specific (on vehicles where they can be controlled independent of the heading).
+	MAV_CMD_DO_FIGURE_EIGHT MAV_CMD = 35
 	// Sets the region of interest (ROI) for a sensor set or the vehicle itself. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras.
 	MAV_CMD_NAV_ROI MAV_CMD = 80
 	// Control autonomous path planning on the MAV.
@@ -410,12 +416,6 @@ const (
 	MAV_CMD_USER_5 MAV_CMD = 31014
 	// Request forwarding of CAN packets from the given CAN bus to this component. CAN Frames are sent using CAN_FRAME and CANFD_FRAME messages
 	MAV_CMD_CAN_FORWARD MAV_CMD = 32000
-	// Fly a figure eight path as defined by the parameters.
-	// Set parameters to NaN/INT32_MAX (as appropriate) to use system-default values.
-	// The command is intended for fixed wing vehicles (and VTOL hybrids flying in fixed-wing mode), allowing POI tracking for gimbals that don't support infinite rotation.
-	// This command only defines the flight path. Speed should be set independently (use e.g. MAV_CMD_DO_CHANGE_SPEED).
-	// Yaw and other degrees of freedom are not specified, and will be flight-stack specific (on vehicles where they can be controlled independent of the heading).
-	MAV_CMD_DO_FIGURE_EIGHT MAV_CMD = 35
 	// Circular arc path waypoint.
 	// This defines the end/exit point and angle (param1) of an arc path from the previous waypoint. A position is required before this command to define the start of the arc (e.g. current position, a MAV_CMD_NAV_WAYPOINT, or a MAV_CMD_NAV_ARC_WAYPOINT).
 	// The resulting path is a circular arc in the NE frame, with the difference in height being defined by the difference in waypoint altitudes.
@@ -499,6 +499,7 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_DO_FOLLOW:                          "MAV_CMD_DO_FOLLOW",
 	MAV_CMD_DO_FOLLOW_REPOSITION:               "MAV_CMD_DO_FOLLOW_REPOSITION",
 	MAV_CMD_DO_ORBIT:                           "MAV_CMD_DO_ORBIT",
+	MAV_CMD_DO_FIGURE_EIGHT:                    "MAV_CMD_DO_FIGURE_EIGHT",
 	MAV_CMD_NAV_ROI:                            "MAV_CMD_NAV_ROI",
 	MAV_CMD_NAV_PATHPLANNING:                   "MAV_CMD_NAV_PATHPLANNING",
 	MAV_CMD_NAV_SPLINE_WAYPOINT:                "MAV_CMD_NAV_SPLINE_WAYPOINT",
@@ -649,7 +650,6 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_USER_4:                             "MAV_CMD_USER_4",
 	MAV_CMD_USER_5:                             "MAV_CMD_USER_5",
 	MAV_CMD_CAN_FORWARD:                        "MAV_CMD_CAN_FORWARD",
-	MAV_CMD_DO_FIGURE_EIGHT:                    "MAV_CMD_DO_FIGURE_EIGHT",
 	MAV_CMD_NAV_ARC_WAYPOINT:                   "MAV_CMD_NAV_ARC_WAYPOINT",
 	MAV_CMD_DO_UPGRADE:                         "MAV_CMD_DO_UPGRADE",
 	MAV_CMD_ACTUATOR_GROUP_TEST:                "MAV_CMD_ACTUATOR_GROUP_TEST",
@@ -679,6 +679,7 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_DO_FOLLOW":                          MAV_CMD_DO_FOLLOW,
 	"MAV_CMD_DO_FOLLOW_REPOSITION":               MAV_CMD_DO_FOLLOW_REPOSITION,
 	"MAV_CMD_DO_ORBIT":                           MAV_CMD_DO_ORBIT,
+	"MAV_CMD_DO_FIGURE_EIGHT":                    MAV_CMD_DO_FIGURE_EIGHT,
 	"MAV_CMD_NAV_ROI":                            MAV_CMD_NAV_ROI,
 	"MAV_CMD_NAV_PATHPLANNING":                   MAV_CMD_NAV_PATHPLANNING,
 	"MAV_CMD_NAV_SPLINE_WAYPOINT":                MAV_CMD_NAV_SPLINE_WAYPOINT,
@@ -829,7 +830,6 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_USER_4":                             MAV_CMD_USER_4,
 	"MAV_CMD_USER_5":                             MAV_CMD_USER_5,
 	"MAV_CMD_CAN_FORWARD":                        MAV_CMD_CAN_FORWARD,
-	"MAV_CMD_DO_FIGURE_EIGHT":                    MAV_CMD_DO_FIGURE_EIGHT,
 	"MAV_CMD_NAV_ARC_WAYPOINT":                   MAV_CMD_NAV_ARC_WAYPOINT,
 	"MAV_CMD_DO_UPGRADE":                         MAV_CMD_DO_UPGRADE,
 	"MAV_CMD_ACTUATOR_GROUP_TEST":                MAV_CMD_ACTUATOR_GROUP_TEST,

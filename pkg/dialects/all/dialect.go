@@ -377,6 +377,7 @@ var dial = &dialect.Dialect{
 		&MessageTargetAbsolute{},
 		&MessageTargetRelative{},
 		&MessageControlStatus{},
+		&MessageEscEeprom{},
 		// pythonarraytest
 		&MessageArrayTest_0{},
 		&MessageArrayTest_1{},

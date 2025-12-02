@@ -6,7 +6,7 @@ package common
 type MessageStatustext struct {
 	// Severity of status. Relies on the definitions within RFC-5424.
 	Severity MAV_SEVERITY `mavenum:"uint8"`
-	// Status text message, without null termination character
+	// Status text message, without null termination character. UTF-8 encoded.
 	Text string `mavlen:"50"`
 	// Unique (opaque) identifier for this statustext message.  May be used to reassemble a logical long-statustext message from a sequence of chunks.  A value of zero indicates this is the only chunk in the sequence and the message can be emitted immediately.
 	Id uint16 `mavext:"true"`

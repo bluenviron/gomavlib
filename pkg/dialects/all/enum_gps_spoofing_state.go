@@ -13,7 +13,7 @@ const (
 	// The GPS receiver does not provide GPS signal spoofing info.
 	GPS_SPOOFING_STATE_UNKNOWN GPS_SPOOFING_STATE = development.GPS_SPOOFING_STATE_UNKNOWN
 	// The GPS receiver detected no signal spoofing.
-	GPS_SPOOFING_STATE_OK GPS_SPOOFING_STATE = development.GPS_SPOOFING_STATE_OK
+	GPS_SPOOFING_STATE_NOT_SPOOFED GPS_SPOOFING_STATE = development.GPS_SPOOFING_STATE_NOT_SPOOFED
 	// The GPS receiver detected and mitigated signal spoofing.
 	GPS_SPOOFING_STATE_MITIGATED GPS_SPOOFING_STATE = development.GPS_SPOOFING_STATE_MITIGATED
 	// The GPS receiver detected signal spoofing but still has a fix.

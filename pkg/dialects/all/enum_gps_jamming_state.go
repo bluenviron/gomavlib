@@ -13,7 +13,7 @@ const (
 	// The GPS receiver does not provide GPS signal jamming info.
 	GPS_JAMMING_STATE_UNKNOWN GPS_JAMMING_STATE = development.GPS_JAMMING_STATE_UNKNOWN
 	// The GPS receiver detected no signal jamming.
-	GPS_JAMMING_STATE_OK GPS_JAMMING_STATE = development.GPS_JAMMING_STATE_OK
+	GPS_JAMMING_STATE_NOT_JAMMED GPS_JAMMING_STATE = development.GPS_JAMMING_STATE_NOT_JAMMED
 	// The GPS receiver detected and mitigated signal jamming.
 	GPS_JAMMING_STATE_MITIGATED GPS_JAMMING_STATE = development.GPS_JAMMING_STATE_MITIGATED
 	// The GPS receiver detected signal jamming.

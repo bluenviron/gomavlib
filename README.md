@@ -1,8 +1,8 @@
 # gomavlib
 
-[![Test](https://github.com/bluenviron/gomavlib/actions/workflows/test.yml/badge.svg)](https://github.com/bluenviron/gomavlib/actions/workflows/test.yml)
-[![Lint](https://github.com/bluenviron/gomavlib/actions/workflows/lint.yml/badge.svg)](https://github.com/bluenviron/gomavlib/actions/workflows/lint.yml)
-[![Dialects](https://github.com/bluenviron/gomavlib/actions/workflows/dialects.yml/badge.svg)](https://github.com/bluenviron/gomavlib/actions/workflows/dialects.yml)
+[![Test](https://github.com/bluenviron/gomavlib/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/bluenviron/gomavlib/actions/workflows/test.yml?query=branch%3Amain)
+[![Lint](https://github.com/bluenviron/gomavlib/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/bluenviron/gomavlib/actions/workflows/lint.yml?query=branch%3Amain)
+[![Dialects](https://github.com/bluenviron/gomavlib/actions/workflows/dialects.yml/badge.svg?branch=main)](https://github.com/bluenviron/gomavlib/actions/workflows/dialects.yml?query=branch%3Amain)
 [![Go Report Card](https://goreportcard.com/badge/github.com/bluenviron/gomavlib)](https://goreportcard.com/report/github.com/bluenviron/gomavlib)
 [![CodeCov](https://codecov.io/gh/bluenviron/gomavlib/branch/main/graph/badge.svg)](https://app.codecov.io/gh/bluenviron/gomavlib/tree/main)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/bluenviron/gomavlib/v3)](https://pkg.go.dev/github.com/bluenviron/gomavlib/v3#pkg-index)

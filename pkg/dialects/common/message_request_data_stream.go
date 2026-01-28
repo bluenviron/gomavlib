@@ -8,8 +8,8 @@ type MessageRequestDataStream struct {
 	TargetSystem uint8
 	// The target requested to send the message stream.
 	TargetComponent uint8
-	// The ID of the requested data stream
-	ReqStreamId uint8
+	// The ID of the requested data stream.
+	ReqStreamId MAV_DATA_STREAM `mavenum:"uint8"`
 	// The requested message rate
 	ReqMessageRate uint16
 	// 1 to start sending, 0 to stop sending.

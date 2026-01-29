@@ -87,7 +87,7 @@ const (
 	MAV_CMD_DO_SET_HOME MAV_CMD = common.MAV_CMD_DO_SET_HOME
 	// Set a system parameter.  Caution!  Use of this command requires knowledge of the numeric enumeration value of the parameter.
 	MAV_CMD_DO_SET_PARAMETER MAV_CMD = common.MAV_CMD_DO_SET_PARAMETER
-	// Set a relay to a condition.
+	// Set a relay to a condition. The current value may optionally be reported using RELAY_STATUS.
 	MAV_CMD_DO_SET_RELAY MAV_CMD = common.MAV_CMD_DO_SET_RELAY
 	// Cycle a relay on and off for a desired number of cycles with a desired period.
 	MAV_CMD_DO_REPEAT_RELAY MAV_CMD = common.MAV_CMD_DO_REPEAT_RELAY

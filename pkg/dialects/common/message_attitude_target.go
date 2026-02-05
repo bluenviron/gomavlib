@@ -16,7 +16,7 @@ type MessageAttitudeTarget struct {
 	BodyPitchRate float32
 	// Body yaw rate
 	BodyYawRate float32
-	// Collective thrust, normalized to 0 .. 1 (-1 .. 1 for vehicles capable of reverse trust)
+	// Collective thrust, normalized to 0 .. 1 (-1 .. 1 for vehicles capable of reverse thrust)
 	Thrust float32
 }
 

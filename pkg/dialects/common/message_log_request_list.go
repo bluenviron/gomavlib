@@ -2,7 +2,11 @@
 //nolint:revive,misspell,govet,lll
 package common
 
-// Request a list of available logs. On some systems calling this may stop on-board logging until LOG_REQUEST_END is called. If there are no log files available this request shall be answered with one LOG_ENTRY message with id = 0 and num_logs = 0.
+// Request a list of available logs.
+// On some systems calling this may stop on-board logging until LOG_REQUEST_END is called.
+// If there are no log files available this request shall be answered with one LOG_ENTRY message with id = 0 and num_logs = 0.
+// LOG_ENTRY messages can start with id 1 or 0.
+// The ground station needs to be able to process either.
 type MessageLogRequestList struct {
 	// System ID
 	TargetSystem uint8

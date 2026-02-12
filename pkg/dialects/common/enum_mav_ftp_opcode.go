@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-// MAV FTP opcodes: https://mavlink.io/en/services/ftp.html
+// MAV FTP opcodes (may be used in FILE_TRANSFER_PROTOCOL). See https://mavlink.io/en/services/ftp.html.
 type MAV_FTP_OPCODE uint64
 
 const (

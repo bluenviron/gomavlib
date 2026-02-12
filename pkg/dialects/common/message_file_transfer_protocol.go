@@ -10,7 +10,7 @@ type MessageFileTransferProtocol struct {
 	TargetSystem uint8
 	// Component ID (0 for broadcast)
 	TargetComponent uint8
-	// Variable length payload. The length is defined by the remaining message length when subtracting the header and other fields. The content/format of this block is defined in https://mavlink.io/en/services/ftp.html.
+	// Variable length payload. The content/format of this block is defined in https://mavlink.io/en/services/ftp.html. The length is defined by the remaining message length when subtracting the header and other fields. See also MAV_FTP_OPCODE and MAV_FTP_ERR.
 	Payload [251]uint8
 }
 

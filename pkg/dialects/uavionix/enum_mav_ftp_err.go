@@ -6,7 +6,7 @@ import (
 	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
-// MAV FTP error codes (https://mavlink.io/en/services/ftp.html)
+// MAV FTP error codes (may be used in FILE_TRANSFER_PROTOCOL). See https://mavlink.io/en/services/ftp.html.
 type MAV_FTP_ERR = common.MAV_FTP_ERR
 
 const (

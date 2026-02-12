@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-// MAV FTP error codes (https://mavlink.io/en/services/ftp.html)
+// MAV FTP error codes (may be used in FILE_TRANSFER_PROTOCOL). See https://mavlink.io/en/services/ftp.html.
 type MAV_FTP_ERR uint64
 
 const (

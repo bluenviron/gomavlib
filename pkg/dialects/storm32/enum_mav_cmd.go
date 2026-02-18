@@ -236,7 +236,7 @@ const (
 	// Configures illuminator settings. An illuminator is a light source that is used for lighting up dark areas external to the system: e.g. a torch or searchlight (as opposed to a light source for illuminating the system itself, e.g. an indicator light).
 	MAV_CMD_DO_ILLUMINATOR_CONFIGURE MAV_CMD = 406
 	// Request the home position from the vehicle.
-	// The vehicle will ACK the command and then emit the HOME_POSITION message.
+	// The vehicle will ACK the command and emit the HOME_POSITION message.
 	MAV_CMD_GET_HOME_POSITION MAV_CMD = 410
 	// Inject artificial failure for testing purposes. Note that autopilots should implement an additional protection before accepting this command such as a specific param setting.
 	MAV_CMD_INJECT_FAILURE MAV_CMD = 420

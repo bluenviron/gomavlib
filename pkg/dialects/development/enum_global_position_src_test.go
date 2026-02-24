@@ -17,13 +17,13 @@ func TestEnum_GLOBAL_POSITION_SRC(t *testing.T) {
 	})
 
 	t.Run("first entry", func(t *testing.T) {
-		enc, err := GLOBAL_POSITION_UNKNOWN.MarshalText()
+		enc, err := GLOBAL_POSITION_SRC_UNKNOWN.MarshalText()
 		require.NoError(t, err)
 
 		var dec GLOBAL_POSITION_SRC
 		err = dec.UnmarshalText(enc)
 		require.NoError(t, err)
 
-		require.Equal(t, GLOBAL_POSITION_UNKNOWN, dec)
+		require.Equal(t, GLOBAL_POSITION_SRC_UNKNOWN, dec)
 	})
 }

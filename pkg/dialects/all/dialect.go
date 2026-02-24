@@ -367,7 +367,7 @@ var dial = &dialect.Dialect{
 		&MessageSatcomLinkStatus{},
 		&MessageSensorAirflowAngles{},
 		// development
-		&MessageGlobalPosition{},
+		&MessageGlobalPositionSensor{},
 		&MessageSetVelocityLimits{},
 		&MessageVelocityLimits{},
 		&MessageBatteryStatusV2{},

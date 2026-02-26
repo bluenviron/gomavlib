@@ -191,6 +191,7 @@ var dial = &dialect.Dialect{
 		&MessageEscInfo{},
 		&MessageEscStatus{},
 		&MessageAirspeed{},
+		&MessageGlobalPositionSensor{},
 		&MessageWifiConfigAp{},
 		&MessageProtocolVersion{},
 		&MessageAisVessel{},
@@ -252,7 +253,6 @@ var dial = &dialect.Dialect{
 		&MessageOpenDroneIdSystemUpdate{},
 		&MessageHygrometerSensor{},
 		// development
-		&MessageGlobalPositionSensor{},
 		&MessageSetVelocityLimits{},
 		&MessageVelocityLimits{},
 		&MessageBatteryStatusV2{},

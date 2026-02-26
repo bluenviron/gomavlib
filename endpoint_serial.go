@@ -70,7 +70,7 @@ func (conf EndpointSerial) init(node *Node) (Endpoint, error) {
 				}
 				return &rwcToConn{rwc}, nil
 			},
-			Label: "serial",
+			Label: "serial:" + conf.Device,
 		},
 	}
 	err := e.initialize()

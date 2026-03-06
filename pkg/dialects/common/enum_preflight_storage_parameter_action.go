@@ -16,28 +16,28 @@ const (
 	PARAM_READ_PERSISTENT PREFLIGHT_STORAGE_PARAMETER_ACTION = 0
 	// Write all parameter values to persistent storage (flash/EEPROM)
 	PARAM_WRITE_PERSISTENT PREFLIGHT_STORAGE_PARAMETER_ACTION = 1
-	// Reset all user configurable parameters to their default value (including airframe selection, sensor calibration data, safety settings, and so on). Does not reset values that contain operation counters and vehicle computed statistics.
-	PARAM_RESET_CONFIG_DEFAULT PREFLIGHT_STORAGE_PARAMETER_ACTION = 2
+	// Reset parameters to default values (such as sensor calibration, safety settings, and so on). Note that a flight stack may choose not to reset some parameters at their own discretion (such as those that are locked or expected to persist for the vehicle lifetime).
+	PARAM_RESET_FACTORY_DEFAULT PREFLIGHT_STORAGE_PARAMETER_ACTION = 2
 	// Reset only sensor calibration parameters to factory defaults (or firmware default if not available)
 	PARAM_RESET_SENSOR_DEFAULT PREFLIGHT_STORAGE_PARAMETER_ACTION = 3
-	// Reset all parameters, including operation counters, to default values
+	// Reset all parameters to default values.
 	PARAM_RESET_ALL_DEFAULT PREFLIGHT_STORAGE_PARAMETER_ACTION = 4
 )
 
 var value_to_label_PREFLIGHT_STORAGE_PARAMETER_ACTION = map[PREFLIGHT_STORAGE_PARAMETER_ACTION]string{
-	PARAM_READ_PERSISTENT:      "PARAM_READ_PERSISTENT",
-	PARAM_WRITE_PERSISTENT:     "PARAM_WRITE_PERSISTENT",
-	PARAM_RESET_CONFIG_DEFAULT: "PARAM_RESET_CONFIG_DEFAULT",
-	PARAM_RESET_SENSOR_DEFAULT: "PARAM_RESET_SENSOR_DEFAULT",
-	PARAM_RESET_ALL_DEFAULT:    "PARAM_RESET_ALL_DEFAULT",
+	PARAM_READ_PERSISTENT:       "PARAM_READ_PERSISTENT",
+	PARAM_WRITE_PERSISTENT:      "PARAM_WRITE_PERSISTENT",
+	PARAM_RESET_FACTORY_DEFAULT: "PARAM_RESET_FACTORY_DEFAULT",
+	PARAM_RESET_SENSOR_DEFAULT:  "PARAM_RESET_SENSOR_DEFAULT",
+	PARAM_RESET_ALL_DEFAULT:     "PARAM_RESET_ALL_DEFAULT",
 }
 
 var label_to_value_PREFLIGHT_STORAGE_PARAMETER_ACTION = map[string]PREFLIGHT_STORAGE_PARAMETER_ACTION{
-	"PARAM_READ_PERSISTENT":      PARAM_READ_PERSISTENT,
-	"PARAM_WRITE_PERSISTENT":     PARAM_WRITE_PERSISTENT,
-	"PARAM_RESET_CONFIG_DEFAULT": PARAM_RESET_CONFIG_DEFAULT,
-	"PARAM_RESET_SENSOR_DEFAULT": PARAM_RESET_SENSOR_DEFAULT,
-	"PARAM_RESET_ALL_DEFAULT":    PARAM_RESET_ALL_DEFAULT,
+	"PARAM_READ_PERSISTENT":       PARAM_READ_PERSISTENT,
+	"PARAM_WRITE_PERSISTENT":      PARAM_WRITE_PERSISTENT,
+	"PARAM_RESET_FACTORY_DEFAULT": PARAM_RESET_FACTORY_DEFAULT,
+	"PARAM_RESET_SENSOR_DEFAULT":  PARAM_RESET_SENSOR_DEFAULT,
+	"PARAM_RESET_ALL_DEFAULT":     PARAM_RESET_ALL_DEFAULT,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.

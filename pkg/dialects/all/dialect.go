@@ -374,6 +374,7 @@ var dial = &dialect.Dialect{
 		&MessageGroupStart{},
 		&MessageGroupEnd{},
 		&MessageRadioRcChannels{},
+		&MessageRcChannelsOverrideV2{},
 		&MessageGnssIntegrity{},
 		&MessageTargetAbsolute{},
 		&MessageTargetRelative{},

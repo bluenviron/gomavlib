@@ -36,6 +36,8 @@ type MessageGimbalDeviceInformation struct {
 	YawMax float32
 	// This field is to be used if the gimbal manager and the gimbal device are the same component and hence have the same component ID. This field is then set to a number between 1-6. If the component ID is separate, this field is not required and must be set to 0.
 	GimbalDeviceId uint8 `mavext:"true"`
+	// Extended bitmap of gimbal capability flags (32 bit). For backwards compatibility, the lower 16 bits should also be set in cap_flags. Ground stations should prefer this field if non-zero.
+	CapFlags2 GIMBAL_DEVICE_CAP_FLAGS `mavenum:"uint32" mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

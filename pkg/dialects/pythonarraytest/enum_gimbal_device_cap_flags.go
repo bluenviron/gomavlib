@@ -38,4 +38,8 @@ const (
 	GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_YAW_IN_EARTH_FRAME GIMBAL_DEVICE_CAP_FLAGS = common.GIMBAL_DEVICE_CAP_FLAGS_SUPPORTS_YAW_IN_EARTH_FRAME
 	// Gimbal device supports radio control inputs as an alternative input for controlling the gimbal orientation.
 	GIMBAL_DEVICE_CAP_FLAGS_HAS_RC_INPUTS GIMBAL_DEVICE_CAP_FLAGS = common.GIMBAL_DEVICE_CAP_FLAGS_HAS_RC_INPUTS
+	// Gimbal device supports to point to a local position.
+	GIMBAL_DEVICE_CAP_FLAGS_CAN_POINT_LOCATION_LOCAL GIMBAL_DEVICE_CAP_FLAGS = common.GIMBAL_DEVICE_CAP_FLAGS_CAN_POINT_LOCATION_LOCAL
+	// Gimbal device supports to point to a global latitude, longitude, altitude position.
+	GIMBAL_DEVICE_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL GIMBAL_DEVICE_CAP_FLAGS = common.GIMBAL_DEVICE_CAP_FLAGS_CAN_POINT_LOCATION_GLOBAL
 )

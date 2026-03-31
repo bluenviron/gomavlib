@@ -380,6 +380,7 @@ var dial = &dialect.Dialect{
 		&MessageTargetRelative{},
 		&MessageControlStatus{},
 		&MessageEscEeprom{},
+		&MessageRangingBeacon{},
 		// pythonarraytest
 		&MessageArrayTest_0{},
 		&MessageArrayTest_1{},

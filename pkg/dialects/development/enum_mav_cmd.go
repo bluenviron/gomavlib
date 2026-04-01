@@ -47,6 +47,10 @@ const (
 	// This command only defines the flight path. Speed should be set independently (use e.g. MAV_CMD_DO_CHANGE_SPEED).
 	// Yaw and other degrees of freedom are not specified, and will be flight-stack specific (on vehicles where they can be controlled independent of the heading).
 	MAV_CMD_DO_FIGURE_EIGHT MAV_CMD = 35
+	// Circular arc path waypoint.
+	// This defines the end/exit point and angle (param1) of an arc path from the previous waypoint. A position is required before this command to define the start of the arc (e.g. current position, a MAV_CMD_NAV_WAYPOINT, or a MAV_CMD_NAV_ARC_WAYPOINT).
+	// The resulting path is a circular arc in the NE frame, with the difference in height being defined by the difference in waypoint altitudes.
+	MAV_CMD_NAV_ARC_WAYPOINT MAV_CMD = 36
 	// Sets the region of interest (ROI) for a sensor set or the vehicle itself. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras.
 	MAV_CMD_NAV_ROI MAV_CMD = 80
 	// Control autonomous path planning on the MAV.
@@ -346,7 +350,7 @@ const (
 	MAV_CMD_DO_VTOL_TRANSITION MAV_CMD = 3000
 	// Request authorization to arm the vehicle to a external entity, the arm authorizer is responsible to request all data that is needs from the vehicle before authorize or deny the request.
 	// If approved the COMMAND_ACK message progress field should be set with period of time that this authorization is valid in seconds.
-	// If the authorization is denied COMMAND_ACK.result_param2 should be set with one of the reasons in ARM_AUTH_DENIED_REASON.
+	// If the authorization is denied COMMAND_ACK.result_param2 should be set with one of the reasons in MAV_ARM_AUTH_DENIED_REASON.
 	MAV_CMD_ARM_AUTHORIZATION_REQUEST MAV_CMD = 3001
 	// This command sets the submode to standard guided when vehicle is in guided mode. The vehicle holds position and altitude and the user can input the desired velocities along all three axes.
 	MAV_CMD_SET_GUIDED_SUBMODE_STANDARD MAV_CMD = 4000
@@ -416,10 +420,6 @@ const (
 	MAV_CMD_USER_5 MAV_CMD = 31014
 	// Request forwarding of CAN packets from the given CAN bus to this component. CAN Frames are sent using CAN_FRAME and CANFD_FRAME messages
 	MAV_CMD_CAN_FORWARD MAV_CMD = 32000
-	// Circular arc path waypoint.
-	// This defines the end/exit point and angle (param1) of an arc path from the previous waypoint. A position is required before this command to define the start of the arc (e.g. current position, a MAV_CMD_NAV_WAYPOINT, or a MAV_CMD_NAV_ARC_WAYPOINT).
-	// The resulting path is a circular arc in the NE frame, with the difference in height being defined by the difference in waypoint altitudes.
-	MAV_CMD_NAV_ARC_WAYPOINT MAV_CMD = 36
 	// Request a target system to start an upgrade of one (or all) of its components.
 	// For example, the command might be sent to a companion computer to cause it to upgrade a connected flight controller.
 	// The system doing the upgrade will report progress using the normal command protocol sequence for a long running operation.
@@ -446,6 +446,8 @@ const (
 	MAV_CMD_CAMERA_START_MTI MAV_CMD = 2020
 	// Disable Moving Target Indicators (MTI) on streamed video.
 	MAV_CMD_CAMERA_STOP_MTI MAV_CMD = 2021
+	// Circular fence area centered on home. The vehicle must stay inside this area. If home is moved, the fence moves.
+	MAV_CMD_NAV_FENCE_HOME_CIRCLE_INCLUSION MAV_CMD = 5005
 	// Used to manually set/unset emergency status for remote id.
 	// This is for compliance with MOC ASTM docs, specifically F358 section 7.7: "Emergency Status Indicator".
 	// The requirement can also be satisfied by automatic setting of the emergency status by flight stack, and that approach is preferred.
@@ -454,6 +456,9 @@ const (
 	// Set an external estimate of wind direction and speed.
 	// This might be used to provide an initial wind estimate to the estimator (EKF) in the case where the vehicle is wind dead-reckoning, extending the time when operating without GPS before before position drift builds to an unsafe level. For this use case the command might reasonably be sent every few minutes when operating at altitude, and the value is cleared if the estimator resets itself.
 	MAV_CMD_EXTERNAL_WIND_ESTIMATE MAV_CMD = 43004
+	// Enable or disable a specific estimator sensor fusion source at runtime.
+	// This allows a GCS or companion computer to dynamically control which sensors the estimator fuses without changing parameters.
+	MAV_CMD_ESTIMATOR_SENSOR_ENABLE MAV_CMD = 43006
 	// Set an external estimate of vehicle attitude.
 	// This might be used to provide an initial attitude (especially heading) estimate to the estimator (EKF). Angles are defined in a 3-2-1 (yaw-pitch-roll) intrinsic Tait-Bryan sequence.
 	MAV_CMD_EXTERNAL_ATTITUDE_ESTIMATE MAV_CMD = 620
@@ -500,6 +505,7 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_DO_FOLLOW_REPOSITION:               "MAV_CMD_DO_FOLLOW_REPOSITION",
 	MAV_CMD_DO_ORBIT:                           "MAV_CMD_DO_ORBIT",
 	MAV_CMD_DO_FIGURE_EIGHT:                    "MAV_CMD_DO_FIGURE_EIGHT",
+	MAV_CMD_NAV_ARC_WAYPOINT:                   "MAV_CMD_NAV_ARC_WAYPOINT",
 	MAV_CMD_NAV_ROI:                            "MAV_CMD_NAV_ROI",
 	MAV_CMD_NAV_PATHPLANNING:                   "MAV_CMD_NAV_PATHPLANNING",
 	MAV_CMD_NAV_SPLINE_WAYPOINT:                "MAV_CMD_NAV_SPLINE_WAYPOINT",
@@ -650,15 +656,16 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_USER_4:                             "MAV_CMD_USER_4",
 	MAV_CMD_USER_5:                             "MAV_CMD_USER_5",
 	MAV_CMD_CAN_FORWARD:                        "MAV_CMD_CAN_FORWARD",
-	MAV_CMD_NAV_ARC_WAYPOINT:                   "MAV_CMD_NAV_ARC_WAYPOINT",
 	MAV_CMD_DO_UPGRADE:                         "MAV_CMD_DO_UPGRADE",
 	MAV_CMD_ACTUATOR_GROUP_TEST:                "MAV_CMD_ACTUATOR_GROUP_TEST",
 	MAV_CMD_DO_SET_SYS_CMP_ID:                  "MAV_CMD_DO_SET_SYS_CMP_ID",
 	MAV_CMD_DO_SET_GLOBAL_ORIGIN:               "MAV_CMD_DO_SET_GLOBAL_ORIGIN",
 	MAV_CMD_CAMERA_START_MTI:                   "MAV_CMD_CAMERA_START_MTI",
 	MAV_CMD_CAMERA_STOP_MTI:                    "MAV_CMD_CAMERA_STOP_MTI",
+	MAV_CMD_NAV_FENCE_HOME_CIRCLE_INCLUSION:    "MAV_CMD_NAV_FENCE_HOME_CIRCLE_INCLUSION",
 	MAV_CMD_ODID_SET_EMERGENCY:                 "MAV_CMD_ODID_SET_EMERGENCY",
 	MAV_CMD_EXTERNAL_WIND_ESTIMATE:             "MAV_CMD_EXTERNAL_WIND_ESTIMATE",
+	MAV_CMD_ESTIMATOR_SENSOR_ENABLE:            "MAV_CMD_ESTIMATOR_SENSOR_ENABLE",
 	MAV_CMD_EXTERNAL_ATTITUDE_ESTIMATE:         "MAV_CMD_EXTERNAL_ATTITUDE_ESTIMATE",
 	MAV_CMD_REQUEST_OPERATOR_CONTROL:           "MAV_CMD_REQUEST_OPERATOR_CONTROL",
 }
@@ -680,6 +687,7 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_DO_FOLLOW_REPOSITION":               MAV_CMD_DO_FOLLOW_REPOSITION,
 	"MAV_CMD_DO_ORBIT":                           MAV_CMD_DO_ORBIT,
 	"MAV_CMD_DO_FIGURE_EIGHT":                    MAV_CMD_DO_FIGURE_EIGHT,
+	"MAV_CMD_NAV_ARC_WAYPOINT":                   MAV_CMD_NAV_ARC_WAYPOINT,
 	"MAV_CMD_NAV_ROI":                            MAV_CMD_NAV_ROI,
 	"MAV_CMD_NAV_PATHPLANNING":                   MAV_CMD_NAV_PATHPLANNING,
 	"MAV_CMD_NAV_SPLINE_WAYPOINT":                MAV_CMD_NAV_SPLINE_WAYPOINT,
@@ -830,15 +838,16 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_USER_4":                             MAV_CMD_USER_4,
 	"MAV_CMD_USER_5":                             MAV_CMD_USER_5,
 	"MAV_CMD_CAN_FORWARD":                        MAV_CMD_CAN_FORWARD,
-	"MAV_CMD_NAV_ARC_WAYPOINT":                   MAV_CMD_NAV_ARC_WAYPOINT,
 	"MAV_CMD_DO_UPGRADE":                         MAV_CMD_DO_UPGRADE,
 	"MAV_CMD_ACTUATOR_GROUP_TEST":                MAV_CMD_ACTUATOR_GROUP_TEST,
 	"MAV_CMD_DO_SET_SYS_CMP_ID":                  MAV_CMD_DO_SET_SYS_CMP_ID,
 	"MAV_CMD_DO_SET_GLOBAL_ORIGIN":               MAV_CMD_DO_SET_GLOBAL_ORIGIN,
 	"MAV_CMD_CAMERA_START_MTI":                   MAV_CMD_CAMERA_START_MTI,
 	"MAV_CMD_CAMERA_STOP_MTI":                    MAV_CMD_CAMERA_STOP_MTI,
+	"MAV_CMD_NAV_FENCE_HOME_CIRCLE_INCLUSION":    MAV_CMD_NAV_FENCE_HOME_CIRCLE_INCLUSION,
 	"MAV_CMD_ODID_SET_EMERGENCY":                 MAV_CMD_ODID_SET_EMERGENCY,
 	"MAV_CMD_EXTERNAL_WIND_ESTIMATE":             MAV_CMD_EXTERNAL_WIND_ESTIMATE,
+	"MAV_CMD_ESTIMATOR_SENSOR_ENABLE":            MAV_CMD_ESTIMATOR_SENSOR_ENABLE,
 	"MAV_CMD_EXTERNAL_ATTITUDE_ESTIMATE":         MAV_CMD_EXTERNAL_ATTITUDE_ESTIMATE,
 	"MAV_CMD_REQUEST_OPERATOR_CONTROL":           MAV_CMD_REQUEST_OPERATOR_CONTROL,
 }

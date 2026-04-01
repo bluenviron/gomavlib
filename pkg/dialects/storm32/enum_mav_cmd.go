@@ -47,6 +47,10 @@ const (
 	// This command only defines the flight path. Speed should be set independently (use e.g. MAV_CMD_DO_CHANGE_SPEED).
 	// Yaw and other degrees of freedom are not specified, and will be flight-stack specific (on vehicles where they can be controlled independent of the heading).
 	MAV_CMD_DO_FIGURE_EIGHT MAV_CMD = 35
+	// Circular arc path waypoint.
+	// This defines the end/exit point and angle (param1) of an arc path from the previous waypoint. A position is required before this command to define the start of the arc (e.g. current position, a MAV_CMD_NAV_WAYPOINT, or a MAV_CMD_NAV_ARC_WAYPOINT).
+	// The resulting path is a circular arc in the NE frame, with the difference in height being defined by the difference in waypoint altitudes.
+	MAV_CMD_NAV_ARC_WAYPOINT MAV_CMD = 36
 	// Sets the region of interest (ROI) for a sensor set or the vehicle itself. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras.
 	MAV_CMD_NAV_ROI MAV_CMD = 80
 	// Control autonomous path planning on the MAV.
@@ -346,7 +350,7 @@ const (
 	MAV_CMD_DO_VTOL_TRANSITION MAV_CMD = 3000
 	// Request authorization to arm the vehicle to a external entity, the arm authorizer is responsible to request all data that is needs from the vehicle before authorize or deny the request.
 	// If approved the COMMAND_ACK message progress field should be set with period of time that this authorization is valid in seconds.
-	// If the authorization is denied COMMAND_ACK.result_param2 should be set with one of the reasons in ARM_AUTH_DENIED_REASON.
+	// If the authorization is denied COMMAND_ACK.result_param2 should be set with one of the reasons in MAV_ARM_AUTH_DENIED_REASON.
 	MAV_CMD_ARM_AUTHORIZATION_REQUEST MAV_CMD = 3001
 	// This command sets the submode to standard guided when vehicle is in guided mode. The vehicle holds position and altitude and the user can input the desired velocities along all three axes.
 	MAV_CMD_SET_GUIDED_SUBMODE_STANDARD MAV_CMD = 4000
@@ -508,6 +512,7 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_DO_FOLLOW_REPOSITION:                       "MAV_CMD_DO_FOLLOW_REPOSITION",
 	MAV_CMD_DO_ORBIT:                                   "MAV_CMD_DO_ORBIT",
 	MAV_CMD_DO_FIGURE_EIGHT:                            "MAV_CMD_DO_FIGURE_EIGHT",
+	MAV_CMD_NAV_ARC_WAYPOINT:                           "MAV_CMD_NAV_ARC_WAYPOINT",
 	MAV_CMD_NAV_ROI:                                    "MAV_CMD_NAV_ROI",
 	MAV_CMD_NAV_PATHPLANNING:                           "MAV_CMD_NAV_PATHPLANNING",
 	MAV_CMD_NAV_SPLINE_WAYPOINT:                        "MAV_CMD_NAV_SPLINE_WAYPOINT",
@@ -713,6 +718,7 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_DO_FOLLOW_REPOSITION":                       MAV_CMD_DO_FOLLOW_REPOSITION,
 	"MAV_CMD_DO_ORBIT":                                   MAV_CMD_DO_ORBIT,
 	"MAV_CMD_DO_FIGURE_EIGHT":                            MAV_CMD_DO_FIGURE_EIGHT,
+	"MAV_CMD_NAV_ARC_WAYPOINT":                           MAV_CMD_NAV_ARC_WAYPOINT,
 	"MAV_CMD_NAV_ROI":                                    MAV_CMD_NAV_ROI,
 	"MAV_CMD_NAV_PATHPLANNING":                           MAV_CMD_NAV_PATHPLANNING,
 	"MAV_CMD_NAV_SPLINE_WAYPOINT":                        MAV_CMD_NAV_SPLINE_WAYPOINT,

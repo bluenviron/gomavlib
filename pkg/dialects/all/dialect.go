@@ -381,6 +381,7 @@ var dial = &dialect.Dialect{
 		&MessageControlStatus{},
 		&MessageEscEeprom{},
 		&MessageRangingBeacon{},
+		&MessageEstimatorSensorFusionStatus{},
 		// pythonarraytest
 		&MessageArrayTest_0{},
 		&MessageArrayTest_1{},

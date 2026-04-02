@@ -12,7 +12,7 @@ type MessageAdsbVehicle struct {
 	Lon int32
 	// ADSB altitude type.
 	AltitudeType ADSB_ALTITUDE_TYPE `mavenum:"uint8"`
-	// Altitude(ASL)
+	// Altitude (ASL)
 	Altitude int32
 	// Course over ground
 	Heading uint16
@@ -24,7 +24,7 @@ type MessageAdsbVehicle struct {
 	Callsign string `mavlen:"9"`
 	// ADSB emitter type.
 	EmitterType ADSB_EMITTER_TYPE `mavenum:"uint8"`
-	// Time since last communication in seconds
+	// Time since last communication from the remote vehicle, in seconds.
 	Tslc uint8
 	// Bitmap to indicate various statuses including valid data fields
 	Flags ADSB_FLAGS `mavenum:"uint16"`

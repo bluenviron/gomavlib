@@ -5,6 +5,15 @@ import (
 	"fmt"
 )
 
+// packetOrientedEndpoint is implemented by endpoints whose connections carry
+// discrete, self-contained packets (e.g. UDP datagrams). When recognised by
+// channelProvider, the resulting Channel gets PacketOriented = true, which
+// causes the frame reader to discard the remainder of a bad datagram after a
+// parse error instead of continuing to scan inside it.
+type packetOrientedEndpoint interface {
+	isPacketOrientedEndpoint() bool
+}
+
 type channelProvider struct {
 	node     *Node
 	endpoint Endpoint
@@ -44,6 +53,9 @@ func (cp *channelProvider) run() {
 			endpoint: cp.endpoint,
 			label:    label,
 			rwc:      rwc,
+		}
+		if poe, ok := cp.endpoint.(packetOrientedEndpoint); ok && poe.isPacketOrientedEndpoint() {
+			ch.PacketOriented = true
 		}
 		err = ch.initialize()
 		if err != nil {

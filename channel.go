@@ -31,6 +31,12 @@ type Channel struct {
 	label    string
 	rwc      io.ReadWriteCloser
 
+	// PacketOriented enables datagram-boundary recovery: after a parse error the
+	// remainder of the current datagram is discarded so the next Read always starts
+	// on a fresh datagram.  Set by channel_provider when the endpoint implements
+	// packetOrientedEndpoint.
+	PacketOriented bool
+
 	ctx          context.Context
 	ctxCancel    func()
 	frameWriter  *frame.ReadWriter
@@ -54,6 +60,7 @@ func (ch *Channel) initialize() error {
 		ByteReadWriter: ch.rwc,
 		DialectRW:      ch.node.dialectRW,
 		InKey:          ch.node.InKey,
+		PacketOriented: ch.PacketOriented,
 	}
 	err = ch.frameWriter.Initialize()
 	if err != nil {
@@ -153,6 +160,9 @@ func (ch *Channel) runReader() error {
 		if err != nil {
 			var eerr frame.ReadError
 			if errors.As(err, &eerr) {
+				if ch.PacketOriented {
+					ch.frameWriter.DiscardBuffered()
+				}
 				ch.node.pushEvent(&EventParseError{err, ch})
 				continue
 			}

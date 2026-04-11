@@ -1,6 +1,7 @@
 package frame
 
 import (
+	"bufio"
 	"io"
 
 	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
@@ -91,17 +92,30 @@ type ReadWriter struct {
 	// Deprecated: use streamwriter.Writer for writing messages.
 	OutKey *V2Key
 
+	// If true, the reader uses a 65536-byte buffer so each underlying Read()
+	// consumes exactly one UDP datagram. Combined with Channel.PacketOriented,
+	// this enables full datagram-boundary recovery after parse errors.
+	PacketOriented bool
+
 	*Reader
 	*Writer
 }
 
 // Initialize initializes ReadWriter.
 func (rw *ReadWriter) Initialize() error {
-	r, err := NewReader(ReaderConf{
-		Reader:    rw.ByteReadWriter,
+	r := &Reader{
 		DialectRW: rw.DialectRW,
 		InKey:     rw.InKey,
-	})
+	}
+	if rw.PacketOriented {
+		// Use a 65536-byte buffer so each underlying Read() consumes exactly one
+		// UDP datagram (max 65535 bytes). Do NOT set ByteReader — Initialize()
+		// would overwrite BufByteReader with a default 512-byte buffer.
+		r.BufByteReader = bufio.NewReaderSize(rw.ByteReadWriter, 65536)
+	} else {
+		r.ByteReader = rw.ByteReadWriter
+	}
+	err := r.Initialize()
 	if err != nil {
 		return err
 	}

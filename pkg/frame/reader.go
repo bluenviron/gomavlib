@@ -116,6 +116,15 @@ func (r *Reader) Initialize() error {
 	return nil
 }
 
+// DiscardBuffered discards all bytes currently buffered but not yet consumed by the parser.
+// Call this after a ReadError to discard the remainder of a malformed UDP datagram and
+// ensure the next Read begins on a fresh datagram boundary.
+func (r *Reader) DiscardBuffered() {
+	if n := r.BufByteReader.Buffered(); n > 0 {
+		_, _ = r.BufByteReader.Discard(n)
+	}
+}
+
 // Read reads a Frame from the reader.
 // It must not be called by multiple routines in parallel.
 func (r *Reader) Read() (Frame, error) {

@@ -1,6 +1,7 @@
 package gomavlib
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -191,6 +192,135 @@ func TestEndpointClient(t *testing.T) {
 				}, evt)
 			}
 		})
+	}
+}
+
+func TestEndpointUDPClientRecoverAfterMalformedDatagram(t *testing.T) {
+	pc, err := net.ListenPacket("udp4", "127.0.0.1:5604")
+	require.NoError(t, err)
+	defer pc.Close()
+
+	var rawFrame bytes.Buffer
+	dialectRW := &dialect.ReadWriter{Dialect: testDialect}
+	err = dialectRW.Initialize()
+	require.NoError(t, err)
+
+	fw := &frame.Writer{
+		ByteWriter: &rawFrame,
+		DialectRW:  dialectRW,
+	}
+	err = fw.Initialize()
+	require.NoError(t, err)
+
+	sw := &streamwriter.Writer{
+		FrameWriter: fw,
+		Version:     streamwriter.V2,
+		SystemID:    11,
+	}
+	err = sw.Initialize()
+	require.NoError(t, err)
+
+	err = sw.Write(&MessageHeartbeat{
+		Type:           6,
+		Autopilot:      5,
+		BaseMode:       4,
+		CustomMode:     3,
+		SystemStatus:   2,
+		MavlinkVersion: 1,
+	})
+	require.NoError(t, err)
+
+	validDatagram := append([]byte(nil), rawFrame.Bytes()...)
+	malformedDatagram := []byte("\x11\x22\x33\x44\x55")
+	serverErr := make(chan error, 1)
+
+	go func() {
+		buf := make([]byte, 2048)
+		n, addr, err2 := pc.ReadFrom(buf)
+		if err2 != nil {
+			serverErr <- err2
+			return
+		}
+		if n <= 0 {
+			serverErr <- fmt.Errorf("empty datagram")
+			return
+		}
+
+		_, err2 = pc.WriteTo(malformedDatagram, addr)
+		if err2 != nil {
+			serverErr <- err2
+			return
+		}
+
+		_, err2 = pc.WriteTo(validDatagram, addr)
+		if err2 != nil {
+			serverErr <- err2
+			return
+		}
+
+		serverErr <- nil
+	}()
+
+	node, err := NewNode(NodeConf{
+		Dialect:          testDialect,
+		OutVersion:       V2,
+		OutSystemID:      10,
+		Endpoints:        []EndpointConf{EndpointUDPClient{"127.0.0.1:5604"}},
+		HeartbeatDisable: true,
+	})
+	require.NoError(t, err)
+	defer node.Close()
+
+	evt := <-node.Events()
+	require.Equal(t, &EventChannelOpen{
+		Channel: evt.(*EventChannelOpen).Channel,
+	}, evt)
+
+	err = node.WriteMessageAll(&MessageHeartbeat{
+		Type:           1,
+		Autopilot:      2,
+		BaseMode:       3,
+		CustomMode:     6,
+		SystemStatus:   4,
+		MavlinkVersion: 5,
+	})
+	require.NoError(t, err)
+
+	deadline := time.After(2 * time.Second)
+	gotParseError := false
+
+	for {
+		select {
+		case err := <-serverErr:
+			require.NoError(t, err)
+
+		case ev := <-node.Events():
+			switch et := ev.(type) {
+			case *EventParseError:
+				gotParseError = true
+
+			case *EventFrame:
+				require.True(t, gotParseError)
+				require.Equal(t, &frame.V2Frame{
+					SequenceNumber: 0,
+					SystemID:       11,
+					ComponentID:    1,
+					Message: &MessageHeartbeat{
+						Type:           6,
+						Autopilot:      5,
+						BaseMode:       4,
+						CustomMode:     3,
+						SystemStatus:   2,
+						MavlinkVersion: 1,
+					},
+					Checksum: et.Frame.GetChecksum(),
+				}, et.Frame)
+				return
+			}
+
+		case <-deadline:
+			t.Fatalf("did not receive valid frame after malformed UDP datagram")
+		}
 	}
 }
 

@@ -154,7 +154,7 @@ func (f V2Frame) GenerateSignature(key *V2Key) *V2Signature {
 
 func (f *V2Frame) unmarshal(br *bufio.Reader) error {
 	// header
-	buf, err := peekAndDiscard(br, 9)
+	buf, err := br.Peek(9)
 	if err != nil {
 		return err
 	}
@@ -170,6 +170,11 @@ func (f *V2Frame) unmarshal(br *bufio.Reader) error {
 	// discard frame if incompatibility flag is not understood, as in recommendations
 	if f.IncompatibilityFlag != 0 && f.IncompatibilityFlag != V2FlagSigned {
 		return fmt.Errorf("unknown incompatibility flag: %d", f.IncompatibilityFlag)
+	}
+
+	_, err = br.Discard(9)
+	if err != nil {
+		return err
 	}
 
 	// message

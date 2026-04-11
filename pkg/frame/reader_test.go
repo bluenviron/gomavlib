@@ -487,3 +487,32 @@ func TestReaderErrorSignatureTimestamp(t *testing.T) {
 	_, err = reader.Read()
 	require.EqualError(t, err, "signature timestamp is too old")
 }
+
+func TestReaderRecoverAfterInvalidV2IncompatibilityFlag(t *testing.T) {
+	stream := []byte("\xFD\x00\xFD\x00\x00\x00\x03\x04\x05\x04\x00\x00\xb7\x0a")
+
+	reader, err := NewReader(ReaderConf{Reader: bytes.NewReader(stream)})
+	require.NoError(t, err)
+
+	_, err = reader.Read()
+	require.EqualError(t, err, "unknown incompatibility flag: 253")
+
+	_, err = reader.Read()
+	require.EqualError(t, err, "invalid magic byte: 0")
+
+	f, err := reader.Read()
+	require.NoError(t, err)
+
+	require.Equal(t, &V2Frame{
+		IncompatibilityFlag: 0,
+		CompatibilityFlag:   0,
+		SequenceNumber:      3,
+		SystemID:            4,
+		ComponentID:         5,
+		Message: &message.MessageRaw{
+			ID:      4,
+			Payload: nil,
+		},
+		Checksum: 0x0ab7,
+	}, f)
+}

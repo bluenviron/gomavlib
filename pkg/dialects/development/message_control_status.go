@@ -2,12 +2,23 @@
 //nolint:revive,misspell,govet,lll
 package development
 
-// Information about GCS in control of this MAV. This should be broadcast at low rate (nominally 1 Hz) and emitted when ownership or takeover status change. Control over MAV is requested using MAV_CMD_REQUEST_OPERATOR_CONTROL.
+// Information about GCS(s) in control of this MAV.
+// This should be broadcast at low rate (nominally 1 Hz) and emitted when ownership or takeover status change.
+// Components in the system should only accept "state changing commands/messages" from any system id in `gcs_main` or  `gcs_secondary`.
+// - In single-owner mode there is a single GCS that can send "state changing commands/messages" listed in `gcs_main` (`gcs_secondary` must be set to all-zero).
+// - In multi-owner mode, all GCS with ids in `gcs_main` and `gcs_secondary` can send "state changing commands/messages".
+// However `gcs_main` is the only GCS that can perform "special controlled operations" such as manual control.
+// - Control over ownership of the `gcs_main` role is requested using MAV_CMD_REQUEST_OPERATOR_CONTROL.
+// - GCS in `gcs_secondary` are set by the flight stack (cannot be set by this mechanism).
+// It should only include IDs for connected GCS.
+// If more than 11 GCS are in control and visible, the flight stack will at most be able to publish 11.
 type MessageControlStatus struct {
-	// System ID of GCS MAVLink component in control (0: no GCS in control).
-	SysidInControl uint8
-	// Control status. For example, whether takeover is allowed, and whether this message instance defines the default controlling GCS for the whole system.
+	// Control status. For example, whether takeover of the `gcs_main` role is allowed, and whether this CONTROL_STATUS instance defines the default controlling GCS for the whole system.
 	Flags GCS_CONTROL_STATUS_FLAGS `mavenum:"uint8"`
+	// System ID of GCS in control. 0: no GCS in control.
+	GcsMain uint8
+	// System IDs from which the system can recieve state-changing commands/messages in multi-control mode. All values should be zero for single-ower mode.
+	GcsSecondary [10]uint8
 }
 
 // GetID implements the message.Message interface.

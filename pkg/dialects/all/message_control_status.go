@@ -6,5 +6,14 @@ import (
 	"github.com/bluenviron/gomavlib/v3/pkg/dialects/development"
 )
 
-// Information about GCS in control of this MAV. This should be broadcast at low rate (nominally 1 Hz) and emitted when ownership or takeover status change. Control over MAV is requested using MAV_CMD_REQUEST_OPERATOR_CONTROL.
+// Information about GCS(s) in control of this MAV.
+// This should be broadcast at low rate (nominally 1 Hz) and emitted when ownership or takeover status change.
+// Components in the system should only accept "state changing commands/messages" from any system id in `gcs_main` or  `gcs_secondary`.
+// - In single-owner mode there is a single GCS that can send "state changing commands/messages" listed in `gcs_main` (`gcs_secondary` must be set to all-zero).
+// - In multi-owner mode, all GCS with ids in `gcs_main` and `gcs_secondary` can send "state changing commands/messages".
+// However `gcs_main` is the only GCS that can perform "special controlled operations" such as manual control.
+// - Control over ownership of the `gcs_main` role is requested using MAV_CMD_REQUEST_OPERATOR_CONTROL.
+// - GCS in `gcs_secondary` are set by the flight stack (cannot be set by this mechanism).
+// It should only include IDs for connected GCS.
+// If more than 11 GCS are in control and visible, the flight stack will at most be able to publish 11.
 type MessageControlStatus = development.MessageControlStatus

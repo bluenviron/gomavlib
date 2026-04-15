@@ -10,7 +10,9 @@ import (
 type GCS_CONTROL_STATUS_FLAGS = development.GCS_CONTROL_STATUS_FLAGS
 
 const (
-	// If set, this CONTROL_STATUS publishes the controlling GCS for the whole system. If unset, the CONTROL_STATUS indicates the controlling GCS for just the component emitting the message. Note that to request control of the system a GCS should send MAV_CMD_REQUEST_OPERATOR_CONTROL to the component emitting CONTROL_STATUS with this flag set.
+	// If set, this CONTROL_STATUS publishes the controlling GCS(s) of the whole system.
+	// If unset, the CONTROL_STATUS indicates the controlling GCS(s) for just the component emitting the message.
+	// Note that to request control of the system a GCS should send MAV_CMD_REQUEST_OPERATOR_CONTROL to the component emitting CONTROL_STATUS with this flag set.
 	GCS_CONTROL_STATUS_FLAGS_SYSTEM_MANAGER GCS_CONTROL_STATUS_FLAGS = development.GCS_CONTROL_STATUS_FLAGS_SYSTEM_MANAGER
 	// Takeover allowed (requests for control will be granted). If not set requests for control will be rejected, but the controlling GCS will be notified (and may release control or allow takeover).
 	GCS_CONTROL_STATUS_FLAGS_TAKEOVER_ALLOWED GCS_CONTROL_STATUS_FLAGS = development.GCS_CONTROL_STATUS_FLAGS_TAKEOVER_ALLOWED

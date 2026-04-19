@@ -17,6 +17,10 @@ import (
 	"text/template"
 )
 
+const (
+	maxInboundDialectSize = 10 * 1024 * 1024
+)
+
 var (
 	reMsgName     = regexp.MustCompile("^[A-Z0-9_]+$")
 	reTypeIsArray = regexp.MustCompile(`^(.+?)\[([0-9]+)\]$`)
@@ -477,7 +481,7 @@ func download(addr string) ([]byte, error) {
 		return nil, fmt.Errorf("bad return code: %v", res.StatusCode)
 	}
 
-	byt, err := io.ReadAll(res.Body)
+	byt, err := io.ReadAll(io.LimitReader(res.Body, maxInboundDialectSize))
 	if err != nil {
 		return nil, err
 	}

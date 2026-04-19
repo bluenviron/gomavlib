@@ -4,6 +4,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"os/exec"
@@ -11,6 +12,10 @@ import (
 	"regexp"
 	"strings"
 	"text/template"
+)
+
+const (
+	maxInboundJSONSize = 128 * 1024
 )
 
 var tplTest = template.Must(template.New("").Parse(
@@ -148,7 +153,7 @@ func downloadJSON(addr string, data any) error {
 	}
 	defer res.Body.Close()
 
-	return json.NewDecoder(res.Body).Decode(data)
+	return json.NewDecoder(io.LimitReader(res.Body, maxInboundJSONSize)).Decode(data)
 }
 
 func processDialect(commit string, name string) error {

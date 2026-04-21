@@ -4,7 +4,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"os/exec"
@@ -153,7 +152,7 @@ func downloadJSON(addr string, data any) error {
 	}
 	defer res.Body.Close()
 
-	return json.NewDecoder(io.LimitReader(res.Body, maxInboundJSONSize)).Decode(data)
+	return json.NewDecoder(&customLimitReader{res.Body, maxInboundJSONSize}).Decode(data)
 }
 
 func processDialect(commit string, name string) error {

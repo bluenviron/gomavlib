@@ -481,7 +481,7 @@ func download(addr string) ([]byte, error) {
 		return nil, fmt.Errorf("bad return code: %v", res.StatusCode)
 	}
 
-	byt, err := io.ReadAll(io.LimitReader(res.Body, maxInboundDialectSize))
+	byt, err := io.ReadAll(&customLimitReader{res.Body, maxInboundDialectSize})
 	if err != nil {
 		return nil, err
 	}

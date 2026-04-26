@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"bou.ke/monkey"
 	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
 	"github.com/bluenviron/gomavlib/v3/pkg/frame"
 	"github.com/bluenviron/gomavlib/v3/pkg/message"
@@ -70,10 +69,7 @@ func (m *MessageTest8) GetID() uint32 {
 }
 
 func TestWriteMessage(t *testing.T) {
-	// fake current time in order to obtain deterministic signatures
 	wayback := time.Date(2019, time.May, 18, 1, 2, 3, 4, time.UTC)
-	patch := monkey.Patch(time.Now, func() time.Time { return wayback })
-	defer patch.Unpatch()
 
 	for _, ca := range []struct {
 		name string
@@ -127,6 +123,7 @@ func TestWriteMessage(t *testing.T) {
 				SystemID:    1,
 				Key:         ca.key,
 			}
+			nw.now = func() time.Time { return wayback }
 			err = nw.Initialize()
 			require.NoError(t, err)
 

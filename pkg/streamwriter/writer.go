@@ -69,6 +69,7 @@ type Writer struct {
 	// private
 	//
 
+	now           func() time.Time
 	nextSeqNumber byte
 }
 
@@ -85,6 +86,10 @@ func (w *Writer) Initialize() error {
 	}
 	if w.Key != nil && w.Version != V2 {
 		return fmt.Errorf("OutKey requires V2 frames")
+	}
+
+	if w.now == nil {
+		w.now = time.Now
 	}
 
 	return nil
@@ -150,7 +155,7 @@ func (w *Writer) writeInner(fr frame.Frame) error {
 	if ff, ok := fr.(*frame.V2Frame); ok && w.Key != nil {
 		ff.SignatureLinkID = w.SignatureLinkID
 		// Timestamp in 10 microsecond units since 1st January 2015 GMT time
-		ff.SignatureTimestamp = uint64(time.Since(signatureReferenceDate)) / 10000
+		ff.SignatureTimestamp = uint64(w.now().Sub(signatureReferenceDate)) / 10000
 		ff.Signature = ff.GenerateSignature(w.Key)
 	}
 

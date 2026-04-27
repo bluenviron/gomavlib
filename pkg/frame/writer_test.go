@@ -170,7 +170,7 @@ func TestWriterWriteMessage(t *testing.T) {
 			})
 			require.NoError(t, err)
 
-			writer.now = func() time.Time { return wayback }
+			writer.timeNow = func() time.Time { return wayback }
 
 			err = writer.WriteMessage(c.msg)
 			require.NoError(t, err)

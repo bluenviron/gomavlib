@@ -123,7 +123,7 @@ func TestWriteMessage(t *testing.T) {
 				SystemID:    1,
 				Key:         ca.key,
 			}
-			nw.now = func() time.Time { return wayback }
+			nw.timeNow = func() time.Time { return wayback }
 			err = nw.Initialize()
 			require.NoError(t, err)
 

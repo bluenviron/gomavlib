@@ -3,7 +3,6 @@ module github.com/bluenviron/gomavlib/v3
 go 1.25.0
 
 require (
-	bou.ke/monkey v1.0.2
 	github.com/alecthomas/kong v1.15.0
 	github.com/pion/transport/v2 v2.2.10
 	github.com/stretchr/testify v1.11.1

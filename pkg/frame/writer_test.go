@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"bou.ke/monkey"
 	"github.com/stretchr/testify/require"
 
 	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
@@ -122,10 +121,7 @@ func TestWriterWriteErrors(t *testing.T) {
 }
 
 func TestWriterWriteMessage(t *testing.T) {
-	// fake current time in order to obtain deterministic signatures
 	wayback := time.Date(2019, time.May, 18, 1, 2, 3, 4, time.UTC)
-	patch := monkey.Patch(time.Now, func() time.Time { return wayback })
-	defer patch.Unpatch()
 
 	for _, c := range []struct {
 		name string
@@ -173,6 +169,8 @@ func TestWriterWriteMessage(t *testing.T) {
 				OutKey:      c.key,
 			})
 			require.NoError(t, err)
+
+			writer.timeNow = func() time.Time { return wayback }
 
 			err = writer.WriteMessage(c.msg)
 			require.NoError(t, err)

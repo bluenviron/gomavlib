@@ -420,11 +420,6 @@ const (
 	MAV_CMD_USER_5 MAV_CMD = 31014
 	// Request forwarding of CAN packets from the given CAN bus to this component via this MAVLink channel. CAN Frames are sent using CAN_FRAME and CANFD_FRAME messages
 	MAV_CMD_CAN_FORWARD MAV_CMD = 32000
-	// Request a target system to start an upgrade of one (or all) of its components.
-	// For example, the command might be sent to a companion computer to cause it to upgrade a connected flight controller.
-	// The system doing the upgrade will report progress using the normal command protocol sequence for a long running operation.
-	// Command protocol information: https://mavlink.io/en/services/command.html.
-	MAV_CMD_DO_UPGRADE MAV_CMD = 247
 	// Command to test groups of related actuators together.
 	// This might include groups such as the actuators that contribute to roll, pitch, or yaw torque, actuators that contribute to thrust in x, y, z axis, tilt mechanisms, flaps and spoilers, and so on.
 	// This is similar to MAV_CMD_ACTUATOR_TEST, except that multiple actuators may be affected.
@@ -664,7 +659,6 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_USER_4:                             "MAV_CMD_USER_4",
 	MAV_CMD_USER_5:                             "MAV_CMD_USER_5",
 	MAV_CMD_CAN_FORWARD:                        "MAV_CMD_CAN_FORWARD",
-	MAV_CMD_DO_UPGRADE:                         "MAV_CMD_DO_UPGRADE",
 	MAV_CMD_ACTUATOR_GROUP_TEST:                "MAV_CMD_ACTUATOR_GROUP_TEST",
 	MAV_CMD_DO_SET_SYS_CMP_ID:                  "MAV_CMD_DO_SET_SYS_CMP_ID",
 	MAV_CMD_DO_SET_GLOBAL_ORIGIN:               "MAV_CMD_DO_SET_GLOBAL_ORIGIN",
@@ -846,7 +840,6 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_USER_4":                             MAV_CMD_USER_4,
 	"MAV_CMD_USER_5":                             MAV_CMD_USER_5,
 	"MAV_CMD_CAN_FORWARD":                        MAV_CMD_CAN_FORWARD,
-	"MAV_CMD_DO_UPGRADE":                         MAV_CMD_DO_UPGRADE,
 	"MAV_CMD_ACTUATOR_GROUP_TEST":                MAV_CMD_ACTUATOR_GROUP_TEST,
 	"MAV_CMD_DO_SET_SYS_CMP_ID":                  MAV_CMD_DO_SET_SYS_CMP_ID,
 	"MAV_CMD_DO_SET_GLOBAL_ORIGIN":               MAV_CMD_DO_SET_GLOBAL_ORIGIN,

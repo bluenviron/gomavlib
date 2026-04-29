@@ -491,11 +491,6 @@ const (
 	MAV_CMD_RESET_MPPT MAV_CMD = 40001
 	// Mission command to perform a power cycle on payload
 	MAV_CMD_PAYLOAD_CONTROL MAV_CMD = 40002
-	// Request a target system to start an upgrade of one (or all) of its components.
-	// For example, the command might be sent to a companion computer to cause it to upgrade a connected flight controller.
-	// The system doing the upgrade will report progress using the normal command protocol sequence for a long running operation.
-	// Command protocol information: https://mavlink.io/en/services/command.html.
-	MAV_CMD_DO_UPGRADE MAV_CMD = 247
 	// Command to test groups of related actuators together.
 	// This might include groups such as the actuators that contribute to roll, pitch, or yaw torque, actuators that contribute to thrust in x, y, z axis, tilt mechanisms, flaps and spoilers, and so on.
 	// This is similar to MAV_CMD_ACTUATOR_TEST, except that multiple actuators may be affected.
@@ -793,7 +788,6 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_SET_HAGL:                                   "MAV_CMD_SET_HAGL",
 	MAV_CMD_RESET_MPPT:                                 "MAV_CMD_RESET_MPPT",
 	MAV_CMD_PAYLOAD_CONTROL:                            "MAV_CMD_PAYLOAD_CONTROL",
-	MAV_CMD_DO_UPGRADE:                                 "MAV_CMD_DO_UPGRADE",
 	MAV_CMD_ACTUATOR_GROUP_TEST:                        "MAV_CMD_ACTUATOR_GROUP_TEST",
 	MAV_CMD_DO_SET_SYS_CMP_ID:                          "MAV_CMD_DO_SET_SYS_CMP_ID",
 	MAV_CMD_DO_SET_GLOBAL_ORIGIN:                       "MAV_CMD_DO_SET_GLOBAL_ORIGIN",
@@ -1021,7 +1015,6 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_SET_HAGL":                                   MAV_CMD_SET_HAGL,
 	"MAV_CMD_RESET_MPPT":                                 MAV_CMD_RESET_MPPT,
 	"MAV_CMD_PAYLOAD_CONTROL":                            MAV_CMD_PAYLOAD_CONTROL,
-	"MAV_CMD_DO_UPGRADE":                                 MAV_CMD_DO_UPGRADE,
 	"MAV_CMD_ACTUATOR_GROUP_TEST":                        MAV_CMD_ACTUATOR_GROUP_TEST,
 	"MAV_CMD_DO_SET_SYS_CMP_ID":                          MAV_CMD_DO_SET_SYS_CMP_ID,
 	"MAV_CMD_DO_SET_GLOBAL_ORIGIN":                       MAV_CMD_DO_SET_GLOBAL_ORIGIN,

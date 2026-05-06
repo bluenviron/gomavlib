@@ -24,4 +24,6 @@ const (
 	GLOBAL_POSITION_SRC_MAGNETIC GLOBAL_POSITION_SRC = common.GLOBAL_POSITION_SRC_MAGNETIC
 	// Estimated position based on various sensors (eg. a Kalman Filter).
 	GLOBAL_POSITION_SRC_ESTIMATOR GLOBAL_POSITION_SRC = common.GLOBAL_POSITION_SRC_ESTIMATOR
+	// Low Earth Orbit satellite-based positioning (e.g.: Starlink, Xona PULSAR).
+	GLOBAL_POSITION_SRC_LEO GLOBAL_POSITION_SRC = common.GLOBAL_POSITION_SRC_LEO
 )

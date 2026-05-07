@@ -18,4 +18,10 @@ const (
 	ACTUATOR_TEST_GROUP_YAW_TORQUE ACTUATOR_TEST_GROUP = development.ACTUATOR_TEST_GROUP_YAW_TORQUE
 	// Actuators that affect collective tilt.
 	ACTUATOR_TEST_GROUP_COLLECTIVE_TILT ACTUATOR_TEST_GROUP = development.ACTUATOR_TEST_GROUP_COLLECTIVE_TILT
+	// Actuators that contribute to x (longitudinal, positive = forward) thrust.
+	ACTUATOR_TEST_GROUP_X_THRUST ACTUATOR_TEST_GROUP = development.ACTUATOR_TEST_GROUP_X_THRUST
+	// Actuators that contribute to y (lateral, positive = right) thrust.
+	ACTUATOR_TEST_GROUP_Y_THRUST ACTUATOR_TEST_GROUP = development.ACTUATOR_TEST_GROUP_Y_THRUST
+	// Actuators that contribute to z (vertical, positive = down) thrust.
+	ACTUATOR_TEST_GROUP_Z_THRUST ACTUATOR_TEST_GROUP = development.ACTUATOR_TEST_GROUP_Z_THRUST
 )

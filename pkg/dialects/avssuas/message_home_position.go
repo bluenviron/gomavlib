@@ -12,5 +12,5 @@ import (
 // The global and local positions encode the position in the respective coordinate frames, while the q parameter encodes the orientation of the surface.
 // Under normal conditions it describes the heading and terrain slope, which can be used by the aircraft to adjust the approach.
 // The approach 3D vector describes the point to which the system should fly in normal flight mode and then perform a landing sequence along the vector.
-// Note: this message can be requested by sending the MAV_CMD_REQUEST_MESSAGE with param1=242 (or the deprecated MAV_CMD_GET_HOME_POSITION command).
+// Note: this message can be requested by sending the MAV_CMD_REQUEST_MESSAGE with param1=242.
 type MessageHomePosition = common.MessageHomePosition

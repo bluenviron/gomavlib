@@ -424,7 +424,6 @@ const (
 	// This might include groups such as the actuators that contribute to roll, pitch, or yaw torque, actuators that contribute to thrust in x, y, z axis, tilt mechanisms, flaps and spoilers, and so on.
 	// This is similar to MAV_CMD_ACTUATOR_TEST, except that multiple actuators may be affected.
 	// Different groups may also affect the same actuators (as in the case of controls that affect torque in different axes).
-	// Autopilots must NACK this command with MAV_RESULT_TEMPORARILY_REJECTED while armed.
 	MAV_CMD_ACTUATOR_GROUP_TEST MAV_CMD = 309
 	// Set system and component id.
 	// This allows moving of a system and all its components to a new system id, or moving a particular component to a new system/component id.

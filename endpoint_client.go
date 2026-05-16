@@ -39,6 +39,10 @@ func (e *endpointClient) oneChannelAtAtime() bool {
 	return true
 }
 
+func (e *endpointClient) isDatagram() bool {
+	return e.conf.IsDatagram
+}
+
 func (e *endpointClient) connect() (io.ReadWriteCloser, error) {
 	timedContext, timedContextClose := context.WithTimeout(e.ctx, e.node.ReadTimeout)
 	nconn, err := e.conf.Connect(timedContext)

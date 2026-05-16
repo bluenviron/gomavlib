@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"errors"
+	"fmt"
 	"io"
 
 	"github.com/bluenviron/gomavlib/v3/pkg/frame"
@@ -12,8 +13,45 @@ import (
 )
 
 const (
-	writeBufferSize = 64
+	writeBufferSize        = 64
+	datagramReadBufferSize = 512
 )
+
+type datagramReader struct {
+	r   io.ReadCloser
+	buf []byte
+	pos int
+}
+
+func (r *datagramReader) ReadPacket() error {
+	if r.buf == nil {
+		r.buf = make([]byte, datagramReadBufferSize)
+	}
+
+	n, err := r.r.Read(r.buf[:datagramReadBufferSize])
+	if n == 0 && err != nil {
+		return err
+	}
+
+	r.buf = r.buf[:n]
+	r.pos = 0
+
+	return nil
+}
+
+func (r *datagramReader) Read(p []byte) (n int, err error) {
+	n = copy(p, r.buf[r.pos:])
+	r.pos += n
+	if n == 0 && r.pos >= len(r.buf) {
+		return 0, fmt.Errorf("packet is too short")
+	}
+	return n, nil
+}
+
+type readWriter struct {
+	io.Reader
+	io.Writer
+}
 
 func randomByte() (byte, error) {
 	var buf [1]byte
@@ -26,16 +64,18 @@ func randomByte() (byte, error) {
 // For instance, a TCP client endpoint creates a single channel, while a TCP
 // server endpoint creates a channel for each incoming connection.
 type Channel struct {
-	node     *Node
-	endpoint Endpoint
-	label    string
-	rwc      io.ReadWriteCloser
+	node       *Node
+	endpoint   Endpoint
+	label      string
+	rwc        io.ReadWriteCloser
+	isDatagram bool
 
-	ctx          context.Context
-	ctxCancel    func()
-	frameWriter  *frame.ReadWriter
-	streamWriter *streamwriter.Writer
-	running      bool
+	datagramReader  *datagramReader
+	ctx             context.Context
+	ctxCancel       func()
+	frameReadWriter *frame.ReadWriter
+	streamWriter    *streamwriter.Writer
+	running         bool
 
 	// in
 	chWrite chan any
@@ -50,18 +90,29 @@ func (ch *Channel) initialize() error {
 		return err
 	}
 
-	ch.frameWriter = &frame.ReadWriter{
-		ByteReadWriter: ch.rwc,
+	var rw io.ReadWriter
+	if ch.isDatagram {
+		ch.datagramReader = &datagramReader{r: ch.rwc}
+		rw = &readWriter{
+			Reader: ch.datagramReader,
+			Writer: ch.rwc,
+		}
+	} else {
+		rw = ch.rwc
+	}
+
+	ch.frameReadWriter = &frame.ReadWriter{
+		ByteReadWriter: rw,
 		DialectRW:      ch.node.dialectRW,
 		InKey:          ch.node.InKey,
 	}
-	err = ch.frameWriter.Initialize()
+	err = ch.frameReadWriter.Initialize()
 	if err != nil {
 		return err
 	}
 
 	ch.streamWriter = &streamwriter.Writer{
-		FrameWriter: ch.frameWriter.Writer,
+		FrameWriter: ch.frameReadWriter.Writer,
 		SystemID:    ch.node.OutSystemID,
 		Version: func() streamwriter.Version {
 			if ch.node.OutVersion == V2 {
@@ -149,14 +200,32 @@ func (ch *Channel) runReader() error {
 	ch.node.pushEvent(&EventChannelOpen{ch})
 
 	for {
-		fr, err := ch.frameWriter.Read()
-		if err != nil {
-			var eerr frame.ReadError
-			if errors.As(err, &eerr) {
+		var fr frame.Frame
+
+		if ch.isDatagram {
+			err := ch.datagramReader.ReadPacket()
+			if err != nil {
+				return err
+			}
+
+			ch.frameReadWriter.ResetBuffer()
+
+			fr, err = ch.frameReadWriter.Read()
+			if err != nil {
 				ch.node.pushEvent(&EventParseError{err, ch})
 				continue
 			}
-			return err
+		} else {
+			var err error
+			fr, err = ch.frameReadWriter.Read()
+			if err != nil {
+				var eerr frame.ReadError
+				if errors.As(err, &eerr) {
+					ch.node.pushEvent(&EventParseError{err, ch})
+					continue
+				}
+				return err
+			}
 		}
 
 		evt := &EventFrame{fr, ch}
@@ -181,7 +250,7 @@ func (ch *Channel) runWriter(writerTerminate chan struct{}) error {
 				}
 
 			case frame.Frame:
-				err := ch.frameWriter.Write(wh)
+				err := ch.frameReadWriter.Write(wh)
 				if err != nil {
 					return err
 				}

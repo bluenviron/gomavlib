@@ -44,6 +44,10 @@ func (e *endpointServer) oneChannelAtAtime() bool {
 	return false
 }
 
+func (e *endpointServer) isDatagram() bool {
+	return e.conf.IsDatagram
+}
+
 func (e *endpointServer) provide() (string, io.ReadWriteCloser, error) {
 	nconn, err := e.listener.Accept()
 	if err != nil {

@@ -18,7 +18,8 @@ func (conf EndpointUDPClient) init(node *Node) (Endpoint, error) {
 			Connect: func(ctx context.Context) (net.Conn, error) {
 				return (&net.Dialer{}).DialContext(ctx, "udp4", conf.Address)
 			},
-			Label: "udp:" + conf.Address,
+			Label:      "udp:" + conf.Address,
+			IsDatagram: true,
 		},
 	}
 	err := e.initialize()

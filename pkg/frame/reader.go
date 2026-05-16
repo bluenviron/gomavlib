@@ -214,3 +214,8 @@ func (r *Reader) Read() (Frame, error) {
 
 	return f, nil
 }
+
+// ResetBuffer discards data in the read buffer.
+func (r *Reader) ResetBuffer() {
+	r.BufByteReader.Discard(r.BufByteReader.Buffered()) //nolint:errcheck
+}

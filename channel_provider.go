@@ -40,10 +40,11 @@ func (cp *channelProvider) run() {
 		}
 
 		ch := &Channel{
-			node:     cp.node,
-			endpoint: cp.endpoint,
-			label:    label,
-			rwc:      rwc,
+			node:       cp.node,
+			endpoint:   cp.endpoint,
+			label:      label,
+			rwc:        rwc,
+			isDatagram: cp.endpoint.isDatagram(),
 		}
 		err = ch.initialize()
 		if err != nil {

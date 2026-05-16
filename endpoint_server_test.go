@@ -22,13 +22,14 @@ func TestEndpointServer(t *testing.T) {
 				e = EndpointUDPServer{"127.0.0.1:5601"}
 			}
 
-			node, err := NewNode(NodeConf{
+			node := &Node{
 				Dialect:          testDialect,
 				OutVersion:       V2,
 				OutSystemID:      10,
 				Endpoints:        []EndpointConf{e},
 				HeartbeatDisable: true,
-			})
+			}
+			err := node.Initialize()
 			require.NoError(t, err)
 			defer node.Close()
 
@@ -122,14 +123,15 @@ func TestEndpointServerIdleTimeout(t *testing.T) {
 				e = EndpointUDPServer{"127.0.0.1:5601"}
 			}
 
-			node, err := NewNode(NodeConf{
+			node := &Node{
 				Dialect:          testDialect,
 				OutVersion:       V2,
 				OutSystemID:      10,
 				Endpoints:        []EndpointConf{e},
 				HeartbeatDisable: true,
 				IdleTimeout:      500 * time.Millisecond,
-			})
+			}
+			err := node.Initialize()
 			require.NoError(t, err)
 			defer node.Close()
 

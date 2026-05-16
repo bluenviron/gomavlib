@@ -13,10 +13,7 @@ import (
 )
 
 func TestWriterNewErrors(t *testing.T) {
-	_, err := NewWriter(WriterConf{
-		OutVersion:  V2,
-		OutSystemID: 1,
-	})
+	err := (&Writer{}).Initialize()
 	require.EqualError(t, err, "ByteWriter not provided")
 }
 
@@ -30,12 +27,11 @@ func TestWriterWrite(t *testing.T) {
 
 		t.Run(ca.name, func(t *testing.T) {
 			var buf bytes.Buffer
-			writer, err := NewWriter(WriterConf{
-				Writer:      &buf,
-				OutVersion:  V2,
-				OutSystemID: 1,
-				DialectRW:   ca.dialectRW,
-			})
+			writer := &Writer{
+				ByteWriter: &buf,
+				DialectRW:  ca.dialectRW,
+			}
+			err := writer.Initialize()
 			require.NoError(t, err)
 
 			err = writer.Write(ca.frame)
@@ -73,7 +69,7 @@ func TestWriterWriteErrors(t *testing.T) {
 				ComponentID:    0x02,
 				Message: &MessageTest5{
 					'\x10',
-					binary.LittleEndian.Uint32([]byte("\x10\x10\x10\x10")),
+					0x10101010,
 				},
 				Checksum: 0x66e5,
 			},
@@ -106,12 +102,11 @@ func TestWriterWriteErrors(t *testing.T) {
 	} {
 		t.Run(ca.name, func(t *testing.T) {
 			var buf bytes.Buffer
-			writer, err := NewWriter(WriterConf{
-				Writer:      &buf,
-				OutVersion:  V2,
-				OutSystemID: 1,
-				DialectRW:   ca.dialectRW,
-			})
+			writer := &Writer{
+				ByteWriter: &buf,
+				DialectRW:  ca.dialectRW,
+			}
+			err := writer.Initialize()
 			require.NoError(t, err)
 
 			err = writer.Write(ca.frame)
@@ -231,12 +226,10 @@ func TestWriterWriteMessageErrors(t *testing.T) {
 }
 
 func TestWriterWriteFrameNilMsg(t *testing.T) {
-	writer, err := NewWriter(WriterConf{
-		Writer:      bytes.NewBuffer(nil),
-		DialectRW:   nil,
-		OutVersion:  V2,
-		OutSystemID: 1,
-	})
+	writer := &Writer{
+		ByteWriter: bytes.NewBuffer(nil),
+	}
+	err := writer.Initialize()
 	require.NoError(t, err)
 
 	f := &V1Frame{Message: nil}

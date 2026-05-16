@@ -1,6 +1,7 @@
 package frame
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/binary"
 	"testing"
@@ -409,18 +410,19 @@ var casesReadWrite = []struct {
 }
 
 func TestReaderNewErrors(t *testing.T) {
-	_, err := NewReader(ReaderConf{})
+	err := (&Reader{}).Initialize()
 	require.EqualError(t, err, "BufByteReader not provided")
 }
 
 func TestReader(t *testing.T) {
 	for _, ca := range casesReadWrite {
 		t.Run(ca.name, func(t *testing.T) {
-			reader, err := NewReader(ReaderConf{
-				Reader:    bytes.NewReader(ca.raw),
-				DialectRW: ca.dialectRW,
-				InKey:     ca.key,
-			})
+			reader := &Reader{
+				BufByteReader: bufio.NewReaderSize(bytes.NewReader(ca.raw), bufferSize),
+				DialectRW:     ca.dialectRW,
+				InKey:         ca.key,
+			}
+			err := reader.Initialize()
 			require.NoError(t, err)
 
 			frame, err := reader.Read()
@@ -475,10 +477,11 @@ func TestReaderErrorSignatureTimestamp(t *testing.T) {
 	require.NoError(t, err)
 	buf.Write(buf2[:n])
 
-	reader, err := NewReader(ReaderConf{
-		Reader: &buf,
-		InKey:  NewV2Key(bytes.Repeat([]byte("\x4F"), 32)),
-	})
+	reader := &Reader{
+		BufByteReader: bufio.NewReaderSize(&buf, bufferSize),
+		InKey:         NewV2Key(bytes.Repeat([]byte("\x4F"), 32)),
+	}
+	err = reader.Initialize()
 	require.NoError(t, err)
 
 	_, err = reader.Read()

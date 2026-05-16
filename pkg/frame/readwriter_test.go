@@ -11,19 +11,13 @@ import (
 
 func TestReadWriter(t *testing.T) {
 	var buf bytes.Buffer
-	_, err := NewReadWriter(ReadWriterConf{
-		ReadWriter:  &buf,
-		OutVersion:  V2,
-		OutSystemID: 1,
-	})
+	rw := &ReadWriter{ByteReadWriter: &buf}
+	err := rw.Initialize()
 	require.NoError(t, err)
 }
 
 func TestReadWriterNewErrors(t *testing.T) {
-	_, err := NewReadWriter(ReadWriterConf{
-		OutVersion:  V2,
-		OutSystemID: 1,
-	})
+	err := (&ReadWriter{}).Initialize()
 	require.EqualError(t, err, "ByteReadWriter not provided")
 }
 
@@ -38,17 +32,10 @@ func FuzzReadWriter(f *testing.F) {
 		panic(err)
 	}
 
-	f.Fuzz(func(t *testing.T, a []byte, k bool, v2 bool) {
+	f.Fuzz(func(t *testing.T, a []byte, k bool, _ bool) {
 		var key *V2Key
 		if k {
 			key = NewV2Key(bytes.Repeat([]byte("\x4F"), 32))
-		}
-
-		var outv WriterOutVersion
-		if v2 {
-			outv = V2
-		} else {
-			outv = V1
 		}
 
 		buf := bytes.NewBuffer(a)
@@ -56,8 +43,6 @@ func FuzzReadWriter(f *testing.F) {
 			ByteReadWriter: buf,
 			DialectRW:      dialectRW,
 			InKey:          key,
-			OutVersion:     outv,
-			OutSystemID:    1,
 		}
 		err2 := rw.Initialize()
 		require.NoError(t, err2)

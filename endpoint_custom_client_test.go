@@ -14,17 +14,18 @@ import (
 func TestEndpointCustomClient(t *testing.T) {
 	remote, local := newDummyReadWriterPair()
 
-	node, err := NewNode(NodeConf{
-		Dialect:     testDialect,
-		OutVersion:  V2,
-		OutSystemID: 10,
+	node := &Node{
+		Dialect:          testDialect,
+		OutVersion:       V2,
+		OutSystemID:      10,
+		HeartbeatDisable: true,
 		Endpoints: []EndpointConf{EndpointCustomClient{
 			Connect: func(_ context.Context) (net.Conn, error) {
 				return &rwcToConn{remote}, nil
 			},
 		}},
-		HeartbeatDisable: true,
-	})
+	}
+	err := node.Initialize()
 	require.NoError(t, err)
 	defer node.Close()
 

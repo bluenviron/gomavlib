@@ -1,6 +1,7 @@
 package gomavlib
 
 import (
+	"bufio"
 	"context"
 	"errors"
 	"fmt"
@@ -145,13 +146,14 @@ func TestEndpointClient(t *testing.T) {
 				e = EndpointUDPClient{"127.0.0.1:5601"}
 			}
 
-			node, err := NewNode(NodeConf{
+			node := &Node{
 				Dialect:          testDialect,
 				OutVersion:       V2,
 				OutSystemID:      10,
 				Endpoints:        []EndpointConf{e},
 				HeartbeatDisable: true,
-			})
+			}
+			err := node.Initialize()
 			require.NoError(t, err)
 			defer node.Close()
 
@@ -215,8 +217,8 @@ func TestEndpointClientIdleTimeout(t *testing.T) {
 				require.NoError(t, err2)
 
 				rw := &frame.Reader{
-					ByteReader: conn,
-					DialectRW:  dialectRW,
+					BufByteReader: bufio.NewReader(conn),
+					DialectRW:     dialectRW,
 				}
 				err2 = rw.Initialize()
 				require.NoError(t, err2)
@@ -259,14 +261,15 @@ func TestEndpointClientIdleTimeout(t *testing.T) {
 				e = EndpointUDPClient{"127.0.0.1:5603"}
 			}
 
-			node, err := NewNode(NodeConf{
+			node := &Node{
 				Dialect:          testDialect,
 				OutVersion:       V2,
 				OutSystemID:      10,
 				Endpoints:        []EndpointConf{e},
 				HeartbeatDisable: true,
 				IdleTimeout:      500 * time.Millisecond,
-			})
+			}
+			err = node.Initialize()
 			require.NoError(t, err)
 			defer node.Close()
 
@@ -323,17 +326,18 @@ func TestEndpointClientWriteError(t *testing.T) {
 		terminate: make(chan struct{}),
 	}
 
-	node, err := NewNode(NodeConf{
-		Dialect:     testDialect,
-		OutVersion:  V2,
-		OutSystemID: 10,
+	node := &Node{
+		Dialect:          testDialect,
+		OutVersion:       V2,
+		OutSystemID:      10,
+		HeartbeatDisable: true,
 		Endpoints: []EndpointConf{EndpointCustomClient{
 			Connect: func(_ context.Context) (net.Conn, error) {
 				return &rwcToConn{rwc}, nil
 			},
 		}},
-		HeartbeatDisable: true,
-	})
+	}
+	err := node.Initialize()
 	require.NoError(t, err)
 	defer node.Close()
 

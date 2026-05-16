@@ -12,7 +12,13 @@ import (
 )
 
 const (
-	bufferSize = 512 // frames cannot go beyond len(header) + 255 + len(check) + len(sig)
+	// bufferSize is the size of the internal bufio.Reader buffer.
+	// A single MAVLink V2 frame cannot exceed len(magic) + len(header) + 255 + len(check) + len(sig) = 280 bytes,
+	// but UDP transports often pack multiple frames into a single datagram. If the buffer is smaller than the
+	// datagram, the kernel discards the trailing bytes (since each Read() on a UDP socket consumes exactly one
+	// datagram), causing checksum failures and "invalid magic byte" errors on otherwise valid streams.
+	// The maximum UDP payload is 65507 bytes; round up to fit any plausible datagram in a single fill().
+	bufferSize = 65536
 )
 
 // 1st January 2015 GMT

@@ -571,7 +571,7 @@ func processField(fieldDef *dialectField) (*outField, error) {
 	if len(tags) > 0 {
 		var tmp []string
 		for k, v := range tags {
-			tmp = append(tmp, fmt.Sprintf("%s:\"%s\"", k, v))
+			tmp = append(tmp, k+":\""+v+"\"")
 		}
 		sort.Strings(tmp)
 		outF.Line += " `" + strings.Join(tmp, " ") + "`"

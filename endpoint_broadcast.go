@@ -102,7 +102,7 @@ func (conf EndpointUDPBroadcast) init(node *Node) (Endpoint, error) {
 		if localIP == nil {
 			return nil, fmt.Errorf("cannot find local address associated with given broadcast address")
 		}
-		conf.LocalAddress = fmt.Sprintf("%s:%s", localIP, port)
+		conf.LocalAddress = localIP.String() + ":" + port
 	} else {
 		_, _, err = net.SplitHostPort(conf.LocalAddress)
 		if err != nil {
@@ -129,7 +129,7 @@ func (conf EndpointUDPBroadcast) init(node *Node) (Endpoint, error) {
 					broadcastAddr: broadcastAddr,
 				}}, nil
 			},
-			Label: fmt.Sprintf("udp:%s", broadcastAddr),
+			Label: "udp:" + broadcastAddr.String(),
 		},
 	}
 	err = e.initialize()

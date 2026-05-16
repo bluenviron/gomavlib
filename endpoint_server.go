@@ -1,7 +1,6 @@
 package gomavlib
 
 import (
-	"fmt"
 	"io"
 	"net"
 
@@ -47,18 +46,21 @@ func (e *endpointServer) oneChannelAtAtime() bool {
 
 func (e *endpointServer) provide() (string, io.ReadWriteCloser, error) {
 	nconn, err := e.listener.Accept()
-	// wait termination, do not report errors
 	if err != nil {
+		// wait termination, do not report errors
 		<-e.terminate
 		return "", nil, errTerminated
 	}
 
-	label := fmt.Sprintf("%s:%s", func() string {
-		if e.conf.Label != "" {
-			return e.conf.Label
-		}
-		return "custom"
-	}(), nconn.RemoteAddr())
+	label := ""
+
+	if e.conf.Label != "" {
+		label += e.conf.Label
+	} else {
+		label = "custom"
+	}
+
+	label += ":" + nconn.RemoteAddr().String()
 
 	conn := timednetconn.New(
 		e.node.IdleTimeout,

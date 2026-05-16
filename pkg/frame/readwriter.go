@@ -1,6 +1,8 @@
 package frame
 
 import (
+	"bufio"
+	"fmt"
 	"io"
 
 	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
@@ -97,24 +99,30 @@ type ReadWriter struct {
 
 // Initialize initializes ReadWriter.
 func (rw *ReadWriter) Initialize() error {
-	r, err := NewReader(ReaderConf{
-		Reader:    rw.ByteReadWriter,
-		DialectRW: rw.DialectRW,
-		InKey:     rw.InKey,
-	})
+	if rw.ByteReadWriter == nil {
+		return fmt.Errorf("ByteReadWriter not provided")
+	}
+
+	r := &Reader{
+		BufByteReader: bufio.NewReaderSize(rw.ByteReadWriter, bufferSize),
+		DialectRW:     rw.DialectRW,
+		InKey:         rw.InKey,
+	}
+	err := r.Initialize()
 	if err != nil {
 		return err
 	}
 
-	w, err := NewWriter(WriterConf{
-		Writer:             rw.ByteReadWriter,
+	w := &Writer{
+		ByteWriter:         rw.ByteReadWriter,
 		DialectRW:          rw.DialectRW,
 		OutVersion:         rw.OutVersion,
 		OutSystemID:        rw.OutSystemID,
 		OutComponentID:     rw.OutComponentID,
 		OutSignatureLinkID: rw.OutSignatureLinkID,
 		OutKey:             rw.OutKey,
-	})
+	}
+	err = w.Initialize()
 	if err != nil {
 		return err
 	}

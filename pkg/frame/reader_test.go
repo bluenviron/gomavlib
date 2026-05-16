@@ -3,6 +3,7 @@ package frame
 import (
 	"bytes"
 	"encoding/binary"
+	"io"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -486,4 +487,73 @@ func TestReaderErrorSignatureTimestamp(t *testing.T) {
 
 	_, err = reader.Read()
 	require.EqualError(t, err, "signature timestamp is too old")
+}
+
+// datagramReader mimics the semantics of a UDP net.Conn: each Read() returns
+// exactly one datagram and any leftover bytes that did not fit into the caller's
+// buffer are silently discarded by the kernel, as documented for SOCK_DGRAM.
+type datagramReader struct {
+	datagrams [][]byte
+}
+
+func (d *datagramReader) Read(p []byte) (int, error) {
+	if len(d.datagrams) == 0 {
+		return 0, io.EOF
+	}
+	dg := d.datagrams[0]
+	d.datagrams = d.datagrams[1:]
+	n := copy(p, dg)
+	// emulate the kernel discarding the tail of an oversized datagram.
+	return n, nil
+}
+
+// TestReaderUDPMultiFrameDatagram verifies that the Reader can decode every
+// frame inside a single UDP datagram even when their combined size exceeds the
+// classic MAVLink frame budget. Routers and autopilots (e.g. ArduPilot via
+// mavproxy / mavp2p forwarders) routinely coalesce multiple frames into one
+// datagram, and an undersized internal buffer would cause the kernel to
+// truncate the datagram, producing spurious "invalid magic byte" and
+// "wrong checksum" errors. Regression test for the UDP parsing failure
+// reported against valid ArduPilot streams.
+func TestReaderUDPMultiFrameDatagram(t *testing.T) {
+	// craft three frames whose total encoded length is larger than the
+	// previous internal buffer size (512 bytes).
+	makeFrame := func(seq byte, payloadLen int) ([]byte, *V2Frame) {
+		payload := bytes.Repeat([]byte{0x10}, payloadLen)
+		f := &V2Frame{
+			IncompatibilityFlag: 0,
+			CompatibilityFlag:   0,
+			SequenceNumber:      seq,
+			SystemID:            1,
+			ComponentID:         2,
+			Message: &message.MessageRaw{
+				ID:      0x0607,
+				Payload: payload,
+			},
+		}
+		f.Checksum = f.GenerateChecksum(0)
+		buf := make([]byte, 512)
+		n, err := f.marshalTo(buf, payload)
+		require.NoError(t, err)
+		return buf[:n], f
+	}
+
+	raw1, want1 := makeFrame(1, 250)
+	raw2, want2 := makeFrame(2, 250)
+	raw3, want3 := makeFrame(3, 50)
+
+	// concatenate every frame into a single UDP datagram (>512 bytes).
+	datagram := append(append(append([]byte{}, raw1...), raw2...), raw3...)
+	require.Greater(t, len(datagram), 512)
+
+	reader, err := NewReader(ReaderConf{
+		Reader: &datagramReader{datagrams: [][]byte{datagram}},
+	})
+	require.NoError(t, err)
+
+	for _, want := range []*V2Frame{want1, want2, want3} {
+		got, errR := reader.Read()
+		require.NoError(t, errR)
+		require.Equal(t, want, got)
+	}
 }

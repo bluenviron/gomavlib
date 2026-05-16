@@ -24,7 +24,7 @@ func (rw *readWriterFromFuncs) Write(p []byte) (int, error) {
 	return rw.writeFunc(p)
 }
 
-func TestEndpointBroadcast(t *testing.T) {
+func TestEndpointUDPBroadcast(t *testing.T) {
 	node := &Node{
 		Dialect:          testDialect,
 		OutVersion:       V2,

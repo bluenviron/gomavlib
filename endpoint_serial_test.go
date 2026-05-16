@@ -1,6 +1,7 @@
 package gomavlib
 
 import (
+	"bufio"
 	"io"
 	"testing"
 
@@ -85,16 +86,17 @@ func TestEndpointSerial(t *testing.T) {
 		return remote, nil
 	}
 
-	node, err := NewNode(NodeConf{
-		Dialect:     testDialect,
-		OutVersion:  V2,
-		OutSystemID: 10,
+	node := &Node{
+		Dialect:          testDialect,
+		OutVersion:       V2,
+		OutSystemID:      10,
+		HeartbeatDisable: true,
 		Endpoints: []EndpointConf{EndpointSerial{
 			Device: "/dev/ttyUSB0",
 			Baud:   57600,
 		}},
-		HeartbeatDisable: true,
-	})
+	}
+	err := node.Initialize()
 	require.NoError(t, err)
 	defer node.Close()
 
@@ -203,8 +205,8 @@ func TestEndpointSerialReconnect(t *testing.T) {
 				require.NoError(t, err)
 
 				rw := &frame.Reader{
-					ByteReader: local,
-					DialectRW:  dialectRW,
+					BufByteReader: bufio.NewReader(local),
+					DialectRW:     dialectRW,
 				}
 				err = rw.Initialize()
 				require.NoError(t, err)
@@ -234,16 +236,17 @@ func TestEndpointSerialReconnect(t *testing.T) {
 		return remote, nil
 	}
 
-	node, err := NewNode(NodeConf{
-		Dialect:     testDialect,
-		OutVersion:  V2,
-		OutSystemID: 10,
+	node := &Node{
+		Dialect:          testDialect,
+		OutVersion:       V2,
+		OutSystemID:      10,
+		HeartbeatDisable: true,
 		Endpoints: []EndpointConf{EndpointSerial{
 			Device: "/dev/ttyUSB0",
 			Baud:   57600,
 		}},
-		HeartbeatDisable: true,
-	})
+	}
+	err := node.Initialize()
 	require.NoError(t, err)
 	defer node.Close()
 

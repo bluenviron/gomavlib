@@ -19,16 +19,15 @@ func TestNodeStreamRequest(t *testing.T) {
 		},
 	}
 
-	node1, err := NewNode(NodeConf{
-		Dialect:     dialect,
-		OutVersion:  V2,
-		OutSystemID: 10,
-		Endpoints: []EndpointConf{
-			EndpointUDPServer{"127.0.0.1:5600"},
-		},
+	node1 := &Node{
+		Dialect:             dialect,
+		OutVersion:          V2,
+		OutSystemID:         10,
+		Endpoints:           []EndpointConf{EndpointUDPServer{"127.0.0.1:5600"}},
 		HeartbeatDisable:    true,
 		StreamRequestEnable: true,
-	})
+	}
+	err := node1.Initialize()
 	require.NoError(t, err)
 	defer node1.Close()
 
@@ -37,17 +36,15 @@ func TestNodeStreamRequest(t *testing.T) {
 		}
 	}()
 
-	node2, err := NewNode(NodeConf{
-		Dialect:     dialect,
-		OutVersion:  V2,
-		OutSystemID: 11,
-		Endpoints: []EndpointConf{
-			EndpointUDPClient{"127.0.0.1:5600"},
-		},
-		HeartbeatDisable:       false,
+	node2 := &Node{
+		Dialect:                dialect,
+		OutVersion:             V2,
+		OutSystemID:            11,
+		Endpoints:              []EndpointConf{EndpointUDPClient{"127.0.0.1:5600"}},
 		HeartbeatPeriod:        500 * time.Millisecond,
 		HeartbeatAutopilotType: 3, // MAV_AUTOPILOT_ARDUPILOTMEGA
-	})
+	}
+	err = node2.Initialize()
 	require.NoError(t, err)
 	defer node2.Close()
 

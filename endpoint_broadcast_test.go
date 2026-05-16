@@ -25,13 +25,14 @@ func (rw *readWriterFromFuncs) Write(p []byte) (int, error) {
 }
 
 func TestEndpointBroadcast(t *testing.T) {
-	node, err := NewNode(NodeConf{
+	node := &Node{
 		Dialect:          testDialect,
 		OutVersion:       V2,
 		OutSystemID:      10,
 		Endpoints:        []EndpointConf{EndpointUDPBroadcast{"127.255.255.255:5602", ":5601"}},
 		HeartbeatDisable: true,
-	})
+	}
+	err := node.Initialize()
 	require.NoError(t, err)
 	defer node.Close()
 

@@ -12,5 +12,6 @@ type Endpoint interface {
 	isEndpoint()
 	close()
 	oneChannelAtAtime() bool
+	isDatagram() bool
 	provide() (string, io.ReadWriteCloser, error)
 }

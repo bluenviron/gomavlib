@@ -129,7 +129,8 @@ func (conf EndpointUDPBroadcast) init(node *Node) (Endpoint, error) {
 					broadcastAddr: broadcastAddr,
 				}}, nil
 			},
-			Label: "udp:" + broadcastAddr.String(),
+			Label:      "udp:" + broadcastAddr.String(),
+			IsDatagram: true,
 		},
 	}
 	err = e.initialize()

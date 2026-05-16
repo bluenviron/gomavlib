@@ -13,6 +13,9 @@ type EndpointCustomClient struct {
 
 	// the label of the protocol
 	Label string
+
+	// whether the connection is datagram-based (e.g. UDP).
+	IsDatagram bool
 }
 
 func (conf EndpointCustomClient) init(node *Node) (Endpoint, error) {

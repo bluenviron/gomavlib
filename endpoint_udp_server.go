@@ -26,7 +26,8 @@ func (conf EndpointUDPServer) init(node *Node) (Endpoint, error) {
 
 				return udp.Listen("udp4", addr)
 			},
-			Label: "udp",
+			Label:      "udp",
+			IsDatagram: true,
 		},
 	}
 	err := e.initialize()

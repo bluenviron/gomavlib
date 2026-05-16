@@ -64,6 +64,10 @@ func (e *endpointCustom) oneChannelAtAtime() bool {
 	return true
 }
 
+func (e *endpointCustom) isDatagram() bool {
+	return false
+}
+
 func (e *endpointCustom) provide() (string, io.ReadWriteCloser, error) {
 	return "custom", &removeCloser{e.rwc}, nil
 }

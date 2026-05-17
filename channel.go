@@ -203,12 +203,19 @@ func (ch *Channel) runReader() error {
 		var fr frame.Frame
 
 		if ch.isDatagram {
+			skipped := len(ch.datagramReader.buf) - ch.datagramReader.pos
 			err := ch.datagramReader.ReadPacket()
 			if err != nil {
 				return err
 			}
 
-			ch.frameReadWriter.ResetBuffer()
+			n := ch.frameReadWriter.BufByteReader.Buffered()
+			skipped += n
+			ch.frameReadWriter.BufByteReader.Discard(n) //nolint:errcheck
+
+			if skipped > 0 {
+				ch.node.pushEvent(&EventParseError{fmt.Errorf("skipped %d bytes", skipped), ch})
+			}
 
 			fr, err = ch.frameReadWriter.Read()
 			if err != nil {

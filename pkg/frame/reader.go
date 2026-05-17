@@ -216,6 +216,8 @@ func (r *Reader) Read() (Frame, error) {
 }
 
 // ResetBuffer discards data in the read buffer.
+//
+// Deprecated: not used anymore.
 func (r *Reader) ResetBuffer() {
 	r.BufByteReader.Discard(r.BufByteReader.Buffered()) //nolint:errcheck
 }

@@ -1,15 +1,12 @@
 package gomavlib
 
 import (
-	"bytes"
 	"net"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
 	"github.com/bluenviron/gomavlib/v3/pkg/frame"
-	"github.com/bluenviron/gomavlib/v3/pkg/streamwriter"
 )
 
 func TestEndpointUDPClientDatagramRecovery(t *testing.T) {
@@ -34,38 +31,21 @@ func TestEndpointUDPClientDatagramRecovery(t *testing.T) {
 		_, err2 = pc.WriteTo([]byte{frame.V2MagicByte, 5, 0x04, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, clientAddr)
 		require.NoError(t, err2)
 
+		// valid packet, with extra bytes
+		_, err2 = pc.WriteTo([]byte{
+			0xfd, 0x09, 0x00, 0x00, 0x00, 0x0b, 0x01, 0x00,
+			0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x06, 0x05,
+			0x04, 0x02, 0x01, 0xb4, 0xde,
+			0xff, 0xff, 0xff, 0xff, 0xff,
+		}, clientAddr)
+		require.NoError(t, err2)
+
 		// valid packet
-		dialectRW := &dialect.ReadWriter{Dialect: testDialect}
-		err2 = dialectRW.Initialize()
-		require.NoError(t, err2)
-
-		var frameBuf bytes.Buffer
-		rw := &frame.ReadWriter{
-			ByteReadWriter: &frameBuf,
-			DialectRW:      dialectRW,
-		}
-		err2 = rw.Initialize()
-		require.NoError(t, err2)
-
-		sw := &streamwriter.Writer{
-			FrameWriter: rw.Writer,
-			Version:     streamwriter.V2,
-			SystemID:    11,
-		}
-		err2 = sw.Initialize()
-		require.NoError(t, err2)
-
-		err2 = sw.Write(&MessageHeartbeat{
-			Type:           6,
-			Autopilot:      5,
-			BaseMode:       4,
-			CustomMode:     3,
-			SystemStatus:   2,
-			MavlinkVersion: 1,
-		})
-		require.NoError(t, err2)
-
-		_, err2 = pc.WriteTo(frameBuf.Bytes(), clientAddr)
+		_, err2 = pc.WriteTo([]byte{
+			0xfd, 0x09, 0x00, 0x00, 0x00, 0x0b, 0x01, 0x00,
+			0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x06, 0x05,
+			0x04, 0x02, 0x01, 0xb4, 0xde,
+		}, clientAddr)
 		require.NoError(t, err2)
 	}()
 
@@ -106,7 +86,38 @@ func TestEndpointUDPClientDatagramRecovery(t *testing.T) {
 	require.EqualError(t, parseErr.Error, "unknown incompatibility flag: 4")
 
 	evt = <-node.Events()
+	parseErr, ok = evt.(*EventParseError)
+	require.True(t, ok)
+	require.EqualError(t, parseErr.Error, "skipped 7 bytes")
+
+	evt = <-node.Events()
 	fr, ok := evt.(*EventFrame)
+	require.True(t, ok)
+	require.Equal(t, &EventFrame{
+		Frame: &frame.V2Frame{
+			SequenceNumber: 0,
+			SystemID:       11,
+			ComponentID:    1,
+			Message: &MessageHeartbeat{
+				Type:           6,
+				Autopilot:      5,
+				BaseMode:       4,
+				CustomMode:     3,
+				SystemStatus:   2,
+				MavlinkVersion: 1,
+			},
+			Checksum: fr.Frame.GetChecksum(),
+		},
+		Channel: fr.Channel,
+	}, evt)
+
+	evt = <-node.Events()
+	parseErr, ok = evt.(*EventParseError)
+	require.True(t, ok)
+	require.EqualError(t, parseErr.Error, "skipped 5 bytes")
+
+	evt = <-node.Events()
+	fr, ok = evt.(*EventFrame)
 	require.True(t, ok)
 	require.Equal(t, &EventFrame{
 		Frame: &frame.V2Frame{

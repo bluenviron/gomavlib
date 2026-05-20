@@ -2,6 +2,7 @@ package frame
 
 import (
 	"bufio"
+	"crypto/subtle"
 	"fmt"
 	"io"
 	"reflect"
@@ -152,7 +153,7 @@ func (r *Reader) Read() (Frame, error) {
 			return nil, newError("signature not present")
 		}
 
-		if sig := ff.GenerateSignature(r.InKey); *sig != *ff.Signature {
+		if sig := ff.GenerateSignature(r.InKey); subtle.ConstantTimeCompare(sig[:], ff.Signature[:]) != 1 {
 			return nil, newError("wrong signature")
 		}
 

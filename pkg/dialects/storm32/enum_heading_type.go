@@ -3,13 +3,17 @@
 package storm32
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
-type HEADING_TYPE = ardupilotmega.HEADING_TYPE
+// Heading setpoint types used in MAV_CMD_GUIDED_CHANGE_HEADING
+type HEADING_TYPE = common.HEADING_TYPE
 
 const (
-	HEADING_TYPE_COURSE_OVER_GROUND HEADING_TYPE = ardupilotmega.HEADING_TYPE_COURSE_OVER_GROUND
-	HEADING_TYPE_HEADING            HEADING_TYPE = ardupilotmega.HEADING_TYPE_HEADING
-	HEADING_TYPE_DEFAULT            HEADING_TYPE = ardupilotmega.HEADING_TYPE_DEFAULT
+	// Course over ground.
+	HEADING_TYPE_COURSE_OVER_GROUND HEADING_TYPE = common.HEADING_TYPE_COURSE_OVER_GROUND
+	// Raw vehicle heading.
+	HEADING_TYPE_HEADING HEADING_TYPE = common.HEADING_TYPE_HEADING
+	// Default heading.
+	HEADING_TYPE_DEFAULT HEADING_TYPE = common.HEADING_TYPE_DEFAULT
 )

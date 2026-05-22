@@ -2,7 +2,10 @@
 //nolint:revive,misspell,govet,lll
 package common
 
-// Report current used cellular network status
+// Cellular network status as reported by a particular modem.
+// This is primarily intended for logging, but a GCS may choose to display link_tx_rate and link_rx_rate.
+// Note that a value of 0 in the id field indicates that the sender does not support reporting of multiple modems.
+// Message data should be from a single modem, but that is not guaranteed.
 type MessageCellularStatus struct {
 	// Cellular modem status
 	Status CELLULAR_STATUS_FLAG `mavenum:"uint8"`
@@ -18,6 +21,28 @@ type MessageCellularStatus struct {
 	Mnc uint16
 	// Location area code. If unknown, set to 0
 	Lac uint16
+	// Cellular modem instance number. Indexed from 1.
+	Id uint8 `mavext:"true"`
+	// Download rate.
+	LinkTxRate uint32 `mavext:"true"`
+	// Upload rate.
+	LinkRxRate uint32 `mavext:"true"`
+	// ID of the currently connected cell tower. This must be NULL terminated if the length is less than 9 human-readable chars, and without the null termination (NULL) byte if the length is exactly 9 chars.
+	CellTowerId string `mavext:"true" mavlen:"9"`
+	// LTE frequency band number.
+	BandNumber uint8 `mavext:"true"`
+	// LTE radio frequency.
+	BandFrequency float32 `mavext:"true"`
+	// The channel number (CN). Absolute radio-frequency (ARFCN) / E-UTRA (EARFCN) / UTRA (UARFCN) / New radio (NR_CH).
+	ChannelNumber uint32 `mavext:"true"`
+	// On 3G is Received Signal Code Power (RSCP). On LTE is Reference Signal Received Power (RSRP). On 5G is New Radio Reference Signal Received Power (NR_RSRP).
+	RxLevel float32 `mavext:"true"`
+	// Transmitter (modem) signal absolute power level.
+	TxLevel float32 `mavext:"true"`
+	// On 3G is Receiver Quality (RxQual). On LTE is Reference Signal Received Quality (RSRQ). On 5G is New Radio Reference Signal Received Quality (NR_RSRQ).
+	RxQuality float32 `mavext:"true"`
+	// Signal to interference plus noise ratio (SINR).
+	Sinr float32 `mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

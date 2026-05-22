@@ -6,5 +6,8 @@ import (
 	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
 )
 
-// Report current used cellular network status
+// Cellular network status as reported by a particular modem.
+// This is primarily intended for logging, but a GCS may choose to display link_tx_rate and link_rx_rate.
+// Note that a value of 0 in the id field indicates that the sender does not support reporting of multiple modems.
+// Message data should be from a single modem, but that is not guaranteed.
 type MessageCellularStatus = common.MessageCellularStatus

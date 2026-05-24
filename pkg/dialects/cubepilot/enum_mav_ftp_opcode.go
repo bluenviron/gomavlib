@@ -42,6 +42,8 @@ const (
 	MAV_FTP_OPCODE_CALCFILECRC MAV_FTP_OPCODE = common.MAV_FTP_OPCODE_CALCFILECRC
 	// BurstReadFile: Burst download session file
 	MAV_FTP_OPCODE_BURSTREADFILE MAV_FTP_OPCODE = common.MAV_FTP_OPCODE_BURSTREADFILE
+	// ListDirectoryWithTime: List files and directories, along with last-modification timestamps, in path from offset. This is the same as ListDirectory except for the addition of timestamps. Servers that do not support this opcode respond with a NAK (MAV_FTP_ERR_UNKNOWNCOMMAND).
+	MAV_FTP_OPCODE_LISTDIRECTORYWITHTIME MAV_FTP_OPCODE = common.MAV_FTP_OPCODE_LISTDIRECTORYWITHTIME
 	// ACK: ACK response
 	MAV_FTP_OPCODE_ACK MAV_FTP_OPCODE = common.MAV_FTP_OPCODE_ACK
 	// NAK: NAK response

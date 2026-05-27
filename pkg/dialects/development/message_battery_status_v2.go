@@ -20,8 +20,8 @@ type MessageBatteryStatusV2 struct {
 	CapacityConsumed float32
 	// Remaining charge (until empty). NaN: field not provided. Note: If MAV_BATTERY_STATUS_FLAGS_CAPACITY_RELATIVE_TO_FULL is unset, this value is based on the assumption the battery was full when the system was powered.
 	CapacityRemaining float32
-	// Remaining battery energy. Values: [0-100], UINT8_MAX: field not provided.
-	PercentRemaining uint8
+	// State of Charge (SoC). Remaining capacity relative to current fully-charged capacity as a percentage. Values: [0-100], NaN: field not provided. Note that the value may be calculated from design_capacity if current full_charge_capacity is not known (see BATTERY_INFO).
+	StateOfCharge float32
 	// Fault, health, readiness, and other status indications.
 	StatusFlags MAV_BATTERY_STATUS_FLAGS `mavenum:"uint32"`
 }

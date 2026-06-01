@@ -120,7 +120,7 @@ func (conf EndpointUDPBroadcast) init(node *Node) (Endpoint, error) {
 			Connect: func(_ context.Context) (net.Conn, error) {
 				pc, err2 := net.ListenPacket("udp4", conf.LocalAddress)
 				if err2 != nil {
-					return nil, err
+					return nil, err2
 				}
 
 				return &rwcToConn{&wrappedPacketConn{

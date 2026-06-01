@@ -42,7 +42,7 @@ type writeExceptReq struct {
 type Node struct {
 	// endpoints with which this node will
 	// communicate. Each endpoint contains zero or more channels
-	Endpoints []EndpointConf
+	Endpoints []Endpoint
 
 	// (optional) dialect which contains the messages that will be encoded and decoded.
 	// If not provided, messages are decoded in the MessageRaw struct.
@@ -184,9 +184,8 @@ func (n *Node) Initialize() error {
 		}
 	}
 
-	// endpoints
-	for _, conf := range n.Endpoints {
-		endpoint, err := conf.init(n)
+	for _, e := range n.Endpoints {
+		err := e.init(n)
 		if err != nil {
 			closeExisting()
 			return err
@@ -194,7 +193,7 @@ func (n *Node) Initialize() error {
 
 		ca := &channelProvider{
 			node:     n,
-			endpoint: endpoint,
+			endpoint: e,
 		}
 		err = ca.initialize()
 		if err != nil {

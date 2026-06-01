@@ -1,22 +1,20 @@
 package gomavlib //nolint:dupl
 
 import (
+	"bufio"
+	"io"
 	"net"
 	"testing"
-
-	"github.com/pion/transport/v2/udp"
-	"github.com/stretchr/testify/require"
+	"time"
 
 	"github.com/bluenviron/gomavlib/v4/pkg/dialect"
 	"github.com/bluenviron/gomavlib/v4/pkg/frame"
 	"github.com/bluenviron/gomavlib/v4/pkg/streamwriter"
+	"github.com/stretchr/testify/require"
 )
 
-func TestEndpointUDPClient(t *testing.T) {
-	addr, err := net.ResolveUDPAddr("udp", "127.0.0.1:5601")
-	require.NoError(t, err)
-
-	ln, err := udp.Listen("udp", addr)
+func TestEndpointTCPClient(t *testing.T) {
+	ln, err := net.Listen("tcp", "127.0.0.1:5602")
 	require.NoError(t, err)
 	defer ln.Close()
 
@@ -79,7 +77,7 @@ func TestEndpointUDPClient(t *testing.T) {
 		Dialect:          testDialect,
 		OutVersion:       V2,
 		OutSystemID:      10,
-		Endpoints:        []Endpoint{&EndpointUDPClient{Address: "127.0.0.1:5601"}},
+		Endpoints:        []Endpoint{&EndpointTCPClient{Address: "127.0.0.1:5602"}},
 		HeartbeatDisable: true,
 	}
 	err = node.Initialize()
@@ -123,52 +121,69 @@ func TestEndpointUDPClient(t *testing.T) {
 	}
 }
 
-func TestEndpointUDPClientDatagramRecovery(t *testing.T) {
-	pc, err := net.ListenPacket("udp4", "127.0.0.1:5604")
+func TestEndpointTCPClientIdleTimeout(t *testing.T) {
+	var ln net.Listener
+	var err error
+	ln, err = net.Listen("tcp", "127.0.0.1:5603")
 	require.NoError(t, err)
-	defer pc.Close()
+	defer ln.Close()
 
-	serverDone := make(chan struct{})
+	closed := make(chan struct{})
+	reconnected := make(chan struct{})
 
 	go func() {
-		defer close(serverDone)
-
-		buf := make([]byte, 4096)
-		_, clientAddr, err2 := pc.ReadFrom(buf)
+		conn, err2 := ln.Accept()
 		require.NoError(t, err2)
 
-		// first malformed packet (too short)
-		_, err2 = pc.WriteTo([]byte{frame.V2MagicByte}, clientAddr)
+		dialectRW := &dialect.ReadWriter{Dialect: testDialect}
+		err2 = dialectRW.Initialize()
 		require.NoError(t, err2)
 
-		// second malformed packet (unknown incompatibility flag, with trailing payload+checksum bytes
-		_, err2 = pc.WriteTo([]byte{frame.V2MagicByte, 5, 0x04, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, clientAddr)
+		rw := &frame.Reader{
+			BufByteReader: bufio.NewReader(conn),
+			DialectRW:     dialectRW,
+		}
+		err2 = rw.Initialize()
 		require.NoError(t, err2)
 
-		// valid packet, with extra bytes
-		_, err2 = pc.WriteTo([]byte{
-			0xfd, 0x09, 0x00, 0x00, 0x00, 0x0b, 0x01, 0x00,
-			0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x06, 0x05,
-			0x04, 0x02, 0x01, 0xb4, 0xde,
-			0xff, 0xff, 0xff, 0xff, 0xff,
-		}, clientAddr)
+		fr, err2 := rw.Read()
 		require.NoError(t, err2)
+		require.Equal(t, &frame.V2Frame{
+			SequenceNumber: 0,
+			SystemID:       10,
+			ComponentID:    1,
+			Message: &MessageHeartbeat{
+				Type:           1,
+				Autopilot:      2,
+				BaseMode:       3,
+				CustomMode:     6,
+				SystemStatus:   4,
+				MavlinkVersion: 5,
+			},
+			Checksum: fr.GetChecksum(),
+		}, fr)
 
-		// valid packet
-		_, err2 = pc.WriteTo([]byte{
-			0xfd, 0x09, 0x00, 0x00, 0x00, 0x0b, 0x01, 0x00,
-			0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x06, 0x05,
-			0x04, 0x02, 0x01, 0xb4, 0xde,
-		}, clientAddr)
+		_, err2 = rw.Read()
+		require.Equal(t, io.EOF, err2)
+		conn.Close()
+
+		close(closed)
+
+		// the client reconnects to the server due to autoReconnector
+		conn, err2 = ln.Accept()
 		require.NoError(t, err2)
+		conn.Close()
+
+		close(reconnected)
 	}()
 
 	node := &Node{
 		Dialect:          testDialect,
 		OutVersion:       V2,
 		OutSystemID:      10,
-		Endpoints:        []Endpoint{&EndpointUDPClient{Address: "127.0.0.1:5604"}},
+		Endpoints:        []Endpoint{&EndpointTCPClient{Address: "127.0.0.1:5603"}},
 		HeartbeatDisable: true,
+		IdleTimeout:      500 * time.Millisecond,
 	}
 	err = node.Initialize()
 	require.NoError(t, err)
@@ -189,67 +204,13 @@ func TestEndpointUDPClientDatagramRecovery(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	evt = <-node.Events()
-	parseErr, ok := evt.(*EventParseError)
-	require.True(t, ok)
-	require.EqualError(t, parseErr.Error, "packet is too short")
+	select {
+	case <-closed:
+	case <-time.After(1 * time.Second):
+		t.Errorf("should not happen")
+	}
 
-	evt = <-node.Events()
-	parseErr, ok = evt.(*EventParseError)
-	require.True(t, ok)
-	require.EqualError(t, parseErr.Error, "unknown incompatibility flag: 4")
+	<-node.Events()
 
-	evt = <-node.Events()
-	parseErr, ok = evt.(*EventParseError)
-	require.True(t, ok)
-	require.EqualError(t, parseErr.Error, "skipped 7 bytes")
-
-	evt = <-node.Events()
-	fr, ok := evt.(*EventFrame)
-	require.True(t, ok)
-	require.Equal(t, &EventFrame{
-		Frame: &frame.V2Frame{
-			SequenceNumber: 0,
-			SystemID:       11,
-			ComponentID:    1,
-			Message: &MessageHeartbeat{
-				Type:           6,
-				Autopilot:      5,
-				BaseMode:       4,
-				CustomMode:     3,
-				SystemStatus:   2,
-				MavlinkVersion: 1,
-			},
-			Checksum: fr.Frame.GetChecksum(),
-		},
-		Channel: fr.Channel,
-	}, evt)
-
-	evt = <-node.Events()
-	parseErr, ok = evt.(*EventParseError)
-	require.True(t, ok)
-	require.EqualError(t, parseErr.Error, "skipped 5 bytes")
-
-	evt = <-node.Events()
-	fr, ok = evt.(*EventFrame)
-	require.True(t, ok)
-	require.Equal(t, &EventFrame{
-		Frame: &frame.V2Frame{
-			SequenceNumber: 0,
-			SystemID:       11,
-			ComponentID:    1,
-			Message: &MessageHeartbeat{
-				Type:           6,
-				Autopilot:      5,
-				BaseMode:       4,
-				CustomMode:     3,
-				SystemStatus:   2,
-				MavlinkVersion: 1,
-			},
-			Checksum: fr.Frame.GetChecksum(),
-		},
-		Channel: fr.Channel,
-	}, evt)
-
-	<-serverDone
+	<-reconnected
 }

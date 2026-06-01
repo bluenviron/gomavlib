@@ -18,8 +18,8 @@ import (
 func main() {
 	// create a node which communicates with a TCP endpoint in client mode
 	node := &gomavlib.Node{
-		Endpoints: []gomavlib.EndpointConf{
-			gomavlib.EndpointCustomClient{
+		Endpoints: []gomavlib.Endpoint{
+			&gomavlib.EndpointCustomClient{
 				Connect: func(ctx context.Context) (net.Conn, error) {
 					tlsConfig := &tls.Config{
 						// skip checking the certificate against a CA (just set to true for simplicity of this example)

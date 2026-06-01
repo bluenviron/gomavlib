@@ -18,12 +18,12 @@ import (
 func main() {
 	// create a node which communicates with multiple endpoints.
 	node := &gomavlib.Node{
-		Endpoints: []gomavlib.EndpointConf{
-			gomavlib.EndpointSerial{
+		Endpoints: []gomavlib.Endpoint{
+			&gomavlib.EndpointSerial{
 				Device: "/dev/ttyUSB0",
 				Baud:   57600,
 			},
-			gomavlib.EndpointUDPClient{Address: "1.2.3.4:5900"},
+			&gomavlib.EndpointUDPClient{Address: "1.2.3.4:5900"},
 		},
 		Dialect:     ardupilotmega.Dialect,
 		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target

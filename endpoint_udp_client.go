@@ -5,23 +5,23 @@ import (
 	"net"
 )
 
-// EndpointUDPClient sets up a endpoint that works with a UDP client.
+var _ Endpoint = (*EndpointUDPClient)(nil)
+
+// EndpointUDPClient is an endpoint that works with a UDP client.
 type EndpointUDPClient struct {
 	// domain name or IP of the server to connect to, example: 1.2.3.4:5600
 	Address string
+
+	EndpointCustomClient
 }
 
-func (conf EndpointUDPClient) init(node *Node) (Endpoint, error) {
-	e := &endpointClient{
-		node: node,
-		conf: EndpointCustomClient{
-			Connect: func(ctx context.Context) (net.Conn, error) {
-				return (&net.Dialer{}).DialContext(ctx, "udp4", conf.Address)
-			},
-			Label:      "udp:" + conf.Address,
-			IsDatagram: true,
+func (e *EndpointUDPClient) init(node *Node) error {
+	e.EndpointCustomClient = EndpointCustomClient{
+		Connect: func(ctx context.Context) (net.Conn, error) {
+			return (&net.Dialer{}).DialContext(ctx, "udp4", e.Address)
 		},
+		Label:      "udp:" + e.Address,
+		IsDatagram: true,
 	}
-	err := e.initialize()
-	return e, err
+	return e.EndpointCustomClient.init(node)
 }

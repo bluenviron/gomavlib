@@ -1,36 +1,62 @@
 package gomavlib
 
 import (
+	"errors"
 	"net"
+	"sync"
 	"testing"
-
-	"github.com/stretchr/testify/require"
 
 	"github.com/bluenviron/gomavlib/v4/pkg/dialect"
 	"github.com/bluenviron/gomavlib/v4/pkg/frame"
 	"github.com/bluenviron/gomavlib/v4/pkg/streamwriter"
+	"github.com/stretchr/testify/require"
 )
 
-type readWriterFromFuncs struct {
-	readFunc  func([]byte) (int, error)
-	writeFunc func([]byte) (int, error)
+type mockNetListener struct {
+	connCh    chan net.Conn
+	terminate chan struct{}
+	closeOnce sync.Once
 }
 
-func (rw *readWriterFromFuncs) Read(p []byte) (int, error) {
-	return rw.readFunc(p)
+func (l *mockNetListener) Accept() (net.Conn, error) {
+	select {
+	case conn := <-l.connCh:
+		return conn, nil
+	case <-l.terminate:
+		return nil, errors.New("listener closed")
+	}
 }
 
-func (rw *readWriterFromFuncs) Write(p []byte) (int, error) {
-	return rw.writeFunc(p)
+func (l *mockNetListener) Close() error {
+	l.closeOnce.Do(func() {
+		close(l.terminate)
+	})
+	return nil
 }
 
-func TestEndpointUDPBroadcast(t *testing.T) {
+func (l *mockNetListener) Addr() net.Addr {
+	return &net.TCPAddr{}
+}
+
+func TestEndpointCustomServer(t *testing.T) {
+	serverConn, clientConn := net.Pipe()
+
+	ln := &mockNetListener{
+		connCh:    make(chan net.Conn, 1),
+		terminate: make(chan struct{}),
+	}
+	ln.connCh <- serverConn
+
 	node := &Node{
 		Dialect:          testDialect,
 		OutVersion:       V2,
 		OutSystemID:      10,
-		Endpoints:        []Endpoint{&EndpointUDPBroadcast{BroadcastAddress: "127.255.255.255:5602", LocalAddress: ":5601"}},
 		HeartbeatDisable: true,
+		Endpoints: []Endpoint{&EndpointCustomServer{
+			Listen: func() (net.Listener, error) {
+				return ln, nil
+			},
+		}},
 	}
 	err := node.Initialize()
 	require.NoError(t, err)
@@ -41,28 +67,13 @@ func TestEndpointUDPBroadcast(t *testing.T) {
 		Channel: evt.(*EventChannelOpen).Channel,
 	}, evt)
 
-	pc, err := net.ListenPacket("udp4", ":5602")
-	require.NoError(t, err)
-	defer pc.Close()
-
 	dialectRW := &dialect.ReadWriter{Dialect: testDialect}
 	err = dialectRW.Initialize()
 	require.NoError(t, err)
 
 	rw := &frame.ReadWriter{
-		ByteReadWriter: &readWriterFromFuncs{
-			readFunc: func(p []byte) (int, error) {
-				n, _, err2 := pc.ReadFrom(p)
-				return n, err2
-			},
-			writeFunc: func(p []byte) (int, error) {
-				return pc.WriteTo(p, &net.UDPAddr{
-					IP:   net.ParseIP("127.255.255.255"),
-					Port: 5601,
-				})
-			},
-		},
-		DialectRW: dialectRW,
+		ByteReadWriter: clientConn,
+		DialectRW:      dialectRW,
 	}
 	err = rw.Initialize()
 	require.NoError(t, err)

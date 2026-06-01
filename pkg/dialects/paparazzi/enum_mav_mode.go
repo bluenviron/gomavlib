@@ -3,7 +3,7 @@
 package paparazzi
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/common"
 )
 
 // Predefined OR-combined MAV_MODE_FLAG values. These can simplify using the flags when setting modes. Note that manual input is enabled in all modes as a safety override.

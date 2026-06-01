@@ -3,7 +3,7 @@
 package uavionix
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/common"
 )
 
 // Vehicle status report that is sent out while figure eight execution is in progress (see MAV_CMD_DO_FIGURE_EIGHT).

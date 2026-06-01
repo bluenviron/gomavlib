@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/asluav"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/asluav"
 )
 
 // Off-board controls/commands for ASLUAVs

@@ -3,7 +3,7 @@
 package cubepilot
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/common"
 )
 
 // Flags used in HIL_ACTUATOR_CONTROLS message.

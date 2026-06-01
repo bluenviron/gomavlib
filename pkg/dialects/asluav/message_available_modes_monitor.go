@@ -3,7 +3,7 @@
 package asluav
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/common"
 )
 
 // A change to the sequence number indicates that the set of AVAILABLE_MODES has changed, and that the receiver should re-request all available modes.

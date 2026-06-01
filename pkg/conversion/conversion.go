@@ -33,8 +33,8 @@ var tplDialect = template.Must(template.New("").Parse(
 package {{ .PkgName }}
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/message"
-	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v4/pkg/message"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialect"
 )
 
 // Dialect contains the dialect definition.
@@ -62,7 +62,7 @@ package {{ .PkgName }}
 {{- if .Link }}
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/{{ .Enum.DefName }}"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/{{ .Enum.DefName }}"
 )
 
 {{- range .Enum.Description }}
@@ -189,7 +189,7 @@ package {{ .PkgName }}
 {{- if .Link }}
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/{{ .Msg.DefName }}"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/{{ .Msg.DefName }}"
 )
 
 {{- range .Msg.Description }}

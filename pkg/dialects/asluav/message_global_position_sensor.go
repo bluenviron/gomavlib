@@ -3,7 +3,7 @@
 package asluav
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/common"
 )
 
 // Reports measurement/estimate from a global position sensor. Used as navigation fusion source and optionally displayed in the UI.

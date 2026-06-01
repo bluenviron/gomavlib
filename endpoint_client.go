@@ -5,7 +5,7 @@ import (
 	"io"
 	"time"
 
-	"github.com/bluenviron/gomavlib/v3/pkg/timednetconn"
+	"github.com/bluenviron/gomavlib/v4/pkg/timednetconn"
 )
 
 var reconnectPeriod = 2 * time.Second

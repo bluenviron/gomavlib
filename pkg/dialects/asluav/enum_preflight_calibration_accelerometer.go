@@ -3,7 +3,7 @@
 package asluav
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/common"
 )
 
 // Action for the accelerometer (param5) of MAV_CMD_PREFLIGHT_CALIBRATION.

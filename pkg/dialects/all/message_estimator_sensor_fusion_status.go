@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/development"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/development"
 )
 
 // Status of estimator sensor fusion sources. Each array is indexed by ESTIMATOR_SENSOR_FUSION_SOURCE - 1. Each element is a per-instance bitmask (bit 0 = instance 0, etc.). For single-instance sources only bit 0 is used. For multi-instance sources like AGP, multiple bits may be set.

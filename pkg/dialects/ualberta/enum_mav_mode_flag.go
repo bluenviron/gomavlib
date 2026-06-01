@@ -3,7 +3,7 @@
 package ualberta
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/minimal"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/minimal"
 )
 
 // These flags encode the MAV mode, see MAV_MODE enum for useful combinations.

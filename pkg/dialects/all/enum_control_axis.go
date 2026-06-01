@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/marsh"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/marsh"
 )
 
 // Specific axis of pilot control inputs, with order corresponding to x, y, z, r fields in MANUAL_CONTROL message.

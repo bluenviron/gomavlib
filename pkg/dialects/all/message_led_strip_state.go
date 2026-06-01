@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/stemstudios"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/stemstudios"
 )
 
 // Current LED State. Can be emitted by LED Strip Controller.

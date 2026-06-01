@@ -3,7 +3,7 @@
 package stemstudios
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/common"
 )
 
 // Flags to report failure cases over the high latency telemetry.

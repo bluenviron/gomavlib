@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/bluenviron/gomavlib/v3/pkg/frame"
-	"github.com/bluenviron/gomavlib/v3/pkg/message"
+	"github.com/bluenviron/gomavlib/v4/pkg/frame"
+	"github.com/bluenviron/gomavlib/v4/pkg/message"
 )
 
 // 1st January 2015 GMT

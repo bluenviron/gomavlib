@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/marsh"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/marsh"
 )
 
 // Send data about a control axis from a control loading system. This is the primary message for logging data from MARSH_TYPE_CONTROL_LOADING.

@@ -6,9 +6,7 @@ import (
 
 // Endpoint is an endpoint, which provides Channels.
 type Endpoint interface {
-	// Conf returns the configuration used to initialize the endpoint
-	Conf() EndpointConf
-
+	init(node *Node) error
 	isEndpoint()
 	close()
 	oneChannelAtAtime() bool

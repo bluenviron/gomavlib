@@ -63,9 +63,9 @@ func TestNodeError(t *testing.T) {
 		Dialect:     testDialect,
 		OutVersion:  V2,
 		OutSystemID: 11,
-		Endpoints: []EndpointConf{
-			EndpointUDPServer{"127.0.0.1:5600"},
-			EndpointUDPServer{"127.0.0.1:5600"},
+		Endpoints: []Endpoint{
+			&EndpointUDPServer{Address: "127.0.0.1:5600"},
+			&EndpointUDPServer{Address: "127.0.0.1:5600"},
 		},
 		HeartbeatDisable: true,
 	}).Initialize()
@@ -77,7 +77,7 @@ func TestNodeCloseInLoop(t *testing.T) {
 		Dialect:          testDialect,
 		OutVersion:       V2,
 		OutSystemID:      11,
-		Endpoints:        []EndpointConf{EndpointUDPServer{"127.0.0.1:5600"}},
+		Endpoints:        []Endpoint{&EndpointUDPServer{Address: "127.0.0.1:5600"}},
 		HeartbeatDisable: true,
 	}
 	err := node1.Initialize()
@@ -87,7 +87,7 @@ func TestNodeCloseInLoop(t *testing.T) {
 		Dialect:          testDialect,
 		OutVersion:       V2,
 		OutSystemID:      11,
-		Endpoints:        []EndpointConf{EndpointUDPClient{"127.0.0.1:5600"}},
+		Endpoints:        []Endpoint{&EndpointUDPClient{Address: "127.0.0.1:5600"}},
 		HeartbeatDisable: true,
 	}
 	err = node2.Initialize()
@@ -116,7 +116,7 @@ func TestNodeWriteAll(t *testing.T) {
 				Dialect:          testDialect,
 				OutVersion:       V2,
 				OutSystemID:      11,
-				Endpoints:        []EndpointConf{EndpointTCPServer{"127.0.0.1:5600"}},
+				Endpoints:        []Endpoint{&EndpointTCPServer{Address: "127.0.0.1:5600"}},
 				HeartbeatDisable: true,
 			}
 			err := server.Initialize()
@@ -131,7 +131,7 @@ func TestNodeWriteAll(t *testing.T) {
 					Dialect:          testDialect,
 					OutVersion:       V2,
 					OutSystemID:      11,
-					Endpoints:        []EndpointConf{EndpointTCPClient{"127.0.0.1:5600"}},
+					Endpoints:        []Endpoint{&EndpointTCPClient{Address: "127.0.0.1:5600"}},
 					HeartbeatDisable: true,
 				}
 				err = client.Initialize()
@@ -192,7 +192,7 @@ func TestNodeWriteExcept(t *testing.T) {
 				Dialect:          testDialect,
 				OutVersion:       V2,
 				OutSystemID:      11,
-				Endpoints:        []EndpointConf{EndpointTCPServer{"127.0.0.1:5600"}},
+				Endpoints:        []Endpoint{&EndpointTCPServer{Address: "127.0.0.1:5600"}},
 				HeartbeatDisable: true,
 			}
 			err := server.Initialize()
@@ -207,7 +207,7 @@ func TestNodeWriteExcept(t *testing.T) {
 					Dialect:          testDialect,
 					OutVersion:       V2,
 					OutSystemID:      11,
-					Endpoints:        []EndpointConf{EndpointTCPClient{"127.0.0.1:5600"}},
+					Endpoints:        []Endpoint{&EndpointTCPClient{Address: "127.0.0.1:5600"}},
 					HeartbeatDisable: true,
 				}
 				err = client.Initialize()
@@ -272,7 +272,7 @@ func TestNodeWriteTo(t *testing.T) {
 				Dialect:          testDialect,
 				OutVersion:       V2,
 				OutSystemID:      11,
-				Endpoints:        []EndpointConf{EndpointTCPServer{"127.0.0.1:5600"}},
+				Endpoints:        []Endpoint{&EndpointTCPServer{Address: "127.0.0.1:5600"}},
 				HeartbeatDisable: true,
 			}
 			err := server.Initialize()
@@ -286,7 +286,7 @@ func TestNodeWriteTo(t *testing.T) {
 					Dialect:          testDialect,
 					OutVersion:       V2,
 					OutSystemID:      11,
-					Endpoints:        []EndpointConf{EndpointTCPClient{"127.0.0.1:5600"}},
+					Endpoints:        []Endpoint{&EndpointTCPClient{Address: "127.0.0.1:5600"}},
 					HeartbeatDisable: true,
 				}
 				err = client.Initialize()
@@ -349,7 +349,7 @@ func TestNodeWriteMessageInLoop(t *testing.T) {
 		Dialect:          testDialect,
 		OutVersion:       V2,
 		OutSystemID:      11,
-		Endpoints:        []EndpointConf{EndpointUDPServer{"127.0.0.1:5600"}},
+		Endpoints:        []Endpoint{&EndpointUDPServer{Address: "127.0.0.1:5600"}},
 		HeartbeatDisable: true,
 	}
 	err := node1.Initialize()
@@ -360,7 +360,7 @@ func TestNodeWriteMessageInLoop(t *testing.T) {
 		Dialect:          testDialect,
 		OutVersion:       V2,
 		OutSystemID:      11,
-		Endpoints:        []EndpointConf{EndpointUDPClient{"127.0.0.1:5600"}},
+		Endpoints:        []Endpoint{&EndpointUDPClient{Address: "127.0.0.1:5600"}},
 		HeartbeatDisable: true,
 	}
 	err = node2.Initialize()
@@ -392,7 +392,7 @@ func TestNodeSignature(t *testing.T) {
 
 	node1 := &Node{
 		Dialect:          testDialect,
-		Endpoints:        []EndpointConf{EndpointUDPServer{"127.0.0.1:5600"}},
+		Endpoints:        []Endpoint{&EndpointUDPServer{Address: "127.0.0.1:5600"}},
 		HeartbeatDisable: true,
 		InKey:            key2,
 		OutVersion:       V2,
@@ -405,7 +405,7 @@ func TestNodeSignature(t *testing.T) {
 
 	node2 := &Node{
 		Dialect:          testDialect,
-		Endpoints:        []EndpointConf{EndpointUDPClient{"127.0.0.1:5600"}},
+		Endpoints:        []Endpoint{&EndpointUDPClient{Address: "127.0.0.1:5600"}},
 		HeartbeatDisable: true,
 		InKey:            key1,
 		OutVersion:       V2,
@@ -449,7 +449,7 @@ func TestNodeRoute(t *testing.T) {
 		Dialect:          testDialect,
 		OutVersion:       V2,
 		OutSystemID:      10,
-		Endpoints:        []EndpointConf{EndpointUDPClient{"127.0.0.1:5600"}},
+		Endpoints:        []Endpoint{&EndpointUDPClient{Address: "127.0.0.1:5600"}},
 		HeartbeatDisable: true,
 	}
 	err := node1.Initialize()
@@ -460,9 +460,9 @@ func TestNodeRoute(t *testing.T) {
 		Dialect:     testDialect,
 		OutVersion:  V2,
 		OutSystemID: 11,
-		Endpoints: []EndpointConf{
-			EndpointUDPServer{"127.0.0.1:5600"},
-			EndpointUDPClient{"127.0.0.1:5601"},
+		Endpoints: []Endpoint{
+			&EndpointUDPServer{Address: "127.0.0.1:5600"},
+			&EndpointUDPClient{Address: "127.0.0.1:5601"},
 		},
 		HeartbeatDisable: true,
 	}
@@ -474,7 +474,7 @@ func TestNodeRoute(t *testing.T) {
 		Dialect:          testDialect,
 		OutVersion:       V2,
 		OutSystemID:      12,
-		Endpoints:        []EndpointConf{EndpointUDPServer{"127.0.0.1:5601"}},
+		Endpoints:        []Endpoint{&EndpointUDPServer{Address: "127.0.0.1:5601"}},
 		HeartbeatDisable: true,
 	}
 	err = node3.Initialize()
@@ -523,7 +523,7 @@ func TestNodeFixFrame(t *testing.T) {
 
 	node1 := &Node{
 		Dialect:          testDialect,
-		Endpoints:        []EndpointConf{EndpointUDPServer{"127.0.0.1:5600"}},
+		Endpoints:        []Endpoint{&EndpointUDPServer{Address: "127.0.0.1:5600"}},
 		HeartbeatDisable: true,
 		InKey:            key,
 		OutVersion:       V2,
@@ -535,7 +535,7 @@ func TestNodeFixFrame(t *testing.T) {
 
 	node2 := &Node{
 		Dialect:          testDialect,
-		Endpoints:        []EndpointConf{EndpointUDPClient{"127.0.0.1:5600"}},
+		Endpoints:        []Endpoint{&EndpointUDPClient{Address: "127.0.0.1:5600"}},
 		HeartbeatDisable: true,
 		OutVersion:       V2,
 		OutSystemID:      11,
@@ -592,7 +592,7 @@ func TestNodeWriteSameToMultiple(t *testing.T) {
 		Dialect:          testDialect,
 		OutVersion:       V2,
 		OutSystemID:      11,
-		Endpoints:        []EndpointConf{EndpointTCPServer{"127.0.0.1:5600"}},
+		Endpoints:        []Endpoint{&EndpointTCPServer{Address: "127.0.0.1:5600"}},
 		HeartbeatDisable: true,
 	}
 	err := server.Initialize()
@@ -603,7 +603,7 @@ func TestNodeWriteSameToMultiple(t *testing.T) {
 		Dialect:          testDialect,
 		OutVersion:       V2,
 		OutSystemID:      11,
-		Endpoints:        []EndpointConf{EndpointTCPClient{"127.0.0.1:5600"}},
+		Endpoints:        []Endpoint{&EndpointTCPClient{Address: "127.0.0.1:5600"}},
 		HeartbeatDisable: true,
 	}
 	err = client1.Initialize()
@@ -614,7 +614,7 @@ func TestNodeWriteSameToMultiple(t *testing.T) {
 		Dialect:          testDialect,
 		OutVersion:       V2,
 		OutSystemID:      11,
-		Endpoints:        []EndpointConf{EndpointTCPClient{"127.0.0.1:5600"}},
+		Endpoints:        []Endpoint{&EndpointTCPClient{Address: "127.0.0.1:5600"}},
 		HeartbeatDisable: true,
 	}
 	err = client2.Initialize()

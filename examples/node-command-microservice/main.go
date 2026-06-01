@@ -84,8 +84,8 @@ func sleepWhileListening(node *gomavlib.Node, d time.Duration) {
 
 func main() {
 	node := &gomavlib.Node{
-		Endpoints: []gomavlib.EndpointConf{
-			gomavlib.EndpointSerial{
+		Endpoints: []gomavlib.Endpoint{
+			&gomavlib.EndpointSerial{
 				Device: "/dev/ttyUSB0",
 				Baud:   57600,
 			},

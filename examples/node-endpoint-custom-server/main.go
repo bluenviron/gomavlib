@@ -32,8 +32,8 @@ func main() {
 
 	// create a node which communicates with a custom TCP/TLS endpoint in server mode
 	node := &gomavlib.Node{
-		Endpoints: []gomavlib.EndpointConf{
-			gomavlib.EndpointCustomServer{
+		Endpoints: []gomavlib.Endpoint{
+			&gomavlib.EndpointCustomServer{
 				Listen: func() (net.Listener, error) {
 					// Loads the certificate and key from the generated certs dir
 					cert, err := tls.LoadX509KeyPair("certs/cert.pem", "certs/key.pem")

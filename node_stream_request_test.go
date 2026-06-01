@@ -23,7 +23,7 @@ func TestNodeStreamRequest(t *testing.T) {
 		Dialect:             dialect,
 		OutVersion:          V2,
 		OutSystemID:         10,
-		Endpoints:           []EndpointConf{EndpointUDPServer{"127.0.0.1:5600"}},
+		Endpoints:           []Endpoint{&EndpointUDPServer{Address: "127.0.0.1:5600"}},
 		HeartbeatDisable:    true,
 		StreamRequestEnable: true,
 	}
@@ -40,7 +40,7 @@ func TestNodeStreamRequest(t *testing.T) {
 		Dialect:                dialect,
 		OutVersion:             V2,
 		OutSystemID:            11,
-		Endpoints:              []EndpointConf{EndpointUDPClient{"127.0.0.1:5600"}},
+		Endpoints:              []Endpoint{&EndpointUDPClient{Address: "127.0.0.1:5600"}},
 		HeartbeatPeriod:        500 * time.Millisecond,
 		HeartbeatAutopilotType: 3, // MAV_AUTOPILOT_ARDUPILOTMEGA
 	}

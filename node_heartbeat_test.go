@@ -12,7 +12,7 @@ func TestNodeHeartbeat(t *testing.T) {
 		Dialect:          testDialect,
 		OutVersion:       V2,
 		OutSystemID:      10,
-		Endpoints:        []EndpointConf{EndpointUDPServer{"127.0.0.1:5600"}},
+		Endpoints:        []Endpoint{&EndpointUDPServer{Address: "127.0.0.1:5600"}},
 		HeartbeatDisable: true,
 	}
 	err := node1.Initialize()
@@ -23,7 +23,7 @@ func TestNodeHeartbeat(t *testing.T) {
 		Dialect:         testDialect,
 		OutVersion:      V2,
 		OutSystemID:     11,
-		Endpoints:       []EndpointConf{EndpointUDPClient{"127.0.0.1:5600"}},
+		Endpoints:       []Endpoint{&EndpointUDPClient{Address: "127.0.0.1:5600"}},
 		HeartbeatPeriod: 500 * time.Millisecond,
 	}
 	err = node2.Initialize()

@@ -91,7 +91,7 @@ func TestEndpointSerial(t *testing.T) {
 		OutVersion:       V2,
 		OutSystemID:      10,
 		HeartbeatDisable: true,
-		Endpoints: []EndpointConf{EndpointSerial{
+		Endpoints: []Endpoint{&EndpointSerial{
 			Device: "/dev/ttyUSB0",
 			Baud:   57600,
 		}},
@@ -241,7 +241,7 @@ func TestEndpointSerialReconnect(t *testing.T) {
 		OutVersion:       V2,
 		OutSystemID:      10,
 		HeartbeatDisable: true,
-		Endpoints: []EndpointConf{EndpointSerial{
+		Endpoints: []Endpoint{&EndpointSerial{
 			Device: "/dev/ttyUSB0",
 			Baud:   57600,
 		}},

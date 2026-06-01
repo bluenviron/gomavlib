@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+var _ Endpoint = (*EndpointUDPBroadcast)(nil)
+
 // ipByBroadcastIP returns the ip of an interface associated with given broadcast ip
 func ipByBroadcastIP(target net.IP) net.IP {
 	intfs, err := net.Interfaces()
@@ -71,7 +73,7 @@ func (r *wrappedPacketConn) Close() error {
 	return r.pc.Close()
 }
 
-// EndpointUDPBroadcast sets up a endpoint that works with UDP broadcast packets.
+// EndpointUDPBroadcast is an endpoint that works with UDP broadcast packets.
 type EndpointUDPBroadcast struct {
 	// broadcast address to which sending outgoing frames, example: 192.168.5.255:5600
 	BroadcastAddress string
@@ -79,34 +81,36 @@ type EndpointUDPBroadcast struct {
 	// (optional) listening address. if empty, it will be computed
 	// from the broadcast address.
 	LocalAddress string
+
+	EndpointCustomClient
 }
 
-func (conf EndpointUDPBroadcast) init(node *Node) (Endpoint, error) {
-	ipString, port, err := net.SplitHostPort(conf.BroadcastAddress)
+func (e *EndpointUDPBroadcast) init(node *Node) error {
+	ipString, port, err := net.SplitHostPort(e.BroadcastAddress)
 	if err != nil {
-		return nil, fmt.Errorf("invalid broadcast address")
+		return fmt.Errorf("invalid broadcast address")
 	}
 
 	broadcastIP := net.ParseIP(ipString)
 	if broadcastIP == nil {
-		return nil, fmt.Errorf("invalid IP")
+		return fmt.Errorf("invalid IP")
 	}
 
 	broadcastIP = broadcastIP.To4()
 	if broadcastIP == nil {
-		return nil, fmt.Errorf("invalid IP")
+		return fmt.Errorf("invalid IP")
 	}
 
-	if conf.LocalAddress == "" {
+	if e.LocalAddress == "" {
 		localIP := ipByBroadcastIP(broadcastIP)
 		if localIP == nil {
-			return nil, fmt.Errorf("cannot find local address associated with given broadcast address")
+			return fmt.Errorf("cannot find local address associated with given broadcast address")
 		}
-		conf.LocalAddress = localIP.String() + ":" + port
+		e.LocalAddress = localIP.String() + ":" + port
 	} else {
-		_, _, err = net.SplitHostPort(conf.LocalAddress)
+		_, _, err = net.SplitHostPort(e.LocalAddress)
 		if err != nil {
-			return nil, fmt.Errorf("invalid local address")
+			return fmt.Errorf("invalid local address")
 		}
 	}
 
@@ -114,25 +118,21 @@ func (conf EndpointUDPBroadcast) init(node *Node) (Endpoint, error) {
 
 	broadcastAddr := &net.UDPAddr{IP: broadcastIP, Port: iport}
 
-	e := &endpointClient{
-		node: node,
-		conf: EndpointCustomClient{
-			Connect: func(_ context.Context) (net.Conn, error) {
-				pc, err2 := net.ListenPacket("udp4", conf.LocalAddress)
-				if err2 != nil {
-					return nil, err2
-				}
+	e.EndpointCustomClient = EndpointCustomClient{
+		Connect: func(_ context.Context) (net.Conn, error) {
+			pc, err2 := net.ListenPacket("udp4", e.LocalAddress)
+			if err2 != nil {
+				return nil, err2
+			}
 
-				return &rwcToConn{&wrappedPacketConn{
-					pc:            pc,
-					writeTimeout:  node.WriteTimeout,
-					broadcastAddr: broadcastAddr,
-				}}, nil
-			},
-			Label:      "udp:" + broadcastAddr.String(),
-			IsDatagram: true,
+			return &rwcToConn{&wrappedPacketConn{
+				pc:            pc,
+				writeTimeout:  node.WriteTimeout,
+				broadcastAddr: broadcastAddr,
+			}}, nil
 		},
+		Label:      "udp:" + broadcastAddr.String(),
+		IsDatagram: true,
 	}
-	err = e.initialize()
-	return e, err
+	return e.EndpointCustomClient.init(node)
 }

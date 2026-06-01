@@ -15,12 +15,12 @@ import (
 func main() {
 	// create a node which communicates with multiple endpoints.
 	node := &gomavlib.Node{
-		Endpoints: []gomavlib.EndpointConf{
-			gomavlib.EndpointSerial{
+		Endpoints: []gomavlib.Endpoint{
+			&gomavlib.EndpointSerial{
 				Device: "/dev/ttyUSB0",
 				Baud:   57600,
 			},
-			gomavlib.EndpointUDPClient{Address: "1.2.3.4:5900"},
+			&gomavlib.EndpointUDPClient{Address: "1.2.3.4:5900"},
 		},
 		Dialect:     nil,         // do not use a dialect and do not attempt to decode messages (in a router it is preferable)
 		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target

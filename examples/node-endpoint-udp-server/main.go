@@ -15,8 +15,8 @@ import (
 func main() {
 	// create a node which communicates with a UDP endpoint in server mode
 	node := &gomavlib.Node{
-		Endpoints: []gomavlib.EndpointConf{
-			gomavlib.EndpointUDPServer{Address: ":5600"},
+		Endpoints: []gomavlib.Endpoint{
+			&gomavlib.EndpointUDPServer{Address: ":5600"},
 		},
 		Dialect:     ardupilotmega.Dialect,
 		OutVersion:  gomavlib.V2, // change to V1 if you're unable to communicate with the target

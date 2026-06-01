@@ -264,15 +264,6 @@ type decEncoderField struct {
 	isExtension bool
 }
 
-// NewReadWriter allocates a ReadWriter.
-//
-// Deprecated: replaced by ReadWriter.Initialize().
-func NewReadWriter(msg Message) (*ReadWriter, error) {
-	rw := &ReadWriter{Message: msg}
-	err := rw.Initialize()
-	return rw, err
-}
-
 // ReadWriter is a Message Reader and Writer.
 type ReadWriter struct {
 	Message Message

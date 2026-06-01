@@ -4,9 +4,7 @@ import (
 	"bufio"
 	"crypto/subtle"
 	"fmt"
-	"io"
 	"reflect"
-	"time"
 
 	"github.com/bluenviron/gomavlib/v4/pkg/dialect"
 	"github.com/bluenviron/gomavlib/v4/pkg/message"
@@ -15,9 +13,6 @@ import (
 const (
 	bufferSize = 512 // frames cannot go beyond len(header) + 255 + len(check) + len(sig)
 )
-
-// 1st January 2015 GMT
-var signatureReferenceDate = time.Date(2015, 0o1, 0o1, 0, 0, 0, 0, time.UTC)
 
 func hasStringFields(msg message.Message) bool {
 	typ := reflect.TypeOf(msg).Elem()
@@ -50,44 +45,10 @@ func newError(format string, args ...any) ReadError {
 	}
 }
 
-// ReaderConf is the configuration of a Reader.
-//
-// Deprecated: configuration has been moved into Reader.
-type ReaderConf struct {
-	// underlying bytes reader.
-	Reader io.Reader
-
-	// (optional) dialect which contains the messages that will be read.
-	// If not provided, messages are decoded into the MessageRaw struct.
-	DialectRW *dialect.ReadWriter
-
-	// (optional) secret key used to validate incoming frames.
-	// Non-signed frames are discarded. This feature requires v2 frames.
-	InKey *V2Key
-}
-
-// NewReader allocates a Reader.
-//
-// Deprecated: replaced by Reader.Initialize().
-func NewReader(conf ReaderConf) (*Reader, error) {
-	r := &Reader{
-		ByteReader: conf.Reader,
-		DialectRW:  conf.DialectRW,
-		InKey:      conf.InKey,
-	}
-	err := r.Initialize()
-	return r, err
-}
-
 // Reader is a Frame reader.
 type Reader struct {
 	// underlying byte reader.
 	BufByteReader *bufio.Reader
-
-	// underlying byte reader.
-	//
-	// Deprecated: replaced by BufByteReader
-	ByteReader io.Reader
 
 	// (optional) dialect which contains the messages that will be read.
 	// If not provided, messages are decoded into the MessageRaw struct.
@@ -106,10 +67,6 @@ type Reader struct {
 
 // Initialize initializes a Reader.
 func (r *Reader) Initialize() error {
-	if r.ByteReader != nil {
-		r.BufByteReader = bufio.NewReaderSize(r.ByteReader, bufferSize)
-	}
-
 	if r.BufByteReader == nil {
 		return fmt.Errorf("BufByteReader not provided")
 	}
@@ -214,11 +171,4 @@ func (r *Reader) Read() (Frame, error) {
 	}
 
 	return f, nil
-}
-
-// ResetBuffer discards data in the read buffer.
-//
-// Deprecated: not used anymore.
-func (r *Reader) ResetBuffer() {
-	r.BufByteReader.Discard(r.BufByteReader.Buffered()) //nolint:errcheck
 }

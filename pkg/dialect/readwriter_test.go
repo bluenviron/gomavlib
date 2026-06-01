@@ -35,7 +35,10 @@ func (*Invalid) GetID() uint32 {
 }
 
 func TestReadWriter(t *testing.T) {
-	rw, err := NewReadWriter(&Dialect{3, []message.Message{&MessageHeartbeat{}}})
+	rw := &ReadWriter{
+		Dialect: &Dialect{3, []message.Message{&MessageHeartbeat{}}},
+	}
+	err := rw.Initialize()
 	require.NoError(t, err)
 
 	mrw := rw.GetMessage(0)
@@ -68,7 +71,10 @@ func TestReadWriterErrors(t *testing.T) {
 		},
 	} {
 		t.Run(ca.name, func(t *testing.T) {
-			_, err := NewReadWriter(ca.dialect)
+			rw := &ReadWriter{
+				Dialect: ca.dialect,
+			}
+			err := rw.Initialize()
 			require.EqualError(t, err, ca.err)
 		})
 	}

@@ -200,9 +200,10 @@ var casesCRC = []struct {
 
 func TestCRC(t *testing.T) {
 	for _, c := range casesCRC {
-		mp, err := message.NewReadWriter(c.msg)
+		rw := &message.ReadWriter{Message: c.msg}
+		err := rw.Initialize()
 		require.NoError(t, err)
-		require.Equal(t, c.crc, mp.CRCExtra())
+		require.Equal(t, c.crc, rw.CRCExtra())
 	}
 }
 
@@ -469,29 +470,48 @@ func (*MessageInvalid3) GetID() uint32 {
 }
 
 func TestNewReadWriterErrors(t *testing.T) {
-	_, err := message.NewReadWriter(&Invalid{})
+	rw := &message.ReadWriter{
+		Message: &Invalid{},
+	}
+	err := rw.Initialize()
 	require.EqualError(t, err, "struct name must begin with 'Message'")
 
-	_, err = message.NewReadWriter(&MessageInvalidEnum{})
+	rw = &message.ReadWriter{
+		Message: &MessageInvalidEnum{},
+	}
+	err = rw.Initialize()
 	require.EqualError(t, err, "an enum must be an uint64")
 
-	_, err = message.NewReadWriter(&MessageInvalidEnum2{})
+	rw = &message.ReadWriter{
+		Message: &MessageInvalidEnum2{},
+	}
+	err = rw.Initialize()
 	require.EqualError(t, err, "unsupported Go type: invalid")
 
-	_, err = message.NewReadWriter(&MessageInvalidEnum3{})
+	rw = &message.ReadWriter{
+		Message: &MessageInvalidEnum3{},
+	}
+	err = rw.Initialize()
 	require.EqualError(t, err, "type 'int64' cannot be used as enum")
 
-	_, err = message.NewReadWriter(&MessageInvalid2{})
+	rw = &message.ReadWriter{
+		Message: &MessageInvalid2{},
+	}
+	err = rw.Initialize()
 	require.EqualError(t, err, "unsupported Go type: ")
 
-	_, err = message.NewReadWriter(&MessageInvalid3{})
+	rw = &message.ReadWriter{
+		Message: &MessageInvalid3{},
+	}
+	err = rw.Initialize()
 	require.EqualError(t, err, "string has invalid length: invalid")
 }
 
 func TestRead(t *testing.T) {
 	for _, c := range casesReadWriter {
 		t.Run(c.name, func(t *testing.T) {
-			mp, err := message.NewReadWriter(c.parsed)
+			rw := &message.ReadWriter{Message: c.parsed}
+			err := rw.Initialize()
 			require.NoError(t, err)
 
 			rawMsg := &message.MessageRaw{
@@ -499,7 +519,7 @@ func TestRead(t *testing.T) {
 				Payload: c.raw,
 			}
 
-			msg, err := mp.Read(rawMsg, c.isV2)
+			msg, err := rw.Read(rawMsg, c.isV2)
 			require.NoError(t, err)
 			require.Equal(t, c.parsed, msg)
 
@@ -511,9 +531,11 @@ func TestRead(t *testing.T) {
 func TestWrite(t *testing.T) {
 	for _, c := range casesReadWriter {
 		t.Run(c.name, func(t *testing.T) {
-			mp, err := message.NewReadWriter(c.parsed)
+			rw := &message.ReadWriter{Message: c.parsed}
+			err := rw.Initialize()
 			require.NoError(t, err)
-			msgRaw := mp.Write(c.parsed, c.isV2)
+
+			msgRaw := rw.Write(c.parsed, c.isV2)
 			require.Equal(t, &message.MessageRaw{
 				ID:      c.parsed.GetID(),
 				Payload: c.raw,

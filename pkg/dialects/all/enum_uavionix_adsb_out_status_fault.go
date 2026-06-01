@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/uavionix"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/uavionix"
 )
 
 // State flags for ADS-B transponder fault report

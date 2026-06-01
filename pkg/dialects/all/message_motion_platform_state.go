@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/marsh"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/marsh"
 )
 
 // State report for motion platform used for moving the cockpit with the pilot for motion cueing. This is the primary message for MARSH_TYPE_MOTION_PLATFORM.

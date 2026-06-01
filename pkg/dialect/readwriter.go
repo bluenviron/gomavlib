@@ -3,7 +3,7 @@ package dialect
 import (
 	"fmt"
 
-	"github.com/bluenviron/gomavlib/v3/pkg/message"
+	"github.com/bluenviron/gomavlib/v4/pkg/message"
 )
 
 // NewReadWriter allocates a ReadWriter.

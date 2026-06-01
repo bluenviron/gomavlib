@@ -7,8 +7,8 @@ import (
 	"log"
 	"net"
 
-	"github.com/bluenviron/gomavlib/v3"
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v4"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/ardupilotmega"
 )
 
 // this example shows how to:

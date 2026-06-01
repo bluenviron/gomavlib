@@ -4,8 +4,8 @@
 package test
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
-	"github.com/bluenviron/gomavlib/v3/pkg/message"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v4/pkg/message"
 )
 
 // Dialect contains the dialect definition.

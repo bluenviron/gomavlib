@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/ardupilotmega"
 )
 
 // Request to set a GOPRO_COMMAND with a desired.

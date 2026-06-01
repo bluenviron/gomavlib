@@ -3,7 +3,7 @@
 package paparazzi
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/common"
 )
 
 // Sensor and subsystem status information. Provides a compact representation of sensor/subsystem status and a few other basic statistics.

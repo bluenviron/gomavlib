@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/stemstudios"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/stemstudios"
 )
 
 // Set the colors on an LED strip. The mode field determines how the colors are set. We can:

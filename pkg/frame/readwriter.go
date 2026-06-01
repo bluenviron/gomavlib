@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialect"
 )
 
 // ReadWriterConf is the configuration of a ReadWriter.

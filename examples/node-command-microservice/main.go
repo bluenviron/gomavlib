@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/bluenviron/gomavlib/v3"
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v4"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/common"
 )
 
 // This example shows how to:

@@ -3,7 +3,7 @@
 package development
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/common"
 )
 
 // Reports the on/off state of relays, as controlled by MAV_CMD_DO_SET_RELAY.

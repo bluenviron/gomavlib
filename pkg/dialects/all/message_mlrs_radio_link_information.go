@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/storm32"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/storm32"
 )
 
 // Radio link information. Tx: ground-side device, Rx: vehicle-side device.

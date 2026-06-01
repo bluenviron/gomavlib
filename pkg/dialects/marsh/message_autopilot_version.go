@@ -3,7 +3,7 @@
 package marsh
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/standard"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/standard"
 )
 
 // Version and capability of autopilot software. This should be emitted in response to a request with MAV_CMD_REQUEST_MESSAGE.

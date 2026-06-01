@@ -3,7 +3,7 @@
 package uavionix
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/minimal"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/minimal"
 )
 
 type MAV_STATE = minimal.MAV_STATE

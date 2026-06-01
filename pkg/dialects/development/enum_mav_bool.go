@@ -3,7 +3,7 @@
 package development
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/standard"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/standard"
 )
 
 // Enum used to indicate true or false (also: success or failure, enabled or disabled, active or inactive).

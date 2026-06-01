@@ -4,7 +4,7 @@ import (
 	"io"
 	"net"
 
-	"github.com/bluenviron/gomavlib/v3/pkg/timednetconn"
+	"github.com/bluenviron/gomavlib/v4/pkg/timednetconn"
 )
 
 type endpointServer struct {

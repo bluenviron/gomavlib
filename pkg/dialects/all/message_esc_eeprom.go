@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/development"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/development"
 )
 
 // ESC EEPROM data message for reading and writing ESC configuration.

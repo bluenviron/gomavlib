@@ -4,7 +4,7 @@ package main
 import (
 	"log"
 
-	"github.com/bluenviron/gomavlib/v3"
+	"github.com/bluenviron/gomavlib/v4"
 )
 
 // this example shows how to:

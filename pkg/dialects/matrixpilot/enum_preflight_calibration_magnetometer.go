@@ -3,7 +3,7 @@
 package matrixpilot
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/common"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/common"
 )
 
 // Action for the magnetometer (param2) of MAV_CMD_PREFLIGHT_CALIBRATION.

@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/asluav"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/asluav"
 )
 
 type GSM_MODEM_TYPE = asluav.GSM_MODEM_TYPE

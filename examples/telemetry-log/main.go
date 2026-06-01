@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
-	"github.com/bluenviron/gomavlib/v3/pkg/tlog"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v4/pkg/tlog"
 )
 
 // this example shows how to:

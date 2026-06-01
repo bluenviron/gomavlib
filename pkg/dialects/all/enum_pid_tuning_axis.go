@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/ardupilotmega"
 )
 
 type PID_TUNING_AXIS = ardupilotmega.PID_TUNING_AXIS
@@ -15,4 +15,24 @@ const (
 	PID_TUNING_ACCZ    PID_TUNING_AXIS = ardupilotmega.PID_TUNING_ACCZ
 	PID_TUNING_STEER   PID_TUNING_AXIS = ardupilotmega.PID_TUNING_STEER
 	PID_TUNING_LANDING PID_TUNING_AXIS = ardupilotmega.PID_TUNING_LANDING
+	// Left wheel rate.
+	PID_TUNING_WHEEL_LEFT PID_TUNING_AXIS = ardupilotmega.PID_TUNING_WHEEL_LEFT
+	// Right wheel rate.
+	PID_TUNING_WHEEL_RIGHT PID_TUNING_AXIS = ardupilotmega.PID_TUNING_WHEEL_RIGHT
+	// Sailboat heel to mainsail.
+	PID_TUNING_SAIL_HEEL PID_TUNING_AXIS = ardupilotmega.PID_TUNING_SAIL_HEEL
+	// Velocity north.
+	PID_TUNING_VEL_NORTH PID_TUNING_AXIS = ardupilotmega.PID_TUNING_VEL_NORTH
+	// Velocity east.
+	PID_TUNING_VEL_EAST PID_TUNING_AXIS = ardupilotmega.PID_TUNING_VEL_EAST
+	// Velocity down.
+	PID_TUNING_VEL_DOWN PID_TUNING_AXIS = ardupilotmega.PID_TUNING_VEL_DOWN
+	// Position north.
+	PID_TUNING_POS_NORTH PID_TUNING_AXIS = ardupilotmega.PID_TUNING_POS_NORTH
+	// Position east.
+	PID_TUNING_POS_EAST PID_TUNING_AXIS = ardupilotmega.PID_TUNING_POS_EAST
+	// Position down.
+	PID_TUNING_POS_DOWN PID_TUNING_AXIS = ardupilotmega.PID_TUNING_POS_DOWN
+	// Yaw angle.
+	PID_TUNING_YAW_ANGLE PID_TUNING_AXIS = ardupilotmega.PID_TUNING_YAW_ANGLE
 )

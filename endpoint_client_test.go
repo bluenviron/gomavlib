@@ -13,9 +13,9 @@ import (
 	"github.com/pion/transport/v2/udp"
 	"github.com/stretchr/testify/require"
 
-	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
-	"github.com/bluenviron/gomavlib/v3/pkg/frame"
-	"github.com/bluenviron/gomavlib/v3/pkg/streamwriter"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v4/pkg/frame"
+	"github.com/bluenviron/gomavlib/v4/pkg/streamwriter"
 )
 
 type dummyReadWriter struct {

@@ -3,7 +3,7 @@
 package cubepilot
 
 import (
-	"github.com/bluenviron/gomavlib/v3/pkg/dialects/minimal"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/minimal"
 )
 
 // Legacy component ID values for particular types of hardware/software that might make up a MAVLink system (autopilot, cameras, servos, avoidance systems etc.).

@@ -3,8 +3,8 @@ package tlog
 import (
 	"io"
 
-	"github.com/bluenviron/gomavlib/v3/pkg/dialect"
-	"github.com/bluenviron/gomavlib/v3/pkg/frame"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialect"
+	"github.com/bluenviron/gomavlib/v4/pkg/frame"
 )
 
 // Writer is a telemetry log writer.

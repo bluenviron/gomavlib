@@ -6,15 +6,6 @@ import (
 	"github.com/bluenviron/gomavlib/v4/pkg/message"
 )
 
-// NewReadWriter allocates a ReadWriter.
-//
-// Deprecated: replaced by ReadWriter.Initialize().
-func NewReadWriter(d *Dialect) (*ReadWriter, error) {
-	rw := &ReadWriter{Dialect: d}
-	err := rw.Initialize()
-	return rw, err
-}
-
 // ReadWriter is a Dialect Reader and Writer.
 type ReadWriter struct {
 	Dialect *Dialect

@@ -2,7 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package common
 
-// Play vehicle tone/tune (buzzer). Supersedes message PLAY_TUNE.
+// Play vehicle tone/tune (buzzer). Supported tunes can be determined using SUPPORTED_TUNES. Supersedes message PLAY_TUNE.
 type MessagePlayTuneV2 struct {
 	// System ID
 	TargetSystem uint8

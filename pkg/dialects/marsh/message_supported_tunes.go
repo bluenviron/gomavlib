@@ -6,5 +6,5 @@ import (
 	"github.com/bluenviron/gomavlib/v4/pkg/dialects/common"
 )
 
-// Tune formats supported by vehicle. This should be emitted as response to MAV_CMD_REQUEST_MESSAGE.
+// Tune formats supported by vehicle, i.e. via PLAY_TUNE_V2. This should be emitted as response to MAV_CMD_REQUEST_MESSAGE.
 type MessageSupportedTunes = common.MessageSupportedTunes

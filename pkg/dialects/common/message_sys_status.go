@@ -12,11 +12,11 @@ type MessageSysStatus struct {
 	OnboardControlSensorsHealth MAV_SYS_STATUS_SENSOR `mavenum:"uint32"`
 	// Maximum usage in percent of the mainloop time. Values: [0-1000] - should always be below 1000
 	Load uint16
-	// Battery voltage, UINT16_MAX: Voltage not sent by autopilot
+	// Battery voltage, UINT16_MAX: Voltage not sent by autopilot. Value is ambiguous on multi-battery systems. BATTERY_STATUS is a recommended alternative.
 	VoltageBattery uint16
-	// Battery current, -1: Current not sent by autopilot
+	// Battery current, -1: Current not sent by autopilot. Value may overflow/rollover for very high currents (&gt; 327.67A). Value is ambiguous on multi-battery systems. BATTERY_STATUS is a recommended alternative.
 	CurrentBattery int16
-	// Battery energy remaining, -1: Battery remaining energy not sent by autopilot
+	// Battery energy remaining, -1: Battery remaining energy not sent by autopilot. Value is ambiguous on multi-battery systems. BATTERY_STATUS is a recommended alternative.
 	BatteryRemaining int8
 	// Communication drop rate, (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV)
 	DropRateComm uint16

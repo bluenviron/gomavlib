@@ -15,6 +15,14 @@ const (
 	MAG_CAL_RUNNING_STEP_TWO MAG_CAL_STATUS = common.MAG_CAL_RUNNING_STEP_TWO
 	MAG_CAL_SUCCESS          MAG_CAL_STATUS = common.MAG_CAL_SUCCESS
 	MAG_CAL_FAILED           MAG_CAL_STATUS = common.MAG_CAL_FAILED
-	MAG_CAL_BAD_ORIENTATION  MAG_CAL_STATUS = common.MAG_CAL_BAD_ORIENTATION
-	MAG_CAL_BAD_RADIUS       MAG_CAL_STATUS = common.MAG_CAL_BAD_RADIUS
+	// Compass calibration failed: the vehicle orientation is outside the required tolerance.
+	MAG_CAL_FAILED_ORIENTATION MAG_CAL_STATUS = common.MAG_CAL_FAILED_ORIENTATION
+	// Compass calibration failed: the radius of the fitted sphere is unrealistically small or large.
+	MAG_CAL_FAILED_RADIUS MAG_CAL_STATUS = common.MAG_CAL_FAILED_RADIUS
+	// Compass calibration failed: offset magnitude too large.
+	MAG_CAL_FAILED_OFFSETS MAG_CAL_STATUS = common.MAG_CAL_FAILED_OFFSETS
+	// Compass calibration failed: diagonal or off-diagonal scaling values out of valid range.
+	MAG_CAL_FAILED_DIAG_SCALING MAG_CAL_STATUS = common.MAG_CAL_FAILED_DIAG_SCALING
+	// Compass calibration failed: fitness (RMS residual) exceeds tolerance.
+	MAG_CAL_FAILED_RESIDUALS_HIGH MAG_CAL_STATUS = common.MAG_CAL_FAILED_RESIDUALS_HIGH
 )

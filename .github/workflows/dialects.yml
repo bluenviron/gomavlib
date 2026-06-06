@@ -5,6 +5,9 @@ on:
   - cron: '4 5 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   dialects:
     runs-on: ubuntu-24.04

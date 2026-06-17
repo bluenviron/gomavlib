@@ -34,7 +34,7 @@ type MessageAisVessel struct {
 	Callsign string `mavlen:"7"`
 	// The vessel name. Characters are encoded as 7-bit ASCII, but only characters in the [AIS 6-bit ASCII subset](https://en.wikipedia.org/wiki/Six-bit_character_code#AIS_SixBit_ASCII) are permitted. Also set AIS_FLAGS_VALID_NAME if valid. The string is NULL-terminated if it is shorter than the array length.
 	Name string `mavlen:"20"`
-	// Time since last communication from the vessel, in seconds
+	// Time since last communication. This is the age of the AIS information in this message, in seconds.
 	Tslc uint16
 	// Bitmask to indicate various statuses including valid data fields
 	Flags AIS_FLAGS `mavenum:"uint16"`

@@ -10,7 +10,7 @@ type MessageAutopilotStateForGimbalDeviceExt struct {
 	TargetComponent uint8
 	// Timestamp (time since system boot).
 	TimeBootUs uint64
-	// Wind X speed in NED (North,Est, Down). NAN if unknown.
+	// Wind X speed in NED (North, East, Down). NAN if unknown.
 	WindX float32
 	// Wind Y speed in NED (North, East, Down). NAN if unknown.
 	WindY float32

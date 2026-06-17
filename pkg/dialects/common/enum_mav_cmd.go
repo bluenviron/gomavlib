@@ -386,6 +386,10 @@ const (
 	MAV_CMD_FIXED_MAG_CAL_YAW MAV_CMD = 42006
 	// Command to operate winch.
 	MAV_CMD_DO_WINCH MAV_CMD = 42600
+	// Change flight speed at a given rate. This slews the vehicle at a controllable rate between it's previous speed and the new one.
+	MAV_CMD_GUIDED_CHANGE_SPEED MAV_CMD = 43000
+	// Change target altitude at a given rate. This slews the vehicle at a controllable rate between it's previous altitude and the new one.
+	MAV_CMD_GUIDED_CHANGE_ALTITUDE MAV_CMD = 43001
 	// Change to target direction at a given rate, overriding previous heading/s. This slews the vehicle at a controllable rate between its previous heading and the new one.
 	MAV_CMD_GUIDED_CHANGE_HEADING MAV_CMD = 43002
 	// Provide an external position estimate for use when dead-reckoning. This is meant to be used for occasional position resets that may be provided by a external system such as a remote pilot using landmarks over a video link.
@@ -575,6 +579,8 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_PAYLOAD_CONTROL_DEPLOY:             "MAV_CMD_PAYLOAD_CONTROL_DEPLOY",
 	MAV_CMD_FIXED_MAG_CAL_YAW:                  "MAV_CMD_FIXED_MAG_CAL_YAW",
 	MAV_CMD_DO_WINCH:                           "MAV_CMD_DO_WINCH",
+	MAV_CMD_GUIDED_CHANGE_SPEED:                "MAV_CMD_GUIDED_CHANGE_SPEED",
+	MAV_CMD_GUIDED_CHANGE_ALTITUDE:             "MAV_CMD_GUIDED_CHANGE_ALTITUDE",
 	MAV_CMD_GUIDED_CHANGE_HEADING:              "MAV_CMD_GUIDED_CHANGE_HEADING",
 	MAV_CMD_EXTERNAL_POSITION_ESTIMATE:         "MAV_CMD_EXTERNAL_POSITION_ESTIMATE",
 	MAV_CMD_WAYPOINT_USER_1:                    "MAV_CMD_WAYPOINT_USER_1",
@@ -746,6 +752,8 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_PAYLOAD_CONTROL_DEPLOY":             MAV_CMD_PAYLOAD_CONTROL_DEPLOY,
 	"MAV_CMD_FIXED_MAG_CAL_YAW":                  MAV_CMD_FIXED_MAG_CAL_YAW,
 	"MAV_CMD_DO_WINCH":                           MAV_CMD_DO_WINCH,
+	"MAV_CMD_GUIDED_CHANGE_SPEED":                MAV_CMD_GUIDED_CHANGE_SPEED,
+	"MAV_CMD_GUIDED_CHANGE_ALTITUDE":             MAV_CMD_GUIDED_CHANGE_ALTITUDE,
 	"MAV_CMD_GUIDED_CHANGE_HEADING":              MAV_CMD_GUIDED_CHANGE_HEADING,
 	"MAV_CMD_EXTERNAL_POSITION_ESTIMATE":         MAV_CMD_EXTERNAL_POSITION_ESTIMATE,
 	"MAV_CMD_WAYPOINT_USER_1":                    MAV_CMD_WAYPOINT_USER_1,

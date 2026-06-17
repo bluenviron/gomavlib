@@ -386,6 +386,10 @@ const (
 	MAV_CMD_FIXED_MAG_CAL_YAW MAV_CMD = 42006
 	// Command to operate winch.
 	MAV_CMD_DO_WINCH MAV_CMD = 42600
+	// Change flight speed at a given rate. This slews the vehicle at a controllable rate between it's previous speed and the new one.
+	MAV_CMD_GUIDED_CHANGE_SPEED MAV_CMD = 43000
+	// Change target altitude at a given rate. This slews the vehicle at a controllable rate between it's previous altitude and the new one.
+	MAV_CMD_GUIDED_CHANGE_ALTITUDE MAV_CMD = 43001
 	// Change to target direction at a given rate, overriding previous heading/s. This slews the vehicle at a controllable rate between its previous heading and the new one.
 	MAV_CMD_GUIDED_CHANGE_HEADING MAV_CMD = 43002
 	// Provide an external position estimate for use when dead-reckoning. This is meant to be used for occasional position resets that may be provided by a external system such as a remote pilot using landmarks over a video link.
@@ -481,10 +485,6 @@ const (
 	MAV_CMD_NAV_SCRIPT_TIME MAV_CMD = 42702
 	// Maintain an attitude for a specified time.
 	MAV_CMD_NAV_ATTITUDE_TIME MAV_CMD = 42703
-	// Change flight speed at a given rate. This slews the vehicle at a controllable rate between it's previous speed and the new one. (affects GUIDED only. Outside GUIDED, aircraft ignores these commands. Designed for onboard companion-computer command-and-control, not normally operator/GCS control.)
-	MAV_CMD_GUIDED_CHANGE_SPEED MAV_CMD = 43000
-	// Change target altitude at a given rate. This slews the vehicle at a controllable rate between it's previous altitude and the new one. (affects GUIDED only. Outside GUIDED, aircraft ignores these commands. Designed for onboard companion-computer command-and-control, not normally operator/GCS control.)
-	MAV_CMD_GUIDED_CHANGE_ALTITUDE MAV_CMD = 43001
 	// Provide a value for height above ground level. This can be used for things like fixed wing and VTOL landing.
 	MAV_CMD_SET_HAGL MAV_CMD = 43005
 	// Command to a gimbal manager to control the gimbal tilt and pan angles. It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. A gimbal device is never to react to this command.
@@ -646,6 +646,8 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_PAYLOAD_CONTROL_DEPLOY:                     "MAV_CMD_PAYLOAD_CONTROL_DEPLOY",
 	MAV_CMD_FIXED_MAG_CAL_YAW:                          "MAV_CMD_FIXED_MAG_CAL_YAW",
 	MAV_CMD_DO_WINCH:                                   "MAV_CMD_DO_WINCH",
+	MAV_CMD_GUIDED_CHANGE_SPEED:                        "MAV_CMD_GUIDED_CHANGE_SPEED",
+	MAV_CMD_GUIDED_CHANGE_ALTITUDE:                     "MAV_CMD_GUIDED_CHANGE_ALTITUDE",
 	MAV_CMD_GUIDED_CHANGE_HEADING:                      "MAV_CMD_GUIDED_CHANGE_HEADING",
 	MAV_CMD_EXTERNAL_POSITION_ESTIMATE:                 "MAV_CMD_EXTERNAL_POSITION_ESTIMATE",
 	MAV_CMD_WAYPOINT_USER_1:                            "MAV_CMD_WAYPOINT_USER_1",
@@ -693,8 +695,6 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_SCRIPTING:                                  "MAV_CMD_SCRIPTING",
 	MAV_CMD_NAV_SCRIPT_TIME:                            "MAV_CMD_NAV_SCRIPT_TIME",
 	MAV_CMD_NAV_ATTITUDE_TIME:                          "MAV_CMD_NAV_ATTITUDE_TIME",
-	MAV_CMD_GUIDED_CHANGE_SPEED:                        "MAV_CMD_GUIDED_CHANGE_SPEED",
-	MAV_CMD_GUIDED_CHANGE_ALTITUDE:                     "MAV_CMD_GUIDED_CHANGE_ALTITUDE",
 	MAV_CMD_SET_HAGL:                                   "MAV_CMD_SET_HAGL",
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW: "MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW",
 	MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP:            "MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP",
@@ -852,6 +852,8 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_PAYLOAD_CONTROL_DEPLOY":                     MAV_CMD_PAYLOAD_CONTROL_DEPLOY,
 	"MAV_CMD_FIXED_MAG_CAL_YAW":                          MAV_CMD_FIXED_MAG_CAL_YAW,
 	"MAV_CMD_DO_WINCH":                                   MAV_CMD_DO_WINCH,
+	"MAV_CMD_GUIDED_CHANGE_SPEED":                        MAV_CMD_GUIDED_CHANGE_SPEED,
+	"MAV_CMD_GUIDED_CHANGE_ALTITUDE":                     MAV_CMD_GUIDED_CHANGE_ALTITUDE,
 	"MAV_CMD_GUIDED_CHANGE_HEADING":                      MAV_CMD_GUIDED_CHANGE_HEADING,
 	"MAV_CMD_EXTERNAL_POSITION_ESTIMATE":                 MAV_CMD_EXTERNAL_POSITION_ESTIMATE,
 	"MAV_CMD_WAYPOINT_USER_1":                            MAV_CMD_WAYPOINT_USER_1,
@@ -899,8 +901,6 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_SCRIPTING":                                  MAV_CMD_SCRIPTING,
 	"MAV_CMD_NAV_SCRIPT_TIME":                            MAV_CMD_NAV_SCRIPT_TIME,
 	"MAV_CMD_NAV_ATTITUDE_TIME":                          MAV_CMD_NAV_ATTITUDE_TIME,
-	"MAV_CMD_GUIDED_CHANGE_SPEED":                        MAV_CMD_GUIDED_CHANGE_SPEED,
-	"MAV_CMD_GUIDED_CHANGE_ALTITUDE":                     MAV_CMD_GUIDED_CHANGE_ALTITUDE,
 	"MAV_CMD_SET_HAGL":                                   MAV_CMD_SET_HAGL,
 	"MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW": MAV_CMD_STORM32_DO_GIMBAL_MANAGER_CONTROL_PITCHYAW,
 	"MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP":            MAV_CMD_STORM32_DO_GIMBAL_MANAGER_SETUP,

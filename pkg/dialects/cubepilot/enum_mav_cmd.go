@@ -385,6 +385,10 @@ const (
 	MAV_CMD_FIXED_MAG_CAL_YAW MAV_CMD = common.MAV_CMD_FIXED_MAG_CAL_YAW
 	// Command to operate winch.
 	MAV_CMD_DO_WINCH MAV_CMD = common.MAV_CMD_DO_WINCH
+	// Change flight speed at a given rate. This slews the vehicle at a controllable rate between it's previous speed and the new one.
+	MAV_CMD_GUIDED_CHANGE_SPEED MAV_CMD = common.MAV_CMD_GUIDED_CHANGE_SPEED
+	// Change target altitude at a given rate. This slews the vehicle at a controllable rate between it's previous altitude and the new one.
+	MAV_CMD_GUIDED_CHANGE_ALTITUDE MAV_CMD = common.MAV_CMD_GUIDED_CHANGE_ALTITUDE
 	// Change to target direction at a given rate, overriding previous heading/s. This slews the vehicle at a controllable rate between its previous heading and the new one.
 	MAV_CMD_GUIDED_CHANGE_HEADING MAV_CMD = common.MAV_CMD_GUIDED_CHANGE_HEADING
 	// Provide an external position estimate for use when dead-reckoning. This is meant to be used for occasional position resets that may be provided by a external system such as a remote pilot using landmarks over a video link.

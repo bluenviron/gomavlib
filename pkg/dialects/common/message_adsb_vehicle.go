@@ -24,7 +24,7 @@ type MessageAdsbVehicle struct {
 	Callsign string `mavlen:"9"`
 	// ADSB emitter type.
 	EmitterType ADSB_EMITTER_TYPE `mavenum:"uint8"`
-	// Time since last communication from the remote vehicle, in seconds.
+	// Time since last communication. This is the age of the ADS-B information in this message, in seconds.
 	Tslc uint8
 	// Bitmap to indicate various statuses including valid data fields
 	Flags ADSB_FLAGS `mavenum:"uint16"`

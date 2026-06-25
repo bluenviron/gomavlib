@@ -14,8 +14,8 @@ type MessageGpsInput struct {
 	TimeWeekMs uint32
 	// GPS week number
 	TimeWeek uint16
-	// 0-1: no fix, 2: 2D fix, 3: 3D fix. 4: 3D with DGPS. 5: 3D with RTK
-	FixType uint8
+	// GNSS fix type
+	FixType GPS_FIX_TYPE `mavenum:"uint8"`
 	// Latitude (WGS84)
 	Lat int32
 	// Longitude (WGS84)

@@ -289,6 +289,12 @@ const (
 	MAV_CMD_JUMP_TAG MAV_CMD = 600
 	// Jump to the matching tag in the mission list. Repeat this action for the specified number of times. A mission should contain a single matching tag for each jump. If this is not the case then a jump to a missing tag should complete the mission, and a jump where there are multiple matching tags should always select the one with the lowest mission sequence number.
 	MAV_CMD_DO_JUMP_TAG MAV_CMD = 601
+	// Sets the GNSS coordinates of the vehicle local origin (0,0,0) position.
+	// Vehicle should emit GPS_GLOBAL_ORIGIN irrespective of whether the origin is changed.
+	// This enables transform between the local coordinate frame and the global (GNSS) coordinate frame, which may be necessary when (for example) indoor and outdoor settings are connected and the MAV should move from in- to outdoor.
+	// This command supersedes SET_GPS_GLOBAL_ORIGIN.
+	// Should be sent in a COMMAND_INT (Expected frame is MAV_FRAME_GLOBAL, and this should be assumed when sent in COMMAND_LONG).
+	MAV_CMD_DO_SET_GLOBAL_ORIGIN MAV_CMD = 611
 	// Set gimbal manager pitch/yaw setpoints (low rate command). It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. Note: only the gimbal manager will react to this command - it will be ignored by a gimbal device. Use GIMBAL_MANAGER_SET_PITCHYAW if you need to stream pitch/yaw setpoints at higher rate.
 	MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW MAV_CMD = 1000
 	// Gimbal configuration to set which sysid/compid is in primary and secondary control.
@@ -435,12 +441,6 @@ const (
 	// This allows moving of a system and all its components to a new system id, or moving a particular component to a new system/component id.
 	// Recipients must reject command addressed to broadcast system ID.
 	MAV_CMD_DO_SET_SYS_CMP_ID MAV_CMD = 610
-	// Sets the GNSS coordinates of the vehicle local origin (0,0,0) position.
-	// Vehicle should emit GPS_GLOBAL_ORIGIN irrespective of whether the origin is changed.
-	// This enables transform between the local coordinate frame and the global (GNSS) coordinate frame, which may be necessary when (for example) indoor and outdoor settings are connected and the MAV should move from in- to outdoor.
-	// This command supersedes SET_GPS_GLOBAL_ORIGIN.
-	// Should be sent in a COMMAND_INT (Expected frame is MAV_FRAME_GLOBAL, and this should be assumed when sent in COMMAND_LONG).
-	MAV_CMD_DO_SET_GLOBAL_ORIGIN MAV_CMD = 611
 	// Enable Moving Target Indicators (MTI) on streamed video.
 	// Support for feature can be checked with CAMERA_CAP_FLAGS_HAS_MTI, and disabled with MAV_CMD_CAMERA_STOP_MTI.
 	MAV_CMD_CAMERA_START_MTI MAV_CMD = 2020
@@ -609,6 +609,7 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_SET_CAMERA_SOURCE:                  "MAV_CMD_SET_CAMERA_SOURCE",
 	MAV_CMD_JUMP_TAG:                           "MAV_CMD_JUMP_TAG",
 	MAV_CMD_DO_JUMP_TAG:                        "MAV_CMD_DO_JUMP_TAG",
+	MAV_CMD_DO_SET_GLOBAL_ORIGIN:               "MAV_CMD_DO_SET_GLOBAL_ORIGIN",
 	MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW:         "MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW",
 	MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE:        "MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE",
 	MAV_CMD_IMAGE_START_CAPTURE:                "MAV_CMD_IMAGE_START_CAPTURE",
@@ -669,7 +670,6 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_CAN_FORWARD:                        "MAV_CMD_CAN_FORWARD",
 	MAV_CMD_ACTUATOR_GROUP_TEST:                "MAV_CMD_ACTUATOR_GROUP_TEST",
 	MAV_CMD_DO_SET_SYS_CMP_ID:                  "MAV_CMD_DO_SET_SYS_CMP_ID",
-	MAV_CMD_DO_SET_GLOBAL_ORIGIN:               "MAV_CMD_DO_SET_GLOBAL_ORIGIN",
 	MAV_CMD_CAMERA_START_MTI:                   "MAV_CMD_CAMERA_START_MTI",
 	MAV_CMD_CAMERA_STOP_MTI:                    "MAV_CMD_CAMERA_STOP_MTI",
 	MAV_CMD_NAV_FENCE_HOME_CIRCLE_INCLUSION:    "MAV_CMD_NAV_FENCE_HOME_CIRCLE_INCLUSION",
@@ -793,6 +793,7 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_SET_CAMERA_SOURCE":                  MAV_CMD_SET_CAMERA_SOURCE,
 	"MAV_CMD_JUMP_TAG":                           MAV_CMD_JUMP_TAG,
 	"MAV_CMD_DO_JUMP_TAG":                        MAV_CMD_DO_JUMP_TAG,
+	"MAV_CMD_DO_SET_GLOBAL_ORIGIN":               MAV_CMD_DO_SET_GLOBAL_ORIGIN,
 	"MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW":         MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW,
 	"MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE":        MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE,
 	"MAV_CMD_IMAGE_START_CAPTURE":                MAV_CMD_IMAGE_START_CAPTURE,
@@ -853,7 +854,6 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_CAN_FORWARD":                        MAV_CMD_CAN_FORWARD,
 	"MAV_CMD_ACTUATOR_GROUP_TEST":                MAV_CMD_ACTUATOR_GROUP_TEST,
 	"MAV_CMD_DO_SET_SYS_CMP_ID":                  MAV_CMD_DO_SET_SYS_CMP_ID,
-	"MAV_CMD_DO_SET_GLOBAL_ORIGIN":               MAV_CMD_DO_SET_GLOBAL_ORIGIN,
 	"MAV_CMD_CAMERA_START_MTI":                   MAV_CMD_CAMERA_START_MTI,
 	"MAV_CMD_CAMERA_STOP_MTI":                    MAV_CMD_CAMERA_STOP_MTI,
 	"MAV_CMD_NAV_FENCE_HOME_CIRCLE_INCLUSION":    MAV_CMD_NAV_FENCE_HOME_CIRCLE_INCLUSION,

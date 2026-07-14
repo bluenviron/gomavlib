@@ -8,7 +8,7 @@ type MessageRadio struct {
 	Rssi uint8
 	// Remote signal strength.
 	Remrssi uint8
-	// How full the tx buffer is.
+	// Remaining free transmitter buffer space.
 	Txbuf uint8
 	// Background noise level.
 	Noise uint8

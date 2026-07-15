@@ -27,6 +27,8 @@ const (
 	FAILURE_TYPE_DELAYED FAILURE_TYPE = 6
 	// Unit is sometimes working, sometimes not.
 	FAILURE_TYPE_INTERMITTENT FAILURE_TYPE = 7
+	// Unit is publishing plausible values but drifting away from true values.
+	FAILURE_TYPE_DRIFT FAILURE_TYPE = 8
 )
 
 var value_to_label_FAILURE_TYPE = map[FAILURE_TYPE]string{
@@ -38,6 +40,7 @@ var value_to_label_FAILURE_TYPE = map[FAILURE_TYPE]string{
 	FAILURE_TYPE_SLOW:         "FAILURE_TYPE_SLOW",
 	FAILURE_TYPE_DELAYED:      "FAILURE_TYPE_DELAYED",
 	FAILURE_TYPE_INTERMITTENT: "FAILURE_TYPE_INTERMITTENT",
+	FAILURE_TYPE_DRIFT:        "FAILURE_TYPE_DRIFT",
 }
 
 var label_to_value_FAILURE_TYPE = map[string]FAILURE_TYPE{
@@ -49,6 +52,7 @@ var label_to_value_FAILURE_TYPE = map[string]FAILURE_TYPE{
 	"FAILURE_TYPE_SLOW":         FAILURE_TYPE_SLOW,
 	"FAILURE_TYPE_DELAYED":      FAILURE_TYPE_DELAYED,
 	"FAILURE_TYPE_INTERMITTENT": FAILURE_TYPE_INTERMITTENT,
+	"FAILURE_TYPE_DRIFT":        FAILURE_TYPE_DRIFT,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.

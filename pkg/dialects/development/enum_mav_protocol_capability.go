@@ -25,11 +25,11 @@ const (
 	MAV_PROTOCOL_CAPABILITY_PARAM_ENCODE_BYTEWISE MAV_PROTOCOL_CAPABILITY = standard.MAV_PROTOCOL_CAPABILITY_PARAM_ENCODE_BYTEWISE
 	// Autopilot supports the File Transfer Protocol v1: https://mavlink.io/en/services/ftp.html.
 	MAV_PROTOCOL_CAPABILITY_FTP MAV_PROTOCOL_CAPABILITY = standard.MAV_PROTOCOL_CAPABILITY_FTP
-	// Autopilot supports commanding attitude offboard.
+	// Autopilot supports the SET_ATTITUDE_TARGET message (for commanding attitude from an offboard controller).
 	MAV_PROTOCOL_CAPABILITY_SET_ATTITUDE_TARGET MAV_PROTOCOL_CAPABILITY = standard.MAV_PROTOCOL_CAPABILITY_SET_ATTITUDE_TARGET
-	// Autopilot supports commanding position and velocity targets in local NED frame.
+	// Autopilot supports the SET_POSITION_TARGET_LOCAL_NED message (for commanding position and velocity targets in local NED frame).
 	MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_LOCAL_NED MAV_PROTOCOL_CAPABILITY = standard.MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_LOCAL_NED
-	// Autopilot supports commanding position and velocity targets in global scaled integers.
+	// Autopilot supports the SET_POSITION_TARGET_GLOBAL_INT message (for commanding position and velocity targets in global scaled integers).
 	MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_GLOBAL_INT MAV_PROTOCOL_CAPABILITY = standard.MAV_PROTOCOL_CAPABILITY_SET_POSITION_TARGET_GLOBAL_INT
 	// Autopilot supports terrain protocol / data handling.
 	MAV_PROTOCOL_CAPABILITY_TERRAIN MAV_PROTOCOL_CAPABILITY = standard.MAV_PROTOCOL_CAPABILITY_TERRAIN

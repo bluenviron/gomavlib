@@ -1,10 +1,12 @@
-package conversion
+package conversion_test
 
 import (
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/require"
+
+	"github.com/bluenviron/gomavlib/v4/pkg/conversion"
 )
 
 const testDialect = `<?xml version="1.0"?>
@@ -174,7 +176,7 @@ func TestConversion(t *testing.T) {
 	err = os.WriteFile("testdialect.xml", []byte(testDialect), 0o644)
 	require.NoError(t, err)
 
-	err = Convert("testdialect.xml", true)
+	err = conversion.Convert("testdialect.xml", true)
 	require.NoError(t, err)
 
 	buf, err := os.ReadFile("testdialect/message_a_message.go")

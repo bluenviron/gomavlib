@@ -1,4 +1,4 @@
-package timednetconn
+package timednetconn_test
 
 import (
 	"net"
@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/require"
+
+	"github.com/bluenviron/gomavlib/v4/pkg/timednetconn"
 )
 
 type fakeConn struct {
@@ -56,7 +58,7 @@ func TestConn(t *testing.T) {
 		closeDone:         make(chan struct{}),
 	}
 
-	conn := New(10*time.Second, 10*time.Second, fc)
+	conn := timednetconn.New(10*time.Second, 10*time.Second, fc)
 
 	n, err := conn.Read(nil)
 	require.NoError(t, err)

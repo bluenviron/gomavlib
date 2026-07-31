@@ -1,14 +1,16 @@
-package x25
+package x25_test
 
 import (
 	"encoding/binary"
 	"testing"
 
 	"github.com/stretchr/testify/require"
+
+	"github.com/bluenviron/gomavlib/v4/pkg/x25"
 )
 
 func TestX25Params(t *testing.T) {
-	h := New()
+	h := x25.New()
 	require.Equal(t, 2, h.Size())
 	require.Equal(t, 1, h.BlockSize())
 }
@@ -41,7 +43,7 @@ func TestX25Hash(t *testing.T) {
 		},
 	} {
 		t.Run(ca.name, func(t *testing.T) {
-			h := New()
+			h := x25.New()
 			h.Write(ca.in)
 			out1 := h.Sum16()
 			require.Equal(t, ca.out, out1)

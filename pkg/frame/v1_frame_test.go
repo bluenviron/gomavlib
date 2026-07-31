@@ -1,13 +1,15 @@
-package frame
+package frame_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+
+	"github.com/bluenviron/gomavlib/v4/pkg/frame"
 )
 
 func TestV1Frame(t *testing.T) {
-	f := &V1Frame{
+	f := &frame.V1Frame{
 		SequenceNumber: 123,
 		SystemID:       56,
 		ComponentID:    89,

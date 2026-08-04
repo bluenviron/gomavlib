@@ -5,8 +5,9 @@ package ardupilotmega_test
 import (
 	"testing"
 
-	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/ardupilotmega"
 	"github.com/stretchr/testify/require"
+
+	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/ardupilotmega"
 )
 
 func TestEnum_MAV_CMD_DO_AUX_FUNCTION_SWITCH_LEVEL(t *testing.T) {

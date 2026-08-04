@@ -5,8 +5,9 @@ package uavionix_test
 import (
 	"testing"
 
-	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/uavionix"
 	"github.com/stretchr/testify/require"
+
+	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/uavionix"
 )
 
 func TestEnum_UAVIONIX_ADSB_XBIT(t *testing.T) {

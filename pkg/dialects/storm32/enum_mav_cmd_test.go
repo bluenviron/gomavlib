@@ -5,8 +5,9 @@ package storm32_test
 import (
 	"testing"
 
-	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/storm32"
 	"github.com/stretchr/testify/require"
+
+	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/storm32"
 )
 
 func TestEnum_MAV_CMD(t *testing.T) {

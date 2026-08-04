@@ -5,8 +5,9 @@ package ardupilotmega_test
 import (
 	"testing"
 
-	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/ardupilotmega"
 	"github.com/stretchr/testify/require"
+
+	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/ardupilotmega"
 )
 
 func TestEnum_GOPRO_VIDEO_SETTINGS_FLAGS(t *testing.T) {

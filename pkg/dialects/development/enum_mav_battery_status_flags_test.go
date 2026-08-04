@@ -5,8 +5,9 @@ package development_test
 import (
 	"testing"
 
-	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/development"
 	"github.com/stretchr/testify/require"
+
+	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/development"
 )
 
 func TestEnum_MAV_BATTERY_STATUS_FLAGS(t *testing.T) {

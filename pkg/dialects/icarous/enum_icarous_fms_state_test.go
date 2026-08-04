@@ -5,8 +5,9 @@ package icarous_test
 import (
 	"testing"
 
-	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/icarous"
 	"github.com/stretchr/testify/require"
+
+	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/icarous"
 )
 
 func TestEnum_ICAROUS_FMS_STATE(t *testing.T) {

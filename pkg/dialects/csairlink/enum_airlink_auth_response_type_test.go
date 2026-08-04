@@ -5,8 +5,9 @@ package csairlink_test
 import (
 	"testing"
 
-	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/csairlink"
 	"github.com/stretchr/testify/require"
+
+	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/csairlink"
 )
 
 func TestEnum_AIRLINK_AUTH_RESPONSE_TYPE(t *testing.T) {

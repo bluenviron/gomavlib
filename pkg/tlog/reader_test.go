@@ -7,9 +7,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/bluenviron/gomavlib/v4/pkg/frame"
 	"github.com/bluenviron/gomavlib/v4/pkg/message"
-	"github.com/stretchr/testify/require"
 )
 
 var casesReadWriter = []struct {

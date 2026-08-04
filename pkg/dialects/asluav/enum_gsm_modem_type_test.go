@@ -5,8 +5,9 @@ package asluav_test
 import (
 	"testing"
 
-	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/asluav"
 	"github.com/stretchr/testify/require"
+
+	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/asluav"
 )
 
 func TestEnum_GSM_MODEM_TYPE(t *testing.T) {

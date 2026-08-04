@@ -5,8 +5,9 @@ package avssuas_test
 import (
 	"testing"
 
-	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/avssuas"
 	"github.com/stretchr/testify/require"
+
+	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/avssuas"
 )
 
 func TestEnum_MAV_AVSS_COMMAND_FAILURE_REASON(t *testing.T) {

@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/bluenviron/gomavlib/v4/pkg/dialects/ardupilotmega"
 	"github.com/bluenviron/gomavlib/v4/pkg/message"
-	"github.com/stretchr/testify/require"
 )
 
 type (

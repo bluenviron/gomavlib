@@ -5,8 +5,9 @@ package common_test
 import (
 	"testing"
 
-	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/common"
 	"github.com/stretchr/testify/require"
+
+	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/common"
 )
 
 func TestEnum_MAV_ODID_TIME_ACC(t *testing.T) {

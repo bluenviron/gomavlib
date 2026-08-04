@@ -5,8 +5,9 @@ package stemstudios_test
 import (
 	"testing"
 
-	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/stemstudios"
 	"github.com/stretchr/testify/require"
+
+	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/stemstudios"
 )
 
 func TestEnum_LED_CONFIG_MODE(t *testing.T) {

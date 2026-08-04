@@ -5,8 +5,9 @@ package development_test
 import (
 	"testing"
 
-	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/development"
 	"github.com/stretchr/testify/require"
+
+	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/development"
 )
 
 func TestEnum_RADIO_RC_CHANNELS_FLAGS(t *testing.T) {

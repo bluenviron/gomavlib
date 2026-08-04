@@ -7,10 +7,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/bluenviron/gomavlib/v4/pkg/dialect"
 	"github.com/bluenviron/gomavlib/v4/pkg/frame"
 	"github.com/bluenviron/gomavlib/v4/pkg/streamwriter"
-	"github.com/stretchr/testify/require"
 )
 
 func TestEndpointTCPClient(t *testing.T) {

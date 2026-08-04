@@ -5,8 +5,9 @@ package standard_test
 import (
 	"testing"
 
-	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/standard"
 	"github.com/stretchr/testify/require"
+
+	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/standard"
 )
 
 func TestEnum_MAV_PROTOCOL_CAPABILITY(t *testing.T) {

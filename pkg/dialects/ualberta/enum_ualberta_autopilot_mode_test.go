@@ -5,8 +5,9 @@ package ualberta_test
 import (
 	"testing"
 
-	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/ualberta"
 	"github.com/stretchr/testify/require"
+
+	dialectpkg "github.com/bluenviron/gomavlib/v4/pkg/dialects/ualberta"
 )
 
 func TestEnum_UALBERTA_AUTOPILOT_MODE(t *testing.T) {

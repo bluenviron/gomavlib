@@ -3,7 +3,7 @@ module github.com/bluenviron/gomavlib/v4
 go 1.25.0
 
 require (
-	github.com/alecthomas/kong v1.16.0
+	github.com/alecthomas/kong v1.16.1
 	github.com/pion/transport/v2 v2.2.10
 	github.com/stretchr/testify v1.11.1
 	go.bug.st/serial v1.8.0

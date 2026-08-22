@@ -267,5 +267,9 @@ var dial = &dialect.Dialect{
 		&MessageEscEeprom{},
 		&MessageRangingBeacon{},
 		&MessageEstimatorSensorFusionStatus{},
+		&MessageManualInputStatus{},
+		&MessageEfiPerformance{},
+		&MessageDistanceSensorInfo{},
+		&MessageDistanceSensorV2{},
 	},
 }

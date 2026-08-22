@@ -10,7 +10,7 @@ import (
 type MAV_MODE_FLAG = minimal.MAV_MODE_FLAG
 
 const (
-	// 0b10000000 MAV safety set to armed. Motors are enabled / running / can start. Ready to fly. Additional note: this flag is to be ignore when sent in the command MAV_CMD_DO_SET_MODE and MAV_CMD_COMPONENT_ARM_DISARM shall be used instead. The flag can still be used to report the armed state.
+	// 0b10000000 MAV safety set to armed. Motors are enabled / running / can start. Ready to fly. Additional note: this flag is to be ignored when sent in the command MAV_CMD_DO_SET_MODE and MAV_CMD_COMPONENT_ARM_DISARM shall be used instead. The flag can still be used to report the armed state.
 	MAV_MODE_FLAG_SAFETY_ARMED MAV_MODE_FLAG = minimal.MAV_MODE_FLAG_SAFETY_ARMED
 	// 0b01000000 remote control input is enabled.
 	MAV_MODE_FLAG_MANUAL_INPUT_ENABLED MAV_MODE_FLAG = minimal.MAV_MODE_FLAG_MANUAL_INPUT_ENABLED

@@ -382,6 +382,10 @@ var dial = &dialect.Dialect{
 		&MessageEscEeprom{},
 		&MessageRangingBeacon{},
 		&MessageEstimatorSensorFusionStatus{},
+		&MessageManualInputStatus{},
+		&MessageEfiPerformance{},
+		&MessageDistanceSensorInfo{},
+		&MessageDistanceSensorV2{},
 		// pythonarraytest
 		&MessageArrayTest_0{},
 		&MessageArrayTest_1{},
@@ -393,10 +397,6 @@ var dial = &dialect.Dialect{
 		&MessageArrayTest_8{},
 		// test
 		&MessageTestTypes{},
-		// ualberta
-		&MessageNavFilterBias{},
-		&MessageRadioCalibration{},
-		&MessageUalbertaSysStatus{},
 		// storm32
 		&MessageStorm32GimbalManagerInformation{},
 		&MessageStorm32GimbalManagerStatus{},

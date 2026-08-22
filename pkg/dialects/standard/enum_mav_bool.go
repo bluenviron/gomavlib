@@ -5,7 +5,6 @@ package standard
 import (
 	"fmt"
 	"strconv"
-	"strings"
 )
 
 // Enum used to indicate true or false (also: success or failure, enabled or disabled, active or inactive).
@@ -17,11 +16,6 @@ const (
 	// True.
 	MAV_BOOL_TRUE MAV_BOOL = 1
 )
-
-var values_MAV_BOOL = []MAV_BOOL{
-	MAV_BOOL_FALSE,
-	MAV_BOOL_TRUE,
-}
 
 var value_to_label_MAV_BOOL = map[MAV_BOOL]string{
 	MAV_BOOL_FALSE: "MAV_BOOL_FALSE",
@@ -35,32 +29,21 @@ var label_to_value_MAV_BOOL = map[string]MAV_BOOL{
 
 // MarshalText implements the encoding.TextMarshaler interface.
 func (e MAV_BOOL) MarshalText() ([]byte, error) {
-	if e == 0 {
-		return []byte("0"), nil
+	if name, ok := value_to_label_MAV_BOOL[e]; ok {
+		return []byte(name), nil
 	}
-	var names []string
-	for _, val := range values_MAV_BOOL {
-		if e&val == val {
-			names = append(names, value_to_label_MAV_BOOL[val])
-		}
-	}
-	return []byte(strings.Join(names, " | ")), nil
+	return []byte(strconv.Itoa(int(e))), nil
 }
 
 // UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (e *MAV_BOOL) UnmarshalText(text []byte) error {
-	labels := strings.Split(string(text), " | ")
-	var mask MAV_BOOL
-	for _, label := range labels {
-		if value, ok := label_to_value_MAV_BOOL[label]; ok {
-			mask |= value
-		} else if value, err := strconv.Atoi(label); err == nil {
-			mask |= MAV_BOOL(value)
-		} else {
-			return fmt.Errorf("invalid label '%s'", label)
-		}
+	if value, ok := label_to_value_MAV_BOOL[string(text)]; ok {
+		*e = value
+	} else if value, err := strconv.Atoi(string(text)); err == nil {
+		*e = MAV_BOOL(value)
+	} else {
+		return fmt.Errorf("invalid label '%s'", text)
 	}
-	*e = mask
 	return nil
 }
 

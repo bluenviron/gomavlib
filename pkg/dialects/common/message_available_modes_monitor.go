@@ -8,7 +8,7 @@ package common
 // It should be streamed at low rate (nominally 0.3 Hz).
 // See https://mavlink.io/en/services/standard_modes.html
 type MessageAvailableModesMonitor struct {
-	// Sequence number. The value iterates sequentially whenever AVAILABLE_MODES changes (e.g. support for a new mode is added/removed dynamically).
+	// Sequence number. Iterates sequentially whenever AVAILABLE_MODES changes (e.g. support for a new mode is added/removed dynamically). 0 initially. 1 on first change of mode set.
 	Seq uint8
 }
 

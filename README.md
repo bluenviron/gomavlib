@@ -2,7 +2,6 @@
 
 [![Test](https://github.com/bluenviron/gomavlib/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/bluenviron/gomavlib/actions/workflows/test.yml?query=branch%3Amain)
 [![Lint](https://github.com/bluenviron/gomavlib/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/bluenviron/gomavlib/actions/workflows/lint.yml?query=branch%3Amain)
-[![Dialects](https://github.com/bluenviron/gomavlib/actions/workflows/dialects.yml/badge.svg?branch=main)](https://github.com/bluenviron/gomavlib/actions/workflows/dialects.yml?query=branch%3Amain)
 [![CodeCov](https://codecov.io/gh/bluenviron/gomavlib/branch/main/graph/badge.svg)](https://app.codecov.io/gh/bluenviron/gomavlib/tree/main)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/bluenviron/gomavlib/v4)](https://pkg.go.dev/github.com/bluenviron/gomavlib/v4#pkg-index)
 

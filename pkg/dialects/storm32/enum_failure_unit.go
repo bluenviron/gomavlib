@@ -30,4 +30,14 @@ const (
 	FAILURE_UNIT_SYSTEM_ESC FAILURE_UNIT = common.FAILURE_UNIT_SYSTEM_ESC
 	// Traffic avoidance system like ADS-B or FLARM.
 	FAILURE_UNIT_SYSTEM_TRAFFIC_AVOIDANCE FAILURE_UNIT = common.FAILURE_UNIT_SYSTEM_TRAFFIC_AVOIDANCE
+	// Data link over a cellular (LTE) connection.
+	FAILURE_UNIT_DATALINK_LTE FAILURE_UNIT = common.FAILURE_UNIT_DATALINK_LTE
+	// Data link over a Wi-Fi connection.
+	FAILURE_UNIT_DATALINK_WIFI FAILURE_UNIT = common.FAILURE_UNIT_DATALINK_WIFI
+	// Data link over a telemetry radio, e.g. a SiK radio.
+	FAILURE_UNIT_DATALINK_TELEM_RADIO FAILURE_UNIT = common.FAILURE_UNIT_DATALINK_TELEM_RADIO
+	// CAN bus. Instance is the bus number, e.g. 1 for CAN1.
+	FAILURE_UNIT_BUS_CAN FAILURE_UNIT = common.FAILURE_UNIT_BUS_CAN
+	// I2C bus. Instance is the bus number, e.g. 1 for I2C1.
+	FAILURE_UNIT_BUS_I2C FAILURE_UNIT = common.FAILURE_UNIT_BUS_I2C
 )

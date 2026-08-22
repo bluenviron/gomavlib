@@ -22,6 +22,8 @@ type MessageAvailableModes struct {
 	Properties MAV_MODE_PROPERTY `mavenum:"uint32"`
 	// Name of custom mode, with null termination character. Should be omitted for standard modes.
 	ModeName string `mavlen:"35"`
+	// Sequence number. The value iterates sequentially whenever the set of AVAILABLE_MODES changes and should match value of AVAILABLE_MODES_MONITOR. Note, a GCS must ignore 0 values, and should re-start the download if the value changes part-way through fetching modes.
+	Seq uint8 `mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

@@ -17,8 +17,8 @@ const (
 func hasStringFields(msg message.Message) bool {
 	typ := reflect.TypeOf(msg).Elem()
 
-	for i := range typ.NumField() {
-		if typ.Field(i).Type == reflect.TypeFor[string]() {
+	for field := range typ.Fields() {
+		if field.Type == reflect.TypeFor[string]() {
 			return true
 		}
 	}

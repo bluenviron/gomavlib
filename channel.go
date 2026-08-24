@@ -226,8 +226,7 @@ func (ch *Channel) runReader() error {
 			var err error
 			fr, err = ch.frameReadWriter.Read()
 			if err != nil {
-				var eerr frame.ReadError
-				if errors.As(err, &eerr) {
+				if _, ok := errors.AsType[frame.ReadError](err); ok {
 					ch.node.pushEvent(&EventParseError{err, ch})
 					continue
 				}

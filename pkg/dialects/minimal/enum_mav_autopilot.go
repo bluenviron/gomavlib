@@ -53,6 +53,8 @@ const (
 	MAV_AUTOPILOT_AIRRAILS MAV_AUTOPILOT = 19
 	// Fusion Reflex - https://fusion.engineering
 	MAV_AUTOPILOT_REFLEX MAV_AUTOPILOT = 20
+	// Flix quadcopter - https://quadcopter.dev
+	MAV_AUTOPILOT_FLIX MAV_AUTOPILOT = 21
 )
 
 var value_to_label_MAV_AUTOPILOT = map[MAV_AUTOPILOT]string{
@@ -77,6 +79,7 @@ var value_to_label_MAV_AUTOPILOT = map[MAV_AUTOPILOT]string{
 	MAV_AUTOPILOT_SMARTAP:                                      "MAV_AUTOPILOT_SMARTAP",
 	MAV_AUTOPILOT_AIRRAILS:                                     "MAV_AUTOPILOT_AIRRAILS",
 	MAV_AUTOPILOT_REFLEX:                                       "MAV_AUTOPILOT_REFLEX",
+	MAV_AUTOPILOT_FLIX:                                         "MAV_AUTOPILOT_FLIX",
 }
 
 var label_to_value_MAV_AUTOPILOT = map[string]MAV_AUTOPILOT{
@@ -101,6 +104,7 @@ var label_to_value_MAV_AUTOPILOT = map[string]MAV_AUTOPILOT{
 	"MAV_AUTOPILOT_SMARTAP":                                      MAV_AUTOPILOT_SMARTAP,
 	"MAV_AUTOPILOT_AIRRAILS":                                     MAV_AUTOPILOT_AIRRAILS,
 	"MAV_AUTOPILOT_REFLEX":                                       MAV_AUTOPILOT_REFLEX,
+	"MAV_AUTOPILOT_FLIX":                                         MAV_AUTOPILOT_FLIX,
 }
 
 // MarshalText implements the encoding.TextMarshaler interface.

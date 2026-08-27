@@ -52,4 +52,6 @@ const (
 	MAV_AUTOPILOT_AIRRAILS MAV_AUTOPILOT = minimal.MAV_AUTOPILOT_AIRRAILS
 	// Fusion Reflex - https://fusion.engineering
 	MAV_AUTOPILOT_REFLEX MAV_AUTOPILOT = minimal.MAV_AUTOPILOT_REFLEX
+	// Flix quadcopter - https://quadcopter.dev
+	MAV_AUTOPILOT_FLIX MAV_AUTOPILOT = minimal.MAV_AUTOPILOT_FLIX
 )

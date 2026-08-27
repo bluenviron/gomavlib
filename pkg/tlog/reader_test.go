@@ -1,4 +1,4 @@
-package tlog
+package tlog_test
 
 import (
 	"bytes"
@@ -11,16 +11,17 @@ import (
 
 	"github.com/bluenviron/gomavlib/v4/pkg/frame"
 	"github.com/bluenviron/gomavlib/v4/pkg/message"
+	"github.com/bluenviron/gomavlib/v4/pkg/tlog"
 )
 
 var casesReadWriter = []struct {
 	name string
-	dec  []Entry
+	dec  []tlog.Entry
 	enc  []byte
 }{
 	{
 		"main",
-		[]Entry{
+		[]tlog.Entry{
 			{
 				Time: time.Date(2014, 9, 12, 3, 15, 17, 37000, time.UTC),
 				Frame: &frame.V1Frame{
@@ -62,7 +63,7 @@ var casesReadWriter = []struct {
 func TestReader(t *testing.T) {
 	for _, ca := range casesReadWriter {
 		t.Run(ca.name, func(t *testing.T) {
-			r := &Reader{
+			r := &tlog.Reader{
 				ByteReader: bytes.NewReader(ca.enc),
 			}
 			err := r.Initialize()
@@ -71,7 +72,7 @@ func TestReader(t *testing.T) {
 			i := 0
 
 			for {
-				var entry *Entry
+				var entry *tlog.Entry
 				entry, err = r.Read()
 				if errors.Is(err, io.EOF) {
 					break

@@ -16,8 +16,8 @@ const (
 	MAV_WINCH_STATUS_FULLY_RETRACTED MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_FULLY_RETRACTED
 	// Winch motor is moving
 	MAV_WINCH_STATUS_MOVING MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_MOVING
-	// Winch clutch is engaged allowing motor to move freely.
-	MAV_WINCH_STATUS_CLUTCH_ENGAGED MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_CLUTCH_ENGAGED
+	// Winch clutch is disengaged. The motor is moving freely and not driving the winch.
+	MAV_WINCH_STATUS_CLUTCH_DISENGAGED MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_CLUTCH_DISENGAGED
 	// Winch is locked by locking mechanism.
 	MAV_WINCH_STATUS_LOCKED MAV_WINCH_STATUS_FLAG = common.MAV_WINCH_STATUS_LOCKED
 	// Winch is gravity dropping payload.

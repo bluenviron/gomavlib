@@ -17,7 +17,7 @@ type MessageControlStatus struct {
 	Flags GCS_CONTROL_STATUS_FLAGS `mavenum:"uint8"`
 	// System ID of GCS in control. 0: no GCS in control.
 	GcsMain uint8
-	// System IDs from which the system can recieve state-changing commands/messages in multi-control mode. All values should be zero for single-ower mode.
+	// System IDs from which the system can receive state-changing commands/messages in multi-control mode. All values should be zero for single-owner mode.
 	GcsSecondary [10]uint8
 }
 

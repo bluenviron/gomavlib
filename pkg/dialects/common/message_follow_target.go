@@ -6,21 +6,21 @@ package common
 type MessageFollowTarget struct {
 	// Timestamp (time since system boot).
 	Timestamp uint64
-	// bit positions for tracker reporting capabilities (POS = 0, VEL = 1, ACCEL = 2, ATT + RATES = 3)
-	EstCapabilities uint8
+	// Bitmask indicating which fields in this message contain valid data.
+	EstCapabilities FOLLOW_TARGET_CAP_FLAGS `mavenum:"uint8"`
 	// Latitude (WGS84)
 	Lat int32
 	// Longitude (WGS84)
 	Lon int32
 	// Altitude (MSL)
 	Alt float32
-	// target velocity (0,0,0) for unknown
+	// Target velocity in MAV_FRAME_LOCAL_NED frame. (0,0,0) for unknown.
 	Vel [3]float32
-	// linear target acceleration (0,0,0) for unknown
+	// Target linear acceleration in MAV_FRAME_LOCAL_NED frame. (0,0,0) for unknown.
 	Acc [3]float32
-	// (0 0 0 0 for unknown)
+	// Target orientation as a quaternion rotating from MAV_FRAME_BODY_FRD to MAV_FRAME_LOCAL_NED (w, x, y, z order, zero-rotation is [1, 0, 0, 0]). (0, 0, 0, 0) for unknown.
 	AttitudeQ [4]float32
-	// (0 0 0 for unknown)
+	// Target angular rates (roll, pitch, yaw) in MAV_FRAME_BODY_FRD frame. (0,0,0) for unknown.
 	Rates [3]float32
 	// eph epv
 	PositionCov [3]float32

@@ -13,28 +13,28 @@ This library powers the [**mavp2p**](https://github.com/bluenviron/mavp2p) route
 
 Features:
 
-* Create Mavlink nodes able to communicate with other nodes.
-  * Supported transports: serial, UDP (server, client or broadcast mode), TCP (server or client mode), custom reader/writer.
-  * Support both domain names and IPs.
-  * Emit heartbeats automatically.
-  * Send automatic stream requests to Ardupilot devices (disabled by default).
-* Decode and encode Mavlink v2.0 and v1.0.
-  * Compute and validate checksums.
-  * Support all v2 features: empty-byte truncation, signatures, message extensions.
-* Use dialects in multiple ways.
-  * Ready-to-use standard dialects are available in directory `dialects/`.
-  * Custom dialects can be defined. Aa dialect generator is available in order to convert XML definitions into their Go representation.
-  * Use no dialect at all. Messages can be routed without having their content decoded.
-* Read and write telemetry logs (tlog)
+- Create Mavlink nodes able to communicate with other nodes.
+  - Supported transports: serial, UDP (server, client or broadcast mode), TCP (server or client mode), custom reader/writer.
+  - Support both domain names and IPs.
+  - Emit heartbeats automatically.
+  - Send automatic stream requests to Ardupilot devices (disabled by default).
+- Decode and encode Mavlink v2.0 and v1.0.
+  - Compute and validate checksums.
+  - Support all v2 features: empty-byte truncation, signatures, message extensions.
+- Use dialects in multiple ways.
+  - Ready-to-use standard dialects are available in directory `dialects/`.
+  - Custom dialects can be defined. Aa dialect generator is available in order to convert XML definitions into their Go representation.
+  - Use no dialect at all. Messages can be routed without having their content decoded.
+- Read and write telemetry logs (tlog)
 
 ## Table of contents
 
-* [Installation](#installation)
-* [Examples](#examples)
-* [API Documentation](#api-documentation)
-* [Dialect generation](#dialect-generation)
-* [Specifications](#specifications)
-* [Links](#links)
+- [Installation](#installation)
+- [Examples](#examples)
+- [API Documentation](#api-documentation)
+- [Dialect generation](#dialect-generation)
+- [Specifications](#specifications)
+- [Links](#links)
 
 ## Installation
 
@@ -56,27 +56,27 @@ Features:
 
 ## Examples
 
-* [node-endpoint-serial](examples/node-endpoint-serial/main.go)
-* [node-endpoint-udp-server](examples/node-endpoint-udp-server/main.go)
-* [node-endpoint-udp-client](examples/node-endpoint-udp-client/main.go)
-* [node-endpoint-udp-broadcast](examples/node-endpoint-udp-broadcast/main.go)
-* [node-endpoint-tcp-server](examples/node-endpoint-tcp-server/main.go)
-* [node-endpoint-tcp-client](examples/node-endpoint-tcp-client/main.go)
-* [node-endpoint-custom-client](examples/node-endpoint-custom-client/main.go)
-* [node-endpoint-custom-server](examples/node-endpoint-custom-server/main.go)
-* [node-message-read](examples/node-message-read/main.go)
-* [node-message-write](examples/node-message-write/main.go)
-* [node-command-microservice](examples/node-command-microservice/main.go)
-* [node-signature](examples/node-signature/main.go)
-* [node-dialect-absent](examples/node-dialect-absent/main.go)
-* [node-dialect-custom](examples/node-dialect-custom/main.go)
-* [node-events](examples/node-events/main.go)
-* [node-router](examples/node-router/main.go)
-* [node-router-edit](examples/node-router-edit/main.go)
-* [node-serial-to-json](examples/node-serial-to-json/main.go)
-* [node-stream-requests](examples/node-stream-requests/main.go)
-* [frame-read-writer](examples/frame-read-writer/main.go)
-* [telemetry-log](examples/telemetry-log/main.go)
+- [node-endpoint-serial](examples/node-endpoint-serial/main.go)
+- [node-endpoint-udp-server](examples/node-endpoint-udp-server/main.go)
+- [node-endpoint-udp-client](examples/node-endpoint-udp-client/main.go)
+- [node-endpoint-udp-broadcast](examples/node-endpoint-udp-broadcast/main.go)
+- [node-endpoint-tcp-server](examples/node-endpoint-tcp-server/main.go)
+- [node-endpoint-tcp-client](examples/node-endpoint-tcp-client/main.go)
+- [node-endpoint-custom-client](examples/node-endpoint-custom-client/main.go)
+- [node-endpoint-custom-server](examples/node-endpoint-custom-server/main.go)
+- [node-message-read](examples/node-message-read/main.go)
+- [node-message-write](examples/node-message-write/main.go)
+- [node-command-microservice](examples/node-command-microservice/main.go)
+- [node-signature](examples/node-signature/main.go)
+- [node-dialect-absent](examples/node-dialect-absent/main.go)
+- [node-dialect-custom](examples/node-dialect-custom/main.go)
+- [node-events](examples/node-events/main.go)
+- [node-router](examples/node-router/main.go)
+- [node-router-edit](examples/node-router-edit/main.go)
+- [node-serial-to-json](examples/node-serial-to-json/main.go)
+- [node-stream-requests](examples/node-stream-requests/main.go)
+- [frame-read-writer](examples/frame-read-writer/main.go)
+- [telemetry-log](examples/telemetry-log/main.go)
 
 ## API Documentation
 
@@ -93,31 +93,31 @@ dialect-import my_dialect.xml
 
 ## Specifications
 
-|name|area|
-|----|----|
-|[main website](https://mavlink.io/en/)|protocol|
-|[packet format](https://mavlink.io/en/guide/serialization.html)|protocol|
-|[common dialect](https://github.com/mavlink/mavlink/blob/master/message_definitions/v1.0/common.xml)|dialects|
-|[Golang project layout](https://github.com/golang-standards/project-layout)|project layout|
+| name                                                                                                 | area           |
+| ---------------------------------------------------------------------------------------------------- | -------------- |
+| [main website](https://mavlink.io/en/)                                                               | protocol       |
+| [packet format](https://mavlink.io/en/guide/serialization.html)                                      | protocol       |
+| [common dialect](https://github.com/mavlink/mavlink/blob/master/message_definitions/v1.0/common.xml) | dialects       |
+| [Golang project layout](https://github.com/golang-standards/project-layout)                          | project layout |
 
 ## Links
 
 Related projects
 
-* [mavp2p](https://github.com/bluenviron/mavp2p)
+- [mavp2p](https://github.com/bluenviron/mavp2p)
 
 Other Go libraries
 
-* [gobot](https://github.com/hybridgroup/gobot/tree/master/platforms/mavlink)
-* [liamstask/go-mavlink](https://github.com/liamstask/go-mavlink)
-* [ungerik/go-mavlink](https://github.com/ungerik/go-mavlink)
-* [SpaceLeap/go-mavlink](https://github.com/SpaceLeap/go-mavlink)
-* [MAVSDK-Go](https://github.com/mavlink/MAVSDK-Go)
+- [gobot](https://github.com/hybridgroup/gobot/tree/master/platforms/mavlink)
+- [liamstask/go-mavlink](https://github.com/liamstask/go-mavlink)
+- [ungerik/go-mavlink](https://github.com/ungerik/go-mavlink)
+- [SpaceLeap/go-mavlink](https://github.com/SpaceLeap/go-mavlink)
+- [MAVSDK-Go](https://github.com/mavlink/MAVSDK-Go)
 
 Other non-Go libraries
 
-* [official library (C)](https://github.com/mavlink/c_library_v2)
-* [pymavlink (Python)](https://github.com/ArduPilot/pymavlink)
-* [mavlink.net (C#)](https://github.com/asvol/mavlink.net)
-* [rust-mavlink (Rust)](https://github.com/3drobotics/rust-mavlink)
-* [node-mavlink (JS)](https://github.com/omcaree/node-mavlink)
+- [official library (C)](https://github.com/mavlink/c_library_v2)
+- [pymavlink (Python)](https://github.com/ArduPilot/pymavlink)
+- [mavlink.net (C#)](https://github.com/asvol/mavlink.net)
+- [rust-mavlink (Rust)](https://github.com/3drobotics/rust-mavlink)
+- [node-mavlink (JS)](https://github.com/omcaree/node-mavlink)

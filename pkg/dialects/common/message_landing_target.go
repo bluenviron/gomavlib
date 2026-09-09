@@ -30,7 +30,7 @@ type MessageLandingTarget struct {
 	Q [4]float32 `mavext:"true"`
 	// Type of landing target
 	Type LANDING_TARGET_TYPE `mavenum:"uint8" mavext:"true"`
-	// Position fields (x, y, z, q, type) contain valid target position information (MAV_BOOL_FALSE: invalid values). Values not equal to 0 or 1 are invalid.
+	// Position fields (x, y, z, q, type) contain valid target position information (MAV_BOOL_TRUE). A value of MAV_BOOL_FALSE indicates the position information is invalid. Values not equal to 0 or 1 are invalid.
 	PositionValid MAV_BOOL `mavenum:"uint8" mavext:"true"`
 }
 

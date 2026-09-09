@@ -8,7 +8,7 @@ type MessageParamError struct {
 	TargetSystem uint8
 	// Component ID
 	TargetComponent uint8
-	// Parameter id. Terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
+	// Parameter id. Terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string. Encoded as 7-bit ASCII.
 	ParamId string `mavlen:"16"`
 	// Parameter index. Will be -1 if the param ID field should be used as an identifier (else the param id will be ignored)
 	ParamIndex int16

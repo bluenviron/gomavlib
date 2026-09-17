@@ -16,7 +16,7 @@ const (
 	MAV_BATTERY_FAULT_DEEP_DISCHARGE MAV_BATTERY_FAULT = 1
 	// Voltage spikes.
 	MAV_BATTERY_FAULT_SPIKES MAV_BATTERY_FAULT = 2
-	// One or more cells have failed. Battery should also report MAV_BATTERY_CHARGE_STATE_FAILE (and should not be used).
+	// One or more cells have failed. Battery should also report MAV_BATTERY_CHARGE_STATE_FAILED (and should not be used).
 	MAV_BATTERY_FAULT_CELL_FAIL MAV_BATTERY_FAULT = 4
 	// Over-current fault.
 	MAV_BATTERY_FAULT_OVER_CURRENT MAV_BATTERY_FAULT = 8

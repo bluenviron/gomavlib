@@ -29,8 +29,6 @@ const (
 	MAV_CMD_NAV_LAND_LOCAL MAV_CMD = 23
 	// Takeoff from local position (local frame only)
 	MAV_CMD_NAV_TAKEOFF_LOCAL MAV_CMD = 24
-	// Vehicle following, i.e. this waypoint represents the position of a moving vehicle
-	MAV_CMD_NAV_FOLLOW MAV_CMD = 25
 	// Continue on the current course and climb/descend to specified altitude.  When the altitude is reached continue to the next command (i.e., don't proceed to the next command until the desired altitude is reached.
 	MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT MAV_CMD = 30
 	// Begin loiter at the specified Latitude and Longitude.  If Lat=Lon=0, then loiter at the current position.  Don't consider the navigation command complete (don't leave loiter) until the altitude has been reached. Additionally, if the Heading Required parameter is non-zero the aircraft will not leave the loiter until heading toward the next waypoint.
@@ -115,7 +113,7 @@ const (
 	// Mission item to specify the start of a failsafe/landing return-path segment (the end of the segment is the next MAV_CMD_DO_LAND_START item).
 	// A vehicle that is using missions for landing (e.g. in a return mode) will join the mission on the closest path of the return-path segment (instead of MAV_CMD_DO_LAND_START or the nearest waypoint).
 	// The main use case is to minimize the failsafe flight path in corridor missions, where the inbound/outbound paths are constrained (by geofences) to the same particular path.
-	// The MAV_CMD_NAV_RETURN_PATH_START would be placed at the start of the return path.
+	// The MAV_CMD_DO_RETURN_PATH_START would be placed at the start of the return path.
 	// If a failsafe occurs on the outbound path the vehicle will move to the nearest point on the return path (which is parallel for this kind of mission), effectively turning round and following the shortest path to landing.
 	// If a failsafe occurs on the inbound path the vehicle is already on the return segment and will continue to landing.
 	// The Latitude/Longitude/Altitude are optional, and may be set to 0 if not needed.
@@ -458,7 +456,6 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_NAV_TAKEOFF:                        "MAV_CMD_NAV_TAKEOFF",
 	MAV_CMD_NAV_LAND_LOCAL:                     "MAV_CMD_NAV_LAND_LOCAL",
 	MAV_CMD_NAV_TAKEOFF_LOCAL:                  "MAV_CMD_NAV_TAKEOFF_LOCAL",
-	MAV_CMD_NAV_FOLLOW:                         "MAV_CMD_NAV_FOLLOW",
 	MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT:        "MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT",
 	MAV_CMD_NAV_LOITER_TO_ALT:                  "MAV_CMD_NAV_LOITER_TO_ALT",
 	MAV_CMD_DO_FOLLOW:                          "MAV_CMD_DO_FOLLOW",
@@ -639,7 +636,6 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_NAV_TAKEOFF":                        MAV_CMD_NAV_TAKEOFF,
 	"MAV_CMD_NAV_LAND_LOCAL":                     MAV_CMD_NAV_LAND_LOCAL,
 	"MAV_CMD_NAV_TAKEOFF_LOCAL":                  MAV_CMD_NAV_TAKEOFF_LOCAL,
-	"MAV_CMD_NAV_FOLLOW":                         MAV_CMD_NAV_FOLLOW,
 	"MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT":        MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT,
 	"MAV_CMD_NAV_LOITER_TO_ALT":                  MAV_CMD_NAV_LOITER_TO_ALT,
 	"MAV_CMD_DO_FOLLOW":                          MAV_CMD_DO_FOLLOW,

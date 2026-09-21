@@ -167,6 +167,12 @@ func (e A_TYPE) String() string {
 `
 
 func TestConversion(t *testing.T) {
+	workingDir, err := os.Getwd()
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		require.NoError(t, os.Chdir(workingDir))
+	})
+
 	dir, err := os.MkdirTemp("", "gomavlib")
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
@@ -186,4 +192,40 @@ func TestConversion(t *testing.T) {
 	buf, err = os.ReadFile("testdialect/enum_a_type.go")
 	require.NoError(t, err)
 	require.Equal(t, testEnumGo, string(buf))
+}
+
+func TestConversionRelativeIncludes(t *testing.T) {
+	workingDir, err := os.Getwd()
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		require.NoError(t, os.Chdir(workingDir))
+	})
+
+	dir, err := os.MkdirTemp("", "gomavlib")
+	require.NoError(t, err)
+	defer os.RemoveAll(dir)
+
+	require.NoError(t, os.Chdir(dir))
+	require.NoError(t, os.MkdirAll("dialects/sub", 0o755))
+	require.NoError(t, os.WriteFile("dialects/main.xml", []byte(`<?xml version="1.0"?>
+<mavlink>
+  <include>sub/child.xml</include>
+</mavlink>
+`), 0o644))
+	require.NoError(t, os.WriteFile("dialects/sub/child.xml", []byte(`<?xml version="1.0"?>
+<mavlink>
+  <include>sibling.xml</include>
+</mavlink>
+`), 0o644))
+	require.NoError(t, os.WriteFile("dialects/sub/sibling.xml", []byte(`<?xml version="1.0"?>
+<mavlink>
+  <messages>
+    <message id="1" name="SIBLING_MESSAGE" />
+  </messages>
+</mavlink>
+`), 0o644))
+
+	require.NoError(t, conversion.Convert("dialects/main.xml", true))
+	_, err = os.Stat("main/message_sibling_message.go")
+	require.NoError(t, err)
 }

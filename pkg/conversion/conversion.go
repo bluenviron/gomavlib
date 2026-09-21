@@ -357,6 +357,8 @@ func processDefinition(
 		// prepend url to remote address
 		if isRemote {
 			subDefAddr = addrPath + subDefAddr
+		} else {
+			subDefAddr = filepath.Join(addrPath, subDefAddr)
 		}
 		var subDefs []*outDefinition
 		subDefs, err = processDefinition(version, processedDefs, isRemote, subDefAddr)

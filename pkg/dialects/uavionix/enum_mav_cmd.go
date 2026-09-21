@@ -127,9 +127,9 @@ const (
 	// When sent as a command it triggers a landing using a mission landing pattern.
 	// The location parameters are not used in this case, and should be set to 0.
 	MAV_CMD_DO_LAND_START MAV_CMD = common.MAV_CMD_DO_LAND_START
-	// Mission command to perform a landing from a rally point.
+	// Command to perform a landing from a rally point.
 	MAV_CMD_DO_RALLY_LAND MAV_CMD = common.MAV_CMD_DO_RALLY_LAND
-	// Mission command to safely abort an autonomous landing.
+	// Command to safely abort an autonomous landing.
 	MAV_CMD_DO_GO_AROUND MAV_CMD = common.MAV_CMD_DO_GO_AROUND
 	// Reposition the vehicle to a specific WGS84 global position. This command is intended for guided commands (for missions use MAV_CMD_NAV_WAYPOINT instead).
 	MAV_CMD_DO_REPOSITION MAV_CMD = common.MAV_CMD_DO_REPOSITION

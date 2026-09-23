@@ -138,11 +138,11 @@ const (
 	MAV_CMD_DO_PAUSE_CONTINUE MAV_CMD = 193
 	// Set moving direction to forward or reverse.
 	MAV_CMD_DO_SET_REVERSE MAV_CMD = 194
-	// Sets the region of interest (ROI) to a location. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras. This command can be sent to a gimbal manager but not to a gimbal device. A gimbal is not to react to this message.
+	// Sets the region of interest (ROI) to a location. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras.
 	MAV_CMD_DO_SET_ROI_LOCATION MAV_CMD = 195
 	// Sets the region of interest (ROI) to be toward next waypoint, with optional pitch/roll/yaw offset. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras. This command can be sent to a gimbal manager but not to a gimbal device. A gimbal device is not to react to this message.
 	MAV_CMD_DO_SET_ROI_WPNEXT_OFFSET MAV_CMD = 196
-	// Cancels any previous ROI command returning the vehicle/sensors to default flight characteristics. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras. This command can be sent to a gimbal manager but not to a gimbal device. A gimbal device is not to react to this message. After this command the gimbal manager should go back to manual input if available, and otherwise assume a neutral position.
+	// Cancels any previous ROI command returning the vehicle/sensors to default flight characteristics. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras. After this command the gimbal manager should go back to manual input if available, and otherwise assume a neutral position.
 	MAV_CMD_DO_SET_ROI_NONE MAV_CMD = 197
 	// Mount tracks system with specified system ID. Determination of target vehicle position may be done with GLOBAL_POSITION_INT or any other means. This command can be sent to a gimbal manager but not to a gimbal device. A gimbal device is not to react to this message.
 	MAV_CMD_DO_SET_ROI_SYSID MAV_CMD = 198

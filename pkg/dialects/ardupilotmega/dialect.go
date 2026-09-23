@@ -236,6 +236,7 @@ var dial = &dialect.Dialect{
 		&MessageCurrentEventSequence{},
 		&MessageRequestEvent{},
 		&MessageResponseEventError{},
+		&MessageRadioRcChannels{},
 		&MessageAvailableModes{},
 		&MessageCurrentMode{},
 		&MessageAvailableModesMonitor{},

@@ -3,7 +3,7 @@
 package all
 
 import (
-	"github.com/bluenviron/gomavlib/v4/pkg/dialects/development"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/common"
 )
 
 // RC channel outputs from a MAVLink RC receiver for input to a flight controller or other components (allows an RC receiver to connect via MAVLink instead of some other protocol such as PPM-Sum or S.BUS).
@@ -18,4 +18,4 @@ import (
 // In this case time_last_update_ms still contains the timestamp of the last valid channels data, but the content of the channels data is not defined by the protocol (it is up to the implementation of the receiver).
 // For instance, the channels data could contain failsafe values configured in the receiver; the default is to carry the last valid data.
 // Note: The RC channels fields are extensions to ensure that they are located at the end of the serialized payload and subject to MAVLink's trailing-zero trimming.
-type MessageRadioRcChannels = development.MessageRadioRcChannels
+type MessageRadioRcChannels = common.MessageRadioRcChannels

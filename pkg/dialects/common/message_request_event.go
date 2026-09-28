@@ -2,7 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package common
 
-// Request one or more events to be (re-)sent. If first_sequence==last_sequence, only a single event is requested. Note that first_sequence can be larger than last_sequence (because the sequence number can wrap). Each sequence will trigger an EVENT or EVENT_ERROR response.
+// Request one or more events to be (re-)sent. If first_sequence==last_sequence, only a single event is requested. Note that first_sequence can be larger than last_sequence (because the sequence number can wrap). Each sequence will trigger an EVENT or RESPONSE_EVENT_ERROR response.
 type MessageRequestEvent struct {
 	// System ID
 	TargetSystem uint8

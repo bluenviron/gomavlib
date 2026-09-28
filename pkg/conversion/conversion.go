@@ -693,16 +693,19 @@ func Convert(path string, link bool) error {
 
 	var root *os.Root
 	isRemote := strings.HasPrefix(path, "http://") || strings.HasPrefix(path, "https://")
+
 	if !isRemote {
 		absPath, err := filepath.Abs(path)
 		if err != nil {
 			return err
 		}
+
 		root, err = os.OpenRoot(filepath.Dir(absPath))
 		if err != nil {
 			return err
 		}
-		defer root.Close()
+		defer root.Close() //nolint:errcheck
+
 		path = filepath.Base(absPath)
 	}
 

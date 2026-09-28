@@ -260,7 +260,8 @@ func TestConversionAbsoluteIncludesWithinRoot(t *testing.T) {
 	t.Chdir(dir)
 	require.NoError(t, os.Mkdir("dialects", 0o755))
 	include := filepath.Join(dir, "dialects", "sibling.xml")
-	require.NoError(t, os.WriteFile("dialects/main.xml", []byte("<mavlink><include>"+include+"</include></mavlink>"), 0o644))
+	require.NoError(t, os.WriteFile("dialects/main.xml",
+		[]byte("<mavlink><include>"+include+"</include></mavlink>"), 0o644))
 	require.NoError(t, os.WriteFile(include, []byte(`<mavlink>
   <messages><message id="1" name="SIBLING_MESSAGE" /></messages>
 </mavlink>`), 0o644))
@@ -286,7 +287,8 @@ func TestConversionRejectsEscapingIncludes(t *testing.T) {
 			require.NoError(t, os.Mkdir("dialects-other", 0o755))
 			require.NoError(t, os.WriteFile("outside.xml", []byte("<mavlink />"), 0o644))
 			require.NoError(t, os.WriteFile("dialects-other/outside.xml", []byte("<mavlink />"), 0o644))
-			require.NoError(t, os.WriteFile("dialects/main.xml", []byte("<mavlink><include>"+ca.include(dir)+"</include></mavlink>"), 0o644))
+			require.NoError(t, os.WriteFile("dialects/main.xml",
+				[]byte("<mavlink><include>"+ca.include(dir)+"</include></mavlink>"), 0o644))
 			require.ErrorContains(t, conversion.Convert("dialects/main.xml", false), "outside dialect root")
 		})
 	}
@@ -300,7 +302,8 @@ func TestConversionRejectsSymlinkEscape(t *testing.T) {
 	if err := os.Symlink(filepath.Join(dir, "outside.xml"), "dialects/escape.xml"); err != nil {
 		t.Skipf("symlinks unavailable: %v", err)
 	}
-	require.NoError(t, os.WriteFile("dialects/main.xml", []byte("<mavlink><include>escape.xml</include></mavlink>"), 0o644))
+	require.NoError(t, os.WriteFile("dialects/main.xml",
+		[]byte("<mavlink><include>escape.xml</include></mavlink>"), 0o644))
 	require.Error(t, conversion.Convert("dialects/main.xml", false))
 }
 
@@ -345,8 +348,10 @@ func TestConversionRejectsDriveRelativeInclude(t *testing.T) {
 	dir := t.TempDir()
 	t.Chdir(dir)
 	require.NoError(t, os.Mkdir("dialects", 0o755))
-	require.NoError(t, os.WriteFile("dialects/main.xml", []byte(`<mavlink><include>C:outside.xml</include></mavlink>`), 0o644))
-	require.ErrorContains(t, conversion.Convert("dialects/main.xml", false), "outside dialect root")
+	require.NoError(t, os.WriteFile("dialects/main.xml",
+		[]byte(`<mavlink><include>C:outside.xml</include></mavlink>`), 0o644))
+	require.ErrorContains(t, conversion.Convert("dialects/main.xml", false),
+		"outside dialect root")
 }
 
 func TestConversionSymlinkCycle(t *testing.T) {

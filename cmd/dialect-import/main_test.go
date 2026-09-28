@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -44,18 +45,27 @@ const testDialect = `<?xml version="1.0"?>
 `
 
 func TestRun(t *testing.T) {
-	dir, err := os.MkdirTemp("", "gomavlib")
-	require.NoError(t, err)
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
+	t.Chdir(dir)
 
-	os.Chdir(dir)
-
-	err = os.WriteFile("testdialect.xml", []byte(testDialect), 0o644)
+	err := os.WriteFile("testdialect.xml", []byte(testDialect), 0o644)
 	require.NoError(t, err)
 
 	err = run([]string{"testdialect.xml"})
 	require.NoError(t, err)
 
+	_, err = os.Stat("testdialect/message_a_message.go")
+	require.NoError(t, err)
+}
+
+func TestRunAbsolutePath(t *testing.T) {
+	dir := t.TempDir()
+	t.Chdir(dir)
+	err := os.WriteFile("testdialect.xml", []byte(testDialect), 0o644)
+	require.NoError(t, err)
+
+	err = run([]string{filepath.Join(dir, "testdialect.xml")})
+	require.NoError(t, err)
 	_, err = os.Stat("testdialect/message_a_message.go")
 	require.NoError(t, err)
 }

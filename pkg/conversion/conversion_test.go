@@ -1,7 +1,11 @@
 package conversion_test
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -167,13 +171,10 @@ func (e A_TYPE) String() string {
 `
 
 func TestConversion(t *testing.T) {
-	dir, err := os.MkdirTemp("", "gomavlib")
-	require.NoError(t, err)
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
+	t.Chdir(dir)
 
-	os.Chdir(dir)
-
-	err = os.WriteFile("testdialect.xml", []byte(testDialect), 0o644)
+	err := os.WriteFile("testdialect.xml", []byte(testDialect), 0o644)
 	require.NoError(t, err)
 
 	err = conversion.Convert("testdialect.xml", true)
@@ -186,4 +187,187 @@ func TestConversion(t *testing.T) {
 	buf, err = os.ReadFile("testdialect/enum_a_type.go")
 	require.NoError(t, err)
 	require.Equal(t, testEnumGo, string(buf))
+}
+
+func TestConversionRelativeIncludes(t *testing.T) {
+	dir := t.TempDir()
+	t.Chdir(dir)
+	require.NoError(t, os.MkdirAll("dialects/sub", 0o755))
+	require.NoError(t, os.WriteFile("dialects/main.xml", []byte(`<?xml version="1.0"?>
+<mavlink>
+  <include>sub/child.xml</include>
+</mavlink>
+`), 0o644))
+	require.NoError(t, os.WriteFile("dialects/sub/child.xml", []byte(`<?xml version="1.0"?>
+<mavlink>
+  <include>sibling.xml</include>
+</mavlink>
+`), 0o644))
+	require.NoError(t, os.WriteFile("dialects/sub/sibling.xml", []byte(`<?xml version="1.0"?>
+<mavlink>
+  <messages>
+    <message id="1" name="SIBLING_MESSAGE" />
+  </messages>
+</mavlink>
+`), 0o644))
+
+	require.NoError(t, conversion.Convert("dialects/main.xml", true))
+	_, err := os.Stat("main/message_sibling_message.go")
+	require.NoError(t, err)
+}
+
+func TestConversionRemoteIncludes(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/main.xml":
+			_, _ = w.Write([]byte(`<mavlink><include>child.xml</include></mavlink>`))
+		case "/child.xml":
+			_, _ = w.Write([]byte(`<mavlink><messages><message id="1" name="CHILD_MESSAGE" /></messages></mavlink>`))
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	dir := t.TempDir()
+	t.Chdir(dir)
+	require.NoError(t, conversion.Convert(server.URL+"/main.xml", false))
+	_, err := os.Stat("main/message_child_message.go")
+	require.NoError(t, err)
+}
+
+func TestConversionIncludesWithinRoot(t *testing.T) {
+	dir := t.TempDir()
+	t.Chdir(dir)
+	require.NoError(t, os.MkdirAll("dialects/sub", 0o755))
+	require.NoError(t, os.WriteFile("dialects/main.xml", []byte(`<mavlink>
+  <include>sub/child.xml</include>
+</mavlink>`), 0o644))
+	require.NoError(t, os.WriteFile("dialects/sub/child.xml", []byte(`<mavlink>
+  <include>../sibling.xml</include>
+</mavlink>`), 0o644))
+	require.NoError(t, os.WriteFile("dialects/sibling.xml", []byte(`<mavlink>
+  <messages><message id="1" name="SIBLING_MESSAGE" /></messages>
+</mavlink>`), 0o644))
+
+	require.NoError(t, conversion.Convert("./dialects/main.xml", false))
+	_, err := os.Stat("main/message_sibling_message.go")
+	require.NoError(t, err)
+}
+
+func TestConversionAbsoluteIncludesWithinRoot(t *testing.T) {
+	dir := t.TempDir()
+	t.Chdir(dir)
+	require.NoError(t, os.Mkdir("dialects", 0o755))
+	include := filepath.Join(dir, "dialects", "sibling.xml")
+	require.NoError(t, os.WriteFile("dialects/main.xml",
+		[]byte("<mavlink><include>"+include+"</include></mavlink>"), 0o644))
+	require.NoError(t, os.WriteFile(include, []byte(`<mavlink>
+  <messages><message id="1" name="SIBLING_MESSAGE" /></messages>
+</mavlink>`), 0o644))
+
+	require.NoError(t, conversion.Convert(filepath.Join(dir, "dialects", "main.xml"), false))
+	_, err := os.Stat("main/message_sibling_message.go")
+	require.NoError(t, err)
+}
+
+func TestConversionRejectsEscapingIncludes(t *testing.T) {
+	for _, ca := range []struct {
+		name    string
+		include func(string) string
+	}{
+		{"parent", func(string) string { return "../outside.xml" }},
+		{"sibling prefix", func(string) string { return "../dialects-other/outside.xml" }},
+		{"absolute", func(dir string) string { return filepath.Join(dir, "outside.xml") }},
+	} {
+		t.Run(ca.name, func(t *testing.T) {
+			dir := t.TempDir()
+			t.Chdir(dir)
+			require.NoError(t, os.Mkdir("dialects", 0o755))
+			require.NoError(t, os.Mkdir("dialects-other", 0o755))
+			require.NoError(t, os.WriteFile("outside.xml", []byte("<mavlink />"), 0o644))
+			require.NoError(t, os.WriteFile("dialects-other/outside.xml", []byte("<mavlink />"), 0o644))
+			require.NoError(t, os.WriteFile("dialects/main.xml",
+				[]byte("<mavlink><include>"+ca.include(dir)+"</include></mavlink>"), 0o644))
+			require.ErrorContains(t, conversion.Convert("dialects/main.xml", false), "outside dialect root")
+		})
+	}
+}
+
+func TestConversionRejectsSymlinkEscape(t *testing.T) {
+	dir := t.TempDir()
+	t.Chdir(dir)
+	require.NoError(t, os.Mkdir("dialects", 0o755))
+	require.NoError(t, os.WriteFile("outside.xml", []byte("<mavlink />"), 0o644))
+	if err := os.Symlink(filepath.Join(dir, "outside.xml"), "dialects/escape.xml"); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+	require.NoError(t, os.WriteFile("dialects/main.xml",
+		[]byte("<mavlink><include>escape.xml</include></mavlink>"), 0o644))
+	require.Error(t, conversion.Convert("dialects/main.xml", false))
+}
+
+func TestConversionAllowsInRootSymlink(t *testing.T) {
+	dir := t.TempDir()
+	t.Chdir(dir)
+	require.NoError(t, os.Mkdir("dialects", 0o755))
+	if err := os.Symlink("sibling.xml", "dialects/alias.xml"); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+	require.NoError(t, os.WriteFile("dialects/main.xml", []byte("<mavlink><include>alias.xml</include></mavlink>"), 0o644))
+	require.NoError(t, os.WriteFile("dialects/sibling.xml", []byte(`<mavlink>
+  <messages><message id="1" name="SIBLING_MESSAGE" /></messages>
+</mavlink>`), 0o644))
+	require.NoError(t, conversion.Convert("dialects/main.xml", false))
+	_, err := os.Stat("main/message_sibling_message.go")
+	require.NoError(t, err)
+}
+
+func TestConversionCycle(t *testing.T) {
+	dir := t.TempDir()
+	t.Chdir(dir)
+	require.NoError(t, os.MkdirAll("dialects/sub", 0o755))
+	require.NoError(t, os.WriteFile("dialects/main.xml", []byte(`<mavlink>
+  <include>sub/child.xml</include>
+  <messages><message id="1" name="ROOT_MESSAGE" /></messages>
+</mavlink>`), 0o644))
+	require.NoError(t, os.WriteFile("dialects/sub/child.xml", []byte(`<mavlink>
+  <include>../main.xml</include>
+</mavlink>`), 0o644))
+
+	require.NoError(t, conversion.Convert("./dialects/main.xml", false))
+	buf, err := os.ReadFile("main/dialect.go")
+	require.NoError(t, err)
+	require.Equal(t, 1, strings.Count(string(buf), "&MessageRootMessage{}"))
+}
+
+func TestConversionRejectsDriveRelativeInclude(t *testing.T) {
+	if filepath.Separator != '\\' {
+		t.Skip("drive-relative paths are Windows-specific")
+	}
+	dir := t.TempDir()
+	t.Chdir(dir)
+	require.NoError(t, os.Mkdir("dialects", 0o755))
+	require.NoError(t, os.WriteFile("dialects/main.xml",
+		[]byte(`<mavlink><include>C:outside.xml</include></mavlink>`), 0o644))
+	require.ErrorContains(t, conversion.Convert("dialects/main.xml", false),
+		"outside dialect root")
+}
+
+func TestConversionSymlinkCycle(t *testing.T) {
+	dir := t.TempDir()
+	t.Chdir(dir)
+	require.NoError(t, os.Mkdir("dialects", 0o755))
+	if err := os.Symlink("main.xml", "dialects/alias.xml"); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+	require.NoError(t, os.WriteFile("dialects/main.xml", []byte(`<mavlink>
+  <include>alias.xml</include>
+  <messages><message id="1" name="ROOT_MESSAGE" /></messages>
+</mavlink>`), 0o644))
+
+	require.NoError(t, conversion.Convert("dialects/main.xml", false))
+	buf, err := os.ReadFile("main/dialect.go")
+	require.NoError(t, err)
+	require.Equal(t, 1, strings.Count(string(buf), "&MessageRootMessage{}"))
 }

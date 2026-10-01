@@ -53,7 +53,7 @@ const (
 	MAV_STANDARD_MODE_ALTITUDE_HOLD MAV_STANDARD_MODE = common.MAV_STANDARD_MODE_ALTITUDE_HOLD
 	// Safe recovery mode (auto).
 	// Automatic mode that takes vehicle to a predefined safe location via a safe flight path, and may also automatically land the vehicle.
-	// This mode is more commonly referred to as RTL and/or or Smart RTL.
+	// This mode is more commonly referred to as RTL and/or Smart RTL.
 	// The precise return location, flight path, and landing behaviour depend on vehicle configuration and type.
 	// For example, the vehicle might return to the home/launch location, a rally point, or the start of a mission landing, it might follow a direct path, mission path, or breadcrumb path, and land using a mission landing pattern or some other kind of descent.
 	MAV_STANDARD_MODE_SAFE_RECOVERY MAV_STANDARD_MODE = common.MAV_STANDARD_MODE_SAFE_RECOVERY

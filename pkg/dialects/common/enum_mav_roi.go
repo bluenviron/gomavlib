@@ -7,9 +7,7 @@ import (
 	"strconv"
 )
 
-// The ROI (region of interest) for the vehicle. This can be
-// be used by the vehicle for camera/vehicle attitude alignment (see
-// MAV_CMD_NAV_ROI).
+// The ROI (region of interest) for the vehicle. This can be used by the vehicle for camera/vehicle attitude alignment (see MAV_CMD_NAV_ROI).
 type MAV_ROI uint64
 
 const (

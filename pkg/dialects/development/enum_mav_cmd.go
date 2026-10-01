@@ -452,7 +452,7 @@ const (
 	// See https://mavlink.io/en/services/opendroneid.html for more information.
 	MAV_CMD_ODID_SET_EMERGENCY MAV_CMD = 12900
 	// Set an external estimate of wind direction and speed.
-	// This might be used to provide an initial wind estimate to the estimator (EKF) in the case where the vehicle is wind dead-reckoning, extending the time when operating without GPS before before position drift builds to an unsafe level. For this use case the command might reasonably be sent every few minutes when operating at altitude, and the value is cleared if the estimator resets itself.
+	// This might be used to provide an initial wind estimate to the estimator (EKF) in the case where the vehicle is wind dead-reckoning, extending the time when operating without GPS before position drift builds to an unsafe level. For this use case the command might reasonably be sent every few minutes when operating at altitude, and the value is cleared if the estimator resets itself.
 	MAV_CMD_EXTERNAL_WIND_ESTIMATE MAV_CMD = 43004
 	// Enable or disable a specific estimator sensor fusion source at runtime.
 	// This allows a GCS or companion computer to dynamically control which sensors the estimator fuses without changing parameters.

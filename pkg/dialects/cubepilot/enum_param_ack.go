@@ -16,6 +16,6 @@ const (
 	PARAM_ACK_VALUE_UNSUPPORTED PARAM_ACK = common.PARAM_ACK_VALUE_UNSUPPORTED
 	// Parameter failed to set
 	PARAM_ACK_FAILED PARAM_ACK = common.PARAM_ACK_FAILED
-	// Parameter value received but not yet set/accepted. A subsequent PARAM_EXT_ACK with the final result will follow once operation is completed. This is returned immediately for parameters that take longer to set, indicating that the the parameter was received and does not need to be resent.
+	// Parameter value received but not yet set/accepted. A subsequent PARAM_EXT_ACK with the final result will follow once operation is completed. This is returned immediately for parameters that take longer to set, indicating that the parameter was received and does not need to be resent.
 	PARAM_ACK_IN_PROGRESS PARAM_ACK = common.PARAM_ACK_IN_PROGRESS
 )

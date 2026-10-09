@@ -398,6 +398,9 @@ const (
 	MAV_CMD_GUIDED_CHANGE_HEADING MAV_CMD = 43002
 	// Provide an external position estimate for use when dead-reckoning. This is meant to be used for occasional position resets that may be provided by a external system such as a remote pilot using landmarks over a video link.
 	MAV_CMD_EXTERNAL_POSITION_ESTIMATE MAV_CMD = 43003
+	// Set an external estimate of wind direction and speed.
+	// This might be used to provide an initial wind estimate to the estimator (EKF) in the case where the vehicle is wind dead-reckoning, extending the time when operating without GPS before position drift builds to an unsafe level. For this use case the command might reasonably be sent every few minutes when operating at altitude, and the value is cleared if the estimator resets itself.
+	MAV_CMD_EXTERNAL_WIND_ESTIMATE MAV_CMD = 43004
 	// User defined waypoint item. Ground Station will show the Vehicle as flying through this item.
 	MAV_CMD_WAYPOINT_USER_1 MAV_CMD = 31000
 	// User defined waypoint item. Ground Station will show the Vehicle as flying through this item.
@@ -601,6 +604,7 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_GUIDED_CHANGE_ALTITUDE:             "MAV_CMD_GUIDED_CHANGE_ALTITUDE",
 	MAV_CMD_GUIDED_CHANGE_HEADING:              "MAV_CMD_GUIDED_CHANGE_HEADING",
 	MAV_CMD_EXTERNAL_POSITION_ESTIMATE:         "MAV_CMD_EXTERNAL_POSITION_ESTIMATE",
+	MAV_CMD_EXTERNAL_WIND_ESTIMATE:             "MAV_CMD_EXTERNAL_WIND_ESTIMATE",
 	MAV_CMD_WAYPOINT_USER_1:                    "MAV_CMD_WAYPOINT_USER_1",
 	MAV_CMD_WAYPOINT_USER_2:                    "MAV_CMD_WAYPOINT_USER_2",
 	MAV_CMD_WAYPOINT_USER_3:                    "MAV_CMD_WAYPOINT_USER_3",
@@ -781,6 +785,7 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_GUIDED_CHANGE_ALTITUDE":             MAV_CMD_GUIDED_CHANGE_ALTITUDE,
 	"MAV_CMD_GUIDED_CHANGE_HEADING":              MAV_CMD_GUIDED_CHANGE_HEADING,
 	"MAV_CMD_EXTERNAL_POSITION_ESTIMATE":         MAV_CMD_EXTERNAL_POSITION_ESTIMATE,
+	"MAV_CMD_EXTERNAL_WIND_ESTIMATE":             MAV_CMD_EXTERNAL_WIND_ESTIMATE,
 	"MAV_CMD_WAYPOINT_USER_1":                    MAV_CMD_WAYPOINT_USER_1,
 	"MAV_CMD_WAYPOINT_USER_2":                    MAV_CMD_WAYPOINT_USER_2,
 	"MAV_CMD_WAYPOINT_USER_3":                    MAV_CMD_WAYPOINT_USER_3,

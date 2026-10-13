@@ -26,12 +26,14 @@ type MessageVideoStreamInformation struct {
 	Hfov uint16
 	// Stream name.
 	Name string `mavlen:"32"`
-	// Video stream URI (TCP or RTSP URI ground station should connect to) or port number (UDP port ground station should listen to).
+	// Video stream URI (TCP, RTSP or SRT URI ground station should connect to) or port number (UDP port ground station should listen to).
 	Uri string `mavlen:"160"`
 	// Encoding of stream.
 	Encoding VIDEO_STREAM_ENCODING `mavenum:"uint8" mavext:"true"`
 	// Camera id of a non-MAVLink camera attached to an autopilot (1-6).  0 if the component is a MAVLink camera (with its own component id).
 	CameraDeviceId uint8 `mavext:"true"`
+	// Vertical field of view (0 if unknown).
+	Vfov uint16 `mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

@@ -6,5 +6,5 @@ import (
 	"github.com/bluenviron/gomavlib/v4/pkg/dialects/common"
 )
 
-// Information about the field of view of a camera. Can be requested with a MAV_CMD_REQUEST_MESSAGE command.
+// Information about the field of view of a camera. Can be requested with a MAV_CMD_REQUEST_MESSAGE command, where param2 indicates the video stream id: 0 for all streams, 1 for first, 2 for second, etc. A camera with multiple streams that have different fields of view should send one message per stream, with stream_id set.
 type MessageCameraFovStatus = common.MessageCameraFovStatus

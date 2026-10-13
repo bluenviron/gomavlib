@@ -2,7 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package common
 
-// Information about the field of view of a camera. Can be requested with a MAV_CMD_REQUEST_MESSAGE command.
+// Information about the field of view of a camera. Can be requested with a MAV_CMD_REQUEST_MESSAGE command, where param2 indicates the video stream id: 0 for all streams, 1 for first, 2 for second, etc. A camera with multiple streams that have different fields of view should send one message per stream, with stream_id set.
 type MessageCameraFovStatus struct {
 	// Timestamp (time since system boot).
 	TimeBootMs uint32
@@ -26,6 +26,8 @@ type MessageCameraFovStatus struct {
 	Vfov float32
 	// Camera id of a non-MAVLink camera attached to an autopilot (1-6).  0 if the component is a MAVLink camera (with its own component id).
 	CameraDeviceId uint8 `mavext:"true"`
+	// Video Stream ID (1 for first, 2 for second, etc.), as in VIDEO_STREAM_INFORMATION. 0 if unknown or the field of view is not specific to a stream.
+	StreamId uint8 `mavext:"true"`
 }
 
 // GetID implements the message.Message interface.

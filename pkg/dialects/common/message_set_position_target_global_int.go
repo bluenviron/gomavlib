@@ -10,7 +10,7 @@ type MessageSetPositionTargetGlobalInt struct {
 	TargetSystem uint8
 	// Component ID
 	TargetComponent uint8
-	// Valid options are: MAV_FRAME_GLOBAL = 0, MAV_FRAME_GLOBAL_RELATIVE_ALT = 3, MAV_FRAME_GLOBAL_TERRAIN_ALT = 10 (MAV_FRAME_GLOBAL_INT, MAV_FRAME_GLOBAL_RELATIVE_ALT_INT, MAV_FRAME_GLOBAL_TERRAIN_ALT_INT are allowed synonyms, but have been deprecated)
+	// Valid options are: MAV_FRAME_GLOBAL = 0, MAV_FRAME_GLOBAL_RELATIVE_ALT = 3, MAV_FRAME_GLOBAL_TERRAIN_ALT = 10 (MAV_FRAME_GLOBAL_INT, MAV_FRAME_GLOBAL_RELATIVE_ALT_INT, MAV_FRAME_GLOBAL_TERRAIN_ALT_INT are allowed synonyms, but have been superseded)
 	CoordinateFrame MAV_FRAME `mavenum:"uint8"`
 	// Bitmap to indicate which dimensions should be ignored by the vehicle.
 	TypeMask POSITION_TARGET_TYPEMASK `mavenum:"uint16"`

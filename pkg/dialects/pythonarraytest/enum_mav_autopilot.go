@@ -54,4 +54,6 @@ const (
 	MAV_AUTOPILOT_REFLEX MAV_AUTOPILOT = minimal.MAV_AUTOPILOT_REFLEX
 	// Flix quadcopter - https://quadcopter.dev
 	MAV_AUTOPILOT_FLIX MAV_AUTOPILOT = minimal.MAV_AUTOPILOT_FLIX
+	// Betaflight - https://betaflight.com
+	MAV_AUTOPILOT_BETAFLIGHT MAV_AUTOPILOT = minimal.MAV_AUTOPILOT_BETAFLIGHT
 )

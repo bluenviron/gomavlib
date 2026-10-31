@@ -40,7 +40,7 @@ const (
 	MAV_SYS_STATUS_SENSOR_Z_ALTITUDE_CONTROL MAV_SYS_STATUS_SENSOR = common.MAV_SYS_STATUS_SENSOR_Z_ALTITUDE_CONTROL
 	// 0x4000 x/y position control
 	MAV_SYS_STATUS_SENSOR_XY_POSITION_CONTROL MAV_SYS_STATUS_SENSOR = common.MAV_SYS_STATUS_SENSOR_XY_POSITION_CONTROL
-	// 0x8000 motor outputs / control
+	// 0x8000 Motor outputs enabled (safety off). Enabled if motor outputs are not inhibited by a safety switch. The health bit for this sensor is not used and should always be set (report ESC, motor and propeller health using MAV_SYS_STATUS_SENSOR_PROPULSION).
 	MAV_SYS_STATUS_SENSOR_MOTOR_OUTPUTS MAV_SYS_STATUS_SENSOR = common.MAV_SYS_STATUS_SENSOR_MOTOR_OUTPUTS
 	// 0x10000 RC receiver
 	MAV_SYS_STATUS_SENSOR_RC_RECEIVER MAV_SYS_STATUS_SENSOR = common.MAV_SYS_STATUS_SENSOR_RC_RECEIVER

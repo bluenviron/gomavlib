@@ -34,4 +34,6 @@ const (
 	ESTIMATOR_GPS_GLITCH ESTIMATOR_STATUS_FLAGS = common.ESTIMATOR_GPS_GLITCH
 	// True if the EKF has detected bad accelerometer data
 	ESTIMATOR_ACCEL_ERROR ESTIMATOR_STATUS_FLAGS = common.ESTIMATOR_ACCEL_ERROR
+	// True if the estimator has not been healthy at any time since it started (for example, it is still aligning). Estimators that cannot report this leave it clear.
+	ESTIMATOR_UNINITIALIZED ESTIMATOR_STATUS_FLAGS = common.ESTIMATOR_UNINITIALIZED
 )

@@ -29,9 +29,9 @@ type MessageMissionItemInt struct {
 	Param4 float32
 	// PARAM5 / local: x position in meters * 1e4, global: latitude in degrees * 10^7
 	X int32
-	// PARAM6 / y position: local: x position in meters * 1e4, global: longitude in degrees *10^7
+	// PARAM6 / local: y position in meters * 1e4, global: longitude in degrees * 10^7
 	Y int32
-	// PARAM7 / z position: global: altitude in meters (relative or absolute, depending on frame.
+	// PARAM7 / local: z position in meters, global: altitude in meters (relative or absolute, depending on frame).
 	Z float32
 	// Mission type.
 	MissionType MAV_MISSION_TYPE `mavenum:"uint8" mavext:"true"`

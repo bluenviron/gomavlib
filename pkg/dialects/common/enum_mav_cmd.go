@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-// Commands to be executed by the MAV. They can be executed on user request, or as part of a mission script. If the action is used in a mission, the parameter mapping to the waypoint/mission message is as follows: Param 1, Param 2, Param 3, Param 4, X: Param 5, Y:Param 6, Z:Param 7. This command list is similar what ARINC 424 is for commercial aircraft: A data format how to interpret waypoint/mission data. NaN and INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current yaw or latitude rather than a specific value). See https://mavlink.io/en/guide/xml_schema.html#MAV_CMD for information about the structure of the MAV_CMD entries
+// Commands to be executed by the MAV. They can be executed on user request, or as part of a mission script. If the action is used in a mission, the parameter mapping to the waypoint/mission message is as follows: Param 1, Param 2, Param 3, Param 4, X: Param 5, Y:Param 6, Z:Param 7. Params 5, 6, 7 labelled Latitude/X, Longitude/Y, Altitude/Z are global or local coordinates according to the frame of the COMMAND_INT or MISSION_ITEM_INT that carries the command; the encoding is defined by the x, y, z fields of those messages. When sent in COMMAND_LONG (no frame field), the default frame documented by the command is used (e.g. MAV_CMD_DO_ORBIT); if none is documented, params 5 and 6 are latitude and longitude, and the altitude frame is implementation-defined. This command list is similar to what ARINC 424 is for commercial aircraft: A data format how to interpret waypoint/mission data. NaN and INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current yaw or latitude rather than a specific value). See https://mavlink.io/en/guide/xml_schema.html#MAV_CMD for information about the structure of the MAV_CMD entries
 type MAV_CMD uint64
 
 const (
@@ -17,7 +17,7 @@ const (
 	MAV_CMD_NAV_LOITER_UNLIM MAV_CMD = 17
 	// Loiter around this waypoint for X turns
 	MAV_CMD_NAV_LOITER_TURNS MAV_CMD = 18
-	// Loiter at the specified latitude, longitude and altitude for a certain amount of time. Multicopter vehicles stop at the point (within a vehicle-specific acceptance radius). Forward-only moving vehicles (e.g. fixed-wing) circle the point with the specified radius/direction. If the Heading Required parameter (2) is non-zero forward moving aircraft will only leave the loiter circle once heading towards the next waypoint.
+	// Loiter at the specified position for a certain amount of time. Multicopter vehicles stop at the point (within a vehicle-specific acceptance radius). Forward-only moving vehicles (e.g. fixed-wing) circle the point with the specified radius/direction. If the Heading Required parameter (2) is non-zero forward moving aircraft will only leave the loiter circle once heading towards the next waypoint.
 	MAV_CMD_NAV_LOITER_TIME MAV_CMD = 19
 	// Return to launch location
 	MAV_CMD_NAV_RETURN_TO_LAUNCH MAV_CMD = 20
@@ -31,7 +31,7 @@ const (
 	MAV_CMD_NAV_TAKEOFF_LOCAL MAV_CMD = 24
 	// Continue on the current course and climb/descend to specified altitude.  When the altitude is reached continue to the next command (i.e., don't proceed to the next command until the desired altitude is reached.
 	MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT MAV_CMD = 30
-	// Begin loiter at the specified Latitude and Longitude.  If Lat=Lon=0, then loiter at the current position.  Don't consider the navigation command complete (don't leave loiter) until the altitude has been reached. Additionally, if the Heading Required parameter is non-zero the aircraft will not leave the loiter until heading toward the next waypoint.
+	// Begin loiter at the specified position. If Lat=Lon=0 (global frame), then loiter at the current position.  Don't consider the navigation command complete (don't leave loiter) until the altitude has been reached. Additionally, if the Heading Required parameter is non-zero the aircraft will not leave the loiter until heading toward the next waypoint.
 	MAV_CMD_NAV_LOITER_TO_ALT MAV_CMD = 31
 	// Begin following a target
 	MAV_CMD_DO_FOLLOW MAV_CMD = 32
@@ -132,7 +132,7 @@ const (
 	MAV_CMD_DO_RALLY_LAND MAV_CMD = 190
 	// Command to safely abort an autonomous landing.
 	MAV_CMD_DO_GO_AROUND MAV_CMD = 191
-	// Reposition the vehicle to a specific WGS84 global position. This command is intended for guided commands (for missions use MAV_CMD_NAV_WAYPOINT instead).
+	// Reposition the vehicle to a specific position. This command is intended for guided commands (for missions use MAV_CMD_NAV_WAYPOINT instead).
 	MAV_CMD_DO_REPOSITION MAV_CMD = 192
 	// If in a GPS controlled position mode, hold the current position or continue.
 	MAV_CMD_DO_PAUSE_CONTINUE MAV_CMD = 193
@@ -211,8 +211,6 @@ const (
 	MAV_CMD_PREFLIGHT_STORAGE MAV_CMD = 245
 	// Request the reboot or shutdown of system components.
 	MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN MAV_CMD = 246
-	// Override current mission with command to pause mission, pause mission and move to position, continue/resume mission. When param 1 indicates that the mission is paused (MAV_GOTO_DO_HOLD), param 2 defines whether it holds in place or moves to another position.
-	MAV_CMD_OVERRIDE_GOTO MAV_CMD = 252
 	// Mission command to set a Camera Auto Mount Pivoting Oblique Survey (Replaces CAM_TRIGG_DIST for this purpose). The camera is triggered each time this distance is exceeded, then the mount moves to the next position. Params 4~6 set-up the angle limits and number of positions for oblique survey, where mount-enabled vehicles automatically roll the camera between shots to emulate an oblique camera setup (providing an increased HFOV). This command can also be used to set the shutter integration time for the camera.
 	MAV_CMD_OBLIQUE_SURVEY MAV_CMD = 260
 	// Enable the specified standard MAVLink mode.
@@ -515,7 +513,6 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_PREFLIGHT_UAVCAN:                   "MAV_CMD_PREFLIGHT_UAVCAN",
 	MAV_CMD_PREFLIGHT_STORAGE:                  "MAV_CMD_PREFLIGHT_STORAGE",
 	MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN:          "MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN",
-	MAV_CMD_OVERRIDE_GOTO:                      "MAV_CMD_OVERRIDE_GOTO",
 	MAV_CMD_OBLIQUE_SURVEY:                     "MAV_CMD_OBLIQUE_SURVEY",
 	MAV_CMD_DO_SET_STANDARD_MODE:               "MAV_CMD_DO_SET_STANDARD_MODE",
 	MAV_CMD_MISSION_START:                      "MAV_CMD_MISSION_START",
@@ -689,7 +686,6 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_PREFLIGHT_UAVCAN":                   MAV_CMD_PREFLIGHT_UAVCAN,
 	"MAV_CMD_PREFLIGHT_STORAGE":                  MAV_CMD_PREFLIGHT_STORAGE,
 	"MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN":          MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN,
-	"MAV_CMD_OVERRIDE_GOTO":                      MAV_CMD_OVERRIDE_GOTO,
 	"MAV_CMD_OBLIQUE_SURVEY":                     MAV_CMD_OBLIQUE_SURVEY,
 	"MAV_CMD_DO_SET_STANDARD_MODE":               MAV_CMD_DO_SET_STANDARD_MODE,
 	"MAV_CMD_MISSION_START":                      MAV_CMD_MISSION_START,

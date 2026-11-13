@@ -28,7 +28,7 @@ type MessageCommandInt struct {
 	X int32
 	// PARAM6 / local: y position in meters * 1e4, global: longitude in degrees * 10^7
 	Y int32
-	// PARAM7 / z position: global: altitude in meters (relative or absolute, depending on frame).
+	// PARAM7 / local: z position in meters, global: altitude in meters (relative or absolute, depending on frame).
 	Z float32
 }
 

@@ -12,7 +12,7 @@ type MessageOrbitExecutionStatus struct {
 	Frame MAV_FRAME `mavenum:"uint8"`
 	// X coordinate of center point. Coordinate system depends on frame field: local = x position in meters * 1e4, global = latitude in degrees * 1e7.
 	X int32
-	// Y coordinate of center point.  Coordinate system depends on frame field: local = x position in meters * 1e4, global = latitude in degrees * 1e7.
+	// Y coordinate of center point. Coordinate system depends on frame field: local = y position in meters * 1e4, global = longitude in degrees * 1e7.
 	Y int32
 	// Altitude of center point. Coordinate system depends on frame field.
 	Z float32

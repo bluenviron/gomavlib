@@ -171,18 +171,18 @@ func (ch *Channel) run() {
 		ch.rwc.Close()
 
 		close(writerTerminate)
-		<-writerDone
+		<-writerDone //nolint:errcheck
 
 	case err = <-writerDone:
 		ch.rwc.Close()
-		<-readerDone
+		<-readerDone //nolint:errcheck
 
 	case <-ch.ctx.Done():
 		close(writerTerminate)
-		<-writerDone
+		<-writerDone //nolint:errcheck
 
 		ch.rwc.Close()
-		<-readerDone
+		<-readerDone //nolint:errcheck
 	}
 
 	ch.ctxCancel()

@@ -26,7 +26,7 @@ type MessageBatteryStatus struct {
 	TimeRemaining int32 `mavext:"true"`
 	// State for extent of discharge, provided by autopilot for warning or external reactions
 	ChargeState MAV_BATTERY_CHARGE_STATE `mavenum:"uint8" mavext:"true"`
-	// Battery voltages for cells 11 to 14. Cells above the valid cell count for this battery should have a value of 0, where zero indicates not supported (note, this is different than for the voltages field and allows empty byte truncation). If the measured value is 0 then 1 should be sent instead.
+	// Battery voltages for cells 11 to 14. Cells above the valid cell count for this battery should have a value of 0, where zero indicates not supported (note, this is different than for the voltages field and allows empty byte truncation). If the measured value is 0 then 1 should be sent instead. Receivers should also treat UINT16_MAX in this field as unused (it is not a valid cell voltage, and some senders incorrectly reuse the voltages sentinel here). Receivers should ignore this field unless all 10 entries of the `voltages` field are valid (i.e. none are UINT16_MAX), since fewer than 10 valid base cells means the pack has no extension cells.
 	VoltagesExt [4]uint16 `mavext:"true"`
 	// Battery mode. Default (0) is that battery mode reporting is not supported or battery is in normal-use mode.
 	Mode MAV_BATTERY_MODE `mavenum:"uint8" mavext:"true"`

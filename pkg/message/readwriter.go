@@ -260,6 +260,7 @@ type decEncoderField struct {
 	ftype       fieldType
 	name        string
 	arrayLength byte
+	isChar      bool
 	index       int
 	isExtension bool
 }
@@ -291,6 +292,7 @@ func (rw *ReadWriter) Initialize() error {
 	for i := 0; i < rw.elemType.NumField(); i++ {
 		field := rw.elemType.Field(i)
 		arrayLength := byte(0)
+		isChar := false
 		goType := field.Type
 
 		// array
@@ -339,6 +341,7 @@ func (rw *ReadWriter) Initialize() error {
 
 				if len(tagLen) == 0 { // char
 					arrayLength = 1
+					isChar = true
 				} else { // string
 					slen, err := strconv.Atoi(tagLen)
 					if err != nil {
@@ -371,6 +374,7 @@ func (rw *ReadWriter) Initialize() error {
 			}(),
 			arrayLength: arrayLength,
 			index:       i,
+			isChar:      isChar,
 			isExtension: isExtension,
 		}
 
@@ -408,7 +412,8 @@ func (rw *ReadWriter) Initialize() error {
 			h.Write([]byte(fieldTypeString[f.ftype] + " "))
 			h.Write([]byte(f.name + " "))
 
-			if f.arrayLength > 0 {
+			// a single char is not an array, so its length is not part of the CRC
+			if f.arrayLength > 0 && !f.isChar {
 				h.Write([]byte{f.arrayLength})
 			}
 		}

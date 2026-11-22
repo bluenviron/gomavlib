@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/bluenviron/gomavlib/v4/pkg/dialects/ardupilotmega"
+	"github.com/bluenviron/gomavlib/v4/pkg/dialects/test"
 	"github.com/bluenviron/gomavlib/v4/pkg/message"
 )
 
@@ -196,6 +197,11 @@ var casesCRC = []struct {
 	{
 		&MessageAhrs{},
 		127,
+	},
+	{
+		// contains a single char field, whose length must not be included in the CRC
+		&test.MessageTestTypes{},
+		103,
 	},
 }
 

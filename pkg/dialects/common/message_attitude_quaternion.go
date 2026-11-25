@@ -2,7 +2,7 @@
 //nolint:revive,misspell,govet,lll
 package common
 
-// The attitude in the aeronautical frame (right-handed, Z-down, X-front, Y-right), expressed as quaternion. Quaternion order is w, x, y, z and a zero rotation would be expressed as (1 0 0 0).
+// The attitude of the vehicle body frame (right-handed, X-front, Y-right, Z-down), expressed as a Hamilton quaternion q (w, x, y, z order) that rotates vectors from the body frame to the NED (north-east-down) earth frame: v_NED = q * v_body * q^-1. A zero rotation (body axes aligned with NED) is expressed as (1 0 0 0). For VTOL vehicles the body frame is the one the autopilot uses (e.g. the multicopter or the fixed-wing frame of a tailsitter); repr_offset_q gives the rotation to the frame that should be displayed.
 type MessageAttitudeQuaternion struct {
 	// Timestamp (time since system boot).
 	TimeBootMs uint32
@@ -14,13 +14,13 @@ type MessageAttitudeQuaternion struct {
 	Q3 float32
 	// Quaternion component 4, z (0 in null-rotation)
 	Q4 float32
-	// Roll angular speed
+	// Roll angular speed (about the body frame X axis)
 	Rollspeed float32
-	// Pitch angular speed
+	// Pitch angular speed (about the body frame Y axis)
 	Pitchspeed float32
-	// Yaw angular speed
+	// Yaw angular speed (about the body frame Z axis)
 	Yawspeed float32
-	// Rotation offset by which the attitude quaternion and angular speed vector should be rotated for user display (quaternion with [w, x, y, z] order, zero-rotation is [1, 0, 0, 0], send [0, 0, 0, 0] if field not supported). This field is intended for systems in which the reference attitude may change during flight. For example, tailsitters VTOLs rotate their reference attitude by 90 degrees between hover mode and fixed wing mode, thus repr_offset_q is equal to [1, 0, 0, 0] in hover mode and equal to [0.7071, 0, 0.7071, 0] in fixed wing mode.
+	// Rotation offset by which the attitude quaternion and angular speed vector should be rotated for user display (quaternion with [w, x, y, z] order, zero-rotation is [1, 0, 0, 0], send [0, 0, 0, 0] if there is no offset or the field is not supported). repr_offset_q rotates vectors from the display frame to the body frame (v_body = repr_offset_q * v_display * repr_offset_q^-1), so the display attitude is q * repr_offset_q and the angular speed vector in the display frame is repr_offset_q^-1 * (rollspeed, pitchspeed, yawspeed) * repr_offset_q. This field is intended for systems in which the reference attitude may change during flight. For example, tailsitter VTOLs rotate their reference attitude by 90 degrees between hover mode and fixed wing mode, thus if the body frame is the multicopter frame (as in PX4), repr_offset_q has no offset in hover mode and is equal to [0.7071, 0, 0.7071, 0] in fixed wing mode.
 	ReprOffsetQ [4]float32 `mavext:"true"`
 }
 

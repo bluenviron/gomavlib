@@ -371,6 +371,8 @@ const (
 	MAV_CMD_NAV_FENCE_CIRCLE_INCLUSION MAV_CMD = common.MAV_CMD_NAV_FENCE_CIRCLE_INCLUSION
 	// Circular fence area. The vehicle must stay outside this area.
 	MAV_CMD_NAV_FENCE_CIRCLE_EXCLUSION MAV_CMD = common.MAV_CMD_NAV_FENCE_CIRCLE_EXCLUSION
+	// Circular fence area centered on home. The vehicle must stay inside this area. If home is moved, the fence moves.
+	MAV_CMD_NAV_FENCE_HOME_CIRCLE_INCLUSION MAV_CMD = common.MAV_CMD_NAV_FENCE_HOME_CIRCLE_INCLUSION
 	// Rally point. You can have multiple rally points defined.
 	MAV_CMD_NAV_RALLY_POINT MAV_CMD = common.MAV_CMD_NAV_RALLY_POINT
 	// Commands the vehicle to respond with a sequence of messages UAVCAN_NODE_INFO, one message per every UAVCAN node that is online. Note that some of the response messages can be lost, which the receiver can detect easily by checking whether every received UAVCAN_NODE_STATUS has a matching message UAVCAN_NODE_INFO received earlier; if not, this command should be sent again in order to request re-transmission of the node information messages.

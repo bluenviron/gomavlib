@@ -6,5 +6,5 @@ import (
 	"github.com/bluenviron/gomavlib/v4/pkg/dialects/common"
 )
 
-// The attitude in the aeronautical frame (right-handed, Z-down, X-front, Y-right), expressed as quaternion. Quaternion order is w, x, y, z and a zero rotation would be expressed as (1 0 0 0).
+// The attitude of the vehicle body frame (right-handed, X-front, Y-right, Z-down), expressed as a Hamilton quaternion q (w, x, y, z order) that rotates vectors from the body frame to the NED (north-east-down) earth frame: v_NED = q * v_body * q^-1. A zero rotation (body axes aligned with NED) is expressed as (1 0 0 0). For VTOL vehicles the body frame is the one the autopilot uses (e.g. the multicopter or the fixed-wing frame of a tailsitter); repr_offset_q gives the rotation to the frame that should be displayed.
 type MessageAttitudeQuaternion = common.MessageAttitudeQuaternion

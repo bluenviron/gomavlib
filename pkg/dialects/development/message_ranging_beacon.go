@@ -27,7 +27,7 @@ type MessageRangingBeacon struct {
 	HaccEst uint32
 	// Beacon 1-sigma vertical accuracy estimate.
 	VaccEst uint32
-	// Ranging carrier frequency
+	// Ranging carrier frequency.
 	CarrierFreq uint16
 	// Estimated 1-sigma range measurement accuracy.
 	RangeAccuracy uint32

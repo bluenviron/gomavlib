@@ -372,6 +372,8 @@ const (
 	MAV_CMD_NAV_FENCE_CIRCLE_INCLUSION MAV_CMD = 5003
 	// Circular fence area. The vehicle must stay outside this area.
 	MAV_CMD_NAV_FENCE_CIRCLE_EXCLUSION MAV_CMD = 5004
+	// Circular fence area centered on home. The vehicle must stay inside this area. If home is moved, the fence moves.
+	MAV_CMD_NAV_FENCE_HOME_CIRCLE_INCLUSION MAV_CMD = 5005
 	// Rally point. You can have multiple rally points defined.
 	MAV_CMD_NAV_RALLY_POINT MAV_CMD = 5100
 	// Commands the vehicle to respond with a sequence of messages UAVCAN_NODE_INFO, one message per every UAVCAN node that is online. Note that some of the response messages can be lost, which the receiver can detect easily by checking whether every received UAVCAN_NODE_STATUS has a matching message UAVCAN_NODE_INFO received earlier; if not, this command should be sent again in order to request re-transmission of the node information messages.
@@ -575,6 +577,7 @@ var value_to_label_MAV_CMD = map[MAV_CMD]string{
 	MAV_CMD_NAV_FENCE_POLYGON_VERTEX_EXCLUSION: "MAV_CMD_NAV_FENCE_POLYGON_VERTEX_EXCLUSION",
 	MAV_CMD_NAV_FENCE_CIRCLE_INCLUSION:         "MAV_CMD_NAV_FENCE_CIRCLE_INCLUSION",
 	MAV_CMD_NAV_FENCE_CIRCLE_EXCLUSION:         "MAV_CMD_NAV_FENCE_CIRCLE_EXCLUSION",
+	MAV_CMD_NAV_FENCE_HOME_CIRCLE_INCLUSION:    "MAV_CMD_NAV_FENCE_HOME_CIRCLE_INCLUSION",
 	MAV_CMD_NAV_RALLY_POINT:                    "MAV_CMD_NAV_RALLY_POINT",
 	MAV_CMD_UAVCAN_GET_NODE_INFO:               "MAV_CMD_UAVCAN_GET_NODE_INFO",
 	MAV_CMD_DO_SET_SAFETY_SWITCH_STATE:         "MAV_CMD_DO_SET_SAFETY_SWITCH_STATE",
@@ -748,6 +751,7 @@ var label_to_value_MAV_CMD = map[string]MAV_CMD{
 	"MAV_CMD_NAV_FENCE_POLYGON_VERTEX_EXCLUSION": MAV_CMD_NAV_FENCE_POLYGON_VERTEX_EXCLUSION,
 	"MAV_CMD_NAV_FENCE_CIRCLE_INCLUSION":         MAV_CMD_NAV_FENCE_CIRCLE_INCLUSION,
 	"MAV_CMD_NAV_FENCE_CIRCLE_EXCLUSION":         MAV_CMD_NAV_FENCE_CIRCLE_EXCLUSION,
+	"MAV_CMD_NAV_FENCE_HOME_CIRCLE_INCLUSION":    MAV_CMD_NAV_FENCE_HOME_CIRCLE_INCLUSION,
 	"MAV_CMD_NAV_RALLY_POINT":                    MAV_CMD_NAV_RALLY_POINT,
 	"MAV_CMD_UAVCAN_GET_NODE_INFO":               MAV_CMD_UAVCAN_GET_NODE_INFO,
 	"MAV_CMD_DO_SET_SAFETY_SWITCH_STATE":         MAV_CMD_DO_SET_SAFETY_SWITCH_STATE,

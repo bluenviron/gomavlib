@@ -372,8 +372,6 @@ var dial = &dialect.Dialect{
 		&MessageSetVelocityLimits{},
 		&MessageVelocityLimits{},
 		&MessageBatteryStatusV2{},
-		&MessageGroupStart{},
-		&MessageGroupEnd{},
 		&MessageRcChannelsOverrideV2{},
 		&MessageGnssIntegrity{},
 		&MessageTargetAbsolute{},
